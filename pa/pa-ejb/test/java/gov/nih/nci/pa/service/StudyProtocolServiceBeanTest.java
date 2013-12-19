@@ -95,7 +95,9 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -112,6 +114,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -120,6 +123,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
@@ -251,6 +255,19 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     public void nullParameter9() throws Exception {
         remoteEjb.updateNonInterventionalStudyProtocol(null);
     }
+    
+    @Test
+    public void nonIntCreateAndUpdate() throws Exception {
+    	NonInterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createNonInterventionalStudyProtocolDTOObj();
+        Ii ii = remoteEjb.createNonInterventionalStudyProtocol(ispDTO);
+        assertNotNull(ii.getExtension());
+        NonInterventionalStudyProtocolDTO saved =  remoteEjb.getNonInterventionalStudyProtocol(ii);
+        assertEquals(ii.getExtension(), saved.getIdentifier().getExtension());
+        saved.setOfficialTitle(StConverter.convertToSt("title changed"));
+        saved = remoteEjb.updateNonInterventionalStudyProtocol(saved);
+        assertEquals("title changed", saved.getOfficialTitle().getValue());
+        saved =  remoteEjb.getNonInterventionalStudyProtocol(ii);
+    }
 
     @Test(expected=PAException.class)
     public void nullParameter10() throws Exception {
@@ -336,6 +353,53 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
                 .convertToCd(BlindingSchemaCode.DOUBLE_BLIND));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
+    
+    @Test
+    public void businessRulesExceptionMaskingRoles1() throws Exception {
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Single Blinding Schema code must have 1 Blinded code.");
+
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        ispDTO.setBlindingSchemaCode(CdConverter
+                .convertToCd(BlindingSchemaCode.SINGLE_BLIND));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+    
+    @Test
+    public void businessRulesExceptionMaskingRoles2() throws Exception {
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Only one masking role must be specified for 'Single Blind' masking.");
+
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.SINGLE_BLIND));
+
+        List<Cd> blindingRoles = new ArrayList<Cd>();
+        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.CAREGIVER.getCode()));
+        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.INVESTIGATOR.getCode()));
+        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.OUTCOMES_ASSESSOR.getCode()));
+        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.SUBJECT.getCode()));
+        ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(blindingRoles));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
+    
+    @Test
+    public void businessRulesExceptionMaskingRoles3() throws Exception {
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Open Blinding Schema code cannot have any Blinded codes.");
+
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest
+                .createInterventionalStudyProtocolDTOObj();
+        ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.OPEN));
+        List<Cd> blindingRoles = new ArrayList<Cd>();
+        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.CAREGIVER.getCode()));
+        ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(blindingRoles));
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+    }
 
     @Test
     public void businessRulesExceptionForUpdate() throws Exception {
@@ -406,6 +470,12 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 				registryService
 						.getLoginNamesByEmailAddress("username@nci.nih.gov"))
 				.thenReturn(Arrays.asList(trialOwner));
+		try {
+            remoteEjb.changeOwnership(null, owners);
+            fail("Protocol identifier (Ii) must not be null");
+        } catch (PAException e) {
+            // expected behavior
+        }		
 		Collection<String> emails = remoteEjb.changeOwnership(ii, owners);
 		assertTrue(emails.isEmpty());
 		verify(registryService, times(1)).removeOwnership(Long.MIN_VALUE,
@@ -504,6 +574,12 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void deleteStudyProtocol() throws Exception {
+    	try {
+    		remoteEjb.deleteStudyProtocol(null);
+    		fail("Ii should not be null.");
+    	} catch (PAException e) {
+            // expected behavior
+        }
         InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
         sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
         sp = TestSchema.createInterventionalStudyProtocolObj(sp);
@@ -659,6 +735,33 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         } catch (PAException e) {
             // expected behavior
         }
+        Ts primaryCompletionDate = TsConverter.convertToTs(null);
+        primaryCompletionDate.setNullFlavor(NullFlavor.UNK);
+        spDto.setPrimaryCompletionDate(primaryCompletionDate);
+        spDto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        try {
+            remoteEjb.updateStudyProtocol(spDto);
+            fail("Unknown primary completion dates must be marked as Anticipated.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        spDto.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2014")));
+        spDto.setCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2013")));
+        try {
+            remoteEjb.updateStudyProtocol(spDto);
+            fail("Completion date type must be set.  ");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        spDto.setPrimaryCompletionDate(TsConverter.convertToTs(new Date()));
+        spDto.setCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2012")));
+        spDto.setCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        try {
+            remoteEjb.updateStudyProtocol(spDto);
+            fail("Completion date must be >= Primary completion date.");
+        } catch (PAException e) {
+            // expected behavior
+        }
     }
 
     @Test
@@ -735,6 +838,15 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         ii.setExtension("CTEP-1");
         spDTO = remoteEjb.loadStudyProtocol(ii);
         assertNotNull(spDTO);
+        
+        spDTO = remoteEjb.loadStudyProtocol(spDTO.getIdentifier());
+        assertNotNull(spDTO);
+                
+        Ii nciId = PAUtil.getAssignedIdentifier(spDTO);
+        System.out.println("the nci id is " + nciId.getExtension());
+        remoteEjb.getProtocolIdsWithNCIId(nciId.getExtension());
+        spDTO = remoteEjb.loadStudyProtocol(nciId);
+        remoteEjb.loadStudyProtocol(null);
     }
 
     @Test
@@ -1253,6 +1365,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(IiConverter.convertToLong(spDTO.getIdentifier()),
                 IiConverter.convertToLong(spaDTO.getStudyProtocolB()));
 
+        spa = remoteEjb.getTrialAssociation(55L);
+        assertNull(spa);
     }
     
     @Test
@@ -1273,6 +1387,22 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         createStudyProtocols(2, "National Cancer", "1", absValue);
         List<Long> ids = remoteEjb.getActiveAndInActiveTrialsByspId(1L);
         assertTrue(ids.size() > 0);
+    }
+    
+    @Test
+    public void junitCoverage() throws PAException {
+    	createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1", false);
+    	
+    	Ii ii = new Ii();
+        ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("DCP-1");
+        StudyProtocolDTO spDTO = remoteEjb.loadStudyProtocol(ii);
+        remoteEjb.changeStudyProtocolType(spDTO.getIdentifier(), StudyTypeCode.NON_INTERVENTIONAL);
+        remoteEjb.addAnatomicSite(spDTO.getIdentifier(), CdConverter.convertStringToCd("Liver"));
+        remoteEjb.addAnatomicSite(spDTO.getIdentifier(), CdConverter.convertStringToCd("Liver"));
+        remoteEjb.removeAnatomicSite(spDTO.getIdentifier(), CdConverter.convertStringToCd("Liver"));
+        remoteEjb.updateRecordVerificationDate(Long.valueOf(spDTO.getIdentifier().getExtension()));
     }
 
 }

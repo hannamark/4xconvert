@@ -14,6 +14,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -22,11 +23,14 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -109,6 +113,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         rBean.setStudySiteContactService(studySiteContactService);
         rBean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         rBean.setOrganizationCorrelationService(ocsr);
+        rBean.setAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));
         remoteBean = rBean;
         
         studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));        
@@ -327,6 +332,69 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         List<ParticipatingSiteDTO> sites = remoteBean.getParticipatingSitesByStudyProtocol(spSecId);
         assertTrue(sites.size() == 1);
         assertEquals(oldIi.getExtension(), sites.get(0).getIdentifier().getExtension());
+        
+        ParticipatingSiteContactDTO participatingSiteContactDTO = new ParticipatingSiteContactDTO();
+        participatingSiteContactDTO.setPersonDTO(person);
+        StudySiteContactDTO studySiteContactDTO = contList.get(0);
+        
+		List<String> phones = new ArrayList<String>();
+        phones.add("1234567890");
+		DSet<Tel> dSet = new DSet<Tel>();
+        dSet = DSetConverter.convertListToDSet(phones, "PHONE", dSet);
+        studySiteContactDTO.setTelecomAddresses(dSet);
+		participatingSiteContactDTO.setStudySiteContactDTO(studySiteContactDTO);
+		HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
+        hcpDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthcareProviderIi("1")));
+        hcpDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));        
+        participatingSiteContactDTO.setAbstractPersonRoleDTO(hcpDTO);		        
+        List<ParticipatingSiteContactDTO> contacts = new ArrayList<ParticipatingSiteContactDTO>();
+        contacts.add(participatingSiteContactDTO);        
+        when(PaRegistry.getRegistryUserService().isTrialOwner(any(Long.class), any(Long.class))).thenReturn(true);
+        when(PaRegistry.getRegistryUserService().getUser(any(String.class))).thenReturn(new RegistryUser());        
+        try {
+        	remoteBean.updateStudySiteParticipant(studySiteDTO, currentStatus, contacts);
+        	fail();
+        } catch (Exception e) {
+            // expected to have rolecode
+        }        
+        studySiteContactDTO.setRoleCode(CdConverter
+                .convertStringToCd(StudySiteContactRoleCode.PRIMARY_CONTACT.getCode()));
+        try {
+        	remoteBean.updateStudySiteParticipant(studySiteDTO, currentStatus, contacts);
+        	fail();
+        } catch (Exception e) {
+            // expected to have primary indicator
+        }        
+        studySiteContactDTO.setPrimaryIndicator(BlConverter.convertToBl(true));
+        remoteBean.updateStudySiteParticipant(studySiteDTO, currentStatus, contacts);
+        
+        OrganizationalContactDTO ocDTO = new OrganizationalContactDTO();
+        ocDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoOrganizationalContactIi("1")));
+        ocDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+        ocDTO.setTitle(StConverter.convertToSt("Title"));
+        ocDTO.setTypeCode(CdConverter.convertStringToCd("Site"));
+        participatingSiteContactDTO.setAbstractPersonRoleDTO(ocDTO);
+        remoteBean.updateStudySiteParticipant(studySiteDTO, currentStatus, contacts);
+        
+        ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
+        crsDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoClinicalResearchStaffIi("1")));
+        crsDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+        participatingSiteContactDTO.setAbstractPersonRoleDTO(crsDTO);
+        remoteBean.updateStudySiteParticipant(studySiteDTO, currentStatus, contacts);
+        
+        StudyProtocolDTO spdto = null;
+        rBean.setStudyProtocolService(mock(StudyProtocolBeanLocal.class));
+        bean.setStudyProtocolService(mock(StudyProtocolBeanLocal.class));
+        when(bean.getStudyProtocolService().getStudyProtocol(any(Ii.class))).thenReturn(spdto);
+        when(rBean.getStudyProtocolService().getStudyProtocol(any(Ii.class))).thenReturn(spdto);
+        localBean = bean;
+        remoteBean = rBean;
+        try {
+        	remoteBean.updateStudySiteParticipant(studySiteDTO, currentStatus, null);
+        	fail();
+        } catch (Exception e) {
+            // expected trial does not exist
+        }        
     }
 
     @Test

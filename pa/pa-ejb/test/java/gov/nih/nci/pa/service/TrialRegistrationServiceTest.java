@@ -78,14 +78,18 @@
  */
 package gov.nih.nci.pa.service;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.StudyMilestone;
@@ -102,9 +106,10 @@ import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -119,26 +124,34 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -152,6 +165,7 @@ import org.junit.Test;
  *
  * @author Michael Visee
  */
+@SuppressWarnings("deprecation")
 public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestBase {
     @Test
     public void createInterventionalStudyProtocolTest() throws Exception {
@@ -200,9 +214,10 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
     /**
      * @return
      * @throws PAException
+     * @throws URISyntaxException 
      */
     private InterventionalStudyProtocolDTO registerAbbreviatedTrial()
-            throws PAException {
+            throws PAException, URISyntaxException {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         
         StudySiteDTO nctID = new StudySiteDTO();
@@ -269,8 +284,46 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
                 eligibility, outcomes, collaborators, documents);
         assertFalse(ISOUtil.isIiNull(ii));
         
-        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);        
         return studyProtocolDTO;
+    }
+    
+    @Test
+    public void testcreateAISP() throws Exception {    	
+    	StudySiteDTO nctID = new StudySiteDTO();
+        nctID.setLocalStudyProtocolIdentifier(StConverter.convertToSt("NCT12345"));        
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = new StudySiteDTO();
+        leadOrganizationSiteIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LID12345"));
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();        
+        PersonDTO principalInvestigatorDTO  = getPI();        
+        List<DocumentDTO> documents = getStudyDocuments(); 
+    	DSet<Tel> owners = new DSet<Tel>();
+		owners.setItem(new HashSet<Tel>());
+		Tel tel = new Tel();
+		tel.setValue(new URI("mailto:username@nci.nih.gov"));
+		owners.getItem().add(tel);
+		
+		leadOrganizationSiteIdentifierDTO.setProgramCodeText(StConverter.convertToSt("PC"));
+		leadOrganizationSiteIdentifierDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()
+                - Long.valueOf("300000000")), new Timestamp(new Date().getTime() - Long.valueOf("200000000"))));
+		List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+		StudyResourcingDTO srDto = summary4StudyResourcing.get(0);
+		srDto.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL));
+		List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(sponsorOrganizationDTO);
+        
+        StudySiteAccrualStatusDTO accessDto = new StudySiteAccrualStatusDTO();
+        accessDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE));
+        accessDto.setStatusDate(TsConverter.convertToTs(new Date()));
+        
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(spIi);
+        spDTO.setIdentifier(null);
+        Ii ii = bean.createAbbreviatedInterventionalStudyProtocol(spDTO, accessDto, documents,
+                leadOrganizationDTO, principalInvestigatorDTO, leadOrganizationSiteIdentifierDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, nctID, 
+                summary4OrganizationDTO, srDto, BlConverter.convertToBl(Boolean.FALSE), owners);
+        assertFalse(ISOUtil.isIiNull(ii));
     }
 
 
@@ -947,6 +1000,19 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
                 summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+        
+        CSMUserUtil csmUserService = mock(CSMUserService.class);
+    	CSMUserService.setInstance(csmUserService);
+    	when(CSMUserService.getInstance().getCSMUser(any(String.class))).thenReturn(null);
+    	studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(false));
+    	try {
+    		bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+    	    Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+    	} catch (Exception e) {
+        	// expected
+        }
     }
 
 
@@ -1396,7 +1462,7 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         studyProtocolDTO.setPublicTitle(StConverter.convertToSt(""));
         studyProtocolDTO.setPublicDescription(StConverter.convertToSt(""));
         studyProtocolDTO.setScientificDescription(StConverter.convertToSt(""));
-        
+        studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(false));
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
@@ -1407,6 +1473,28 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         assertEquals("Public title", studyProtocolDTO.getPublicTitle().getValue());
         assertEquals("Public descr", studyProtocolDTO.getPublicDescription().getValue());
         assertEquals("Scientific descr", studyProtocolDTO.getScientificDescription().getValue());
+        
+        CSMUserUtil csmUserService = mock(CSMUserService.class);
+    	CSMUserService.setInstance(csmUserService);
+    	when(CSMUserService.getInstance().getCSMUser(any(String.class))).thenReturn(null);
+    	studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(false));
+    	/*try {
+    		bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+    	    Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4OrganizationDTO, summary4StudyResourcing.get(0), null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+    	} catch (Exception e) {
+        	// expected
+        }*/
+        try {
+        	bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                       Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO,
+                       principalInvestigatorDTO, sponsorOrganizationDTO, null, leadOrganizationSiteIdentifierDTO, null,
+                       summary4OrganizationDTO, summary4StudyResourcing.get(0), regAuthority, BlConverter
+                           .convertToBl(Boolean.FALSE));
+        } catch (Exception e) {
+        	// expected
+        }
     }
 
     

@@ -88,6 +88,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import org.mockito.Mockito;
+import static org.mockito.Mockito.mock;
 
 
 /**
@@ -103,6 +104,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
     PAHealthCareProviderRemote paHealthCareProvider = new PAHealthCareProviderServiceBean();
+    RegistryUserServiceLocal regSvc = mock(RegistryUserServiceLocal.class);
 
     /**
      * {@inheritDoc}
@@ -405,7 +407,7 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
      */
     @Override
     public RegistryUserServiceLocal getRegistryUserService() {
-        return null;
+        return regSvc;
     }
 
     /**

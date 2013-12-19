@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class MockPoIdentifiedPersonCorrelationServiceRemote implements Identifie
     @Override
     public List<IdentifiedPersonDTO> search(IdentifiedPersonDTO arg0) {
         // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<IdentifiedPersonDTO>();
     }
 
     @Override

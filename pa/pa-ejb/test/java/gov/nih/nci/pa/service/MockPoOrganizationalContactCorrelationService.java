@@ -69,7 +69,7 @@ public class MockPoOrganizationalContactCorrelationService implements
      */
     public List<OrganizationalContactDTO> search(OrganizationalContactDTO arg0) {
         // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<OrganizationalContactDTO>();
     }
 
     /* (non-Javadoc)

@@ -80,16 +80,41 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.OversightCommittee;
+import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.SecondaryPurpose;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StratumGroupServiceBean;
-import gov.nih.nci.pa.service.StudyContactServiceBean;
+import gov.nih.nci.pa.service.StudyContactServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
+import gov.nih.nci.pa.service.StudyProtocolServiceBeanTest;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceBean;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceBean;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.TestSchema;
@@ -99,6 +124,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.hibernate.Session;
 import org.junit.Before;
@@ -113,10 +139,12 @@ import com.lowagie.text.DocumentException;
  */
 public class TSRReportGeneratorServiceTest extends AbstractHibernateTestCase {
     private final TSRReportGeneratorServiceBean bean = new TSRReportGeneratorServiceBean();
+    private final StudyProtocolServiceLocal remoteEjb = new StudyProtocolBeanLocal();
+    private AbstractMockitoTest mockitoTest;
 
     @Before
     public void setup() throws Exception {
-        AbstractMockitoTest mockitoTest = new AbstractMockitoTest();
+    	mockitoTest = new AbstractMockitoTest();
         mockitoTest.setUp();
 
         when(PaRegistry.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
@@ -134,18 +162,36 @@ public class TSRReportGeneratorServiceTest extends AbstractHibernateTestCase {
         bean.setDiseaseService(mockitoTest.getDiseaseSvc());
         bean.setInterventionAlternateNameService(mockitoTest.getInterventionAltNameSvc());
         bean.setInterventionService(mockitoTest.getInterventionSvc());
-        bean.setStudyResourcingService(mockitoTest.getStudyResourcingSvc());
+        StudyResourcingServiceLocal studyResourcingSvc = mockitoTest.getStudyResourcingSvc();        
+        List<StudyResourcingDTO> studyResourcingDtoList = mockitoTest.getStudyResourcingDtoList();
+        studyResourcingDtoList.get(0).setOrganizationIdentifier(IiConverter.convertToPaOrganizationIi(1l));
+		when(studyResourcingSvc.getStudyResourcingByStudyProtocol(any(Ii.class))).thenReturn(studyResourcingDtoList);
+        when(studyResourcingSvc.getSummary4ReportedResourcing(any(Ii.class))).thenReturn(studyResourcingDtoList);
+		bean.setStudyResourcingService(studyResourcingSvc);
         bean.setPlannedMarkerService(mockitoTest.getPlannedMarkerSvc());
         bean.setStudyRegulatoryAuthorityService(new StudyRegulatoryAuthorityServiceBean());
         bean.setStudySiteService(new StudySiteServiceBean());
         bean.setPaOrganizationService(PaRegistry.getPAOrganizationService());
-        bean.setStratumGroupService(new StratumGroupServiceBean());
-        bean.setStudyContactService(new StudyContactServiceBean());
+        bean.setStratumGroupService(new StratumGroupServiceBean());        
+        StudyContactServiceLocal studyContactSvc = mockitoTest.getStudyContactSvc();
+        when(studyContactSvc.getByStudyProtocol(any(Ii.class), any(StudyContactDTO.class))).thenReturn(mockitoTest.getScDtoList());
+        when(studyContactSvc.getResponsiblePartyContact(any(Ii.class))).thenReturn(mockitoTest.getScDtoList().get(0));
+		bean.setStudyContactService(studyContactSvc);
 
         TestSchema.primeData();
+        AnatomicSite as = new AnatomicSite();
+        as.setCode("Lung");
+        as.setCodingSystem("Summary 4 Anatomic Sites");
+        TestSchema.addUpdObject(as);
         Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        sp.setReviewBoardApprovalRequiredIndicator(true);
+        session.save(sp);
         session.flush();
         session.clear();
+        LookUpTableServiceRemote lookupSvc = mock(LookUpTableServiceRemote.class);
+        when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);
+        when(PaRegistry.getLookUpTableService()).thenReturn(lookupSvc);
     }
 
     @Test
@@ -160,11 +206,58 @@ public class TSRReportGeneratorServiceTest extends AbstractHibernateTestCase {
         assertNotNull(x);
         assertTrue(x.size() > 0);
         writeToFile(x, "./tsr_report.rtf");
-
+        
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudySite ss = (StudySite) session.get(StudySite.class, TestSchema.studySiteIds.get(0));
+        ss.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED);
+        OversightCommittee osc = new OversightCommittee();
+        osc.setId(1L);
+        ss.setOversightCommittee(osc);
+        session.save(ss);
+        
+        InterventionalStudyProtocol isp = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
+        isp.setBlindingRoleCodeInvestigator(BlindingRoleCode.INVESTIGATOR);
+        isp.setBlindingRoleCodeOutcome(BlindingRoleCode.OUTCOMES_ASSESSOR);
+        isp.setBlindingRoleCodeSubject(BlindingRoleCode.SUBJECT);
+        isp.setProgramCodeText("programCodeText");
+        session.save(isp);
+        
+        StudySite sPart = new StudySite();
+        sPart.setFunctionalCode(StudySiteFunctionalCode.FUNDING_SOURCE);
+        ResearchOrganization rOrg = new ResearchOrganization();
+        rOrg.setId(TestSchema.researchOrganizationIds.get(0));
+        sPart.setResearchOrganization(rOrg);
+        sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
+        sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        sPart.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("12/18/2013"));
+        sPart.setAccrualDateRangeLow(ISOUtil
+                .dateStringToTimestamp("12/18/2013"));
+        sPart.setStudyProtocol(isp);
+        session.save(sPart);
+        session.flush();
+        StudyContactServiceLocal studyContactSvc = mockitoTest.getStudyContactSvc();
+        when(studyContactSvc.getByStudyProtocol(any(Ii.class), any(StudyContactDTO.class))).thenReturn(mockitoTest.getScDtoList());
+        when(studyContactSvc.getResponsiblePartyContact(any(Ii.class))).thenReturn(null);
+		bean.setStudyContactService(studyContactSvc);
         x = bean.generateHtmlTsrReport(ii);
         assertNotNull(x);
         assertTrue(x.size() > 0);
         writeToFile(x, "./tsr_report.html");
+        
+        try {
+        	bean.generatePdfTsrReport(null);
+        	fail();
+        } catch (PAException e) {
+	        // expected
+		}
+        NonInterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createNonInterventionalStudyProtocolDTOObj();
+        ispDTO.setReviewBoardApprovalRequiredIndicator(BlConverter.convertToBl(true));
+        ii = remoteEjb.createNonInterventionalStudyProtocol(ispDTO);
+        assertNotNull(ii.getExtension());
+        x = bean.generatePdfTsrReport(ii);
+        assertNotNull(x);
+        assertTrue(x.size() > 0);
     }
 
     private void writeToFile(ByteArrayOutputStream os, String fileName) throws DocumentException, IOException {

@@ -178,11 +178,19 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
         assertEquals(new Integer(63), IntConverter.convertToInteger(result.getTargetAccrualNumber()));
         assertEquals("abc", result.getOversightCommitteeIi().getExtension());
 
+        remoteEjb.copy(IiConverter.convertToStudyProtocolIi(studyId), IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(1)));
+        
         LimitOffset pagingParams = new LimitOffset(1, 1);
         StudySiteDTO dto2 = new StudySiteDTO();
         dto2.setStudyProtocolIdentifier(studyIi);
         List<StudySiteDTO> list = remoteEjb.search(dto2, pagingParams);
         assertEquals(1,list.size());
+        try {
+        	remoteEjb.search(null, pagingParams);
+        	fail();
+        } catch (Exception e) {
+            // expected
+        }
     }
 
     private StudySiteDTO createStudySite() {
@@ -231,10 +239,23 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(sPart3);
     	
         StudySiteDTO spDto = new StudySiteDTO();
+        spDto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyId));
+        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
+        Ii resOrgIi = new Ii();
+        resOrgIi.setExtension(resOrg.getIdentifier());
+        resOrgIi.setIdentifierName(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME);
+        spDto.setResearchOrganizationIi(resOrgIi);
+        try {
+            remoteEjb.create(spDto);
+            fail("This organization has already been entered as a 'Identifier Assigner' for this study.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+                
         spDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("Local NCTID"));
         spDto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(1)));
         spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-        Ii resOrgIi = new Ii();
+        resOrgIi = new Ii();
         resOrgIi.setExtension(researchOrgId.toString());
         resOrgIi.setIdentifierName(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME);
         spDto.setResearchOrganizationIi(resOrgIi);
@@ -274,7 +295,60 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
         } catch (PAException e) {
             // expected behavior
         }
-
+        dto.setHealthcareFacilityIi(null);
+        dto.setResearchOrganizationIi(null);
+        try {
+            remoteEjb.update(dto);
+            fail("Either healthcare facility or research organization or Oversight committee must be set.");
+        } catch (PAException e) {
+        	// expected behavior
+        }
+        dto.setHealthcareFacilityIi(facilityIi);
+        dto.setResearchOrganizationIi(researchOrgIi);
+        dto.setOversightCommitteeIi(null);
+        try {
+            remoteEjb.update(dto);
+            fail("Healthcare facility and research organization cannot both be set.");
+        } catch (PAException e) {
+        	// expected behavior
+        }
+        dto.setHealthcareFacilityIi(facilityIi);
+        dto.setOversightCommitteeIi(oversightCommitteeIi);
+        dto.setResearchOrganizationIi(null);
+        try {
+            remoteEjb.update(dto);
+            fail("Healthcare facility and oversight committee cannot both be set.");
+        } catch (PAException e) {
+            // expected behavior
+        }
+        dto.setOversightCommitteeIi(oversightCommitteeIi);
+        dto.setResearchOrganizationIi(researchOrgIi);
+        dto.setHealthcareFacilityIi(null);
+        try {
+            remoteEjb.update(dto);
+            fail("research organization and oversight committee cannot both be set.");
+        } catch (PAException e) {
+            // expected behavior
+        }       
+        dto.setHealthcareFacilityIi(null);
+        dto.setResearchOrganizationIi(null);
+        dto.setReviewBoardApprovalStatusCode
+        (CdConverter.convertToCd(ReviewBoardApprovalStatusCode.SUBMITTED_DENIED));
+        dto.setReviewBoardApprovalNumber(StConverter.convertToSt("0"));
+        remoteEjb.update(dto);
+        
+        dto.setHealthcareFacilityIi(null);
+        dto.setOversightCommitteeIi(null);
+        dto.setResearchOrganizationIi(researchOrgIi);
+        dto.setReviewBoardApprovalStatusCode
+        (CdConverter.convertToCd(ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT));
+        dto.setReviewBoardApprovalNumber(StConverter.convertToSt("2"));
+        try {
+        	remoteEjb.update(dto);
+        	fail("Oversight committee (board) must be set when review board approval status is 'Submitted approved' or 'Submitted exempt'.");
+        } catch (PAException e) {
+            // expected behavior
+        }      
     }
 
     @Test

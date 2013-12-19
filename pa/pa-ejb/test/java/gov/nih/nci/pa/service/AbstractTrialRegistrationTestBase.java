@@ -25,8 +25,11 @@ import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationBean;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -81,7 +84,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected final StudyProtocolBeanLocal studyProtocolService = new StudyProtocolBeanLocal();
     protected final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
     protected final StudyResourcingBeanLocal studyResourcingService = new StudyResourcingBeanLocal();
-    protected final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
+    protected final StudySiteAccrualStatusBeanLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     protected final StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
     protected final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
     protected final PlannedActivityServiceLocal plannedActivityService = new PlannedActivityBeanLocal();
@@ -148,7 +151,8 @@ public abstract class AbstractTrialRegistrationTestBase extends
         bean.setArmService(armService);
         bean.setPlannedActivityService(plannedActivityService);
         bean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
-    
+        studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));
+        studyProtocolService.setRegistryUserService(mock(RegistryUserServiceLocal.class));
         CSMUserService.setInstance(new MockCSMUserService());
     
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));

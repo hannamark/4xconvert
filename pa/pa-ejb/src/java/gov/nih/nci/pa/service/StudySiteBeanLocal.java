@@ -82,7 +82,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, StudySite, StudySiteConverter> implements
         StudySiteServiceLocal {
 
-    private static final Logger LOG = Logger.getLogger(ArmBeanLocal.class);
+    private static final Logger LOG = Logger.getLogger(StudySiteBeanLocal.class);
     private CorrelationUtils corrUtils = new CorrelationUtils();
 
     /**

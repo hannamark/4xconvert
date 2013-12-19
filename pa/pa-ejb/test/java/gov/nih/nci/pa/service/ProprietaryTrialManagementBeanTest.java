@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -99,8 +100,11 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
@@ -511,7 +515,6 @@ public class ProprietaryTrialManagementBeanTest extends
                         + protocol.getId() + " order by d.fileName").list();
         assertEquals("Updated_Other.doc", updatedDocs.get(0).getFileName());
         assertEquals("Updated_Protocol.doc", updatedDocs.get(1).getFileName());
-
     }
 
     @Test(expected = PAException.class)
@@ -795,8 +798,56 @@ public class ProprietaryTrialManagementBeanTest extends
                             + RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE
                                     .getCode()));
 
+        }        
+        try {
+        	bean.update(null, leadOrganizationDTO, summary4Org,
+                    leadOrganizationIdentifier, nctIdentifier,
+                    summary4TypeCode, documents, studySiteDTOs,
+                    studySiteAccrualDTOs);
+        	fail("Study Protocol DTO is null");
+        } catch (Exception e) {
+            // expected to have dto
+        }        
+        try {
+        	studyProtocolDTO.setIdentifier(null);
+        	bean.update(studyProtocolDTO, leadOrganizationDTO, summary4Org,
+                    leadOrganizationIdentifier, nctIdentifier,
+                    summary4TypeCode, documents, studySiteDTOs,
+                    studySiteAccrualDTOs);
+        	fail("Study Protocol DTO identifier is null");
+        } catch (Exception e) {
+            // expected to have dto identifier
+        } 
+        StudyProtocol sp = (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
+        DocumentBeanLocal documentSer = mock(DocumentBeanLocal.class);
+        bean.setDocumentService(documentSer);
+        when(paSvcLoc.getDocumentService()).thenReturn(documentSer);
+        when(paSvcLoc.getDocumentService().getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<DocumentDTO>());
+   	 	CSMUserUtil csmUserService = mock(CSMUserService.class);
+   	 	when(csmUserService.getCSMUser(any(String.class))).thenReturn(null);
+   	 	bean.setCsmUserService(csmUserService);
+        try {
+        	bean.update(spDTO, leadOrganizationDTO, summary4Org,
+                    leadOrganizationIdentifier, null,
+                    summary4TypeCode, documents, studySiteDTOs,
+                    studySiteAccrualDTOs);
+        	fail("NCT identifier is required as there are no Documents");
+        } catch (Exception e) {
+            // expected to have studysite identifier
         }
-
+        try {
+        	studySiteDTOs.get(0).setStudyProtocolIdentifier(null);
+        	studySiteDTOs.get(0).setIdentifier(null);
+        	spDTO.setUserLastCreated(null);
+        	bean.update(spDTO, leadOrganizationDTO, summary4Org,
+                    leadOrganizationIdentifier, nctIdentifier,
+                    summary4TypeCode, documents, studySiteDTOs,
+                    studySiteAccrualDTOs);
+        	fail("Study Protocol Identifier  from Study Site cannot be null Study Site Identifier cannot be null ");
+        } catch (Exception e) {
+            // expected to have studysite identifier
+        }
     }
 
     /**

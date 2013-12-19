@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
@@ -300,5 +301,27 @@ public class ParticipatingSiteServiceBeanTest {
         inOrder.verify(sut).createStudySiteParticipant(studySiteDTO, currentStatusDTO, healthCareFacilityIi);
         inOrder.verify(sut).updateStudySiteContacts(contacts, participatingSiteDTO);
         inOrder.verify(sut).getParticipatingSite(participatingSiteDTO.getIdentifier());
+    }
+    
+    @Test
+    public void testUpdate() throws PAException {
+    	sut = createParticipatingSiteServiceBeanMock();
+    	StudySiteDTO studySiteDTO = new StudySiteDTO();
+        studySiteDTO.setStudyProtocolIdentifier(IiConverter.convertToIi(1L));
+        StudySiteAccrualStatusDTO currentStatusDTO = new StudySiteAccrualStatusDTO();
+        List<ParticipatingSiteContactDTO> contacts = new ArrayList<ParticipatingSiteContactDTO>();
+        doCallRealMethod().when(sut).updateStudySiteParticipant(studySiteDTO, currentStatusDTO, contacts);
+        ParticipatingSiteDTO participatingSiteDTO = new ParticipatingSiteDTO();
+        participatingSiteDTO.setIdentifier(IiConverter.convertToIi(1L));
+        
+        when(sut.getParticipatingSite(participatingSiteDTO.getIdentifier())).thenReturn(participatingSiteDTO);
+        when(sut.getStudySiteDTO(any(Ii.class))).thenReturn(studySiteDTO);
+
+        try {
+        	sut.updateStudySiteParticipant(studySiteDTO, currentStatusDTO, contacts);
+        	 fail();
+        } catch (Exception e) {
+            // expected
+        }
     }
 }
