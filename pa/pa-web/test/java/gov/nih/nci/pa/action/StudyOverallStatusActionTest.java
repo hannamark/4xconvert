@@ -90,7 +90,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -109,6 +108,9 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
+
 import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
@@ -575,5 +577,25 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
 
         verify(studyProtocolService).getStudyProtocol(spIi);
         verify(sut).addActionError("PAException");
+    }
+    
+    @Test
+    public void testStudyprotocolWithPrepare() throws PAException {
+        sut = new StudyOverallStatusAction();
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        when(PaRegistry.getProtocolQueryService()).thenReturn(protocolQueryService);
+        when(PaRegistry.getStudyOverallStatusService()).thenReturn(studyOverallStatusService);
+        when(PaRegistry.getStudyProtocolService()).thenReturn(studyProtocolService);
+        sut.prepare();
+        StudyProtocolDTO dto = new StudyProtocolDTO();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        dto.setIdentifier(spIi);
+        sut.setStartDate("1/1/2013");
+        sut.setStartDateType(ActualAnticipatedTypeCode.ACTUAL.toString());
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(dto);
+
+        sut.updateStudyProtocol();
+
     }
 }

@@ -300,6 +300,30 @@ public class TrialInterventionTest extends AbstractPaActionTest {
         assertEquals(trialIntervention.generate(),"edit");
         assertNotNull(trialIntervention.getInterventionDescription());
     }
+    
+    @Test
+    public void testGenerateSubstanceValue() throws PAException{
+        trialIntervention.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setMinDoseValue(null);
+        trialIntervention.setMaxDoseValue(null);
+        trialIntervention.setMinDoseTotalValue(null);
+        trialIntervention.setMaxDoseTotalValue(null);
+        trialIntervention.setDoseUOM(null);
+        trialIntervention.setDoseTotalUOM(null);
+        trialIntervention.setDoseDurationValue(null);
+        trialIntervention.setDoseDurationUOM("ml");
+        trialIntervention.setDoseForm(null);
+        trialIntervention.setRouteOfAdministration("routeOfAdministration");
+        trialIntervention.setDoseDurationValue("3");
+        trialIntervention.setDoseFrequency(null);
+        trialIntervention.setDoseRegimen(null);
+        trialIntervention.setApproachSite("approachSite");
+        trialIntervention.setTargetSite("targetSite");
+        trialIntervention.setProcedureName("procedureName");
+        assertEquals(trialIntervention.generate(),"edit");
+        assertNotNull(trialIntervention.getInterventionDescription());
+    }
     @Test
     public void testGenerateRadiation() throws PAException{
         trialIntervention.setInterventionType(ActivitySubcategoryCode.RADIATION.getCode());

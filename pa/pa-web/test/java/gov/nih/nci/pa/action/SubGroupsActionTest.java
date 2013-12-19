@@ -5,10 +5,24 @@ package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import gov.nih.nci.pa.dto.SubGroupsWebDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.Constants;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import gov.nih.nci.pa.dto.SubGroupsWebDTO;
+import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StratumGroupServiceLocal;
+import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
+
+import org.hibernate.validator.AssertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,10 +48,24 @@ public class SubGroupsActionTest extends AbstractPaActionTest{
     }
     /**
      * Test method for {@link gov.nih.nci.pa.action.SubGroupsAction#query()}.
+     * @throws PAException 
      */
     @Test
-    public void testQuery() {
-        assertFalse(subGroupsAction.hasActionErrors());
+    public void testQuery() throws PAException {
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        StratumGroupServiceLocal stratumGroupServiceLocal = mock(StratumGroupServiceLocal.class);
+        List<StratumGroupDTO> isoList = new ArrayList<StratumGroupDTO>();
+        StratumGroupDTO dto = new StratumGroupDTO();
+        dto.setDescription(StConverter.convertToSt("description"));
+        dto.setGroupNumberText(StConverter.convertToSt("groupNumberText"));
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        isoList.add(dto);
+        when(PaRegistry.getStratumGroupService()).thenReturn(stratumGroupServiceLocal);
+        when(PaRegistry.getStratumGroupService().
+                getByStudyProtocol(IiConverter.convertToIi(1L))).thenReturn(isoList);
+        String result = subGroupsAction.query();
+        assertEquals("success", result);
     }
 
     /**
@@ -47,6 +75,11 @@ public class SubGroupsActionTest extends AbstractPaActionTest{
     public void testCreate() {
         subGroupsAction.create();
         assertFalse(subGroupsAction.hasActionErrors());
+        
+        dto = new SubGroupsWebDTO();
+        subGroupsAction.setSubGroupsWebDTO(dto);
+        subGroupsAction.create();
+        assertTrue(subGroupsAction.hasFieldErrors());
     }
 
     /**

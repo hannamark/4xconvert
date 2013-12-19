@@ -78,7 +78,9 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
     public void testQuery() {
         assertEquals("edit", trialValidationAction.query());
     }
+    
 
+    
     @Test
     public void displayLeadOrganization() {
         getRequest().setupAddParameter("orgId", "undefined");

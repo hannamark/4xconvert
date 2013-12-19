@@ -4,10 +4,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.MockPoOrganizationEntityService;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
@@ -28,8 +35,11 @@ public class UserAccountDetailsActionTest extends AbstractPaActionTest {
     public void setUp() throws Exception {
         super.setUp();
         action = new UserAccountDetailsAction();
-        action.setUserService(new MockCSMUserService());
-        action.setOrganizationEntityService(new MockPoOrganizationEntityService());
+        PoServiceLocator poServiceLocator = mock(PoServiceLocator.class);
+        PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
+        CSMUserService.setInstance(new MockCSMUserService());
+        when(PoRegistry.getOrganizationEntityService()).thenReturn(new MockPoOrganizationEntityService());
+        action.prepare();
         UsernameHolder.setUser("user3@mail.nih.gov");
     }
 
@@ -100,9 +110,15 @@ public class UserAccountDetailsActionTest extends AbstractPaActionTest {
     }
 
     @Test
-    public void testUpdateOrgName() {
+    public void testUpdateOrgName() throws Exception {
         getRequest().setupAddParameter("orgId", "1");
         assertEquals(Action.SUCCESS, action.updateOrgName());
         assertEquals("OrgName", action.getOrganization());
+        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
+        action.setOrganizationEntityService(organizationEntityService);
+        when(organizationEntityService.
+                getOrganization(IiConverter.convertToPoOrganizationIi("1L"))).thenReturn(null);
+        assertEquals(Action.SUCCESS, action.updateOrgName());
+        assertTrue(action.getActionErrors().size() > 0);
     }
 }

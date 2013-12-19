@@ -84,32 +84,41 @@ package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
+import static org.mockito.Matchers.any;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
 /**
  * @author Michael Visee
  */
-public class StudyOverallStatusHistoryActionTest {
+public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
 
     private StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
+    private StudyProtocolServiceLocal studyProtocolServiceLocal = mock(StudyProtocolServiceLocal.class);
     private StudyOverallStatusHistoryAction sut;
+
 
     /**
      * Creates a real StudyOverallStatusHistoryAction and inject the mock services in it.
@@ -127,6 +136,8 @@ public class StudyOverallStatusHistoryActionTest {
      */
     private void setDependencies(StudyOverallStatusHistoryAction action) {
         action.setStudyOverallStatusService(studyOverallStatusService);
+        action.setStudyProtocolServiceLocal(studyProtocolServiceLocal);
+        
     }
 
     /**
@@ -158,7 +169,77 @@ public class StudyOverallStatusHistoryActionTest {
         status.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
         status.setStatusDate(TsConverter.convertToTs(new Date()));
         status.setReasonText(StConverter.convertToSt("reason"));
+        status.setStudyProtocolIdentifier(IiConverter.convertToIi(1L));
         statuses.add(status);
         return statuses;
+    }
+    
+    @Test
+    public void testDelete() throws PAException {
+        sut = createStudyOverallStatusHistoryAction();
+        sut.setStudyProtocolId(1L);
+        sut.setStatusId(1L);
+        Ii spIi = IiConverter.convertToStudyProtocolIi(sut.getStudyProtocolId());
+        List<StudyOverallStatusDTO> statuses = createStatuses();
+        when(studyOverallStatusService.getByStudyProtocol(spIi)).thenReturn(statuses);
+        when(studyOverallStatusService.get(any(Ii.class))).thenReturn(statuses.get(0));
+        String result = sut.delete();
+        assertEquals("success", result);
+        assertTrue(sut.isChangesMadeFlag());
+        assertTrue(sut.getOverallStatusList().size() > 0);
+        assertTrue(sut.getOverallStatusList().get(0).isEditable());
+        assertFalse(sut.getOverallStatusList().get(0).isSystemCreated());
+        assertEquals("Record Deleted", ServletActionContext.getRequest().getAttribute("successMessage"));
+        
+    }
+    @Test
+    public void testUndo() throws PAException {
+        sut = createStudyOverallStatusHistoryAction();
+        sut.setStatusId(1L);
+        sut.setStudyProtocolId(1L);
+        Ii spIi = IiConverter.convertToStudyProtocolIi(sut.getStudyProtocolId());
+        List<StudyOverallStatusDTO> statuses = createStatuses();
+        when(studyOverallStatusService.getByStudyProtocol(spIi)).thenReturn(statuses);
+        when(studyOverallStatusService.get(spIi)).thenReturn(statuses.get(0));
+        String result = sut.undo();
+        assertEquals("success", result);
+        assertTrue(sut.isChangesMadeFlag());
+        assertTrue(sut.getOverallStatusList().size() > 0);
+        assertTrue(sut.getOverallStatusList().get(0).isEditable());
+        assertFalse(sut.getOverallStatusList().get(0).isSystemCreated());
+    }
+    
+    @Test
+    public void testSave() throws PAException {
+    	ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        when(PaRegistry.getStudyOverallStatusService()).thenReturn(studyOverallStatusService);
+        when(PaRegistry.getStudyProtocolService()).thenReturn(studyProtocolServiceLocal);
+        sut = new StudyOverallStatusHistoryAction();
+        sut.prepare();
+        sut.setStatusId(1L);
+        sut.setStudyProtocolId(1L);
+        Ii spIi = IiConverter.convertToStudyProtocolIi(sut.getStudyProtocolId());
+        List<StudyOverallStatusDTO> statuses = createStatuses();
+        when(studyOverallStatusService.getByStudyProtocol(spIi)).thenReturn(statuses);
+        when(studyOverallStatusService.get(spIi)).thenReturn(statuses.get(0));
+        String result = sut.save();
+        assertEquals("success", result);
+        assertEquals("studyOverallStatus.edit.invalidDate", ServletActionContext.getRequest().getAttribute("failureMessage"));
+        
+        sut.setStatusDate("12/10/2012");
+        sut.setReason("reasonUpdate");
+        sut.setStatusCode("Active");
+        StudyOverallStatusDTO dto = statuses.get(0);
+        dto.setIdentifier(spIi);
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        studyProtocolDTO.setIdentifier(spIi);
+        when(studyOverallStatusService
+                .getCurrentByStudyProtocol(any(Ii.class))).thenReturn(dto);
+        when(studyProtocolServiceLocal.getStudyProtocol(any(Ii.class))).thenReturn(studyProtocolDTO);
+        result = sut.save();
+        assertEquals("success", result);
+        assertEquals("Active", sut.getOverallStatusList().get(0).getStatusCode());
+        assertEquals("reasonUpdate", sut.getOverallStatusList().get(0).getReason());
     }
 }

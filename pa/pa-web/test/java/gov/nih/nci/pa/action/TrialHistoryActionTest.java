@@ -82,14 +82,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.*;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialHistoryWebDTO;
@@ -97,8 +97,10 @@ import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyInboxSectionCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -118,6 +120,7 @@ import gov.nih.nci.pa.util.ServiceLocator;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -144,6 +147,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
     @Before
     public void setup() throws Exception {
         trialHistory = new TrialHistoryAction();
+        trialHistory.setNciID("1");
         trialHistory.prepare();
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         setupMocks();
@@ -160,6 +164,13 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
     	trialHistory.setCurrentAction("create");
     	trialHistory.setSelectedRowIdentifier("1");
         // select from main menu
+        trialHistory.loadEditForm();
+        
+        trialHistory.setCurrentAction("edit");
+    	trialHistory.setSelectedRowIdentifier("1");
+    	DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
+    	dto.setIdentifier(IiConverter.convertToIi(1L));
+        when(documentWorkflowStatusServiceLocal.getInitialStatus(any(Ii.class))).thenReturn(dto);
         trialHistory.loadEditForm();
 
     }
@@ -218,6 +229,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         
         StudyProtocolDTO spDto = new StudyProtocolDTO();
         spDto.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.NA.getCode()));
+        spDto.setSubmissionNumber(IntConverter.convertToInt(1));
         when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(spDto);
 
         List<StudyProtocolDTO> trialUpdates = new ArrayList<StudyProtocolDTO>();
@@ -251,6 +263,8 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
 
         when(documentService.get(any(Ii.class))).thenReturn(docDto);
         when(documentService.getDocumentsByStudyProtocol(any(Ii.class))).thenReturn(docs);
+        when(documentService.
+                getOriginalDocumentsByStudyProtocol(any(Ii.class))).thenReturn(docs);
 
         StudyInboxDTO siDto = new StudyInboxDTO();
         Ivl<Ts> ivlTs = new Ivl<Ts>();
@@ -302,6 +316,7 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
     
     @Test
     public void testView() throws Exception {
+    	trialHistory.clearActionErrors();
     	trialHistory.setAuditTrailCode(AuditTrailCode.MARKERS);
         assertEquals(TrialHistoryAction.AR_LIST, trialHistory.view());
         assertNotNull(trialHistory.getAuditTrail());
@@ -310,8 +325,21 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         assertEquals("PLANNED_MARKER", detail.getRecord().getEntityName());
         assertEquals("name", detail.getAttribute());
         assertEquals("name", detail.getNewValue());
-
+    	trialHistory.clearActionErrors();
         trialHistory.setAuditTrailCode(AuditTrailCode.NCI_SPECIFIC_INFORMATION);
+        List<StudyInboxDTO> inboxEntries = new ArrayList<StudyInboxDTO>();
+        StudyInboxDTO dto = new StudyInboxDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setComments(StConverter.convertToSt("comments"));
+        Ivl<Ts> ivlTs = new Ivl<Ts>();
+        ivlTs.setLow(TsConverter.convertToTs(new Timestamp(0)));
+        dto.setInboxDateRange(ivlTs);
+        dto.setAdmin(BlConverter.convertToBl(true));
+        dto.setScientific(BlConverter.convertToBl(false));
+        dto.setScientificCloseDate(TsConverter.convertToTs(new Date()));
+        dto.setAdminCloseDate(TsConverter.convertToTs(new Date()));
+        inboxEntries.add(dto);
+        when(studyInboxService.getOpenInboxEntries(any(Ii.class))).thenReturn(inboxEntries);
         assertEquals(TrialHistoryAction.AR_LIST, trialHistory.view());
         assertNotNull(trialHistory.getAuditTrail());
         assertEquals(1, trialHistory.getAuditTrail().size());

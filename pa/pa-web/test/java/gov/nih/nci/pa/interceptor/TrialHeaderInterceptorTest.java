@@ -82,15 +82,28 @@
  */
 package gov.nih.nci.pa.interceptor;
 
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.action.AbstractPaActionTest;
+import static org.mockito.Mockito.when;
 import org.junit.Test;
+import com.opensymphony.xwork2.ActionInvocation;
 
-public class TrialHeaderInterceptorTest {
+import static org.mockito.Mockito.mock;
 
+public class TrialHeaderInterceptorTest extends AbstractPaActionTest {
+	
     @Test
     public void testInterceptor() throws Exception {
-        
-    	TrialHeaderInterceptor interceptor = new TrialHeaderInterceptor();
+        TrialHeaderInterceptor interceptor = new TrialHeaderInterceptor();
         interceptor.init();
         interceptor.destroy();
+    }
+    @Test
+    public void testIntercept() throws Exception {
+        TrialHeaderInterceptor interceptor = new TrialHeaderInterceptor();
+        ActionInvocation actionInvocation = mock(ActionInvocation.class);
+        when(actionInvocation.invoke()).thenReturn("success");
+        String result = interceptor.intercept(actionInvocation);
+        assertEquals("success", result);
     }
 }

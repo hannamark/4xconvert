@@ -13,6 +13,7 @@ import org.quartz.JobExecutionException;
 public class VerifyTrialDataJob implements Job {
     /** The LOG details. */
     private static final Logger LOG = Logger.getLogger(VerifyTrialDataJob.class);
+    private VerifyTrialDataHelper helper = new VerifyTrialDataHelper();
     
     /**
      * @param context JobExecutionContext
@@ -22,13 +23,26 @@ public class VerifyTrialDataJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         LOG.info("executing verify trial data job");
         try {
-            VerifyTrialDataHelper helper = new VerifyTrialDataHelper();
             helper.getOpenTrials();
             LOG.info("Success verify trial data job...........");
         } catch (Exception e) {
             LOG.error("error", e);
         }
         
+    }
+    /**
+     * 
+     * @return helper helper
+     */
+    public VerifyTrialDataHelper getHelper() {
+        return helper;
+    }
+    /**
+     * 
+     * @param helper helper
+     */
+    public void setHelper(VerifyTrialDataHelper helper) {
+        this.helper = helper;
     }
 
 }

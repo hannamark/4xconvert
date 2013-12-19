@@ -6,11 +6,33 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Real;
+import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.dto.TrialFundingWebDTO;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
+import gov.nih.nci.pa.enums.NihInstHolderCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.RealConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +52,7 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
 
 	/** The trial funding action. */
 	TrialFundingAction trialFundingAction;
+	Ii id = IiConverter.convertToIi(1L);
 
 	/**
 	 * Sets the up.
@@ -39,7 +62,7 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
 	@Before
 	public void setUp() throws PAException {
 		trialFundingAction =  new TrialFundingAction();
-		getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
+		getSession().setAttribute(Constants.STUDY_PROTOCOL_II, id);
 
 	}
 
@@ -55,10 +78,39 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
 
 	/**
 	 * Test query.
+	 * @throws PAException 
 	 */
-	@Test
-	public void testQuery() {
-		 assertEquals("query", trialFundingAction.query());
+    @Test
+    public void testQuery() throws PAException {
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        StudyResourcingServiceLocal service = mock(StudyResourcingServiceLocal.class);
+        StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
+        when(PaRegistry.getStudyResourcingService()).thenReturn(service);
+        when(PaRegistry.getStudyProtocolService()).thenReturn(studyProtocolService);
+        List<StudyResourcingDTO> isoList = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO dto = new StudyResourcingDTO();
+        dto.setIdentifier(id);
+        dto.setActiveIndicator(BlConverter.convertToBl(true));
+        dto.setFundingMechanismCode(CdConverter.convertStringToCd("B09"));
+        dto.setNihInstitutionCode(CdConverter.convertToCd(NihInstHolderCode.CSR));
+        dto.setNciDivisionProgramCode(CdConverter.convertToCd(NciDivisionProgramCode.CCR));
+        dto.setSerialNumber(StConverter.convertToSt("12345"));
+        dto.setFundingPercent(new Real());
+        dto.setInactiveCommentText(StConverter.convertToSt("Comment"));
+        dto.setLastUpdatedDate(TsConverter.convertToTs(new Date()));
+        dto.setUserLastUpdated("user");
+        isoList.add(dto);
+        StudyProtocolDTO sp = new StudyProtocolDTO();
+        sp.setIdentifier(id);
+        when(studyProtocolService.getStudyProtocol(id)).thenReturn(sp);
+        when(service.getStudyResourcingByStudyProtocol(id)).thenReturn(isoList);
+        assertEquals("query", trialFundingAction.query());
+        assertTrue(trialFundingAction.getTrialFundingList().size() > 0);
+        
+        dto.setActiveIndicator(BlConverter.convertToBl(false));
+        assertEquals("query", trialFundingAction.query());
+        assertTrue(trialFundingAction.getTrialFundingDeleteList().size() > 0);
 	}
 
 	/**
@@ -78,6 +130,7 @@ public class TrialFundingActionTest extends AbstractPaActionTest {
 
 	    trialFundingAction.setTrialFundingWebDTO(dto);
 	    assertEquals(trialFundingAction.create(), "query");
+	    assertTrue(trialFundingAction.getTrialFundingWebDTO()!= null);
 	}
 
 	@Test
