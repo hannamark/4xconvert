@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="trialTypes" language="groovy" pageWidth="1224" pageHeight="842" columnWidth="1184" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="615c27e5-225b-4bc7-8ecd-a9c9be457bae">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="10"/>
+	<property name="ireport.x" value="3"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="OS_WINDOWS" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(
@@ -1312,7 +1312,7 @@ Interventional]]></text>
 					<font isBold="false"/>
 				</textElement>
 				<text><![CDATA[1. NCI Managed Trial: Trial with a value in CTEP-ID, in DCP-ID or in both
-2. NCI Sponsored: Sponsor = 'National Cancer Institute'
+2. NCI Sponsored: Sponsor = 'National Cancer Institute'. These are subset of NCI Managed Trials.
 3. CTEP Trial: Trial with a value in CTEP_ID and with no value in DCP_ID
 4. DCP Trial: Trial with a value in DCP_ID and with or without a value in CTEP_ID
 5. CCR Trial: Trial where Lead Org is 'NCI – Center for Cancer Research -CTEP-ID for this Organization=NCICCR, PO-ID=16108126' and CTEP_ID/DCP_ID is null
