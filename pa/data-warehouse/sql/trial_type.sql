@@ -1,23 +1,23 @@
 DROP TABLE IF EXISTS dw_study_type;
 DROP TABLE IF EXISTS dw_study_types;
 CREATE TABLE dw_study_type AS
-  SELECT 1 AS id, 'NCI Sponsored'::character varying(16) AS group, 'CTEP'::character varying(16) AS type, nci_id
+  SELECT 3 AS id, 'NCI Sponsored'::character varying(16) AS group, 'CTEP'::character varying(16) AS type, nci_id
     FROM dw_study
     WHERE sponsor = 'National Cancer Institute'
       AND ctep_id IS NOT NULL
       AND dcp_id IS NULL
   UNION
-  SELECT 2, 'NCI Sponsored', 'DCP', nci_id
+  SELECT 4, 'NCI Sponsored', 'DCP', nci_id
     FROM dw_study
     WHERE sponsor = 'National Cancer Institute'
       AND dcp_id IS NOT NULL
   UNION
-  SELECT 3, 'NCI Managed', 'CTEP', nci_id
+  SELECT 1, 'NCI Managed', 'CTEP', nci_id
     FROM dw_study
     WHERE ctep_id IS NOT NULL
       AND dcp_id IS NULL
   UNION
-  SELECT 4, 'NCI Managed', 'DCP', nci_id
+  SELECT 2, 'NCI Managed', 'DCP', nci_id
     FROM dw_study
     WHERE dcp_id IS NOT NULL
   UNION
@@ -29,12 +29,18 @@ CREATE TABLE dw_study_type AS
   UNION
   SELECT 6, 'Center Trials', 'Center Registered Complete', nci_id
     FROM dw_study
-    WHERE  submitter_name NOT IN ('CTRO Staff National Cancer Institute','DCP PIO', 'Sulekha Avasthi')
+    WHERE  submitter_name NOT IN ('CTRO Staff National Cancer Institute','DCP PIO', 'Sulekha Avasthi',
+	                              'Paula Brown' ,'P Brown' ,'Rosemarie Mamuad'  , 'Patricia Dickey')
+       AND dcp_id IS NULL
+       AND ctep_id IS NULL
        AND category = 'Complete'
   UNION
   SELECT 7, 'Center Trials', 'Center Registered Abbreviated', nci_id
     FROM dw_study
-    WHERE  submitter_name NOT IN ('CTRO Staff National Cancer Institute','DCP PIO', 'Sulekha Avasthi')
+    WHERE  submitter_name NOT IN ('CTRO Staff National Cancer Institute','DCP PIO', 'Sulekha Avasthi',
+	                              'Paula Brown' ,'P Brown' ,'Rosemarie Mamuad'  , 'Patricia Dickey')
+       AND dcp_id IS NULL
+       AND ctep_id IS NULL
        AND category = 'Abbreviated'
   UNION
   SELECT 8, 'Import from Clinicaltrials.gov', NULL, nci_id

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="trialTypes" language="groovy" pageWidth="1224" pageHeight="842" columnWidth="1184" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="615c27e5-225b-4bc7-8ecd-a9c9be457bae">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="600"/>
+	<property name="ireport.x" value="10"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="OS_WINDOWS" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(
@@ -365,156 +365,156 @@ ORDER BY id;]]>
 					</textElement>
 					<textFieldExpression><![CDATA["Total " + $F{group}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="d457f980-d38e-4d57-98e2-52b68f362648" x="248" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_REG_NON}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="cfaff98d-79a0-4bb8-a31b-1f555dcd8df7" x="176" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_REG_INT}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="1a9f7fe0-f9a8-4d3a-b01f-9c312eb4045d" x="392" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_REJ_NON}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="64da4ff9-7fba-455d-8abf-434818f1bba6" x="320" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_REJ_INT}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="350b6b47-f941-40c0-a44d-e29c7e72def0" x="536" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_LATE_NON}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="beb0b814-4ddb-48bb-be49-bf590f28f579" x="464" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_LATE_INT}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="e7c762e9-c6c7-4f4f-95d6-5d4086601765" x="680" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_HOLD_NON}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="40ecb9ba-bf43-4ee8-9ef8-b9be46244efc" x="608" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_HOLD_INT}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="8f0d45ba-90e2-42ab-adbc-4afbac43b0bd" x="824" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_ACC_NON}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="b47f7ffc-aacb-4c8c-9cc6-90c8cbbfb2ca" x="752" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_ACC_INT}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="029c2703-cc7c-40a9-a10d-dcbcb9d95f99" x="968" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_ABS_NON}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="1b89217d-efdd-494c-b4e8-d50f0ed6fc9b" x="896" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_ABS_INT}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="aecccbdb-816d-46fd-b5b8-c60386f0daff" x="1112" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_ACCR_NON}]]></textFieldExpression>
 				</textField>
-				<textField>
+				<textField pattern="#,##0">
 					<reportElement uuid="7333932e-ad45-4a0b-8107-e29e44fdb4f3" x="1040" y="0" width="72" height="20"/>
 					<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2">
 						<leftPen lineWidth="1.0"/>
 						<rightPen lineWidth="1.0"/>
 					</box>
-					<textElement textAlignment="Center">
+					<textElement textAlignment="Right">
 						<font isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{Group_ACCR_INT}]]></textFieldExpression>
@@ -906,7 +906,7 @@ Interventional]]></text>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA["Totals"]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="aff9f14d-ecea-4605-a790-383705481cc3" x="248" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -914,12 +914,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{registered_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="b84847a3-fe60-4d4d-bbdf-075b47ed3a81" x="176" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -927,12 +927,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{registered_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="7d636f08-97b5-4d4b-9eaf-7486448df868" x="392" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -940,12 +940,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rejected_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="0f589131-16df-496b-9b4f-99397d5dfbe7" x="320" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -953,12 +953,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rejected_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="aaf63bd2-5164-49f5-843c-d3fcb9b83c31" x="536" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -966,12 +966,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{late_rejected_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="9b5d7730-3d49-4105-be05-5862db576d55" x="464" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -979,12 +979,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{late_rejected_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="91350c7a-e023-4a79-bce7-74024201113b" x="680" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -992,12 +992,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{on_hold_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="a181dce3-a1a6-46fa-8d51-bc4a67fded3b" x="608" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -1005,12 +1005,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{on_hold_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="e119e5c7-dee9-4640-a6b4-8a9f4afa91f8" x="824" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -1018,12 +1018,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accepted_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="3967f212-590e-445e-a192-00a5bbab2052" x="752" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -1031,12 +1031,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accepted_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="7fadce78-25e6-4dfa-87b8-b1fc52009d5a" x="968" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -1044,12 +1044,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{abstracted_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="f6ae9929-eee4-484b-b34f-eb0b15261c18" x="896" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -1057,12 +1057,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{abstracted_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="49cb1876-4d39-4987-88aa-a38ed26ba14f" x="1112" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -1070,12 +1070,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accrual_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="ec2e96dc-d2d5-4521-9b8b-7fcf48c51d74" x="1040" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} != null]]></printWhenExpression>
 				</reportElement>
@@ -1083,12 +1083,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accrual_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="403e82d1-19ed-48fd-a0b3-0229da209082" x="248" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1097,12 +1097,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{registered_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="623e05ac-b3e9-461e-99af-10c40f562f83" x="176" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1111,12 +1111,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{registered_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="4facede9-fda8-4d4e-b644-abde055b3b75" x="392" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1125,12 +1125,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rejected_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="dcf48f98-2728-43c7-9151-903c809240e7" x="320" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1139,12 +1139,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{rejected_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="5ebc77ab-852f-45f5-8e40-ac6b26fd4693" x="536" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1153,12 +1153,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{late_rejected_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="5d308a4b-d566-458a-afc4-48f3fa7db70e" x="464" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1167,12 +1167,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{late_rejected_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="c61c888f-c3ac-41f9-a739-bd95fa5b0ca6" x="680" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1181,12 +1181,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{on_hold_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="3139ccda-b25c-4018-9b63-d9e1afe1c379" x="608" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1195,12 +1195,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{on_hold_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="e2dd516a-b22a-4321-a457-eef1473307ba" x="824" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1209,12 +1209,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accepted_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="227e8fc2-859a-499b-ba39-24a5a96a568f" x="752" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1223,12 +1223,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accepted_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="fac9f859-ef39-40d9-a793-fa03232841c8" x="968" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1237,12 +1237,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{abstracted_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="2502518b-1357-4a41-92c8-ae8a07722bd3" x="896" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1251,12 +1251,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{abstracted_int}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="139abf52-78fc-4f9d-89a9-b2242d86a5e7" x="1112" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1265,12 +1265,12 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accrual_non}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0">
 				<reportElement uuid="7f61ca3d-c320-4a94-a0a4-c2105ecf02fe" x="1040" y="0" width="72" height="20">
 					<printWhenExpression><![CDATA[$F{type} == null]]></printWhenExpression>
 				</reportElement>
@@ -1279,7 +1279,7 @@ Interventional]]></text>
 					<leftPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center">
+				<textElement textAlignment="Right">
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{accrual_int}]]></textFieldExpression>
@@ -1311,10 +1311,10 @@ Interventional]]></text>
 				<textElement>
 					<font isBold="false"/>
 				</textElement>
-				<text><![CDATA[1. NCI Sponsored: Sponsor = 'National Cancer Institute'
-2. CTEP Trial: Trial with a value in CTEP_ID and with no value in DCP_ID
-3. DCP Trial: Trial with a value in DCP_ID and with or without a value in CTEP_ID
-4. NCI Managed Trial: Trial with a value in CTEP-ID, in DCP-ID or in both
+				<text><![CDATA[1. NCI Managed Trial: Trial with a value in CTEP-ID, in DCP-ID or in both
+2. NCI Sponsored: Sponsor = 'National Cancer Institute'
+3. CTEP Trial: Trial with a value in CTEP_ID and with no value in DCP_ID
+4. DCP Trial: Trial with a value in DCP_ID and with or without a value in CTEP_ID
 5. CCR Trial: Trial where Lead Org is 'NCI – Center for Cancer Research -CTEP-ID for this Organization=NCICCR, PO-ID=16108126' and CTEP_ID/DCP_ID is null
 6. Center Trial: Trials not registered by CTRO  or  DCP-PIO
 7. Complete Trials: Proprietary_Trial_Indicator= 'False'
