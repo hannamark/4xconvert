@@ -63,6 +63,7 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
             expandproperties="true" autocommit="true">
+            <transaction src="${basedir}/sql/study_accrual_count_audit.sql"/>
             <transaction src="${basedir}/sql/organization.sql"/>
             <transaction src="${basedir}/sql/organization_role.sql"/>
             <transaction src="${basedir}/sql/person_role.sql"/>
@@ -84,6 +85,7 @@
             <transaction src="${basedir}/sql/generic_contact.sql"/>
             <transaction src="${basedir}/sql/milestone.sql"/>
             <transaction src="${basedir}/sql/study.sql"/>
+            <transaction src="${basedir}/sql/summary_4_funding.sql"/>
             <transaction src="${basedir}/sql/amendment.sql"/>
             <transaction src="${basedir}/sql/anatomic_site.sql"/>
             <transaction src="${basedir}/sql/biomarker.sql"/>
@@ -108,7 +110,7 @@
             <transaction src="${basedir}/sql/evaluation_type.sql"/>
             <transaction src="${basedir}/sql/specimen_collection.sql"/>
             <transaction src="${basedir}/sql/specimen_type.sql"/>
-			<transaction src="${basedir}/sql/study_secondary_purpose.sql"/>
+            <transaction src="${basedir}/sql/study_secondary_purpose.sql"/>
             <classpath>
                 <path refid="bda-utils.classpath"/>
             </classpath>
@@ -118,6 +120,11 @@
 
     <target name="gen" depends="init-db" description="Populates the data warehousing tables using the given database">
         <stopwatch name="timer1"/>
+        <echo message = "Running Accrual Count Audit"/>
+        <groovy src="groovy/study_accrual_count_audit.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+    	<stopwatch name="timer1"/>
         <echo message = "Running User"/>
         <groovy src="groovy/user.groovy"/>
         <stopwatch name="timer1" action="total"/>
@@ -180,6 +187,11 @@
         <stopwatch name="timer1"/>
         <echo message = "Running study"/>
         <groovy src="groovy/study.groovy"/>
+        <stopwatch name="timer1" action="total"/>
+
+        <stopwatch name="timer1"/>
+        <echo message = "Running summary 4"/>
+        <groovy src="groovy/summary_4_funding.groovy"/>
         <stopwatch name="timer1" action="total"/>
 
         <stopwatch name="timer1"/>
@@ -301,6 +313,7 @@
         <echo message = "Running Study Associations"/>
         <groovy src="groovy/study_association.groovy"/>
         <stopwatch name="timer1" action="total"/>
+
         <stopwatch name="timer1"/>
         <echo message = "Running Assay Type"/>
         <groovy src="groovy/assay_type.groovy"/>
