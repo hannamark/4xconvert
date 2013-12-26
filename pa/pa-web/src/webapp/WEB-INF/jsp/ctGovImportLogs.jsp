@@ -49,7 +49,7 @@
 	function runEnterScript(e) {
 		var KeyID = (window.event) ? event.keyCode : e.keyCode;
 		if (KeyID == 13) {
-			handleAction();
+			handleAction('query');
 			return false;
 		}
 	}
