@@ -48,7 +48,7 @@ CREATE TABLE STG_DW_STUDY (
     IRB_STATE_OR_PROVINCE character varying(200),
     IRB_STREET_ADDRESS character varying(200),
     IRB_ZIP_CODE character varying(200),
-    KEYWORD_TEXT character varying(600),
+    KEYWORD_TEXT character varying(4000),
     LAST_UPDATED_BY character varying(500),
     LEAD_ORG character varying(200),
     LEAD_ORG_ORG_FAMILY character varying(200),
