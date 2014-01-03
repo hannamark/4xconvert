@@ -47,6 +47,7 @@ public class PopUpPersonActionTest extends AbstractPaActionTest {
         assertNull(popUpAction.getPersons());
         assertEquals("test@test.org", getRequest().getSession().getAttribute("emailEntered"));
         assertEquals("132412312", getRequest().getSession().getAttribute("telephoneEntered"));
+        popUpAction.lookuppersons();
     }
 
     @Test
@@ -75,6 +76,7 @@ public class PopUpPersonActionTest extends AbstractPaActionTest {
     }
     @Test
     public void testdisplayPersonsList() {
+    	assertEquals("success", popUpAction.displayPersonsList());
         popUpAction.setFirstName("fname");
         popUpAction.setLastName("lname");
         popUpAction.setCountryName("USA");
@@ -84,6 +86,11 @@ public class PopUpPersonActionTest extends AbstractPaActionTest {
         assertEquals("success", popUpAction.displayPersonsList());
         assertNotNull(popUpAction.getPersons());
         assertEquals(0, popUpAction.getPersons().size());
+        popUpAction.setPoId("1");
+        popUpAction.setCtepId("1");
+        assertEquals("success", popUpAction.displayPersonsList());
+        popUpAction.setPersons(null);
+        assertNotNull(popUpAction.getCriteria());
     }
     @Test
     public void testdisplayPersonsListDisplayTag() {

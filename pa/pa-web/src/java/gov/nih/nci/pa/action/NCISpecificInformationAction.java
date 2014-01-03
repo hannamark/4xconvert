@@ -132,6 +132,7 @@ public class NCISpecificInformationAction extends ActionSupport {
     private NCISpecificInformationWebDTO nciSpecificInformationWebDTO = new NCISpecificInformationWebDTO();
     private String chosenOrg;
     private TrialHelper trialHelper = new TrialHelper();
+    private PAServiceUtils paServiceUtil = new PAServiceUtils();    
 
     /**
      * @return result
@@ -190,7 +191,6 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     private Organization getOrCreateDuplicateOrgInPA(String poId)
             throws PAException {
-        PAServiceUtils paServiceUtil = new PAServiceUtils();
         Organization dupOrg = null;
         Ii dupId = paServiceUtil.getDuplicateOrganizationIi(IiConverter.convertToPoOrganizationIi(poId));
         if (!ISOUtil.isIiNull(dupId)) {
@@ -451,6 +451,13 @@ public class NCISpecificInformationAction extends ActionSupport {
             }
         }
         return new Gson().toJson(map);
+    }
+
+    /**
+     * @param paServiceUtil the paServiceUtil to set
+     */
+    public void setPaServiceUtil(PAServiceUtils paServiceUtil) {
+        this.paServiceUtil = paServiceUtil;
     }
     
 }

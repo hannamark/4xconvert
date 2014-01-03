@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
@@ -31,12 +32,14 @@ import org.junit.Test;
  */
 public class PersonSearchActionTest extends AbstractPaActionTest {
 
+	private PersonSearchAction action;
     /**
      * @throws java.lang.Exception
      */
     @Override
     @Before
     public void setUp() {
+    	action = new PersonSearchAction();        
         List<Country> countryList = new ArrayList<Country>();
         Country usa = new Country();
         usa.setName("United States");
@@ -69,8 +72,7 @@ public class PersonSearchActionTest extends AbstractPaActionTest {
      */
     @Test
     public final void testExecute() throws PAException {
-        PersonSearchAction action = new PersonSearchAction();
-        assertEquals("success", action.execute());
+       assertEquals("success", action.execute());
     }
 
     /**
@@ -81,7 +83,6 @@ public class PersonSearchActionTest extends AbstractPaActionTest {
      */
     @Test
     public final void testQueryEmptyCriteria() throws PAException {
-        PersonSearchAction action = new PersonSearchAction();
         String fwd = action.query();
         assertEquals("error", fwd);
         assertTrue(ServletActionContext.getRequest()
@@ -95,12 +96,20 @@ public class PersonSearchActionTest extends AbstractPaActionTest {
      */
     @Test
     public final void testQuery() throws PAException {
-        PersonSearchAction action = new PersonSearchAction();
         action.getCriteria().setId("1");
         String fwd = action.query();
         assertEquals("success", fwd);
         assertEquals(1, action.getResults().size());
         assertEquals(1, action.getResults().get(0).getId().longValue());
+        action.setResults(new ArrayList<PaPersonDTO>());
+        assertEquals(0, action.getResults().size());
+    }
+    
+    @Test
+    public final void testQuery2() throws PAException {
+    	getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.FALSE);
+        String fwd = action.query();
+        assertEquals("success", fwd);
     }
 
     /**
@@ -113,8 +122,8 @@ public class PersonSearchActionTest extends AbstractPaActionTest {
      */
     @Test
     public final void testShowDetailspopup() throws NullifiedEntityException, NullifiedRoleException, PAException, TooManyResultsException {
-        PersonSearchAction action = new PersonSearchAction();
         action.setPersonID("1");
+        assertNotNull(action.getPersonID());
         String fwd = action.showDetailspopup();
         assertEquals("details", fwd);
         assertNotNull(action.getPerson());

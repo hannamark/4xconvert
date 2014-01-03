@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Vrushali
@@ -208,6 +209,11 @@ public class MockPoOrganizationEntityService implements
         phones.add("7037071113");
         DSet<Tel> master = new DSet<Tel>();
         dto.setTelecomAddress(DSetConverter.convertListToDSet(phones, "PHONE",master));
+        DSet<Ii> dset = new DSet<Ii>();
+        Set<Ii> familySet = new HashSet<Ii>();
+        familySet.add(IiConverter.convertToPoFamilyIi("1"));
+        dset.setItem(familySet);
+        dto.setFamilyOrganizationRelationships(dset);
         orgDtoList.add(dto);
         return orgDtoList;
     }

@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
@@ -46,13 +48,17 @@ import org.mockito.stubbing.Answer;
  * @author Michael Visee
  */
 public class PopUpDisActionTest extends AbstractPaActionTest {
+	private PopUpDisAction action;
 	
+	@Before
+    public void setUp() {
+		action = new PopUpDisAction();
+	}
     /**
      * Test the displayList method with no search criteria.
      */
     @Test
     public void testDisplayListNoSearch() {
-        PopUpDisAction action = new PopUpDisAction();
         String result = action.displayList();
         assertEquals("displayList", result);
         String msg = (String) ServletActionContext.getRequest().getAttribute(Constants.FAILURE_MESSAGE);
@@ -68,7 +74,8 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testDisplayList() throws PAException {
-        PopUpDisAction action = mock(PopUpDisAction.class);
+		action.prepare();
+		PopUpDisAction action = mock(PopUpDisAction.class);
         doCallRealMethod().when(action).setSearchName("abcd");
         doCallRealMethod().when(action).displayList();
         doCallRealMethod().when(action).getStudyProtocolIi();
@@ -92,7 +99,7 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testDisplayListException() throws PAException {
-        PopUpDisAction action = mock(PopUpDisAction.class);
+    	PopUpDisAction action = mock(PopUpDisAction.class);
         doCallRealMethod().when(action).setSearchName("abcd");
         doCallRealMethod().when(action).displayList();
         doCallRealMethod().when(action).getStudyProtocolIi();
@@ -111,7 +118,6 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testGetStudyProtocolIi() {
-        PopUpDisAction action = new PopUpDisAction();
         Ii result = action.getStudyProtocolIi();
         assertEquals("Wrong strudy Protocol Ii", IiConverter.convertToStudyProtocolIi(1L), result);
     }
@@ -129,8 +135,7 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
         Ii diseaseIi = IiConverter.convertToIi(1L);
         studyDiseaseDTO.setDiseaseIdentifier(diseaseIi);
         studyDiseaseDTOs.add(studyDiseaseDTO);
-        when(studyDiseaseService.getByStudyProtocol(spIi)).thenReturn(studyDiseaseDTOs);
-        PopUpDisAction action = new PopUpDisAction();
+        when(studyDiseaseService.getByStudyProtocol(spIi)).thenReturn(studyDiseaseDTOs);        
         action.setStudyDiseaseService(studyDiseaseService);
         Map<Ii, StudyDiseaseDTO> result = action.getExistingDiseases(spIi);
         verify(studyDiseaseService).getByStudyProtocol(spIi);
@@ -148,12 +153,14 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
     public void testSearchDiseases() throws PAException {
         PDQDiseaseServiceLocal pdqDiseaseService = mock(PDQDiseaseServiceLocal.class);
         List<PDQDiseaseDTO> expectedResult = new ArrayList<PDQDiseaseDTO>();
-        when(pdqDiseaseService.search(any(PDQDiseaseDTO.class))).thenReturn(expectedResult);
-        PopUpDisAction action = new PopUpDisAction();
+        when(pdqDiseaseService.search(any(PDQDiseaseDTO.class))).thenReturn(expectedResult);        
         action.setPdqDiseaseService(pdqDiseaseService);
         action.setSearchName("abcd");
         action.setIncludeSynonym("true");
         action.setExactMatch("true");
+        assertNotNull(action.getSearchName());
+        assertNotNull(action.getIncludeSynonym());
+        assertNotNull(action.getExactMatch());
         List<PDQDiseaseDTO> result = action.searchDiseases();
         ArgumentCaptor<PDQDiseaseDTO> argument = ArgumentCaptor.forClass(PDQDiseaseDTO.class);
         verify(pdqDiseaseService).search(argument.capture());
@@ -178,14 +185,22 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
         existingDiseases.put(pdqDiseaseDTOs.get(0).getIdentifier(), sd1);
         StudyDiseaseDTO sd2 = new StudyDiseaseDTO();
         sd2.setCtGovXmlIndicator(BlConverter.convertToBl(false));
-        existingDiseases.put(pdqDiseaseDTOs.get(1).getIdentifier(), sd2);
-        PopUpDisAction action = new PopUpDisAction();
+        existingDiseases.put(pdqDiseaseDTOs.get(1).getIdentifier(), sd2);        
         List<DiseaseWebDTO> result = action.getDiseaseWebList(existingDiseases, pdqDiseaseDTOs);
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 3, result.size());
         assertDiseaseWebDTO(result.get(0), 1L, true, "Yes");
         assertDiseaseWebDTO(result.get(1), 2L, true, "No");
         assertDiseaseWebDTO(result.get(2), 3L, false, null);
+    }
+    
+    @Test
+    public void testGetDisease() throws Exception {
+    	action.getDiseaseTree();
+    	action.displayDiseaseWidget();
+    	action.addDiseases();
+    	action.setDiseaseId(1L);
+    	action.getDiseaseId();
     }
     
     private PDQDiseaseDTO createDiseaseDTO(long id) {
@@ -215,11 +230,11 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
     @Test
     public void testAddDiseases() throws PAException {
         
-        StudyDiseaseServiceLocal studyDiseaseService = mock(StudyDiseaseServiceLocal.class);
-        PopUpDisAction action = new PopUpDisAction();
+        StudyDiseaseServiceLocal studyDiseaseService = mock(StudyDiseaseServiceLocal.class);        
         action.setStudyDiseaseService(studyDiseaseService);
 
         action.setDiseaseIds("123,321,4321");
+        assertNotNull(action.getDiseaseIds());
         String result = action.addDiseases();
         assertEquals("success", result);
         assertNotNull(action.getPdqDiseases());
@@ -246,8 +261,7 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
                 }
                 return dto;
             }
-        });
-        PopUpDisAction action = new PopUpDisAction();
+        });        
         action.setStudyDiseaseService(studyDiseaseService);
 
         action.setDiseaseIds("123,321,4321");
@@ -366,8 +380,7 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
 	 * @throws PAException if an error occurs
 	 */
 	@Test
-	public void testGetDiseaseParents() throws PAException {
-	    PopUpDisAction action = new PopUpDisAction();
+	public void testGetDiseaseParents() throws PAException {	    
         action.setDisWebList(createDiseaseWebDtos());
         List<PDQDiseaseParentDTO> expectedResult = new ArrayList<PDQDiseaseParentDTO>();
         PDQDiseaseParentServiceRemote pdqDiseaseParentService = mock(PDQDiseaseParentServiceRemote.class);
@@ -390,8 +403,7 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
 	 * @throws PAException if an error occurs
      */
     @Test
-    public void testGetDiseaseParentsError() throws PAException {
-        PopUpDisAction action = new PopUpDisAction();
+    public void testGetDiseaseParentsError() throws PAException {        
         List<DiseaseWebDTO> diseaseWebDtos = new ArrayList<DiseaseWebDTO>();
         action.setDisWebList(diseaseWebDtos);
         PDQDiseaseParentServiceRemote pdqDiseaseParentService = mock(PDQDiseaseParentServiceRemote.class);

@@ -7,6 +7,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.MockPoClinicalResearchStaffCorrelationService;
 import gov.nih.nci.pa.service.MockPoHealthCareFacilityCorrelationService;
@@ -149,7 +150,11 @@ public class MockPoServiceLocator implements PoServiceLocator {
     public FamilyServiceRemote getFamilyService() {
         FamilyServiceRemote svc = mock(FamilyServiceRemote.class);
         Map<Ii, FamilyDTO> results = new HashMap<Ii, FamilyDTO>();
-        when(svc.getFamilies(any(Set.class))).thenReturn(results);   
+        FamilyDTO dto = new FamilyDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setName(EnOnConverter.convertToEnOn("value"));
+        results.put(IiConverter.convertToPoFamilyIi("1"), dto);
+        when(svc.getFamilies(any(Set.class))).thenReturn(results);  
         return svc;
     }
 }

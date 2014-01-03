@@ -40,6 +40,12 @@ public class PADisplayTagDecoratorTest extends AbstractPaActionTest {
 		dto.setUpdatedDate(new Date());
 		tab.initRow(dto, 1, 1);
 		assertEquals("Validate", tab.getAction());
+		dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.REJECTED);
+		tab.initRow(dto, 1, 1);
+		assertEquals("", tab.getAction());
+		dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+		tab.initRow(dto, 1, 1);
+		assertEquals("Abstract", tab.getAction());
 	}
 
 	/**
@@ -52,6 +58,9 @@ public class PADisplayTagDecoratorTest extends AbstractPaActionTest {
 		dto.setUpdatedDate(new Date());
 		tab.initRow(dto, 1, 1);
 		assertEquals("", tab.getViewTSR());
+		dto.setViewTSR(true);
+		tab.initRow(dto, 1, 1);
+		assertNotNull(tab.getViewTSR());
 	}
 
 	/**
@@ -64,6 +73,9 @@ public class PADisplayTagDecoratorTest extends AbstractPaActionTest {
 		dto.setUpdatedDate(new Date());
 		tab.initRow(dto, 1, 1);
 		assertEquals("Remove", tab.getRemove());
+		dto.setUpdatedDate(null);
+		tab.initRow(dto, 1, 1);
+		assertEquals("", tab.getRemove());
 	}
 	/**
 	 * Test method for {@link gov.nih.nci.pa.decorator.PADisplayTagDecorator#getViewPublicId()}.

@@ -29,12 +29,14 @@ import org.junit.Test;
  */
 public class OrganizationSearchActionTest extends AbstractPaActionTest {
 
+	private OrganizationSearchAction action;
     /**
      * @throws java.lang.Exception
      */
     @Override
     @Before
     public void setUp() {
+    	action = new OrganizationSearchAction();
         List<Country> countryList = new ArrayList<Country>();
         Country usa = new Country();
         usa.setName("United States");
@@ -66,8 +68,7 @@ public class OrganizationSearchActionTest extends AbstractPaActionTest {
      * @throws PAException
      */
     @Test
-    public final void testExecute() throws PAException {
-        OrganizationSearchAction action = new OrganizationSearchAction();
+    public final void testExecute() throws PAException {        
         assertEquals("success", action.execute());
     }
 
@@ -82,13 +83,13 @@ public class OrganizationSearchActionTest extends AbstractPaActionTest {
      */
     @Test
     public final void testShowDetailspopup() throws NullifiedEntityException, NullifiedRoleException, PAException, TooManyResultsException {
-        OrganizationSearchAction action = new OrganizationSearchAction();
         action.setOrgID("4648");
         String fwd = action.showDetailspopup();
         assertEquals("details", fwd);
         assertNotNull(action.getOrganization());
         assertEquals("OrgName", action.getOrganization().getName());
         assertEquals("4648", action.getOrganization().getId());
+        assertNotNull(action.getOrgID());
     }
 
     /**
@@ -99,7 +100,6 @@ public class OrganizationSearchActionTest extends AbstractPaActionTest {
      */
     @Test
     public final void testQueryEmptyCriteria() throws PAException {
-        OrganizationSearchAction action = new OrganizationSearchAction();
         String fwd = action.query();
         assertEquals("error", fwd);
         assertTrue(ServletActionContext.getRequest()
@@ -109,13 +109,18 @@ public class OrganizationSearchActionTest extends AbstractPaActionTest {
     
     @Test
     public final void testQuery() throws PAException {
-        OrganizationSearchAction action = new OrganizationSearchAction();
         action.getCriteria().setIdentifier("1");
         String fwd = action.query();
         assertEquals("success", fwd);
         assertEquals(1, action.getResults().size());
-        assertEquals("4648", action.getResults().get(0).getId());
-      
+        assertEquals("4648", action.getResults().get(0).getId());      
+    }
+    
+    @Test
+    public final void testQuery2() throws PAException {
+    	getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.FALSE);
+        String fwd = action.query();
+        assertEquals("success", fwd);
     }
     
 

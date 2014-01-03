@@ -97,7 +97,10 @@ public class MockCorrelationUtils implements CorrelationUtilsRemote {
      * {@inheritDoc}
      */
     public PAContactDTO getContactByPAOrganizationalContactId(Long paOrganizationalContactId) throws PAException {
-        return null;
+    	PAContactDTO paContactDto = new PAContactDTO();
+        paContactDto.setTitle("some title");
+        paContactDto.setSrIdentifier(IiConverter.convertToIi(1L));
+        return paContactDto;
     }
 
     /**

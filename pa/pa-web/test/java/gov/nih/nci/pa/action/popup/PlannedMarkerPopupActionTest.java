@@ -97,6 +97,7 @@ import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
+import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -104,8 +105,10 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.system.applicationservice.ApplicationService;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.hibernate.criterion.DetachedCriteria;
 import org.junit.Before;
 import org.junit.Test;
@@ -159,6 +162,7 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
 
         plannedMarkerAction.setAppService(appService);
+        assertNotNull(plannedMarkerAction.getAppService());
     }
 
     /**
@@ -208,6 +212,8 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       plannedMarkerAction.setMarkers(new ArrayList<CaDSRWebDTO>());
+       assertTrue(plannedMarkerAction.getMarkers().isEmpty());
     }
 
     /**
@@ -219,6 +225,8 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         assertEquals(plannedMarkerAction.setupEmailRequest(), "email");
         assertNotNull(plannedMarkerAction.getToEmail());
         assertNotNull(plannedMarkerAction.getPlannedMarker().getFromEmail());
+        getSession().setAttribute(Constants.LOGGED_USER_NAME, "suAbstractor");
+        assertEquals(plannedMarkerAction.setupEmailRequest(), "email");
     }
 
     /**
@@ -242,11 +250,14 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         assertEquals(plannedMarkerAction.sendEmailRequest(), "email");
         assertTrue(plannedMarkerAction.hasFieldErrors());
         assertFalse(plannedMarkerAction.isPassedValidation());
+        assertNotNull(plannedMarkerAction.getSubject());
         plannedMarkerAction.clearErrorsAndMessages();
 
         dto.setHugoCode("HUGO");
         assertEquals(plannedMarkerAction.sendEmailRequest(), "email");
         assertFalse(plannedMarkerAction.hasFieldErrors());
+        assertTrue(plannedMarkerAction.isPassedValidation());
+        plannedMarkerAction.setPassedValidation(true);
         assertTrue(plannedMarkerAction.isPassedValidation());
     }
 }

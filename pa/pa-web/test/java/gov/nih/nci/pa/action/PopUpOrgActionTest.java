@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +41,12 @@ public class PopUpOrgActionTest extends AbstractPaActionTest {
         assertEquals(1, popUpAction.getCountryList().size());
         assertTrue(CollectionUtils.isEmpty(popUpAction.getOrgs()));
     }
+    
+    @Test
+	public void testDisplayLookUpListDisplayTag() {
+		 assertEquals("success",popUpAction.displayOrgList());
+		 assertEquals("Please enter at least one search criteria", getRequest().getAttribute("failureMessage"));
+	}
 
     @Test
     public void testdisplayOrgList() {
@@ -153,6 +160,8 @@ public class PopUpOrgActionTest extends AbstractPaActionTest {
         popUpAction.setTty("123-456-7890");
         popUpAction.setFax("123-456-7890");
         popUpAction.clearErrors();
+        popUpAction.getTty();
+        popUpAction.getFax();
         assertEquals("create_org_response", popUpAction.createOrganization());
         errors = popUpAction.getActionErrors();
         assertFalse(errors.contains("2-letter State/Province Code required for USA/Canada"));
@@ -166,6 +175,8 @@ public class PopUpOrgActionTest extends AbstractPaActionTest {
 
         popUpAction.setCountryName("AUS");
         popUpAction.setStateName(null);
+        popUpAction.setFamilyName("familyName");
+        popUpAction.setOrgs(new ArrayList<PaOrganizationDTO>());
         popUpAction.clearErrors();
         assertEquals("create_org_response", popUpAction.createOrganization());
         errors = popUpAction.getActionErrors();

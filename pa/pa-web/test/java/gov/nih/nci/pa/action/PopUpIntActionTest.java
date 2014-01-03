@@ -3,9 +3,12 @@
  */
 package gov.nih.nci.pa.action;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.dto.InterventionWebDTO;
 import gov.nih.nci.pa.service.PAException;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +34,14 @@ public class PopUpIntActionTest extends AbstractPaActionTest {
 		popUpIntAction.displayList();
 		assertNotNull(getRequest().getAttribute("failureMessage"));
 		assertEquals("Please enter at least one search criteria.", getRequest().getAttribute("failureMessage"));
+		popUpIntAction.setSearchName("searchName");
+		popUpIntAction.getSearchName();
+		popUpIntAction.setIncludeSynonym("yes");
+		popUpIntAction.getIncludeSynonym();
+		popUpIntAction.setExactMatch("yes");
+		popUpIntAction.getExactMatch();
+		popUpIntAction.setInterWebList(new ArrayList<InterventionWebDTO>());
+		popUpIntAction.getInterWebList();
 	
 	}
 	@Test

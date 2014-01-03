@@ -118,6 +118,7 @@ public class MockPoClinicalResearchStaffCorrelationService implements
         Ii crsIi = IiConverter.convertToPoClinicalResearchStaffIi("1");
         crsIi.setReliability(IdentifierReliability.ISS);
         crsDTO.setIdentifier(DSetConverter.convertIiToDset(crsIi));
+        crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         crsList.add(crsDTO);
         return crsList;
     }

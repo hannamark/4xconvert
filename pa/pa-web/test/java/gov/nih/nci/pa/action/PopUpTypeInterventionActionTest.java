@@ -4,7 +4,11 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.dto.LookUpWebDTO;
 import gov.nih.nci.pa.service.PAException;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +50,16 @@ public class PopUpTypeInterventionActionTest extends AbstractPaActionTest {
 		 assertEquals("success",popUpInterventionAction.displayLookUpList());
 		 assertEquals("Please enter at least one search criteria", getRequest().getAttribute("failureMessage"));
 	}
+	
+	@Test
+	public void testDisplayLookUpListWithClassNameNull() {
+		 getRequest().setupAddParameter("code", "code");
+		 assertEquals("success",popUpInterventionAction.displayLookUpList());
+		 popUpInterventionAction.setLookupDtos(new ArrayList<LookUpWebDTO>());
+		 assertNotNull(popUpInterventionAction.getLookupDtos());
+		 popUpInterventionAction.setLookupSearchCriteria(new LookUpWebDTO());
+	}
+	
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.PopUpTypeInterventionAction#displayLookUpList()}.
 	 */
@@ -123,6 +137,17 @@ public class PopUpTypeInterventionActionTest extends AbstractPaActionTest {
 		 getRequest().setupAddParameter("description", "");
 		 getRequest().setupAddParameter("displayName", "");
 		 getRequest().setupAddParameter("className", "TargetSite");
+		 getRequest().setupAddParameter("divName", "code");
+		 assertEquals("success",popUpInterventionAction.displayLookUpList());
+	}
+	
+	@Test
+	public void testDisplayLookUpListWithAll() {
+		 getRequest().setupAddParameter("code", "pill");
+		 getRequest().setupAddParameter("publicId", "123");
+		 getRequest().setupAddParameter("description", "desc");
+		 getRequest().setupAddParameter("displayName", "display");
+		 getRequest().setupAddParameter("className", "DoseForm");
 		 getRequest().setupAddParameter("divName", "code");
 		 assertEquals("success",popUpInterventionAction.displayLookUpList());
 	}

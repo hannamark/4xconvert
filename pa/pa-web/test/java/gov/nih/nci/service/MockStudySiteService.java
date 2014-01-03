@@ -220,6 +220,7 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
         dto.setResearchOrganizationIi(IiConverter.convertToIi("1"));
         dto.setFunctionalCode(CdConverter.convertStringToCd("functionalCode"));
         dto.setStatusCode(CdConverter.convertStringToCd("statusCode"));
+        dto.setHealthcareFacilityIi(IiConverter.convertToIi("1"));
         return dto;
     }
 

@@ -35,8 +35,11 @@ public class PendingAccrualsQueueActionTest extends AbstractPaActionTest {
     
     @Test
     public void testAction() throws Exception {
+    	patientAction.getPendingAccruals();
         assertEquals("success", patientAction.execute());
         patientAction.setObjectsToDelete(new String[] {"1","2"});
         assertEquals("success", patientAction.delete());
+        patientAction.setIdentifier("1");
+        patientAction.deleteObject(1L);
     }
 }

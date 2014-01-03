@@ -88,11 +88,13 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyResourcing;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
@@ -104,6 +106,7 @@ import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
@@ -111,11 +114,13 @@ import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
@@ -272,7 +277,10 @@ public class MockServiceLocator implements ServiceLocator {
     public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
         StudySiteAccrualStatusServiceLocal ssas = mock(StudySiteAccrualStatusServiceLocal.class);
         try {
-            when(ssas.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(new StudySiteAccrualStatusDTO());
+            StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
+            dto.setStatusCode(CdConverter.convertStringToCd("statuscd"));
+            dto.setStatusDate(TsConverter.convertToTs(new Date()));
+			when(ssas.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(dto);
         } catch (PAException e) {
             //Unreachable
         }
@@ -368,6 +376,8 @@ public class MockServiceLocator implements ServiceLocator {
                         result.setName("Organization #1");
                     } else if (org.getId().equals(2L)) {
                         result.setName("Organization #2");
+                        result.setStatusCode(EntityStatusCode.NULLIFIED);
+                        //result.setIdentifier("2");
                     }
                     return result;
                 }
@@ -417,6 +427,8 @@ public class MockServiceLocator implements ServiceLocator {
         dto.setNciDivisionProgramCode(CdConverter.convertStringToCd(NciDivisionProgramCode.CCR.getCode()));
         dto.setNihInstitutionCode(CdConverter.convertStringToCd("NIH"));
         dto.setSerialNumber(StConverter.convertToSt("1"));
+        dto.setOrganizationIdentifier(IiConverter.convertToPaOrganizationIi(2L));
+        dto.setTypeCode(CdConverter.convertStringToCd("code"));
         
         List<StudyResourcingDTO> dtoList = new ArrayList<StudyResourcingDTO>();
         dtoList.add(dto);
@@ -802,7 +814,17 @@ public class MockServiceLocator implements ServiceLocator {
      */
     @Override
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
-        return mock(ParticipatingSiteServiceLocal.class);
+        ParticipatingSiteServiceLocal svc = mock(ParticipatingSiteServiceLocal.class);
+        ParticipatingSiteDTO dto = new ParticipatingSiteDTO();
+        Ii ii = new Ii();
+        ii.setExtension("1");
+        dto.setIdentifier(ii);
+        try {
+			when(svc.createStudySiteParticipant(any(StudySiteDTO.class), any(StudySiteAccrualStatusDTO.class), any(Ii.class))).thenReturn(dto);
+		} catch (PAException e) {
+			
+		}
+		return svc;
     }
 
     /**

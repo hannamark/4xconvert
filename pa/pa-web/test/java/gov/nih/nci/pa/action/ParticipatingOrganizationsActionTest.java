@@ -82,19 +82,51 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EnPnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockCorrelationUtils;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
+import gov.nih.nci.service.MockStudySiteService;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
@@ -124,9 +156,48 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         String ar = act.execute();
         assertEquals(ActionSupport.SUCCESS, ar);
         assertNotNull(act.getOrganizationList());
+        act.setOrganizationList(null);
+        assertNull(act.getOrganizationList());
+        act.setSelectedOrgDTO(null);
+        assertNull(act.getSelectedOrgDTO());
+        act.setSpContactDTO(null);
+        assertNull(act.getSpContactDTO());
+        assertFalse(act.isNewParticipation());
+        act.setEditOrg(new Organization());
+        assertNotNull(act.getEditOrg());
+        act.setPersonWebDTOList(null);
+        assertNull(act.getPersonWebDTOList());
+        act.setPersonContactWebDTO(null);
+        assertNull(act.getPersonContactWebDTO());
+        assertNull(act.getOrganizationName());
+        assertNotNull(act.getOrgFromPO());
+        assertNotNull(act.getCurrentAction());
+        assertNull(act.getStatusCode());
+        act.setSiteProgramCodeText("siteProgramCodeText");
+        assertNotNull(act.getSiteProgramCodeText());
+        assertNull(act.getDateOpenedForAccrual());
+        assertNull(act.getDateClosedForAccrual());
+        act.setStudySiteIdentifier(1L);
+        assertNotNull(act.getStudySiteIdentifier());
+        getRequest().setupAddParameter("perId", "1");
+        PoServiceLocator poSvcLoc = mock(PoServiceLocator.class);
+        PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
+        PersonEntityServiceRemote poPersonSvc = mock(PersonEntityServiceRemote.class);
+        when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
+        List<PersonDTO> personDtos = new ArrayList<PersonDTO>();
+        PersonDTO personDTO2 = new PersonDTO();
+        personDTO2.setIdentifier(IiConverter.convertToIi("3"));
+        personDTO2.setName(EnPnConverter.convertToEnPn("OtherName", null, "OtherName", null, null));
+        personDTO2.setPostalAddress(AddressConverterUtil.create("streetAddressLine", null, "cityOrMunicipality",
+                "stateOrProvince", "postalCode", "USA"));
+        personDTO2.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+		personDtos.add(personDTO2);
+        when(poPersonSvc.search(any(PersonDTO.class), any(LimitOffset.class))).thenReturn(personDtos);
+        act.prepare();
+        assertEquals("displayPerson", act.displayPerson());
     }
 
-    // @Test
+     @Test
     public void addOrganizationTest() throws Exception {
 
         // click the add button
@@ -167,6 +238,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         assertFalse(act.getFieldErrors().containsKey("recStatusDate"));
         assertTrue(act.getFieldErrors().containsKey("editOrg.name"));
 
+        assertEquals("historypopup", act.historyPopup());
         // look-up org information and save
         String poIdentifier = "abc";
         String newOrgName = MockOrganizationCorrelationService.getOrgNameFromPoIdentifier(poIdentifier);
@@ -199,7 +271,78 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
                 found = true;
             }
         }
-        assertTrue("Added treating site not found.", found);
+        tab.setFacilityOrganization(facility);
+        tab.setStudyParticipationId(1L);
+        getRequest().setupAddParameter("recStatus", RecruitmentStatusCode.APPROVED.getCode());
+        assertEquals("error_edit", act.facilityUpdate());        
+        getRequest().setupAddParameter("recStatusDate", "12/23/2013");
+        getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
+        assertEquals("edit", act.facilityUpdate()); 
+        act.setProprietaryTrialIndicator("true");
+        StudySiteDTO dto = new StudySiteDTO();
+        dto.setFunctionalCode(CdConverter.convertStringToCd("functionalCode"));
+        dto.setStatusCode(CdConverter.convertStringToCd("statusCode"));
+        dto.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi("1"));
+        StudySiteServiceLocal svc = mock(StudySiteServiceLocal.class);
+        when(svc.get(any(Ii.class))).thenReturn(dto);
+        act.setStudySiteService(svc);
+        assertEquals("edit", act.edit());
+        assertEquals("delete", act.delete());
+        act.deleteObject(1L);
+        getRequest().setupAddParameter("orgId", "1");
+        assertEquals("displayJsp",act.displayOrg());
+        assertEquals("display_StudyPartipants",act.getStudyParticipationContacts());
+        assertEquals("error_prim_contacts", act.saveStudyParticipationContact());
+        assertEquals("display_spContacts", act.deleteStudyPartContact());
+        getRequest().setupAddParameter("contactpersid", "1");
+        assertEquals("display_primContacts", act.displayStudyParticipationPrimContact());
+        getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
+        assertEquals("display_spContacts", act.saveStudyParticipationContact());
+        assertEquals("display_spContacts", act.getDisplaySPContacts());
+        
+        ServiceLocator paSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        PAHealthCareProviderRemote rmtSvc = mock(PAHealthCareProviderRemote.class);
+        when(rmtSvc.getPersonsByStudySiteId(any(Long.class), any(String.class))).thenReturn(new ArrayList<PaPersonDTO>());
+        when(rmtSvc.getIdentifierBySPCId(any(Long.class))).thenReturn(new PaPersonDTO());
+        when(paSvcLoc.getPAHealthCareProviderService()).thenReturn(rmtSvc);
+        when(paSvcLoc.getStudySiteService()).thenReturn(new MockStudySiteService());
+        StudySiteAccrualStatusServiceLocal ssas = mock(StudySiteAccrualStatusServiceLocal.class);
+        StudySiteAccrualStatusDTO sasdto = new StudySiteAccrualStatusDTO();
+        sasdto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE));
+        sasdto.setStatusDate(TsConverter.convertToTs(new Date()));
+		when(ssas.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(sasdto);
+		when(ssas.getStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(Arrays.asList(sasdto));
+        when(paSvcLoc.getStudySiteAccrualStatusService()).thenReturn(ssas);
+        StudySiteContactServiceLocal service = mock(StudySiteContactServiceLocal.class);
+        StudySiteContactDTO result = new StudySiteContactDTO();
+        result.setOrganizationalContactIi(IiConverter.convertToPoOrganizationalContactIi("1"));
+        result.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.PRIMARY_CONTACT));
+        when(service.getByStudyProtocol(any(Ii.class), any(StudySiteContactDTO.class))).thenReturn(Arrays.asList(result));
+        when(service.getByStudySite(any(Ii.class))).thenReturn(Arrays.asList(result));
+        when(paSvcLoc.getStudySiteContactService()).thenReturn(service);
+        act.prepare();
+        act.setCbValue(1L);
+        tab.setStudyParticipationId(1L);
+        getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
+        assertEquals("historypopup", act.historyPopup());
+        assertNotNull(act.getCbValue());
+        assertEquals("edit", act.edit());
+        assertEquals("display_primContacts", act.refreshPrimaryContact());
+        getRequest().setupAddParameter("editmode", "yes");
+        getRequest().getSession().setAttribute("emailEntered", "test@test.com");
+        getRequest().getSession().setAttribute("telephoneEntered", "1234567890");
+        assertEquals("display_primContacts", act.displayStudyParticipationPrimContact());
+        act.setPaServiceUtil(null);
+        act.setOrganizationalContactCorrelationService(null);
+        act.setOrganizationEntityService(null);
+        act.setPaHealthCareProviderService(rmtSvc);
+        act.setParticipatingSiteService(null);
+        act.setPersonEntityService(null);
+        act.setStudyProtocolService(null);
+        act.setStudySiteAccrualStatusService(null);
+        act.setStudySiteContactService(null);
+        
     }
     @Test
     public void testsaveStudyParticipationPrimContact() throws NullifiedEntityException, PAException{

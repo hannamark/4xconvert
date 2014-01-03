@@ -156,6 +156,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
 
     @Test
     public void testAdd() throws PAException {
+    	assertNotNull(plannedMarkerAction.getAppService());
         PlannedMarkerDTO oldValue = new PlannedMarkerDTO();
         oldValue.setAssayTypeCode(CdConverter.convertStringToCd("Microarray"));
         oldValue.setAssayPurposeCode(CdConverter.convertStringToCd("Stratification Factor"));
@@ -193,6 +194,8 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
     public void testAddSave() throws PAException {
         plannedMarkerAction.add();
         plannedMarkerAction.setSaveResetAttribute(true);
+        assertTrue(plannedMarkerAction.isSaveResetAttribute());
+        plannedMarkerAction.loadEditForm();
         assertTrue(plannedMarkerAction.hasFieldErrors());
         plannedMarkerAction.clearErrorsAndMessages();
         PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
@@ -219,6 +222,8 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
     public void testAddSaveMarker() throws PAException {
         plannedMarkerAction.add();
         plannedMarkerAction.setSaveResetMarker(true);
+        assertTrue(plannedMarkerAction.isSaveResetMarker());
+        plannedMarkerAction.loadEditForm();
         assertTrue(plannedMarkerAction.hasFieldErrors());
         plannedMarkerAction.clearErrorsAndMessages();
         PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
@@ -239,7 +244,10 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         
         plannedMarkerAction.setPlannedMarker(webDTO);
         assertEquals("list", plannedMarkerAction.add());
-
+        plannedMarkerAction.setPendingStatus(true);
+        assertTrue(plannedMarkerAction.isPendingStatus());
+        plannedMarkerAction.setCadsrId("cadsrId");
+        assertEquals("cadsrId", plannedMarkerAction.getCadsrId());
     }
     
     @Test
@@ -267,12 +275,15 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         
         plannedMarkerAction.setPlannedMarker(webDTO);
         assertEquals("list", plannedMarkerAction.update());
+        plannedMarkerAction.loadEditForm();
     }
 
     @Test
     public void testExecute() throws PAException {
         assertEquals(plannedMarkerAction.execute(), "list");
         assertNotNull(plannedMarkerAction.getPlannedMarkerList());
+        plannedMarkerAction.setMarkerAttributesService(null);
+        plannedMarkerAction.setPermissibleService(null);
     }
 
     @Test

@@ -91,7 +91,11 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.BiospecimenRetentionCode;
+import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
+import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
@@ -106,6 +110,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
@@ -250,6 +255,12 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
             ospDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
             ospDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
             ospDTO.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));
+            ospDTO.setPhaseCode(CdConverter.convertToCd(PhaseCode.I));
+            ospDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode.PILOT));
+            ospDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.OTHER));
+            ospDTO.setPrimaryPurposeOtherText(StConverter.convertToSt("primaryPurposeOtherText"));
+            ospDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(PrimaryPurposeAdditionalQualifierCode.CORRELATIVE));
+            ospDTO.setStudySubtypeCode(CdConverter.convertToCd(StudySubtypeCode.OBSERVATIONAL)); 
             return ospDTO;
     }
     /**
