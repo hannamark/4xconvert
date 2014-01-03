@@ -98,6 +98,7 @@ CREATE TABLE STG_DW_STUDY (
     SUBMITTER_NAME character varying(501),
     SUBMITTER_ORGANIZATION character varying(200),
     SUBMITTER_ORGANIZATION_FAMILY character varying(200),
+    SUMMARY_4_FUNDING_CATEGORY character varying(200),
     WHY_STUDY_STOPPED character varying(2000),
     CATEGORY character varying (12),
     COMMENTS varchar(4000),
