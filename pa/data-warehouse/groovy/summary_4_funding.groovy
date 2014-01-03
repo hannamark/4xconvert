@@ -21,7 +21,6 @@ sourceConnection.eachRow(sql) { row ->
     sponsors.add(
         internal_system_id: row.identifier,
         nci_id: row.extension,
-        category: row.type_code,
         sponsor_id: row.assigned_identifier,
         sponsor: row.name
     );
