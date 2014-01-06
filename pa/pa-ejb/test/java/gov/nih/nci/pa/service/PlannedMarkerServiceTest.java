@@ -88,10 +88,12 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.AssayUseCode;
+import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
 import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
@@ -105,6 +107,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,13 +145,25 @@ public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
 
         dtos = bean.getByStudyProtocol(spIi);
         assertEquals(3, dtos.size());
-
+       
+        PlannedMarkerDTO dto = bean.getPlannedMarker(IiConverter.convertToIi(5L));
+        assertTrue(dto !=null);
+        assertEquals("Pending", dto.getStatusCode().getCode());
+        
+        dto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+        bean.update(dto);
+        dto = bean.getPlannedMarker(IiConverter.convertToIi(5L));
+        assertTrue(dto !=null);
+        assertEquals("Active", dto.getStatusCode().getCode());
+        
         try {
             bean.create(constructPlannedMarker());
             fail();
         } catch (PAException e) {
            //expected, testing duplication
         }
+        
+        
     }
 
     private PlannedMarkerDTO constructPlannedMarker() {
@@ -209,5 +224,40 @@ public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
         assertTrue(markers.size() > 0);
     }
     
+    @Test
+    public void getPlannedMarkersTest() throws PAException {
+        List<PlannedMarkerDTO> list = bean.getPlannedMarkers();
+        assertTrue(list.size() > 0);
+    }
     
+    @Test
+    public void getPendingPlannedMarkersWithNameTest() throws PAException {
+        List<PlannedMarkerDTO> list = bean.getPendingPlannedMarkersWithName("Marker #1");
+        assertTrue(list.size() > 0);
+    }
+    
+    @Test
+    public void getPendingPlannedMarkerWithSyncIDTest() throws PAException {
+    	List<PlannedMarkerDTO> list = bean.getPendingPlannedMarkerWithSyncID(1L);
+    	assertTrue(list.size() > 0);
+    }
+    @Test
+    public void updatePlannedMarkerAttributeValuesTest() throws PAException {
+        bean.updatePlannedMarkerAttributeValues(BioMarkerAttributesCode.ASSAY_TYPE_CODE, "PCR", "Microarray");
+        PlannedMarkerDTO dto = bean.getPlannedMarkerWithID(5L);
+        assertEquals("Microarray", dto.getAssayTypeCode().getCode());
+    }
+    @Test
+    public void updateStatusByPMSynIDTest() throws PAException {
+        bean.updateStatusByPMSynID(1L, ActiveInactivePendingCode.ACTIVE.getName());
+        PlannedMarkerDTO dto = bean.getPlannedMarkerWithID(5L);
+        assertEquals("Active", dto.getStatusCode().getCode());
+    }
+    @Test
+    public void updateStatusOldIDByPMSynIDTest() throws PAException {
+        bean.updateStatusOldIDByPMSynID(1L, 2L, ActiveInactivePendingCode.PENDING.getName());
+        PlannedMarkerDTO dto = bean.getPlannedMarkerWithID(5L);
+        assertEquals("Pending", dto.getStatusCode().getCode());
+        assertEquals("2", dto.getPermissibleValue().getExtension());
+    }
 }

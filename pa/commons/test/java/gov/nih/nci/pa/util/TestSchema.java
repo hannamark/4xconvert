@@ -113,6 +113,7 @@ import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR;
+import gov.nih.nci.pa.domain.PlannedProcedure;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
@@ -124,6 +125,9 @@ import gov.nih.nci.pa.domain.StudyAccrualAccess;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyDisease;
+import gov.nih.nci.pa.domain.StudyDocumentStage;
+import gov.nih.nci.pa.domain.StudyFundingStage;
+import gov.nih.nci.pa.domain.StudyIndIdeStage;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
@@ -132,6 +136,7 @@ import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolAssociation;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
+import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
@@ -200,6 +205,11 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
+
+
+
+
+
 
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -558,7 +568,10 @@ public class TestSchema {
         pa.setUserLastUpdated(curator);
         addUpdObject(pa);
         plannedActivityIds.add(pa.getId());
-
+        PlannedProcedure ppro = new PlannedProcedure();
+        ppro.setStudyProtocol(sp);
+        ppro.setCategoryCode(ActivityCategoryCode.PLANNED_PROCEDURE);
+        addUpdObject(ppro);
         StudyOutcomeMeasure som = new StudyOutcomeMeasure();
         som.setName("StudyOutcomeMeasure");
         som.setStudyProtocol(sp);
@@ -598,7 +611,33 @@ public class TestSchema {
         sra.setRegulatoryAuthority(ra);
         sra.setStudyProtocol(sp);
         addUpdObject(sra);
-
+        
+        StudyProtocolStage stage = new StudyProtocolStage();
+        stage.setLocalProtocolIdentifier("2006-064");
+        stage.setLeadOrganizationIdentifier("1");
+        stage.setUserLastCreated(user);
+        stage.setUserLastUpdated(user);
+        stage.setPhaseCode(PhaseCode.I);
+        stage.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
+        addUpdObject(stage);
+        
+        StudyFundingStage fundingStage = new StudyFundingStage();
+        fundingStage.setStudyProtocolStage(stage);
+        fundingStage.setFundingMechanismCode("Code");
+        addUpdObject(fundingStage);
+        
+        StudyIndIdeStage indStage = new StudyIndIdeStage();
+        indStage.setStudyProtocolStage(stage);
+        indStage.setGrantorCode(GrantorCode.CBER);
+        indStage.setIndIdeNumber("123");
+        addUpdObject(indStage);
+        
+        StudyDocumentStage documentstage = new StudyDocumentStage();
+        documentstage.setStudyProtocolStage(stage);
+        documentstage.setFileName("Document.doc");
+        documentstage.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
+        addUpdObject(documentstage);
+        
         StudyContact sc = new StudyContact();
         sc.setPrimaryIndicator(Boolean.TRUE);
         sc.setStudyProtocol(sp);

@@ -82,15 +82,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
+import gov.nih.nci.pa.iso.dto.PlannedProcedureDTO;
+import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -143,13 +147,15 @@ public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
     @Test
     public void getByStudyProtocolTest() throws Exception {
         List<PlannedActivityDTO> dtoList = remoteEjb.getByStudyProtocol(spIi);
-        assertEquals(5, dtoList.size());
+        assertEquals(6, dtoList.size());
     }
 
     @Test
     public void getByArmTest() throws Exception {
         List<PlannedActivityDTO> dtoList = remoteEjb.getByArm(armIi);
         assertEquals(1, dtoList.size());
+        dtoList = remoteEjb.getByArm(null);
+        assertTrue(dtoList.isEmpty());
     }
 
     @Test
@@ -259,12 +265,44 @@ public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
         dto2 = new PlannedEligibilityCriterionDTO();
         dto2 = remoteEjb.updatePlannedEligibilityCriterion(dto);
         assertEquals(dto.getCriterionName().getValue(), dto2.getCriterionName().getValue());
-
+        
         remoteEjb.deletePlannedEligibilityCriterion(dto.getIdentifier());
+        
+        statusList = remoteEjb.getPlannedEligibilityCriterionByStudyProtocol(null);
+        assertTrue(statusList.isEmpty());
+        
+        dto = remoteEjb.getPlannedEligibilityCriterion(null);
+        assertTrue(dto == null);
+        
+        try {
+            dto = remoteEjb.getPlannedEligibilityCriterion(IiConverter.convertToIi(1L));
+            fail("Object not found using get() for id = 1.");
+        }catch (Exception e) {
+            //expected behavior
+        }
+        
     }
-
+    
     @Test
-    public void createPlannedEligibilityCriterion() throws Exception {
+    public void testUpdatePlannedEligibilityCriterionError() throws Exception {
+        PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
+        dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
+        try {
+            PlannedEligibilityCriterionDTO dto2 = remoteEjb.updatePlannedEligibilityCriterion(dto);
+            fail("Cannot call updatePlannedEligibilityCriterion with a null identifier");
+        } catch (Exception e) {
+            // expected behavior
+        }
+        try {
+            remoteEjb.deletePlannedEligibilityCriterion(dto.getIdentifier());
+            fail("Check the Ii value; found null.");
+        } catch (Exception e) {
+            // expected behavior
+        }
+    }
+    
+    @Test
+    public void testCreatePlannedEligibilityCriterion() throws Exception {
         PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
         dto.setStudyProtocolIdentifier(spIi);
         dto.setCriterionName(StConverter.convertToSt("WHC"));
@@ -283,6 +321,27 @@ public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
         assertEquals(dto.getStudyProtocolIdentifier(), spIi);
     }
 
+    @Test
+    public void testCreatePlannedEligibilityCriterionError() throws Exception {
+        PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
+        dto.setCriterionName(StConverter.convertToSt("WHC"));
+        dto.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setOperator(StConverter.convertToSt(">"));
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        try {
+            remoteEjb.createPlannedEligibilityCriterion(dto);
+            fail("Cannot call createPlannedEligibilityCriterion with a non null identifier");
+        } catch (Exception e) {
+            // expected behavior
+        }
+        dto.setIdentifier(null);
+        try {
+            remoteEjb.createPlannedEligibilityCriterion(dto);
+            fail("Cannot call createPlannedEligibilityCriterion with a null protocol identifier");
+        } catch (Exception e) {
+            // expected behavior
+        }
+    }
     @Test
     public void oneLeadDrugPerStudyTest() throws Exception {
         PlannedActivityDTO dto = remoteEjb.get(ii);
@@ -308,5 +367,197 @@ public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.ACTIVITY_ROOT);
         assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
+    
+    @Test
+    public void testCopyPlannedEligibilityStudyCriterions() throws PAException {
+       Ii toStudyProtocolIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(1));
+       remoteEjb.copyPlannedEligibilityStudyCriterions(spIi, toStudyProtocolIi);
+       List<PlannedEligibilityCriterionDTO> dtos = remoteEjb.getPlannedEligibilityCriterionByStudyProtocol(toStudyProtocolIi);
+       assertEquals(dtos.get(0).getStudyProtocolIdentifier(), toStudyProtocolIi);
+       assertTrue(dtos.get(0).getIdentifier() != null);
+    }
+    
+    @Test
+    public void testCreatePlannedSubstanceAdministration() throws PAException {
+       PlannedSubstanceAdministrationDTO dto = new PlannedSubstanceAdministrationDTO();
+       dto.setStudyProtocolIdentifier(spIi);
+       dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
+       dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.RADIATION));
+       PlannedSubstanceAdministrationDTO returnDto = remoteEjb.createPlannedSubstanceAdministration(dto);
+       assertTrue(returnDto.getIdentifier() != null);
+       
+       dto.setDoseFormCode(CdConverter.convertStringToCd("dose"));
+       dto.setDoseFrequencyCode(CdConverter.convertStringToCd("frequency"));
+       dto.setRouteOfAdministrationCode(CdConverter.convertStringToCd("Admin"));
+       Pq pqLow = new Pq();
+       pqLow.setValue(new BigDecimal("80"));
+       pqLow.setUnit(UnitsCode.YEARS.getCode());
+       Pq pqHigh = new Pq();
+       pqHigh.setValue(new BigDecimal("90"));
+       pqHigh.setUnit(UnitsCode.YEARS.getCode());
+       Ivl<Pq> ivlPq = new Ivl<Pq>();
+       ivlPq.setHigh(pqHigh);
+       ivlPq.setLow(pqLow);
+       dto.setDose(ivlPq);
+       dto.setDoseTotal(ivlPq);
+       dto.setDoseDescription(StConverter.convertToSt("description"));
+       dto.setApproachSiteCode(CdConverter.convertStringToCd("Approach"));
+       dto.setTargetSiteCode(CdConverter.convertStringToCd("Target"));
+       dto.setDoseDuration(pqHigh);
+       try {
+           remoteEjb.createPlannedSubstanceAdministration(dto);
+           fail("Validation Exception ");
+       } catch (Exception e) {
+           // expected behavior
+       }
+       
+       dto.setIdentifier(ii);
+       try {
+           remoteEjb.createPlannedSubstanceAdministration(dto);
+           fail("Cannot call createPlannedSubstanceAdministration with a non null identifier.");
+       } catch (Exception e) {
+           // expected behavior
+       }
+       dto.setIdentifier(null);
+       dto.setStudyProtocolIdentifier(null);
+       try {
+           remoteEjb.createPlannedSubstanceAdministration(dto);
+           fail("Cannot call createPlannedSubstanceAdministration with a null study protocol identifier");
+       } catch (Exception e) {
+           // expected behavior
+       }
+    }
+    
+    @Test
+    public void testupdatePlannedSubstanceAdministration() throws PAException {
+       PlannedSubstanceAdministrationDTO dto = new PlannedSubstanceAdministrationDTO();
+       Ii id = IiConverter.convertToIi(2L);
+       dto.setIdentifier(id);
+       dto.setStudyProtocolIdentifier(spIi);
+       dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
+       dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.BEHAVIORAL));
+       PlannedSubstanceAdministrationDTO returnDto = remoteEjb.updatePlannedSubstanceAdministration(dto);
+       assertTrue(returnDto.getIdentifier() != null);
+       
+       dto.setIdentifier(null);
+       try {
+           remoteEjb.updatePlannedSubstanceAdministration(dto);
+           fail("Create method should be used to modify existing.");
+       } catch (Exception e) {
+           // expected behavior
+       }
+    }
+    
+    @Test
+    public void testGetPlannedSubstanceAdministrationByStudyProtocol() throws PAException {
+       List<PlannedSubstanceAdministrationDTO> dtos = remoteEjb.getPlannedSubstanceAdministrationByStudyProtocol(spIi);
+       assertTrue(dtos.size() > 0);
+       assertEquals(spIi, dtos.get(0).getStudyProtocolIdentifier());
+       assertEquals(ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.getCode(), dtos.get(0).getCategoryCode().getCode());
+       
+       dtos = remoteEjb.getPlannedSubstanceAdministrationByStudyProtocol(null);
+       assertTrue(dtos.isEmpty());
+    }
+    
+    @Test
+    public void testGetPlannedSubstanceAdministration() throws PAException {
+       Ii pid = IiConverter.convertToIi(4L);
+       PlannedSubstanceAdministrationDTO dto = remoteEjb.getPlannedSubstanceAdministration(pid);
+       assertEquals(pid.getExtension(), dto.getIdentifier().getExtension());
+       assertEquals(dto.getCategoryCode().getCode(),ActivityCategoryCode.SUBSTANCE_ADMINISTRATION.getCode());
+       
+      
+       dto = remoteEjb.getPlannedSubstanceAdministration(null);
+       assertTrue(dto == null);
+       
+       pid = IiConverter.convertToIi(3L);
+       try {
+           dto = remoteEjb.getPlannedSubstanceAdministration(pid);
+           fail("Object not found using get() for id = " + IiConverter.convertToString(pid) + ".  ");
+       }catch (Exception e) {
+           // expected behavior
+       }
+    }
+    
+    @Test
+    public void testCreatePlannedProcedure() throws PAException {
+       PlannedProcedureDTO dto = new PlannedProcedureDTO();
+       dto.setStudyProtocolIdentifier(spIi);
+       dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
+       PlannedProcedureDTO returnDto = remoteEjb.createPlannedProcedure(dto);
+       assertEquals("7", returnDto.getIdentifier().getExtension());
+       
+       dto.setMethodCode(CdConverter.convertStringToCd("A"));
+       dto.setTargetSiteCode(CdConverter.convertStringToCd("Site"));
+       try {
+           remoteEjb.createPlannedProcedure(dto);
+           fail("Validation Exception ");
+       }catch (Exception e) {
+           // expected behavior
+       }
+
+       dto.setIdentifier(ii);
+       try {
+           remoteEjb.createPlannedProcedure(dto);
+           fail("Update method should be used to modify existing.  ");
+       }catch (Exception e) {
+           // expected behavior
+       }
+       dto.setIdentifier(null);
+       dto.setStudyProtocolIdentifier(null);
+       try {
+           remoteEjb.createPlannedProcedure(dto);
+           fail("StudyProtocol must be set.  ");
+       }catch (Exception e) {
+           // expected behavior
+       }
+       
+       
+    }
+    
+    @Test
+    public void testUpdatePlannedProcedure() throws PAException {
+       PlannedProcedureDTO dto = new PlannedProcedureDTO();
+       dto.setIdentifier(ii);
+       dto.setStudyProtocolIdentifier(spIi);
+       dto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
+       PlannedProcedureDTO returnDto = remoteEjb.updatePlannedProcedure(dto);
+       assertEquals("1", returnDto.getIdentifier().getExtension());
+       
+       dto.setIdentifier(null);
+       try {
+           remoteEjb.updatePlannedProcedure(dto);
+           fail("Create method should be used to modify existing.  ");
+       }catch (Exception e) {
+           // expected behavior
+       }
+    }
+    @Test
+    public void testGetPlannedProcedureByStudyProtocol() throws PAException {
+        List<PlannedProcedureDTO> dtos = remoteEjb.getPlannedProcedureByStudyProtocol(spIi);
+        assertTrue(dtos.size() > 0);
+        assertEquals("2", dtos.get(0).getIdentifier().getExtension());
+        assertEquals(dtos.get(0).getCategoryCode().getCode(),ActivityCategoryCode.PLANNED_PROCEDURE.getCode());
+        
+        dtos = remoteEjb.getPlannedProcedureByStudyProtocol(null);
+        assertTrue(dtos.isEmpty());
+    }
+    @Test
+    public void testGetPlannedProcedure() throws PAException {
+        Ii pid = IiConverter.convertToIi(2L); 
+        PlannedProcedureDTO dto = remoteEjb.getPlannedProcedure(pid);
+        assertEquals(dto.getCategoryCode().getCode(),ActivityCategoryCode.PLANNED_PROCEDURE.getCode());
+        
+        dto = remoteEjb.getPlannedProcedure(null);
+        assertTrue(dto == null);
+        
+        pid = IiConverter.convertToIi(1L);
+        try {
+            dto = remoteEjb.getPlannedProcedure(pid);
+            fail("Object not found using get() for id = " + IiConverter.convertToString(pid) + ".  ");
+        }catch (Exception e) {
+            // expected behavior
+        }
     }
 }
