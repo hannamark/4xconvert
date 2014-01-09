@@ -6,7 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <c:set var="topic" scope="request" value="diseasesearch"/>
 <head>
-    <title><fmt:message key="accrual.search.trials.page.title"/></title>   
+    <title><fmt:message key="disease.search"/></title>   
     <s:head/>    
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery-1.7.1.js'/>"></script>
