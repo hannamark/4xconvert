@@ -1489,4 +1489,8 @@
         <comment>Updated list of fields of interest.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.10/PO-6644.sql"/>
      </changeSet>
+     <changeSet id="PO-6794" author="Reshma">
+        <comment>updated  Amendment # to email subject value in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6794.sql"/>
+     </changeSet>
 </databaseChangeLog>

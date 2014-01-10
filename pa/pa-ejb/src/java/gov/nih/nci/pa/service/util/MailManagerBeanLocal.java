@@ -601,6 +601,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String subject =  mailSubject;
         subject = subject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
         subject = subject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
+        String amendNumber = "";
+        if (spDTO.getAmendmentNumber() != null) {
+            amendNumber = spDTO.getAmendmentNumber();
+        }
+        subject = subject.replace(AMENDMENT_NUMBER, amendNumber);
         return subject;
     }
 

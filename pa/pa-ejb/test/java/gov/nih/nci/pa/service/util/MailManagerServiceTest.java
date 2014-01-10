@@ -539,10 +539,14 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         prop = new PAProperties();
         prop.setName("trial.amend.accept.subject");
-        prop.setValue("trial.amend.accept.subject.");
+        prop.setValue("trial.amend.accept.subject-${amendmentNumber},${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
         TestSchema.addUpdObject(prop);
-
+        StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+                IiConverter.convertToLong(nonProprietaryTrialIi));
+        spDTO.setAmendmentNumber("1");
         bean.sendAmendAcceptEmail(nonProprietaryTrialIi);
+        assertEquals("trial.amend.accept.subject-1,Ecog1, NCI-2009-00001.", bean.commonMailSubjectReplacements(spDTO, prop.getValue()));
+        
     }
 
     @Test
@@ -554,10 +558,14 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         prop = new PAProperties();
         prop.setName("trial.amend.subject");
-        prop.setValue("trial.amend.subject -${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
+        prop.setValue("trial.amend.subject -${amendmentNumber},${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
         TestSchema.addUpdObject(prop);
-
+        
+        StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+                IiConverter.convertToLong(nonProprietaryTrialIi));
+        spDTO.setAmendmentNumber("1");
         bean.sendAmendNotificationMail(nonProprietaryTrialIi);
+        assertEquals("trial.amend.subject -1,Ecog1, NCI-2009-00001.", bean.commonMailSubjectReplacements(spDTO, prop.getValue()));
     }
 
     @Test
@@ -569,12 +577,14 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         prop = new PAProperties();
         prop.setName("trial.amend.reject.subject");
-        prop.setValue("trial.amend.reject.subject");
+        prop.setValue("Amendment # ${amendmentNumber}, ${nciTrialIdentifier}, ${leadOrgTrialIdentifier}");
         TestSchema.addUpdObject(prop);
 
         StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
                 IiConverter.convertToLong(nonProprietaryTrialIi));
+        spDTO.setAmendmentNumber("1");
         bean.sendAmendRejectEmail(spDTO, "rejectReason");
+        assertEquals("Amendment # 1, NCI-2009-00001, Ecog1", bean.commonMailSubjectReplacements(spDTO, prop.getValue()));
     }
 
     @Test
