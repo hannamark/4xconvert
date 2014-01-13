@@ -108,18 +108,22 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author vrushali
  *
  */
 public abstract class AbstractPDQTrialServiceHelper {
+    private static final Logger LOG = Logger.getLogger(AbstractPDQTrialServiceHelper.class);
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     /**
@@ -186,7 +190,15 @@ public abstract class AbstractPDQTrialServiceHelper {
        if (perDTO == null) {
            PersonDTO createDTO = getUnknownPersonDTO();
            createDTO.setName(perEntity.getName());
-           perDTO = paServiceUtils.createEntity(createDTO);
+           PersonDTO clonedPerson = new PersonDTO();
+           try {
+                 BeanUtils.copyProperties(clonedPerson, createDTO);
+            } catch (IllegalAccessException e) {
+                LOG.error("IllegalAccessException while creating a person during PDQ import ", e);
+            } catch (InvocationTargetException e) {
+                LOG.error("InvocationTargetException while creating a person during PDQ import ", e);
+            }
+            perDTO = paServiceUtils.createEntity(clonedPerson);
        }
        return perDTO;
    }
