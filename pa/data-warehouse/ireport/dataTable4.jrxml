@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dataTable4" language="groovy" pageWidth="2150" pageHeight="842" orientation="Landscape" columnWidth="2110" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2f988a2f-b072-49c1-b4cc-e5e23a1c9311">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="576"/>
 	<parameter name="Center" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -21,7 +21,7 @@ System.getProperty( "os.name" ).toLowerCase().indexOf( "win" ) >= 0
 	</parameter>
 	<parameter name="IMAGES_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{OS_WINDOWS}.booleanValue() ?
-"C:\\Users\\ctrp\\dw-3.10-code\\reg-web\\src\\webapp\\images\\" :
+"C:\\Users\\ctrp\\code\\reg-web\\src\\webapp\\images\\" :
 "repo:"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="Use_Start_Date" class="java.lang.Boolean">
@@ -39,7 +39,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
 		<![CDATA[SELECT
        (SELECT SUM(target_accrual)
         FROM dw_study_participating_site
-        WHERE nci_id = dw_data_table_4.nci_id
+        WHERE nci_id = dt4.nci_id
           AND org_po_id IN
               (SELECT organization_id
                FROM dw_family_organization
@@ -49,7 +49,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
 
        (SELECT count(*)
          FROM dw_study_site_accrual_details ssad
-         WHERE nci_id = dw_data_table_4.nci_id AND ssad.status = 'ACTIVE'
+         WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
            AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
@@ -57,7 +57,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
 
        (SELECT count(*)
          FROM dw_study_site_accrual_details ssad
-         WHERE nci_id = dw_data_table_4.nci_id AND ssad.status = 'ACTIVE'
+         WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date < $P{Calculated_Start_Date}
            AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
@@ -65,7 +65,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
 
        (SELECT count(*)
          FROM dw_study_site_accrual_details ssad
-         WHERE nci_id = dw_data_table_4.nci_id AND ssad.status = 'ACTIVE'
+         WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
            AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
@@ -73,7 +73,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
 
        (SELECT count(*)
          FROM dw_study_site_accrual_details ssad
-         WHERE nci_id = dw_data_table_4.nci_id AND ssad.status = 'ACTIVE'
+         WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <  $P{Calculated_Start_Date}
            AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
@@ -81,27 +81,29 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
 
        (SELECT count(*)
          FROM dw_study_site_accrual_details ssad
-         WHERE nci_id = dw_data_table_4.nci_id AND ssad.status = 'ACTIVE'
+         WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
            AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) NOT IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
-           AND dw_data_table_4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
+           AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total,
 
        (SELECT count(*)
          FROM dw_study_site_accrual_details ssad
-         WHERE nci_id = dw_data_table_4.nci_id AND ssad.status = 'ACTIVE'
+         WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date < $P{Calculated_Start_Date}
            AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) NOT IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
-           AND dw_data_table_4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
+           AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total_before,
-      (dw_data_table_4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})) AS isLead,
-       (SELECT serial_number FROM dw_grants_p30 WHERE family_name = $P{Center}) AS p30Grant,
-       dw_data_table_4.*
-FROM "dw_data_table_4" dw_data_table_4
+      (dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})) AS isLead,
+      (SELECT serial_number FROM dw_grants_p30 WHERE family_name = $P{Center}) AS p30Grant,
+       ftd.program_codes,
+       dt4.*
+FROM "dw_data_table_4" dt4
+LEFT JOIN dw_family_trial_data ftd ON (ftd.nci_id = dt4.nci_id AND ftd.family_name = $P{Center})
 WHERE summary_level_accrual = false
-  AND nci_id IN (select nci_id
+  AND dt4.nci_id IN (select nci_id
                  from dw_study_overall_status
                  where ( date_trunc('day', status_date) between $P{Calculated_Start_Date} and $P{End_Date}
                          or internal_system_id in ( select max(internal_system_id )
@@ -111,7 +113,7 @@ WHERE summary_level_accrual = false
                     and status in ('ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
                                    'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
                                    'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
-  AND nci_id NOT IN (SELECT nci_id
+  AND dt4.nci_id NOT IN (SELECT nci_id
                      FROM dw_study_processing_status
                      WHERE (nci_id, date) IN (
                                          SELECT nci_id, max(date)
@@ -119,14 +121,14 @@ WHERE summary_level_accrual = false
                                          WHERE date <= $P{End_Date}
                                          GROUP BY nci_id)
                        AND status IN ('Rejected', 'SUBMISSION_TERMINATED'))
-  AND nci_id IN ( SELECT nci_id
+  AND dt4.nci_id IN ( SELECT nci_id
                   FROM dw_study_participating_site
                   WHERE  org_org_family = $P{Center} )
 UNION
 SELECT
       ( SELECT SUM(target_accrual)
         FROM dw_study_participating_site
-        WHERE nci_id = dw_data_table_4.nci_id
+        WHERE nci_id = dt4.nci_id
           AND org_po_id IN
               (SELECT organization_id
                FROM dw_family_organization
@@ -147,7 +149,7 @@ SELECT
              )
            ) AS saca1
          JOIN dw_study_participating_site sps1 ON (saca1.study_site_id = sps1.internal_system_id)
-         WHERE sps1.nci_id = dw_data_table_4.nci_id
+         WHERE sps1.nci_id = dt4.nci_id
            AND sps1.org_po_id IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
        ) AS center_total,
@@ -166,7 +168,7 @@ SELECT
              )
            ) AS saca2
          JOIN dw_study_participating_site sps2 ON (saca2.study_site_id = sps2.internal_system_id)
-         WHERE sps2.nci_id = dw_data_table_4.nci_id
+         WHERE sps2.nci_id = dt4.nci_id
            AND sps2.org_po_id IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
        ) AS center_total_before,
@@ -185,7 +187,7 @@ SELECT
               )
             ) AS saca3
           JOIN dw_study_participating_site sps3 ON (saca3.study_site_id = sps3.internal_system_id)
-          WHERE sps3.nci_id = dw_data_table_4.nci_id
+          WHERE sps3.nci_id = dt4.nci_id
             AND sps3.org_po_id IN
                   (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
        ) AS affiliate_total,
@@ -204,7 +206,7 @@ SELECT
               )
             ) AS saca4
           JOIN dw_study_participating_site sps4 ON (saca4.study_site_id = sps4.internal_system_id)
-          WHERE sps4.nci_id = dw_data_table_4.nci_id
+          WHERE sps4.nci_id = dt4.nci_id
             AND sps4.org_po_id IN
                   (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
        ) AS affiliate_total_before,
@@ -223,9 +225,9 @@ SELECT
               )
             ) AS saca5
           JOIN dw_study_participating_site sps5 ON (saca5.study_site_id = sps5.internal_system_id)
-          WHERE sps5.nci_id = dw_data_table_4.nci_id
+          WHERE sps5.nci_id = dt4.nci_id
             AND sps5.org_po_id NOT IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
-            AND dw_data_table_4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
+            AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total,
 
        (
@@ -242,17 +244,19 @@ SELECT
               )
             ) AS saca6
           JOIN dw_study_participating_site sps6 ON (saca6.study_site_id = sps6.internal_system_id)
-          WHERE sps6.nci_id = dw_data_table_4.nci_id
+          WHERE sps6.nci_id = dt4.nci_id
             AND sps6.org_po_id NOT IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
-            AND dw_data_table_4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
+            AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total_before,
 
-      (dw_data_table_4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})) AS isLead,
+      (dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})) AS isLead,
        (SELECT serial_number FROM dw_grants_p30 WHERE family_name = $P{Center}) AS p30Grant,
-       dw_data_table_4.*
-FROM "dw_data_table_4" dw_data_table_4
+       ftd.program_codes,
+       dt4.*
+FROM "dw_data_table_4" dt4
+LEFT JOIN dw_family_trial_data ftd ON (ftd.nci_id = dt4.nci_id AND ftd.family_name = $P{Center})
 WHERE summary_level_accrual = true
-  AND ( nci_id IN (select nci_id
+  AND ( dt4.nci_id IN (select nci_id
                  from dw_study_overall_status
                  where (date_trunc('day', status_date) between $P{Calculated_Start_Date} and $P{End_Date}
                          or internal_system_id in ( select max(internal_system_id )
@@ -262,12 +266,12 @@ WHERE summary_level_accrual = true
                     and status in ('ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
                                    'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
                                    'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
-        OR (is_industrial = TRUE AND nci_id IN (select nci_id
+        OR (is_industrial = TRUE AND dt4.nci_id IN (select nci_id
                       from dw_data_table_4
                       where nci_id not in ( select nci_id
                                             from dw_study_overall_status
 	                                  where date_trunc('day', status_date) < $P{Calculated_Start_Date} ))))
-  AND nci_id NOT IN (SELECT nci_id
+  AND dt4.nci_id NOT IN (SELECT nci_id
                      FROM dw_study_processing_status
                      WHERE (nci_id, date) IN (
                                          SELECT nci_id, max(date)
@@ -275,7 +279,7 @@ WHERE summary_level_accrual = true
                                          WHERE date <= $P{End_Date}
                                          GROUP BY nci_id)
                        AND status IN ('Rejected', 'SUBMISSION_TERMINATED'))
-  AND nci_id IN ( SELECT nci_id
+  AND dt4.nci_id IN ( SELECT nci_id
                   FROM dw_study_participating_site
                   WHERE  org_org_family = $P{Center} )
 ORDER BY clinical_research_cat, nci_id]]>
@@ -289,6 +293,7 @@ ORDER BY clinical_research_cat, nci_id]]>
 	<field name="non_affiliate_total_before" class="java.lang.Long"/>
 	<field name="islead" class="java.lang.Boolean"/>
 	<field name="p30grant" class="java.lang.String"/>
+	<field name="program_codes" class="java.lang.String"/>
 	<field name="clinical_research_cat" class="java.lang.String"/>
 	<field name="study_source" class="java.lang.String"/>
 	<field name="specific_funding_source" class="java.lang.String"/>
@@ -315,7 +320,16 @@ ORDER BY clinical_research_cat, nci_id]]>
 	<field name="summary_level_accrual" class="java.lang.Boolean"/>
 	<field name="consortia_trial_category" class="java.lang.String"/>
 	<background>
-		<band splitType="Stretch"/>
+		<band height="802" splitType="Stretch">
+			<printWhenExpression><![CDATA[true]]></printWhenExpression>
+			<staticText>
+				<reportElement uuid="b398d703-6436-473b-b367-8e0baa33b7b6" x="0" y="0" width="2110" height="802" forecolor="#FF9999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="160" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Draft, NCI Confidential]]></text>
+			</staticText>
+		</band>
 	</background>
 	<title>
 		<band height="37" splitType="Stretch">
@@ -611,7 +625,7 @@ new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{prog_code}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{program_codes}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
 				<reportElement uuid="dcb81fc3-0361-4a84-b100-0e25970286d4" x="984" y="0" width="64" height="80"/>
