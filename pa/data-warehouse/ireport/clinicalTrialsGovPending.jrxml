@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="trialTypes" language="groovy" pageWidth="1000" pageHeight="842" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true" uuid="615c27e5-225b-4bc7-8ecd-a9c9be457bae">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ctgPendingAck" language="groovy" pageWidth="1000" pageHeight="842" columnWidth="960" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="615c27e5-225b-4bc7-8ecd-a9c9be457bae">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="249"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="OS_WINDOWS" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(
@@ -10,7 +10,7 @@ System.getProperty( "os.name" ).toLowerCase().indexOf( "win" ) >= 0
 	</parameter>
 	<parameter name="IMAGES_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{OS_WINDOWS}.booleanValue() ?
-"C:\\Users\\ctrp\\dw-3.10-code\\reg-web\\src\\webapp\\images\\" :
+"C:\\Users\\ctrp\\code\\reg-web\\src\\webapp\\images\\" :
 "repo:"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="NCI_Trial_ID_po" class="java.lang.String">
