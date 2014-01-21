@@ -18,10 +18,13 @@ CREATE TABLE STG_DW_PERSON (
 	RACE_CODE character varying (255),
 	STATE_OR_PROVINCE character varying (255),
 	SUFFIX character varying (10),
-	EMAIL character varying (256),
-	FAX character varying (256),
-	PHONE character varying (256),
-	TTY character varying (50),
-	AFFILIATE_ORG character varying(200)
+	EMAIL character varying (2000),
+	FAX character varying (2000),
+	PHONE character varying (2000),
+	TTY character varying (2000),
+	WEBSITE_URL character varying (2000)
 	)
 	;
+
+ALTER TABLE stg_dw_person
+  ADD PRIMARY KEY (po_id);

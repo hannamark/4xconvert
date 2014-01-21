@@ -8,7 +8,6 @@ def sql = """select
 			 add.cityormunicipality,
 			 country.name as country_name,
 			 ctepid.assigned_identifier_extension as ctep_id,
-			 c.value as comments,
 			 per.firstname,
 			 per.middlename,
 			 per.lastname,	
@@ -18,30 +17,13 @@ def sql = """select
 			 per.statusdate,
 			 per.sex,
 			 per.suffix,
-			 add.stateorprovince,
-			 e.value as email,
-			 fax.value as faxnumber,	 
-			 phone.value as phone,
-			 tty.value as tty,
-			 url.value as url
+			 add.stateorprovince
 			 from Person per
 			 join address add on add.id = per.postal_address_id
 			 left outer join identifiedperson ctepid on ctepid.player_id = per.id 
 			 	and ctepid.assigned_identifier_root = '2.16.840.1.113883.3.26.6.1'
 			 	and ctepid.status = 'ACTIVE'
 			 left outer join country on country.id = add.country_id
-			 left outer join person_email p_e on p_e.person_id = per.id
-			 left outer join email e on e.id = p_e.email_id
-             left outer join person_comment p_c on p_c.person_id = per.id
-             left outer join comment c on c.id = p_c.comment_id
-			 left outer join person_fax p_f on p_f.person_id = per.id
-			 left outer join phonenumber fax on fax.id = p_f.fax_id
-			 left outer join person_phone p_ph on p_ph.person_id = per.id
-			 left outer join phonenumber phone on phone.id = p_ph.phone_id			 
-			 left outer join person_tty p_tty on p_tty.person_id = per.id
-			 left outer join phonenumber tty on tty.id = p_tty.tty_id
-			 left outer join person_url p_url on p_url.person_id = per.id
-			 left outer join url url on url.id = p_url.url_id
 			"""
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.po.jdbc.url'], properties['datawarehouse.po.db.username'], 
@@ -60,7 +42,6 @@ sourceConnection.eachRow(sql) { row ->
     	city: row.cityormunicipality,
     	country: row.country_name,
     	ctep_id: row.ctep_id,
-    	curator_comment: row.comments,
     	name: ((row.firstname == null ? "" : row.firstname + " ") 
               + (row.middlename == null ? "" : row.middlename + " ") 
               + (row.lastname == null ? "" : row.lastname)),
@@ -71,15 +52,65 @@ sourceConnection.eachRow(sql) { row ->
  		sex_code: row.sex,
  		state_or_province: row.stateorprovince,
  		suffix: row.suffix,
- 		email: row.email,
- 	 	fax: row.faxnumber,
- 	 	phone: row.phone,
- 	 	tty: row.tty
 	)
 }
 
-def usql = """
-    UPDATE stg_dw_person per
-    SET affiliate_org = (SELECT affiliate_org FROM stg_dw_affiliate_org aff WHERE per.email = aff.email_address)
-    """
-destinationConnection.executeUpdate(usql)
+sourceConnection.eachRow("""SELECT jt.person_id, c.value
+                            FROM person_comment jt
+                            JOIN comment c ON c.id = jt.comment_id AND c.value IS NOT NULL
+                            ORDER BY jt.idx""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_person
+                                           SET curator_comment = COALESCE(curator_comment || ', ' || ?, ?)
+                                           WHERE po_id = ?
+                                        """, [row.value, row.value, row.person_id]);
+}
+
+sourceConnection.eachRow("""SELECT jt.person_id, e.value 
+                            FROM person_email jt
+                            JOIN email e on e.id = jt.email_id
+                            ORDER BY jt.idx""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_person
+                                           SET email = COALESCE(email || ', ' || ?, ?)
+                                           WHERE po_id = ?
+                                        """, [row.value, row.value, row.person_id]);
+}
+
+sourceConnection.eachRow("""SELECT jt.person_id, p.value
+                            FROM person_fax jt
+                            JOIN phonenumber p on p.id = jt.fax_id
+                            ORDER BY jt.idx""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_person
+                                           SET fax = COALESCE(fax || ', ' || ?, ?)
+                                           WHERE po_id = ?
+                                        """, [row.value, row.value, row.person_id]);
+}
+ 
+sourceConnection.eachRow("""SELECT jt.person_id, p.value
+                            FROM person_phone jt
+                            JOIN phonenumber p on p.id = jt.phone_id
+                            ORDER BY jt.idx""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_person
+                                           SET phone = COALESCE(phone || ', ' || ?, ?)
+                                           WHERE po_id = ?
+                                        """, [row.value, row.value, row.person_id]);
+}
+ 
+sourceConnection.eachRow("""SELECT jt.person_id, p.value
+                            FROM person_fax jt
+                            JOIN phonenumber p on p.id = jt.fax_id
+                            ORDER BY jt.idx""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_person
+                                           SET tty = COALESCE(tty || ', ' || ?, ?)
+                                           WHERE po_id = ?
+                                        """, [row.value, row.value, row.person_id]);
+}
+
+sourceConnection.eachRow("""SELECT jt.person_id, u.value
+                            FROM person_url jt
+                            JOIN url u on u.id = jt.url_id
+                            ORDER BY jt.idx""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_person
+                                           SET website_url = COALESCE(website_url || ', ' || ?, ?)
+                                           WHERE po_id = ?
+                                        """, [row.value, row.value, row.person_id]);
+}
