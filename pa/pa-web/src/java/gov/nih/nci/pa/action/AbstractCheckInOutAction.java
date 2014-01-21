@@ -138,7 +138,7 @@ public abstract class AbstractCheckInOutAction extends ActionSupport {
 
     private String checkOut(CheckOutType checkOutType) throws PAException {
         try {
-            studyCheckoutService.checkOut(
+            getStudyCheckoutService().checkOut(
                     IiConverter.convertToStudyProtocolIi(studyProtocolId),
                     CdConverter.convertToCd(checkOutType),
                     StConverter.convertToSt(UsernameHolder.getUser()));

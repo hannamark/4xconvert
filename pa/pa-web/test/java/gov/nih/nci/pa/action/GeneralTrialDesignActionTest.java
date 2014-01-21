@@ -66,4 +66,21 @@ public class GeneralTrialDesignActionTest extends AbstractPaActionTest {
 	public void testRemoveCentralContact() {
 		assertEquals("edit",generalTrialDesignAction.removeCentralContact());
 	}
+	
+	/**
+	 * Test method for {@link gov.nih.nci.pa.action.AbstractGeneralTrialDesignAction#validateResponsibleParty()}.
+	 */
+	@Test
+	public void testValidateResponsibleParty() {
+	    GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
+	    gtdDTO.setResponsiblePartyType("");
+	    generalTrialDesignAction.setGtdDTO(gtdDTO);
+	    generalTrialDesignAction.validateResponsibleParty();
+	    gtdDTO.setResponsiblePartyType("si");
+	    generalTrialDesignAction.validateResponsibleParty();
+	    gtdDTO.setResponsiblePartyType("pi");
+	    generalTrialDesignAction.validateResponsibleParty();
+	    gtdDTO.setResponsiblePartyType("sponsor");
+	    generalTrialDesignAction.validateResponsibleParty();	    
+	}		
 }

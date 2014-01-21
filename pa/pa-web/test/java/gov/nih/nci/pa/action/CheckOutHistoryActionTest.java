@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.Constants;
 
@@ -19,5 +20,6 @@ public class CheckOutHistoryActionTest extends AbstractPaActionTest {
     @Test
     public void executeTest() throws Exception {
         assertEquals("success", action.execute());
+        assertNotNull(action.getCheckOutList());
     }
 }

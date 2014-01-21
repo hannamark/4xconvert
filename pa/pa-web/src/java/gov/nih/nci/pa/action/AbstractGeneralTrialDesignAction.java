@@ -34,7 +34,7 @@ class AbstractGeneralTrialDesignAction extends ActionSupport {
     
     
     protected void validateResponsibleParty() {
-        String type = gtdDTO.getResponsiblePartyType();
+        String type = getGtdDTO().getResponsiblePartyType();
         if (StringUtils.isBlank(type)) {
             checkForMandatoryResponsibleParty();
         } else if ("pi".equals(type) || "si".equals(type)) {

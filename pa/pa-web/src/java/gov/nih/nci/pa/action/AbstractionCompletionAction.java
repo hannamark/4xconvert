@@ -154,16 +154,16 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
             abstractionList = abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
             abstractionAdminList = new ArrayList<AbstractionCompletionDTO>();
             abstractionScientificList = new ArrayList<AbstractionCompletionDTO>();
-            absWarningList = getWarnings();
-            abstractionError = errorExists();
+            setAbsWarningList(getWarnings());
+            setAbstractionError(errorExists());
                 for (AbstractionCompletionDTO abs : abstractionList) {
                     if (abs.getErrorType().equalsIgnoreCase("error")) {
                         if (abs.getErrorMessageType().equals(ErrorMessageTypeEnum.ADMIN)) {
-                            abstractionAdminList.add(abs);
-                            absAdminError = true;
+                            getAbstractionAdminList().add(abs);
+                            setAbsAdminError(true);                            
                         } else if (abs.getErrorMessageType().equals(ErrorMessageTypeEnum.SCIENTIFIC)) {
-                            abstractionScientificList.add(abs);
-                            absScientificError = true;
+                            getAbstractionScientificList().add(abs);
+                            setAbsScientificError(true);                            
                         }  
                     }
                 }
@@ -176,7 +176,6 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
     }
 
 
-
     /**
      * @return res
      */
@@ -187,7 +186,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
                 return DISPLAY_XML;
             }
             String xmlData = ctGovXmlGeneratorService.generateCTGovXml(
-                    IiConverter.convertToStudyProtocolIi(studyProtocolId),
+                    IiConverter.convertToStudyProtocolIi(getStudyProtocolId()),
                     CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
             servletResponse.setContentType("application/xml");
             servletResponse.setCharacterEncoding("UTF-8");
@@ -212,7 +211,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
             ByteArrayOutputStream reportData = tsrReportGeneratorService.generateRtfTsrReport(studyProtocolIi);
             int randomInt = new Random().nextInt(MAXIMUM_RANDOM_FILE_NUMBER);
             String fileName = TSR + randomInt + studyProtocolIi.getExtension() + EXTENSION_RTF;
-            servletResponse.setContentType("application/rtf");
+            getServletResponse().setContentType("application/rtf");
             servletResponse.setContentLength(reportData.size());
             servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
             servletResponse.setHeader("Pragma", "public");

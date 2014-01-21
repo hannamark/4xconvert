@@ -6,12 +6,19 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.service.MockCorrelationUtils;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -33,11 +40,18 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class CollaboratorsActionTest extends AbstractPaActionTest {
     private CollaboratorsAction action;
+    private OrganizationCorrelationServiceRemote ocService;
+    private StudySiteServiceLocal sPartService;
     @Before
     public void prepare() throws Exception {
         action = new CollaboratorsAction();
         action.prepare();
         action.setCorrelationUtils(new MockCorrelationUtils());
+        ocService = mock(OrganizationCorrelationServiceRemote.class);
+        sPartService = mock(StudySiteServiceLocal.class);
+        StudySiteDTO sp = new StudySiteDTO();
+        when(ocService.createResearchOrganizationCorrelations(any(String.class))).thenReturn(1L);
+        when(sPartService.create(any(StudySiteDTO.class))).thenReturn(sp);
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(2L));
      }
     @Test
@@ -99,7 +113,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
     @Test
     public void testDelete() throws Exception {
         action.setObjectsToDelete(new String[] {"1"});
-        assertEquals("delete",action.delete());
+        assertEquals("delete",action.delete());       
     }
     @Test
     public void testDisplayOrg() throws Exception {
@@ -108,7 +122,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
         request.setupAddParameter("orgId", "1");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("displayJsp",action.displayOrg());
+        assertEquals("displayJsp",action.displayOrg());        
     }
     @Test
     public void testEdit() throws Exception {
@@ -134,7 +148,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
         action.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE.getCode());
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("facilitySave", action.facilityUpdate());
+        assertEquals("facilitySave", action.facilityUpdate());        
     }
     @Test
     public void  testFacilityUpdateE() throws Exception {
@@ -153,6 +167,7 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
         assertEquals("create", action.facilitySave());
         assertNotNull(action.getActionErrors());
     }
+    
     @Test
     public void  testFacilitySave() throws Exception {
         HttpSession sess = new MockHttpSession();
@@ -162,11 +177,11 @@ public class CollaboratorsActionTest extends AbstractPaActionTest {
         Organization facilityOrg = new Organization();
         facilityOrg.setIdentifier("1");
         tab.setFacilityOrganization(facilityOrg);
-        sess.setAttribute("participatingOrganizationsTabs", tab);
-        //action.setFunctionalCode(StudyParticipationFunctionalCode.TREATING_SITE.getCode());
-
+        sess.setAttribute("participatingOrganizationsTabs", tab);        
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("create", action.facilitySave());
+        action.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode());
+        assertEquals("facilitySave", action.facilitySave());
     }
 }

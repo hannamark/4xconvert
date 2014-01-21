@@ -175,7 +175,7 @@ public class AssignOwnershipAction extends ActionSupport {
                 .getAttribute(Constants.STUDY_PROTOCOL_II);
         PaRegistry.getRegistryUserService().setEmailNotificationsPreference(
                 Long.parseLong(getUserId()), IiConverter.convertToLong(spIi),
-                enableEmails);
+                isEnableEmails());
         return null;
     }
 
@@ -234,8 +234,7 @@ public class AssignOwnershipAction extends ActionSupport {
         final RegistryUserService registryUserService = getRegistryUserService();
         try {
             Ii spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-            if (!ISOUtil.isIiNull(spIi)) {
-                
+            if (!ISOUtil.isIiNull(spIi)) {                
                 RegistryUser regUser = new RegistryUser();
                 regUser.setFirstName(criteria.getFirstName());
                 regUser.setLastName(criteria.getLastName());
@@ -367,5 +366,4 @@ public class AssignOwnershipAction extends ActionSupport {
     public void setEnableEmails(boolean enableEmails) {
         this.enableEmails = enableEmails;
     }
-
 }

@@ -196,4 +196,8 @@ public class OnholdActionTest extends AbstractPaActionTest {
         act.deleteObject(1l);
     }
     
+    @Test
+    public void testSave() throws PAException {
+        assertEquals("edit", act.save());
+    }
 }

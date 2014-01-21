@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -51,6 +52,7 @@ public class AbstractionCompletionActionTest {
 
     private AbstractionCompletionAction createAbstractionCompletionAction() {
         AbstractionCompletionAction action = new AbstractionCompletionAction();
+        action.prepare();
         setDependencies(action);
         return action;
     }
@@ -87,15 +89,18 @@ public class AbstractionCompletionActionTest {
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
         HttpSession session = ServletActionContext.getRequest().getSession();
         session.setAttribute(Constants.STUDY_PROTOCOL_II, spIi);
-        List<AbstractionCompletionDTO> abstractionList = new ArrayList<AbstractionCompletionDTO>();
+        List<AbstractionCompletionDTO> abstractionList = createAbstractionList("error", 
+                ErrorMessageTypeEnum.ADMIN);        
         when(abstractionCompletionService.validateAbstractionCompletion(spIi)).thenReturn(abstractionList);
         String result = sut.query();
         assertEquals("Wrong result returned", "success", result);
         assertEquals("Wrong abstraction list", abstractionList, sut.getAbstractionList());
-        assertFalse("Wrong error indicator", sut.isAbstractionError());
+        assertTrue("Wrong error indicator", sut.isAbstractionError());
         assertNull("Unexpected failure message",
                    ServletActionContext.getRequest().getAttribute(Constants.FAILURE_MESSAGE));
-        verify(abstractionCompletionService).validateAbstractionCompletion(spIi);
+        abstractionList = createAbstractionList("error", ErrorMessageTypeEnum.SCIENTIFIC);
+        when(abstractionCompletionService.validateAbstractionCompletion(spIi)).thenReturn(abstractionList);
+        result = sut.query();
     }
 
     /**
@@ -234,8 +239,8 @@ public class AbstractionCompletionActionTest {
     @Test
     public void testerrorExistsTrue() {
         sut = createAbstractionCompletionAction();
-        sut.setAbstractionList(createAbstractionList("error"));
-        assertTrue("Wrong result of errorExists", sut.errorExists());
+        sut.setAbstractionList(createAbstractionList("error", null));
+        assertTrue("Wrong result of errorExists", sut.errorExists());        
     }
 
     /**
@@ -244,19 +249,23 @@ public class AbstractionCompletionActionTest {
     @Test
     public void testerrorExistsFalse() {
         sut = createAbstractionCompletionAction();
-        sut.setAbstractionList(createAbstractionList("warning"));
+        sut.setAbstractionList(createAbstractionList("warning", null));
         assertFalse("Wrong result of errorExists", sut.errorExists());
     }
 
     /**
      * Creates an abstraction list with one element of the given type.
      * @param errorType The type
+     * @param errorMessageType error message type
      * @return an abstraction list with one element of the given type
      */
-    private List<AbstractionCompletionDTO> createAbstractionList(String errorType) {
+    private List<AbstractionCompletionDTO> createAbstractionList(String errorType, ErrorMessageTypeEnum errorMessageType) {
         List<AbstractionCompletionDTO> list = new ArrayList<AbstractionCompletionDTO>();
         AbstractionCompletionDTO dto = new AbstractionCompletionDTO();
         dto.setErrorType(errorType);
+        if (errorMessageType != null) {
+            dto.setErrorMessageType(errorMessageType);
+        }
         list.add(dto);
         return list;
     }
@@ -267,7 +276,7 @@ public class AbstractionCompletionActionTest {
     @Test
     public void testgetWarnings() {
         sut = createAbstractionCompletionAction();
-        sut.setAbstractionList(createAbstractionList("warning"));
+        sut.setAbstractionList(createAbstractionList("warning", null));
         List<AbstractionCompletionDTO> absWarnings = sut.getWarnings();
         assertTrue("true", absWarnings.size()>0);
     }
@@ -279,7 +288,7 @@ public class AbstractionCompletionActionTest {
     @Test
     public void testgetNoWarnings() {
         sut = createAbstractionCompletionAction();
-        sut.setAbstractionList(createAbstractionList("error"));
+        sut.setAbstractionList(createAbstractionList("error", null));
         List<AbstractionCompletionDTO> absWarnings = sut.getWarnings();
         assertFalse("true", absWarnings.size()>0);
     }

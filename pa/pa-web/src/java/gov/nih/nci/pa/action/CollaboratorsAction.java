@@ -276,8 +276,8 @@ public class CollaboratorsAction extends AbstractMultiObjectDeleteAction impleme
     public String edit() throws PAException {
         setCurrentAction(ACT_EDIT);
         StudySiteDTO spDto = sPartService.get(IiConverter.convertToStudySiteIi(cbValue));
-        editOrg = correlationUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi());
-        orgFromPO.setCity(editOrg.getCity());
+        setEditOrg(correlationUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi()));
+        orgFromPO.setCity(getEditOrg().getCity());
         orgFromPO.setCountry(editOrg.getCountryName());
         orgFromPO.setName(editOrg.getName());
         orgFromPO.setZip(editOrg.getPostalCode());

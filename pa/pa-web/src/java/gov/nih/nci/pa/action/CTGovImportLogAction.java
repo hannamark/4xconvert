@@ -51,7 +51,6 @@ Preparable {
     
     private CTGovSyncServiceLocal ctGovSyncService;
 
-
     @Override
     public void prepare() {
         request = ServletActionContext.getRequest();
@@ -74,25 +73,25 @@ Preparable {
         if (hasActionErrors()) {
             return ERROR;
         }
-        try {            
-            final Date onOrAfter = StringUtils.isNotBlank(logsOnOrAfter) ? PAUtil
-                    .dateStringToDateTime(logsOnOrAfter) : new Date(0);
-            final Date onOrBefore = StringUtils.isNotBlank(logsOnOrBefore) ? PAUtil
-                    .endOfDay(PAUtil.dateStringToDateTime(logsOnOrBefore))
+        try {      
+            final Date onOrAfter = StringUtils.isNotBlank(getLogsOnOrAfter()) ? PAUtil
+                    .dateStringToDateTime(getLogsOnOrAfter()) : new Date(0);
+            final Date onOrBefore = StringUtils.isNotBlank(getLogsOnOrBefore()) ? PAUtil
+                    .endOfDay(PAUtil.dateStringToDateTime(getLogsOnOrBefore()))
                     : PAUtil.endOfDay(new Date());
             validateTimeLine(onOrAfter, onOrBefore);
             //get all the log entries sorted by date
-            List<CTGovImportLog> importLogs = ctGovSyncService.getLogEntries(nciIdentifier, nctIdentifier, 
-                    officialTitle, action, importStatus, userCreated, onOrAfter, onOrBefore);
+            List<CTGovImportLog> importLogs = ctGovSyncService.getLogEntries(getNciIdentifier(), getNctIdentifier(), 
+                    getOfficialTitle(), getAction(), getImportStatus(), getUserCreated(), onOrAfter, onOrBefore);
             //get the latest entry for each trial.
             Set<String> uniqueTrials = new HashSet<String>();
             for (CTGovImportLog importLog : importLogs) {
                 if (!uniqueTrials.contains(importLog.getNctID())) {
-                    allCtGovImportLogs.add(importLog);
+                    getAllCtGovImportLogs().add(importLog);
                     uniqueTrials.add(importLog.getNctID());
                 }
             }            
-            searchPerformed = true;
+            setSearchPerformed(true);
             return SUCCESS;
         } catch (PAException e) {
             request.setAttribute(Constants.FAILURE_MESSAGE,
@@ -110,7 +109,7 @@ Preparable {
     public String showDetailspopup() {
         try {
             //get the all the log entries for the specified NCT ID.
-            nctCtGovImportLogs = ctGovSyncService.getLogEntries(null, nctId, null, null, null, null, null, null);
+            setNctCtGovImportLogs(ctGovSyncService.getLogEntries(null, getNctId(), null, null, null, null, null, null));
             return DETAILS;
         } catch (PAException pae) {
             request.setAttribute(Constants.FAILURE_MESSAGE, pae.getLocalizedMessage());

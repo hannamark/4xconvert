@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +33,27 @@ public class CTGovImportLogActionTest extends AbstractPaActionTest {
     @Before
     public void setUp() throws PAException {
         ctGovImportLogAction = new CTGovImportLogAction();
+        ctGovImportLogAction.prepare();        
         ctGovSyncServiceLocal = mock(CTGovSyncServiceLocal.class);
         ctGovImportLogAction.setCtGovSyncService(ctGovSyncServiceLocal);
+        CTGovImportLog logEntry = new CTGovImportLog();
+        logEntry.setAction("UPDATE");
+        logEntry.setAdmin(true);
+        logEntry.setScientific(false);
+        logEntry.setImportStatus("Success");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -1);
+        Date date = calendar.getTime();
+        logEntry.setDateCreated(date);
+        logEntry.setNciID("NCI-2012-00260");
+        logEntry.setNctID("NCT-2012-00260");
+        logEntry.setUserCreated("User");
+        logEntry.setTitle("abc");
+        List<CTGovImportLog> logEntries = new ArrayList<CTGovImportLog>();
+        logEntries.add(logEntry);        
         when(ctGovSyncServiceLocal.getLogEntries(any(String.class), any(String.class), any(String.class), 
                 any(String.class), any(String.class), any(String.class), any(Date.class), 
-                any(Date.class))).thenReturn(new ArrayList<CTGovImportLog>());
-        ctGovImportLogAction.prepare();        
+                any(Date.class))).thenReturn(logEntries);
     }
     
     @Test
@@ -46,8 +62,8 @@ public class CTGovImportLogActionTest extends AbstractPaActionTest {
     }
     
     @Test    
-    public void testQuery() {
-        DateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+    public void testQuery() throws PAException {
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
         Date startDate = calendar.getTime();
@@ -62,6 +78,28 @@ public class CTGovImportLogActionTest extends AbstractPaActionTest {
         ctGovImportLogAction.setUserCreated("User");
         ctGovImportLogAction.setOfficialTitle("Title");
         assertEquals("success", ctGovImportLogAction.query());
-        assertNotNull(ctGovImportLogAction.getAllCtGovImportLogs());        
+        assertNotNull(ctGovImportLogAction.getAllCtGovImportLogs());   
+        calendar.add(Calendar.DATE, -5);
+        endDate = calendar.getTime();
+        ctGovImportLogAction.setLogsOnOrBefore(dateFormat.format(endDate));
+        assertEquals("error", ctGovImportLogAction.query());         
+        calendar.add(Calendar.DATE, 8);
+        endDate = calendar.getTime();
+        ctGovImportLogAction.setLogsOnOrBefore(dateFormat.format(endDate));
+        when(ctGovSyncServiceLocal.getLogEntries(any(String.class), any(String.class), any(String.class), 
+                any(String.class), any(String.class), any(String.class), any(Date.class), 
+                any(Date.class))).thenThrow(new PAException());
+        assertEquals("error", ctGovImportLogAction.query());
+    }    
+    
+    @Test
+    public void testShowDetailsPopUp() throws PAException {
+        ctGovImportLogAction.setNctId("NCT");
+        assertEquals("details", ctGovImportLogAction.showDetailspopup());
+        assertNotNull(ctGovImportLogAction.getNctCtGovImportLogs());
+        when(ctGovSyncServiceLocal.getLogEntries(any(String.class), any(String.class), any(String.class), 
+                any(String.class), any(String.class), any(String.class), any(Date.class), 
+                any(Date.class))).thenThrow(new PAException());
+        assertEquals("error", ctGovImportLogAction.showDetailspopup());        
     }
 }

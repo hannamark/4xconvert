@@ -86,13 +86,23 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.AnatomicSiteWebDTO;
+import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -112,14 +122,25 @@ public class AnatomicSiteActionTest extends AbstractPaActionTest {
     AnatomicSiteWebDTO dto;
 
     @Before
-    public void setUp() throws PAException {
+    public void setUp() throws Exception {
+        super.setUp();
         anatomicSiteAction = new AnatomicSiteAction();
         dto = new AnatomicSiteWebDTO(new Cd());
         anatomicSiteAction.setAnatomicSite(dto);
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
         anatomicSiteAction.prepare();
+        AnatomicSite as = new AnatomicSite();
+        as.setCode("Lung");
+        as.setId(1L);
+        as.setCodingSystem("Summary 4 Anatomic Sites");
+        List<AnatomicSite> asiteList = new ArrayList<AnatomicSite>();
+        Set<AnatomicSite> asiteSet = new HashSet<AnatomicSite>();
+        asiteList.add(as);
+        asiteSet.add(as);        
+        when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);                        
+        when(lookupSvc.getAnatomicSites()).thenReturn(asiteList);        
+        spDto.setSummary4AnatomicSites(AnatomicSiteConverter.convertToDSet(asiteSet));
     }
-
     
     @Test
     public void testAdd() throws PAException {
@@ -131,18 +152,10 @@ public class AnatomicSiteActionTest extends AbstractPaActionTest {
     
     @Test
     public void testAddNoCode() throws PAException {
-       ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
-       LookUpTableServiceRemote lookupSvc = mock(LookUpTableServiceRemote.class);
-       AnatomicSite as = new AnatomicSite();
-       as.setCode("Lung");
-       as.setCodingSystem("Summary 4 Anatomic Sites");
-       when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);
-       when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
-       PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
-       AnatomicSiteWebDTO  webdto = new AnatomicSiteWebDTO();
-       anatomicSiteAction.setAnatomicSite(webdto);
-       assertEquals("edit", anatomicSiteAction.add());
-       assertTrue(anatomicSiteAction.hasActionErrors());
+        AnatomicSiteWebDTO  webdto = new AnatomicSiteWebDTO();
+        anatomicSiteAction.setAnatomicSite(webdto);
+        assertEquals("edit", anatomicSiteAction.add());
+        assertTrue(anatomicSiteAction.hasActionErrors());
     }
 
     /**
@@ -152,7 +165,12 @@ public class AnatomicSiteActionTest extends AbstractPaActionTest {
     public void testDelete()  throws PAException{
         anatomicSiteAction.setObjectsToDelete(new String[] {"1"});
         assertEquals("list", anatomicSiteAction.delete());
+        anatomicSiteAction.setObjectsToDelete(new String[] {"test"});
+        assertEquals("list", anatomicSiteAction.delete());                        
+        anatomicSiteAction.setObjectsToDelete(new String[] {"1"});
+        assertEquals("list", anatomicSiteAction.delete());
     }
+    
     @Test
     public void testExecute()  throws PAException{
         assertEquals("list", anatomicSiteAction.execute());

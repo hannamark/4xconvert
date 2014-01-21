@@ -3,6 +3,7 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
@@ -37,8 +38,12 @@ public class PopUpOrgActionTest extends AbstractPaActionTest {
      */
     @Test
     public void testLookuporgs() {
-        assertEquals("orgs", popUpAction.lookuporgs());
-        assertEquals(1, popUpAction.getCountryList().size());
+        getSession().removeAttribute("countrylist");
+        assertEquals("orgs", popUpAction.lookuporgs());        
+        assertEquals(2, popUpAction.getCountryList().size());
+        assertEquals("Zanzibar", popUpAction.getCountryNameUsingCode("ZZZ"));
+        assertEquals("Cayman Islands", popUpAction.getCountryNameUsingCode("CAM"));
+        assertNull(popUpAction.getCountryNameUsingCode("ABC"));
         assertTrue(CollectionUtils.isEmpty(popUpAction.getOrgs()));
     }
     

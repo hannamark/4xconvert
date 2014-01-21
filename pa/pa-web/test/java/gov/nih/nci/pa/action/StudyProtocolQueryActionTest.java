@@ -207,7 +207,17 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
             Assert.fail("Expected an exception, because the user is not a super abstractor.");
         } catch (PAException e) {
         }
+    }
 
+    /**
+     * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#adminAndScientificCheckIn()}.
+     * @throws PAException
+     */
+    @Test
+    public void testAdminAndScientificCheckIn() throws PAException {
+        spqAction.setCheckInReason("Test");
+        spqAction.setStudyProtocolId(1L);
+        assertEquals("viewRefresh", spqAction.adminAndScientificCheckIn());        
     }
     
     /**
