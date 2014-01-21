@@ -93,12 +93,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -134,13 +138,14 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Test;
@@ -439,5 +444,65 @@ public class AbstractionCompletionServiceBeanTest {
         assertTrue(errors.hasError(" Study Population Description is required "));
         
     }
+    
+    @Test
+    public void testDoubleBlindingSchema() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();        
+        InterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        dto.setBlindingSchemaCode(CdConverter
+                .convertToCd(BlindingSchemaCode.DOUBLE_BLIND));
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceBlindingSchemaRules(dto, errors);
+        assertTrue(errors.hasError("At least two masking roles must be specified for \"Double Blind\" masking."));
+        
+    }
+    
+    @Test
+    public void testOpenBlindingSchema() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();        
+        InterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        dto.setBlindingSchemaCode(CdConverter
+                .convertToCd(BlindingSchemaCode.OPEN));
+        
+        dto.setBlindedRoleCode(new DSet<Cd>());
+        dto.getBlindedRoleCode().setItem(new HashSet<Cd>());
+        dto.getBlindedRoleCode().getItem().add(CdConverter.convertToCd(BlindingRoleCode.CAREGIVER));
+        
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceBlindingSchemaRules(dto, errors);
+        assertTrue(errors.hasError("Open Blinding Schema code cannot have any Blinded codes."));
+        
+    }
+    
+    @Test
+    public void testSingleBlindingSchema() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();        
+        InterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        dto.setBlindingSchemaCode(CdConverter
+                .convertToCd(BlindingSchemaCode.SINGLE_BLIND));
+        
+        dto.setBlindedRoleCode(new DSet<Cd>());
+        dto.getBlindedRoleCode().setItem(new HashSet<Cd>());
+        dto.getBlindedRoleCode().getItem().add(CdConverter.convertToCd(BlindingRoleCode.CAREGIVER));
+        dto.getBlindedRoleCode().getItem().add(CdConverter.convertToCd(BlindingRoleCode.INVESTIGATOR));
+        
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceBlindingSchemaRules(dto, errors);
+        assertTrue(errors.hasError("Only one masking role must be specified for \"Single Blind\" masking."));
+        
+    }
 
+
+    @Test
+    public void testSingleBlindingSingleCodeSchema() throws PAException {
+        AbstractionCompletionServiceBean sut = createAbstractionCompletionServiceBean();        
+        InterventionalStudyProtocolDTO dto = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        dto.setBlindingSchemaCode(CdConverter
+                .convertToCd(BlindingSchemaCode.SINGLE_BLIND));
+        AbstractionMessageCollection errors = new AbstractionMessageCollection();
+        sut.enforceBlindingSchemaRules(dto, errors);
+        assertTrue(errors.hasError("Single Blinding Schema code must have 1 Blinded code."));
+        
+    }
+    
 }

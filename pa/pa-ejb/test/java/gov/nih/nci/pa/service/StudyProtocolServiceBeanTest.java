@@ -341,66 +341,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
     
-    @Test
-    public void businessRulesExceptionNoMaskingRoles() throws Exception {
-
-        thrown.expect(PAException.class);
-        thrown.expectMessage("At least two masking roles must be specified for \"Double Blind\" masking.");
-
-        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest
-                .createInterventionalStudyProtocolDTOObj();
-        ispDTO.setBlindingSchemaCode(CdConverter
-                .convertToCd(BlindingSchemaCode.DOUBLE_BLIND));
-        remoteEjb.createInterventionalStudyProtocol(ispDTO);
-    }
     
-    @Test
-    public void businessRulesExceptionMaskingRoles1() throws Exception {
-
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Single Blinding Schema code must have 1 Blinded code.");
-
-        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest
-                .createInterventionalStudyProtocolDTOObj();
-        ispDTO.setBlindingSchemaCode(CdConverter
-                .convertToCd(BlindingSchemaCode.SINGLE_BLIND));
-        remoteEjb.createInterventionalStudyProtocol(ispDTO);
-    }
-    
-    @Test
-    public void businessRulesExceptionMaskingRoles2() throws Exception {
-
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Only one masking role must be specified for 'Single Blind' masking.");
-
-        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest
-                .createInterventionalStudyProtocolDTOObj();
-        ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.SINGLE_BLIND));
-
-        List<Cd> blindingRoles = new ArrayList<Cd>();
-        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.CAREGIVER.getCode()));
-        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.INVESTIGATOR.getCode()));
-        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.OUTCOMES_ASSESSOR.getCode()));
-        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.SUBJECT.getCode()));
-        ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(blindingRoles));
-        remoteEjb.createInterventionalStudyProtocol(ispDTO);
-    }
-    
-    @Test
-    public void businessRulesExceptionMaskingRoles3() throws Exception {
-
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Open Blinding Schema code cannot have any Blinded codes.");
-
-        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest
-                .createInterventionalStudyProtocolDTOObj();
-        ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.OPEN));
-        List<Cd> blindingRoles = new ArrayList<Cd>();
-        blindingRoles.add(CdConverter.convertStringToCd(BlindingRoleCode.CAREGIVER.getCode()));
-        ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(blindingRoles));
-        remoteEjb.createInterventionalStudyProtocol(ispDTO);
-    }
-
     @Test
     public void businessRulesExceptionForUpdate() throws Exception {
         InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
@@ -435,20 +376,6 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.updateInterventionalStudyProtocol(saved, "DesignDetails");
     }
     
-    @Test
-    public void businessRulesExceptionForUpdateBlindingRoles() throws Exception {
-        
-        thrown.expect(PAException.class);
-        thrown.expectMessage("At least two masking roles must be specified for \"Double Blind\" masking.");
-        
-        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
-        Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
-        InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
-        saved.setBlindingSchemaCode(CdConverter
-                .convertToCd(BlindingSchemaCode.DOUBLE_BLIND));
-        
-        remoteEjb.updateInterventionalStudyProtocol(saved, null);
-    }
 
     @Test
     public void createInterventionalStudyProtocol() throws Exception {

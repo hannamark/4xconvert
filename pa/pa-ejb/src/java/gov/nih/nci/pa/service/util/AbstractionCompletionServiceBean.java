@@ -93,6 +93,7 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
+import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
@@ -257,9 +258,11 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         AbstractionMessageCollection messages = new AbstractionMessageCollection();
 
-        StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
-        if (!ISOUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
-                && BlConverter.convertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator())) {
+        StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);        
+        
+        enforceBlindingSchemaRules(studyProtocolDTO, messages);
+        
+        if (isPropTrial(studyProtocolDTO)) {
             abstractionCompletionRuleForProprietary(studyProtocolDTO, messages);
         } else {
             enforceIdentifierLength(studyProtocolDTO, messages);
@@ -331,6 +334,78 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
 
     /**
+     * @param studyProtocolDTO
+     * @return
+     */
+    private boolean isPropTrial(StudyProtocolDTO studyProtocolDTO) {
+        return !ISOUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
+                && BlConverter.convertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator());
+    }
+
+    void enforceBlindingSchemaRules(StudyProtocolDTO studyProtocolDTO,
+            AbstractionMessageCollection messages) {
+        if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
+            InterventionalStudyProtocolDTO ispDTO = (InterventionalStudyProtocolDTO) studyProtocolDTO;
+            enforceBlindingSchemaRules(ispDTO, messages);
+        }
+    }
+
+    /**
+     * @param ispDTO
+     */
+    private void enforceBlindingSchemaRules(
+            InterventionalStudyProtocolDTO ispDTO,
+            AbstractionMessageCollection messages) {
+        int totBlindCodes = 0;
+        if (ISOUtil.isDSetNotEmpty(ispDTO.getBlindedRoleCode())) {
+            totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
+        }
+        checkBlindingSchemaCode(ispDTO, totBlindCodes, messages);
+    }
+
+    private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, // NOPMD
+            int totBlindCodes, AbstractionMessageCollection messages) {
+        if (ispDTO.getBlindingSchemaCode() != null) {
+            if (BlindingSchemaCode.OPEN.getCode().equals(
+                    ispDTO.getBlindingSchemaCode().getCode())
+                    && totBlindCodes > 0) {
+                addBlindingSchemaMessage(ispDTO, messages,
+                        "Open Blinding Schema code cannot have any Blinded codes.");
+            }
+            if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(
+                    ispDTO.getBlindingSchemaCode().getCode())
+                    && totBlindCodes > 1) {
+                addBlindingSchemaMessage(ispDTO, messages,
+                        "Only one masking role must be specified for \"Single Blind\" masking.");
+            }
+            if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(
+                    ispDTO.getBlindingSchemaCode().getCode())
+                    && totBlindCodes < 1) {
+                addBlindingSchemaMessage(ispDTO, messages,
+                        "Single Blinding Schema code must have 1 Blinded code.");
+            }
+            if (BlindingSchemaCode.DOUBLE_BLIND.getCode().equals(
+                    ispDTO.getBlindingSchemaCode().getCode())
+                    && totBlindCodes < 2) {
+                addBlindingSchemaMessage(ispDTO, messages,
+                        "At least two masking roles must be specified for \"Double Blind\" masking.");
+            }
+        }
+
+    }
+
+    private void addBlindingSchemaMessage(
+            InterventionalStudyProtocolDTO ispDTO,
+            AbstractionMessageCollection messages, String msg) {
+        if (isPropTrial(ispDTO)) {
+            messages.addWarning(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, msg, 12);
+        } else {
+            messages.addError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, msg,
+                    ErrorMessageTypeEnum.SCIENTIFIC, 12);
+        }
+    }
+
+    /**
      * @param studyProtocolIi
      * @param messages
      * @param ospDTO
@@ -383,8 +458,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         enforceIdentifierLength(studyProtocolDTO, messages);
-        enforceGeneralTrialDetails(studyProtocolDTO, messages);
-
+        enforceGeneralTrialDetails(studyProtocolDTO, messages);        
         enforceInterventions(studyProtocolDTO, messages);
         enforceStudySiteNullification(studyProtocolIi, messages);
         enforceStudySiteContactNullification(studyProtocolIi, messages);

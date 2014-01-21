@@ -118,7 +118,6 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.IdentifierType;
@@ -286,48 +285,14 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("InterventionalstudyProtocolDTO should not be null");
 
         }
-        enForceBusinessRules(ispDTO, page);        
-        enforeBlindingSchemaRules(ispDTO);
+        enForceBusinessRules(ispDTO, page);
         Session session = PaHibernateUtil.getCurrentSession();
         InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         setDefaultValues(upd, ispDTO, UPDATE);
         session.merge(upd);
         return InterventionalStudyProtocolConverter.convertFromDomainToDTO(upd);
     }
-
-    /**
-     * @param ispDTO
-     * @throws PAException
-     */
-    private void enforeBlindingSchemaRules(InterventionalStudyProtocolDTO ispDTO)
-            throws PAException {
-        int totBlindCodes = 0;
-        if (ISOUtil.isDSetNotEmpty(ispDTO.getBlindedRoleCode())) {
-            totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
-        }        
-        checkBlindingSchemaCode(ispDTO, totBlindCodes);
-    }
-
-    private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes) throws PAException {
-        if (ispDTO.getBlindingSchemaCode() != null) {
-            if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
-                    && totBlindCodes > 0) {
-                throw new PAException("Open Blinding Schema code cannot have any Blinded codes.");
-            }
-            if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
-                    && totBlindCodes > 1) {
-                throw new PAException("Only one masking role must be specified for 'Single Blind' masking.");
-            }
-            if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
-                    && totBlindCodes < 1) {
-                throw new PAException("Single Blinding Schema code must have 1 Blinded code.");
-            }
-            if (BlindingSchemaCode.DOUBLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
-                    && totBlindCodes < 2) {
-                throw new PAException("At least two masking roles must be specified for \"Double Blind\" masking.");
-            }
-        }
-    }
+    
 
     /**
      * {@inheritDoc}
@@ -342,7 +307,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         }
         enForceBusinessRules(ispDTO, null);
-        enforeBlindingSchemaRules(ispDTO);
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         Session session = PaHibernateUtil.getCurrentSession();
         setDefaultValues(isp, ispDTO, CREATE);

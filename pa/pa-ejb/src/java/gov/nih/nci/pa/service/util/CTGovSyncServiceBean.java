@@ -1845,7 +1845,9 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         final String studyType = study.getStudyType();
         if ("Interventional".equalsIgnoreCase(studyType)) {
             return new InterventionalStudyProtocolDTO();
-        } else if ("Observational".equalsIgnoreCase(studyType)) {
+        } else if ("Observational".equalsIgnoreCase(studyType)
+                || "Observational [Patient Registry]"
+                        .equalsIgnoreCase(studyType)) {
             return new NonInterventionalStudyProtocolDTO();
         } else if ("Expanded Access".equalsIgnoreCase(studyType)) {
             return new InterventionalStudyProtocolDTO();

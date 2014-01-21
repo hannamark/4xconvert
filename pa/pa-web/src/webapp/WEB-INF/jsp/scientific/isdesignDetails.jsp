@@ -301,18 +301,31 @@ function initialize() {
          </td>
 	</tr>
 	<tr id="blindingRoleCode">
-		<td   scope="row" class="label"><fmt:message key="isdesign.details.masking.role"/><span class="required">${asterisk}</span></td>
+		<td   scope="row" class="label"><fmt:message key="isdesign.details.masking.role"/></td>
 		<td>
-           <s:checkbox id="subject" name="subject" fieldValue="Subject"  value="%{subjectChecked}" />
-           <label for="subject">Subject</label>
-		   <s:checkbox id="investigator" name="investigator" fieldValue="Investigator"  value="%{investigatorChecked}" />
-		   <label for="investigator">Investigator</label>
-		   <s:checkbox id="caregiver" name="caregiver" fieldValue="Caregiver"  value="%{caregiverChecked}" />
-		   <label for="caregiver">Caregiver</label>
-		   <s:checkbox id="outcomesassessor" name="outcomesassessor" fieldValue="Outcomes Assessor"  value="%{outcomesAssessorChecked}" />
-		   <label for="outcomesassessor">Outcomes Assessor</label>          
+		  <table cellpadding="0" cellspacing="0">
+		      <tr>
+		          <td style="padding: 0 0 0 0;" nowrap="nowrap">
+			           <s:checkbox id="subject" name="subject" fieldValue="Subject"  value="%{subjectChecked}" />
+			           <label for="subject">Subject</label>
+					   <s:checkbox id="investigator" name="investigator" fieldValue="Investigator"  value="%{investigatorChecked}" />
+					   <label for="investigator">Investigator</label>
+					   <s:checkbox id="caregiver" name="caregiver" fieldValue="Caregiver"  value="%{caregiverChecked}" />
+					   <label for="caregiver">Caregiver</label>
+					   <s:checkbox id="outcomesassessor" name="outcomesassessor" fieldValue="Outcomes Assessor"  value="%{outcomesAssessorChecked}" />
+					   <label for="outcomesassessor">Outcomes Assessor</label>
+				   </td>
+			  </tr>  
+			  <tr>                
+                <td style="padding: 5 0 0 0;">
+                    <p class="info" style="margin-top: 0px; padding-bottom: 0px;">
+                        Even though not mandatory on this screen, failure to select masking role(s) may lead to abstraction validation warnings/errors.
+                    </p>
+                </td>
+            </tr>        
+          </table>
          </td>
-	</tr>
+	</tr>	
 	<tr> 
         <td scope="row" class="label"><label for="allocation">
 	 		<fmt:message key="isdesign.details.allocation"/><span class="required">${asterisk}</span></label> </td>

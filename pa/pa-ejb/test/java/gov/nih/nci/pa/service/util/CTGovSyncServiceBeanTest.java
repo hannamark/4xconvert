@@ -649,14 +649,25 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     }
     
     @Test
-    public final void testImportFailureDoubleMasking() throws PAException,
-            ParseException {
-
-        thrown.expect(PAException.class);
-        thrown.expectMessage("At least two masking roles must be specified for \"Double Blind\" masking.");
+    public final void testImportDoubleMaskingNoLongerFails()
+            throws PAException, ParseException {
 
         final String nctID = "NCT1111111";
-        serviceBean.importTrial(nctID);
+        String nciID = serviceBean.importTrial(nctID);
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        
+        final long id = getProtocolIdByNciId(nciID, session);
+        InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
+                .get(InterventionalStudyProtocol.class, id);
+
+        assertEquals(BlindingSchemaCode.DOUBLE_BLIND, sp.getBlindingSchemaCode());
+        assertNull(sp.getBlindingRoleCodeCaregiver());
+        assertNull(sp.getBlindingRoleCodeSubject());
+        assertNull(sp.getBlindingRoleCodeInvestigator());
+        assertNull(sp.getBlindingRoleCodeOutcome());
 
     }
     
@@ -1212,6 +1223,24 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 .get(NonInterventionalStudyProtocol.class, id);
         assertEquals(StudyModelCode.ECOLOGIC_OR_COMMUNITY_STUDIES,
                 sp.getStudyModelCode());
+
+    }
+    
+    @Test
+    public final void testImportObservationalPatientRegistry() throws PAException,
+            ParseException {
+        final String nctID = "NCT01963949";
+        String nciID = serviceBean.importTrial(nctID);
+        assertTrue(StringUtils.isNotEmpty(nciID));
+
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+
+        final long id = getProtocolIdByNciId(nciID, session);
+        StudyProtocol sp = (StudyProtocol) session
+                .get(StudyProtocol.class, id);
+        assertTrue(sp instanceof NonInterventionalStudyProtocol);
 
     }
     
