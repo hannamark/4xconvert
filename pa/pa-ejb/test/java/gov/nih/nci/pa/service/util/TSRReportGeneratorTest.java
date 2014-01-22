@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -108,7 +111,6 @@ import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
 import gov.nih.nci.pa.util.PAUtil;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -117,6 +119,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -153,14 +157,453 @@ public class TSRReportGeneratorTest {
         AbstractTsrReportGenerator tsrReportGenerator = new PdfTsrReportGenerator(tsrReport, false);
         setupDataForTsrGenerationTest(tsrReportGenerator);
         writeToFile(tsrReportGenerator.generateTsrReport(), "./Non_Proprietary_Tsr_Report.pdf");
-
+        
         tsrReportGenerator = new RtfTsrReportGenerator(tsrReport, false);
         setupDataForTsrGenerationTest(tsrReportGenerator);
-        writeToFile(tsrReportGenerator.generateTsrReport(), "./Non_Proprietary_Tsr_Report.rtf");
-
+        ByteArrayOutputStream x = tsrReportGenerator.generateTsrReport();
+        writeToFile(x, "./Non_Proprietary_Tsr_Report.rtf");
+        String value = new String(x.toByteArray(), "UTF-8");
+        assertNotNull(x);
+        assertTrue(x.size() > 0);
+        Pattern regexp = Pattern.compile("NCI");
+        Matcher matcher = regexp.matcher(value);
+        assertTrue(matcher.find());
         tsrReportGenerator = new HtmlTsrReportGenerator(tsrReport, false);
         setupDataForTsrGenerationTest(tsrReportGenerator);
-        writeToFile(tsrReportGenerator.generateTsrReport(), "./Non_Proprietary_Tsr_Report.html");
+        x = tsrReportGenerator.generateTsrReport();
+        writeToFile(x, "./Non_Proprietary_Tsr_Report.html");
+        value = new String(x.toByteArray(), "UTF-8");
+        assertNotNull(x);
+        assertTrue(x.size() > 0);
+        regexp = Pattern.compile("(NCI([-])?\\d{4}([-])?\\d{5})+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        String result = matcher.group(4).trim();
+        assertTrue(result.equals("Lead Organization Trial Identifier"));
+        assertFalse(result.equals("Other Trial Identifiers"));
+        
+        regexp = Pattern.compile("(DCP Trial Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("5678"));
+        
+        regexp = Pattern.compile("(CTEP Trial Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("3442323"));
+        
+        regexp = Pattern.compile("(Detailed Description)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Detailed description. This should be detailed!"));
+        
+        regexp = Pattern.compile("(Date: <)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("01/22/2014"));
+        
+        regexp = Pattern.compile("(Record Verification Date:)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("01/22/2014"));
+        
+        regexp = Pattern.compile("(Trial Category)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("Proprietary. "));
+        
+        regexp = Pattern.compile("(NCI Trial Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("NCI-2010-00001. This is unnecessary. To see if this spans correctly"));
+        
+        regexp = Pattern.compile("(Lead Organization Trial Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("5AM_NCI"));
+        
+        regexp = Pattern.compile("(Other Trial Identifiers)+.*?<td.*?>(.*?)</td>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        regexp = Pattern.compile(".*?<span.*?>(.*?)</span>.*?");
+        matcher = regexp.matcher(result);
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("OID - 1"));
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("OID - 2"));
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("OID - 3"));
+        assertFalse(matcher.find());
+        
+        regexp = Pattern.compile("(NCT Number)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("12345"));
+        
+        regexp = Pattern.compile("(Amendment Number)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("7367632746"));
+        
+        regexp = Pattern.compile("(Brief Title)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("A very brief title for the abstraction validation title."));
+        
+        regexp = Pattern.compile("(Acronym)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("No Data Available"));
+        
+        regexp = Pattern.compile("(Brief Summary)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("This is the summary of abstraction validation brief summary."));
+        
+        regexp = Pattern.compile("(Keywords)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Certain Keywords"));
+        
+        regexp = Pattern.compile("(Reporting Dataset Method)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Abbreviated"));
+        
+        regexp = Pattern.compile("(Sponsor)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Mayo Clinic"));
+        
+        regexp = Pattern.compile("(Lead Organization\n\t\t\t\t\t)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Mayo Clinic"));
+        
+        regexp = Pattern.compile("(Principal Investigator)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Steve M. Anderson affiliated with Mayo Clinic"));
+        
+        regexp = Pattern.compile("(Official Title\n\t\t\t\t\t</sp)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("NPT for 5AM_NCI_1_2_3"));
+        
+        regexp = Pattern.compile("(Responsible Party)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("Name/Official Title:"));
+        
+        regexp = Pattern.compile("(Overall Official)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Steve M. Anderson affiliated with Mayo Clinic in the role of Principal Investigator"));
+       
+        regexp = Pattern.compile("(Central Contact)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("Clinical Research Department"));
+        
+        regexp = Pattern.compile("(Current Trial Status)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Active as of 12/15/2009"));
+        
+        regexp = Pattern.compile("(Reason Text)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Some Reason"));
+        
+        regexp = Pattern.compile("(Trial Start Date)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("12/17/2009 - Actual"));
+        
+        regexp = Pattern.compile("(Primary Completion Date)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("01/28/2010 - Anticipated"));
+        
+        regexp = Pattern.compile("(Oversight Authorities)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("United States: Food and Drug Administration"));
+        
+        regexp = Pattern.compile("(FDA Regulated Intervention)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Yes"));
+        
+        regexp = Pattern.compile("(Section 801?)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Yes"));
+        
+        regexp = Pattern.compile("(Delayed Posting Indicator?)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("No"));
+        
+        regexp = Pattern.compile("(DMC Appointed)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("No"));
+        
+        regexp = Pattern.compile("(IND/IDE Study)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Yes"));
+        
+        regexp = Pattern.compile("(Board Approval Status)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Submitted, Pending"));
+        
+        regexp = Pattern.compile("(Board Approval Number)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("No Data Available"));
+        
+        regexp = Pattern.compile("(Board\n\t\t\t\t\t)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("ORGANIZATION Name"));
+        
+        regexp = Pattern.compile("(Affiliation)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("Board Affiliated with NCI"));
+        
+        regexp = Pattern.compile("(Funding Category)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Industrial"));
+        
+        regexp = Pattern.compile("(Funding Sponsor/Source)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Cancer Therapy Evaluation Program"));
+        
+        regexp = Pattern.compile("(Program Code\n\t\t\t\t\t</sp)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Summary4_123"));
+        
+        regexp = Pattern.compile("(Anatomic Site Code)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("liver"));
+        
+        regexp = Pattern.compile("(Fairfax Northern Virginia)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Funding Source"));
+        
+        regexp = Pattern.compile("(George Mason University)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Agent Source"));
+        
+        regexp = Pattern.compile("(NCI Division of Cancer Prevention)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Laboratory"));
+        
+        regexp = Pattern.compile("(Primary Purpose)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Treatment"));
+        
+        regexp = Pattern.compile("(Secondary Purpose)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("secondaryPurpose, secondaryPurposeOtherText"));
+        
+        regexp = Pattern.compile("(Phase\n\t\t\t\t\t</sp)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("NA"));
+        
+        regexp = Pattern.compile("(Pilot Study)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Yes"));
+        
+        regexp = Pattern.compile("(Intervention Model)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Single Group"));
+        
+        regexp = Pattern.compile("(Number of Arms)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("2"));
+        
+        regexp = Pattern.compile("(Masking)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Single Blind"));
+        
+        regexp = Pattern.compile("(Masked Roles)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("Subject: No"));
+        
+        regexp = Pattern.compile("(Allocation)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Randomized Controlled Trial"));
+        
+        regexp = Pattern.compile("(Classification)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Efficacy"));
+        
+        regexp = Pattern.compile("(Target Enrollment)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("2"));
+        
+        regexp = Pattern.compile("(Accepts Healthy Volunteers)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("No"));
+        
+        regexp = Pattern.compile("(Gender)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Male"));
+        
+        regexp = Pattern.compile("(Minimum Age)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("20 Years"));
+        
+        regexp = Pattern.compile("(Maximum Age)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("90 Years"));
+        
+        regexp = Pattern.compile("(Inclusion Criteria)+.*?<td.*?>(.*?)</td>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        regexp = Pattern.compile(".*?<span.*?>(.*?)</span>.*?");
+        matcher = regexp.matcher(result);
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("Inclusion Criteria 1"));
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("Inclusion Criteria 2"));
+        assertFalse(matcher.find());
+        
+        regexp = Pattern.compile("(Exclusion Criteria)+.*?<td.*?>(.*?)</td>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        regexp = Pattern.compile(".*?<span.*?>(.*?)</span>.*?");
+        matcher = regexp.matcher(result);
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("Exclusion Criteria 1"));
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("Exclusion Criteria 2"));
+        assertFalse(matcher.find());
+        
+        regexp = Pattern.compile("(Other Criteria)+.*?<td.*?>(.*?)</td>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        regexp = Pattern.compile(".*?<span.*?>(.*?)</span>.*?");
+        matcher = regexp.matcher(result);
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("Other Criteria 1"));
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("Other Criteria 2"));
+        matcher.find();
+        result = matcher.group(1).trim();
+        assertTrue(result.equals("Other Criteria 3"));
+        assertFalse(matcher.find());
+        
+        regexp = Pattern.compile("(Type\n\t\t\t\t\t</sp)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("Placebo Comparator"));
+        
+        regexp = Pattern.compile("(Label)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("A1"));
+        
     }
 
     @Test
@@ -171,15 +614,39 @@ public class TSRReportGeneratorTest {
         tsrReport.getErrorReasons().add("Reason 1");
         tsrReport.getErrorReasons().add("Reason 2");
         tsrReport.getErrorReasons().add("Reason 3");
-
+        
         AbstractTsrReportGenerator tsrReportGenerator = new PdfTsrReportGenerator(tsrReport);
-        writeToFile(tsrReportGenerator.generateErrorReport(), "./Error_Report.pdf");
+        ByteArrayOutputStream x = tsrReportGenerator.generateErrorReport();
+        assertNotNull(x);
+        assertTrue(x.size() > 0);
+        writeToFile(x, "./Error_Report.pdf");
 
         tsrReportGenerator = new RtfTsrReportGenerator(tsrReport);
-        writeToFile(tsrReportGenerator.generateErrorReport(), "./Error_Report.rtf");
-
+        x = tsrReportGenerator.generateErrorReport();
+        writeToFile(x , "./Error_Report.rtf");
+        String value = new String(x.toByteArray(), "UTF-8");
+        assertNotNull(x);
+        assertTrue(x.size() > 0);
+        assertTrue(value.contains("Reason 2"));
         tsrReportGenerator = new HtmlTsrReportGenerator(tsrReport);
-        writeToFile(tsrReportGenerator.generateErrorReport(), "./Error_Report.html");
+        x = tsrReportGenerator.generateErrorReport();
+        writeToFile(x , "./Error_Report.html");
+        value = new String(x.toByteArray(), "UTF-8");
+        assertNotNull(x);
+        assertTrue(x.size() > 0);
+        assertTrue(value.contains("Reason 3"));
+        Pattern regexp = Pattern.compile("(Error Reason)+.*?<li.*?>(.*?)</li>.*?",Pattern.DOTALL);
+        Matcher matcher = regexp.matcher(value);
+        matcher.find();
+        String result = matcher.group(2).trim();
+        assertTrue(result.contains("Reason 1"));
+        assertFalse(result.contains("Other Reason"));
+        
+        regexp = Pattern.compile("(Unable to generate Trial Summary Report for:)+.*?<li.*?>(.*?)</li>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("Study Identifier: Study ID"));
     }
 
     private void writeToFile(ByteArrayOutputStream os, String fileName) throws DocumentException, IOException {
