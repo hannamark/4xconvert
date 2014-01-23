@@ -111,14 +111,21 @@ import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
 import gov.nih.nci.pa.util.PAUtil;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -134,7 +141,7 @@ import com.lowagie.text.DocumentException;
  * @author NAmiruddin, kkanchinadam
  */
 public class TSRReportGeneratorTest {
-
+    private static final String DATE_PATTERN = "MM/dd/yyyy";
     @Test
     public void generateProprietaryTsrReportsToFile() throws Exception {
         TSRReport tsrReport = new TSRReport("Trial Summary Report", PAUtil.today(), PAUtil.today());
@@ -204,13 +211,13 @@ public class TSRReportGeneratorTest {
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
-        assertTrue(result.equals("01/22/2014"));
+        assertTrue(result.equals(getFormatedCurrentDate()));
         
         regexp = Pattern.compile("(Record Verification Date:)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
-        assertTrue(result.equals("01/22/2014"));
+        assertTrue(result.equals(getFormatedCurrentDate()));
         
         regexp = Pattern.compile("(Trial Category)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
@@ -979,5 +986,16 @@ public class TSRReportGeneratorTest {
         site.setProgramCode("SITE1_CODE_2");
         participatingSites.add(site);
         tsrReportGenerator.setParticipatingSites(participatingSites);
+    }
+    
+    /**
+     * Gets the current date properly formatted.
+     * @return The current date properly formatted.
+     */
+    String getFormatedCurrentDate() {
+        Calendar calendar = new GregorianCalendar();
+        Date date = calendar.getTime();
+        DateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+        return format.format(date);
     }
 }
