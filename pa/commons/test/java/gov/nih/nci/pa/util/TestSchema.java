@@ -229,6 +229,7 @@ public class TestSchema {
             .addYears(new Date(), 1).getTime());
     public static List<Long> registryUserIds;
     public static List<Long> studyProtocolIds;
+    public static List<StudyProtocol> studyProtocols;
     public static List<Long> studySiteIds;
     public static List<Long> plannedMarkerSyncIds;
     public static List<Long> studySiteContactIds;
@@ -307,6 +308,7 @@ public class TestSchema {
         studyDiseaseIds = new ArrayList<Long>();
         studyOnholdIds = new ArrayList<Long>();
         assayTypeIds = new ArrayList<Long>();
+        studyProtocols = new ArrayList<StudyProtocol>();
 
         User curator = getUser(true);
         addUpdObject(curator);
@@ -358,6 +360,7 @@ public class TestSchema {
         addUpdObject(sp);
         sp.setId(sp.getId());
         studyProtocolIds.add(sp.getId());
+        studyProtocols.add(sp);
 
         StudyOverallStatus sos = new StudyOverallStatus();
         sos.setStatusCode(StudyStatusCode.APPROVED);
@@ -892,6 +895,7 @@ public class TestSchema {
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         addUpdObject(sp);
         studyProtocolIds.add(sp.getId());
+        studyProtocols.add(sp);
 
         StudyOnhold onhold = new StudyOnhold();
         onhold.setStudyProtocol(sp);
@@ -939,6 +943,7 @@ public class TestSchema {
         addUpdObject(scc);
         sp.setId(sp.getId());
         studyProtocolIds.add(sp.getId());
+        studyProtocols.add(sp);
         inactiveProtocolId = sp.getId();
         addAbstractedWorkflowStatus(inactiveProtocolId);
         
@@ -1703,6 +1708,7 @@ public class TestSchema {
         doc.setFileName("IRB_Approval_Document.doc");
         addUpdObject(doc);
         studyProtocolIds.add(sp.getId());
+        studyProtocols.add(sp);
         return sp;
     }
     
@@ -1723,6 +1729,7 @@ public class TestSchema {
         addUpdObject(doc);
         addUpdObject(sp);
         studyProtocolIds.add(sp.getId());
+        studyProtocols.add(sp);
         return sp;
     }
     
@@ -1744,6 +1751,7 @@ public class TestSchema {
         addUpdObject(sp);
         
         studyProtocolIds.add(sp.getId());
+        studyProtocols.add(sp);
         return sp;
     }
     public static PlannedMarkerSyncWithCaDSR createPlannedMarkerSyncWithCaDSRObj(

@@ -255,8 +255,8 @@ public final class TrialUpdatesRecorder {
      * @param newNCT newNCT
      */
     public static void isNctUpdated(String existingNCT, String newNCT) {
-        if (!StringUtils.equals(StringUtils.trim(existingNCT + ""), // NOPMD
-                StringUtils.trim(newNCT + ""))) { // NOPMD
+        if (!StringUtils.equals(StringUtils.trim(existingNCT), // NOPMD
+                StringUtils.trim(newNCT))) { // NOPMD
             add(StringUtils.isEmpty(existingNCT) ? "NCT Number was added." : "NCT Number was changed.");
         }
     }

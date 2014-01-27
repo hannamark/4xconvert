@@ -549,6 +549,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @return
      */
     String commonMailBodyReplacements(StudyProtocolQueryDTO spDTO, String mailBody) throws PAException {
+        if (mailBody == null || spDTO == null) {
+            //throw a graceful exception on blank body
+            throw new PAException("Can't send email with blank data.");
+        }
         String body = mailBody;
         body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
         body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
@@ -793,6 +797,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      */
     @Override
     public void sendAmendRejectEmail(StudyProtocolQueryDTO spDTO, String rejectReason) throws PAException {
+        if (spDTO == null) {
+            throw new PAException("Cannot send a rejection email for null trial.");
+        }
         String mailBody = lookUpTableService.getPropertyValue("trial.amend.reject.body");
         String amendNumber = "";
         if (spDTO.getAmendmentNumber() != null) {
@@ -846,6 +853,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     }
 
     private String getFormatedDate(Date date) {
+        if (date ==  null) {
+            return "(No Date)";
+        }
         DateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
         return format.format(date);
     }

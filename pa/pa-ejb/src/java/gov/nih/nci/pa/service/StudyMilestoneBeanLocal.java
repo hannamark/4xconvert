@@ -1009,4 +1009,20 @@ public class StudyMilestoneBeanLocal
         this.paServiceUtils = paServiceUtils;
     }
     
+    /**
+     * 
+     * @return the current paServiceUtils. 
+     */
+    public PAServiceUtils getPaServiceUtils() {
+        return this.paServiceUtils;
+    }
+
+    /**
+     * 
+     * @return the trial registration service
+     */
+    public TrialRegistrationServiceLocal getTrialRegistrationService() {
+        return this.trialRegistrationService;
+    }
+    
 }

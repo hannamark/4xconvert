@@ -124,8 +124,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 
 /**
  * Prop trial Management Bean for registering and updating the protocol.
@@ -141,7 +139,6 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
 
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
     private static PAServiceUtils paServiceUtils = new PAServiceUtils();
-    private static final Logger LOG = Logger.getLogger(ProprietaryTrialManagementBeanLocal.class);
 
     @Resource private SessionContext ctx;
     @EJB

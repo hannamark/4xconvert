@@ -90,18 +90,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.LastCreatedDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
-import gov.nih.nci.pa.enums.RejectionReasonCode;
-import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
@@ -120,8 +117,10 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerBeanLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -131,7 +130,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -151,8 +149,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author hreinhart
@@ -188,7 +184,8 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     private final StudyOnholdServiceBean ohs = new StudyOnholdServiceBean();
     private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
     private final FamilyServiceLocal familySvc = mock(FamilyServiceLocal.class);
-
+    
+    private final RegistryUserServiceLocal registryUserServiceLocal = mock(RegistryUserServiceLocal.class);
     private final TSRReportGeneratorServiceRemote tsrReportGeneratorServiceRemote = mock(TSRReportGeneratorServiceRemote.class);
     private final ProtocolQueryServiceLocal protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
     private final DocumentServiceLocal documentServiceLocal = mock(DocumentServiceLocal.class);
@@ -213,10 +210,31 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
                 lookUpTableServiceRemote
                         .getPropertyValue(eq("trial.onhold.reminder.reasons")))
                 .thenReturn("SUBMISSION_INCOM,SUBMISSION_INCOM_MISSING_DOCS");
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("rejection.body")))
+                .thenReturn("test");
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("rejection.subject")))
+                .thenReturn("test");
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.amend.reject.body")))
+                .thenReturn("test");
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("trial.amend.reject.subject")))
+                .thenReturn("test");
+        
         
         ohs.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         bean.setAbstractionCompletionService(abstractionCompletionSerivce);
         bean.setDocumentWorkflowStatusService(dws);
+        mailSrc.setDocWrkflStatusSrv(dws);
+        mailSrc.setLookUpTableService(lookUpTableServiceRemote);
+        mailSrc.setProtocolQueryService(protocolQueryServiceLocal);
+        mailSrc.setRegistryUserService(registryUserServiceLocal);
         bean.setMailManagerService(mailSrc);
         bean.setStudyInboxService(sis);
         bean.setStudyOnholdService(ohs);
@@ -234,6 +252,8 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         spAmendIi = TestSchema.createAmendStudyProtocol();
         spIndustrialIi = TestSchema.createAmendSpIndustrial();
         ohs.setDocumentWorkflowStatusService(dws);
+        TrialRegistrationServiceLocal trialRegistrationService = new MockTrialRegistrationService();
+        bean.setTrialRegistrationService(trialRegistrationService);
     }
 
     private void compareDataAttributes(StudyMilestoneDTO dto1, StudyMilestoneDTO dto2) throws Exception {
@@ -1311,7 +1331,101 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
                 .getMilestoneHistory().get(1).getMilestone());
         assertEquals(MilestoneCode.SUBMISSION_REACTIVATED, queryDTO
                 .getMilestoneHistory().get(2).getMilestone());
+        
+        try {
+            bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REACTIVATED));
+            fail();
+        } catch (PAException ex) {
+            assertTrue(ex.getMessage().contains("The processing status must be 'Submission Terminated' when entering the milestone 'Submission Reactivated Date'."));
+        }
 
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_TERMINATED));
+        
+        try {
+            bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+            fail();
+        } catch (PAException ex) {
+            assertTrue(ex.getMessage().contains("'Submission Terminated Date' milestone can only be followed by 'Submission Reactivated Date' milestone."));
+        }
+    }
+
+    
+    @Test
+    public void testStudyMilestoneServiceBean_documentSetter() {
+        //This is here to test the setters and getters, a boring but necessary part for 100% code coverage.
+        bean.setDocumentService(documentServiceLocal);
+        assertTrue(documentServiceLocal == bean.getDocumentService());
+        PAServiceUtils paServiceUtils = new PAServiceUtils(), tempUtil;
+        assertTrue(null != bean.getPaServiceUtils());
+        assertTrue(paServiceUtils != bean.getPaServiceUtils());
+        tempUtil = bean.getPaServiceUtils();
+        bean.setPaServiceUtils(paServiceUtils);
+        assertTrue(paServiceUtils == bean.getPaServiceUtils());
+        bean.setPaServiceUtils(tempUtil);
+        TrialRegistrationServiceLocal trialRegistrationService = new TrialRegistrationBeanLocal();
+        bean.setTrialRegistrationService(trialRegistrationService);
+        assertTrue(trialRegistrationService == bean.getTrialRegistrationService());
+        bean.setProtocolQueryService(protocolQueryServiceLocal);
+        assertTrue(protocolQueryServiceLocal == bean.getProtocolQueryService());
+        bean.setTsrReportGeneratorService(tsrReportGeneratorServiceRemote);
+        assertTrue(tsrReportGeneratorServiceRemote == bean.getTsrReportGeneratorService());
+    }
+    
+    @SuppressWarnings("serial")
+    @Test
+    public void testStudyMilestoneServiceBean_testLateRejectoion() throws PAException {
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+        bean.create(getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE));
+        
+        //test amendments too
+        spIi = TestSchema.createAmendStudyProtocol();
+        when(protocolQueryServiceLocal.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi)))
+            .thenReturn(new StudyProtocolQueryDTO() {
+                
+                @Override
+                public Long getStudyProtocolId() {
+                    return 2L;
+                }
+                @Override
+                public String getOfficialTitle() {
+                    return "test";
+                }
+                public String getLocalStudyProtocolIdentifier() {
+                    return "test";
+                }
+                public String getLeadOrganizationName() {
+                    return "test";
+                }
+                public String getNciIdentifier() {
+                    return "test";
+                }
+                public LastCreatedDTO getLastCreated() {
+                    LastCreatedDTO date = new LastCreatedDTO();
+                    date.setUserLastCreated("test");
+                    date.setUserLastDisplayName("test");
+                    date.setDateLastCreated(new Date());
+                    return date;
+                }
+            });
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+        bean.create(getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE));
+        
+        //cleanup.
+        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+    }
+    
+    @Test
+    public void testStudyMilestoneServiceBean_testSearch() {
+        try {
+            bean.search(null, new LimitOffset(0, 0));
+            fail();
+        } catch (PAException ex) {
+            assertTrue("Error message does not match expected value for null search paramater.", ex.getMessage().contains("StudyMilestoneDTO should not be null") );
+        } catch (TooManyResultsException e) {
+            fail();
+        }
     }
     
 

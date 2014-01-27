@@ -386,8 +386,14 @@ public class StudyInboxServiceBean // NOPMD
 
     private void recordChange(Object v1, Object v2, String comment,
             StringBuilder comments) {
-        if (!StringUtils.equals(StringUtils.trim(v1 + ""), // NOPMD
-                StringUtils.trim(v2 + ""))) { // NOPMD
+        if (v1 == null  && v2 == null) {
+            //no change so do nothing
+        } else if (v1 == null  || v2 == null) {
+            //There is a difference between the two so add the comment, one is null the other is not
+            comments.append(comment);
+        } else if (!StringUtils.equals(StringUtils.trim(v1.toString()), // NOPMD
+                StringUtils.trim(v2.toString()))) { // NOPMD
+            //There is a difference between the two so add the comment
             comments.append(comment);
         }
     }
