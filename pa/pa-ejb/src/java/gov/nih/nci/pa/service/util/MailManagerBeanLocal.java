@@ -655,7 +655,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String regUserName = user.getFirstName() + " " + user.getLastName();
         mailBody = mailBody.replace(OWNER_NAME, regUserName);
         
-        if (spDTO.isProprietaryTrial()) {
+        if (mailBody.contains("${subOrgTrialIdentifier}") || mailBody.contains("${subOrg}")) {
             String subOrgTrialIdentifier = "";
             PAServiceUtils serviceUtil = new PAServiceUtils();
             List<StudySiteDTO> siteList =

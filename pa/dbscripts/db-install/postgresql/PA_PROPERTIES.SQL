@@ -19,7 +19,7 @@ Thank you for registering your trial with NCI Clinical Trials Reporting Program 
 ');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(3,'smtp',
-'mailfwd.nih.gov');
+'localhost');
 
 insert into pa_properties(IDENTIFIER,name,value) VALUES(4,'fromaddress',
 'ncictro@mail.nih.gov');
