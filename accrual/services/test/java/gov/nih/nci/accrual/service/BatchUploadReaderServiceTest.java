@@ -382,7 +382,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
         BatchImportResults importResults = readerService.importBatchData(batchFile, validationResults.get(0));
         assertEquals("suAbs-accrual-count-batch-file.txt", importResults.getFileName());
-        assertEquals(2, importResults.getTotalImports());       
+        assertEquals(2, importResults.getTotalImports()); 
+        verifyEmailsSent(0, 1, 0);
     }
     
     @Test
@@ -476,7 +477,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      
      file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
      batchFile = getBatchFile(file);
-     results = readerService.validateBatchData(batchFile);
+     results = readerService.validateBatchData(batchFile); 
+     verifyEmailsSent(0, 2, 0);
      
      when(diseaseSvc.getTrialCodeSystem(any(Long.class))).thenReturn("ICD-O-3");
      disease1.setCodeSystem("ICD-O-3");
@@ -487,7 +489,8 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      
      file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
      batchFile = getBatchFile(file);
-     results = readerService.validateBatchData(batchFile);
+     results = readerService.validateBatchData(batchFile); 
+     verifyEmailsSent(0, 3, 0);
      
      setStudyProtocolSvc();
      file = new File(this.getClass().getResource("/suAbs-accrual-count-batch-file2.txt").toURI());
@@ -537,7 +540,8 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         String errorMsg = results.get(0).getErrors().toString();
         assertTrue(StringUtils.contains(errorMsg, "Patient race code is missing for patient ID 200708"));
-        assertTrue(results.get(0).getValidatedLines().isEmpty());
+        assertTrue(results.get(0).getValidatedLines().isEmpty()); 
+        verifyEmailsSent(1, 0, 0);
 	}
 	
 	@Test
@@ -560,7 +564,8 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         String errorMsg = results.get(0).getErrors().toString(); 
         assertTrue(StringUtils.contains(errorMsg, "Only CTRO Team can do batch upload for NCI-2010-00003 identifier."));
-        assertTrue(results.get(0).getValidatedLines().isEmpty());
+        assertTrue(results.get(0).getValidatedLines().isEmpty()); 
+        verifyEmailsSent(1, 0, 0);
         
 	}
 
@@ -582,7 +587,8 @@ private List<PatientStage> getPatientStage(String nciId) {
 		assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
-        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        assertFalse(results.get(0).getValidatedLines().isEmpty()); 
+        verifyEmailsSent(0, 1, 0);
 
         BatchFile r = getResultFromDb();
         assertTrue(r.isPassedValidation());
@@ -596,6 +602,17 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertEquals("NCI-2009-00001", collection.getNciNumber());
         assertTrue(StringUtils.isEmpty(collection.getResults()));
         assertEquals((Integer) 3, collection.getTotalImports());
+        
+        file = new File(this.getClass().getResource("/ICD-O-3_coverage2.txt").toURI());
+		batchFile = getBatchFile(file);
+		results = readerService.validateBatchData(batchFile);
+		assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
+        String errorMsg = results.get(0).getErrors().toString(); 
+        assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 55"));
+        assertTrue(results.get(0).getValidatedLines().isEmpty()); 
+        verifyEmailsSent(1, 1, 0);
 	}
         
 	@Test
@@ -681,6 +698,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         when(diseaseSvc.getByCode("code1")).thenReturn(null);
         when(diseaseSvc.getByCode("code2")).thenReturn(null);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        verifyEmailsSent(1, 0, 0);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
@@ -691,6 +709,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         when(diseaseSvc.getByCode("code1")).thenReturn(disease1);
         when(diseaseSvc.getByCode("code2")).thenReturn(disease2);
         results = readerService.validateBatchData(batchFile);
+        verifyEmailsSent(1, 1, 0);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString())); 
@@ -715,6 +734,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         subj.setDateLastCreated(PAUtil.dateStringToDateTime("1/1/2001"));
         TestSchema.addUpdObject(subj);
         results = readerService.validateBatchData(batchFile);
+        verifyEmailsSent(2, 2, 0);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
@@ -956,6 +976,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
+        verifyEmailsSent(1, 0, 0);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
@@ -984,6 +1005,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         validationResults = readerService.validateBatchData(batchFile);
         assertEquals(1, validationResults.size());
         assertTrue(StringUtils.isNotBlank(validationResults.get(0).getErrors().toString()));
+        verifyEmailsSent(1, 0, 0);
     }
 
     @Test
@@ -1059,6 +1081,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         
         assertEquals("CDUS_Complete.txt", validationResults.get(2).getFileName());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+        verifyEmailsSent(0, 6, 0);
 
     }
     
@@ -1070,6 +1093,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
         BatchImportResults importResults = readerService.importBatchData(batchFile, validationResults.get(0));
+        verifyEmailsSent(0, 1, 0);
         assertEquals(72, importResults.getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.getFileName());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
@@ -1126,6 +1150,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
         assertTrue(results.get(0).isPassedValidation());
+        verifyEmailsSent(0, 1, 0);
     }
     
     @Test
@@ -1133,12 +1158,14 @@ private List<PatientStage> getPatientStage(String nciId) {
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
         assertTrue(results.get(0).isPassedValidation());
+        verifyEmailsSent(0, 1, 0);
     }
 
     @Test
     public void birthDateYearOnlyOr000000() throws Exception {
         File file = new File(this.getClass().getResource("/CDUS_Complete-BirthDates.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
+        verifyEmailsSent(1, 0, 0);
         assertFalse(results.get(0).isPassedValidation());
         assertEquals(16, StringUtils.countMatches(results.get(0).getErrors().toString(), "Patient birth date must be in YYYYMM format"));
     }
@@ -1150,6 +1177,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        verifyEmailsSent(1, 0, 0);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         String errorMsg = results.get(0).getErrors().toString();
