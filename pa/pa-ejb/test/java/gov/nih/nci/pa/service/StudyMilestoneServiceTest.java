@@ -110,6 +110,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceBean;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
@@ -129,6 +130,8 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.ByteArrayOutputStream;
@@ -254,6 +257,28 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         ohs.setDocumentWorkflowStatusService(dws);
         TrialRegistrationServiceLocal trialRegistrationService = new MockTrialRegistrationService();
         bean.setTrialRegistrationService(trialRegistrationService);
+        
+        
+        OrganizationCorrelationServiceBean.resetCache();
+        OrganizationCorrelationServiceBean ocsr = mock(OrganizationCorrelationServiceBean.class);
+        when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenAnswer(new Answer<Ii>() {
+            @Override
+            public Ii answer(InvocationOnMock invocation) throws Throwable {
+                Ii ii = (Ii) invocation.getArguments()[0];
+                return IiConverter.convertToPoResearchOrganizationIi(ii.getExtension());
+            }
+        });
+        when(ocsr.getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE)).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {               
+                return "abc";
+            }
+        });
+        
+        ServiceLocator paSvcLoc = mock (ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(ocsr);
+        when(paSvcLoc.getStudySiteService()).thenReturn(new StudySiteBeanLocal());
     }
 
     private void compareDataAttributes(StudyMilestoneDTO dto1, StudyMilestoneDTO dto2) throws Exception {
