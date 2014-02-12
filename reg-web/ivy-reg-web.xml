@@ -137,5 +137,8 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.seleniumhq.selenium.server" name="selenium-server" rev="1.0.3"               conf="selenium->master">
         <artifact name="selenium-server" m:classifier="standalone"/>
     </dependency>
+    <dependency org="commons-dbutils"                  name="commons-dbutils"                   rev="1.5"           conf="selenium->master"/>
+    <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="selenium->master"/>
+    <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="selenium->master"/>
   </dependencies>
 </ivy-module>

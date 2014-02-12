@@ -82,13 +82,25 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import static gov.nih.nci.registry.integration.TestProperties.TEST_DB_DRIVER;
+import static gov.nih.nci.registry.integration.TestProperties.TEST_DB_PASSWORD;
+import static gov.nih.nci.registry.integration.TestProperties.TEST_DB_URL;
+import static gov.nih.nci.registry.integration.TestProperties.TEST_DB_USER;
 import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.registry.integration.TestProperties;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
@@ -104,6 +116,10 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
     private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
     private static final String IRB_DOCUMENT = "IrbDoc.doc";
     private static boolean firstRun = true;
+    
+    private Connection connection;
+    
+    private static Logger LOG = Logger.getLogger(AbstractRegistrySeleniumTest.class.getName());
 
     @Override
     public void setUp() throws Exception {
@@ -113,12 +129,31 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         super.setBrowser(TestProperties.getSeleniumBrowser());
         super.setUp();
         selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
+        
+        openDbConnection();
+    }
+
+    private void openDbConnection() {
+        try {
+            DbUtils.loadDriver(TestProperties.getProperty(TEST_DB_DRIVER));
+            this.connection = DriverManager.getConnection(TestProperties.getProperty(TEST_DB_URL),
+                    TestProperties.getProperty(TEST_DB_USER), TestProperties.getProperty(TEST_DB_PASSWORD));
+            LOG.info("Successfully connected to the database at "+TestProperties.getProperty(TEST_DB_URL));
+        } catch (Exception e) {
+            LOG.severe("Unable to open a JDBC connection to the database: tests may fail!");
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
     @Override
     public void tearDown() throws Exception {
         logoutUser();
+        closeDbConnection();
         super.tearDown();
+    }
+
+    private void closeDbConnection() {
+       DbUtils.closeQuietly(connection);        
     }
 
     protected void logoutUser() {
@@ -424,6 +459,17 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWaitAjax("link=Save as Draft");
         pause(5000);
         firstRun = false;
+    }
+    
+    public final void deactivateTrialByLeadOrgId(String leadOrgID)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        runner.update(
+                connection,
+                "update study_protocol sp set status_code='INACTIVE' where exists "
+                        + "(select local_sp_indentifier from study_site ss where ss.study_protocol_identifier=sp.identifier "
+                        + "and ss.functional_code='LEAD_ORGANIZATION' and ss.local_sp_indentifier='"
+                        + StringEscapeUtils.escapeSql(leadOrgID) + "')");
     }
 
 }

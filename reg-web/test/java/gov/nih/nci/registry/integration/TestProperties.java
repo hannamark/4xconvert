@@ -105,6 +105,11 @@ public final class TestProperties {
 
     public static final String SELENIUM_DELAY_KEY = "selenium.delay";
     public static final String SELENIUM_DELAY_DEFAULT = "10";
+    
+    public static final String TEST_DB_URL = "test.db.connection.url";
+    public static final String TEST_DB_DRIVER = "test.db.driver";
+    public static final String TEST_DB_USER = "test.db.user";
+    public static final String TEST_DB_PASSWORD = "test.db.password";
 
     private static Properties properties = new Properties();
     static {
@@ -134,5 +139,9 @@ public final class TestProperties {
 
     public static String getSeleniumCommandDelay() {
         return properties.getProperty(SELENIUM_DELAY_KEY, SELENIUM_DELAY_DEFAULT);
+    }
+    
+    public static String getProperty(String name) {
+        return properties.getProperty(name);
     }
 }

@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.registry.integration.TestProperties;
+
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -91,6 +94,19 @@ import org.junit.Test;
  *
  */
 public class SetupPaTrialData extends AbstractRegistrySeleniumTest {
+    
+     
+    @Override
+    public void setUp() throws Exception {  
+        super.setUp();
+        deactivateTrialByLeadOrgId("LEAD-ORG3");
+        deactivateTrialByLeadOrgId("LEAD-ORG4");
+        deactivateTrialByLeadOrgId("LEAD-ORG5");
+        deactivateTrialByLeadOrgId("LEAD-ORG6");
+        deactivateTrialByLeadOrgId("LEAD-ORG7");
+        deactivateTrialByLeadOrgId("LEAD-ORG8");
+        deactivateTrialByLeadOrgId("LEAD-ORG9");
+    }
 
     @Test
     public void testRegisterAssignOwnershipTrial() throws Exception {

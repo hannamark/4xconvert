@@ -210,7 +210,11 @@
                 <filter token="pa.server.name" value="${pa.server.name}"/>
                 <filter token="jboss.port" value="${jboss.port}" />
                 <filter token="selenium.server.port" value="${selenium.server.port}"/>
-                <filter token="selenium.delay" value="${selenium.delay}"/>
+                <filter token="selenium.delay" value="${selenium.delay}"/>            	
+            	<filter token="jdbc.driver" value="${jdbc.driver}"/>
+                <filter token="jdbc.url" value="${jdbc.url}"/>
+                <filter token="db.username" value="${db.username}"/>
+                <filter token="db.password" value="${db.password}"/>                
             </filterset>
         </copy>
     </target>
