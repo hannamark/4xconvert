@@ -125,8 +125,10 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -146,6 +148,8 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -155,6 +159,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -173,6 +178,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * 
  */
 public class MailManagerServiceTest extends AbstractHibernateTestCase {
+	private static final String DATE_PATTERN = "MM/dd/yyyy";
     private static String email1 = "example1@example.com";
     private static String email2 = "example2@example.com";
     private static String smtpHost = "";
@@ -190,7 +196,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
             + "${leadOrgTrialIdentifier}, ${nciTrialIdentifier} ${subOrgTrialIdentifier}.";
     private static final String PROP_NOTFICATION_BODY_KEY = "proprietarytrial.register.body";
     private static final String PROP_NOTFICATION_BODY_VALUE = "${CurrentDate} ${SubmitterName} ${nciTrialIdentifier},"
-            + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}. ${errors}  ";
+            + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${leadOrgID}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}. ${errors}  ";
     private static final String ERRORS_BODY_VALUE = "{0}";
     private static final String ERRORS_BODY_KEY = "trial.register.unidentifiableOwner.sub.email.body";
 
@@ -199,7 +205,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     private final RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class);
     private final StudySiteServiceLocal studySiteService = mock(StudySiteServiceLocal.class);
     private final PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
-
+    private final DocumentWorkflowStatusServiceLocal docWrkStatService = mock(DocumentWorkflowStatusServiceLocal.class);
     private MailManagerBeanLocal sut;
 
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
@@ -356,7 +362,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         prop = new PAProperties();
         prop.setName("tsr.amend.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier},${leadOrgID}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
@@ -452,6 +458,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 registryUserService);
         doCallRealMethod().when(service).setStudySiteService(studySiteService);
         doCallRealMethod().when(service).setPaServiceUtils(paServiceUtils);
+        doCallRealMethod().when(service).setDocWrkflStatusSrv(docWrkStatService);
         setDependencies(service);
         return service;
     }
@@ -462,6 +469,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         service.setRegistryUserService(registryUserService);
         service.setStudySiteService(studySiteService);
         service.setPaServiceUtils(paServiceUtils);
+        service.setDocWrkflStatusSrv(docWrkStatService);
     }
 
     @Test(expected = PAException.class)
@@ -517,17 +525,23 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void testSendAcceptEmail() throws PAException {
-        PAProperties prop = new PAProperties();
-        prop.setName("trial.accept.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${title} ${leadOrgTrialIdentifier}.");
-        TestSchema.addUpdObject(prop);
-
-        prop = new PAProperties();
+    	PAProperties prop = new PAProperties();
         prop.setName("trial.accept.subject");
         prop.setValue("trial.accept.subject");
         TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("trial.accept.body");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${leadOrgTrialIdentifier} ${leadOrgID}.");
+        TestSchema.addUpdObject(prop);
 
         bean.sendAcceptEmail(nonProprietaryTrialIi);
+        StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+                IiConverter.convertToLong(nonProprietaryTrialIi));
+        spDTO.setLeadOrganizationPOId(1L);
+        spDTO.setAmendmentNumber("1");
+        assertEquals(getFormatedCurrentDate() + " ${SubmitterName}NCI-2009-00001, Ecog1 1.", 
+        		bean.commonMailBodyReplacements(spDTO, prop.getValue()));
     }
 
     @Test
@@ -546,6 +560,15 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         spDTO.setAmendmentNumber("1");
         bean.sendAmendAcceptEmail(nonProprietaryTrialIi);
         assertEquals("trial.amend.accept.subject-1,Ecog1, NCI-2009-00001.", bean.commonMailSubjectReplacements(spDTO, prop.getValue()));
+
+        prop = new PAProperties();
+        prop.setName("trial.amend.accept.body");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${title}, ${leadOrgID}");
+        TestSchema.addUpdObject(prop);
+        spDTO.setAmendmentNumber("1");
+        spDTO.setLeadOrganizationPOId(1L);
+        bean.sendAmendAcceptEmail(nonProprietaryTrialIi);
+        assertEquals(getFormatedCurrentDate()+ " ${SubmitterName}NCI-2009-00001, ${title}, 1", bean.commonMailBodyReplacements(spDTO, prop.getValue()));
         
     }
 
@@ -566,6 +589,16 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         spDTO.setAmendmentNumber("1");
         bean.sendAmendNotificationMail(nonProprietaryTrialIi);
         assertEquals("trial.amend.subject -1,Ecog1, NCI-2009-00001.", bean.commonMailSubjectReplacements(spDTO, prop.getValue()));
+        
+        prop = new PAProperties();
+        prop.setName("trial.amend.body");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${title}, ${leadOrgID}");
+        TestSchema.addUpdObject(prop);
+        spDTO.setAmendmentNumber("1");
+        spDTO.setLeadOrganizationPOId(1L);
+        bean.sendAmendNotificationMail(nonProprietaryTrialIi);
+        assertEquals(getFormatedCurrentDate()+ " ${SubmitterName}NCI-2009-00001, ${title}, 1", bean.commonMailBodyReplacements(spDTO, prop.getValue()));
+        
     }
 
     @Test
@@ -585,26 +618,91 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         spDTO.setAmendmentNumber("1");
         bean.sendAmendRejectEmail(spDTO, "rejectReason");
         assertEquals("Amendment # 1, NCI-2009-00001, Ecog1", bean.commonMailSubjectReplacements(spDTO, prop.getValue()));
+        
+        prop = new PAProperties();
+        prop.setName("trial.amend.reject.body");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${title}, ${leadOrgID}");
+        TestSchema.addUpdObject(prop);
+        spDTO.setAmendmentNumber("1");
+        spDTO.setLeadOrganizationPOId(1L);
+        bean.sendAmendRejectEmail(spDTO, "rejectReason");
+        assertEquals(getFormatedCurrentDate()+ " ${SubmitterName}NCI-2009-00001, ${title}, 1", bean.commonMailBodyReplacements(spDTO, prop.getValue()));
+        
     }
 
     @Test
     public void testSendRejectionEmail() throws PAException {
-        PAProperties prop = new PAProperties();
-        prop.setName("rejection.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, ${receiptDate}, ${reasoncode}.");
-        TestSchema.addUpdObject(prop);
+        sut = createMailManagerServiceMock();
+        IiConverter.convertToStudyProtocolIi(1L);
+        doCallRealMethod().when(sut).sendRejectionEmail(any(Ii.class));
 
-        prop = new PAProperties();
-        prop.setName("rejection.subject");
-        prop.setValue("rejection.subect");
-        TestSchema.addUpdObject(prop);
+        doCallRealMethod().when(sut).getFormatedCurrentDate();
 
-        bean.sendRejectionEmail(nonProprietaryTrialIi);
+        doCallRealMethod().when(sut).commonMailBodyReplacements(
+                any(StudyProtocolQueryDTO.class), any(String.class));
+        when(lookUpTableService
+                .getPropertyValue("rejection.subject")).thenReturn("subject");
+        when(
+                lookUpTableService
+                        .getPropertyValue("rejection.body"))
+                .thenReturn(
+                        "BODY ${CurrentDate} ${SubmitterName} ${leadOrgTrialIdentifier},${leadOrgID}, ${trialTitle},${nciTrialIdentifier}, ${receiptDate}, ${reasoncode}.");
+
+
+        StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
+        spDTO.setProprietaryTrial(false);
+        spDTO.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier");
+        spDTO.setNciIdentifier("nciIdentifier");
+        spDTO.setLeadOrganizationName("NCI");
+        spDTO.setLeadOrganizationPOId(1L);
+        spDTO.setOfficialTitle("officialTitle");
+        spDTO.setStudyProtocolId(IiConverter.convertToLong(nonProprietaryTrialIi));
+        spDTO.setCurrentUserIsSiteOwner(true);
+        spDTO.setSearcherTrialOwner(true);
+        LastCreatedDTO lastCreated = new LastCreatedDTO();
+        lastCreated.setUserLastCreated("loginName");
+        lastCreated.setDateLastCreated(getCurrentDate());
+        spDTO.setLastCreated(lastCreated);
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L))
+                .thenReturn(spDTO);
+        List<DocumentWorkflowStatusDTO> documentList = new ArrayList<DocumentWorkflowStatusDTO>();
+        DocumentWorkflowStatusDTO documentDto = new DocumentWorkflowStatusDTO();
+        documentDto.setIdentifier(IiConverter.convertToIi(1L));
+        documentDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.REJECTED));
+        documentDto.setCommentText(StConverter.convertToSt("Comment"));
+        documentList.add(documentDto);
+        when(docWrkStatService.getByStudyProtocol(nonProprietaryTrialIi)).thenReturn(documentList);
+        when(registryUserService.isEmailNotificationsEnabled(any(Long.class), any(Long.class))).thenReturn(true);
+        
+        sut.sendRejectionEmail(nonProprietaryTrialIi);
+
+        verify(protocolQueryService, atLeastOnce()).getTrialSummaryByStudyProtocolId(1L);
+
+        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
+                .forClass(String.class);
+        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
+                .forClass(String.class);
+
+        verify(sut).sendMailWithHtmlBody(eq(email1),
+                mailSubjectCaptor.capture(), mailBodyCaptor.capture());
+
+        assertEquals("BODY "+ getFormatedCurrentDate() +" lname1 fname1 localStudyProtocolIdentifier,1, "
+        		+ "officialTitle,nciIdentifier, "+getFormatedCurrentDate() +", Comment.",
+                mailBodyCaptor.getValue());
     }
 
     @Test
     public void testSendXmlTSREmail() throws PAException {
+    	 PAProperties prop = new PAProperties();
+         prop.setName("xml.body");
+         prop.setValue("${nciTrialIdentifier} ${leadOrgTrialIdentifier} ${leadOrgID}.");
+         TestSchema.addUpdObject(prop);
         bean.sendXMLAndTSREmail(email1, email1, nonProprietaryTrialIi);
+        StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+                IiConverter.convertToLong(nonProprietaryTrialIi));
+        spDTO.setLeadOrganizationPOId(1L);
+        spDTO.setAmendmentNumber("1");
+        assertEquals("NCI-2009-00001 Ecog1 1.", bean.commonMailBodyReplacements(spDTO, prop.getValue()));
     }
 
     @Test
@@ -616,10 +714,16 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         prop = new PAProperties();
         prop.setName("trial.update.body");
-        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}, (${leadOrgTrialIdentifier}).");
+        prop.setValue("${CurrentDate} ${SubmitterName}${nciTrialIdentifier}, ${trialTitle}, (${leadOrgTrialIdentifier}), ${leadOrgID}.");
         TestSchema.addUpdObject(prop);
 
         bean.sendUpdateNotificationMail(nonProprietaryTrialIi, "");
+        StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+                IiConverter.convertToLong(nonProprietaryTrialIi));
+        spDTO.setLeadOrganizationPOId(1L);
+        spDTO.setAmendmentNumber("1");
+        assertEquals(getFormatedCurrentDate() + " ${SubmitterName}NCI-2009-00001, Cancer for kids, (Ecog1), 1.", 
+        		bean.commonMailBodyReplacements(spDTO, prop.getValue()));
     }
 
     @Test
@@ -941,6 +1045,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         spDTO.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier");
         spDTO.setNciIdentifier("nciIdentifier");
         spDTO.setLeadOrganizationName("leadOrganizationName");
+        spDTO.setLeadOrganizationPOId(1L);
         spDTO.setOfficialTitle("officialTitle");
         LastCreatedDTO lastCreated = new LastCreatedDTO();
         lastCreated.setUserLastCreated("loginName");
@@ -987,7 +1092,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assertEquals(
                 "Wrong mail body",
                 "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier,"
-                        + " leadOrganizationName, officialTitle, siteLocalStudyProtocolIdentifier,"
+                        + " leadOrganizationName, 1, officialTitle, siteLocalStudyProtocolIdentifier,"
                         + " Mayo University.", mailBodyCaptor.getValue().trim());
     }
 
@@ -1160,7 +1265,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 lookUpTableService
                         .getPropertyValue("trial.register.unidentifiableOwner.email.body"))
                 .thenReturn(
-                        "BODY ${nciTrialIdentifier} ${leadOrgName} ${badEmail}");
+                        "BODY ${nciTrialIdentifier} ${leadOrgName} ${badEmail} ${leadOrgID}");
         when(
                 lookUpTableService
                         .getPropertyValue("trial.register.mismatchedUser.email.subject"))
@@ -1180,6 +1285,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         spDTO.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier");
         spDTO.setNciIdentifier("nciIdentifier");
         spDTO.setLeadOrganizationName("NCI");
+        spDTO.setLeadOrganizationPOId(1L);
         spDTO.setOfficialTitle("officialTitle");
         LastCreatedDTO lastCreated = new LastCreatedDTO();
         lastCreated.setUserLastCreated("loginName");
@@ -1214,7 +1320,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 "NCI CTRP: CTRP Trial Record Ownership Assignment: EMAIL ADDRESS ERROR",
                 mailSubjectCaptor.getValue());
         assertEquals("Wrong mail body",
-                "BODY nciIdentifier NCI bademail@semanticbits.com",
+                "BODY nciIdentifier NCI bademail@semanticbits.com 1",
                 mailBodyCaptor.getValue());
     }
 
@@ -1303,6 +1409,18 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(prop);
 
         bean.sendCTROVerifyDataEmail(list);
+        
+        prop = new PAProperties();
+        prop.setName("verifyDataCTRO.email.body");
+        prop.setValue("${nciTrialIdentifier} ${leadOrgTrialIdentifier} ${leadOrgID}");
+        TestSchema.addUpdObject(prop);
+        bean.sendCTROVerifyDataEmail(list);
+        StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+               IiConverter.convertToLong(nonProprietaryTrialIi));
+       spDTO.setLeadOrganizationPOId(1L);
+       spDTO.setAmendmentNumber("1");
+       assertEquals("NCI-2009-00001 Ecog1 1", bean.commonMailBodyReplacements(spDTO, prop.getValue()));
+      
     }
     
     @Test
@@ -1356,6 +1474,27 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setValue("12");
         TestSchema.addUpdObject(prop);
         bean.sendVerifyDataEmail(map);
+        
+        prop = new PAProperties();
+        prop.setName("verifyData.email.body");
+        prop.setValue("${nciTrialIdentifier} ${leadOrgTrialIdentifier}");
+        TestSchema.addUpdObject(prop);
+       bean.sendVerifyDataEmail(map);
+       StudyProtocolQueryDTO spDTO = protocolQrySrv.getTrialSummaryByStudyProtocolId(
+               IiConverter.convertToLong(nonProprietaryTrialIi));
+       spDTO.setLeadOrganizationPOId(1L);
+       spDTO.setAmendmentNumber("1");
+       assertEquals("NCI-2009-00001 Ecog1", bean.commonMailBodyReplacements(spDTO, prop.getValue()));
+    }
+    /**
+     * Gets the current date properly formatted.
+     * @return The current date properly formatted.
+     */
+    String getFormatedCurrentDate() {
+        Calendar calendar = new GregorianCalendar();
+        Date date = calendar.getTime();
+        DateFormat format = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault());
+        return format.format(date);
     }
 
 }

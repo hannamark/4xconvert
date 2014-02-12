@@ -188,6 +188,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     private static final String LEAD_ORG_NAME = "${leadOrgName}";
+    private static final String LEAD_ORG_ID = "${leadOrgID}";
     private static final String FROMADDRESS = "fromaddress";
     private static final String PLACEHOLDER_2 = "{2}";
     private static final String PLACEHOLDER_0 = "{0}";
@@ -556,6 +557,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String body = mailBody;
         body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
         body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
+        if (spDTO.getLeadOrganizationPOId() != null) {
+            body = body.replace(LEAD_ORG_ID, spDTO.getLeadOrganizationPOId().toString());
+        } else {
+            body = body.replace(LEAD_ORG_ID, " ");
+        }
         body = body.replace(LEAD_ORG_NAME, spDTO.getLeadOrganizationName());
         body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
         body = body.replace(SUBMISSION_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
@@ -1742,8 +1748,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 StringBuffer innerTable = new StringBuffer();
                 for (StudyProtocolQueryDTO dto : list) {
                     if (new Date().after(effectiveDate) && dto.getVerificationDueDate().after(effectiveDate)) {
-                        innerTable.append("<tr><td style=\"width:80%\">" + dto.getNciIdentifier() + "</td>"
-                                + "<td>" + getFormatedDate(dto.getVerificationDueDate()) + "</td></tr>");
+                        innerTable.append("<tr><td style=\"width:50%\">" + dto.getNciIdentifier() + "</td>"
+                                + "<td style=\"width:50%\">" + dto.getLocalStudyProtocolIdentifier() + "</td>"
+                                + "<td style=\"width:50%\">" + getFormatedDate(dto.getVerificationDueDate()) 
+                                + "</td></tr>");
                     }
                 }
                 
@@ -1775,6 +1783,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String mailto = lookUpTableService
                 .getPropertyValue("abstraction.script.mailTo");
         mailSubject = lookUpTableService.getPropertyValue("verifyDataCTRO.email.subject");
+        if (!list.isEmpty()) {
+            mailSubject = mailSubject.replace(DUE_DATE, getFormatedDate(list.get(0)
+                     .getVerificationDueDate()));
+        }
+        
         mailBody = lookUpTableService.getPropertyValue("verifyDataCTRO.email.bodyHeader");
         mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyDataCTRO.email.body"));
         mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyDataCTRO.email.bodyFooter"));
@@ -1787,8 +1800,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             for (StudyProtocolQueryDTO dto : list) {                
                 mailBody = mailBody.replace(DUE_DATE, getFormatedDate(dto.getVerificationDueDate()));
                 if (new Date().after(effectiveDate) && dto.getVerificationDueDate().after(effectiveDate)) {
-                    innerTable.append("<tr><td style=\"width:80%\">" + dto.getNciIdentifier() + "</td>"
-                            + "<td>" + dto.getLeadOrganizationName() + "</td></tr>");
+                    innerTable.append("<tr><td style=\"width:50%\">" + dto.getNciIdentifier() + "</td>"
+                            + "<td style=\"width:50%\">" + dto.getLeadOrganizationName() + "</td>"
+                            + "<td style=\"width:50%\">" + dto.getLocalStudyProtocolIdentifier() 
+                            + "</td></tr>");
                 }
             }
             if (innerTable.length() > 0) {
@@ -1797,7 +1812,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             }
         } catch (ParseException e) {
             LOG.error(SEND_MAIL_ERROR, e);
-        }    
+        }
     }
     
     @Override
