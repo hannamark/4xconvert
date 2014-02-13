@@ -235,7 +235,18 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
     }
 
-    protected void registerTrial(String trialName, String leadOrgTrialId) throws URISyntaxException {
+    protected void registerTrial(String trialName, String leadOrgTrialId) throws URISyntaxException, SQLException {
+        deactivateTrialByLeadOrgId(leadOrgTrialId);
+        registerTrialWithoutDeletingExistingOne(trialName, leadOrgTrialId);
+    }
+
+    /**
+     * @param trialName
+     * @param leadOrgTrialId
+     * @throws URISyntaxException
+     */
+    protected void registerTrialWithoutDeletingExistingOne(String trialName,
+            String leadOrgTrialId) throws URISyntaxException {
         String today = MONTH_DAY_YEAR_FMT.format(new Date());
         String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
         String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
@@ -348,7 +359,8 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         firstRun = false;
     }
 
-    protected void registerDraftTrial(String trialName, String leadOrgTrialId) throws URISyntaxException {
+    protected void registerDraftTrial(String trialName, String leadOrgTrialId) throws URISyntaxException, SQLException {
+        deactivateTrialByLeadOrgId(leadOrgTrialId);
         String today = MONTH_DAY_YEAR_FMT.format(new Date());
         String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
         String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
@@ -470,6 +482,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
                         + "(select local_sp_indentifier from study_site ss where ss.study_protocol_identifier=sp.identifier "
                         + "and ss.functional_code='LEAD_ORGANIZATION' and ss.local_sp_indentifier='"
                         + StringEscapeUtils.escapeSql(leadOrgID) + "')");
+        LOG.info("De-activated trial with Lead Org ID of "+leadOrgID);
     }
 
 }

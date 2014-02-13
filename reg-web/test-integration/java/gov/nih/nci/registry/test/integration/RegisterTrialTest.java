@@ -119,7 +119,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
         int nciId1 = getSeqNumFromNciId(getNciIdViaSearch(TRIAL_NAME));
         // try to register a trial with the same lead org trial ID and fail
-        registerTrial(TRIAL_NAME, LEAD_ORG_TRIAL_ID);
+        registerTrialWithoutDeletingExistingOne(TRIAL_NAME, LEAD_ORG_TRIAL_ID);
         waitForPageToLoad();
         assertFalse("A success message was found", selenium.isElementPresent("css=div.confirm_msg"));
         assertFalse("A success message was found",

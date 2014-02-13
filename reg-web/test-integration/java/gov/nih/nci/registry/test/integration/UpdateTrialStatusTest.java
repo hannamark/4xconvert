@@ -84,6 +84,7 @@ package gov.nih.nci.registry.test.integration;
 
 
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -112,7 +113,7 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
         assertStatusUpdated();
     }
 
-    private void registerTrial() throws URISyntaxException {
+    private void registerTrial() throws URISyntaxException, SQLException {
         loginAndAcceptDisclaimer();
         registerTrial(UPDATE_TRIAL_TITLE, LEAD_ORG_IDENTIFIER);
         assertTrue(selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
