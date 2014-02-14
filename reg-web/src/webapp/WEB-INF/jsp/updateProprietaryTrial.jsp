@@ -93,7 +93,7 @@
     </head>
     <body>
     <!-- main content begins-->
-        <h1><fmt:message key="submit.trial.page.header"/></h1>
+        <h1><fmt:message key="update.trial.page.header"/></h1>
         <c:set var="topic" scope="request" value="updatetrial"/>
         <div class="box" id="filters">
             <reg-web:failureMessage/>
