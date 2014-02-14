@@ -140,71 +140,71 @@ ORDER BY last_name, first_name, email]]>
 	</columnHeader>
 	<detail>
 		<band height="21" splitType="Stretch">
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="69e14d9d-1ff3-46b7-b0fe-a0d6a75bd9c6" x="0" y="0" width="128" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="69e14d9d-1ff3-46b7-b0fe-a0d6a75bd9c6" x="0" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{first_name}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="7d8cf61a-a486-4db7-b513-ab8bdbce5be1" x="128" y="0" width="128" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="7d8cf61a-a486-4db7-b513-ab8bdbce5be1" x="128" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{last_name}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement uuid="fda6abaa-cc0c-4b21-9ccc-ee2fe086334d" x="256" y="0" width="152" height="21"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="9356dc40-26a7-412b-8222-c53708615c31" x="408" y="0" width="392" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="9356dc40-26a7-412b-8222-c53708615c31" x="408" y="0" width="392" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{login_name}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="9b81967b-8539-4f7d-b424-e2030b2776b5" x="800" y="0" width="192" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="9b81967b-8539-4f7d-b424-e2030b2776b5" x="800" y="0" width="192" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{prs_organization}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="cf490b8e-929c-4bd4-9097-ca1bf930123a" x="992" y="0" width="192" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="cf490b8e-929c-4bd4-9097-ca1bf930123a" x="992" y="0" width="192" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="dfc767c0-f178-4518-bdc9-10005bb70519" x="1184" y="0" width="128" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="dfc767c0-f178-4518-bdc9-10005bb70519" x="1184" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{po_id}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="3801d219-a7a2-4298-9c7d-2d99e761ab9a" x="1312" y="0" width="128" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="3801d219-a7a2-4298-9c7d-2d99e761ab9a" x="1312" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{ctep_id}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="11377fc1-a3fd-44e8-a035-747260d3f32a" x="1440" y="0" width="192" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="11377fc1-a3fd-44e8-a035-747260d3f32a" x="1440" y="0" width="192" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{family_name}]]></textFieldExpression>
 			</textField>
-			<textField isBlankWhenNull="true">
-				<reportElement uuid="33015edb-2bb1-4b0f-9a04-d128750b0233" x="1632" y="0" width="128" height="21"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement uuid="33015edb-2bb1-4b0f-9a04-d128750b0233" x="1632" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
