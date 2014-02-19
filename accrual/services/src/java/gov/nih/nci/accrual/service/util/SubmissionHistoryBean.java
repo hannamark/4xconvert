@@ -9,13 +9,11 @@ import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
@@ -44,6 +42,7 @@ import net.sf.ehcache.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 /**
@@ -53,7 +52,7 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity" })
 public class SubmissionHistoryBean implements SubmissionHistoryService {
     private static final String YES = "Yes";
     private static final String NO = "No";
@@ -85,7 +84,21 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             "select identifier, study_protocol_identifier, user_last_updated_id, date_last_updated "
             + "from study_site_subject_accrual_count "
             + "where submission_type = '" + AccrualSubmissionTypeCode.UI.getName() + "' "
-            + "and study_protocol_identifier in (:studyProtocolIdentifiers) ";
+            + "and study_protocol_identifier in (:studyProtocolIdentifiers) ";    
+    private static final String AFFILIATEDORG_TREATING_SITE_TRIALS_SQL = 
+            "select sp.identifier from study_protocol sp"
+            + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
+            + " join healthcare_facility hcf on (ss.healthcare_facility_identifier = hcf.identifier)"
+            + " join organization org on (hcf.organization_identifier = org.identifier)"
+            + " where ss.functional_code = 'TREATING_SITE' and sp.status_code = 'ACTIVE'"
+            + " and org.assigned_identifier IN (:affiliatedOrgId)"; 
+    private static final String AFFILIATEDORG_LEAD_ORG_TRIALS_SQL = 
+            "select sp.identifier from study_protocol sp"
+            + " join study_site ss on (ss.study_protocol_identifier = sp.identifier)"
+            + " join research_organization ro on (ss.research_organization_identifier = ro.identifier)"
+            + " join organization org on (ro.organization_identifier = org.identifier)"
+            + " where ss.functional_code = 'LEAD_ORGANIZATION' and sp.status_code = 'ACTIVE'"
+            + " and org.assigned_identifier IN (:affiliatedOrgId)";
 
     /** Used to store data on submitters. Avoid redundant db queries. */
     private class UserData {
@@ -201,12 +214,33 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             result.addAll(searchBatchSubmissions(from, to, trials, users));
             Collections.sort(result);
         }
-        return po6304Filter(result, ru, trials);
+        return filterPriorSubmissionResults(result, ru, trials);
     }
 
-    private List<HistoricalSubmissionDto> po6304Filter(List<HistoricalSubmissionDto> sList, RegistryUser ru,
-            Map<Long, String> trials) throws PAException {
+    private List<HistoricalSubmissionDto> filterPriorSubmissionResults(List<HistoricalSubmissionDto> sList, 
+            RegistryUser ru, Map<Long, String> trials) throws PAException {
         List<Long> familyOrgIds = FamilyHelper.getAllRelatedOrgs(ru.getAffiliatedOrganizationId());
+        List<Long> leadOrgTrials = new ArrayList<Long>();
+        List<Long> treatingSiteTrials = new ArrayList<Long>();
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session.createSQLQuery(AFFILIATEDORG_TREATING_SITE_TRIALS_SQL);
+        query.setString("affiliatedOrgId", ru.getAffiliatedOrganizationId().toString());
+        List<BigInteger> queryList = query.list();
+        for (BigInteger obj : queryList) {
+            Long studyProtocolId = obj.longValue();
+            if (!treatingSiteTrials.contains(studyProtocolId)) {
+                treatingSiteTrials.add(studyProtocolId);
+            }
+        }
+        query = session.createSQLQuery(AFFILIATEDORG_LEAD_ORG_TRIALS_SQL);
+        query.setString("affiliatedOrgId", ru.getAffiliatedOrganizationId().toString());
+        queryList = query.list();
+        for (BigInteger obj : queryList) {
+            Long studyProtocolId = obj.longValue();
+            if (!leadOrgTrials.contains(studyProtocolId)) {
+                leadOrgTrials.add(studyProtocolId);
+            }
+        }
         List<HistoricalSubmissionDto> result = new ArrayList<HistoricalSubmissionDto>();
         for (HistoricalSubmissionDto s : sList) {
             if (s.getRegistryUserId() == null) {
@@ -220,16 +254,17 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             }
 
             // otherwise show only under certain conditions
-            if (trials.containsValue(s.getNciNumber()) && po6304Show(s, ru, familyOrgIds)) {
+            if (trials.containsValue(s.getNciNumber()) 
+                    && po6304Show(s, ru, familyOrgIds, leadOrgTrials, treatingSiteTrials)) {
                 result.add(s);
             }
         }
         return result;
     }
 
-    private boolean po6304Show(HistoricalSubmissionDto s, RegistryUser ru, List<Long> familyOrgIds)
-            throws PAException {
-        TrialData d = getTrialData(s.getNciNumber(), ru);
+    private boolean po6304Show(HistoricalSubmissionDto s, RegistryUser ru, List<Long> familyOrgIds,
+            List<Long> leadOrgTrials, List<Long> treatingSiteTrials) throws PAException {
+        TrialData d = getTrialData(s.getNciNumber(), ru, leadOrgTrials, treatingSiteTrials);
         return !d.industrial && d.affiliatedWithLead
                 || d.affiliatedWithSite  
                    && d.siteAccess.contains(s.getUserAffiliatedOrgId())
@@ -238,7 +273,8 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
                        || ru.getAffiliatedOrganizationId().equals(s.getUserAffiliatedOrgId()));
     }
 
-    private TrialData getTrialData(String nciId, RegistryUser user) throws PAException {
+    private TrialData getTrialData(String nciId, RegistryUser user,
+            List<Long> leadOrgTrials, List<Long> treatingSiteTrials) throws PAException {
         TrialDataKey key = new TrialDataKey(user.getId(), nciId);
         Element element = getTrialDataCache().get(key);
         if (element == null) {
@@ -259,10 +295,9 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
                 spId = (Long) row[0];
                 industrial = (Boolean) row[1];
             }
-            boolean lead = PaRegistry.getOrganizationCorrelationService().isAffiliatedWithTrial(spId, 
-                    user.getAffiliatedOrganizationId(), StudySiteFunctionalCode.LEAD_ORGANIZATION);
-            boolean site =  PaRegistry.getOrganizationCorrelationService().isAffiliatedWithTrial(spId, 
-                    user.getAffiliatedOrganizationId(), StudySiteFunctionalCode.TREATING_SITE);
+            boolean lead = leadOrgTrials.contains(spId) ? true : false;
+            boolean site =  treatingSiteTrials.contains(spId) ? true : false;
+            
             Set<Long> siteAccess = new HashSet<Long>();
             String hql = "select org.identifier "
                 + "from StudyProtocol sp "
@@ -355,7 +390,7 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             row.setNciNumber(trials.get(trialId));
             row.setResult(YES);
             row.setSubmissionType(AccrualSubmissionTypeCode.valueOf((String) subm[TYPE_COL]));
-            row.setRegistryUserId(((Number) subm[2]).longValue());
+            row.setRegistryUserId(subm[2] == null ? null : ((Number) subm[2]).longValue());
             UserData userData = getRegistryUserData(users, row.getRegistryUserId());
             row.setUsername(userData.name);
             row.setUserAffiliatedOrgId(userData.organization);
@@ -384,7 +419,7 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             row.setNciNumber(trials.get(trialId));
             row.setResult(YES);
             row.setSubmissionType(AccrualSubmissionTypeCode.UI);
-            row.setRegistryUserId(((Number) subm[2]).longValue());
+            row.setRegistryUserId(subm[2] == null ? null : ((Number) subm[2]).longValue());
             UserData userData = getRegistryUserData(users, row.getRegistryUserId());
             row.setUsername(userData.name);
             row.setUserAffiliatedOrgId(userData.organization);

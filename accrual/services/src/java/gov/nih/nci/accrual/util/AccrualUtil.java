@@ -107,6 +107,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
@@ -119,6 +120,7 @@ import au.com.bytecode.opencsv.CSVParser;
  */
 @SuppressWarnings({ "PMD.TooManyMethods" })
 public class AccrualUtil {
+    private static final Logger LOG = Logger.getLogger(AccrualUtil.class);
     private static final int YR_MO_FORMAT_IDX = 5;
     private static final int YR_MO_BATCH_FORMAT_IDX = 7;
     private static final CSVParser PARSER = new CSVParser();
@@ -340,6 +342,7 @@ public class AccrualUtil {
         try {
             arr = PARSER.parseLine(StringUtils.trim(line));
         } catch (IOException e) {
+            LOG.info("the error line in the file: " + line);
             arr = null;
         }
         if (arr == null) {

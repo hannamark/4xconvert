@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.HistoricalSubmissionDto;
@@ -23,6 +22,7 @@ import gov.nih.nci.pa.domain.AccrualCollections;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
@@ -31,9 +31,7 @@ import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -64,6 +62,7 @@ import java.util.Set;
 import net.sf.ehcache.Cache;
 
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -358,19 +357,15 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
     }
 
     @Test
-    public void showIfNonIndustrialAndLeadOrgTest() throws Exception {
-        sp.setProprietaryTrialIndicator(BlConverter.convertToBl(false));
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.LEAD_ORGANIZATION))).thenReturn(false);
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.TREATING_SITE))).thenReturn(false);
+    public void showIfNonIndustrialAndLeadOrgTest() throws Exception {        
         clearAccess();
-        grantAccess(1);
-        createSubjectSite2(otherUser);
+        grantAccess(1);        
 
         clearCache();
         List<HistoricalSubmissionDto> rList = bean.search(null, null, user);
         assertTrue(rList.isEmpty());
 
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.LEAD_ORGANIZATION))).thenReturn(true);
+        createSubjectSite2(otherUser);
         clearCache();
         rList = bean.search(null, null, user);
         assertFalse(rList.isEmpty());
@@ -378,11 +373,8 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
 
     @Test
     public void showIfNonIndustrialAndParticipatingSiteTest() throws Exception {
-        sp.setProprietaryTrialIndicator(BlConverter.convertToBl(false));
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.LEAD_ORGANIZATION))).thenReturn(false);
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.TREATING_SITE))).thenReturn(false);
         clearAccess();
-        grantAccess(1);
+        grantAccess(4);
         createSubjectSite2(otherUser);
 
         clearCache();
@@ -390,7 +382,6 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         assertTrue(rList.isEmpty());
 
         // affiliate with site
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.TREATING_SITE))).thenReturn(true);
         clearCache();
         rList = bean.search(null, null, user);
         assertTrue(rList.isEmpty());
@@ -410,59 +401,83 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
 
     @Test
     public void showIfIndustrialAndAndParticipatingSiteTest() throws Exception {
-        sp.setProprietaryTrialIndicator(BlConverter.convertToBl(true));
         affiliateWithFamily();
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.LEAD_ORGANIZATION))).thenReturn(false);
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.TREATING_SITE))).thenReturn(false);
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol protocol = (StudyProtocol) session.get(
+                StudyProtocol.class, TestSchema.studyProtocols.get(3).getId());
+        protocol.setProprietaryTrialIndicator(true);
+        session.update(protocol);
+        session.flush();
+        
         clearAccess();
-        grantAccess(2);
+        grantAccess(4);
         createSubjectSite2(otherUser);
 
         clearCache();
         List<HistoricalSubmissionDto> rList = bean.search(null, null, user);
         assertTrue(rList.isEmpty());
 
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.TREATING_SITE))).thenReturn(true);
+        StudySiteSubjectAccrualCount dataGui = new StudySiteSubjectAccrualCount();
+        dataGui.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
+        dataGui.setStudyProtocol(protocol);
+        dataGui.setStudySite(TestSchema.studySites.get(7));
+        dataGui.setDateLastUpdated(new Date());
+        dataGui.setUserLastUpdated(user.getCsmUser());
+        TestSchema.addUpdObject(dataGui);
         clearCache();
+        grantAccess(7);
         rList = bean.search(null, null, user);
         assertFalse(rList.isEmpty());
     }
 
     @Test
     public void showIfIndustrialAndLeadOrgTest() throws Exception {
-        sp.setProprietaryTrialIndicator(BlConverter.convertToBl(true));
         affiliateWithFamily();
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.LEAD_ORGANIZATION))).thenReturn(false);
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.TREATING_SITE))).thenReturn(false);
         clearAccess();
-        grantAccess(2);
+        grantAccess(4);
         createSubjectSite2(otherUser);
 
         clearCache();
         List<HistoricalSubmissionDto> rList = bean.search(null, null, user);
         assertTrue(rList.isEmpty());
 
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.LEAD_ORGANIZATION))).thenReturn(true);
         clearCache();
         rList = bean.search(null, null, user);
-        //assertTrue(rList.isEmpty());
+        assertTrue(rList.isEmpty());
 
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.TREATING_SITE))).thenReturn(true);
+        final Session session = PaHibernateUtil.getCurrentSession();
+        StudyProtocol protocol = (StudyProtocol) session.get(
+                StudyProtocol.class, TestSchema.studyProtocols.get(2).getId());
+        protocol.setProprietaryTrialIndicator(true);
+        session.update(protocol);
+        session.flush();
+        StudySiteSubjectAccrualCount dataGui = new StudySiteSubjectAccrualCount();
+        dataGui.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
+        dataGui.setStudyProtocol(protocol);
+        dataGui.setStudySite(TestSchema.studySites.get(6));
+        dataGui.setDateLastUpdated(new Date());
+        dataGui.setUserLastUpdated(user.getCsmUser());
+        TestSchema.addUpdObject(dataGui);
         clearCache();
+        grantAccess(6);
         rList = bean.search(null, null, user);
         assertFalse(rList.isEmpty());
     }
 
     @Test
     public void showIfAffiliatedOrgNotPartOfFamilyTest() throws Exception {
-        sp.setProprietaryTrialIndicator(BlConverter.convertToBl(true));
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.LEAD_ORGANIZATION))).thenReturn(false);
-        when(ocSvc.isAffiliatedWithTrial(anyLong(), anyLong(), eq(StudySiteFunctionalCode.TREATING_SITE))).thenReturn(true);
         clearAccess();
-        grantAccess(1);
-        grantAccess(2);
-        createSubjectSite2(otherUser);
-
+        StudySubject dataGui = new StudySubject();
+        dataGui.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        dataGui.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
+        dataGui.setStudyProtocol(TestSchema.studyProtocols.get(3));
+        dataGui.setStudySite(TestSchema.studySites.get(8));
+        dataGui.setDateLastUpdated(new Date());
+        dataGui.setUserLastUpdated(otherUser.getCsmUser());
+        dataGui.setPatient(TestSchema.patients.get(0));
+        TestSchema.addUpdObject(dataGui);        
+        
         clearCache();
         List<HistoricalSubmissionDto> rList = bean.search(null, null, user);
         assertTrue(rList.isEmpty());
@@ -477,11 +492,34 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
         ru.setCsmUser(otherCsmUser);
         ru.setAffiliatedOrganizationId(user.getAffiliatedOrganizationId());
         TestSchema.addUpdObject(ru);
-        createSubjectSite2(ru);
-
+        //createSubjectSite2(ru);
+        dataGui.setUserLastUpdated(ru.getCsmUser());
+        TestSchema.addUpdObject(dataGui);
+        grantAccess(7);
         clearCache();
         rList = bean.search(null, null, user);
         assertFalse(rList.isEmpty());
+    }
+    
+    @Test
+    public void junitCoverage()  throws Exception {
+    	User otherCsmUser = TestSchema.createUser();
+    	RegistryUser ru = new RegistryUser();
+    	ru.setFirstName("Test");
+    	ru.setLastName("User");
+    	ru.setEmailAddress("test@example.com");
+    	ru.setPhone("123-456-7890");
+    	ru.setCsmUser(otherCsmUser);
+    	ru.setAffiliatedOrganizationId(user.getAffiliatedOrganizationId());
+    	TestSchema.addUpdObject(ru);
+    	createSubjectSite2(ru);
+    	createSubjectSite2(otherUser);
+    	clearCache();
+    	List<HistoricalSubmissionDto> rList = bean.search(null, null, otherUser);
+    	assertTrue(rList.isEmpty());
+    	clearCache();
+    	rList = bean.search(null, null, user);
+    	assertFalse(rList.isEmpty());
     }
 
     private void createSubjectSite2(RegistryUser submitter) {
