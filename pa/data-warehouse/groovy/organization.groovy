@@ -6,39 +6,15 @@ def sql = """select
 			 add.postalcode,
 			 add.cityormunicipality,
 			 country.name as country_name,
-			 ctepid.assigned_identifier_extension as ctep_id,
-			 c.value as comments,
 			 org.id,
 			 org.status,
 			 org.statusdate,
 			 add.stateorprovince,
 			 org.name as orgname,
-			 e.value as email,
-			 fax.value as faxnumber,	 
-			 phone.value as phone,
-			 tty.value as tty,
-			 url.value as url,
-			 fam.name as fam_name,
-			 f_o_r.functionaltype,
 			 crcount
 			 from Organization org
-			 left outer join address add on add.id = org.postal_address_id
-			 left outer join identifiedorganization ctepid on ctepid.player_id = org.id and ctepid.assigned_identifier_root = '2.16.840.1.113883.3.26.6.2'
+			 join address add on add.id = org.postal_address_id
 			 left outer join country on country.id = add.country_id
-			 left outer join organization_email o_e on o_e.organization_id = org.id
-			 left outer join email e on e.id = o_e.email_id
-             left outer join organization_comment o_c on o_c.organization_id = org.id
-             left outer join comment c on c.id = o_c.comment_id
-			 left outer join organization_fax o_f on o_f.organization_id = org.id
-			 left outer join phonenumber fax on fax.id = o_f.fax_id
-			 left outer join organization_phone o_ph on o_ph.organization_id = org.id
-			 left outer join phonenumber phone on phone.id = o_ph.phone_id			 
-			 left outer join organization_tty o_tty on o_tty.organization_id = org.id
-			 left outer join phonenumber tty on tty.id = o_tty.tty_id
-			 left outer join organization_url o_url on o_url.organization_id = org.id
-			 left outer join url url on url.id = o_url.url_id
-			 left outer join familyorganizationrelationship f_o_r on f_o_r.organization_id = org.id
-			 left outer join family fam on fam.id = f_o_r.family_id
 			 left outer join (select count(*) as crcount, target from organizationcr group by target) AS orgcr
 				on orgcr.target = org.id
 			"""
@@ -57,25 +33,119 @@ sourceConnection.eachRow(sql) { row ->
     	postal_code: row.postalcode,
     	city: row.cityormunicipality,
     	country: row.country_name,
-    	ctep_id: row.ctep_id,
-    	curator_comment: row.comments,
         name: row.orgname,
  		po_id: row.id,
  		status: row.status,
  		status_date: row.statusdate,
  		state_or_province: row.stateorprovince,
- 		email: row.email,
- 	 	fax: row.faxnumber,
- 	 	phone: row.phone,
- 	 	tty: row.tty,
  	 	internal_id: row.id,
- 	 	FAMILY: row.fam_name,
- 	 	ORG_TO_FAMILY_RELATIONSHIP: row.functionaltype,
  	 	CHANGE_REQUEST_COUNT: row.crcount
 	)
 }
 
 destinationConnection.execute("UPDATE STG_DW_ORGANIZATION set CHANGE_REQUEST_COUNT = 0 where CHANGE_REQUEST_COUNT is null")
 
+sourceConnection.eachRow("""SELECT rel.organization_id, c.value
+                            FROM organization_comment rel
+                            JOIN comment c ON (c.id = rel.comment_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET curator_comment = curator_comment || chr(13) || ?
+                                     WHERE po_id = ?
+                                       AND curator_comment IS NOT NULL
+                                  """, [row.value, row.organization_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET curator_comment = ?
+                                     WHERE po_id = ?
+                                       AND curator_comment IS NULL
+                                  """, [row.value, row.organization_id]);
+}
 
+sourceConnection.eachRow("""SELECT player_id, assigned_identifier_extension
+                            FROM identifiedorganization
+							WHERE assigned_identifier_root = '2.16.840.1.113883.3.26.6.2'
+							  AND status IN ('ACTIVE','PENDING')""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET ctep_id = ctep_id || chr(13) || ?
+                                     WHERE po_id = ?
+                                       AND ctep_id IS NOT NULL
+                                  """, [row.assigned_identifier_extension, row.player_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET ctep_id = ?
+                                     WHERE po_id = ?
+                                       AND ctep_id IS NULL
+                                  """, [row.assigned_identifier_extension, row.player_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.organization_id, e.value
+                            FROM organization_email rel
+                            JOIN email e ON (e.id = rel.email_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET email = email || chr(13) || ?
+                                     WHERE po_id = ?
+                                       AND email IS NOT NULL
+                                  """, [row.value, row.organization_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET email = ?
+                                     WHERE po_id = ?
+                                       AND email IS NULL
+                                  """, [row.value, row.organization_id]);
+}
+sourceConnection.eachRow("""SELECT rel.organization_id, e.value
+                            FROM organization_fax rel
+                            JOIN phonenumber e ON (e.id = rel.fax_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET fax = fax || chr(13) || ?
+                                     WHERE po_id = ?
+                                       AND fax IS NOT NULL
+                                  """, [row.value, row.organization_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET fax = ?
+                                     WHERE po_id = ?
+                                       AND fax IS NULL
+                                  """, [row.value, row.organization_id]);
+}
+sourceConnection.eachRow("""SELECT rel.organization_id, e.value
+                            FROM organization_phone rel
+                            JOIN phonenumber e ON (e.id = rel.phone_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET phone = phone || chr(13) || ?
+                                     WHERE po_id = ?
+                                       AND phone IS NOT NULL
+                                  """, [row.value, row.organization_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET phone = ?
+                                     WHERE po_id = ?
+                                       AND phone IS NULL
+                                  """, [row.value, row.organization_id]);
+}
+sourceConnection.eachRow("""SELECT rel.organization_id, e.value
+                            FROM organization_tty rel
+                            JOIN phonenumber e ON (e.id = rel.tty_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET tty = tty || chr(13) || ?
+                                     WHERE po_id = ?
+                                       AND tty IS NOT NULL
+                                  """, [row.value, row.organization_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET tty = ?
+                                     WHERE po_id = ?
+                                       AND tty IS NULL
+                                  """, [row.value, row.organization_id]);
+}
+sourceConnection.eachRow("""SELECT rel.organization_id, e.name, rel.functionaltype
+                            FROM familyorganizationrelationship rel
+                            JOIN family e ON (e.id = rel.family_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET family = family || chr(13) || ?
+									   , org_to_family_relationship = org_to_family_relationship || chr(13) || ?
+                                     WHERE po_id = ?
+                                       AND family IS NOT NULL
+                                  """, [row.name, row.functionaltype, row.organization_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization
+                                     SET family = ?
+									   , org_to_family_relationship = ?
+                                     WHERE po_id = ?
+                                       AND family IS NULL
+                                  """, [row.name, row.functionaltype, row.organization_id]);
+}
 

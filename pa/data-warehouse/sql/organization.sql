@@ -21,5 +21,6 @@ CREATE TABLE STG_DW_ORGANIZATION (
 	CHANGE_REQUEST_COUNT integer,
 	FAMILY character varying (400),
 	ORG_TO_FAMILY_RELATIONSHIP character varying (30)
-	)
-;
+	);
+
+ALTER TABLE stg_dw_organization ADD PRIMARY KEY (po_id);
