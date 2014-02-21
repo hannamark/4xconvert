@@ -110,7 +110,7 @@ WHERE summary_level_accrual = false
                                                     from dw_study_overall_status
                                                     where date_trunc('day', status_date) < $P{Calculated_Start_Date}
                                                     group by nci_id ))
-                    and status in ('ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                    and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
                                    'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
                                    'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
   AND dt4.nci_id NOT IN (SELECT nci_id
@@ -263,7 +263,7 @@ WHERE summary_level_accrual = true
                                                     from dw_study_overall_status
                                                     where date_trunc('day', status_date) < $P{Calculated_Start_Date}
                                                     group by nci_id ))
-                    and status in ('ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                    and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
                                    'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
                                    'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
         OR (is_industrial = TRUE AND dt4.nci_id IN (select nci_id
