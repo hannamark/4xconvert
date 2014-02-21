@@ -362,7 +362,23 @@ public class ProtocolQueryResultsServiceTest {
         rssOrgs = Arrays.asList("RSS");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.REJECTED);
         bean.setFlags(dto, qryResult, rssOrgs);
-        assertFalse(dto.isSiteSelfRegistrable());       
+        assertFalse(dto.isSiteSelfRegistrable());    
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setProprietaryTrial(true);
+        rssOrgs = Arrays.asList("RSS");
+        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
+        dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
+        bean.setFlags(dto, qryResult, rssOrgs);
+        assertTrue(dto.isSiteSelfRegistrable());  
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setProprietaryTrial(true);
+        rssOrgs = Arrays.asList("RSS");
+        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
+        dto.setStudyStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
+        bean.setFlags(dto, qryResult, rssOrgs);
+        assertTrue(dto.isSiteSelfRegistrable());      
         
         
     }

@@ -518,9 +518,6 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             List<String> rssOrgs) {
         if (dto.isProprietaryTrial()
                 && !rssOrgs.contains(row[LEAD_ORG_NAME_IDX])
-                && !(dto.getStudyStatusCode() != null && !dto
-                        .getStudyStatusCode()
-                        .isEligibleForSiteSelfRegistration())
                 && dto.getDocumentWorkflowStatusCode() != null
                 && dto.getDocumentWorkflowStatusCode().isAcceptedOrAbove()) {
             dto.setSiteSelfRegistrable(true);
