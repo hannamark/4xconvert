@@ -314,7 +314,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         final String message = "This trial cannot be updated at this time. "
                 + "Please contact us at ncictro@mail.nih.gov for further assistance regarding this trial. "
                 + "Please include the NCI Trial Identifier in your email.";
-        if (!validateRespPartyInfo() || !validateSummaryFourInfo()) {
+        if (!validateSummaryFourInfo()) {
             failureMessage = message;
         } else {
             enforceBusinessRules();
@@ -681,30 +681,6 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         return sosDto;
     }
 
-    /**
-     * Validates the responsible party info.
-     * @return true if the responsible party info is valid
-     */
-    boolean validateRespPartyInfo() {
-        if (StringUtils.isEmpty(trialDTO.getResponsiblePartyType())) {
-            return false;
-        }      
-
-        if (!validateXmlRequiredTrial()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean validateXmlRequiredTrial() {
-        if (trialDTO.isXmlRequired()) {
-            if (StringUtils.isEmpty(trialDTO.getSponsorIdentifier())) { // NOPMD
-                return false;
-            }            
-        }
-        return true;
-    }
 
     /**
      * Validates the summary four info.

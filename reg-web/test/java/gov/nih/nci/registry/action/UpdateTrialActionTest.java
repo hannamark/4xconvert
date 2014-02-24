@@ -540,68 +540,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         ServletActionContext.setRequest(request);
         assertEquals("redirect_to_search", action.update());
     }
-    
-    @Test 
-    public void validateRespPartyInfoValidationPassed() {
-        TrialDTO trial = getMockTrialDTO();
-        action.setTrialDTO(trial);
-        assertTrue(action.validateRespPartyInfo());
-    }
-    
-    @Test 
-    public void validateRespPartyInfoIncorrectSponsorIdentifier() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setSponsorIdentifier(null);
-        action.setTrialDTO(trial);
-        assertFalse(action.validateRespPartyInfo());
-    }
-    
-    @Test 
-    public void validateRespPartyInfoIncorrectResponsiblePartyType() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setResponsiblePartyType(null);
-        action.setTrialDTO(trial);
-        assertFalse(action.validateRespPartyInfo());
-    }
-  
-    
-    @Test 
-    public void validateRespPartyInfoIncorrectSponsorIdentifierNoXMLRequired() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setXmlRequired(false);
-        trial.setSponsorIdentifier(null);
-        action.setTrialDTO(trial);
-        assertTrue(action.validateRespPartyInfo());
-    }    
-   
-    
-    @Test 
-    public void validateRespPartyInfoIncorrectContactPhoneNoXMLRequired() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setXmlRequired(false);
-        trial.setContactPhone(null);
-        action.setTrialDTO(trial);
-        assertTrue(action.validateRespPartyInfo());
-    }
-    
-    @Test 
-    public void validateRespPartyInfoIncorrectContactEmailNoXMLRequired() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setXmlRequired(false);
-        trial.setContactEmail(null);
-        action.setTrialDTO(trial);
-        assertTrue(action.validateRespPartyInfo());
-    }
-    
-    @Test 
-    public void validateRespPartyInfoIncorrectResponsiblePartyTypePINoXMLRequired() {
-        TrialDTO trial = getMockTrialDTO();
-        trial.setXmlRequired(false);
-        trial.setResponsiblePartyType("not PI");
-        action.setTrialDTO(trial);
-        assertTrue(action.validateRespPartyInfo());
-    }
-    
+
     @Test 
     public void validateSummaryFourInfoValidationPassed() {
         TrialDTO trial = getMockTrialDTO();
@@ -622,7 +561,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
     public void validateTrialNotUpdatableFieldsFailed() throws PAException, IOException {
         UpdateTrialAction action = mock(UpdateTrialAction.class);
         doCallRealMethod().when(action).validateTrial();
-        when(action.validateRespPartyInfo()).thenReturn(true);
         when(action.validateSummaryFourInfo()).thenReturn(false);
         String result = action.validateTrial();
         assertEquals("Wrong error message returned",
@@ -634,7 +572,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
     public void validateTrialBusinessRulesFailed() throws PAException, IOException {
         UpdateTrialAction action = mock(UpdateTrialAction.class);
         doCallRealMethod().when(action).validateTrial();
-        when(action.validateRespPartyInfo()).thenReturn(true);
         when(action.validateSummaryFourInfo()).thenReturn(true);
         when(action.hasFieldErrors()).thenReturn(true);
         String result = action.validateTrial();
@@ -647,7 +584,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
     public void validateTrial() throws PAException, IOException {
         UpdateTrialAction action = mock(UpdateTrialAction.class);
         doCallRealMethod().when(action).validateTrial();
-        when(action.validateRespPartyInfo()).thenReturn(true);
         when(action.validateSummaryFourInfo()).thenReturn(true);
         when(action.hasFieldErrors()).thenReturn(true);
 
@@ -655,7 +591,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
 
         InOrder inOrder = inOrder(action);
         inOrder.verify(action).clearErrorsAndMessages();
-        inOrder.verify(action).validateRespPartyInfo();
         inOrder.verify(action).validateSummaryFourInfo();
         inOrder.verify(action).enforceBusinessRules();
         inOrder.verify(action).hasFieldErrors();
