@@ -7,20 +7,20 @@ CREATE TABLE STG_DW_ORGANIZATION (
 	CITY character varying (50),
 	STATE_OR_PROVINCE character varying (255),
 	COUNTRY character varying (50),
-	CTEP_ID character varying (50),
+	CTEP_ID character varying (2000),
 	CURATOR_COMMENT text,
 	NAME character varying (255),
 	PO_ID integer,
 	STATUS character varying (20),
 	STATUS_DATE date,
-	EMAIL character varying (256),
-	FAX character varying (256),
-	PHONE character varying (256),
-	TTY character varying (50),
+	EMAIL character varying (2000),
+	FAX character varying (2000),
+	PHONE character varying (2000),
+	TTY character varying (2000),
 	INTERNAL_ID integer,
 	CHANGE_REQUEST_COUNT integer,
-	FAMILY character varying (400),
-	ORG_TO_FAMILY_RELATIONSHIP character varying (30)
+	FAMILY character varying (2000),
+	ORG_TO_FAMILY_RELATIONSHIP character varying (2000)
 	);
 
 ALTER TABLE stg_dw_organization ADD PRIMARY KEY (po_id);

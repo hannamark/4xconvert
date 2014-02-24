@@ -14,7 +14,7 @@ def sql = """select
 			 crcount
 			 from Organization org
 			 join address add on add.id = org.postal_address_id
-			 left outer join country on country.id = add.country_id
+			 join country on country.id = add.country_id
 			 left outer join (select count(*) as crcount, target from organizationcr group by target) AS orgcr
 				on orgcr.target = org.id
 			"""

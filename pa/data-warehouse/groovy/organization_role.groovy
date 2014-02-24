@@ -7,120 +7,449 @@ def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jd
 
 def orgs = destinationConnection.dataSet("STG_DW_ORGANIZATION_ROLE")
 
-def sql = """select 
-                         org.name,
-                         org.id as organization_po_id,
-			 add.streetaddressline,
-			 add.deliveryaddressline,
-			 add.postalcode,
-			 add.cityormunicipality,
-			 country.name as country_name,
-			 ctepid.extension as ctep_id,
-			 sr.id as role_po_id,
-			 sr.status,
-			 sr.statusdate,
-			 add.stateorprovince,
-			 e.value as email,
-			 fax.value as faxnumber,	 
-			 phone.value as phone,
-			 tty.value as tty,
-			 url.value as url
-			 from Organization org
-			 inner join healthcarefacility SR on SR.player_id = org.id
-			 left outer join hcf_otheridentifier ctepid on ctepid.hcf_id = SR.id 
-			 	and ctepid.root = '2.16.840.1.113883.3.26.6.2'
-			 left outer join hcf_address SR_add on SR_add.hcf_id = SR.id
-			 left outer join address add on add.id = SR_add.address_id
-			 left outer join country on country.id = add.country_id
-			 left outer join hcf_email sr_e on sr_e.hcf_id = sr.id
-			 left outer join email e on e.id = sr_e.email_id
-			 left outer join hcf_fax sr_f on sr_f.hcf_id = sr.id
-			 left outer join phonenumber fax on fax.id = sr_f.fax_id
-			 left outer join hcf_phone sr_ph on sr_ph.hcf_id = sr.id
-			 left outer join phonenumber phone on phone.id = sr_ph.phone_id			 
-			 left outer join hcf_tty sr_tty on sr_tty.hcf_id = sr.id
-			 left outer join phonenumber tty on tty.id = sr_tty.tty_id
-			 left outer join hcf_url sr_url on sr_url.hcf_id = sr.id
-			 left outer join url url on url.id = sr_url.url_id
-			"""
+def sql = """SELECT id, assigned_identifier_extension, player_id, status, statusdate
+             FROM identifiedorganization"""
 
 sourceConnection.eachRow(sql) { row ->
     orgs.add(
-        name: row.name,
-    	address_line_1: row.streetaddressline,
-    	address_line_2: row.deliveryaddressline,
-    	postal_code: row.postalcode,
-    	city: row.cityormunicipality,
-    	country: row.country_name,
-    	ctep_id: row.ctep_id,
-        organization_po_id: row.organization_po_id,
-        role_po_id: row.role_po_id,
- 		status: row.status,
- 		status_date: row.statusdate,
- 		state_or_province: row.stateorprovince,
- 		email: row.email,
- 	 	fax: row.faxnumber,
- 	 	phone: row.phone,
- 	 	tty: row.tty,
- 	 	ROLE_NAME: "Healthcare Facility"
+        organization_po_id: row.player_id,
+        role_po_id: row.id,
+		identified_org_extension: row.assigned_identifier_extension,
+		status: row.status,
+		status_date: row.statusdate,
+ 	 	ROLE_NAME: "Identified Organization"
 	)
 }
 
 sql = """select 
                          org.name,
                          org.id as organization_po_id,
-			 add.streetaddressline,
-			 add.deliveryaddressline,
-			 add.postalcode,
-			 add.cityormunicipality,
-			 country.name as country_name,
-			 ctepid.extension as ctep_id,
 			 sr.id as role_po_id,
 			 sr.status,
-			 sr.statusdate,
-			 add.stateorprovince,
-			 e.value as email,
-			 fax.value as faxnumber,	 
-			 phone.value as phone,
-			 tty.value as tty,
-			 url.value as url
+			 sr.statusdate
 			 from Organization org
-			 inner join researchorganization SR on SR.player_id = org.id
-			 left outer join ro_otheridentifier ctepid on ctepid.ro_id = SR.id 
-			 	and ctepid.root = '2.16.840.1.113883.3.26.6.2'
-			 join ro_address SR_add on SR_add.ro_id = SR.id
-			 join address add on add.id = SR_add.address_id
-			 left outer join country on country.id = add.country_id
-			 left outer join ro_email sr_e on sr_e.ro_id = sr.id
-			 left outer join email e on e.id = sr_e.email_id
-			 left outer join ro_fax sr_f on sr_f.ro_id = sr.id
-			 left outer join phonenumber fax on fax.id = sr_f.fax_id
-			 left outer join ro_phone sr_ph on sr_ph.ro_id = sr.id
-			 left outer join phonenumber phone on phone.id = sr_ph.phone_id			 
-			 left outer join ro_tty sr_tty on sr_tty.ro_id = sr.id
-			 left outer join phonenumber tty on tty.id = sr_tty.tty_id
-			 left outer join ro_url sr_url on sr_url.ro_id = sr.id
-			 left outer join url url on url.id = sr_url.url_id
+			 inner join healthcarefacility SR on SR.player_id = org.id
 			"""
 
 sourceConnection.eachRow(sql) { row ->
     orgs.add(
         name: row.name,
-    	address_line_1: row.streetaddressline,
-    	address_line_2: row.deliveryaddressline,
-    	postal_code: row.postalcode,
-    	city: row.cityormunicipality,
-    	country: row.country_name,
-    	ctep_id: row.ctep_id,
         organization_po_id: row.organization_po_id,
         role_po_id: row.role_po_id,
  		status: row.status,
  		status_date: row.statusdate,
- 		state_or_province: row.stateorprovince,
- 		email: row.email,
- 	 	fax: row.faxnumber,
- 	 	phone: row.phone,
- 	 	tty: row.tty,
+ 	 	ROLE_NAME: "Healthcare Facility"
+	)
+}
+
+sourceConnection.eachRow("""SELECT hcf_id, extension
+                            FROM hcf_otheridentifier
+							WHERE root = '2.16.840.1.113883.3.26.6.2'""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET ctep_id = ctep_id || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND ctep_id IS NOT NULL
+                                  """, [row.extension, row.hcf_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET ctep_id = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND ctep_id IS NULL
+                                  """, [row.extension, row.hcf_id]);
+}
+
+sourceConnection.eachRow("""SELECT hcf_address.hcf_id,
+                                   add.streetaddressline, 
+                                   COALESCE(add.deliveryaddressline,'') AS deliveryaddressline,
+                                   add.cityormunicipality,
+                                   COALESCE(add.stateorprovince,'') AS stateorprovince, 
+                                   COALESCE(add.postalcode,'') AS postalcode,
+                                   country.name 
+                            FROM hcf_address 
+							JOIN address add ON (hcf_address.address_id = add.id)
+                            JOIN country ON (country.id = add.country_id)""") { row ->
+    destinationConnection.executeUpdate("""
+			UPDATE stg_dw_organization_role
+               SET address_line_1 = address_line_1 || chr(13) || ?,
+    	           address_line_2 = address_line_2 || chr(13) || ?,
+    	           city = city || chr(13) || ?,
+            	   state_or_province = state_or_province || chr(13) || ?,
+    	           postal_code = postal_code || chr(13) || ?,
+    	           country = country || chr(13) || ?
+            WHERE role_po_id = ?
+			  AND role_name = 'Healthcare Facility'
+              AND address_line_1 IS NOT NULL
+        """, [row.streetaddressline, row.deliveryaddressline, row.cityormunicipality,
+		      row.stateorprovince, row.postalcode, row.name, row.hcf_id]);
+    destinationConnection.executeUpdate("""
+			UPDATE stg_dw_organization_role
+               SET address_line_1 = ?,
+    	           address_line_2 = ?,
+    	           city = ?,
+            	   state_or_province = ?,
+    	           postal_code = ?,
+    	           country = ?
+            WHERE role_po_id = ?
+			  AND role_name = 'Healthcare Facility'
+              AND address_line_1 IS NULL
+        """, [row.streetaddressline, row.deliveryaddressline, row.cityormunicipality,
+		      row.stateorprovince, row.postalcode, row.name, row.hcf_id]);
+}
+
+sourceConnection.eachRow("""SELECT hcf_id, value
+                            FROM hcf_email
+							JOIN email ON (hcf_email.email_id = email.id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET email = email || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND email IS NOT NULL
+                                  """, [row.value, row.hcf_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET email = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND email IS NULL
+                                  """, [row.value, row.hcf_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.hcf_id, e.value
+                            FROM hcf_fax rel
+                            JOIN phonenumber e ON (e.id = rel.fax_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET fax = fax || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND fax IS NOT NULL
+                                  """, [row.value, row.hcf_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET fax = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND fax IS NULL
+                                  """, [row.value, row.hcf_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.hcf_id, e.value
+                            FROM hcf_phone rel
+                            JOIN phonenumber e ON (e.id = rel.phone_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET phone = phone || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND phone IS NOT NULL
+                                  """, [row.value, row.hcf_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET phone = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND phone IS NULL
+                                  """, [row.value, row.hcf_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.hcf_id, e.value
+                            FROM hcf_tty rel
+                            JOIN phonenumber e ON (e.id = rel.tty_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET tty = tty || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND tty IS NOT NULL
+                                  """, [row.value, row.hcf_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET tty = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Healthcare Facility'
+                                       AND tty IS NULL
+                                  """, [row.value, row.hcf_id]);
+}
+
+
+sql = """select 
+                         org.name,
+                         org.id as organization_po_id,
+			 sr.id as role_po_id,
+			 sr.status,
+			 sr.statusdate
+			 from Organization org
+			 inner join researchorganization SR on SR.player_id = org.id
+			"""
+
+sourceConnection.eachRow(sql) { row ->
+    orgs.add(
+        name: row.name,
+        organization_po_id: row.organization_po_id,
+        role_po_id: row.role_po_id,
+ 		status: row.status,
+ 		status_date: row.statusdate,
  	 	ROLE_NAME: "Research Organization"
 	)
+}
+
+sourceConnection.eachRow("""SELECT ro_id, extension
+                            FROM ro_otheridentifier
+							WHERE root = '2.16.840.1.113883.3.26.6.2'""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET ctep_id = ctep_id || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND ctep_id IS NOT NULL
+                                  """, [row.extension, row.ro_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET ctep_id = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND ctep_id IS NULL
+                                  """, [row.extension, row.ro_id]);
+}
+
+sourceConnection.eachRow("""SELECT ro_address.ro_id,
+                                   add.streetaddressline, 
+                                   COALESCE(add.deliveryaddressline,'') AS deliveryaddressline,
+                                   add.cityormunicipality,
+                                   COALESCE(add.stateorprovince,'') AS stateorprovince, 
+                                   COALESCE(add.postalcode,'') AS postalcode,
+                                   country.name 
+                            FROM ro_address 
+							JOIN address add ON (ro_address.address_id = add.id)
+                            JOIN country ON (country.id = add.country_id)""") { row ->
+    destinationConnection.executeUpdate("""
+			UPDATE stg_dw_organization_role
+               SET address_line_1 = address_line_1 || chr(13) || ?,
+    	           address_line_2 = address_line_2 || chr(13) || ?,
+    	           city = city || chr(13) || ?,
+            	   state_or_province = state_or_province || chr(13) || ?,
+    	           postal_code = postal_code || chr(13) || ?,
+    	           country = country || chr(13) || ?
+            WHERE role_po_id = ?
+			  AND role_name = 'Research Organization'
+              AND address_line_1 IS NOT NULL
+        """, [row.streetaddressline, row.deliveryaddressline, row.cityormunicipality,
+		      row.stateorprovince, row.postalcode, row.name, row.ro_id]);
+    destinationConnection.executeUpdate("""
+			UPDATE stg_dw_organization_role
+               SET address_line_1 = ?,
+    	           address_line_2 = ?,
+    	           city = ?,
+            	   state_or_province = ?,
+    	           postal_code = ?,
+    	           country = ?
+            WHERE role_po_id = ?
+			  AND role_name = 'Research Organization'
+              AND address_line_1 IS NULL
+        """, [row.streetaddressline, row.deliveryaddressline, row.cityormunicipality,
+		      row.stateorprovince, row.postalcode, row.name, row.ro_id]);
+}
+
+sourceConnection.eachRow("""SELECT ro_id, value
+                            FROM ro_email
+							JOIN email ON (ro_email.email_id = email.id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET email = email || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND email IS NOT NULL
+                                  """, [row.value, row.ro_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET email = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND email IS NULL
+                                  """, [row.value, row.ro_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.ro_id, e.value
+                            FROM ro_fax rel
+                            JOIN phonenumber e ON (e.id = rel.fax_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET fax = fax || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND fax IS NOT NULL
+                                  """, [row.value, row.ro_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET fax = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND fax IS NULL
+                                  """, [row.value, row.ro_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.ro_id, e.value
+                            FROM ro_phone rel
+                            JOIN phonenumber e ON (e.id = rel.phone_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET phone = phone || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND phone IS NOT NULL
+                                  """, [row.value, row.ro_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET phone = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND phone IS NULL
+                                  """, [row.value, row.ro_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.ro_id, e.value
+                            FROM ro_tty rel
+                            JOIN phonenumber e ON (e.id = rel.tty_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET tty = tty || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND tty IS NOT NULL
+                                  """, [row.value, row.ro_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET tty = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Research Organization'
+                                       AND tty IS NULL
+                                  """, [row.value, row.ro_id]);
+}
+
+sql = """select 
+                         org.name,
+                         org.id as organization_po_id,
+			 sr.id as role_po_id,
+			 sr.status,
+			 sr.statusdate
+			 from Organization org
+			 inner join oversightcommittee SR on SR.player_id = org.id
+			"""
+
+sourceConnection.eachRow(sql) { row ->
+    orgs.add(
+        name: row.name,
+        organization_po_id: row.organization_po_id,
+        role_po_id: row.role_po_id,
+ 		status: row.status,
+ 		status_date: row.statusdate,
+ 	 	ROLE_NAME: "Oversight Committee"
+	)
+}
+
+sourceConnection.eachRow("""SELECT oco_id, extension
+                            FROM oco_otheridentifier
+							WHERE root = '2.16.840.1.113883.3.26.6.2'""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET ctep_id = ctep_id || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND ctep_id IS NOT NULL
+                                  """, [row.extension, row.oco_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET ctep_id = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND ctep_id IS NULL
+                                  """, [row.extension, row.oco_id]);
+}
+
+sourceConnection.eachRow("""SELECT oc_address.oc_id,
+                                   add.streetaddressline, 
+                                   COALESCE(add.deliveryaddressline,'') AS deliveryaddressline,
+                                   add.cityormunicipality,
+                                   COALESCE(add.stateorprovince,'') AS stateorprovince, 
+                                   COALESCE(add.postalcode,'') AS postalcode,
+                                   country.name 
+                            FROM oc_address 
+							JOIN address add ON (oc_address.address_id = add.id)
+                            JOIN country ON (country.id = add.country_id)""") { row ->
+    destinationConnection.executeUpdate("""
+			UPDATE stg_dw_organization_role
+               SET address_line_1 = address_line_1 || chr(13) || ?,
+    	           address_line_2 = address_line_2 || chr(13) || ?,
+    	           city = city || chr(13) || ?,
+            	   state_or_province = state_or_province || chr(13) || ?,
+    	           postal_code = postal_code || chr(13) || ?,
+    	           country = country || chr(13) || ?
+            WHERE role_po_id = ?
+			  AND role_name = 'Oversight Committee'
+              AND address_line_1 IS NOT NULL
+        """, [row.streetaddressline, row.deliveryaddressline, row.cityormunicipality,
+		      row.stateorprovince, row.postalcode, row.name, row.oc_id]);
+    destinationConnection.executeUpdate("""
+			UPDATE stg_dw_organization_role
+               SET address_line_1 = ?,
+    	           address_line_2 = ?,
+    	           city = ?,
+            	   state_or_province = ?,
+    	           postal_code = ?,
+    	           country = ?
+            WHERE role_po_id = ?
+			  AND role_name = 'Oversight Committee'
+              AND address_line_1 IS NULL
+        """, [row.streetaddressline, row.deliveryaddressline, row.cityormunicipality,
+		      row.stateorprovince, row.postalcode, row.name, row.oc_id]);
+}
+
+sourceConnection.eachRow("""SELECT oc_id, value
+                            FROM oc_email
+							JOIN email ON (oc_email.email_id = email.id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET email = email || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND email IS NOT NULL
+                                  """, [row.value, row.oc_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET email = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND email IS NULL
+                                  """, [row.value, row.oc_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.oc_id, e.value
+                            FROM oc_fax rel
+                            JOIN phonenumber e ON (e.id = rel.fax_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET fax = fax || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND fax IS NOT NULL
+                                  """, [row.value, row.oc_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET fax = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND fax IS NULL
+                                  """, [row.value, row.oc_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.oc_id, e.value
+                            FROM oc_phone rel
+                            JOIN phonenumber e ON (e.id = rel.phone_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET phone = phone || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND phone IS NOT NULL
+                                  """, [row.value, row.oc_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET phone = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND phone IS NULL
+                                  """, [row.value, row.oc_id]);
+}
+
+sourceConnection.eachRow("""SELECT rel.oc_id, e.value
+                            FROM oc_tty rel
+                            JOIN phonenumber e ON (e.id = rel.tty_id)""") { row ->
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET tty = tty || chr(13) || ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND tty IS NOT NULL
+                                  """, [row.value, row.oc_id]);
+    destinationConnection.executeUpdate("""UPDATE stg_dw_organization_role
+                                     SET tty = ?
+                                     WHERE role_po_id = ?
+									   AND role_name = 'Oversight Committee'
+                                       AND tty IS NULL
+                                  """, [row.value, row.oc_id]);
 }
