@@ -134,7 +134,8 @@ sourceConnection.eachRow("""SELECT rel.organization_id, e.value
 }
 sourceConnection.eachRow("""SELECT rel.organization_id, e.name, rel.functionaltype
                             FROM familyorganizationrelationship rel
-                            JOIN family e ON (e.id = rel.family_id)""") { row ->
+                            JOIN family e ON (e.id = rel.family_id)
+							WHERE rel.enddate IS NULL OR rel.enddate > NOW()""") { row ->
     destinationConnection.executeUpdate("""UPDATE stg_dw_organization
                                      SET family = family || chr(13) || ?
 									   , org_to_family_relationship = org_to_family_relationship || chr(13) || ?

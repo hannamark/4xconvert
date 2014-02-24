@@ -17,10 +17,9 @@ System.getProperty( "os.name" ).toLowerCase().indexOf( "win" ) >= 0
 		<![CDATA[SELECT duser.first_name, duser.last_name, duser.email, duser.login_name, prs_organization,
        dorg.name, dorg.po_id, dorg.ctep_id, dfam.family_name, dfam.family_id
 FROM dw_user duser
-LEFT JOIN (SELECT internal_id, name, po_id, family, MIN(ctep_id) AS ctep_id FROM dw_organization GROUP BY internal_id, name, po_id, family) AS dorg
-     ON (duser.affiliated_organization_id = dorg.internal_id)
+LEFT JOIN dw_organization dorg ON (duser.affiliated_organization_id = dorg.internal_id)
 LEFT JOIN (SELECT DISTINCT family_name, family_id FROM dw_family_organization) AS dfam
-          ON (dfam.family_name = dorg.family)
+          ON (dorg.family LIKE dfam.family_name || '%')
 WHERE (duser.login_name LIKE '%OU=NCI%' OR duser.login_name LIKE '%OU=National Cancer Institute%')
   AND duser.affiliated_organization_id IS NOT NULL
 ORDER BY last_name, first_name, email]]>
