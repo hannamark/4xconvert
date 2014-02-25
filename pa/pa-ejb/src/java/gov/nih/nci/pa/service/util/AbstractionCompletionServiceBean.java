@@ -509,8 +509,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
         if (spList == null || spList.isEmpty()) {
-            messages.addError(SELECT_PARTICIPATING_SITES_FROM_ADMINISTRATIVE_DATA_MENU,
-                              "No Participating Sites exists for the trial.", ErrorMessageTypeEnum.ADMIN, 8);
             return;
         }
         // treating site for the study
