@@ -117,14 +117,14 @@ ORDER BY ENT_NAME, SORT_ORDER, role_name]]>
 + (org.apache.commons.lang.StringUtils.isBlank($F{ent_country}) ? "" : ("\n" + $F{ent_country}))]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="96b9769d-5705-4690-a8e5-e515ca7184c8" stretchType="RelativeToBandHeight" mode="Opaque" x="1120" y="0" width="200" height="22" backcolor="#D6D6FF"/>
+					<reportElement uuid="96b9769d-5705-4690-a8e5-e515ca7184c8" stretchType="RelativeToBandHeight" mode="Opaque" x="1120" y="0" width="240" height="22" backcolor="#D6D6FF"/>
 					<textElement>
 						<font size="13" isBold="false"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{ent_email}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement uuid="840ab8d3-7668-40f6-a7d0-601075f5adf7" stretchType="RelativeToBandHeight" mode="Opaque" x="1320" y="0" width="200" height="22" backcolor="#D6D6FF"/>
+					<reportElement uuid="840ab8d3-7668-40f6-a7d0-601075f5adf7" stretchType="RelativeToBandHeight" mode="Opaque" x="1360" y="0" width="160" height="22" backcolor="#D6D6FF"/>
 					<textElement>
 						<font size="13" isBold="false"/>
 					</textElement>
@@ -203,14 +203,14 @@ ORDER BY ENT_NAME, SORT_ORDER, role_name]]>
 				<text><![CDATA[Address]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="bbfc9a10-0a69-4efb-a2b0-65a18e958fbf" mode="Opaque" x="1120" y="0" width="200" height="20" forecolor="#FFFFFF" backcolor="#475B82"/>
+				<reportElement uuid="bbfc9a10-0a69-4efb-a2b0-65a18e958fbf" mode="Opaque" x="1120" y="0" width="240" height="20" forecolor="#FFFFFF" backcolor="#475B82"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="12"/>
 				</textElement>
 				<text><![CDATA[Email]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="76f2ac2d-d907-400b-8ba6-2b9fa0012ec7" stretchType="RelativeToBandHeight" mode="Opaque" x="1320" y="0" width="200" height="20" forecolor="#FFFFFF" backcolor="#475B82"/>
+				<reportElement uuid="76f2ac2d-d907-400b-8ba6-2b9fa0012ec7" stretchType="RelativeToBandHeight" mode="Opaque" x="1360" y="0" width="160" height="20" forecolor="#FFFFFF" backcolor="#475B82"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="12"/>
 				</textElement>
@@ -264,14 +264,14 @@ ORDER BY ENT_NAME, SORT_ORDER, role_name]]>
 + (org.apache.commons.lang.StringUtils.isBlank($F{role_country}) ? "" : ("\n" + $F{role_country}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="0e616ce3-5528-4ae6-9d4e-e84deeca599c" stretchType="RelativeToBandHeight" x="1120" y="0" width="200" height="21" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="0e616ce3-5528-4ae6-9d4e-e84deeca599c" stretchType="RelativeToBandHeight" x="1120" y="0" width="240" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{role_email}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="a55f697c-ef90-4387-ab91-5be3001d9455" stretchType="RelativeToBandHeight" x="1320" y="0" width="200" height="21" isPrintWhenDetailOverflows="true"/>
+				<reportElement uuid="a55f697c-ef90-4387-ab91-5be3001d9455" stretchType="RelativeToBandHeight" x="1360" y="0" width="160" height="21" isPrintWhenDetailOverflows="true"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
