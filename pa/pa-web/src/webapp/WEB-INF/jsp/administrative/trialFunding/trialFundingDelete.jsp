@@ -49,7 +49,7 @@ function handleAction(){
                         </label>
                      </td>                     
                     <td class="value">
-                        <s:textarea name="trialFundingWebDTO.inactiveCommentText" rows="4" cssStyle="width:206px"/>
+                        <s:textarea name="trialFundingWebDTO.inactiveCommentText" maxlength="200" rows="4" cssStyle="width:206px" cssClass="charcounter"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialFundingWebDTO.inactiveCommentText</s:param>
