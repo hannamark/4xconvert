@@ -29,7 +29,7 @@
         titleKey="trialHistory.documents" />
         
     
-    <display:column escapeXml="false" sortable="false" title="MileStone">
+    <display:column escapeXml="false" sortable="false" title="Milestone">
         <c:out value="${row.lastMileStone}"></c:out>
         <br/> <br/>
         <c:if test="${not empty row.rejectComment && (row.lastMileStone == 'Submission Rejection Date' || row.lastMileStone == 'Late Rejection Date') }">

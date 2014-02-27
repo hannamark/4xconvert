@@ -1497,4 +1497,8 @@
         <comment>updated  system generated email value in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6878.sql"/>
      </changeSet>
+          <changeSet id="PO-7012" author="Reshma">
+        <comment>updated system generated email value in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7012.sql"/>
+     </changeSet>
 </databaseChangeLog>
