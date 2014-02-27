@@ -60,7 +60,7 @@
        <comment>Upgrade for PO-1292 - cleans up the broken version of PO-1292.sql if it has already been run</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1292-cleanup.sql"/>
     </changeSet>
-    <changeSet id="PO-1292" author="smatyas" runOnChange="true">
+    <changeSet id="PO-1292" author="smatyas">
        <!--  The initial version of this file would have failed on production, so it was corrected.  runOnChange is
              set to true so that the corrected version will be run, even if the broken version had already been run
              (after running the PO-1292-cleanup.sql script). -->
