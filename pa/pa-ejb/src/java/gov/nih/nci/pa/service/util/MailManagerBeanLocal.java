@@ -148,6 +148,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -598,6 +599,27 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             dcpIdRow = dcpIdRow.replace(DCP_TRIAL_IDENTIFIER, dcpID);
         }
         body = body.replace("${dcpIdentifierRow}", dcpIdRow);
+        
+        if (body.contains("${subOrgTrialIdentifier}") || body.contains("${subOrg}")) {
+            String subOrgTrialIdentifier = "";
+            PAServiceUtils serviceUtil = new PAServiceUtils();
+            List<StudySiteDTO> siteList =
+                    studySiteService.getByStudyProtocol(IiConverter.convertToStudyProtocolIi(
+                            spDTO.getStudyProtocolId()), new ArrayList<StudySiteDTO>());
+            for (StudySiteDTO dto : siteList) {
+                if (dto.getFunctionalCode().getCode().equals(StudySiteFunctionalCode.TREATING_SITE.getCode())) {
+                    subOrgTrialIdentifier = dto.getLocalStudyProtocolIdentifier().getValue();
+                    body = body.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
+                    String subOrgName =
+                            serviceUtil.getOrCreatePAOrganizationByIi(dto.getHealthcareFacilityIi()).getName();
+                    body = body.replace("${subOrg}", subOrgName);
+                    break;
+                }
+            }
+            body = body.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
+            body = body.replace("${subOrg}", "N/A");
+        }
+        
         return body;
     }
     
@@ -611,6 +633,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String subject =  mailSubject;
         subject = subject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
         subject = subject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
+        subject = subject.replace("${subOrgTrialIdentifier}", spDTO.getLocalStudyProtocolIdentifier());
         String amendNumber = "";
         if (spDTO.getAmendmentNumber() != null) {
             amendNumber = spDTO.getAmendmentNumber();
@@ -664,24 +687,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         
         String regUserName = user.getFirstName() + " " + user.getLastName();
         mailBody = mailBody.replace(OWNER_NAME, regUserName);
-        
-        if (mailBody.contains("${subOrgTrialIdentifier}") || mailBody.contains("${subOrg}")) {
-            String subOrgTrialIdentifier = "";
-            PAServiceUtils serviceUtil = new PAServiceUtils();
-            List<StudySiteDTO> siteList =
-                    studySiteService.getByStudyProtocol(studyProtocolIi, new ArrayList<StudySiteDTO>());
-            for (StudySiteDTO dto : siteList) {
-                if (dto.getFunctionalCode().getCode().equals(StudySiteFunctionalCode.TREATING_SITE.getCode())) {
-                    subOrgTrialIdentifier = dto.getLocalStudyProtocolIdentifier().getValue();
-                    mailBody = mailBody.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
-                    String subOrgName =
-                            serviceUtil.getOrCreatePAOrganizationByIi(dto.getHealthcareFacilityIi()).getName();
-                    mailBody = mailBody.replace("${subOrg}", subOrgName);
-                }
-            }
-            mailSubject = mailSubject.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
-        }
-        
+
         if (CollectionUtils.isNotEmpty(unmatchedEmails)) {
             mailBody = mailBody
                     .replace(
@@ -1188,6 +1194,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         Set<String> emails = new HashSet<String>();
         String emailSubject = mailSubject;
         emailSubject = commonMailSubjectReplacements(spDTO, emailSubject);
+        body = commonMailBodyReplacements(spDTO, body);
 
         // We are making the assumption here that if the user created the trial
         // then they have a registry

@@ -126,6 +126,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -216,7 +217,7 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     @Override
     public Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException {
         Map<Long, Organization> orgMap = getTreatingOrganizations(studyProtocolId);
-        Map<Long, String> result = new HashMap<Long, String>();
+        Map<Long, String> result = new LinkedHashMap<Long, String>();
         for (Map.Entry<Long, Organization> org : orgMap.entrySet()) {
             result.put(org.getKey(), org.getValue().getName());
         }
@@ -232,31 +233,27 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         List<Object[]> queryList = null;
         session = PaHibernateUtil.getCurrentSession();
         Query query = null;
-        String hql = "select ss.id, org from StudyProtocol sp join sp.studySites ss "
-            + " join ss.healthCareFacility hcf join hcf.organization org where sp.id = :spId "
+        String hql = "select ss.id, org, ssas from StudyProtocol sp join sp.studySites ss "
+            + " join ss.studySiteAccrualStatuses ssas "
+            + " join ss.healthCareFacility hcf join hcf.organization org "
+            + " where sp.id = :spId "
             + " and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
             + " order by org.name, ss.id ";
         query = session.createQuery(hql);
         query.setParameter(SP_ID, studyProtocolId);
         queryList = query.list();
 
-        List<Long> siteIDs = new ArrayList<Long>();
-        Map<Long, Organization> siteIdToOrgMap = new HashMap<Long, Organization>();
+        Map<Long, Organization> siteIdToOrgMap = new LinkedHashMap<Long, Organization>();
+        Map<Long, StudySiteAccrualStatus> accrualStatusMap = new LinkedHashMap<Long, StudySiteAccrualStatus>();
         for (Object[] oArr : queryList) {
-            siteIDs.add((Long) oArr[0]);
             siteIdToOrgMap.put((Long) oArr[0], (Organization) oArr[1]);
+            accrualStatusMap.put((Long) oArr[0], (StudySiteAccrualStatus) oArr[2]);
         }
         
-        Map<Long, StudySiteAccrualStatus> accrualStatusMap = studySiteAccrualStatusService
-                .getCurrentStudySiteAccrualStatus(siteIDs.toArray(new Long[0])); // NOPMD
         Map<Long, Organization> result = new LinkedHashMap<Long, Organization>();
-        for (Long siteID : accrualStatusMap.keySet()) {
-            StudySiteAccrualStatus ssas = accrualStatusMap.get(siteID);            
-            if (ssas != null) {
-                RecruitmentStatusCode recruitmentStatus = ssas.getStatusCode();
-                if (recruitmentStatus.isEligibleForAccrual()) {
-                    result.put(siteID, siteIdToOrgMap.get(siteID));
-                }
+        for (Entry<Long, StudySiteAccrualStatus> site : accrualStatusMap.entrySet()) {         
+            if (site.getValue() != null && site.getValue().getStatusCode().isEligibleForAccrual()) {
+                result.put(site.getKey(), siteIdToOrgMap.get(site.getKey()));
             }
         }
         return result;
