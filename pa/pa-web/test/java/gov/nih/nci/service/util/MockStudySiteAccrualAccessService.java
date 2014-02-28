@@ -255,7 +255,7 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
     }
 
     
-    public void synchronizeSiteAccrualAccess(Long studySiteId)
+    public void synchronizeSiteAccrualAccess(Long trialID, RegistryUser user)
             throws PAException {  // TODO Auto-generated method stub
         
     }

@@ -497,7 +497,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         assertEquals(0, siteAccessList.size());
         
         // Now synchronize.
-        bean.synchronizeSiteAccrualAccess(site.getId());
+        bean.synchronizeSiteAccrualAccess(sp.getId(), user);
         
         // Make sure site-level access has been provisioned.
         siteAccessList = session.createQuery(

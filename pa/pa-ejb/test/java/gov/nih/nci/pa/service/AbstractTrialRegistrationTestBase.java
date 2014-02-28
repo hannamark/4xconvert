@@ -198,8 +198,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         studyMilestoneSvc.setStudyInboxService(studyInboxSvc);
         studyMilestoneSvc.setStudyOnholdService(studyOnholdSvc);
         studyMilestoneSvc.setStudyProtocolService(studyProtocolService);
-        studyMilestoneSvc.setFamilyService(mock(FamilyServiceLocal.class));
-    
+        
         studyResourcingService.setLookUpTableSvc(lookUpTableServiceRemote);
         studyResourcingService.setStudyProtocolSvc(studyProtocolService);
         studyResourcingService.setPaServiceUtils(paServiceUtils);

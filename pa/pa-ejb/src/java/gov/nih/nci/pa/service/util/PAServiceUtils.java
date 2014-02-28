@@ -2281,15 +2281,26 @@ public class PAServiceUtils {
     }
     
     /**
-     * Returns true if the trial doesn't have ctep or dcp id. 
+     * Returns the ctep or dcp id. 
      * @param spId studyProtocol id
-     * @return boolean value
+     * @param whichId kind of id
+     * @return String value
      * @throws PAException the exception
      */
-    public boolean checkTrialHasNoCtepOrDcpId(Ii spId) throws PAException {
-        String ctepId = getStudyIdentifier(spId, PAConstants.CTEP_IDENTIFIER_TYPE);
-        String dcpId = getStudyIdentifier(spId, PAConstants.DCP_IDENTIFIER_TYPE);
-        return ctepId.isEmpty() && dcpId.isEmpty();
+    public String getCtepOrDcpId(Long spId, String whichId) throws PAException {
+        String ctepIdQuery = "select local_sp_indentifier from rv_ctep_id where study_protocol_identifier = :spId";
+        String dcpIdQuery = "select local_sp_indentifier from rv_dcp_id  where study_protocol_identifier = :spId";
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = null;
+        if (whichId.equals(PAConstants.DCP_IDENTIFIER_TYPE)) {
+            query = session.createSQLQuery(dcpIdQuery);
+            query.setLong("spId", spId);
+        } else if (whichId.equals(PAConstants.CTEP_IDENTIFIER_TYPE)) {
+            query = session.createSQLQuery(ctepIdQuery);
+            query.setLong("spId", spId);
+        }
+        List<String> queryList = query.list();
+        return CollectionUtils.isNotEmpty(queryList) ? queryList.get(0) : "";
     }
     /**
      * 

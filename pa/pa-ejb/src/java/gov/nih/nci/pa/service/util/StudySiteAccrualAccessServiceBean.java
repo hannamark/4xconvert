@@ -118,7 +118,6 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -666,38 +665,19 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void synchronizeSiteAccrualAccess(Long studySiteId)
+    public void synchronizeSiteAccrualAccess(Long trialID, RegistryUser user)
             throws PAException {
         
         Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         
         try {
-            ParticipatingOrgDTO site = participatingOrgServiceLocal
-                    .getTreatingSite(studySiteId);
-            List<ParticipatingOrgDTO> sites = new LinkedList<ParticipatingOrgDTO>(Arrays.asList(site));
-            Long trialID = site.getStudyProtocolId();
-
-            Map<RegistryUser, AccrualAccessSourceCode> users = new HashMap<RegistryUser, AccrualAccessSourceCode>();
-            
-            String hql = "select saa.registryUser, saa.source from "
-                    + StudyAccrualAccess.class.getName()
-                    + " saa where saa.studyProtocol.id = :spId "
-                    + "and saa.statusCode = :statusCode and saa.actionCode = :actionCode";
-            Query query = session.createQuery(hql);
-            query.setParameter(SP_ID, trialID);
-            query.setParameter(STATUS_CODE, ActiveInactiveCode.ACTIVE);
-            query.setParameter(ACTION_CODE, AssignmentActionCode.ASSIGNED);
-            for (Object obj : query.list()) {
-                Object[] row = (Object[]) obj;
-                users.put(((RegistryUser) row[0]), (AccrualAccessSourceCode) row[1]);
-            }
-
-            for (RegistryUser user : users.keySet()) {
-                List<AccrualSubmissionAccessDTO> siteLevelAccess = getAccrualSubmissionAccess(user);
-                breakDownTrialLevelAccrualAccessIntoSites(user, users.get(user), siteLevelAccess,
-                        trialID, sites);
-            }
+             List<AccrualSubmissionAccessDTO> siteLevelAccess = getAccrualSubmissionAccess(user);
+             List<ParticipatingOrgDTO> sites = new LinkedList<ParticipatingOrgDTO>(
+                        participatingOrgServiceLocal.getTreatingSites(trialID)); 
+             breakDownTrialLevelAccrualAccessIntoSites(user, user.getFamilyAccrualSubmitter().equals(true) 
+                        ? AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE : AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, 
+                		siteLevelAccess, trialID, sites);
         } catch (Exception e) {
             LOG.error(e, e);
         }

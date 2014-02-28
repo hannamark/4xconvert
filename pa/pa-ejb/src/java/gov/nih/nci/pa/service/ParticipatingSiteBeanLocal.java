@@ -389,7 +389,6 @@ implements ParticipatingSiteServiceLocal {
         }
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
         final StudySite studySite = getStudySite(studySiteDTO.getIdentifier());
-        getAccrualAccessServiceLocal().synchronizeSiteAccrualAccess(studySite.getId());
         return studySite;
     }
 

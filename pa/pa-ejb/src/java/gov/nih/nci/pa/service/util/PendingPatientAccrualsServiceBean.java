@@ -245,14 +245,12 @@ public class PendingPatientAccrualsServiceBean implements PendingPatientAccruals
                     ps.setOrgName(orgList.get(ps.getStudySite()));
                 }
                 if (!idsList.containsKey(ps.getStudyProtocolIdentifier())) {
-                    String ctepId = paServiceUtils.getStudyIdentifier(
-                            IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()), 
+                    String ctepId = paServiceUtils.getCtepOrDcpId(ps.getStudyProtocolIdentifier(), 
                             PAConstants.CTEP_IDENTIFIER_TYPE);
                     if (StringUtils.isNotEmpty(ctepId)) {
                         ps.setCtepId(ctepId);
                     }
-                    String dcpId = paServiceUtils.getStudyIdentifier(
-                            IiConverter.convertToStudyProtocolIi(ps.getStudyProtocolIdentifier()),
+                    String dcpId = paServiceUtils.getCtepOrDcpId(ps.getStudyProtocolIdentifier(),
                             PAConstants.DCP_IDENTIFIER_TYPE);
                     if (StringUtils.isNotEmpty(dcpId)) {
                         ps.setDcpId(dcpId);

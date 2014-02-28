@@ -254,10 +254,11 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
      * This method is supposed to be invoked after a change is made to a participating site or a new participating
      * site is created. It checks trial-level accrual access records to see if a site-level accrual access needs to be
      * automatically created for this site.
-     * @param studySiteId studySiteId
+     * @param trialID the trial
+     * @param user Registry User
      * @throws PAException PAException
      */
-    void synchronizeSiteAccrualAccess(Long studySiteId) throws PAException;
+    void synchronizeSiteAccrualAccess(Long trialID, RegistryUser user) throws PAException;
     
     /**
      * Gets Accrual Access Assignment History.

@@ -245,7 +245,6 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.setTsrReportGeneratorService(tsrReportGeneratorServiceRemote);
         bean.setProtocolQueryService(protocolQueryServiceLocal);
         bean.setDocumentService(documentServiceLocal);
-        bean.setFamilyService(familySvc);
 
         mailSrc.setProtocolQueryService(new ProtocolQueryServiceBean());
         bean.setValidateAbstractions(false);

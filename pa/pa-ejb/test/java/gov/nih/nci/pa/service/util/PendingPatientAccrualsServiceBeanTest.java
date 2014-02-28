@@ -112,6 +112,9 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
         final OrganizationCorrelationServiceRemote correlationServiceRemote = mock(OrganizationCorrelationServiceRemote.class);
         when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(correlationServiceRemote);
         
+        PAServiceUtils paSrvUtil = mock(PAServiceUtils.class);
+		bean.setPaServiceUtils(paSrvUtil);
+        when(paSrvUtil.getCtepOrDcpId(any(Long.class), any(String.class))).thenReturn("test");
     }
 	
 	@After

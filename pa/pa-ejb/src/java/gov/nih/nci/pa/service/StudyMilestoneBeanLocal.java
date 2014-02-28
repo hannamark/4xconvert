@@ -7,7 +7,6 @@ import static gov.nih.nci.pa.enums.StudyInboxTypeCode.VALIDATION;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
@@ -33,7 +32,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyMilestoneSortCriterion;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
-import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -62,7 +60,6 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jboss.annotation.IgnoreDependency;
 
@@ -130,9 +127,6 @@ public class StudyMilestoneBeanLocal
     private DocumentServiceLocal documentService;
 
     @EJB
-    private FamilyServiceLocal familyService;
-
-    @EJB
     @IgnoreDependency
     private TrialRegistrationServiceLocal trialRegistrationService;
     
@@ -173,30 +167,8 @@ public class StudyMilestoneBeanLocal
         if (!BlConverter.convertToBoolean(sp.getProprietaryTrialIndicator())) {
              sendTSREmail(workDto);
         }
-        checkSiteAndFamilyAccrualSubmitter(resultDto);
         rejectAmendmentAndSendLateRejectionEmail(workDto);
         return resultDto;
-    }
-
-    private void checkSiteAndFamilyAccrualSubmitter(StudyMilestoneDTO resultDto) throws PAException {
-        Session session = PaHibernateUtil.getCurrentSession();
-        String hql = "from DocumentWorkflowStatus dws "
-                + "where dws.studyProtocol.id = :studyProtocolId "
-                + " order by dws.id desc";
-        Query query = session.createQuery(hql);
-        query.setParameter("studyProtocolId", IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier()));
-        query.setMaxResults(2);
-        @SuppressWarnings("unchecked")
-        List<DocumentWorkflowStatus> qryList = query.list();
-        if (qryList.size() > 1) {
-            DocumentWorkflowStatus dws = qryList.get(0);
-            DocumentWorkflowStatus priorDws = qryList.get(1);
-            if (dws.getStatusCode().isEligibleForAccrual() && !priorDws.getStatusCode().isEligibleForAccrual()
-                    && paServiceUtils.checkTrialHasNoCtepOrDcpId(resultDto.getStudyProtocolIdentifier())) {
-                    familyService.updateSiteAndFamilyPermissions(
-                            IiConverter.convertToLong(resultDto.getStudyProtocolIdentifier()));
-            }
-        }
     }
 
     private void resetProcessingPriority(StudyMilestoneDTO dto) {
@@ -985,14 +957,7 @@ public class StudyMilestoneBeanLocal
     public void setDocumentService(DocumentServiceLocal documentService) {
         this.documentService = documentService;
     }
-
-    /**
-     * @param familyService the familyService to set
-     */
-    public void setFamilyService(FamilyServiceLocal familyService) {
-        this.familyService = familyService;
-    }
-
+    
     /**
      * @param trialRegistrationService the trialRegistrationService to set
      */

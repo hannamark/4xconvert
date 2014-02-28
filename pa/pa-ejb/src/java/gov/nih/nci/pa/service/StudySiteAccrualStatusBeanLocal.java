@@ -97,9 +97,6 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
             StudySiteAccrualStatus bo = converter.convertFromDtoToDomain(dto);
             session.saveOrUpdate(bo);
             resultDto = converter.convertFromDomainToDto(bo);
-            studySiteAccrualAccessServiceLocal
-                    .synchronizeSiteAccrualAccess(IiConverter.convertToLong(dto
-                            .getStudySiteIi()));
             TrialUpdatesRecorder
                     .recordUpdate(TrialUpdatesRecorder.RECRUITMENT_STATUS_DATE_UPDATED);
         }
