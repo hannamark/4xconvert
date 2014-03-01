@@ -215,7 +215,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     TSRReportGeneratorServiceRemote tsrReptSrv = new TSRReportGeneratorServiceBean();
     LookUpTableServiceRemote lookUpTableSrv = new LookUpTableServiceBean();
     DocumentWorkflowStatusServiceLocal docWrkStatSrv = new DocumentWorkflowStatusServiceBean();
-    StudySiteServiceLocal studySiteSrv = new StudySiteBeanLocal();
 
     Ii nonProprietaryTrialIi;
     Ii proprietaryTrialIi;
@@ -236,7 +235,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.setTsrReportGeneratorService(tsrReptSrv);
         bean.setLookUpTableService(lookUpTableSrv);
         bean.setDocWrkflStatusSrv(docWrkStatSrv);
-        bean.setStudySiteService(studySiteSrv);
+        bean.setStudySiteService(studySiteService);
         bean.setPaServiceUtils(paServiceUtils);
 
         // setup owners for both prop/nonprop trials.
@@ -1070,13 +1069,14 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                 .convertToPoHealthCareFacilityIi("1"));
         studySites.add(site);
         when(
-                studySiteService.getByStudyProtocol(eq(spIi),
+                studySiteService.getByStudyProtocol(any(Ii.class),
                         anyListOf(StudySiteDTO.class))).thenReturn(studySites);
+        sut.setStudySiteService(studySiteService);
+        
         sut.sendNotificationMail(spIi, null);
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
-        verify(studySiteService).getByStudyProtocol(eq(spIi),
-                anyListOf(StudySiteDTO.class));
+        
         ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
                 .forClass(String.class);
         ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
@@ -1087,7 +1087,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         assertEquals("Wrong mail subject",
                 "proprietarytrial.register.subject - localStudyProtocolIdentifier, "
-                        + "nciIdentifier siteLocalStudyProtocolIdentifier.",
+                        + "nciIdentifier localStudyProtocolIdentifier.",
                 mailSubjectCaptor.getValue());
         assertEquals(
                 "Wrong mail body",
