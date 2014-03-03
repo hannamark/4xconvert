@@ -66,7 +66,7 @@ def sql =
             sp.comments, sp.processing_priority, sp.ctro_override,
             sp.bio_specimen_description, sp.bio_specimen_retention_code, sp.sampling_method_code, sp.study_model_code, sp.study_model_other_text,
             sp.study_population_description, sp.time_perspective_code, sp.time_perspective_other_text, sp.study_protocol_type, sp.study_subtype_code,
-            sp.consortia_trial_category
+            sp.consortia_trial_category, sp.nci_grant
             from STUDY_PROTOCOL sp
                 left outer join study_checkout as admin on (admin.study_protocol_identifier = sp.identifier and admin.checkout_type = 'ADMINISTRATIVE' and admin.checkin_date is null)
                 left outer join study_checkout as scientific on (scientific.study_protocol_identifier = sp.identifier and scientific.checkout_type = 'SCIENTIFIC' and scientific.checkin_date is null)
@@ -154,7 +154,7 @@ sourceConnection.eachRow(sql) { row ->
                     sampling_method_code: row.sampling_method_code, study_model_code: row.study_model_code, study_model_other_text: row.study_model_other_text,
                     study_population_description: row.study_population_description, time_perspective_code: row.time_perspective_code,
                     time_perspective_other_text: row.time_perspective_other_text, study_protocol_type: row.study_protocol_type, study_subtype_code: row.study_subtype_code,
-                    program_code: row.program_code, consortia_trial_category: row.consortia_trial_category
+                    program_code: row.program_code, consortia_trial_category: row.consortia_trial_category, nci_grant: row.nci_grant
                     )
         } catch (Exception e) {
             println "Error adding row : " + row
