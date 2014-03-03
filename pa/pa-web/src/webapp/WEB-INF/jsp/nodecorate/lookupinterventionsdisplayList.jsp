@@ -8,7 +8,7 @@
     <display:column escapeXml="true" title="Preferred Name" property="name"  headerClass="sortable"/>
     <display:column escapeXml="true" title="Other Names" property="otherNames"  headerClass="sortable"/>
     <display:column escapeXml="true" title="Type Code" property="type"  headerClass="sortable"/>
-    <display:column escapeXml="true" title="CTGOV<br>Type Code" property="ctGovType"  headerClass="sortable"/>
+    <display:column escapeXml="true" title="ClinicalTrials.gov<br>Type Code" property="ctGovType"  headerClass="sortable"/>
     <display:column escapeXml="true" title="Description" property="description"  headerClass="sortable"/>
     <display:column title="Action" headerClass="centered" class="action" sortable="false">
         <a href="javascript:void(0)" class="btn" onclick="submitform('${row.identifier}')">
