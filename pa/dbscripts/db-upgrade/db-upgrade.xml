@@ -1501,4 +1501,8 @@
         <comment>updated system generated email value in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7012.sql"/>
      </changeSet>
+     <changeSet id="PO-6972" author="Reshma">
+        <comment>updated csm and registry user table</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6972.sql"/>
+     </changeSet>
 </databaseChangeLog>
