@@ -101,6 +101,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
        ftd.program_codes,
        dt4.*
 FROM "dw_data_table_4" dt4
+JOIN dw_study std ON (dt4.nci_id = std.nci_id)
 LEFT JOIN dw_family_trial_data ftd ON (ftd.nci_id = dt4.nci_id AND ftd.family_name = $P{Center})
 WHERE summary_level_accrual = false
   AND dt4.nci_id IN (select nci_id
@@ -111,8 +112,7 @@ WHERE summary_level_accrual = false
                                                     where date_trunc('day', status_date) < $P{Calculated_Start_Date}
                                                     group by nci_id ))
                     and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
-                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
-                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
   AND dt4.nci_id NOT IN (SELECT nci_id
                      FROM dw_study_processing_status
                      WHERE (nci_id, date) IN (
@@ -124,6 +124,16 @@ WHERE summary_level_accrual = false
   AND dt4.nci_id IN ( SELECT nci_id
                   FROM dw_study_participating_site
                   WHERE  org_org_family = $P{Center} )
+  AND std.start_date <= $P{End_Date}
+  AND NOT (std.completion_date IS NOT NULL
+           AND std.completion_date_type_code IS NOT NULL
+           AND (std.completion_date < $P{Calculated_Start_Date}
+                AND std.completion_date_type_code = 'ACTUAL'))
+  AND NOT (std.primary_completion_date IS NOT NULL
+           AND std.primary_completion_date_type_code IS NOT NULL
+           AND (std.primary_completion_date < $P{Calculated_Start_Date}
+                AND std.primary_completion_date_type_code = 'ACTUAL'))
+  AND (std.current_trial_status IS NULL OR std.current_trial_status != 'Withdrawn')
 UNION
 SELECT
       ( SELECT SUM(target_accrual)
@@ -254,6 +264,7 @@ SELECT
        ftd.program_codes,
        dt4.*
 FROM "dw_data_table_4" dt4
+JOIN dw_study std ON (dt4.nci_id = std.nci_id)
 LEFT JOIN dw_family_trial_data ftd ON (ftd.nci_id = dt4.nci_id AND ftd.family_name = $P{Center})
 WHERE summary_level_accrual = true
   AND ( dt4.nci_id IN (select nci_id
@@ -264,8 +275,7 @@ WHERE summary_level_accrual = true
                                                     where date_trunc('day', status_date) < $P{Calculated_Start_Date}
                                                     group by nci_id ))
                     and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
-                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
-                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
         OR (is_industrial = TRUE AND dt4.nci_id IN (select nci_id
                       from dw_data_table_4
                       where nci_id not in ( select nci_id
@@ -282,6 +292,16 @@ WHERE summary_level_accrual = true
   AND dt4.nci_id IN ( SELECT nci_id
                   FROM dw_study_participating_site
                   WHERE  org_org_family = $P{Center} )
+  AND std.start_date <= $P{End_Date}
+  AND NOT (std.completion_date IS NOT NULL
+           AND std.completion_date_type_code IS NOT NULL
+           AND (std.completion_date < $P{Calculated_Start_Date}
+                AND std.completion_date_type_code = 'ACTUAL'))
+  AND NOT (std.primary_completion_date IS NOT NULL
+           AND std.primary_completion_date_type_code IS NOT NULL
+           AND (std.primary_completion_date < $P{Calculated_Start_Date}
+                AND std.primary_completion_date_type_code = 'ACTUAL'))
+  AND (std.current_trial_status IS NULL OR std.current_trial_status != 'Withdrawn')
 ORDER BY clinical_research_cat, nci_id]]>
 	</queryString>
 	<field name="your_center_total" class="java.lang.Long"/>
