@@ -1505,4 +1505,8 @@
         <comment>updated csm and registry user table</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6972.sql"/>
      </changeSet>
+     <changeSet id="PO-6883" author="Reshma">
+        <comment>updated status code to completed</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6883.sql"/>
+     </changeSet>
 </databaseChangeLog>
