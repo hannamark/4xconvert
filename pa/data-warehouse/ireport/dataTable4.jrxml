@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dataTable4" language="groovy" pageWidth="2150" pageHeight="842" orientation="Landscape" columnWidth="2110" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2f988a2f-b072-49c1-b4cc-e5e23a1c9311">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="576"/>
+	<property name="ireport.y" value="0"/>
 	<parameter name="Center" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -112,7 +112,8 @@ WHERE summary_level_accrual = false
                                                     where date_trunc('day', status_date) < $P{Calculated_Start_Date}
                                                     group by nci_id ))
                     and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
-                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
   AND dt4.nci_id NOT IN (SELECT nci_id
                      FROM dw_study_processing_status
                      WHERE (nci_id, date) IN (
@@ -133,6 +134,16 @@ WHERE summary_level_accrual = false
            AND std.primary_completion_date_type_code IS NOT NULL
            AND (std.primary_completion_date < $P{Calculated_Start_Date}
                 AND std.primary_completion_date_type_code = 'ACTUAL'))
+  AND dt4.nci_id NOT IN (SELECT nci_id
+                         FROM dw_study_overall_status
+                         WHERE date_trunc('day', status_date) < '01-JAN-2012'
+                           AND status in ('ADMINISTRATIVELY_COMPLETE','CLOSED_TO_ACCRUAL',
+                                          'CLOSED_TO_ACCRUAL_AND_INTERVENTION', 'COMPLETE')
+                           AND nci_id NOT IN (SELECT nci_id
+                                              FROM dw_study_overall_status
+                                              WHERE status = 'ACTIVE'
+                                               AND date_trunc('day', status_date)
+                                                   BETWEEN '01-JAN-2012' AND '31-DEC-2012'))
   AND (std.current_trial_status IS NULL OR std.current_trial_status != 'Withdrawn')
 UNION
 SELECT
@@ -275,7 +286,8 @@ WHERE summary_level_accrual = true
                                                     where date_trunc('day', status_date) < $P{Calculated_Start_Date}
                                                     group by nci_id ))
                     and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
-                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
         OR (is_industrial = TRUE AND dt4.nci_id IN (select nci_id
                       from dw_data_table_4
                       where nci_id not in ( select nci_id
@@ -301,6 +313,16 @@ WHERE summary_level_accrual = true
            AND std.primary_completion_date_type_code IS NOT NULL
            AND (std.primary_completion_date < $P{Calculated_Start_Date}
                 AND std.primary_completion_date_type_code = 'ACTUAL'))
+  AND dt4.nci_id NOT IN (SELECT nci_id
+                         FROM dw_study_overall_status
+                         WHERE date_trunc('day', status_date) < '01-JAN-2012'
+                           AND status in ('ADMINISTRATIVELY_COMPLETE','CLOSED_TO_ACCRUAL',
+                                          'CLOSED_TO_ACCRUAL_AND_INTERVENTION', 'COMPLETE')
+                           AND nci_id NOT IN (SELECT nci_id
+                                              FROM dw_study_overall_status
+                                              WHERE status = 'ACTIVE'
+                                               AND date_trunc('day', status_date)
+                                                   BETWEEN '01-JAN-2012' AND '31-DEC-2012'))
   AND (std.current_trial_status IS NULL OR std.current_trial_status != 'Withdrawn')
 ORDER BY clinical_research_cat, nci_id]]>
 	</queryString>
@@ -369,7 +391,7 @@ ORDER BY clinical_research_cat, nci_id]]>
 				<text><![CDATA[Data Table 4 Report]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="a5adabcb-76fa-4dd3-84eb-32a0f8198e32" mode="Opaque" x="181" y="0" width="481" height="26" forecolor="#FFFFFF" backcolor="#475B82"/>
+				<reportElement uuid="a5adabcb-76fa-4dd3-84eb-32a0f8198e32" mode="Opaque" x="181" y="0" width="545" height="26" forecolor="#FFFFFF" backcolor="#475B82"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
@@ -385,13 +407,6 @@ ORDER BY clinical_research_cat, nci_id]]>
 + "  to  " +
 new SimpleDateFormat("dd-MMM-yyyy").format($P{End_Date})]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement uuid="2151a8f0-71d2-4597-81d9-f51294e95eb2" mode="Opaque" x="662" y="0" width="64" height="26" forecolor="#FFFFFF" backcolor="#475B82"/>
-				<textElement>
-					<font size="14" isItalic="false"/>
-				</textElement>
-				<text><![CDATA[]]></text>
-			</staticText>
 			<staticText>
 				<reportElement uuid="08117de8-1e8a-4a80-ae9a-35f0106aad2d" mode="Opaque" x="1528" y="0" width="584" height="26" backcolor="#475B82"/>
 				<textElement>
