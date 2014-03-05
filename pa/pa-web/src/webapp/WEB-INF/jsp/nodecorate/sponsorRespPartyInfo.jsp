@@ -156,6 +156,7 @@
       function respPartyTypeChanged() {
     	  
     	  $('responsiblePersonNameErr').innerHTML='';
+    	  $('affiliationOrgErr').innerHTML='';
     	  
     	  var partyType = $F('gtdDTO.responsiblePartyType');
     	  if (partyType=='' || partyType=='sponsor') {
