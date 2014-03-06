@@ -80,79 +80,90 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.util;
+package gov.nih.nci.pa.action;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.Constants;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.struts2.ServletActionContext;
+
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
- *
- * @author gnaveh
+ * Action to add, delete, save and edit study alternate titles during
+ * protocol abstraction 
+ * @author ADas
  */
-public class Constants {
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+public class ManageStudyAlternateTitlesAction extends ActionSupport {
+    private static final long serialVersionUID = 1L;
+    private static final String DISPLAY_STUDY_ALTERNATE_TITLES = "displayStudyAlternateTitles";
+    
     /**
-     * @USERNAME_REQ_ERROR an error message that is fired during login when user not insert userName
-    */
-    public static final String USERNAME_REQ_ERROR = "User Name is required field";
-    /**
-     *@PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
+     * Adds an alternate title
+     * @return result
      */
-    public static final String PASSWORD_REQ_ERROR = "Password is required field";
-    /** logged user name is stored in session using loggerUserName variable . */
-    public static final String LOGGED_USER_NAME = "loggedUserName";
-    /** Trial Summary . */
-    public static final String TRIAL_SUMMARY = "trialSummary";
-    /** Study Protocol II. */
-    public static final String STUDY_PROTOCOL_II = "studyProtocolIi";
-    /** Funding Mechanism code. */
-    public static final String FUNDING_MECHANISM = "fundingMechanism";
-    /** nih Institute Code . */
-    public static final String NIH_INSTITUTE = "nihInstitute";
-    /** Country . */
-    public static final String ISO_COUNTRY = "isoCounty";
-    /** Success Message . */
-    public static final String SUCCESS_MESSAGE = "successMessage";
-    /** Failure Message . */
-    public static final String FAILURE_MESSAGE = "failureMessage";
-    /** Deleted Message . */
-    public static final String DELETE_MESSAGE = "Record Deleted";
-    /** Deleted Message . */
-    public static final String NOTHING_TO_DELETE_MESSAGE = "Please select one, or more, record(s) to delete";    
-    /** Deleted Message . */
-    public static final String MULTI_DELETE_MESSAGE = "Record(s) Deleted";
-    /** Updated Message . */
-    public static final String UPDATE_MESSAGE = "Record Updated";
-    /** Create Message . */
-    public static final String CREATE_MESSAGE = "Record Created";
-    /** Participating Organization Tab Data. */
-    public static final String PARTICIPATING_ORGANIZATIONS_TAB = "participatingOrganizationsTabs";
-    /** Is user in the abstractor role.**/
-    public static final String IS_ABSTRACTOR = "isAbstractor";
-    /** Is user in the su abstractor role.**/
-    public static final String IS_SU_ABSTRACTOR = "isSuAbstractor";
-    /** Is user in the scientific abstractor role.**/
-    public static final String IS_SCIENTIFIC_ABSTRACTOR = "isScientificAbstractor";
-    /** Is user in the admin abstractor role.**/
-    public static final String IS_ADMIN_ABSTRACTOR = "isAdminAbstractor";
-    /** Is user in the report viewer role.**/
-    public static final String IS_REPORT_VIEWER = "isReportViewer";
-    /** CSM Group used to define reporting role. **/
-    public static final String REPORT_VIEWER = "ReportViewer";
-    /** CSM Group used to define abstractor role. **/
-    public static final String ABSTRACTOR = "Abstractor";
-    /** CSM Group used to define suabstractor role. **/
-    public static final String SUABSTRACTOR = "SuAbstractor";
-    /** CSM Group used to define scientific abstractor role.**/
-    public static final String SCIENTIFIC_ABSTRACTOR = "ScientificAbstractor";
-    /** CSM Group used to define admin abstractor role.**/
-    public static final String ADMIN_ABSTRACTOR = "AdminAbstractor";
-    /** NCI. */
-    public static final String NCI = "NCI";
-    /** OTHER_IDENTIFIERS_LIST. */
-    public static final String OTHER_IDENTIFIERS_LIST = "otherIdentifiersList";
-    /** Trial Submitter Organization.  */
-    public static final String TRIAL_SUBMITTER_ORG = "trialSubmitterOrg";
-    /** Trial Submitter Organization.  */
-    public static final String TRIAL_SUBMITTER_ORG_PO_ID = "trialSubmitterOrgPOId";
-    /** Principal Investigator PO_ID  */
-    public static final String PI_PO_ID = "principalInvestigatorPOId";
-    /** STUDY_ALTERNATE_TITLES_LIST. */
-    public static final String STUDY_ALTERNATE_TITLES_LIST = "studyAlternateTitlesList";
+    @SuppressWarnings("unchecked")
+    public String addStudyAlternateTitle() {
+        String alternateTitleTypeValue = ServletActionContext.getRequest().getParameter("alternateTitleType");
+        String alternateTitleValue = ServletActionContext.getRequest().getParameter("alternateTitle");
+        List<StudyAlternateTitleDTO> studyAlternateTitlesList = (List<StudyAlternateTitleDTO>) 
+                ServletActionContext.getRequest().getSession().getAttribute(
+                        Constants.STUDY_ALTERNATE_TITLES_LIST);        
+        if (CollectionUtils.isEmpty(studyAlternateTitlesList)) {
+            studyAlternateTitlesList = new ArrayList<StudyAlternateTitleDTO>();
+        }        
+        if (!StringUtils.isEmpty(alternateTitleTypeValue) && !StringUtils.isEmpty(alternateTitleValue)) {
+            StudyAlternateTitleDTO studyAlternateTitleDTO = new StudyAlternateTitleDTO();
+            studyAlternateTitleDTO.setAlternateTitle(StConverter.convertToSt(alternateTitleValue));
+            studyAlternateTitleDTO.setCategory(StConverter.convertToSt(alternateTitleTypeValue));            
+            studyAlternateTitlesList.add(studyAlternateTitleDTO);            
+        }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST, 
+                studyAlternateTitlesList);
+        return DISPLAY_STUDY_ALTERNATE_TITLES;
+    }
+    
+    /**
+     * Deletes an alternate title
+     * @return result
+     */
+    @SuppressWarnings("unchecked")
+    public String deleteStudyAlternateTitle() {
+        int rowid =  Integer.valueOf(ServletActionContext.getRequest().getParameter("uuid"));
+        List<StudyAlternateTitleDTO> studyAlternateTitlesList = (List<StudyAlternateTitleDTO>) 
+                ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST);
+        studyAlternateTitlesList.remove(rowid - 1);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST, 
+                studyAlternateTitlesList);
+        return DISPLAY_STUDY_ALTERNATE_TITLES;
+    }
+    
+    /**
+     * Saves an alternate title
+     * @return result
+     */
+    @SuppressWarnings("unchecked")
+    public String saveStudyAlternateTitle() {
+        int rowid =  Integer.valueOf(ServletActionContext.getRequest().getParameter("uuid"));
+        String alternateTitleTypeValue = ServletActionContext.getRequest().getParameter("alternateTitleType");
+        String alternateTitleValue = ServletActionContext.getRequest().getParameter("alternateTitle");
+        List<StudyAlternateTitleDTO> studyAlternateTitlesList = (List<StudyAlternateTitleDTO>) 
+                ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST);
+        StudyAlternateTitleDTO currentStudyAlternateTitle = studyAlternateTitlesList.get(rowid - 1);
+        if (!StringUtils.isEmpty(alternateTitleTypeValue) 
+                && !StringUtils.isEmpty(alternateTitleValue)) {
+            currentStudyAlternateTitle.setAlternateTitle(StConverter.convertToSt(alternateTitleValue));
+            currentStudyAlternateTitle.setCategory(StConverter.convertToSt(alternateTitleTypeValue));
+        }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST, 
+                studyAlternateTitlesList);
+        return DISPLAY_STUDY_ALTERNATE_TITLES;
+    }
 }

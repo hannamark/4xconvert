@@ -90,6 +90,7 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -131,6 +132,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Int processingPriority;
     private Ii assignedUser;    
     private Bl nciGrant;
+    private Set<StudyAlternateTitleDTO> studyAlternateTitles;
 
     /**
      *
@@ -553,5 +555,20 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setFinalAccrualNumber(Int finalAccrualNumber) {
         this.finalAccrualNumber = finalAccrualNumber;
+    }
+
+    /**
+     * @return study alternate titles
+     */
+    public Set<StudyAlternateTitleDTO> getStudyAlternateTitles() {
+        return studyAlternateTitles;
+    }
+
+    /**
+     * @param studyAlternateTitles study alternate titles to set
+     */
+    public void setStudyAlternateTitles(
+            Set<StudyAlternateTitleDTO> studyAlternateTitles) {
+        this.studyAlternateTitles = studyAlternateTitles;
     }
 }

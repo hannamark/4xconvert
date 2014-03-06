@@ -88,10 +88,14 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.domain.StudyAlternateTitle;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -102,6 +106,7 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -132,10 +137,12 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
     public void convertFromDomainToDTOTest() {
         Session session  = PaHibernateUtil.getCurrentSession();
         StudyProtocol sp = TestSchema.createStudyProtocolObj(new StudyProtocol());
+        addAlternateTitles(sp);
         session.save(sp);
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
-        assertStudyProtocol(sp , spDTO);
+        assertStudyProtocol(sp, spDTO);
+        assertStudyAlternateTitles(sp, spDTO);
     }
 
     @Test
@@ -156,14 +163,21 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
     public void convertFromDtoToDomainTest() throws PAException {
         Session session  = PaHibernateUtil.getCurrentSession();
         StudyProtocol create = TestSchema.createStudyProtocolObj(new StudyProtocol());
+        addAlternateTitles(create);
         session.save(create);
         assertNotNull(create.getId());
 
         //convert to DTO
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
+        assertStudyProtocol(create, spDTO);
+        assertStudyAlternateTitles(create, spDTO);
         AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+        CSMUserUtil csmUserService = mock(CSMUserService.class);
+        CSMUserService.setInstance(csmUserService);
+        when(CSMUserService.getInstance().getCSMUser(any(String.class))).thenReturn(null);
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO);
-        assertStudyProtocol(sp , spDTO);
+        assertStudyProtocol(sp, spDTO);
+        assertStudyAlternateTitles(sp, spDTO);
     }
 
     @Test
@@ -174,7 +188,7 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         assertNotNull(create.getId());
         //convert to DTO
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(create);
-        AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
+        AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());        
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
         assertStudyProtocol(sp , spDTO);
     }
@@ -200,10 +214,51 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         assertEquals(sp.getStatusCode().getCode() ,spDTO.getStatusCode().getCode());
         assertEquals(sp.getComments() ,spDTO.getComments().getValue());
         assertEquals(sp.getProcessingPriority() ,spDTO.getProcessingPriority().getValue());
-        assertEquals(sp.getAssignedUser().getUserId().toString() ,spDTO.getAssignedUser().getExtension());
-        
+        assertEquals(sp.getAssignedUser().getUserId().toString() ,spDTO.getAssignedUser().getExtension());        
     }
 
+    /**
+     * Adds alternate titles to study protocol.
+     * @param sp study protocol
+     */
+    private void addAlternateTitles(StudyProtocol sp) {
+        StudyAlternateTitle obj1 = new StudyAlternateTitle();
+        obj1.setAlternateTitle("Test3");
+        obj1.setCategory("Other");
+        obj1.setStudyProtocol(sp);
+        sp.getStudyAlternateTitles().add(obj1);
+        
+        StudyAlternateTitle obj2 = new StudyAlternateTitle();
+        obj2.setAlternateTitle("Test1");
+        obj2.setCategory("Spelling/Formatting Correction");
+        obj2.setStudyProtocol(sp);
+        sp.getStudyAlternateTitles().add(obj2);
+        
+        StudyAlternateTitle obj3 = new StudyAlternateTitle();
+        obj3.setAlternateTitle("Test2");
+        obj3.setCategory("Other");
+        obj3.setStudyProtocol(sp);
+        sp.getStudyAlternateTitles().add(obj3);
+    }
+    
+    /**
+     * Asserts study alternate title information. 
+     * @param sp study protocol 
+     * @param spDTO study protocol DTO.
+     */
+    private void assertStudyAlternateTitles(StudyProtocol sp, StudyProtocolDTO spDTO) {
+        assertNotNull(sp.getStudyAlternateTitles());
+        assertNotNull(spDTO.getStudyAlternateTitles());
+        assertEquals(sp.getStudyAlternateTitles().size(), 
+                spDTO.getStudyAlternateTitles().size());
+        Iterator<StudyAlternateTitle> itr = sp.getStudyAlternateTitles().iterator();
+        for (StudyAlternateTitleDTO dto : spDTO.getStudyAlternateTitles()) {            
+            StudyAlternateTitle title = itr.next();
+            assertEquals(title.getAlternateTitle(), dto.getAlternateTitle().getValue());
+            assertEquals(title.getCategory(), dto.getCategory().getValue());
+        }
+    }
+    
     @Test
     public void convertToDSetCd() throws PAException {
         Set<AnatomicSite> sasList = new HashSet<AnatomicSite>();

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -36,6 +37,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -79,7 +81,13 @@ public class TrialHelperTest extends AbstractPaActionTest {
         trialHelper.setOrgService(orgSvc);
         trialHelper.setLookupTableService(lookupSvc);
 
+        List<StudyAlternateTitleDTO> studyAlternateTitlesList = new ArrayList<StudyAlternateTitleDTO>();
+        StudyAlternateTitleDTO studyAlternateTitleDTO = new StudyAlternateTitleDTO();
+        studyAlternateTitleDTO.setAlternateTitle(StConverter.convertToSt("Test"));
+        studyAlternateTitleDTO.setCategory(StConverter.convertToSt("Other"));
+        studyAlternateTitlesList.add(studyAlternateTitleDTO);        
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
+        getSession().setAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST, studyAlternateTitlesList);
     }
 
     @Test

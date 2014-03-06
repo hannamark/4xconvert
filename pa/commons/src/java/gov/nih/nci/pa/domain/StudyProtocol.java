@@ -87,6 +87,7 @@ import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.LastCreatedComparator;
 import gov.nih.nci.pa.util.NotEmptyIiExtension;
 import gov.nih.nci.pa.util.NotEmptyIiRoot;
+import gov.nih.nci.pa.util.StudyAlternateTitleComparator;
 import gov.nih.nci.pa.util.StudyContactComparator;
 import gov.nih.nci.pa.util.StudyInboxComparator;
 import gov.nih.nci.pa.util.StudySiteComparator;
@@ -101,6 +102,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -118,6 +120,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Fetch;
@@ -194,6 +197,8 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Set<StudyInbox> studyInbox = new TreeSet<StudyInbox>(new StudyInboxComparator());
     private Set<StudyCheckout> studyCheckout = new TreeSet<StudyCheckout>(new LastCreatedComparator());
     private Set<SecondaryPurpose> secondaryPurposes = new LinkedHashSet<SecondaryPurpose>();
+    private Set<StudyAlternateTitle> studyAlternateTitles = new TreeSet<StudyAlternateTitle>(
+            new StudyAlternateTitleComparator());
     private String secondaryPurposeOtherText;
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
@@ -958,4 +963,22 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
         this.finalAccrualNumber = finalAccrualNumber;
     }
 
+    /**
+     * @return study alternate titles
+     */
+    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
+    @Sort(type = SortType.COMPARATOR, comparator = StudyAlternateTitleComparator.class)
+    public Set<StudyAlternateTitle> getStudyAlternateTitles() {
+        return studyAlternateTitles;
+    }
+
+    /**
+     * 
+     * @param studyAlternateTitles study alternate titles to set.
+     */
+    public void setStudyAlternateTitles(
+            Set<StudyAlternateTitle> studyAlternateTitles) {
+        this.studyAlternateTitles = studyAlternateTitles;
+    }
 }

@@ -76,95 +76,50 @@
 * 
 * 
 */
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.iso.dto;
 
-import gov.nih.nci.pa.domain.AbstractLookUpEntity;
-import gov.nih.nci.pa.domain.AnatomicSite;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.FundingMechanism;
-import gov.nih.nci.pa.domain.NIHinstitute;
-import gov.nih.nci.pa.service.PAException;
-
-import java.util.List;
-
-import javax.ejb.Remote;
+import gov.nih.nci.iso21090.St;
 
 /**
- *  Bean implementation for providing access to look up tables. .
- * @author Naveen Amiruddin
- * @since 07/22/2008
- 
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the copyright holder, NCI.
+ * DTO for corresponding StudyAlternateTitle class.
+ * @author ADas
+ *
  */
+public class StudyAlternateTitleDTO extends StudyDTO implements Comparable<StudyAlternateTitleDTO> { 
+    private static final long serialVersionUID = 1L;
+    private St alternateTitle;
+    private St category;
+    
+    /**
+     * @return alternate title.
+     */
+    public St getAlternateTitle() {
+        return alternateTitle;
+    }
+    
+    /**
+     * @param alternateTitle alternate title to set.
+     */
+    public void setAlternateTitle(St alternateTitle) {
+        this.alternateTitle = alternateTitle;
+    }
+    
+    /**
+     * @return category.
+     */
+    public St getCategory() {
+        return category;
+    }
+    
+    /**
+     * @param category category to set.
+     */
+    public void setCategory(St category) {
+        this.category = category;
+    }
 
-@Remote
-public interface LookUpTableServiceRemote {
-
-    /**
-     * 
-     * @return FundingMechanism  FundingMechanism
-     * @throws PAException PAException
-     */
-    List<FundingMechanism> getFundingMechanisms() throws PAException;
-    
-    /**
-     * 
-     * @return nihList  FundingMechanism
-     * @throws PAException PAException
-     */
-    List<NIHinstitute> getNihInstitutes() throws PAException;    
-    
-    /**
-     * 
-     * @return country  Country
-     * @throws PAException PAException
-     */
-    List<Country> getCountries() throws PAException;  
-    
-    /**
-     * Gets the country by name.
-     * @param name The name of the country
-     * @return the country with the given name
-     * @throws PAException on error
-     */
-    Country getCountryByName(String name) throws PAException;
-    
-    /**
-     * @param name name
-     * @return value 
-     * @throws PAException PAException
-     */
-    String getPropertyValue(String name) throws PAException;
-    /**
-     * 
-     * @param country country
-     * @return list of countries
-     * @throws PAException on error
-     */
-    List<Country> searchCountry(Country country) throws PAException;
-    
-    /**
-     * Get all anatomic sites. Ordered by code. 
-     * @return list of anatomic sites.
-     * @throws PAException on error
-     */
-    List<AnatomicSite> getAnatomicSites() throws PAException;
- 
-    /**
-     * Get all study alternate title types. 
-     * @return list of study alternate title types.
-     * @throws PAException on error
-     */
-    List<String> getStudyAlternateTitleTypes() throws PAException;
-    
-    /**
-     * Get a lookup entity class by code.
-     * @param <T> lookup entity class
-     * @param clazz type of lookup entity class
-     * @param code code
-     * @return lookup entity item.
-     * @throws PAException when error.
-     */
-    <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException;
+    @Override
+    public int compareTo(StudyAlternateTitleDTO o) {
+        return this.alternateTitle.getValue().compareTo(o.getAlternateTitle().getValue());
+    }
 }

@@ -117,23 +117,23 @@
                 var div = $('otherIdentifierdiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
                 var aj = callAjaxPost(div, url, params);
-            }
-
+            }            
+            
             function saveIdentifierRow(rowid){
-                      	var orgValue = $("identifier_"+rowid).value;
-                          var otherIdentifierTypeValue = $("identifierType_"+rowid).value;
-                          if (orgValue != null && orgValue != '') {
-            		            	var  url = 'ajaxManageOtherIdentifiersActionsaveOtherIdentifierRow.action';
-            		                var params = { uuid: rowid, otherIdentifier : orgValue,
-            		    	                 otherIdentifierType : otherIdentifierTypeValue };
-            		                var div = $('otherIdentifierdiv');
-            		                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Saving...</div>';
-            		                var aj = callAjaxPost(div, url, params); 
-                          } else {
-                              alert("Please enter a valid Other identifier.");
-                          }
-                      }
-            	 
+            	var orgValue = $("identifier_"+rowid).value;
+            	var otherIdentifierTypeValue = $("identifierType_"+rowid).value;
+            	if (orgValue != null && orgValue != '') {
+            		var  url = 'ajaxManageOtherIdentifiersActionsaveOtherIdentifierRow.action';
+            		var params = { uuid: rowid, otherIdentifier : orgValue, 
+            				       otherIdentifierType : otherIdentifierTypeValue };
+            		var div = $('otherIdentifierdiv');
+            		div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Saving...</div>';
+            		var aj = callAjaxPost(div, url, params); 
+            	} else {
+            		alert("Please enter a valid Other identifier.");
+            	}
+            }            
+            
              function editIdentifierRow(rowid){
              	jQuery("#identifierDiv_"+rowid).hide();
              	jQuery("#identifierInputDiv_"+rowid).show(); 
@@ -142,8 +142,8 @@
              	jQuery("#actionEdit_"+rowid).hide();
              	jQuery("#actionSave_"+rowid).show();            	            	
              }
-
-            function addOtherIdentifier() {
+             
+             function addOtherIdentifier() {
                 var orgValue = $("otherIdentifierOrg").value;
                 var otherIdentifierTypeValue = $("otherIdentifierType").value;
                 if (orgValue != null && orgValue != '') {
@@ -158,8 +158,54 @@
                     alert("Please enter a valid Other identifier.");
                 }
             }
-
-
+             
+             function deleteStudyAlternateTitle(rowid){ 
+                 var  url = 'ajaxManageStudyAlternateTitlesActiondeleteStudyAlternateTitle.action';
+                 var params = { uuid: rowid };
+                 var div = $('studyAlternateTitleDiv');
+                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
+                 var aj = callAjaxPost(div, url, params);
+             }
+             
+            function saveStudyAlternateTitle(rowid){
+                var alternateTitleValue = $("studyAlternateTitle_"+rowid).value;
+                var alternateTitleTypeValue = $("studyAlternateTitleType_"+rowid).value;                
+                if (alternateTitleValue != null && alternateTitleValue != '') {                	
+                    var  url = 'ajaxManageStudyAlternateTitlesActionsaveStudyAlternateTitle.action';
+                    var params = { uuid: rowid, alternateTitle: alternateTitleValue, 
+                                   alternateTitleType: alternateTitleTypeValue };
+                    var div = $('studyAlternateTitleDiv');
+                    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Saving...</div>';
+                    var aj = callAjaxPost(div, url, params); 
+                } else {
+                    alert("Please enter a valid Alternate Title.");
+                }
+            }
+            
+            function editStudyAlternateTitle(rowid) {
+                jQuery("#studyAlternateTitleTypeDiv_"+rowid).hide();
+                jQuery("#studyAlternateTitleTypeInputDiv_"+rowid).show(); 
+                jQuery("#studyAlternateTitleDiv_"+rowid).hide();
+                jQuery("#studyAlternateTitleInputDiv_"+rowid).show();
+                jQuery("#studyAlternateTitleActionEdit_"+rowid).hide();
+                jQuery("#studyAlternateTitleActionSave_"+rowid).show();
+            }
+            
+            function addStudyAlternateTitle() {
+            	var alternateTitleValue = $("studyAlternateTitle").value;
+            	var alternateTitleTypeValue = $("studyAlternateTitleType").value;
+            	if (alternateTitleValue != null && alternateTitleValue != '') {
+            		var url = 'ajaxManageStudyAlternateTitlesActionaddStudyAlternateTitle.action';
+            		var params = { alternateTitle: alternateTitleValue, alternateTitleType: alternateTitleTypeValue };
+            		
+            		var div = $('studyAlternateTitleDiv');
+            		div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+                    var aj = callAjaxPost(div, url, params);
+                    $("studyAlternateTitle").value="";
+            	} else {
+                    alert("Please enter a valid Alternate Title.");
+                }
+            }
         </script>
     </head>
     
@@ -284,7 +330,33 @@
                                </s:fielderror>
                             </span>
                         </td>
+                    </tr>                    
+                    <tr>
+                        <th colspan="3">Alternate Titles</th>
                     </tr>
+                    <tr>                       
+                        <td>
+                            <label for="studyAlternateTitleType" style="width:80px;">Category</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <s:set name="studyAlternateTitleTypeCodeValues" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getStudyAlternateTitleTypes()" />                             
+                            <s:select id="studyAlternateTitleType" headerKey="" name="studyAlternateTitleType" 
+                                list="#studyAlternateTitleTypeCodeValues" cssStyle="width:110px;"/>&nbsp;&nbsp;
+                        </td>       
+                        <td>
+                            <s:textarea id="studyAlternateTitle" name="studyAlternateTitle" cssStyle="width:606px" rows="4" 
+                                maxlength="4000" cssClass="charcounter" />&nbsp;
+                        </td>                                                        
+                        <td>    
+                            <input type="button" id="studyAlternateTitleBtnId" 
+                                value="Add Alternate Title" onclick="addStudyAlternateTitle();" style="width:110px;"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="space">
+                            <div id="studyAlternateTitleDiv">
+                                <%@ include file="/WEB-INF/jsp/nodecorate/displayStudyAlternateTitles.jsp"%>
+                            </div>
+                        </td>
+                    </tr>                    
                     <tr>
                         <th colspan="2"> <fmt:message key="studyProtocol.trialDescription"/></th>
                     </tr>
@@ -331,8 +403,7 @@
                                     <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp"%>
                                 </div>
                             </td>
-                        </tr>
-                    
+                        </tr>                       
                     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
                     
                         <tr>

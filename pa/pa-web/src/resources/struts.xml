@@ -640,7 +640,9 @@
             <result name="display_otherIdentifiers">/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp</result>
             <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
         </action>
-        
+        <action name="ajaxManageStudyAlternateTitlesAction*" class="gov.nih.nci.pa.action.ManageStudyAlternateTitlesAction" method="{1}">
+            <result name="displayStudyAlternateTitles">/WEB-INF/jsp/nodecorate/displayStudyAlternateTitles.jsp</result>            
+        </action>
         <action name="milestone*" class="gov.nih.nci.pa.action.MilestoneAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">

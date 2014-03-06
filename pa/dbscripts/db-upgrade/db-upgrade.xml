@@ -1497,7 +1497,7 @@
         <comment>updated  system generated email value in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6878.sql"/>
      </changeSet>
-          <changeSet id="PO-7012" author="Reshma">
+     <changeSet id="PO-7012" author="Reshma">
         <comment>updated system generated email value in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7012.sql"/>
      </changeSet>
@@ -1508,9 +1508,13 @@
      <changeSet id="PO-6883" author="Reshma">
         <comment>updated status code to completed</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6883.sql"/>
-     </changeSet>
+     </changeSet>     
      <changeSet id="PO-6744" author="Reshma">
         <comment>updat to Admin and scientific views</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6744.sql"/>
+     </changeSet>
+     <changeSet id="PO-6780" author="Anubhav">
+        <comment>Added study alternate title table to support alternate titles</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6780.sql"/>
      </changeSet>
 </databaseChangeLog>

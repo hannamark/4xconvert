@@ -82,77 +82,31 @@
  */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.domain.StudyAlternateTitle;
+
+import java.io.Serializable;
+import java.util.Comparator;
+
 /**
+ * Sorts the alternate titles based on the title field.
+ * @author ADas
  *
- * @author gnaveh
  */
-public class Constants {
+public class StudyAlternateTitleComparator implements Comparator<StudyAlternateTitle>, Serializable {
+    private static final long serialVersionUID = 1L;
+
     /**
-     * @USERNAME_REQ_ERROR an error message that is fired during login when user not insert userName
-    */
-    public static final String USERNAME_REQ_ERROR = "User Name is required field";
-    /**
-     *@PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
+     * {@inheritDoc}
      */
-    public static final String PASSWORD_REQ_ERROR = "Password is required field";
-    /** logged user name is stored in session using loggerUserName variable . */
-    public static final String LOGGED_USER_NAME = "loggedUserName";
-    /** Trial Summary . */
-    public static final String TRIAL_SUMMARY = "trialSummary";
-    /** Study Protocol II. */
-    public static final String STUDY_PROTOCOL_II = "studyProtocolIi";
-    /** Funding Mechanism code. */
-    public static final String FUNDING_MECHANISM = "fundingMechanism";
-    /** nih Institute Code . */
-    public static final String NIH_INSTITUTE = "nihInstitute";
-    /** Country . */
-    public static final String ISO_COUNTRY = "isoCounty";
-    /** Success Message . */
-    public static final String SUCCESS_MESSAGE = "successMessage";
-    /** Failure Message . */
-    public static final String FAILURE_MESSAGE = "failureMessage";
-    /** Deleted Message . */
-    public static final String DELETE_MESSAGE = "Record Deleted";
-    /** Deleted Message . */
-    public static final String NOTHING_TO_DELETE_MESSAGE = "Please select one, or more, record(s) to delete";    
-    /** Deleted Message . */
-    public static final String MULTI_DELETE_MESSAGE = "Record(s) Deleted";
-    /** Updated Message . */
-    public static final String UPDATE_MESSAGE = "Record Updated";
-    /** Create Message . */
-    public static final String CREATE_MESSAGE = "Record Created";
-    /** Participating Organization Tab Data. */
-    public static final String PARTICIPATING_ORGANIZATIONS_TAB = "participatingOrganizationsTabs";
-    /** Is user in the abstractor role.**/
-    public static final String IS_ABSTRACTOR = "isAbstractor";
-    /** Is user in the su abstractor role.**/
-    public static final String IS_SU_ABSTRACTOR = "isSuAbstractor";
-    /** Is user in the scientific abstractor role.**/
-    public static final String IS_SCIENTIFIC_ABSTRACTOR = "isScientificAbstractor";
-    /** Is user in the admin abstractor role.**/
-    public static final String IS_ADMIN_ABSTRACTOR = "isAdminAbstractor";
-    /** Is user in the report viewer role.**/
-    public static final String IS_REPORT_VIEWER = "isReportViewer";
-    /** CSM Group used to define reporting role. **/
-    public static final String REPORT_VIEWER = "ReportViewer";
-    /** CSM Group used to define abstractor role. **/
-    public static final String ABSTRACTOR = "Abstractor";
-    /** CSM Group used to define suabstractor role. **/
-    public static final String SUABSTRACTOR = "SuAbstractor";
-    /** CSM Group used to define scientific abstractor role.**/
-    public static final String SCIENTIFIC_ABSTRACTOR = "ScientificAbstractor";
-    /** CSM Group used to define admin abstractor role.**/
-    public static final String ADMIN_ABSTRACTOR = "AdminAbstractor";
-    /** NCI. */
-    public static final String NCI = "NCI";
-    /** OTHER_IDENTIFIERS_LIST. */
-    public static final String OTHER_IDENTIFIERS_LIST = "otherIdentifiersList";
-    /** Trial Submitter Organization.  */
-    public static final String TRIAL_SUBMITTER_ORG = "trialSubmitterOrg";
-    /** Trial Submitter Organization.  */
-    public static final String TRIAL_SUBMITTER_ORG_PO_ID = "trialSubmitterOrgPOId";
-    /** Principal Investigator PO_ID  */
-    public static final String PI_PO_ID = "principalInvestigatorPOId";
-    /** STUDY_ALTERNATE_TITLES_LIST. */
-    public static final String STUDY_ALTERNATE_TITLES_LIST = "studyAlternateTitlesList";
+    public int compare(StudyAlternateTitle o1, StudyAlternateTitle o2) {
+        String a1 = o1.getAlternateTitle();
+        String a2 = o2.getAlternateTitle();
+        if (a1 == null) {
+            return 1;
+        } else if (a2 == null) {
+            return -1;
+        } else {
+            return a1.compareToIgnoreCase(a2);
+        }
+    }
 }

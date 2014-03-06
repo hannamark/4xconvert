@@ -104,6 +104,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyAlternateTitle;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolAssociation;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -127,6 +128,7 @@ import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -602,7 +604,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         Ii ii = remoteEjb.createInterventionalStudyProtocol(createDTO);
         assertNotNull(ii.getExtension());
         InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
-
+        //add alternate titles
+        addAlternateTitles(saved);
         saved.setAcronym(StConverter.convertToSt("1234"));
 
         InterventionalStudyProtocolDTO update =  remoteEjb.updateInterventionalStudyProtocol(saved, null);
@@ -617,6 +620,17 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(saved.getOfficialTitle().getValue(),update.getOfficialTitle().getValue());
         assertEquals(saved.getPhaseCode().getCode(),update.getPhaseCode().getCode());
         assertNotNull(update.getIdentifier().getExtension());
+        assertNotNull(update.getStudyAlternateTitles());
+        assertEquals(update.getStudyAlternateTitles().size(), 2);
+        for (StudyAlternateTitleDTO dto : update.getStudyAlternateTitles()) {
+            String title = StConverter.convertToString(dto.getAlternateTitle());
+            String category = StConverter.convertToString(dto.getCategory());
+            if (category.equals("Spelling/Formatting Correction")) {       
+                assertEquals(title, "Test1");
+            } else if (category.equals("Other")) {
+                assertEquals(title, "Test2");
+            }
+        }
     }
 
     @Test
@@ -1332,4 +1346,23 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.updateRecordVerificationDate(Long.valueOf(spDTO.getIdentifier().getExtension()));
     }
 
+    /**
+     * Adds alternate titles to study protocol dto.
+     * @param dto study protocol dto.
+     */
+    private void addAlternateTitles(StudyProtocolDTO dto) {
+        Set<StudyAlternateTitleDTO> titles = new TreeSet<StudyAlternateTitleDTO>();
+        StudyAlternateTitleDTO obj1 = new StudyAlternateTitleDTO();
+        obj1.setAlternateTitle(StConverter.convertToSt("Test2"));
+        obj1.setCategory(StConverter.convertToSt("Other"));        
+        titles.add(obj1);
+        
+        StudyAlternateTitleDTO obj2 = new StudyAlternateTitleDTO();
+        obj2.setAlternateTitle(StConverter.convertToSt("Test1"));
+        obj2.setCategory(StConverter.convertToSt("Spelling/Formatting Correction"));      
+        titles.add(obj2);
+        
+        dto.setStudyAlternateTitles(titles);
+    }
+    
 }

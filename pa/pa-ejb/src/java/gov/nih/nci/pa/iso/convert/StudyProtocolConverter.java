@@ -84,10 +84,12 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.SecondaryPurpose;
+import gov.nih.nci.pa.domain.StudyAlternateTitle;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -98,15 +100,22 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * Convert StudyProtocol domain to DTO.
@@ -118,7 +127,7 @@ import org.hibernate.criterion.Example;
  * copyright holder, NCI.
  */
 public class StudyProtocolConverter {
-
+    private static final Logger LOG = Logger.getLogger(StudyProtocolConverter.class);
     /**
      *
      * @param studyProtocol study Protocol
@@ -203,6 +212,7 @@ public class StudyProtocolConverter {
                     .convertToIi((Long) null));
         }
         studyProtocolDTO.setNciGrant(BlConverter.convertToBl(studyProtocol.getNciGrant()));
+        convertStudyAlternateTitlesToDTO(studyProtocol, studyProtocolDTO);
         return studyProtocolDTO;
     }
 
@@ -288,6 +298,7 @@ public class StudyProtocolConverter {
             studyProtocol.setAssignedUser(null);
         }
        studyProtocol.setNciGrant(BlConverter.convertToBoolean(studyProtocolDTO.getNciGrant()));
+       convertStudyAlternateTitlesToDomain(studyProtocolDTO, studyProtocol); 
        return studyProtocol;
    }
 
@@ -363,5 +374,60 @@ public class StudyProtocolConverter {
         return (SecondaryPurpose) session
                 .createCriteria(SecondaryPurpose.class)
                 .add(Example.create(example)).uniqueResult();
+    }
+    
+    /**
+     * Populates alternate title information in corresponding DTO object using the 
+     * corresponding domain object.
+     * @param bo study protocol domain object
+     * @param dto study protocol DTO object
+     */
+    private static void convertStudyAlternateTitlesToDTO(StudyProtocol bo, StudyProtocolDTO dto) {
+        if (!CollectionUtils.isEmpty(bo.getStudyAlternateTitles())) {
+            Set<StudyAlternateTitleDTO> studyAlternateTitleDTOs = new TreeSet<StudyAlternateTitleDTO>();
+            for (StudyAlternateTitle studyAlternateTitle : bo.getStudyAlternateTitles()) {
+                StudyAlternateTitleDTO studyAlternateTitleDTO = new StudyAlternateTitleDTO();
+                studyAlternateTitleDTO.setAlternateTitle(
+                        StConverter.convertToSt(studyAlternateTitle.getAlternateTitle()));
+                studyAlternateTitleDTO.setCategory(StConverter.convertToSt(
+                        studyAlternateTitle.getCategory()));               
+                studyAlternateTitleDTO.setStudyProtocolIdentifier(
+                        IiConverter.convertToStudyProtocolIi(bo.getId()));                
+                studyAlternateTitleDTO.setIdentifier(
+                        IiConverter.convertToIi(studyAlternateTitle.getId()));                
+                studyAlternateTitleDTOs.add(studyAlternateTitleDTO);
+            }
+            dto.setStudyAlternateTitles(studyAlternateTitleDTOs);
+        }
+    }
+    
+    /**
+     * Populates alternate title information in corresponding domain object using the corresponding
+     * DTO object
+     * @param dto study protocol DTO object
+     * @param bo study protocol domain object
+     * @return study protocol
+     * @throws PAException PAException
+     */
+    public static StudyProtocol convertStudyAlternateTitlesToDomain(StudyProtocolDTO dto, StudyProtocol bo) 
+            throws PAException {
+        bo.getStudyAlternateTitles().clear();
+        if (!CollectionUtils.isEmpty(dto.getStudyAlternateTitles())) {           
+            User user = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser());
+            for (StudyAlternateTitleDTO studyAlternateTitleDTO : dto.getStudyAlternateTitles()) {
+                Date today = new Date();
+                StudyAlternateTitle studyAlternateTitle = new StudyAlternateTitle();
+                studyAlternateTitle.setAlternateTitle(StConverter.convertToString(
+                        studyAlternateTitleDTO.getAlternateTitle()));
+                studyAlternateTitle.setCategory(StConverter.convertToString(studyAlternateTitleDTO.getCategory()));
+                studyAlternateTitle.setStudyProtocol(bo);
+                studyAlternateTitle.setUserLastCreated(user);
+                studyAlternateTitle.setDateLastCreated(today);
+                studyAlternateTitle.setUserLastUpdated(user);
+                studyAlternateTitle.setDateLastUpdated(today);
+                bo.getStudyAlternateTitles().add(studyAlternateTitle);
+            }
+        } 
+        return bo;
     }
 }

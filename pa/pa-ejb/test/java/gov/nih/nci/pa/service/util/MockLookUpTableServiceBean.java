@@ -153,4 +153,13 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
         }
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<String> getStudyAlternateTitleTypes() throws PAException {
+        List<String> studyAlternateTitleTypes = new ArrayList<String>();
+        studyAlternateTitleTypes.add("Test");
+        return studyAlternateTitleTypes;
+    }
 }

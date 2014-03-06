@@ -1,7 +1,6 @@
 package gov.nih.nci.pa.domain;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
@@ -162,6 +161,31 @@ public class DomainClasssesTest {
         assertNotNull(subj.getRegistrationGroupId());
         assertNotNull(subj.getSiteDisease());
         
+        StudyAlternateTitle alTitle = new StudyAlternateTitle();        
+        alTitle.setCategory("Other");
+        alTitle.setStudyProtocol(new StudyProtocol());
+        alTitle.setDateLastCreated(new Timestamp(new Date().getTime()));
+        alTitle.setDateLastUpdated(new Timestamp(new Date().getTime()));        
+        assertNotNull(alTitle.getCategory());
+        assertNotNull(alTitle.getDateLastCreated());
+        assertNotNull(alTitle.getDateLastUpdated());
+        assertNotNull(alTitle.getStudyProtocol());
+        StudyAlternateTitle otherTitle = new StudyAlternateTitle();
+        otherTitle.setCategory("Spelling/Formatting Correction");
+        otherTitle.setAlternateTitle("Test1");
+        assertFalse(alTitle.equals(null));      
+        assertTrue(alTitle.equals(alTitle));
+        assertFalse(alTitle.equals(subj));        
+        assertFalse(alTitle.equals(otherTitle));
+        alTitle.setAlternateTitle("Test");
+        assertNotNull(alTitle.getAlternateTitle());
+        assertFalse(alTitle.equals(otherTitle));
+        otherTitle.setAlternateTitle("Test");
+        assertFalse(alTitle.equals(otherTitle));
+        otherTitle.setCategory("Other");
+        assertTrue(alTitle.equals(otherTitle));
+        assertTrue(alTitle.hashCode() == otherTitle.hashCode());
+        alTitle.setCategory(null);
+        assertFalse(alTitle.equals(otherTitle));
 	}
-
 }

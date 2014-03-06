@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
@@ -159,5 +160,18 @@ public class LookUpTableServiceTest extends AbstractHibernateTestCase {
         List<AnatomicSite> asList = bean.getAnatomicSites();
         assertEquals("Size does not match", asList.size(), 1);
     }
+    
+    @Test
+    public void testGetStudyAlternateTitleTypes() throws PAException {
+        PAProperties prop = new PAProperties();
+        prop.setName("studyAlternateTitleTypes");
+        prop.setValue("Spelling/Formatting Correction,Other");
 
+        PaHibernateUtil.getCurrentSession().save(prop);
+        List<String> data = bean.getStudyAlternateTitleTypes();
+        assertNotNull(data);
+        assertEquals(data.size(), 2);
+        assertEquals(data.get(0), "Spelling/Formatting Correction");
+        assertEquals(data.get(1), "Other");
+    }
 }

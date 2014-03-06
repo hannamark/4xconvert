@@ -90,6 +90,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -123,7 +124,8 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     private static final String PAPROPERTY_BY_NAME_QUERY = "select p from PAProperties p where p.name = :name";
     private static final String ALL_ANATOMIC_SITES_QUERY = "select items from AnatomicSite items order by code";
     private static final String LOOKUP_BY_CODE_QUERY = "select item from {0} item where item.code = :code";
-
+    private static final String STUDY_ALTERNATE_TITLE_TYPES = "studyAlternateTitleTypes";
+    
     /**
      * {@inheritDoc}
      */
@@ -232,5 +234,14 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql);
         return query.list();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getStudyAlternateTitleTypes() throws PAException {
+        String studyAlternateTitleTypes = getPropertyValue(STUDY_ALTERNATE_TITLE_TYPES);
+        return Arrays.asList(studyAlternateTitleTypes.split(","));
     }
 }

@@ -21,6 +21,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.OrganizationalContactConverter;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -56,6 +57,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -79,7 +81,7 @@ public class TrialHelper {
     private static final String ABSTRACTION = "Abstraction";
     private static final String VALIDATION = "Validation";
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
-    private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
+    private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();  
 
     private LookUpTableServiceRemote lookUpTableService = PaRegistry.getLookUpTableService();
     private OrganizationCorrelationServiceRemote organizationCorrelationService =
@@ -118,6 +120,13 @@ public class TrialHelper {
                     gtdDTO);
         }
         copyOtherTrialIdentifiers(spDTO, gtdDTO);
+        Set<StudyAlternateTitleDTO> studyAlternateTitleDTOs = spDTO.getStudyAlternateTitles();
+        List<StudyAlternateTitleDTO> studyAlternateTitlesList = new ArrayList<StudyAlternateTitleDTO>();
+        if (!CollectionUtils.isEmpty(studyAlternateTitleDTOs)) {
+            studyAlternateTitlesList.addAll(studyAlternateTitleDTOs);
+        }
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST, 
+                studyAlternateTitlesList);
         return gtdDTO;
     }
 
@@ -442,6 +451,9 @@ public class TrialHelper {
             spDTO.setSecondaryIdentifiers(null);
             spDTO.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(allIdentifiers));
         }
+        List<StudyAlternateTitleDTO> studyAlternateTitlesList = (List<StudyAlternateTitleDTO>)
+                ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST);
+        updateStudyAlternateTitles(studyAlternateTitlesList, spDTO);
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
     }
 
@@ -579,6 +591,7 @@ public class TrialHelper {
             }
         }
     }
+    
     /**
      *
      * @param studyProtocolIi ii
@@ -620,6 +633,20 @@ public class TrialHelper {
         }
     }
 
+    /**
+     *  Copies study alternate title information to study protocol DTO.
+     * @param studyAlternateTitlesList list of study alternate titles. 
+     * @param spDTO study protocol DTO.
+     */
+    private void updateStudyAlternateTitles(List<StudyAlternateTitleDTO> studyAlternateTitlesList, 
+            StudyProtocolDTO spDTO) {
+        Set<StudyAlternateTitleDTO> altTitleDTOs = new TreeSet<StudyAlternateTitleDTO>();
+        if (!CollectionUtils.isEmpty(studyAlternateTitlesList)) {
+            altTitleDTOs.addAll(studyAlternateTitlesList);
+        }
+        spDTO.setStudyAlternateTitles(altTitleDTOs);
+    }
+    
     /**
      * @return the correlationUtils
      */
