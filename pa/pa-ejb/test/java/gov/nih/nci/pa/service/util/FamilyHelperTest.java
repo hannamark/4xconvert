@@ -182,7 +182,7 @@ public class FamilyHelperTest {
         return family;
     }
 
-    private List<FamilyOrganizationRelationshipDTO> getRelationships(Long[] orgIds) {
+    public static List<FamilyOrganizationRelationshipDTO> getRelationships(Long[] orgIds) {
         List<FamilyOrganizationRelationshipDTO> result = new ArrayList<FamilyOrganizationRelationshipDTO>();
         for (Long orgId : orgIds) {
             FamilyOrganizationRelationshipDTO rel = new FamilyOrganizationRelationshipDTO();
