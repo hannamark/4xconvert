@@ -67,7 +67,7 @@
 			<c:if test="${searchPerformed}">
 				<div id="searchResults">
 					<s:if test="study==null">
-						<div align="center">No trial was found with the specified NCT identifier. Please check the identifier and try again.</div>
+						<div align="center">No trial was found with the specified ClinicalTrials.gov identifier. Please check the identifier and try again.</div>
 					</s:if>
 					<s:if test="study!=null">
 						<s:hidden id="nctIdToImport" name="nctIdToImport"
@@ -81,7 +81,7 @@
 							requestURI="importCtGovquery.action">
 							<display:setProperty name="basic.msg.empty_list"
 								value="No studies found." />
-							<display:column escapeXml="true" title="NCT ID" property="nctId" />
+							<display:column escapeXml="true" title="ClinicalTrials.gov Identifier" property="nctId" />
 							<display:column escapeXml="true" title="Status  "
 								property="status" />
 							<display:column escapeXml="false" title="Study">
@@ -97,7 +97,7 @@
 						<c:if test="${potentialMatch!=null}">
 						  <br/>
 						  <div class="error_msg">
-                            <strong>Message.</strong> Although there is no trial with the given NCT identifier
+                            <strong>Message.</strong> Although there is no trial with the given ClinicalTrials.gov Identifier
                             in CTRP, we found an exact match by title and category. The matching trial's NCI ID is
                             <c:out value="${potentialMatch.nciIdentifier}"></c:out>. 
                              Please click Cancel to abort the import, or

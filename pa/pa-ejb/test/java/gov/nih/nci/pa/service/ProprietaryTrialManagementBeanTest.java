@@ -832,7 +832,7 @@ public class ProprietaryTrialManagementBeanTest extends
                     leadOrganizationIdentifier, null,
                     summary4TypeCode, documents, studySiteDTOs,
                     studySiteAccrualDTOs);
-        	fail("NCT identifier is required as there are no Documents");
+        	fail("ClinicalTrials.gov Identifier is required as there are no Documents");
         } catch (Exception e) {
             // expected to have studysite identifier
         }

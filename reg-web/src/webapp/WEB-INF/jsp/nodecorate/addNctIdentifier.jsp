@@ -7,7 +7,7 @@
     <c:otherwise>
       <div id="nctIdentifierdiv">
         <s:textfield id="nctId" name="nctId"  maxlength="200" size="100"  cssStyle="width:200px" />&nbsp; 
-        <input type="button" value="Add NCT Identifier" onclick="addNCTIdentifier();" />
+        <input type="button" value="Add ClinicalTrials.gov Identifier" onclick="addNCTIdentifier();" />
 	    <span class="formErrorMsg">
 	        <s:fielderror cssStyle = "white-space:pre-line;">
 	              <s:param>trialDTO.nctIdentifier</s:param>

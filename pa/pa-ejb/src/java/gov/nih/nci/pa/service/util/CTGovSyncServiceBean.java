@@ -460,7 +460,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     @Override
     public String importTrial(String nctID) throws PAException {
         if (isBlank(nctID) || !isNctIdValid(nctID)) {
-            throw new PAException("Invalid NCT ID");
+            throw new PAException("Invalid ClinicalTrials.gov Identifier");
         }
         final String currentUser = getCurrentUser();
         String xml;

@@ -363,7 +363,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         validateOwner(studyProtocolDTO, errorMsg);
         if (ISOUtil.isStNull(nctIdentifier)
                 && CollectionUtils.isEmpty(documentService.getByStudyProtocol(studyProtocolDTO.getIdentifier()))) {
-            errorMsg.append("NCT identifier is required as there are no Documents");
+            errorMsg.append("ClinicalTrials.gov Identifier is required as there are no Documents");
         }
         if (CollectionUtils.isNotEmpty(studySiteDTOs)) {
             for (StudySiteDTO studySiteDto : studySiteDTOs) {

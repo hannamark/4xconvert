@@ -62,7 +62,7 @@
 							requestURI="importCtGovquery.action">
 							<display:setProperty name="basic.msg.empty_list"
 								value="No studies found." />
-							<display:column escapeXml="true" title="NCT ID" property="nctId" />
+							<display:column escapeXml="true" title="ClinicalTrials.gov Identifier" property="nctId" />
 							<display:column escapeXml="true" title="Status  "
 								property="status" />
 							<display:column escapeXml="false" title="Study">

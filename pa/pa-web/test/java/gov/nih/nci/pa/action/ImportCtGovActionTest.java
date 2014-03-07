@@ -52,7 +52,7 @@ public class ImportCtGovActionTest {
          assertEquals("error", action.query());  
          assertTrue(action.getActionErrors().size() > 0);
          assertTrue(action.getActionErrors().contains
-                ("Please provide an NCT Identifier value"));
+                ("Please provide an ClinicalTrials.gov Identifier value"));
      }
      
      @Test    

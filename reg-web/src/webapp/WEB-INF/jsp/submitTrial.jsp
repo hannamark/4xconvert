@@ -396,7 +396,7 @@
                     <tr>
                         <td scope="row" class="label">
                             <reg-web:displayTooltip tooltip="tooltip.ct_gov_xml">
-                                XML required for <a href="http://www.ClinicalTrials.gov" target="_new">ClinicalTrials.gov</a>?
+                                XML Required, Enable "Upload from NCI CTRP" in <a href="http://www.ClinicalTrials.gov" target="_new">ClinicalTrials.gov</a>
                             </reg-web:displayTooltip>
                         </td>
                         <td>

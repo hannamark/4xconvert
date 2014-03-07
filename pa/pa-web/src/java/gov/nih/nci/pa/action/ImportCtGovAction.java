@@ -155,9 +155,9 @@ public final class ImportCtGovAction extends ActionSupport implements
      */
     private void validateNctID(final String nctIdToValidate) {
         if (StringUtils.isBlank(nctIdToValidate)) {
-            addActionError("Please provide an NCT Identifier value");
+            addActionError("Please provide an ClinicalTrials.gov Identifier value");
         } else if (!StringUtils.isAsciiPrintable(nctIdToValidate)) {
-            addActionError("Provided NCT Identifer is invalid");
+            addActionError("Provided ClinicalTrials.gov Identifier is invalid");
         }
     }
     

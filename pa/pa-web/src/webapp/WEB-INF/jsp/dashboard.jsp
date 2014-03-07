@@ -388,7 +388,7 @@
                                         headerClass="sortable">                                        
                                     </display:column>									
 
-                                    <display:column  title="NCT ID" property="nctIdentifier"
+                                    <display:column  title="ClinicalTrials.gov Identifier" property="nctIdentifier"
                                         media="excel csv xml"/>									
 						            <display:column  titleKey="studyProtocol.ctepIdentifier" property="ctepId"
 						                media="excel csv xml"/>
