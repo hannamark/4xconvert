@@ -12,6 +12,7 @@ CREATE TABLE STG_DW_STUDY_PARTICIPATING_SITE (
     TARGET_ACCRUAL integer,
     ORG_PO_ID integer,
     PROGRAM_CODE character varying(200),
+    LOCAL_SITE_IDENTIFIER character varying(200),
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 );
 
