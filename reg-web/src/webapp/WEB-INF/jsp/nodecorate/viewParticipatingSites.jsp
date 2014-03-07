@@ -21,7 +21,6 @@
 					<display:table name="organizationList" id="row" class="data" pagesize="20" requestURI="participatingSitespopup.action">
 							<display:column escapeXml="true" property="nciNumber" titleKey="participatingOrganizations.nciNumber" class="sortable" />
 							<display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" class="sortable" />
-							<display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" class="sortable" />
 	        				<display:column property="investigator" titleKey="participatingOrganizations.investigators"/>
 					</display:table>
 				</td>

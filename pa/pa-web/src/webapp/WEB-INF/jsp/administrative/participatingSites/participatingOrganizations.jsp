@@ -67,7 +67,6 @@ function handleEdit(studyResourcingId){
                         <a href="javascript:void(0);" onclick="displayOrgDetails(<c:out value="${row.nciNumber}"/>)"><c:out value="${row.nciNumber}"/></a>
                     </display:column>
                     <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" sortable="true" />
-                    <display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" sortable="true" />
                     <display:column escapeXml="true" property="recruitmentStatus" titleKey="participatingOrganizations.recruitmentStatus" sortable="true" />
                     <display:column escapeXml="true" property="recruitmentStatusDate" titleKey="participatingOrganizations.recruitmentStatusDate" sortable="true" />
                     <display:column titleKey="participatingOrganizations.investigators">

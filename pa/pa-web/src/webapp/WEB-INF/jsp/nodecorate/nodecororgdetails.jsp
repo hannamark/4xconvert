@@ -127,12 +127,6 @@
                         </td>
                     </tr>
                 </c:if>
-                <tr>
-                    <td class="label"><label for="statusCode">Status:</label></td>
-                    <td class="value" colspan="2">
-                        <s:textfield id="statusCode" name="statusCode" readonly="true" cssClass="readonly" maxlength="80" size="80" cssStyle="width: 200px"/>
-                    </td>               
-                </tr>
                 
 			</table>
 
