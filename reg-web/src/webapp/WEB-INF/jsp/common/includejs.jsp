@@ -22,3 +22,5 @@
 <script type="text/javascript" src="${scriptPath}/js/overlib.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/cal2.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/ajaxHelper.js"></script>
+<!-- Javascript -->
+<script type='text/javascript' src="${scriptPath}/js/css3-mediaqueries.js"></script>

@@ -2,16 +2,33 @@
 <%@page import="gov.nih.nci.pa.util.CsmHelper"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<div id="header">
-   <div id="logo"><a href="javascript:void(0)"><img src="${pageContext.request.contextPath}/images/logo_ctrp_reg.gif" width="340" height="41" alt="NCI CTRP Registration Site" /></a></div>
-    <!--User Details-->
+<header class="masthead">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-9">
+          <div class="navbar-brand"><a data-placement="top" rel="tooltip" href="#" data-original-title="Clinical Trials Reporting Program"><img src="${pageContext.request.contextPath}/images/logo.png"/></a></div>
+        </div>
+       <!--User Details-->
       <c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
-        <c:url value="registerUsershowMyAccount.action" var="showMyAccountUrl"/>
-        <div id="userarea">Welcome, <a href="javascript:void(0)" onclick="submitXsrfForm('${showMyAccountUrl}');"><c:out value="${CsmHelper.firstName}"/> <c:out value="${CsmHelper.lastName}"/> </a>  |  <a href='<c:url value="/logout.action"/>' class="btn_logout">Log Out</a></div>
+        <div class="col-xs-3">
+          <div class="dropdown pull-right">
+          	<a href="#" data-toggle="dropdown" class="dropdown-toggle nav-user"><c:out value="${CsmHelper.firstName}"/> <c:out value="${CsmHelper.lastName}"/></a>
+            <ul class="dropdown-menu">
+              <li><a class="account" data-toggle="modal" data-target="#myAccount" href="javascript:void(0)" onclick="submitXsrfForm('${showMyAccountUrl}');">My Account</a></li>
+              <li><a href="#" class="help">Help</a></li>
+              <li class="divider"></li>
+              <li class="sign-out">
+                <button type="button" class="btn btn-default btn-sm" onClick="javascript:void(0)"/>'>Sign Out</button>
+              </li>
+            </ul>
+          </div>
+        </div>
         </c:when>
         <c:otherwise>
-        <div id="userarea"><a href='<c:url value="/protected/disClaimerAction.action?actionName=searchTrial.action"/>' class="btn_login">Log In</a></div>
+	      Log  In 
         </c:otherwise>
-    </c:choose>
-</div>
+	  </c:choose>
+      </div>
+    </div>
+  </header>
