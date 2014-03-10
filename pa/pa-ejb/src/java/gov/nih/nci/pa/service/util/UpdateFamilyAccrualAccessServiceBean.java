@@ -90,6 +90,8 @@ public class UpdateFamilyAccrualAccessServiceBean implements UpdateFamilyAccrual
 
             for (RegistryUser ru : rUsers) {
                 Set<Long> siteAccrualTrials = familyService.getSiteAccrualTrials(ru.getAffiliatedOrganizationId());
+                LOG.info("siteAccrualTrials size is : " + siteAccrualTrials.size() + " for: " + ru.getFullName());
+                if (CollectionUtils.isNotEmpty(siteAccrualTrials)) {
                 Map<Long, String> trialsWorkFlowStatus = new HashMap<Long, String>();
                 qr.addParameter("spIds", siteAccrualTrials);
                 List<Object[]> trialsDWFS = dataAccessService.findByQuery(qr);
@@ -106,6 +108,7 @@ public class UpdateFamilyAccrualAccessServiceBean implements UpdateFamilyAccrual
                 }
                 userTrials.put(ru, trialsWithoutCTEPOrDCPId);
                 LOG.info("the trial size is: " + trialsWithoutCTEPOrDCPId.size() + " and uname:" + ru.getFullName());
+                }
             }
             User pauser = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser());
             for (Map.Entry<RegistryUser, Set<Long>> user : userTrials.entrySet()) {
