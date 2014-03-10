@@ -121,7 +121,7 @@ WHERE summary_level_accrual = false
                                          FROM dw_study_processing_status
                                          WHERE date <= $P{End_Date}
                                          GROUP BY nci_id)
-                       AND status IN ('Rejected', 'SUBMISSION_TERMINATED'))
+                       AND status IN ('Rejected', 'Submission Terminated'))
   AND dt4.nci_id IN ( SELECT nci_id
                   FROM dw_study_participating_site
                   WHERE  org_org_family = $P{Center} )
@@ -300,7 +300,7 @@ WHERE summary_level_accrual = true
                                          FROM dw_study_processing_status
                                          WHERE date <= $P{End_Date}
                                          GROUP BY nci_id)
-                       AND status IN ('Rejected', 'SUBMISSION_TERMINATED'))
+                       AND status IN ('Rejected', 'Submission Terminated'))
   AND dt4.nci_id IN ( SELECT nci_id
                   FROM dw_study_participating_site
                   WHERE  org_org_family = $P{Center} )

@@ -104,13 +104,13 @@ org.apache.commons.lang.time.DateUtils.addWeeks($P{End_Date}, -2)
 							where a.nci_id=c.nci_id
 							and lower(c.user_name_created) like '%sulekha%')) as "Abstracted_Completed_(C)_Trials",
 (select count(DISTINCT a.nci_id) from dw_study_Milestone a, dw_study b
-		where lower(a.name)='trial_summary_report'
+		where lower(a.name)='trial summary report date'
 		and a.date between $P{Calculated_Start_Date} and $P{End_Date}
 		and a.nci_id=b.nci_id
 		and b.submission_number <=1
 		and a.internal_system_id=(select min(c.internal_system_id) from dw_study_milestone c
 						where a.nci_id=c.nci_id
-						and lower(c.name)in ('trial_summary_report'))
+						and lower(c.name)in ('trial summary report date'))
 		and lower(a.user_name_created) not in (select lower(c.user_name_created) from dw_study_milestone c
 							where a.nci_id=c.nci_id
 							and lower(c.user_name_created) like '%sulekha%')) as "TSR_Sent_Trials",
@@ -140,13 +140,13 @@ org.apache.commons.lang.time.DateUtils.addWeeks($P{End_Date}, -2)
 		and a.nci_id=b.nci_id
 		and b.submission_number > 1) as "Abstracted_Amendment_Trials",
 (select count (distinct a.nci_id) from dw_study_Milestone a, dw_study b
-		where lower(a.name)='trial_summary_report'
+		where lower(a.name)='trial summary report date'
 		and a.date between $P{Calculated_Start_Date} and $P{End_Date}
 		and a.nci_id=b.nci_id
 		and b.submission_number > 1
 		and a.internal_system_id=(select max(c.internal_system_id) from dw_study_milestone c
 						where a.nci_id=c.nci_id
-						and lower(c.name)in ('trial_summary_report'))) as "TSR_Sent_Amendments",
+						and lower(c.name)in ('trial summary report date'))) as "TSR_Sent_Amendments",
 (select count (corresponding_nci_id) from dw_accrual_batch_submission
         where date_last_created between $P{Calculated_Start_Date} and $P{End_Date}) as "Accrual_Submitted_Trials",
 (select count (corresponding_nci_id) from dw_accrual_batch_submission

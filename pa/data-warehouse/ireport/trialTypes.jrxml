@@ -10,7 +10,7 @@ System.getProperty( "os.name" ).toLowerCase().indexOf( "win" ) >= 0
 	</parameter>
 	<parameter name="IMAGES_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{OS_WINDOWS}.booleanValue() ?
-"C:\\Users\\ctrp\\dw-3.10-code\\reg-web\\src\\webapp\\images\\" :
+"C:\\Users\\ctrp\\code\\reg-web\\src\\webapp\\images\\" :
 "repo:"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
@@ -75,14 +75,14 @@ System.getProperty( "os.name" ).toLowerCase().indexOf( "win" ) >= 0
      FROM dw_study s
      JOIN dw_study_type t ON (s.nci_id = t.nci_id)
      WHERE t.id = ts.id
-       AND (s.processing_status NOT IN ('Submitted','On-Hold','Rejected','SUBMISSION_TERMINATED')
+       AND (s.processing_status NOT IN ('Submitted','On-Hold','Rejected','Submission Terminated')
             OR s.submission_number > 1)
        AND s.study_protocol_type = 'Non-interventional') AS accepted_non
   , (SELECT COUNT(*)
      FROM dw_study s
      JOIN dw_study_type t ON (s.nci_id = t.nci_id)
      WHERE t.id = ts.id
-       AND (s.processing_status NOT IN ('Submitted','On-Hold','Rejected','SUBMISSION_TERMINATED')
+       AND (s.processing_status NOT IN ('Submitted','On-Hold','Rejected','Submission Terminated')
             OR s.submission_number > 1)
        AND s.study_protocol_type = 'Interventional') AS accepted_int
   , (SELECT COUNT(*)
