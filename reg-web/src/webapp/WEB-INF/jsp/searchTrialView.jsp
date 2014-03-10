@@ -51,6 +51,15 @@
                                             <span class="btn_img">Verify Trial Data</span>
                                         </s:a>
                          </c:if>
+                         <s:if test="showAddMySite"> 
+                              <s:url id="addMySiteUrl" action="addSitepopupview">
+                                <s:param name="studyProtocolId"><c:out value= "${requestScope.trialIdentifier}"/></s:param>
+                              </s:url>
+                              <s:a cssClass="btn" href="javascript:void(0)" onclick="showPopup('%{addMySiteUrl}', '', 'Add Participating Site');" 
+                                           onkeypress="showPopup('%{addMySiteUrl}', '', 'Add Participating Site');">
+                                 <span class="btn_img">Add My Site</span>
+                              </s:a>
+                         </s:if>
                        </li>
                    </ul>
                 </del>

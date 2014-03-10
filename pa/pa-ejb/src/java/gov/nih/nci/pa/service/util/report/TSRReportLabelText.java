@@ -292,6 +292,10 @@ public class TSRReportLabelText { //NOPMD
      * primary completion date.
      */
     public static final String SD_PRIMARY_COMPLETION_DATE = "Primary Completion Date";
+    /**
+     * completion date.
+     */
+    public static final String SD_COMPLETION_DATE = "Study Completion Date";
 
     // Regulatory Information
     /**

@@ -93,6 +93,7 @@ package gov.nih.nci.pa.service.util.report;
 public class TSRReportStatusDate {
     private String trialStartDate;
     private String primaryCompletionDate;
+    private String completionDate;
     private String currentTrialStatus;
     private String reasonText;
     /**
@@ -118,6 +119,18 @@ public class TSRReportStatusDate {
      */
     public void setPrimaryCompletionDate(String primaryCompletionDate) {
         this.primaryCompletionDate = primaryCompletionDate;
+    }
+    /**
+     * @return the completionDate
+     */
+    public String getCompletionDate() {
+        return completionDate;
+    }
+    /**
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = completionDate;
     }
     /**
      * @return the currentTrialStatus

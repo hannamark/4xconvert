@@ -149,9 +149,6 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.newDocument();
         Element result = getBean().createLeadSponsor(spId, doc);
-        System.out.println("1" + result);
-        System.out.println("2" + result.getElementsByTagName("agency"));
-        System.out.println("3" + result.getElementsByTagName("agency").item(0));
         assertEquals(orgName, result.getElementsByTagName("agency").item(0).getTextContent());
     }
 
@@ -183,6 +180,10 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
        assertTrue(st.contains("<clinical_study>"));
        assertTrue(st.contains("<is_section_801>"));
        assertTrue(st.contains("<id_type>Registry Identifier</id_type>"));
+       assertTrue(st.contains("<primary_compl_date>1969-12</primary_compl_date>"));
+       assertTrue(st.contains("<primary_compl_date_type>Anticipated</primary_compl_date_type>"));
+       assertTrue(st.contains("<last_follow_up_date>1969-12</last_follow_up_date>"));
+       assertTrue(st.contains("<last_follow_up_date_type>Anticipated</last_follow_up_date_type>"));
        
        st = getBean().generateCTGovXml(spId,CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
        assertTrue(st.contains("<clinical_study>"));

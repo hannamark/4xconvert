@@ -212,6 +212,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
 
     private String currentUser;
     private boolean showVerifyButton = false;
+    private boolean showAddMySite = false;
     
     /**
      * {@inheritDoc}
@@ -331,6 +332,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
                     Constants.SUCCESS_MESSAGE,
                     getText("importctgov.import.new.success", new String[] {
                             nctID, nciID }));
+            setShowAddMySite(true);
             return view();
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(FAILURE_MESSAGE,
@@ -1094,5 +1096,19 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
      */
     public void setCtGovSyncService(CTGovSyncServiceLocal ctGovSyncService) {
         this.ctGovSyncService = ctGovSyncService;
+    }
+
+    /**
+     * @return the showAddMySite
+     */
+    public boolean isShowAddMySite() {
+        return showAddMySite;
+    }
+
+    /**
+     * @param showAddMySite the showAddMySite to set
+     */
+    public void setShowAddMySite(boolean showAddMySite) {
+        this.showAddMySite = showAddMySite;
     }
 }

@@ -765,6 +765,8 @@ public class AbstractMockitoTest {
         spDto.setStartDateTypeCode(CdConverter.convertStringToCd("Actual"));
         spDto.setPrimaryCompletionDate(TsConverter.convertToTs(new Timestamp(0)));
         spDto.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd("Anticipated"));
+        spDto.setCompletionDate(TsConverter.convertToTs(new Timestamp(0)));
+        spDto.setCompletionDateTypeCode(CdConverter.convertStringToCd("Anticipated"));
         spDto.setPublicDescription(StConverter.convertToSt("public description"));
         spDto.setDelayedpostingIndicator(BlConverter.convertToBl(true));
         spDto.setPublicTitle(StConverter.convertToSt("public title"));

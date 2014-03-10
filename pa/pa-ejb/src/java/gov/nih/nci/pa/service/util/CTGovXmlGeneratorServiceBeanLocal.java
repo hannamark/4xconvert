@@ -573,6 +573,12 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         XmlGenHelper.appendElement(root,
                 XmlGenHelper.createElementWithTextblock("primary_compl_date_type", convertToCtValues(spDTO
                 .getPrimaryCompletionDateTypeCode()), doc));
+        XmlGenHelper.appendElement(root,
+                XmlGenHelper.createElementWithTextblock("last_follow_up_date", convertTsToYYYYMMFormat(spDTO
+                .getCompletionDate()), doc));
+        XmlGenHelper.appendElement(root,
+                XmlGenHelper.createElementWithTextblock("last_follow_up_date_type", convertToCtValues(spDTO
+                .getCompletionDateTypeCode()), doc));
     }
 
     /**

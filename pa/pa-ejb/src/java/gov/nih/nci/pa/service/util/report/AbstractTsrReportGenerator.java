@@ -458,6 +458,7 @@ public abstract class AbstractTsrReportGenerator {
             addTableRow(table, TSRReportLabelText.SD_TRIAL_START_DATE, getStatusDate().getTrialStartDate());
             addTableRow(table, TSRReportLabelText.SD_PRIMARY_COMPLETION_DATE, getStatusDate()
                     .getPrimaryCompletionDate());
+            addTableRow(table, TSRReportLabelText.SD_COMPLETION_DATE, getStatusDate().getCompletionDate());
             reportDocument.add(table);
             reportDocument.add(getLineBreak());
         }

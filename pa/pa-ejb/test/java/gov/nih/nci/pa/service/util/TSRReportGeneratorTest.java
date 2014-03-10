@@ -362,6 +362,12 @@ public class TSRReportGeneratorTest {
         result = matcher.group(2).trim();
         assertTrue(result.equals("01/28/2010 - Anticipated"));
         
+        regexp = Pattern.compile("(Study Completion Date)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("01/28/2011 - Anticipated"));
+        
         regexp = Pattern.compile("(Oversight Authorities)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
@@ -711,6 +717,7 @@ public class TSRReportGeneratorTest {
         statusDate.setReasonText("Some Reason");
         statusDate.setTrialStartDate("12/17/2009 - Actual");
         statusDate.setPrimaryCompletionDate("01/28/2010 - Anticipated");
+        statusDate.setCompletionDate("01/28/2011 - Anticipated");
         tsrReportGenerator.setStatusDate(statusDate);
 
         // Regulatory Information

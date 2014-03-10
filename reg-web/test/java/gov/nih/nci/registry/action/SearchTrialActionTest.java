@@ -157,10 +157,11 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         
         action.prepare();
         action.setNctIdToImport("NCT01861054");
-        
+        assertFalse(action.isShowAddMySite());
         assertEquals("view", action.importTrial());
         assertNotNull(action.getStudy());
         assertEquals("NCT01861054", action.getStudy().getNctId());
+        assertTrue(action.isShowAddMySite());
     }
     
     @Test

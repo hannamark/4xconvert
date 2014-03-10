@@ -623,6 +623,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             } else {
                 statusDate.setPrimaryCompletionDate(getValue(studyProtocolDto.getPrimaryCompletionDateTypeCode()));
             }
+            if (!ISOUtil.isTsNull(studyProtocolDto.getCompletionDate())) {
+                statusDate.setCompletionDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                        studyProtocolDto.getCompletionDate()).toString())
+                        + "-" + getValue(studyProtocolDto.getCompletionDateTypeCode()));
+            } else {
+                statusDate.setCompletionDate(getValue(studyProtocolDto.getCompletionDateTypeCode()));
+            }
             tsrReportGenerator.setStatusDate(statusDate);
         }
     }
