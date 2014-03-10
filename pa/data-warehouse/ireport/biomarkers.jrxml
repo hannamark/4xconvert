@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ctrpUser" language="groovy" pageWidth="1800" pageHeight="842" columnWidth="1760" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ae6bc613-aa8b-4de2-bc57-668901c88560">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="biomarkers" language="groovy" pageWidth="2136" pageHeight="842" columnWidth="2096" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ae6bc613-aa8b-4de2-bc57-668901c88560">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="44"/>
+	<property name="ireport.x" value="1312"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="OS_WINDOWS" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(
@@ -123,7 +123,7 @@ ORDER BY name, use, nci_id]]>
 	<title>
 		<band height="37" splitType="Stretch">
 			<image>
-				<reportElement uuid="1dcb890e-b83e-459a-8d6a-1ed970ab71f6" mode="Opaque" x="0" y="0" width="1760" height="37" backcolor="#A90101"/>
+				<reportElement uuid="1dcb890e-b83e-459a-8d6a-1ed970ab71f6" mode="Opaque" x="0" y="0" width="2096" height="37" backcolor="#A90101"/>
 				<imageExpression><![CDATA[$P{IMAGES_DIR} + "logotype.gif"]]></imageExpression>
 			</image>
 		</band>
@@ -138,7 +138,7 @@ ORDER BY name, use, nci_id]]>
 				<textFieldExpression><![CDATA["CTRP Biomarker Report"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd-MMM-yyyy" isBlankWhenNull="true">
-				<reportElement uuid="ecf30522-3d21-41e3-bd1f-5c6ae85a4f42" mode="Opaque" x="608" y="0" width="1152" height="22" forecolor="#FFFFFF" backcolor="#475B82"/>
+				<reportElement uuid="ecf30522-3d21-41e3-bd1f-5c6ae85a4f42" mode="Opaque" x="608" y="0" width="1488" height="22" forecolor="#FFFFFF" backcolor="#475B82"/>
 				<textElement textAlignment="Right">
 					<font size="13"/>
 				</textElement>
@@ -153,7 +153,7 @@ ORDER BY name, use, nci_id]]>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="32" splitType="Stretch">
+		<band height="33" splitType="Stretch">
 			<staticText>
 				<reportElement uuid="8d76c2a6-682f-445a-896f-d15e6298cfef" mode="Opaque" x="0" y="0" width="256" height="32" backcolor="#D6D6FF"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
@@ -211,21 +211,35 @@ ORDER BY name, use, nci_id]]>
 				<text><![CDATA[Disease Site]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="ee9b28b1-2619-4614-a417-ecac65865478" mode="Opaque" x="1092" y="0" width="316" height="32" backcolor="#D6D6FF"/>
+				<reportElement uuid="ee9b28b1-2619-4614-a417-ecac65865478" mode="Opaque" x="1092" y="0" width="380" height="32" backcolor="#D6D6FF"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="12"/>
 				</textElement>
 				<text><![CDATA[Official Title]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="3925df05-27dc-4d7c-a876-f9034ef26e3f" mode="Opaque" x="1408" y="0" width="224" height="32" backcolor="#D6D6FF"/>
+				<reportElement uuid="e744c8ff-7923-49cb-919b-f1cd1b816e13" mode="Opaque" x="1472" y="0" width="128" height="32" backcolor="#D6D6FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Current Trial Overall Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5c784308-bdab-45c7-bcd7-4b42ee95c938" mode="Opaque" x="1600" y="0" width="144" height="32" backcolor="#D6D6FF"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Processing Status]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3925df05-27dc-4d7c-a876-f9034ef26e3f" mode="Opaque" x="1744" y="0" width="224" height="32" backcolor="#D6D6FF"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="12"/>
 				</textElement>
 				<text><![CDATA[Intervention Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="5cfc5581-150d-493b-837d-b7d524cf9e03" mode="Opaque" x="1632" y="0" width="128" height="32" backcolor="#D6D6FF"/>
+				<reportElement uuid="5cfc5581-150d-493b-837d-b7d524cf9e03" mode="Opaque" x="1968" y="1" width="128" height="32" backcolor="#D6D6FF"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="12"/>
 				</textElement>
@@ -234,58 +248,58 @@ ORDER BY name, use, nci_id]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="21" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="69e14d9d-1ff3-46b7-b0fe-a0d6a75bd9c6" stretchType="RelativeToTallestObject" x="0" y="0" width="256" height="21" isPrintWhenDetailOverflows="true"/>
+		<band height="42" splitType="Prevent">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="69e14d9d-1ff3-46b7-b0fe-a0d6a75bd9c6" positionType="Float" x="0" y="0" width="256" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="7d8cf61a-a486-4db7-b513-ab8bdbce5be1" stretchType="RelativeToTallestObject" x="256" y="0" width="96" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7d8cf61a-a486-4db7-b513-ab8bdbce5be1" positionType="Float" x="256" y="0" width="96" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{use}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="fda6abaa-cc0c-4b21-9ccc-ee2fe086334d" stretchType="RelativeToTallestObject" x="352" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="fda6abaa-cc0c-4b21-9ccc-ee2fe086334d" positionType="Float" x="352" y="0" width="128" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{purpose}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="9356dc40-26a7-412b-8222-c53708615c31" stretchType="RelativeToTallestObject" x="480" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9356dc40-26a7-412b-8222-c53708615c31" positionType="Float" x="480" y="0" width="128" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nci_id}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="a0d2d8a8-1e2e-4aea-9634-22b5dcc7899f" stretchType="RelativeToTallestObject" x="608" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a0d2d8a8-1e2e-4aea-9634-22b5dcc7899f" positionType="Float" x="608" y="0" width="128" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nct_id}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="9b81967b-8539-4f7d-b424-e2030b2776b5" stretchType="RelativeToTallestObject" x="736" y="0" width="164" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9b81967b-8539-4f7d-b424-e2030b2776b5" positionType="Float" x="736" y="0" width="164" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{lead_org_id}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="cf490b8e-929c-4bd4-9097-ca1bf930123a" stretchType="RelativeToTallestObject" x="900" y="0" width="48" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cf490b8e-929c-4bd4-9097-ca1bf930123a" positionType="Float" x="900" y="0" width="48" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{phase}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="dfc767c0-f178-4518-bdc9-10005bb70519" stretchType="RelativeToTallestObject" x="948" y="0" width="144" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="dfc767c0-f178-4518-bdc9-10005bb70519" positionType="Float" x="948" y="0" width="144" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
@@ -294,29 +308,64 @@ ORDER BY name, use, nci_id]]>
 .replace("}","")
 .replace("\"","")]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="3801d219-a7a2-4298-9c7d-2d99e761ab9a" stretchType="RelativeToTallestObject" x="1092" y="0" width="316" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3801d219-a7a2-4298-9c7d-2d99e761ab9a" positionType="Float" x="1092" y="0" width="380" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{official_title}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="11377fc1-a3fd-44e8-a035-747260d3f32a" stretchType="RelativeToTallestObject" x="1408" y="0" width="224" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cd8e0d82-d83f-48ec-b0e3-926ff0fa2186" positionType="Float" x="1472" y="0" width="128" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
-				<textFieldExpression><![CDATA[((String) $F{intervention_name})
-.replace("{","")
-.replace("}","")
-.replace("\"","")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{current_study_status} == null ? "" :
+($F{current_study_status}.equals("IN_REVIEW") ? "In Review" :
+($F{current_study_status}.equals("APPROVED") ? "Approved" :
+($F{current_study_status}.equals("ACTIVE") ? "Active" :
+($F{current_study_status}.equals("ENROLLING_BY_INVITATION") ? "Enrolling by Invitation" :
+($F{current_study_status}.equals("CLOSED_TO_ACCRUAL") ? "Closed to Accrual" :
+($F{current_study_status}.equals("CLOSED_TO_ACCRUAL_AND_INTERVENTION") ? "Closed to Accrual and Intervention" :
+($F{current_study_status}.equals("TEMPORARILY_CLOSED_TO_ACCRUAL") ? "Temporarily Closed to Accrual" :
+($F{current_study_status}.equals("TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION") ? "Temporarily Closed to Accrual and Intervention" :
+($F{current_study_status}.equals("WITHDRAWN") ? "Withdrawn" :
+($F{current_study_status}.equals("ADMINISTRATIVELY_COMPLETE") ? "Administratively Complete" :
+($F{current_study_status}.equals("COMPLETE") ? "Complete" :
+($F{current_study_status}))))))))))))]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement uuid="33015edb-2bb1-4b0f-9a04-d128750b0233" stretchType="RelativeToTallestObject" x="1632" y="0" width="128" height="21" isPrintWhenDetailOverflows="true"/>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="003af400-3f40-4077-9fb9-7638d033824a" positionType="Float" x="1600" y="0" width="144" height="42"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{processing_status} == null ? "" :
+($F{processing_status}.equals("SUBMITTED") ? "Submitted" :
+($F{processing_status}.equals("AMENDMENT_SUBMITTED") ? "Amendment Submitted" :
+($F{processing_status}.equals("ACCEPTED") ? "Accepted" :
+($F{processing_status}.equals("ABSTRACTED") ? "Abstracted" :
+($F{processing_status}.equals("VERIFICATION_PENDING") ? "Verification Pending" :
+($F{processing_status}.equals("ABSTRACTION_VERIFIED_RESPONSE") ? "Abstraction Verified Response" :
+($F{processing_status}.equals("ABSTRACTION_VERIFIED_NORESPONSE") ? "Abstraction Verified No Response" :
+($F{processing_status}.equals("ON_HOLD") ? "On-Hold" :
+($F{processing_status})))))))))]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="33015edb-2bb1-4b0f-9a04-d128750b0233" positionType="Float" x="1968" y="0" width="128" height="42"/>
 				<textElement>
 					<font size="13"/>
 				</textElement>
 				<textFieldExpression><![CDATA[((String) $F{intervention_type})
+.replace("{","")
+.replace("}","")
+.replace("\"","")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="11377fc1-a3fd-44e8-a035-747260d3f32a" positionType="Float" x="1744" y="0" width="224" height="42"/>
+				<textElement>
+					<font size="13"/>
+				</textElement>
+				<textFieldExpression><![CDATA[((String) $F{intervention_name})
 .replace("{","")
 .replace("}","")
 .replace("\"","")]]></textFieldExpression>
