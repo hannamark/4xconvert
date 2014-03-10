@@ -99,7 +99,7 @@ import org.w3c.dom.Text;
 public class BaseXmlGenHelper {
 
     /**
-     * Creates an XML element.
+     * Creates an XML element with textblock if it contains special characters.
      * @param elementName name
      * @param data data
      * @param doc doc
@@ -107,6 +107,22 @@ public class BaseXmlGenHelper {
      */
     public static void createElement(final String elementName, String data, Document doc, Element root) {
         Element element = createElementWithTextblock(elementName, data, doc);
+
+        if (element != null) {
+            root.appendChild(element);
+        }
+    }
+    
+    /**
+     * Creates an XML element wihtout textblock.
+     * @param elementName name
+     * @param data data
+     * @param doc doc
+     * @param root root
+     */
+    public static void createElementWithoutTextblock(final String elementName,
+            String data, Document doc, Element root) {
+        Element element = createElement(elementName, data, doc);
 
         if (element != null) {
             root.appendChild(element);

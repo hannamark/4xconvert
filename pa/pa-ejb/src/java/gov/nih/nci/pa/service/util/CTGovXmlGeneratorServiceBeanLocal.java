@@ -325,7 +325,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         addNciSpecificInfo(spDTO, doc, root);
         addCtGovInfo(spDTO, doc, root);
         createIndInfo(spDTO, doc, root);
-        XmlGenHelper.createElement("brief_title", spDTO.getPublicTitle()
+        XmlGenHelper.createElementWithoutTextblock("brief_title", spDTO.getPublicTitle()
                 .getValue(), doc, root);
         XmlGenHelper.createElement("acronym", spDTO.getAcronym().getValue(),
                 doc, root);
