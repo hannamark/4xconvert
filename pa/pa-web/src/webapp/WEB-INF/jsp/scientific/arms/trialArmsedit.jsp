@@ -73,6 +73,7 @@
 </h2>
 
 <table class="form">
+
     <tr>
         <s:form name="armForm">
         <s:token/>
@@ -81,6 +82,13 @@
         <s:hidden name="currentAction"/>
         <s:hidden name="selectedArmIdentifier"/>
         <td>
+        
+        <h3>
+        <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editNewArm')}">
+           <fmt:message key="arms.edit.subtitle" /></s:if>
+        <s:elseif test="%{(currentAction == 'editGroup')||(currentAction == 'editNewGroup')}">
+           <fmt:message key="arms.obs.edit.subtitle" /></s:elseif>
+        </h3>
             <table>
                 <tr>
                     <td class="label"><label for="armName">Label:</label><span class="required">*</span></td>
@@ -117,6 +125,9 @@
             </table>
         </td>
         <td>
+        <h3>
+            <fmt:message key="arms.interventions.subtitle" />
+        </h3>
             <s:set name="intList" value="intList" scope="request"/>
             <display:table name="intList" id="row" class="data">
                 <display:column titleKey="arms.intervention.assignment" headerClass="centered" style="text-align: center">
