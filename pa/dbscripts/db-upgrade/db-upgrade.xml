@@ -1521,4 +1521,8 @@
         <comment>updat to Admin and scientific views</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6744_1.sql"/>
      </changeSet>
+    <changeSet id="PO-6966" author="Reshma">
+        <comment>update to pa_properties to change the ctgov sync fields of interest</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6966.sql"/>
+     </changeSet>
 </databaseChangeLog>
