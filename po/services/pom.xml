@@ -499,9 +499,7 @@
                             <autocommit>true</autocommit>
                             <sqlCommand>
                                 drop database if exists ${database.name};
-                                drop user if exists ${jdbc.username};
                                 create database ${database.name};
-                                create user ${jdbc.username} with password '${jdbc.password}';
                                 grant all on database ${database.name} to ${jdbc.username};
                             </sqlCommand>
                         </configuration>
