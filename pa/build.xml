@@ -46,8 +46,8 @@
     <!-- ====================================================================== -->
     <target name="test-static-analysis" description="Runs PMD / Checkstyle">
         <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
-        <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
-        <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
+        <ant target="test-static-analysis" dir="pa-ejb" inheritAll="false"/>
+        <ant target="test-static-analysis" dir="pa-web" inheritAll="false"/>
     </target>
 
     <!-- ====================================================================== -->
