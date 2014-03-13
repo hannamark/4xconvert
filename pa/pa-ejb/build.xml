@@ -195,6 +195,7 @@
                 <filter token="wikiHelp.baseUrl.pa" value="${wikiHelp.baseUrl.pa}" />
                 <filter token="wikiHelp.baseUrl.registry" value="${wikiHelp.baseUrl.registry}" />
                 <filter token="wikiHelp.baseUrl.accrual" value="${wikiHelp.baseUrl.accrual}" />
+                <filter token="wikiHelp.baseUrl.viewer" value="${wikiHelp.baseUrl.viewer}" />
             	<filter token="wikiHelp.baseUrl.trialStatusRules" value="${wikiHelp.baseUrl.trialStatusRules}" />            	
             	<filter token="ctgov.ftp.url" value="${ctgov.ftp.url}"/>
             </filterset>
