@@ -421,7 +421,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         " />
 
     <!-- Build generic-query-grid sub-project produces project level artifact -->
-    <target name="build:pa-ear" depends="init,build:pa-commons,build:pa-ejb, build:pa-web, build:reg-web" unless="exclude.pa-ear">
+    <target name="build:pa-ear" depends="init,build:pa-commons,build:pa-ejb, build:pa-web, build:reg-web, build:viewer-services, build:viewer-web" unless="exclude.pa-ear">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
             dir="${pa-ear.base.dir}" >
             <property name="exclude.viewer" value="${exclude.viewer}"/>
@@ -692,7 +692,28 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
-   
+    <target name="build:viewer-services" depends="init" unless="exclude.viewer">
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
+            dir="${viewer-services.base.dir}" >
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+
+            <target name="${viewer-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${viewer-services.build.target}"/>
+        </ant>
+    </target>
+
+    <target name="build:viewer-web" depends="init" unless="exclude.viewer">
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
+            dir="${viewer-web.base.dir}" >
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+
+            <target name="${viewer-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${viewer-web.build.target}"/>
+        </ant>
+    </target>
+
     <!-- Build pa-grid sub-project produces project level artifact -->
     <target name="build:pa-grid-3.3" depends="init" unless="exclude.pa-grid-3.3">
         <fail unless="jboss.server.hostname"/>
@@ -1525,8 +1546,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <run-selenium runDir="${accrual-ear.base.dir}"/>
     </target>
 
-    <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, and accrual"
-        depends="run-selenium:reg-web,run-selenium:paear, run-selenium:accrual">
+    <target name="run-selenium:viewer" description="Runs Selenium for Viewer" depends="build:viewer-services,build:viewer-web" unless="exclude.viewer">
+        <run-selenium runDir="${viewer.base.dir}"/>
+    </target>
+
+    <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, viewer and accrual"
+        depends="run-selenium:reg-web,run-selenium:paear, run-selenium:viewer, run-selenium:accrual">
     </target>
 
     <target name="maven:install" description="Installs the pa-commons,pa-ejb-client and accrual-services-client into the local maven repo.">
