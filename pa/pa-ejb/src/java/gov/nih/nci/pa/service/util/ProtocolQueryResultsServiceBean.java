@@ -89,7 +89,9 @@ import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.convert.BaseStudyProtocolQueryConverter;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -105,6 +107,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -182,6 +185,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     static final String OTHER_IDENTIFIERS_QRY_STRING = "select study_protocol_id , extension, " 
             + "identifier_name FROM study_otheridentifiers "
             + "WHERE study_protocol_id IN (:ids)";
+    
+    static final String STUDY_ALTERNATE_TITLE_QRY_STRING = "SELECT study_protocol_identifier, alternate_title," 
+        + " category from study_alternate_title where study_protocol_identifier IN (:ids)";
     
     static final String LAST_UPDATED_DATE = "SELECT study_inbox.study_protocol_identifier, csm_user.first_name, "
             + "csm_user.last_name, csm_user.login_name, study_inbox.open_date "
@@ -318,6 +324,30 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
                        && !identifierName.equals(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME)) {                  
                    dto.getOtherIdentifiers().add((String) obj[1]);
                }
+            }
+        }
+        
+        //populate study alternate title information
+        query = new DAQuery();
+        query.setSql(true);
+        query.setText(STUDY_ALTERNATE_TITLE_QRY_STRING);
+        query.addParameter("ids", protocols);
+        List<Object[]> studyAlternateTitlesQueryList = dataAccessService.findByQuery(query);
+        
+        for (Object[] obj : studyAlternateTitlesQueryList) {
+            Long studyprotocolId = ((BigInteger) obj[0]).longValue();
+            for (StudyProtocolQueryDTO dto : dtoList) {
+                String alternateTitle = (String) obj[1];
+                String category = (String) obj[2];
+                if (dto.getStudyProtocolId().equals(studyprotocolId)) {
+                    if (dto.getStudyAlternateTitles() == null) {
+                        dto.setStudyAlternateTitles(new TreeSet<StudyAlternateTitleDTO>());                        
+                    }
+                    StudyAlternateTitleDTO alternateTitleDTO = new StudyAlternateTitleDTO();
+                    alternateTitleDTO.setAlternateTitle(StConverter.convertToSt(alternateTitle));
+                    alternateTitleDTO.setCategory(StConverter.convertToSt(category));
+                    dto.getStudyAlternateTitles().add(alternateTitleDTO);
+                }
             }
         }
         

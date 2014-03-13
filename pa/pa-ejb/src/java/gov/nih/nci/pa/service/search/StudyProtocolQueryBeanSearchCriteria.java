@@ -207,6 +207,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String ANATOMIC_SITES_PARAM  = "anatomicSitesParam";
         private static final String PARTICIPATING_SITE_PARAM  = "participatingSiteParam";
         private static final String BIOMARKERS_PARAM  = "biomarkersParam";
+        private static final String STUDY_ALTERNATE_TITLE_PARAM  = "studyAlternateTitleParam";
         private static final String PDQDISEASES_PARAM  = "pdqdiseaseParam";
         private static final String INTERVENTIONS_PARAM  = "interventions";
         private static final String INTERVENTIONS_ALTERNAMES_PARAM  = "interventionAlternates";
@@ -225,8 +226,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String INACTIVE_MILESTONES_PARAM = "inactiveMilestones";
         private static final String PROCESSING_PRIORITY_PARAM = "processingPriorityParam";
         private final StudyProtocol sp;
-        private final StudyProtocolOptions spo;
-       
+        private final StudyProtocolOptions spo;        
 
         public StudyProtocolHelper(StudyProtocol sp, StudyProtocolOptions spo) {
             this.sp = sp;
@@ -263,6 +263,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(DWS_PARAM, statusCodes);
             }
             handleMilestones(whereClause, params);   
+            handleOfficialTitle(whereClause, params);
             
             if (spo.isExcludeRejectedTrials()) {
                 appendDWSExclusionClause(whereClause, params,
@@ -289,6 +290,22 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             }
         }
 
+        /**
+         * @param whereClause where clause 
+         * @param params mapping of params and values
+         */
+        private void handleOfficialTitle(StringBuffer whereClause, Map<String, Object> params) {            
+            if (!StringUtils.isEmpty(sp.getOfficialTitle())) {                
+                String operator = determineOperator(whereClause);                
+                whereClause.append(String.format(" %s (lower(%s.officialTitle) like :%s or " 
+                        + "exists (select sat.id from StudyAlternateTitle sat where " 
+                        + "sat.studyProtocol.id = %s.id and lower(sat.alternateTitle) like :%s))", 
+                        operator, SearchableUtils.ROOT_OBJ_ALIAS, STUDY_ALTERNATE_TITLE_PARAM, 
+                        SearchableUtils.ROOT_OBJ_ALIAS, STUDY_ALTERNATE_TITLE_PARAM));
+                params.put(STUDY_ALTERNATE_TITLE_PARAM, "%" + sp.getOfficialTitle().toLowerCase() + "%");
+            }            
+        }
+        
         /**
          * @param whereClause
          * @param params

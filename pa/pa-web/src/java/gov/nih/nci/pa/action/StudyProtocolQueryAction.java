@@ -82,6 +82,7 @@ import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -101,14 +102,16 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import java.util.ArrayList; 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -129,6 +132,9 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private static final long serialVersionUID = -2308994602660261367L;
     private static final String SHOW_VIEW = "view";
     private static final String BARE = "/bare/";
+    private static final String POPUP_STUDY_ALTERNATE_TITLES = "popUpStudyAlternateTitles";
+    
+    private static final Logger LOG = Logger.getLogger(StudyProtocolQueryAction.class);
     
     private ProtocolQueryServiceLocal protocolQueryService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
@@ -197,7 +203,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
      * @throws PAException exception
      */
     @SuppressWarnings("PMD")
-    public String query() throws PAException {
+    public String query() throws PAException {        
         if (!ActionUtils.isUserRoleInSession(ServletActionContext.getRequest()
                 .getSession())) {
             return showCriteria();
@@ -364,6 +370,23 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
             addActionError(e.getLocalizedMessage());
         }
         return SHOW_VIEW_REFRESH;
+    }
+    
+    /**
+     * Displays study alternate titles
+     * @return result
+     * @throws PAException PAException
+     */
+    @SuppressWarnings("unchecked")
+    public String popUpStudyAlternateTitles() throws PAException {
+        Long studyProtocolId =  Long.valueOf(ServletActionContext.getRequest().getParameter("studyProtocolId"));        
+        StudyProtocolDTO studyDTO = studyProtocolService.getStudyProtocol(
+                IiConverter.convertToIi(studyProtocolId));
+        Set<StudyAlternateTitleDTO> studyAlternateTitles = 
+                studyDTO.getStudyAlternateTitles();        
+        ServletActionContext.getRequest().setAttribute(Constants.STUDY_ALTERNATE_TITLES, 
+                studyAlternateTitles);
+        return POPUP_STUDY_ALTERNATE_TITLES;
     }
     
     private boolean isInRole(String roleFlag) {
@@ -551,6 +574,4 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     public void setPageFrom(String pageFrom) {
         this.pageFrom = pageFrom;
     }
-    
-    
 }

@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <s:if test="records != null">
+    <div class="label">(*) Trial has alternate titles. Click to view.</div>
     <h2>Search Results</h2>
     <s:form name="sForm">
         <c:if test="${empty isBare}">  

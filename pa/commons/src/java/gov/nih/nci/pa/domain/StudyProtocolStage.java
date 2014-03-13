@@ -37,6 +37,8 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.Length;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
+
 /**
  * A draft StudyProtocol.
  * @author Vrushali
@@ -569,6 +571,15 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
         this.siteNciDesignatedCancerCenterIndicator = siteNciDesignatedCancerCenterIndicator;
     }
 
+    /**
+     * @return the officialTitle
+     */
+    @Column(name = "OFFICIAL_TITLE")
+    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
+    public String getOfficialTitle() {
+        return super.getOfficialTitle();
+    }
+    
     /**
      * {@inheritDoc}
      */

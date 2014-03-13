@@ -7,6 +7,7 @@
     <head>
         <title><fmt:message key="studyProtocol.search.title"/></title>
         <s:head/>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>        
         <script type="text/javascript" language="javascript">
             function handleAction() {
                  document.forms[0].action="studyProtocolquery.action";
@@ -280,7 +281,7 @@
                     </del>
                 </div>
             </s:form>
-        </div>
+        </div>        
         <div class="line"></div>
         <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp"/>
     </body>

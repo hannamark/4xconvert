@@ -155,4 +155,6 @@ public class Constants {
     public static final String PI_PO_ID = "principalInvestigatorPOId";
     /** STUDY_ALTERNATE_TITLES_LIST. */
     public static final String STUDY_ALTERNATE_TITLES_LIST = "studyAlternateTitlesList";
+    /** STUDY ALTERNATE TITLES. */
+    public static final String STUDY_ALTERNATE_TITLES = "studyAlternateTitles";
 }

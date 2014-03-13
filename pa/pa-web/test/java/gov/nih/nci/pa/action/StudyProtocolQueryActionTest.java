@@ -8,7 +8,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -21,6 +23,8 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -54,7 +58,6 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
         UsernameHolder.setUser("suAbstractor");
         getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);
-        
     }
 
     /**
@@ -84,7 +87,16 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         assertEquals("success", spqAction.query());
     }
     
-
+    /**
+     * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#popUpStudyAlternateTitles()}.
+     * @throws PAException in case of error 
+     */
+    @Test   
+    public void testPopUpStudyAlternateTitles() throws PAException {
+        getRequest().setupAddParameter("studyProtocolId", "1");
+        assertEquals("popUpStudyAlternateTitles", spqAction.popUpStudyAlternateTitles());
+    }
+    
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#query()}.
      * @throws PAException in case of error

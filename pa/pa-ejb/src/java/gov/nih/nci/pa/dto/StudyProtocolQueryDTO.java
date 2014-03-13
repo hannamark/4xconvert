@@ -81,11 +81,13 @@ package gov.nih.nci.pa.dto;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -130,6 +132,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private Date recentOffHoldDate;
     private boolean verifyData = false;
     private Date verificationDueDate;
+    private Set<StudyAlternateTitleDTO> studyAlternateTitles;
    
 
     /**
@@ -709,7 +712,19 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     public void setVerificationDueDate(Date verificationDueDate) {
         this.verificationDueDate = verificationDueDate;
     }
-    
-    
-    
+
+    /**
+     * @return study alternate titles
+     */
+    public Set<StudyAlternateTitleDTO> getStudyAlternateTitles() {
+        return studyAlternateTitles;
+    }
+
+    /**
+     * @param studyAlternateTitles study alternate titles to set
+     */
+    public void setStudyAlternateTitles(
+            Set<StudyAlternateTitleDTO> studyAlternateTitles) {
+        this.studyAlternateTitles = studyAlternateTitles;
+    }
 }

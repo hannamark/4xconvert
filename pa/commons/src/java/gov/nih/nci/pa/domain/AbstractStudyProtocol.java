@@ -311,8 +311,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     /**
      * @return the officialTitle
      */
-    @Column(name = "OFFICIAL_TITLE")
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Transient
     public String getOfficialTitle() {
         return officialTitle;
     }

@@ -196,6 +196,7 @@
                 <param name="actionName">studyProtocolshowCriteria</param>
             </result>
             <result name="design">/WEB-INF/jsp/designDetails.jsp</result>
+            <result name="popUpStudyAlternateTitles">/WEB-INF/jsp/nodecorate/popUpStudyAlternateTitles.jsp</result>
         </action>
 		<action name="bioMarkers*" class="gov.nih.nci.pa.action.BioMarkersQueryAction" method="{1}">
 			
@@ -641,7 +642,7 @@
             <result name="show_ok_create">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
         </action>
         <action name="ajaxManageStudyAlternateTitlesAction*" class="gov.nih.nci.pa.action.ManageStudyAlternateTitlesAction" method="{1}">
-            <result name="displayStudyAlternateTitles">/WEB-INF/jsp/nodecorate/displayStudyAlternateTitles.jsp</result>            
+            <result name="displayStudyAlternateTitles">/WEB-INF/jsp/nodecorate/displayStudyAlternateTitles.jsp</result>                       
         </action>
         <action name="milestone*" class="gov.nih.nci.pa.action.MilestoneAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />

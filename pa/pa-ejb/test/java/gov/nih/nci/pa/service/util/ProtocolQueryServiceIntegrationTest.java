@@ -104,6 +104,7 @@ import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyAlternateTitle;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyDisease;
@@ -242,7 +243,7 @@ public class ProtocolQueryServiceIntegrationTest extends
                 .getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals("Title does not match.",
-                results.get(0).getOfficialTitle(), "Cancer for kids");
+                results.get(0).getOfficialTitle(), "Cancer for kids");        
         criteria.setNciIdentifier(null);
 
         criteria.setStudyStatusCode("In Review");
@@ -274,6 +275,37 @@ public class ProtocolQueryServiceIntegrationTest extends
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
+        
+        criteria.setOfficialTitle("caNc");
+        results = localEjb.getStudyProtocolByCriteria(criteria);
+        assertEquals("Size does not match.", 1, results.size());
+        assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
+        
+        criteria.setOfficialTitle("caNCer FOR");
+        results = localEjb.getStudyProtocolByCriteria(criteria);
+        assertEquals("Size does not match.", 1, results.size());
+        assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
+        
+        criteria.setOfficialTitle("Cancer FOR kidS");
+        results = localEjb.getStudyProtocolByCriteria(criteria);
+        assertEquals("Size does not match.", 1, results.size());
+        assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
+        
+        criteria.setOfficialTitle("tEeN");
+        results = localEjb.getStudyProtocolByCriteria(criteria);
+        assertEquals("Size does not match.", 1, results.size());
+        assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
+        
+        criteria.setOfficialTitle("for ADultS");
+        results = localEjb.getStudyProtocolByCriteria(criteria);
+        assertEquals("Size does not match.", 1, results.size());
+        assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
+        
+        criteria.setOfficialTitle("CaNceR for Child");
+        results = localEjb.getStudyProtocolByCriteria(criteria);
+        assertEquals("Size does not match.", 1, results.size());
+        assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
+        
         criteria.setOfficialTitle(null);
 
         criteria.setPhaseCodes(Arrays.asList(new String[] { "I", "0" }));
@@ -803,6 +835,24 @@ public class ProtocolQueryServiceIntegrationTest extends
             TestSchema.addUpdObject(co);
             sp.getStudyCheckout().add(co);
         }
+        //add study alternate titles
+        StudyAlternateTitle obj1 = new StudyAlternateTitle();
+        obj1.setAlternateTitle("cancer for Teens");
+        obj1.setCategory("Other");
+        obj1.setStudyProtocol(sp);
+        sp.getStudyAlternateTitles().add(obj1);
+        
+        StudyAlternateTitle obj2 = new StudyAlternateTitle();
+        obj2.setAlternateTitle("cancer For children");
+        obj2.setCategory("Spelling/Formatting Correction");
+        obj2.setStudyProtocol(sp);
+        sp.getStudyAlternateTitles().add(obj2);
+        
+        StudyAlternateTitle obj3 = new StudyAlternateTitle();
+        obj3.setAlternateTitle("Cancer For adults");
+        obj3.setCategory("Other");
+        obj3.setStudyProtocol(sp);
+        sp.getStudyAlternateTitles().add(obj3);
         TestSchema.addUpdObject(sp);
         return sp;
     }

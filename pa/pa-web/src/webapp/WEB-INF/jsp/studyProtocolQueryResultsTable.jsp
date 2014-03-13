@@ -1,4 +1,5 @@
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>       
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
+        <c:url value="/report/studyProtocolpopUpStudyAlternateTitles.action" var="studyAlternateTitlesPopUpUrl"/>     
         <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="${displayTableUID}"
             name="records" requestURI="${requestURI}" export="${empty isBare}">                           
             <display:setProperty name="export.xml" value="false"/>
@@ -30,7 +31,14 @@
                 sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.dcpIdentifier" property="dcpId"
                 sortable="true" headerClass="sortable"/>
-            <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
+            <display:column escapeXml="false" titleKey="studyProtocol.officialTitle" maxLength= "200" sortable="true" property="officialTitle" headerClass="sortable" media="excel csv"/>  
+            <display:column escapeXml="false" titleKey="studyProtocol.officialTitle" maxLength= "200" sortable="true" headerClass="sortable" media="html">
+                <!-- <c:out value="${row.officialTitle}"/> -->
+                <c:if test="${not empty row.studyAlternateTitles}">                    
+                    <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${row.studyProtocolId}')">(*)</a>
+                </c:if>
+                <c:out value="${row.officialTitle}"/>                
+            </display:column>
             <display:column escapeXml="true" titleKey="studyProtocol.milestone" sortable="true" headerClass="sortable">
                 <c:out value="${row.milestones.lastMilestone.milestone.code}" />
                 <fmt:formatDate value="${row.milestones.lastMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
@@ -106,5 +114,15 @@
                 
                 form.action = paApp.contextPath + "/protected/studyProtocol" + action + ".action?studyProtocolId=" + id;
                 form.submit();
+            }
+            
+            function displayStudyAlternateTitles(studyProtocolId) {                	
+            	var width = 300;
+                var height = 300;
+                if (Prototype.Browser.IE) {
+                    width = 250;
+                    height = 250;                   
+                }
+                showPopWin('${studyAlternateTitlesPopUpUrl}?studyProtocolId='+studyProtocolId, width, height, '', 'Trial Alternate Titles');
             }
         </script>

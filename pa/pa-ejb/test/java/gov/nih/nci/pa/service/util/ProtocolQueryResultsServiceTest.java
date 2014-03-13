@@ -228,8 +228,20 @@ public class ProtocolQueryResultsServiceTest {
                 "Test", new Date() });
         when(daMock.findByQuery(qryMain1)).thenReturn(result2);
         
+        //populate study alternate titles
+        DAQuery qryMain3 = new DAQuery();
+        qryMain3.setSql(true);
+        qryMain3.setText(ProtocolQueryResultsServiceBean.STUDY_ALTERNATE_TITLE_QRY_STRING);
+        Set<Long> ids3 = new HashSet<Long>();
+        ids3.add(studyProtocolIdentifier.longValue());
+        Map<String, Object> params3 = new HashMap<String, Object>();
+        params3.put("ids", ids3);
+        qryMain3.setParameters(params3);
+        List<Object> result3 = new ArrayList<Object>();
+        result3.add(new Object[] {studyProtocolIdentifier, "Alternate Title", "Other"});
+        when(daMock.findByQuery(qryMain3)).thenReturn(result3);
     }
-
+    
     @Test
     public void emptyListTest() throws Exception {
         assertEquals(0, bean.getResults(null, false, null).size());
@@ -266,7 +278,8 @@ public class ProtocolQueryResultsServiceTest {
         // update
         List<StudyProtocolQueryDTO> trials = bean.getResults(ids, false, MEMB_USERID);
         assertEquals(1, trials.size());
-        assertEquals(SubmissionTypeCode.U, trials.get(0).getSubmissionTypeCode());
+        assertEquals(SubmissionTypeCode.U, trials.get(0).getSubmissionTypeCode());    
+        
         // original
         qryResult[UPDATING_IDX] = null;
         trials = bean.getResults(ids, false, MEMB_USERID);

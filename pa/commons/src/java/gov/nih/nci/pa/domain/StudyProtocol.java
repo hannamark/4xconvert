@@ -806,6 +806,14 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     }
 
     /**
+     * @return the officialTitle
+     */
+    @Column(name = "OFFICIAL_TITLE")
+    public String getOfficialTitle() {
+        return super.getOfficialTitle();
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @CollectionOfElements(fetch = FetchType.EAGER)
