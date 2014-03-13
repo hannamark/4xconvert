@@ -1557,7 +1557,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     .getIdentifier());
             createStudyProtocolDTO.setAmendmentDate(studyProtocolDTO.getAmendmentDate());
             createStudyProtocolDTO.setAmendmentNumber(studyProtocolDTO.getAmendmentNumber());
-            createStudyProtocolDTO.setSecondaryIdentifiers(studyProtocolDTO.getSecondaryIdentifiers());
+            final DSet<Ii> createStudyOtherIdentifiers = getUpdatedStudyOtherIdentifiers(
+                   createStudyProtocolDTO, studyProtocolDTO.getSecondaryIdentifiers());
+            createStudyProtocolDTO.setSecondaryIdentifiers(createStudyOtherIdentifiers);
         } else {
             createStudyProtocolDTO.setSubmissionNumber(studyProtocolDTO.getSubmissionNumber());
             createStudyProtocolDTO.setIdentifier(null);
@@ -1598,7 +1600,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             }
         }
         if (ISOUtil.isDSetNotEmpty(studyProtocolDTO.getSecondaryIdentifiers())) {
-            createStudyProtocolDTO.setSecondaryIdentifiers(studyProtocolDTO.getSecondaryIdentifiers());
+             final DSet<Ii> createStudyOtherIdentifiersLocal = getUpdatedStudyOtherIdentifiers(
+                    createStudyProtocolDTO, studyProtocolDTO.getSecondaryIdentifiers());
+             createStudyProtocolDTO.setSecondaryIdentifiers(createStudyOtherIdentifiersLocal);
         }
         if (!ISOUtil.isStNull(studyProtocolDTO.getAcronym())) {
             createStudyProtocolDTO.setAcronym(studyProtocolDTO.getAcronym());
@@ -2015,11 +2019,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             // "updatedOtherIdentifiers.getItem()" set is Hibernate's PersistentSet, which made working with it
             // a bit tricky. 
             for (Ii ii : additionalOtherIdentifiers.getItem()) {
-                if (!containsIi(updatedOtherIdentifiers.getItem(),
-                        ii.getExtension(), ii.getRoot())) {
-                    updatedOtherIdentifiers.getItem().add(ii);
+                if (ISOUtil.isDSetNotEmpty(updatedOtherIdentifiers)) {
+                      if (!containsIi(updatedOtherIdentifiers.getItem(),
+                           ii.getExtension(), ii.getRoot())) { 
+                           updatedOtherIdentifiers.getItem().add(ii); 
+                      }
                 }
             }
+        } else {
+            updatedOtherIdentifiers = additionalOtherIdentifiers;
         }
         return updatedOtherIdentifiers;
     }
