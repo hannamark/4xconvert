@@ -86,4 +86,10 @@ public class MockPaLookupTableServiceBean implements LookUpTableServiceRemote {
         return null;
     }
 
+	@Override
+	public List<String> getStudyAlternateTitleTypes() throws PAException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
