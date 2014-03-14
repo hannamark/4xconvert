@@ -243,7 +243,13 @@ header .pull-right > .dropdown-menu > li.sign-out .btn-default.btn-sm {
 .dropdown-menu .divider {
 	margin: 5px 0;
 }
+/* #nav is for the old left nav*/
 #nav {
+	width: 100%;
+	position:static;
+	top:-32px;
+}
+#nav-new {
 	width: 100%;
 	position:static;
 	top:-32px;
@@ -1328,12 +1334,6 @@ label em {
 }
 .login .navbar-brand {
 	float: none;
-}
-.login .masthead {
-	-webkit-box-shadow:0 4px 7px rgba(0, 0, 0, 0.2);
-	box-shadow:0 4px 7px rgba(0, 0, 0, 0.2);
-	border-bottom: 1px solid white;
-	margin-bottom:50px;
 }
 .login.disclaimer .masthead {
 	margin-bottom: 0px

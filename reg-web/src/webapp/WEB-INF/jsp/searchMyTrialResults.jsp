@@ -26,11 +26,13 @@ body {
 }
 
 /* remove the list style */
+
 #nav {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
+
 
 /* make the LI display inline */
 /* it's position relative so that position absolute */

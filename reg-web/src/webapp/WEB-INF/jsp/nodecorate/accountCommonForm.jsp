@@ -1,126 +1,101 @@
-
-<tr><td class="space" colspan="2">&nbsp;</td></tr>
-<tr>
-    <th colspan="3">
-      Your Account Profile
-    </th>
-</tr>
-<tr><td class="space" colspan="2">&nbsp;</td></tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.emailAddress"><fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.emailAddress" name="registryUserWebDTO.emailAddress"  maxlength="255" size="35" cssStyle="width:200px" />
-        <span class="formErrorMsg">
+<i data-trigger="hover" data-placement="left" data-content="Please provide professional contact information only. Contact information required for internal administrative use only; not revealed to public." rel="popover" id="popover" class="fa-info-circle help-text" data-original-title="" title=""></i>
+ <div class="form-group">
+   <label for="registryUserWebDTO.emailAddress" class="col-xs-4 control-label"><fmt:message key="register.user.emailAddress"/> <span class="required">*</span></label>
+   <div class="col-xs-7">
+     <input type="email" class="form-control" id="registryUserWebDTO.emailAddress" name="registryUserWebDTO.emailAddress"  maxlength="255" min="35" placeholder="example@email.com"/>
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.emailAddress</s:param>
             </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.firstName"> <fmt:message key="register.user.firstName"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.firstName"  name="registryUserWebDTO.firstName"  maxlength="200" size="50"  cssStyle="width:150px" />
-        <span class="formErrorMsg">
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.firstName" class="col-xs-4 control-label"><fmt:message key="register.user.firstName"/> <span class="required">*</span></label>
+   <div class="col-xs-7">
+     <input type="text" class="form-control" id="registryUserWebDTO.firstName"  name="registryUserWebDTO.firstName"  maxlength="200" size="50"/>
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.firstName</s:param>
            </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.middleName"> <fmt:message key="register.user.middleInitial"/></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.middleName" name="registryUserWebDTO.middleName"  maxlength="2" size="35"  cssStyle="width:20px" />
-        <span class="formErrorMsg">
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.middleName" class="col-xs-4 control-label"><fmt:message key="register.user.middleInitial"/></label>
+   <div class="col-xs-2">
+     <input type="text" class="form-control" id="registryUserWebDTO.middleName" name="registryUserWebDTO.middleName"  maxlength="2" size="35"/>
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.middleName</s:param>
             </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.lastName"> <fmt:message key="register.user.lastName"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:textfield  id="registryUserWebDTO.lastName"  name="registryUserWebDTO.lastName"  maxlength="200" size="50"  cssStyle="width:150px" />
-        <span class="formErrorMsg">
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.lastName" class="col-xs-4 control-label"><fmt:message key="register.user.lastName"/> <span class="required">*</span></label>
+   <div class="col-xs-7">
+     <input type="text" class="form-control" id="registryUserWebDTO.lastName"  name="registryUserWebDTO.lastName"  maxlength="200" size="50" />
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.lastName</s:param>
             </s:fielderror>
         </span>
-    </td>
-</tr>
-                        <tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.addressLine"><fmt:message key="register.user.streetAddress"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.addressLine" name="registryUserWebDTO.addressLine"  maxlength="200" size="50"  cssStyle="width:200px" />
-        <span class="formErrorMsg">
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.addressLine" class="col-xs-4 control-label"><fmt:message key="register.user.streetAddress"/> <span class="required">*</span></label>
+   <div class="col-xs-7">
+     <input type="text" class="form-control" id="registryUserWebDTO.addressLine" name="registryUserWebDTO.addressLine"  maxlength="200" size="50" />
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.addressLine</s:param>
             </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.city"> <fmt:message key="register.user.city"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.city" name="registryUserWebDTO.city"  maxlength="200" size="35"  cssStyle="width:200px" />
-        <span class="formErrorMsg">
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.city" class="col-xs-4 control-label"><fmt:message key="register.user.city"/> <span class="required">*</span></label>
+   <div class="col-xs-7">
+     <input type="text" class="form-control" id="registryUserWebDTO.city" name="registryUserWebDTO.city"  maxlength="200" size="35" />
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.city</s:param>
             </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.state"><fmt:message key="register.user.state"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:set name="stateCodeValues" value="@gov.nih.nci.pa.enums.USStateCode@getDisplayNames()" />
-        <s:select id="registryUserWebDTO.state" headerKey="" headerValue="--Select--"
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.state" class="col-xs-4 control-label"><fmt:message key="register.user.state"/> <span class="required">*</span></label>
+   <div class="col-xs-5">
+   	 <s:set name="stateCodeValues" value="@gov.nih.nci.pa.enums.USStateCode@getDisplayNames()" />
+     <s:select id="registryUserWebDTO.state" headerKey="" headerValue="--Select--"
             name="registryUserWebDTO.state"
             list="#stateCodeValues"
             value="registryUserWebDTO.state"
-             />
+            class="form-control" />
         <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.state</s:param>
            </s:fielderror>
         </span>
-    </td>
-</tr>
-                        <tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.postalCode"><fmt:message key="register.user.zipCode"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.postalCode" name="registryUserWebDTO.postalCode"  maxlength="15" size="8"  cssStyle="width:80px" />
-        <span class="formErrorMsg">
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.postalCode" class="col-xs-4 control-label"><fmt:message key="register.user.zipCode"/> <span class="required">*</span></label>
+   <div class="col-xs-3">
+     <input type="text" class="form-control" id="registryUserWebDTO.postalCode" name="registryUserWebDTO.postalCode"  maxlength="15" size="8" />
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.postalCode</s:param>
            </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.country"> <fmt:message key="register.user.country"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:set name="countries"
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.country" class="col-xs-4 control-label"><fmt:message key="register.user.country"/> <span class="required">*</span></label>
+   <div class="col-xs-5">
+     <s:set name="countries"
                 value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().
                 getCountries()" />
         <s:select headerKey="United States" headerValue="United States"
@@ -130,82 +105,59 @@
                  listKey="name"
                  listValue="name"
                  value="registryUserWebDTO.country"
-                 />
+                 class="form-control"/>
         <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.country</s:param>
             </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.phone"> <fmt:message key="register.user.phone"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.phone" name="registryUserWebDTO.phone"  maxlength="50" size="15"  cssStyle="width:120px" />
-        <span class="formErrorMsg">
-            <s:fielderror>
-                <s:param>registryUserWebDTO.phone</s:param>
-            </s:fielderror>
-        </span>
-    </td>
-</tr>
-<s:hidden name="registryUserWebDTO.affiliatedOrganizationId" id="registryUserWebDTO.affiliatedOrganizationId"/>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.affiliateOrg"> <fmt:message key="register.user.affiliateOrg"/><span class="required">*</span></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.affiliateOrg" readonly="true" size="30" name="registryUserWebDTO.affiliateOrg" cssStyle="float:left; width:250px" cssClass="readonly"/>
-        <a href="javascript:void(0)" class="btn" onclick="lookupAffiliateOrg();"/><span class="btn_img"><span class="search">Look Up</span></span></a>
-        <span class="formErrorMsg">
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.phone" class="col-xs-4 control-label"><fmt:message key="register.user.phone"/> <span class="required">*</span></label>
+   <div class="col-xs-3">
+     <input type="text" class="form-control" id="registryUserWebDTO.phone" name="registryUserWebDTO.phone"  maxlength="50" size="15" placeholder="XXX-XXX-XXXX"/>
+     <span class="formErrorMsg">
+           <s:fielderror>
+               <s:param>registryUserWebDTO.phone</s:param>
+           </s:fielderror>
+       </span>
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.affiliateOrg" class="col-xs-4 control-label"><fmt:message key="register.user.affiliateOrg"/> <span class="required">*</span></label>
+   <div class="col-xs-5">
+   	 <s:hidden name="registryUserWebDTO.affiliatedOrganizationId" id="registryUserWebDTO.affiliatedOrganizationId"/>
+     <input type="text" class="form-control" id="registryUserWebDTO.affiliateOrg" readonly="true" size="30"/>
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.affiliateOrg</s:param>
             </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td colspan="2" class="space">
-        <div id="adminAccessDiv">
-            <%@ include file="/WEB-INF/jsp/nodecorate/adminUsers.jsp" %>
-        </div>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.prsOrgName"> <fmt:message key="register.user.prsOrgName"/></label>
-    </td>
-    <td>
-        <s:textfield id="registryUserWebDTO.prsOrgName"  name="registryUserWebDTO.prsOrgName"  maxlength="200" size="100"  cssStyle="width:200px" />
-        <span class="formErrorMsg">
+   </div>
+   <div class="col-xs-3">
+     <button type="button" class="btn btn-icon btn-default" onclick="lookupAffiliateOrg();"><i class="fa-search"></i>Look Up</button>
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.prsOrgName" class="col-xs-4 control-label"><fmt:message key="register.user.prsOrgName"/></label>
+   <div class="col-xs-7">
+     <input type="text" class="form-control" id="registryUserWebDTO.prsOrgName"  name="registryUserWebDTO.prsOrgName"  maxlength="200" size="100"/>
+     <span class="formErrorMsg">
             <s:fielderror>
                 <s:param>registryUserWebDTO.prsOrgName</s:param>
             </s:fielderror>
         </span>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label">
-        <label for="registryUserWebDTO.enableEmails"> <fmt:message key="register.user.enableEmails"/></label>
-    </td>
-    <td>
-        <s:if test="%{registryUserWebDTO.enableEmails or registryUserWebDTO.id ==null}">
-            <s:checkbox id="registryUserWebDTO.enableEmails" name="registryUserWebDTO.enableEmails"  fieldValue="true" value="true"/>
-        </s:if>
-        <s:else>
-            <s:checkbox id="registryUserWebDTO.enableEmails" name="registryUserWebDTO.enableEmails" value="registryUserWebDTO.enableEmails"/>
-        </s:else>
-        <span class="formErrorMsg">
-            <s:fielderror>
-                <s:param>registryUserWebDTO.enableEmails</s:param>
-            </s:fielderror>
-        </span>
-    </td>
-</tr>
-<tr>
-    <td colspan="2" align="left">
-        <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
-    </td>
-</tr>
+   </div>
+ </div>
+ <div class="form-group">
+   <label for="registryUserWebDTO.enableEmails" class="col-xs-4 control-label"><fmt:message key="register.user.enableEmails"/></label>
+   <div class="col-xs-7">
+     <label class="radio-inline">
+       <input type="radio" id="registryUserWebDTO.enableEmails" value="true" id="inlineRadio1" selected="%{registryUserWebDTO.enableEmails or registryUserWebDTO.id ==null}">
+       Yes </label>
+     <label class="radio-inline">
+       <input type="radio" id="registryUserWebDTO.enableEmails" value="false" id="inlineRadio2" selected="%{registryUserWebDTO.enableEmails or registryUserWebDTO.id ==null}">
+       No </label>
+   </div>
+ </div>

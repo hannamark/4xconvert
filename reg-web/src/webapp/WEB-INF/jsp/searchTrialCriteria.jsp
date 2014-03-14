@@ -103,9 +103,17 @@
    }     
 </SCRIPT>
 <body>
-<!-- main content begins-->
+<div class="container">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#search-clinical-trials" data-toggle="tab"><i class="fa-flask"></i><fmt:message key="search.trial.page.header"/></a></li>
+    <li><a href="<s:url action='personsSearch.action' />" ><i class="fa-user"></i><fmt:message key="person.search.header"/></a></li>
+    <li><a href="<s:url action='organizationsSearch.action' />"><i class="fa-sitemap"></i><fmt:message key="organization.search.header"/></a></li>
+  </ul>
+  
+  <!-- main content begins-->
+<div class="tab-content">
+ <div class="tab-pane fade active in " id="search-clinical-trials">
     <!--  <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a> -->
-    <h1><fmt:message key="search.trial.page.header"/></h1>
     <c:set var="topic"  scope="request" value="searchtrials"/>    
     <s:if test="records.size > 0">
         <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
@@ -274,25 +282,19 @@
                --%>
                            
         </table>
-        <div class="actionsrow">
-            <del class="btnwrapper">
-                <ul class="btnrow">
-                    <li>
-                        <s:a href="javascript:void(0)" cssClass="btn" onclick="handleMyAction()" id="searchMyTrialsBtn"><span class="btn_img"><span class="search">Search My Trials</span></span></s:a>
-                        <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()" id="searchAllTrialsBtn"><span class="btn_img"><span class="search">Search All Trials</span></span></s:a>
-                        <s:a href="javascript:void(0)" cssClass="btn" onclick="resetValues();return false" id="resetSearchBtn"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                        <s:a href="javascript:void(0)" cssClass="btn" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn"><span class="btn_img"><span class="search">Search Saved Drafts</span></span></s:a>
-                    </li>
-                </ul>
-            </del>
-        </div>
-        <p align="center" class="info">
-            Search My Trials: Search the trials registered in the CTRP that I own.
-            <br>
-            Search All Trials: Search the trials registered in the CTRP that I own as well as those registered by others. 
-            <br>
-            Search Saved Drafts: Search my saved drafts.
-        </p>
+        
+        <div class="bottom">
+            <div class="btn-group">
+              <button type="button" class="btn btn-icon btn-primary dropdown-toggle" data-toggle="dropdown"> <i class="fa-search"></i>Search <span class="caret"></span> </button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="javascript:void(0)" onclick="handleMyAction()" id="searchMyTrialsBtn">My Trials</a></li>
+                <li><a href="javascript:void(0)"  onclick="handleAction()" id="searchAllTrialsBtn">All Trials</a></li>
+                <li><a href="javascript:void(0)" cssClass="btn" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn">Saved Drafts</a></li>
+              </ul>
+            </div>
+            <button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false" id="resetSearchBtn"><i class="fa-repeat"></i>Reset</button>
+          </div>
+        
     </s:form>
     </div>
     <div class="line"></div>
@@ -302,5 +304,10 @@
     <s:else>
     	<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
     </s:else>
+     
+  </div>
+</div>
+</div>
+
     </body>
 </html>

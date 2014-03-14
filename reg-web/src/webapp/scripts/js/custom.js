@@ -1,10 +1,3 @@
-	/* affix the navbar after scroll below header */
-$('#nav').affix({
-      offset: {
-        top: $('header').height()+$('#nav').height()
-      }
-});	
-
 
 $(document).ready(function() {
 $('.navbar-nav .dropdown').hover(function() {
@@ -97,14 +90,6 @@ $('.expandcollapse').click(function() {
         $('[rel=popover]').popover()
     });
 	
-// Date Picker
-$(function() {
-    $('.datetimepicker').datetimepicker({
-      pickTime: false
-    });
-  });
-
-	
 
 
 jQuery(function ($) {
@@ -135,7 +120,24 @@ var vis = (box.checked) ? "none" : "block";
 document.getElementById(it).style.display = vis;
 }
 
+  /*
 // Multi-select Dropdown  
 	$('#multi-select').multiselect({
 			        	includeSelectAllOption: true
 			        });
+	
+// affix the navbar after scroll below header 
+$('#nav-new').affix({
+      offset: {
+        top: $('header').height()+$('#nav-new').height()
+      }
+});	
+
+//Date Picker
+$(function() {
+    $('.datetimepicker').datetimepicker({
+      pickTime: false
+    });
+  });
+*/
+	

@@ -3,51 +3,56 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-        <title><fmt:message key="person.search.title"/></title>
-        <s:head/>
-        <script type="text/javascript" language="javascript">
-            function handleAction() {
-                 $('personSearchForm').action="personsSearchquery.action";
-                 $('personSearchForm').submit();
-            }
-            function resetValues() {
-            	$('personSearchForm').getElements().each(function (el) {
-            		if (el.type!='button') {
-            			el.setValue('');
-            		}
-            	});
-            	$('searchResults').innerHTML='';
-            }
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery-1.7.1.js"/>"></script>
+<script type="text/javascript" language="javascript">
+    function handleAction() {
+         $('#personSearchForm').submit();
+    }
+    function resetValues() {
+    	$('#poID').val("");
+     	$('#ctepID').val("");
+     	$('#firstName').val("");
+     	$('#lastName').val("");
+     	$('#affiliation').val("");
+     	$('#functionalRole').val("");    
+    	$('#searchResults').innerHTML='';
+    }
 
-            document.onkeypress = runEnterScript;
-            function runEnterScript(e) {
-                var KeyID = (window.event) ? event.keyCode : e.keyCode;
-                if (KeyID == 13) {
-                    handleAction();
-                    return false;
-                }
-            }
-            
-            function displayPersonDetails(personID) {
-            	var width = 700;
-            	var height = 550;
-            	/*if (Prototype.Browser.IE) {
-            		width = 670;
-                    height = 500;            		
-            	}*/
-            	showPopWin('personsSearchshowDetailspopup.action?personID='+personID, width, height, '', 'Person Details');            	
-            }
-            
-        </script>
-    </head>
-    <body>
-    <!-- main content begins-->
-        <h1><fmt:message key="person.search.header"/></h1>
+    document.onkeypress = runEnterScript;
+    function runEnterScript(e) {
+        var KeyID = (window.event) ? event.keyCode : e.keyCode;
+        if (KeyID == 13) {
+            handleAction();
+            return false;
+        }
+    }
+    
+    function displayPersonDetails(personID) {
+    	var width = 700;
+    	var height = 550;
+    	/*if (Prototype.Browser.IE) {
+    		width = 670;
+            height = 500;            		
+    	}*/
+    	showPopWin('personsSearchshowDetailspopup.action?personID='+personID, width, height, '', 'Person Details');            	
+    }
+    
+</script>
+
+<!-- main content begins-->
+<div class="container">
+  <ul class="nav nav-tabs">
+    <li><a href="<s:url action='searchTrial.action' />"><i class="fa-flask"></i><fmt:message key="search.trial.page.header"/></a></li>
+    <li class="active"><a href="#search-persons" data-toggle="tab"><i class="fa-user"></i><fmt:message key="person.search.header"/></a></li>
+    <li><a href="<s:url action='organizationsSearch.action' />"><i class="fa-sitemap"></i><fmt:message key="organization.search.header"/></a></li>
+  </ul>
+  
+  <!-- main content begins-->
+<div class="tab-content">
+ <div class="tab-pane fade active in " id="search-persons">
         <c:set var="topic" scope="request" value="searchperson"/>
         <div class="box" id="filters">
-            <s:form id="personSearchForm">        
+            <s:form id="personSearchForm"  action="personsSearchquery.action">        
                  <reg-web:failureMessage/>
                  <reg-web:sucessMessage/>
                  
@@ -111,16 +116,11 @@
                         </td>                        
                     </tr>                                      
                 </table>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
-                </div>
+                
+                <div class="bottom">
+            		<button type="button" class="btn btn-icon btn-primary" onclick="handleAction()"> <i class="fa-search"></i>Search </button>
+            		<button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false"><i class="fa-repeat"></i>Reset</button>
+          		</div>
             </s:form>
         </div>
         <div class="line"></div>
@@ -161,6 +161,6 @@
 		        
 		    </display:table>		
 		</s:if>        
-        </div>        
-    </body>
-</html>
+        </div>     
+        
+        </div></div></div>   
