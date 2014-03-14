@@ -168,7 +168,7 @@ public class BatchUploadUtils {
     public static String[] getStudyLine(List<String[]> batchFile) {
         String[] results = new String[] {};
         for (String[] line : batchFile) {
-            if (StringUtils.equals("COLLECTIONS", line[LINE_IDENTIFIER_INDEX])) {
+            if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[LINE_IDENTIFIER_INDEX])) {
                 results = line;
                 break;
             }
@@ -185,7 +185,7 @@ public class BatchUploadUtils {
     public static Map<Ii, Int> getAccrualCounts(List<String[]> batchFile) throws PAException {
         Map<Ii, Int> accrualCounts = new HashMap<Ii, Int>();
         for (String[] line : batchFile) {
-            if (StringUtils.equals("ACCRUAL_COUNT", line[LINE_IDENTIFIER_INDEX])) {
+            if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", line[LINE_IDENTIFIER_INDEX])) {
                 Integer count = Integer.valueOf(line[ACCRUAL_COUNT_INDEX]);
                 // assume validator has already vetted all invalid part sites.
                 Ii partSiteIi = getOrganizationIi(line[ACCRUAL_COUNT_STUDY_SITE_INDEX]);
@@ -240,7 +240,7 @@ public class BatchUploadUtils {
     public static List<String[]> getPatientInfo(List<String[]> batchFile) {
         List<String[]> patients = new ArrayList<String[]>();
         for (String[] line : batchFile) {
-            if (StringUtils.equals("PATIENTS" , line[LINE_IDENTIFIER_INDEX])) {
+            if (StringUtils.equalsIgnoreCase("PATIENTS" , line[LINE_IDENTIFIER_INDEX])) {
                 patients.add(line);
             }
         }
@@ -255,7 +255,7 @@ public class BatchUploadUtils {
     public static Map<String, List<String>> getPatientRaceInfo(List<String[]> batchFile) {
         Map<String, List<String>> raceMap = new HashMap<String, List<String>>();
         for (String[] line : batchFile) {
-            if (StringUtils.equals("PATIENT_RACES", line[LINE_IDENTIFIER_INDEX])) {
+            if (StringUtils.equalsIgnoreCase("PATIENT_RACES", line[LINE_IDENTIFIER_INDEX])) {
                 String patientId = line[PATIENT_ID_INDEX];
                 if (raceMap.get(patientId) == null) {
                     raceMap.put(patientId, Arrays.asList(line[RACE_INDEX]));
@@ -279,7 +279,7 @@ public class BatchUploadUtils {
     public static Map<String, Integer> getStudySiteCounts(List<String[]> batchFile) throws PAException {
         Map<String, Integer> accrualCounts = new HashMap<String, Integer>();
         for (String[] line : batchFile) {
-            if (StringUtils.equals("ACCRUAL_COUNT", line[LINE_IDENTIFIER_INDEX])) {
+            if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", line[LINE_IDENTIFIER_INDEX])) {
                 Integer count = Integer.valueOf(line[ACCRUAL_COUNT_INDEX]);
                 accrualCounts.put(line[ACCRUAL_COUNT_STUDY_SITE_INDEX], count);
             }

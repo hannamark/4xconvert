@@ -112,6 +112,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -382,20 +383,21 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      */
     private String validateBatchData(String[] data, long lineNumber, String expectedProtocolId) {
         String key = data != null ? data[0] : null;
-        if (!LIST_OF_ELEMENT.containsKey(key)) {
+        if (!LIST_OF_ELEMENT.containsKey(key.toUpperCase(Locale.US))) {
             return StringUtils.EMPTY;
         }
         List<String> values = Arrays.asList((String[]) ArrayUtils.subarray(data, 1, data.length));
-        if (LIST_OF_ELEMENT.containsKey(key) && LIST_OF_ELEMENT.get(key) != values.size()) {
+        if (LIST_OF_ELEMENT.containsKey(key.toUpperCase(Locale.US)) 
+                && LIST_OF_ELEMENT.get(key.toUpperCase(Locale.US)) != values.size()) {
             bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber))
                     .append(" does not have correct number of elements.\n"));
         }
         validateProtocolNumber(key, values, lineNumber, expectedProtocolId);
         validatePatientID(key, values, lineNumber);
         String studySiteID = null;
-        if (StringUtils.equals(PATIENTS, key)) {
+        if (StringUtils.equalsIgnoreCase(PATIENTS, key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
-        } else if (StringUtils.equals("ACCRUAL_COUNT", key)) {
+        } else if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1);
         }
         boolean correctOrganizationId = false;
@@ -434,7 +436,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      */
     private void validateRegisteringInstitutionCode(String key, List<String> values, 
             long lineNumber, boolean correctOrganizationId) {
-        if (StringUtils.equals(PATIENTS, key)) {
+        if (StringUtils.equalsIgnoreCase(PATIENTS, key)) {
             String registeringInstitutionID = AccrualUtil.safeGet(values, 
                     BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
             if (StringUtils.isEmpty(registeringInstitutionID)) {
@@ -453,9 +455,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private void validateStudySiteAccrualAccessCode(String key, List<String> values, 
             long lineNumber, boolean correctOrganizationId) {
         String studySiteID = null;
-        if (StringUtils.equals(PATIENTS, key)) {
+        if (StringUtils.equalsIgnoreCase(PATIENTS, key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
-        } else if (StringUtils.equals("ACCRUAL_COUNT", key)) {
+        } else if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1);
         }
         if (!StringUtils.isEmpty(studySiteID)) {
@@ -622,7 +624,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         } else if (!StringUtils.equalsIgnoreCase(protocolId, expectedProtocolId)) {
             bfErrors.append(new StringBuffer().append(key).append(appendLineNumber(lineNumber))
             .append(" does not contain the same protocol identifier as the one specified in the COLLECTIONS line.\n"));
-        } else if (StringUtils.equals(key, "COLLECTIONS")) {
+        } else if (StringUtils.equalsIgnoreCase(key, "COLLECTIONS")) {
             validateProtocolStatus(key, lineNumber, protocolId);    
         }
     }

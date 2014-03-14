@@ -634,7 +634,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         String errorMsg = results.get(0).getErrors().toString();
         assertTrue(StringUtils.contains(errorMsg, "Found invalid change code 3. Valid value for COLLECTIONS.Change_Code are 1 and 2."));
         assertTrue(StringUtils.contains(errorMsg, "The Registering Institution Code must be a valid PO or CTEP ID. Code: 21"));
-        assertTrue(StringUtils.contains(errorMsg, "PATIENTS at line 4  must contain a valid NCI protocol identifier or the CTEP/DCP identifier."));
+        assertTrue(StringUtils.contains(errorMsg, "Patients at line 4  must contain a valid NCI protocol identifier or the CTEP/DCP identifier."));
         assertTrue(StringUtils.contains(errorMsg, "Patient Registering Institution Code is missing for patient ID 223694 at line 4"));
         assertTrue(StringUtils.contains(errorMsg, "Please enter valid alpha2 country code for patient ID 223694 at line 4"));
         assertTrue(StringUtils.contains(errorMsg, "Please enter valid patient payment method for patient ID 207747 at line 2"));
