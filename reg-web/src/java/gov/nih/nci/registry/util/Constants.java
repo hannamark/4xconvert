@@ -233,4 +233,6 @@ public class Constants {
     /** Redirect to Login. **/
     public static final String REDIRECT_TO_LOGIN = "redirect_to_login";
 
+    /** STUDY ALTERNATE TITLES. */
+    public static final String STUDY_ALTERNATE_TITLES = "studyAlternateTitles";
 }

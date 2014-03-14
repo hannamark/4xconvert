@@ -7,6 +7,8 @@
         <title><fmt:message key="view.trial.page.title"/></title>
         <s:head />
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <script type="text/javascript" language="javascript">
             function tooltip() {
                 BubbleTips.activateTipOn("acronym");
@@ -175,6 +177,9 @@
                         <reg-web:titleRow titleKey="view.trial.trialDetails"/>
                         <reg-web:valueRow labelKey="view.trial.title" noLabelTag="true">
                             <c:out value="${requestScope.trialSummary.officialTitle.value}"/>
+                            <c:if test="${not empty trialSummary.studyAlternateTitles}">
+                               <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
+                            </c:if>
                         </reg-web:valueRow>
                         <reg-web:valueRow labelKey="view.trial.phase" noLabelTag="true">
                             <c:out value="${requestScope.trialSummary.phaseCode.code }"/>

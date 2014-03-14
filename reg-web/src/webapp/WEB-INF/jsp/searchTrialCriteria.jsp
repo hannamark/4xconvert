@@ -7,6 +7,7 @@
 <head>
     <title><fmt:message key="search.trial.page.title"/></title>
     <s:head/>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 </head>
 <SCRIPT LANGUAGE="JavaScript">
     window.onload=displayOrg;
@@ -99,13 +100,13 @@
     }
    function deletePartialProtocol() {
        return confirm("Do you want to delete?");
-   }
+   }     
 </SCRIPT>
 <body>
 <!-- main content begins-->
     <!--  <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a> -->
     <h1><fmt:message key="search.trial.page.header"/></h1>
-    <c:set var="topic"  scope="request" value="searchtrials"/>
+    <c:set var="topic"  scope="request" value="searchtrials"/>    
     <s:if test="records.size > 0">
         <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
     </s:if>

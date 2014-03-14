@@ -166,6 +166,16 @@ function setDisplayBasedOnTrialType() {
 	}
 }
 
+function displayStudyAlternateTitles(studyProtocolId) {
+	var width = 300;
+    var height = 300;
+    if (Prototype.Browser.IE) {
+        width = 250;
+        height = 250;                   
+    }
+    showPopWin('searchTrialpopUpStudyAlternateTitles.action?studyProtocolId='+studyProtocolId, width, height, '', 'Trial Alternate Titles');
+}
+
 function hideElements(cssRule) {
 	$$(cssRule).each(function (e) {
 		e.hide();

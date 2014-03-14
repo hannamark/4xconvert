@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <head>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery-1.7.1.js"/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript">
 $(document).ready(function () {	
 	
@@ -160,7 +161,14 @@ body {
                 <display:column class="title" title="NCI Trial Identifier" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.nciIdentifier}"/>
                 </display:column>
-                <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength="200" sortable="true" headerClass="sortable" headerScope="col"/>
+                <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength="200" sortable="true" headerClass="sortable" headerScope="col" media="excel csv"/>
+                <display:column escapeXml="false" titleKey="search.trial.officialTitle" maxLength="200" sortable="true" headerClass="sortable" headerScope="col" media="html">
+                    <!-- <c:out value="${row.officialTitle}"/> -->
+                    <c:if test="${not empty row.studyAlternateTitles}">                    
+                        <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${row.studyProtocolId}')">(*)</a>
+                    </c:if>
+                    <c:out value="${row.officialTitle}"/>
+                </display:column>
                 <display:column escapeXml="true" titleKey="search.trial.studyStatusCode" property="studyStatusCode.code" sortable="true" headerClass="sortable" headerScope="col"/>
                 <display:column escapeXml="true" titleKey="search.trial.leadOrganizationName" property="leadOrganizationName" sortable="true" headerClass="sortable" headerScope="col"/>
                 <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>

@@ -29,7 +29,9 @@
     </td>
     <td>
         <s:textarea id="submitTrial_protocolWebDTO_trialTitle" name="trialDTO.officialTitle" cssClass="readonly" readonly="true" cols="75" rows="4" />
-        
+        <c:if test="${not empty trialDTO.studyAlternateTitles}">
+            <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialDTO.identifier}')">(*)</a>                                                   
+        </c:if>
     </td>
 </tr>
 <tr>

@@ -12,6 +12,7 @@ import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
@@ -55,6 +56,8 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -137,6 +140,19 @@ public class TrialUtil extends TrialConvertUtils {
         copyNonInterventionalTrialFields(spDTO, trialDTO);
     }
 
+    /**
+     * @param spDTO study protocol DTO
+     * @param trialDTO trial DTO
+     */
+    private void copyStudyAlternateTitles(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
+        Set<StudyAlternateTitleDTO> studyAlternateTitles = spDTO.getStudyAlternateTitles();
+        if (CollectionUtils.isNotEmpty(studyAlternateTitles)) {
+            Set<StudyAlternateTitleDTO> studyAlternateTitleDTOs = new TreeSet<StudyAlternateTitleDTO>(
+                    studyAlternateTitles);           
+            trialDTO.setStudyAlternateTitles(studyAlternateTitleDTOs);
+        }
+    }
+    
     /**
      * @param spDTO
      * @param trialDTO
@@ -348,6 +364,7 @@ public class TrialUtil extends TrialConvertUtils {
         StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                 Long.valueOf(studyProtocolIi.getExtension()));
         copy(spDTO, trialDTO);
+        copyStudyAlternateTitles(spDTO, trialDTO);
         copy(spqDto, trialDTO);
         copyLO(getCorrelationUtils().getPAOrganizationByIi(
                 IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
@@ -847,7 +864,7 @@ public class TrialUtil extends TrialConvertUtils {
             NullifiedRoleException {
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                Long.valueOf(studyProtocolIi.getExtension()));
+                Long.valueOf(studyProtocolIi.getExtension()));        
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
         trialDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());

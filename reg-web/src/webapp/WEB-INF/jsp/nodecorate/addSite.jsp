@@ -11,6 +11,8 @@
 <%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>
 <%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 <%@ include file="/WEB-INF/jsp/common/includeextrajs.jsp"%>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript">
 	addCalendar("Cal1", "Select Date", "siteDTO.recruitmentStatusDate", "addSiteForm");
 	addCalendar("Cal2", "Select Date", "siteDTO.dateOpenedforAccrual",
@@ -78,6 +80,9 @@
 			</reg-web:valueRow>
 			<reg-web:valueRow labelKey="add.site.trial.officialTitle" noLabelTag="true">
                  <c:out value="${sessionScope.TITLE}"/>
+                 <c:if test="${not empty trialSummary.studyAlternateTitles}">
+                     <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
+                 </c:if>
             </reg-web:valueRow>			
 			<reg-web:valueRow labelFor="organizationName"
 				labelKey="add.site.orgName" required="true">

@@ -95,6 +95,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -179,6 +180,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
                        DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
     private static final Set<StudyStatusCode> UPDATEABLE_STATUS = new HashSet<StudyStatusCode>();
     private static final Set<String> EXECUTE_ACTIONS = new HashSet<String>();
+    private static final String POPUP_STUDY_ALTERNATE_TITLES = "popUpStudyAlternateTitles";
+    
     static {
         UPDATEABLE_STATUS.add(StudyStatusCode.WITHDRAWN);
         UPDATEABLE_STATUS.add(StudyStatusCode.COMPLETE);
@@ -573,6 +576,23 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             addActionError(e.getLocalizedMessage());
             return ERROR;
         }
+    }
+    
+    /**
+     * Displays study alternate titles
+     * @return result
+     * @throws PAException PAException
+     */
+    @SuppressWarnings("unchecked")
+    public String popUpStudyAlternateTitles() throws PAException {
+        Long spId =  Long.valueOf(ServletActionContext.getRequest().getParameter("studyProtocolId"));        
+        StudyProtocolDTO studyDTO = studyProtocolService.getStudyProtocol(
+                IiConverter.convertToIi(spId));
+        Set<StudyAlternateTitleDTO> studyAlternateTitles = 
+                studyDTO.getStudyAlternateTitles();        
+        ServletActionContext.getRequest().setAttribute(Constants.STUDY_ALTERNATE_TITLES, 
+                studyAlternateTitles);
+        return POPUP_STUDY_ALTERNATE_TITLES;
     }
     
     private void checkVerifyData() throws PAException {

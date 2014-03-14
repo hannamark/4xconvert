@@ -109,6 +109,7 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
+import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -166,6 +167,9 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
      */
     public String view() {
         try {
+            Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(studyProtocolId));
+            StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, spDTO);
             populateSiteDTO();
             StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
             studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
