@@ -12,7 +12,6 @@
             pa:loader=reg-web.war
             <loader-repository-config>java2ParentDelegation=false</loader-repository-config>
         </loader-repository>
-    </class-loading>
-    @jbosswebxml.viewer.dd@
+    </class-loading>    
 </jboss-web>
  

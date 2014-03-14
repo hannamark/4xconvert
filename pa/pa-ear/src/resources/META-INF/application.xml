@@ -16,7 +16,6 @@
             <context-root>/pa</context-root>
         </web>
     </module>
-    @viewer.deployment.descriptor@
     <module>
         <java>jboss-service.xml</java>
     </module>
