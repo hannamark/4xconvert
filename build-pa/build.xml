@@ -88,15 +88,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Properties that relate to how to call build targets from sub-projects-->
     <!-- Working directory passed to Ant tasks -->
     <property name="pa.base.dir" location="${software.dir}/pa"/>
-    <property name="viewer.base.dir" location="${software.dir}/viewer"/>
     <property name="pa-ear.base.dir" location="${software.dir}/pa/pa-ear"/>
     <property name="pa-commons.base.dir" location="${software.dir}/pa/commons"/>
     <property name="pa-resources.base.dir" location="${software.dir}/pa/resources"/>
     <property name="pa-ejb.base.dir" location="${software.dir}/pa/pa-ejb"/>
     <property name="pa-web.base.dir" location="${software.dir}/pa/pa-web"/>
     <property name="reg-web.base.dir" location="${software.dir}/reg-web"/>
-    <property name="viewer-services.base.dir" location="${software.dir}/viewer/services"/>
-    <property name="viewer-web.base.dir" location="${software.dir}/viewer/web"/>
     <property name="accrual-ear.base.dir" location="${software.dir}/accrual"/>
     <property name="data-warehouse.base.dir" location="${software.dir}/pa/data-warehouse"/>
 
@@ -107,14 +104,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-ejb.build.file" value="build.xml"/>
     <property name="pa-web.build.file" value="build.xml"/>
     <property name="reg-web.build.file" value="build.xml"/>
-    <property name="viewer-services.build.file" value="build.xml"/>
-    <property name="viewer-web.build.file" value="build.xml"/>
     <property name="accrual-ear.build.file" value="build.xml"/>
     <property name="data-warehouse.build.file" value="build.xml"/>
 
     <!-- The target name that should be called from the sub-project build file -->
     <property name="pa-clean.build.target" value="clean"/>
-    <property name="viewer-clean.build.target" value="pre-clean"/>
     <property name="accrual-clean.build.target" value="clean"/>
     <property name="pa-ivy-clean.build.target" value="ivy-clean"/>
     <property name="pa-ear.build.target" value="package"/>
@@ -123,8 +117,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-ejb.build.target" value="package-notest"/>
     <property name="pa-web.build.target" value="package-notest"/>
     <property name="reg-web.build.target" value="package-notest"/>
-    <property name="viewer-services.build.target" value="jar-notest"/>
-    <property name="viewer-web.build.target" value="war-notest"/>
     <property name="accrual-ear.build.target" value="build-notest"/>
     <property name="accrual-ear.deploy.target" value="deploy-ear"/>
     <property name="data-warehouse.target" value="populate"/>
@@ -372,15 +364,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}" dir="${pa-ejb.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}" dir="${viewer-services.base.dir}" >
-            <target name="ivy-get"/>
-        </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}" dir="${viewer-web.base.dir}" >
-            <target name="ivy-get"/>
-        </ant>
     </target>
 
-    <target name="javadoc:all" description="Generates Javadoc for accrual, pa, registry, accrual and viewer">
+    <target name="javadoc:all" description="Generates Javadoc for accrual, pa, registry, and accrual">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}"
                    dir="${pa.base.dir}" >
             <target name="${pa.javadoc.target}"/>
@@ -392,12 +378,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <target name="${pa.javadoc.target}"/>
         </ant>
         <copy file="${accrual.javadoc.file}" todir="${dist.javadoc.dir}"/>
-
-        <ant inheritAll="false" inheritRefs="false"
-                   dir="${viewer.base.dir}" >
-            <target name="${pa.javadoc.target}"/>
-        </ant>
-        <copy file="${viewer.javadoc.file}" todir="${dist.javadoc.dir}"/>
 
         <ant inheritAll="false" inheritRefs="false"
                    dir="${reg-web.base.dir}" >
@@ -421,10 +401,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         " />
 
     <!-- Build generic-query-grid sub-project produces project level artifact -->
-    <target name="build:pa-ear" depends="init,build:pa-commons,build:pa-ejb, build:pa-web, build:reg-web, build:viewer-services, build:viewer-web" unless="exclude.pa-ear">
+    <target name="build:pa-ear" depends="init,build:pa-commons,build:pa-ejb, build:pa-web, build:reg-web" unless="exclude.pa-ear">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
             dir="${pa-ear.base.dir}" >
-            <property name="exclude.viewer" value="${exclude.viewer}"/>
+            <property name="exclude.viewer" value="true"/>
             <property name="exclude.accrual" value="${exclude.accrual}"/>
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/>
@@ -689,28 +669,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
-        </ant>
-    </target>
-
-    <target name="build:viewer-services" depends="init" unless="exclude.viewer">
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
-            dir="${viewer-services.base.dir}" >
-            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-
-            <target name="${viewer-clean.build.target}"/>
-            <target name="${pa-ivy-clean.build.target}"/>
-            <target name="${viewer-services.build.target}"/>
-        </ant>
-    </target>
-
-    <target name="build:viewer-web" depends="init" unless="exclude.viewer">
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
-            dir="${viewer-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-
-            <target name="${viewer-clean.build.target}"/>
-            <target name="${pa-ivy-clean.build.target}"/>
-            <target name="${viewer-web.build.target}"/>
         </ant>
     </target>
 
@@ -1311,9 +1269,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         test:pa-ejb,
         test:pa-web,
         test:reg-web,
-        test:accrual,
-        test:viewer-services,
-        test:viewer-web
+        test:accrual
         "/>
 
     <target name="test:pa-commons" depends="init">
@@ -1397,33 +1353,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="po.username" value="${po.username}"/>
         <property name="po.pass" value="${po.pass}"/>
         <property name="po.server.name" value="${po.server.name}"/>
-        </ant>
-    </target>
-    <target name="test:viewer-services" depends="init" unless="exclude.viewer">
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
-                target="test-dynamic-analysis" dir="${viewer-services.base.dir}" >
-            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-            <property name="hibernate.dialect" value="${database.dialect}"/>
-            <property name="db.username" value="${database.user}"/>
-            <property name="db.password" value="${database.password}"/>
-            <property name="jdbc.driver" value="${database.dirver}"/>
-            <property name="jdbc.url" value="${database.url}"/>
-        </ant>
-    </target>
-    <target name="test:viewer-web" depends="init" unless="exclude.viewer">
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}" target="test-dynamic-analysis"
-            dir="${viewer-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-            <property name="jboss.port" value="${selenium.jboss.port}"/>
-            <property name="hibernate.dialect" value="${database.dialect}"/>
-            <property name="db.username" value="${database.user}"/>
-            <property name="db.password" value="${database.password}"/>
-            <property name="jdbc.driver" value="${database.dirver}"/>
-            <property name="jdbc.url" value="${database.url}"/>
-            <property name="test.schema.showsql" value="false"/>
-            <property name="test.java.naming.provider" value="localhost"/>
-            <property name="pa.server.name" value="${jboss.server.hostname}"/>
-            <property name="selenium.server.port" value="${selenium.proxy.port}"/>
+        <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
         </ant>
     </target>
 
@@ -1433,9 +1363,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         static-analysis:pa-commons,
         static-analysis:pa-ejb,
         static-analysis:pa-web,
-        static-analysis:reg-web,
-        static-analysis:viewer-services,
-        static-analysis:viewer-web
+        static-analysis:reg-web
         "/>
 
     <target name="static-analysis:pa-web" depends="init">
@@ -1469,22 +1397,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
         </ant>
     </target>
-
-    <target name="static-analysis:viewer-services" depends="init">
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
-            target="test-static-analysis"
-            dir="${viewer-services.base.dir}" >
-            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-        </ant>
-    </target>
-    <target name="static-analysis:viewer-web" depends="init">
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
-            target="test-static-analysis"
-            dir="${viewer-web.base.dir}" >
-            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-        </ant>
-    </target>
-
+    
     <target name="continuous-integration" description="calls wrapper targets for continuous integration build"
         depends="static-analysis:all, test:all"/>
 
@@ -1546,12 +1459,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <run-selenium runDir="${accrual-ear.base.dir}"/>
     </target>
 
-    <target name="run-selenium:viewer" description="Runs Selenium for Viewer" depends="build:viewer-services,build:viewer-web" unless="exclude.viewer">
-        <run-selenium runDir="${viewer.base.dir}"/>
-    </target>
-
-    <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, viewer and accrual"
-        depends="run-selenium:reg-web,run-selenium:paear, run-selenium:viewer, run-selenium:accrual">
+    <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, and accrual"
+        depends="run-selenium:reg-web,run-selenium:paear, run-selenium:accrual">
     </target>
 
     <target name="maven:install" description="Installs the pa-commons,pa-ejb-client and accrual-services-client into the local maven repo.">
