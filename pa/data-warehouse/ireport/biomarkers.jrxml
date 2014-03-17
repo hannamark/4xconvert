@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="biomarkers" language="groovy" pageWidth="2136" pageHeight="842" columnWidth="2096" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ae6bc613-aa8b-4de2-bc57-668901c88560">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="1454"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="OS_WINDOWS" class="java.lang.Boolean" isForPrompting="false">
 		<defaultValueExpression><![CDATA[new Boolean(
@@ -118,7 +118,16 @@ ORDER BY name, use, nci_id]]>
 	<field name="intervention_name" class="java.sql.Array"/>
 	<field name="intervention_type" class="java.sql.Array"/>
 	<background>
-		<band splitType="Stretch"/>
+		<band height="802" splitType="Stretch">
+			<printWhenExpression><![CDATA[true]]></printWhenExpression>
+			<staticText>
+				<reportElement uuid="9c4f334c-4fb8-44a5-aa23-e3e8196c84ae" x="0" y="0" width="2096" height="802" forecolor="#FF9999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="160" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Draft, NCI Confidential]]></text>
+			</staticText>
+		</band>
 	</background>
 	<title>
 		<band height="37" splitType="Stretch">
