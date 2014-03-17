@@ -52,7 +52,7 @@ public class VerifyTrialDataNightlyServiceBeanLocal implements
     private MailManagerServiceLocal mailManagerService;
     
     /** The n value for setting the verification due date. */
-    private static final String N = "N_value";
+    private static final String N = "group1TrialsVerificationFrequency";
     /** The n1 value for calculating the verification due date. */
     private static final int N1 = 30;
     /** The n2 value for calculating the verification due date */

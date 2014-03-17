@@ -1470,7 +1470,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(prop);
         
         prop = new PAProperties();
-        prop.setName("N_value");
+        prop.setName("group1TrialsVerificationFrequency");
         prop.setValue("12");
         TestSchema.addUpdObject(prop);
         bean.sendVerifyDataEmail(map);

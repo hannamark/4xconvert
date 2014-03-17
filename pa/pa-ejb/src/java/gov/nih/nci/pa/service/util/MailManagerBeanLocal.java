@@ -1743,7 +1743,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.body"));
         mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.bodyFooter"));
         mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        mailBody = mailBody.replace(N_VALUE , lookUpTableService.getPropertyValue("N_value"));
+        mailBody = mailBody.replace(N_VALUE , lookUpTableService
+                 .getPropertyValue("group1TrialsVerificationFrequency"));
         try {
             String date = lookUpTableService.getPropertyValue(EFFECTIVE_DATE);
             Date effectiveDate = new SimpleDateFormat(DATE_PATTERN, Locale.getDefault()).parse(date);
@@ -1772,7 +1773,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                 mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.body"));
                 mailBody = mailBody.concat(lookUpTableService.getPropertyValue("verifyData.email.bodyFooter"));
                 mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-                mailBody = mailBody.replace(N_VALUE , lookUpTableService.getPropertyValue("N_value"));
+                mailBody = mailBody.replace(N_VALUE , lookUpTableService
+                         .getPropertyValue("group1TrialsVerificationFrequency"));
             }
         } catch (ParseException e) {
             LOG.error(SEND_MAIL_ERROR, e);

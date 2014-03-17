@@ -42,7 +42,7 @@ public class VerifyTrialDataNightlyServiceTest extends AbstractHibernateTestCase
     StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
     List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
     RegistryUser regUser = new RegistryUser();
-    private static final String N = "N_value";
+    private static final String N = "group1TrialsVerificationFrequency";
     Set<RegistryUser> trialOwners = new HashSet<RegistryUser>();
     
     @Before
