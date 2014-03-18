@@ -1,9 +1,12 @@
-<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script> 
-<script type="text/javascript" src="${scriptPath}/js/jquery-1.7.1.min.js"></script>
+
+<script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>
+
+<script type="text/javascript" src="${scriptPath}/js/jquery-1.10.2.min.js"></script> 
 <script type="text/javascript" src="${scriptPath}/js/jquery-ui-1.8.16.custom.min.js"></script>
+
 <script type="text/javascript">
- jQuery.noConflict();
- var registryApp = {
+jQuery.noConflict();
+var registryApp = {
    contextPath: "${pageContext.request.contextPath}",
    imagePath: "${imagePath}",
    scriptPath: "${scriptPath}",
@@ -11,6 +14,13 @@
    stylePath: "${stylePath}"
  };
 </script>
+
+<c:if test="${sessionScope.disclaimerAccepted}">
+	<script type="text/javascript" language="javascript" src="${scriptPath}/js/subModalcommon.js"></script>
+	<script type="text/javascript" language="javascript" src="${scriptPath}/js/subModal.js"></script>
+	<script type="text/javascript" language="javascript" src="${scriptPath}/js/coppa.js"></script>
+</c:if>
+
 <script type="text/javascript" src="${scriptPath}/js/calendarpopup.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/tooltip.js"></script>
 
@@ -23,7 +33,7 @@
     var contextPath = '${pageContext.request.contextPath}';
 </script>
 <script type="text/javascript" src="${scriptPath}/js/overlib.js"></script>
-<%-- <script type="text/javascript" src="${scriptPath}/js/cal2.js"></script> --%>
+<script type="text/javascript" src="${scriptPath}/js/cal2.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/ajaxHelper.js"></script>
 <!-- Javascript -->
 <script type='text/javascript' src="${scriptPath}/js/css3-mediaqueries.js"></script>

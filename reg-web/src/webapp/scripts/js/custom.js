@@ -1,99 +1,99 @@
 
-$(document).ready(function() {
-$('.navbar-nav .dropdown').hover(function() {
-  $(this).find('.dropdown-menu').first().stop(true, true).delay(0).slideDown(200);
+jQuery(document).ready(function() {
+jQuery('.navbar-nav .dropdown').hover(function() {
+  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(0).slideDown(200);
 }, function() {
-  $(this).find('.dropdown-menu').first().stop(true, true).delay(100).slideUp(200)
+  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(100).slideUp(200)
 });
 
-   jQuery(function ($) {
-        $('[rel=tooltip]').tooltip()
+   jQuery(function (jQuery) {
+        jQuery('[rel=tooltip]').tooltip()
     });
 });
 
 //Multi-level Dropdown
-$(function(){
-	$(".dropdown-menu > li > a.trigger").on("mouseover",function(e){
-		var current=$(this).next();
-		var grandparent=$(this).parent().parent();
-		if($(this).hasClass('left-caret')||$(this).hasClass('right-caret'))
-			$(this).toggleClass('right-caret left-caret');
+jQuery(function(){
+	jQuery(".dropdown-menu > li > a.trigger").on("mouseover",function(e){
+		var current=jQuery(this).next();
+		var grandparent=jQuery(this).parent().parent();
+		if(jQuery(this).hasClass('left-caret')||jQuery(this).hasClass('right-caret'))
+			jQuery(this).toggleClass('right-caret left-caret');
 		grandparent.find('.left-caret').not(this).toggleClass('right-caret left-caret');
 		grandparent.find(".sub-menu:visible").not(current).hide();
 		current.toggle();
 		e.stopPropagation();
 	});
-	$(".dropdown-menu > li > a:not(.trigger)").on("mouseoff",function(){
-		var root=$(this).closest('.dropdown');
+	jQuery(".dropdown-menu > li > a:not(.trigger)").on("mouseoff",function(){
+		var root=jQuery(this).closest('.dropdown');
 		root.find('.left-caret').toggleClass('right-caret left-caret');
 		root.find('.sub-menu:visible').hide();
 	});
 });
 
 //Collapse / Expand
-$('.expandcollapse').click(function() {
+jQuery('.expandcollapse').click(function() {
 
-        var newstate = $(this).attr('state') ^ 1,
+        var newstate = jQuery(this).attr('state') ^ 1,
             icon = newstate ? "plus" : "minus",
             text = newstate ? "Expand" : "Collapse";
     
         // if state=0, show all the accordion divs within the same block (in this case, within the same section)
-        if ( $(this).attr('state')==="0" ) {
+        if ( jQuery(this).attr('state')==="0" ) {
             console.log('1');
-            $(this).siblings('div').find('div.accordion-body.in').collapse('hide');
-			$('a.accordion-toggle').each(function() {
-				$(this).addClass('collapsed');
+            jQuery(this).siblings('div').find('div.accordion-body.in').collapse('hide');
+			jQuery('a.accordion-toggle').each(function() {
+				jQuery(this).addClass('collapsed');
 			});
         }
         // otherwise, collapse all the divs
         else {
             console.log('2');
-            $(this).siblings('div').find('div.accordion-body:not(.in)').collapse('show');
-			$('a.accordion-toggle').each(function() {
+            jQuery(this).siblings('div').find('div.accordion-body:not(.in)').collapse('show');
+			jQuery('a.accordion-toggle').each(function() {
 				
-				$(this).removeClass('collapsed')
+				jQuery(this).removeClass('collapsed')
 			});
         }
 
-        $(this).html("<i class=\"fa-" + icon + "-circle\"></i> " + text +" All");
+        jQuery(this).html("<i class=\"fa-" + icon + "-circle\"></i> " + text +" All");
 
-        $(this).attr('state',newstate)
+        jQuery(this).attr('state',newstate)
 
     });
 
-    $('a[data-toggle="tab"]').on('shown', function (e) {
+    jQuery('a[data-toggle="tab"]').on('shown', function (e) {
 
-        var myState = $(this).attr('state'),
-            state = $('.expandcollapse').attr('state');
+        var myState = jQuery(this).attr('state'),
+            state = jQuery('.expandcollapse').attr('state');
 
         if(myState != state) {
-          toggleTab($(this).prop('hash'));
-          $(this).attr('state',state);
+          toggleTab(jQuery(this).prop('hash'));
+          jQuery(this).attr('state',state);
         }
 
     })
 
     function toggleTab(id){
 
-        $(id).find('.collapse').each(function() {
-            $(this).collapse('toggle');
+        jQuery(id).find('.collapse').each(function() {
+            jQuery(this).collapse('toggle');
           });
 
     }
 // Tooltip
-	jQuery(function ($) {
-        $('[rel=tooltip]').tooltip()
+	jQuery(function (jQuery) {
+        jQuery('[rel=tooltip]').tooltip()
     });
 	
 // Popover
-	jQuery(function ($) {
-        $('[rel=popover]').popover()
+	jQuery(function (jQuery) {
+        jQuery('[rel=popover]').popover()
     });
 	
 
 
-jQuery(function ($) {
-	$('#popover').popover({
+jQuery(function (jQuery) {
+	jQuery('#popover').popover({
 		container: 'body',
 		trigger: "hover"
 	});   
@@ -102,15 +102,15 @@ jQuery(function ($) {
 
 // Increase/Decrease text size 
 
-$('#incfont').click(function(){    
-        curSize= parseInt($('#wrap').css('font-size')) + 2;
+jQuery('#incfont').click(function(){    
+        curSize= parseInt(jQuery('#wrap').css('font-size')) + 2;
   if(curSize<=19)
-        $('#wrap').css('font-size', curSize);
+        jQuery('#wrap').css('font-size', curSize);
         });  
-  $('#decfont').click(function(){    
-        curSize= parseInt($('#wrap').css('font-size')) - 2;
+  jQuery('#decfont').click(function(){    
+        curSize= parseInt(jQuery('#wrap').css('font-size')) - 2;
   if(curSize>=11)
-        $('#wrap').css('font-size', curSize);
+        jQuery('#wrap').css('font-size', curSize);
 }); 
 
 // Show/Hide Search Criteria  
@@ -122,20 +122,20 @@ document.getElementById(it).style.display = vis;
 
   /*
 // Multi-select Dropdown  
-	$('#multi-select').multiselect({
+	jQuery('#multi-select').multiselect({
 			        	includeSelectAllOption: true
 			        });
 	
 // affix the navbar after scroll below header 
-$('#nav-new').affix({
+jQuery('#nav-new').affix({
       offset: {
-        top: $('header').height()+$('#nav-new').height()
+        top: jQuery('header').height()+jQuery('#nav-new').height()
       }
 });	
 
 //Date Picker
-$(function() {
-    $('.datetimepicker').datetimepicker({
+jQuery(function() {
+    jQuery('.datetimepicker').datetimepicker({
       pickTime: false
     });
   });
