@@ -401,6 +401,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
      */
     @SuppressWarnings({ "PMD.NPathComplexity", "unchecked" })
     private void buildMilestoneCriteria(StudyProtocolQueryCriteria criteria) {
+        
         if (ANY.equalsIgnoreCase(milestoneType)
                 && StringUtils.isNotBlank(milestone)) {
             criteria.setCurrentOrPreviousMilestone(MilestoneCode
@@ -419,32 +420,32 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
                     ADMINISTRATIVE_READY_FOR_QC, ADMINISTRATIVE_QC_START,
                     ADMINISTRATIVE_QC_COMPLETE), Arrays
                     .asList(SCIENTIFIC_PROCESSING_START_DATE)));
-
         }
         if (Boolean.TRUE.equals(adminAbstraction)) {
             filter.add(new MilestoneFilter(Arrays.asList(SUBMISSION_ACCEPTED),
                     ListUtils.EMPTY_LIST));
-
         }
         if (Boolean.TRUE.equals(adminQC)) {
             filter.add(new MilestoneFilter(Arrays
                     .asList(ADMINISTRATIVE_READY_FOR_QC), ListUtils.EMPTY_LIST));
-
         }
         if (Boolean.TRUE.equals(readyForTSR)) {
             filter.add(new MilestoneFilter(Arrays.asList(READY_FOR_TSR),
                     ListUtils.EMPTY_LIST));
-
         }
         if (Boolean.TRUE.equals(submittedUnaccepted)) {
             filter.add(new MilestoneFilter(Arrays.asList(SUBMISSION_RECEIVED),
                     ListUtils.EMPTY_LIST));
-
         }
         if (Boolean.TRUE.equals(scientificQC)) {
             filter.add(new MilestoneFilter(Arrays
                     .asList(SCIENTIFIC_READY_FOR_QC), ListUtils.EMPTY_LIST));
-
+        }
+        if (Boolean.TRUE.equals(scientificAbstraction) 
+             || Boolean.TRUE.equals(adminAbstraction)
+             || Boolean.TRUE.equals(adminQC)
+             || Boolean.TRUE.equals(scientificQC)) {
+                  criteria.setExcludeRejectProtocol(true);
         }
     }
 
