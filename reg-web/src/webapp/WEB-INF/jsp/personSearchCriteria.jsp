@@ -4,18 +4,17 @@
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <script type="text/javascript" language="javascript">
-    function handleAction() {
-         $('#personSearchForm').submit();
-    }
-    function resetValues() {
-    	$('#poID').val("");
-     	$('#ctepID').val("");
-     	$('#firstName').val("");
-     	$('#lastName').val("");
-     	$('#affiliation').val("");
-     	$('#functionalRole').val("");    
-    	$('#searchResults').innerHTML='';
-    }
+	function handleAction() {
+	     $('personSearchForm').submit();
+	}
+	function resetValues() {
+		$('personSearchForm').getElements().each(function (el) {
+			if (el.type!='button') {
+				el.setValue('');
+			}
+		});
+		$('searchResults').innerHTML='';
+	}
 
     document.onkeypress = runEnterScript;
     function runEnterScript(e) {
@@ -50,78 +49,50 @@
 <div class="tab-content">
  <div class="tab-pane fade active in " id="search-persons">
         <c:set var="topic" scope="request" value="searchperson"/>
-        <div class="box" id="filters">
-            <s:form id="personSearchForm"  action="personsSearchquery.action">        
-                 <reg-web:failureMessage/>
+            <s:form id="personSearchForm"  action="personsSearchquery.action" cssClass="form-horizontal" role="form">
+            	 <reg-web:failureMessage/> 
                  <reg-web:sucessMessage/>
+                <p class="mb20"><fmt:message key="search.instructions"/></p>                   
                  
-                <p align="center" class="info">
-                   Enter information for at least one of the criteria and then click Search. 
-                   The maximum number of results returned for any search is 500 records. If necessary, 
-                   limit your search by providing additional search criteria.
-                </p>                   
-                 
-                <table class="form fluid_width">
-                   
-                    <tr>
-                        <td  scope="row" class="label">
-                            <label for="poID"><fmt:message key="person.search.poID"/></label>
-                        </td>
-                        <td>
-                            <s:textfield id="poID" name="criteria.id" maxlength="10" cssStyle="width:294px"  />
-                        </td>
-                        <td  scope="row" class="label">
-                            <label for="functionalRole"> <fmt:message key="person.search.role"/></label>
-                        </td>
-                        <td>
-                             <s:select name="criteria.functionalRole" id="functionalRole" cssStyle="width:300px;"
-                                list="#{'Healthcare Provider':'Healthcare Provider',
-                                'Clinical Research Staff':'Clinical Research Staff',
-                                'Organizational Contact':'Organizational Contact'}" 
-                                headerKey="" headerValue="Any" value="criteria.functionalRole" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td  scope="row" class="label">
-                            <label for="ctepID"><fmt:message key="person.search.ctepID"/></label>
-                        </td>
-                        <td>
-                            <s:textfield id="ctepID" name="criteria.ctepId" maxlength="75" cssStyle="width:294px"  />
-                        </td>                        
-                    </tr>                   
-                    <tr>
-                      
-                        <td  scope="row" class="label">
-                            <label for="firstName"><fmt:message key="person.search.firstName"/></label>
-                        </td>
-                        <td>
-                            <s:textfield id="firstName" name="criteria.firstName" maxlength="10" cssStyle="width:294px"  />
-                        </td>                        
-                    </tr>  
-                    <tr>
-                        <td  scope="row" class="label">
-                            <label for="lastName"><fmt:message key="person.search.lastName"/></label>
-                        </td>
-                        <td>
-                            <s:textfield id="lastName" name="criteria.lastName" maxlength="200" cssStyle="width:294px"  />
-                        </td>                       
-                    </tr>
-                    <tr>
-                        <td  scope="row" class="label">
-                            <label for="affiliation"><fmt:message key="person.search.affiliation"/></label>
-                        </td>
-                        <td>
-                            <s:textfield id="affiliation" name="criteria.affiliation" maxlength="200" cssStyle="width:294px"  />
-                        </td>                        
-                    </tr>                                      
-                </table>
-                
+           		<div class="form-group">
+                       <label for="poID" class="col-xs-2 control-label"><fmt:message key="person.search.poID"/></label>
+                       <div class="col-xs-4">
+                           <s:textfield id="poID" name="criteria.id" maxlength="10"  cssClass="form-control"  />
+                       </div>
+                        <label for="functionalRole" class="col-xs-2 control-label"> <fmt:message key="person.search.role"/></label>
+                      <div class="col-xs-4">
+                           <s:select name="criteria.functionalRole" id="functionalRole"  cssClass="form-control" 
+                              list="#{'Healthcare Provider':'Healthcare Provider',
+                              'Clinical Research Staff':'Clinical Research Staff',
+                              'Organizational Contact':'Organizational Contact'}" 
+                              headerKey="" headerValue="Any" value="criteria.functionalRole" />
+                      </div>
+               </div>
+              	<div class="form-group">
+                	<label for="ctepID" class="col-xs-2 control-label" ><fmt:message key="person.search.ctepID"/></label>
+					<div class="col-xs-4">
+					   	<s:textfield id="ctepID" name="criteria.ctepId" maxlength="75"  cssClass="form-control" />
+					</div> <label for="affiliation" class="col-xs-2 control-label"><fmt:message key="person.search.affiliation"/></label>
+					<div class="col-xs-4">
+						<s:textfield id="affiliation" name="criteria.affiliation" maxlength="200"  cssClass="form-control"   />
+					</div>                 
+                  </div>
+              	<div class="form-group">
+					<label for="firstName" class="col-xs-2 control-label"><fmt:message key="person.search.firstName"/></label>
+                    <div class="col-xs-4">
+                    	<s:textfield id="firstName" name="criteria.firstName" maxlength="10"  cssClass="form-control"   />	
+					</div>
+					<label for="lastName" class="col-xs-2 control-label"><fmt:message key="person.search.lastName"/></label>
+					<div class="col-xs-4">
+						<s:textfield id="lastName" name="criteria.lastName" maxlength="200"  cssClass="form-control"   />
+					</div>       
+                </div>
                 <div class="bottom">
             		<button type="button" class="btn btn-icon btn-primary" onclick="handleAction()"> <i class="fa-search"></i>Search </button>
             		<button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false"><i class="fa-repeat"></i>Reset</button>
           		</div>
             </s:form>
-        </div>
+
         <div class="line"></div>
         <div id="searchResults">        
         <s:if test="results!=null && results.empty">

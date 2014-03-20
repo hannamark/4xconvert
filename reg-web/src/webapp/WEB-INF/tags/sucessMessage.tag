@@ -5,7 +5,7 @@
 
 <c:if test="${requestScope.successMessage  != null || sessionScope.successMessage  != null}">
 
-<div class="confirm_msg">
+<div class="alert alert-success">
 	<strong>Message:</strong> <c:out value="${successMessage}"/>.
 </div>
 <c:remove var="successMessage" scope="request"/>

@@ -4,6 +4,7 @@
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
     <title><fmt:message key="search.trial.page.title"/></title>
     <s:head/>
@@ -68,30 +69,15 @@
 	        if (inputElement.options[inputElement.selectedIndex].value == "Both") {
 	            document.getElementById("Lead").style.display = "none";
 	            document.getElementById("Site").style.display = "none";
-	            document.getElementById("Lead-label").style.display = "none";
-	            document.getElementById("Site-label").style.display = "none";
 	            document.getElementById("LeadOrSite").style.display = "";
-	            document.getElementById("LeadOrSite-label").style.display = "";
-	            document.getElementById("organizationId").value="";
-	            document.getElementById("participatingSiteId").value="";
 	        } else if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {
                 document.getElementById("Lead").style.display = "none";
                 document.getElementById("LeadOrSite").style.display = "none";
-	            document.getElementById("Lead-label").style.display = "none";
-	            document.getElementById("LeadOrSite-label").style.display = "none";
                 document.getElementById("Site").style.display = "";
-                document.getElementById("Site-label").style.display = "";
-                document.getElementById("organizationId").value="";
-                document.getElementById("leadAndParticipatingOrgId").value="";
             } else {
                 document.getElementById("Lead").style.display = "";
                 document.getElementById("Site").style.display = "none";
                 document.getElementById("LeadOrSite").style.display = "none";
-                document.getElementById("Lead-label").style.display = "";
-                document.getElementById("Site-label").style.display = "none";
-                document.getElementById("LeadOrSite-label").style.display = "none";
-                document.getElementById("participatingSiteId").value="";
-                document.getElementById("leadAndParticipatingOrgId").value="";
             }
     }
     function viewPartialProtocol(pId,user) {
@@ -118,156 +104,136 @@
     <s:if test="records.size > 0">
         <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
     </s:if>
-    <div class="box" id="filters">
-			<s:if test="hasActionErrors()">
-				<div class="error_msg">
-					<s:actionerror />
-				</div>
-			</s:if>
-    <reg-web:sucessMessage />
+    <s:form name="searchTrial" cssClass="form-horizontal" role="form">
+   	<s:if test="hasActionErrors()">
+		<div class="alert alert-danger">
+			<s:actionerror />
+		</div>
+	</s:if>
+	<reg-web:sucessMessage />
     <reg-web:failureMessage/>
-    <s:form name="searchTrial">
+    <p class="mb20"><fmt:message key="search.instructions"/></p> 
+        
     <s:hidden name="criteria.myTrialsOnly" id="criteria.myTrialsOnly"/>
-        <table class="form">
-            <tr>
-                <td scope="row" class="label">
-                <label for="officialTitle"> <fmt:message key="search.trial.title"/></label>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="officialTitle" name="criteria.officialTitle" maxlength="400" size="300"  cssStyle="width:98%;max-width:680px" />
-                </td>
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="phaseCode"> <fmt:message key="search.trial.phase"/></label>
-                </td>
-                    <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
-                <td>
-                    <s:select id="phaseCode" headerKey="" headerValue="--Select--" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
-                </td>
-                <td scope="row" class="label">
-                    <label for="typeCodeValues"> <fmt:message key="search.trial.purpose"/></label>
-                </td>
-                    <s:set name="typeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
-                <td>
-                    <s:select id="typeCodeValues" headerKey="" headerValue="--Select--" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssStyle="width:206px" />
-                </td>
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="phaseAdditionalQualifierCode">
-                    <fmt:message key="search.trial.phaseAdditionalQualifier"/></label>
-                </td>
-                  <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-                <td>
-                  <s:select id="phaseAdditionalQualifierCode" headerKey="" headerValue="--Select--" name="criteria.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues"
-                    value="criteria.phaseAdditionalQualifierCode" cssStyle="width:206px" />
-                </td>
-                <td> </td>
-                </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="identifierType"> <fmt:message key="search.trial.identifierType"/></label>
-                </td>
-                <td>
-                    <s:select
-                        id = "identifierType"
-                        headerKey="All"
-                        headerValue="--Select--"
-                        name="criteria.identifierType"
-                        list="#{'NCI':'NCI','NCT':'NCT (Exact Match)','Lead Organization':'Lead Organization','Other Identifier':'Other Identifier'}"
-                        value="criteria.identifierType"
-                        cssStyle="width:206px"
-                        />
-                    <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>criteria.identifierType</s:param>
-                       </s:fielderror>
-                    </span>
-                </td>
-                <td scope="row" class="label">
-                    <label for="identifier"> <fmt:message key="search.trial.identifier"/></label>
-                    <br><span class="info">(Examples: NCI-2008-00015; ECOG-1234)</span>
-                </td>
-                <td>
-                    <s:textfield id="identifier" name="criteria.identifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                    <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>criteria.identifier</s:param>
-                       </s:fielderror>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="organizationType"> <fmt:message key="search.trial.organizationType"/></label>
-                </td>
-                <td>
-                    <s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Both':'Both'}" value="criteria.organizationType" cssStyle="width:206px" onchange="displayOrg()"/>
-                </td>
-                <td id="Lead-label" scope="row" class="label">
-                    <label for="organizationId"> <fmt:message key="search.trial.organization"/></label>
-                </td>
-                <td id="Lead">
-                    <s:set name="protocolOrgs" value="getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
-                    <s:select id="organizationId" name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" value="criteria.organizationId" cssStyle="width:206px"/>
-                    <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>criteria.organizationId</s:param>
-                       </s:fielderror>
-                    </span>
-                </td>
-                 <td id="Site-label" scope="row" class="label" style="display:none">
-                    <label for="participatingSiteId"> <fmt:message key="search.trial.organization"/></label>
-                </td>
-                <td id="Site" style="display:none">
-                    <s:set name="participatingSites" value="getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
-                    <s:select id="participatingSiteId" name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssStyle="width:206px"/>
-                    <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>criteria.organizationId</s:param>
-                       </s:fielderror>
-                    </span>
-                </td>
-                <td id="LeadOrSite-label" scope="row" class="label" style="display:none">
-                    <label for="leadAndParticipatingOrgId"> <fmt:message key="search.trial.organization"/></label>
-                </td>
-                <td id="LeadOrSite" style="display:none">   
-                    <s:set name="leadAndParticipatingOrgs" value="getLeadAndParticipatingOrganizations()" />                
-                    <s:select id="leadAndParticipatingOrgId" name="criteria.leadAndParticipatingOrgId" list="#leadAndParticipatingOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.leadAndParticipatingOrgId" cssStyle="width:206px"/>
-                    <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>criteria.organizationId</s:param>
-                       </s:fielderror>
-                    </span>
-                </td>                
-            </tr>
-            <s:set name="principalInvs" value="getAllPrincipalInvestigators()" />
-             <tr>
-                <td  scope="row" class="label">
-                    <label for="principalInvestigatorId"> <fmt:message key="search.trial.principalInvestigator"/></label>
-                </td>
-                <td align=left>
-                    <s:select
-                        name="criteria.principalInvestigatorId"
-                        id="principalInvestigatorId"
-                        list="#principalInvs"
-                        listKey="id"
-                        listValue="fullName"
-                        headerKey=""
-                        headerValue="--Select--"
-                        value="criteria.principalInvestigatorId" />
-                </td>
-                <td scope="row" class="label">
-                    <label for="trialCategory"> <fmt:message key="search.trial.trialCategorySearch"/></label>
-                </td>
-                <td>
-                   <s:select headerKey="" headerValue="--Select--" id="trialCategory" name="criteria.trialCategory" 
-                    list="#{'p':'Abbreviated','n':'Complete', 'b':'Both'}"  value="criteria.trialCategory" 
-                        cssStyle="width:206px" />
-                </td>
-              </tr>
-              
+    <div class="form-group">
+		<label for="officialTitle" class="col-xs-2 control-label"> <fmt:message key="search.trial.title"/></label>
+		<div class="col-xs-10">
+        	<s:textfield id ="officialTitle" name="criteria.officialTitle" maxlength="400" cssClass="form-control" placeholder="Enter keywords" />
+		</div>        	
+    </div>     
+    <div class="form-group">
+		<label for="phaseCode"  class="col-xs-2 control-label"> <fmt:message key="search.trial.phase"/></label>
+		<s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
+		<div class="col-xs-4">
+        	<s:select id="phaseCode" headerKey="" headerValue="--Select--" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssClass="form-control" />
+		</div>
+        <label for="typeCodeValues" class="col-xs-2 control-label"> <fmt:message key="search.trial.purpose"/></label>
+        <s:set name="typeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
+		<div class="col-xs-4">
+        	<s:select id="typeCodeValues" headerKey="" headerValue="--Select--" name="criteria.primaryPurposeCode" list="#typeCodeValues"  value="criteria.primaryPurposeCode" cssClass="form-control" />
+        </div>
+	</div>
+    <div class="form-group">
+    	<label for="phaseAdditionalQualifierCode" class="col-xs-2 control-label"><fmt:message key="search.trial.phaseAdditionalQualifier"/></label>
+        <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
+        <div class="col-xs-4">
+        	<s:select id="phaseAdditionalQualifierCode" headerKey="" headerValue="--Select--" name="criteria.phaseAdditionalQualifierCode" list="#phaseAdditionlQualiefierCodeValues"
+				value="criteria.phaseAdditionalQualifierCode" cssClass="form-control" />
+		</div>
+	</div>
+	<div class="form-group">
+    	<label for="identifierType" class="col-xs-2 control-label"> <fmt:message key="search.trial.identifierType"/></label>
+        <div class="col-xs-4">       
+             <s:select
+                 id = "identifierType"
+                 headerKey="All"
+                 headerValue="--Select--"
+                 name="criteria.identifierType"
+                 list="#{'NCI':'NCI','NCT':'NCT (Exact Match)','Lead Organization':'Lead Organization','Other Identifier':'Other Identifier'}"
+                 value="criteria.identifierType"
+                 cssClass="form-control"
+                 />
+                 <span class="formErrorMsg">
+                     <s:fielderror>
+                     <s:param>criteria.identifierType</s:param>
+                    </s:fielderror>
+                 </span>
+		</div>
+        <label for="identifier" class="col-xs-2 control-label"> <fmt:message key="search.trial.identifier"/></label>
+        <div class="col-xs-4">
+	       	<s:textfield id="identifier" name="criteria.identifier"  maxlength="200" size="100"  cssClass="form-control" placeholder="Examples: NCI-2008-00015; ECOG-1234"/>
+	             <span class="formErrorMsg">
+	                 <s:fielderror>
+	                 <s:param>criteria.identifier</s:param>
+	                </s:fielderror>
+	             </span>
+        </div>
+    </div>
+    <div class="form-group">
+		<label for="organizationType" class="col-xs-2 control-label">  <fmt:message key="search.trial.organizationType"/></label>
+		<div class="col-xs-4">
+        	<s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Both':'Both'}" value="criteria.organizationType" cssClass="form-control" onchange="displayOrg()"/>
+        </div>
+        <div id="Lead">
+        <label for="organizationId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+		<s:set name="protocolOrgs" value="getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
+		<div class="col-xs-4">                    
+			<s:select id="organizationId" name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" value="criteria.organizationId" cssClass="form-control"/>
+             <span class="formErrorMsg">
+                 <s:fielderror>
+                 <s:param>criteria.organizationId</s:param>
+                </s:fielderror>
+             </span>
+        </div>
+     </div>
+     <div id="Site">
+		<label for="participatingSiteId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+		    <s:set name="participatingSites" value="getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
+		<div class="col-xs-4">
+			<s:select id="participatingSiteId" name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssClass="form-control"/>
+            <span class="formErrorMsg">
+                <s:fielderror>
+                <s:param>criteria.organizationId</s:param>
+               </s:fielderror>
+            </span>
+    	</div>
+    </div>
+    <div id="LeadOrSite">
+        <label for="leadAndParticipatingOrgId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+        <s:set name="leadAndParticipatingOrgs" value="getLeadAndParticipatingOrganizations()" />
+        <div class="col-xs-4">                
+			<s:select id="leadAndParticipatingOrgId" name="criteria.leadAndParticipatingOrgId" list="#leadAndParticipatingOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.leadAndParticipatingOrgId" cssClass="form-control"/>
+            <span class="formErrorMsg">
+                <s:fielderror>
+                <s:param>criteria.organizationId</s:param>
+               </s:fielderror>
+            </span>
+        </div>
+	</div>
+    </div>
+   
+	<div class="form-group">
+		<s:set name="principalInvs" value="getAllPrincipalInvestigators()" />
+        <label for="principalInvestigatorId" class="col-xs-2 control-label"> <fmt:message key="search.trial.principalInvestigator"/></label>
+        <div class="col-xs-4">
+            <s:select
+                name="criteria.principalInvestigatorId"
+                id="principalInvestigatorId"
+                list="#principalInvs"
+                listKey="id"
+                listValue="fullName"
+                headerKey=""
+                headerValue="--Select--"
+                value="criteria.principalInvestigatorId"
+                cssClass="form-control" />
+       </div>
+       <label for="trialCategory" class="col-xs-2 control-label"> <fmt:message key="search.trial.trialCategorySearch"/></label>
+       <div class="col-xs-4">        
+	       <s:select headerKey="" headerValue="--Select--" id="trialCategory" name="criteria.trialCategory" 
+	        list="#{'p':'Abbreviated','n':'Complete', 'b':'Both'}"  value="criteria.trialCategory" 
+	           cssClass="form-control" />
+		</div>
+    </div>      
               <%-- Initially implemented, but then asked to remove as part of https://tracker.nci.nih.gov/browse/PO-4852.
                    Keeping the code in case we need to bring back in.
               <tr>
@@ -296,7 +262,7 @@
           </div>
         
     </s:form>
-    </div>
+    
     <div class="line"></div>
     <s:if test="criteria.myTrialsOnly">
       	<jsp:include page="/WEB-INF/jsp/searchMyTrialResults.jsp"/>
@@ -308,6 +274,5 @@
   </div>
 </div>
 </div>
-
-    </body>
+</body>
 </html>
