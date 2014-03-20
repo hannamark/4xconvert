@@ -107,7 +107,9 @@ body {
     <c:choose>
         <c:when test="${requestScope.partialSubmission != null}">
             <h2 id="search_results">Saved Draft Search Results</h2>
-            <display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results"
+            <div class="table-wrapper">
+            <div class="table-responsive">
+            <display:table class="table table-striped table-bordered sortable" summary="This table contains your trial search results. Please use column headers to sort results"
                            decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
                            name="records" requestURI="searchTrialgetMyPartiallySavedTrial.action" export="true">
                 <display:setProperty name="paging.banner.item_name" value="trial"/>
@@ -143,10 +145,14 @@ body {
                     <s:a href="%{deleteUrl}" onclick="return deletePartialProtocol();">Delete</s:a>
                 </display:column>
             </display:table>
+            </div>
+            </div>
         </c:when>
         <c:otherwise>
             <h2 id="search_results">Submitted Clinical Trials Search Results</h2>
-            <display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results"
+            <div class="table-wrapper">
+            <div class="table-responsive">
+            <display:table class="table table-striped table-bordered sortable" summary="This table contains your trial search results. Please use column headers to sort results"
                            decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
                            name="records" requestURI="searchTrialquery.action" export="true">
                 <display:setProperty name="paging.banner.item_name" value="trial"/>
@@ -179,9 +185,9 @@ body {
                 <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable" headerScope="col"/>
                  <display:column title="Available Actions" sortable="false" headerClass="sortable" media="html">
           	 		<s:if test="%{#attr.row.actionVisible}">
-                	<ul id="nav">
-						<li>&nbsp;Select action &nbsp;&nbsp;&nbsp;&nbsp; &nabla;
-							<ul>
+                	<div class="btn-group">
+                        <button data-toggle="dropdown" class="btn btn-default dropdown-toggle btn-sm" type="button">Select Action <span class="caret"></span></button>
+                        <ul role="menu" class="dropdown-menu">
 								<li>
 									<s:if test="%{!(#attr.row.update == null || #attr.row.update.equals(''))}">									
 										<s:if test="%{#attr.row.proprietaryTrial}">
@@ -243,8 +249,7 @@ body {
                                     </s:if>
                                 </li>
 							</ul>
-						</li>
-					</ul>  
+						</div>  
 					</s:if>              		                    	                    
                  </display:column>  
                 <display:column title="Participating Sites" media="html">
@@ -267,6 +272,8 @@ body {
                 <display:column title="Last Amender Name" property="lastUpdatedUserDisplayName" sortable="true" headerClass="sortable"/>     
                 <display:column title="On-Hold Reason" property="onHoldReasons" sortable="true" headerClass="sortable" escapeXml="true"/>
             </display:table>
+            </div>
+            </div>
         </c:otherwise>
     </c:choose>
 </s:if>

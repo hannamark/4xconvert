@@ -43,12 +43,15 @@
   <ul class="nav nav-tabs">
     <li><a href="<s:url action='searchTrial.action' />" ><i class="fa-flask"></i><fmt:message key="search.trial.page.header"/></a></li>
     <li><a href="<s:url action='personsSearch.action' />" ><i class="fa-user"></i><fmt:message key="person.search.header"/></a></li>
-    <li class="active"><a href="#search-organizations" data-toggle="tab" ><i class="fa-sitemap"></i><fmt:message key="organization.search.header"/></a></li>
+    <li <s:if test="results == null">class="active"</s:if>><a href="#search-organizations" data-toggle="tab" ><i class="fa-sitemap"></i><fmt:message key="organization.search.header"/></a></li>
+    <s:if test="results != null">
+    	<li class="active"><a href="#search-results" data-toggle="tab"><i class="fa-search"></i><fmt:message key="search.results"/></a></li>
+    </s:if>
   </ul>
   
   <!-- main content begins-->
 <div class="tab-content">
- <div class="tab-pane fade active in " id="search-organizations">
+ <div class="tab-pane fade <s:if test="results == null">active in</s:if>"  id="search-organizations">
 	<c:set var="topic" scope="request" value="searchorganization"/>
     <s:form id="organizationSearchForm" action="organizationsSearchquery.action" cssClass="form-horizontal" role="form">       
        <reg-web:failureMessage/>
@@ -129,17 +132,21 @@
     		<button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false"><i class="fa-repeat"></i>Reset</button>
   		</div>
         </s:form>
-        <div class="line"></div>
-        <div id="searchResults">        
+     </div>
+     
+     <s:if test="results!=null">
+     	<div id="search-results" class="tab-pane fade active in">   
 	        <s:if test="results!=null && results.empty">
-	            <div align="center">
+	            <div class="alert alert-warning">
 	            No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria.
 	            </div>
 	        </s:if>        
 			<s:if test="results!=null && !results.empty">
 			    <h2><fmt:message key="organization.search.results"/></h2>		
 			    <s:set name="orgs" value="results" scope="request" />
-			    <display:table class="data" sort="list" pagesize="10" uid="row" name="orgs" export="false"
+			<div class="table-wrapper">
+            <div class="table-responsive">
+			    <display:table class="table table-striped table-bordered sortable" sort="list" pagesize="10" uid="row" name="orgs" export="false"
 			        requestURI="organizationsSearchquery.action">
 			        <display:setProperty name="basic.msg.empty_list"
 			            value="No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
@@ -160,10 +167,9 @@
 			        <display:column escapeXml="true" title="State" property="state" headerClass="sortable"  sortable="true"/>
 			        <display:column escapeXml="true" title="Country" property="country" headerClass="sortable"  sortable="true"/>
 			        <display:column escapeXml="true" title="Zip" property="zip" headerClass="sortable"  sortable="true"/>
-			        
 			    </display:table>		
 			</s:if>        
         </div>        
-     </div>
+     </s:if>
   </div>
   </div>

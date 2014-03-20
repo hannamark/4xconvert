@@ -91,19 +91,24 @@
 <body>
 <div class="container">
   <ul class="nav nav-tabs">
-    <li class="active"><a href="#search-clinical-trials" data-toggle="tab"><i class="fa-flask"></i><fmt:message key="search.trial.page.header"/></a></li>
+    <li <s:if test="records == null">class="active"</s:if>><a href="#search-clinical-trials" data-toggle="tab"><i class="fa-flask"></i><fmt:message key="search.trial.page.header"/></a></li>
     <li><a href="<s:url action='personsSearch.action' />" ><i class="fa-user"></i><fmt:message key="person.search.header"/></a></li>
     <li><a href="<s:url action='organizationsSearch.action' />"><i class="fa-sitemap"></i><fmt:message key="organization.search.header"/></a></li>
+    <s:if test="records != null">
+    	<li class="active"><a href="#search-results" data-toggle="tab"><i class="fa-search"></i><fmt:message key="search.results"/></a></li>
+    </s:if>
   </ul>
   
   <!-- main content begins-->
 <div class="tab-content">
- <div class="tab-pane fade active in " id="search-clinical-trials">
+<s:if test="records == null">
+ <div class="tab-pane fade active in" id="search-clinical-trials">
+</s:if>
+<s:else>
+ <div class="tab-pane fade" id="search-clinical-trials">
+</s:else>
     <!--  <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a> -->
     <c:set var="topic"  scope="request" value="searchtrials"/>    
-    <s:if test="records.size > 0">
-        <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
-    </s:if>
     <s:form name="searchTrial" cssClass="form-horizontal" role="form">
    	<s:if test="hasActionErrors()">
 		<div class="alert alert-danger">
@@ -261,18 +266,23 @@
             <button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false" id="resetSearchBtn"><i class="fa-repeat"></i>Reset</button>
           </div>
         
-    </s:form>
-    
-    <div class="line"></div>
-    <s:if test="criteria.myTrialsOnly">
-      	<jsp:include page="/WEB-INF/jsp/searchMyTrialResults.jsp"/>
-    </s:if>
-    <s:else>
-    	<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
-    </s:else>
-     
+    </s:form>     
   </div>
-</div>
+ <s:if test="records != null">
+	    <div class="tab-pane fade in active" id="search-results">
+	        <div class="tab-inside">
+	          <div class="mb20 control-bar">
+	    		<s:if test="criteria.myTrialsOnly">
+	      			<jsp:include page="/WEB-INF/jsp/searchMyTrialResults.jsp"/>
+	    		</s:if>
+	    		<s:else>
+	    			<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
+	    		</s:else>
+			</div>
+			</div>
+		</div>
+	</s:if>
+	</div>
 </div>
 </body>
 </html>

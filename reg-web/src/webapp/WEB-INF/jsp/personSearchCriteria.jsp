@@ -41,13 +41,16 @@
 <div class="container">
   <ul class="nav nav-tabs">
     <li><a href="<s:url action='searchTrial.action' />"><i class="fa-flask"></i><fmt:message key="search.trial.page.header"/></a></li>
-    <li class="active"><a href="#search-persons" data-toggle="tab"><i class="fa-user"></i><fmt:message key="person.search.header"/></a></li>
+    <li <s:if test="results == null">class="active"</s:if>><a href="#search-persons" data-toggle="tab"><i class="fa-user"></i><fmt:message key="person.search.header"/></a></li>
     <li><a href="<s:url action='organizationsSearch.action' />"><i class="fa-sitemap"></i><fmt:message key="organization.search.header"/></a></li>
+    <s:if test="results != null">
+    	<li class="active"><a href="#search-results" data-toggle="tab"><i class="fa-search"></i><fmt:message key="search.results"/></a></li>
+    </s:if>
   </ul>
   
   <!-- main content begins-->
 <div class="tab-content">
- <div class="tab-pane fade active in " id="search-persons">
+ <div class="tab-pane fade  <s:if test="results == null">active in</s:if> " id="search-persons">
         <c:set var="topic" scope="request" value="searchperson"/>
             <s:form id="personSearchForm"  action="personsSearchquery.action" cssClass="form-horizontal" role="form">
             	 <reg-web:failureMessage/> 
@@ -92,45 +95,49 @@
             		<button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false"><i class="fa-repeat"></i>Reset</button>
           		</div>
             </s:form>
-
-        <div class="line"></div>
-        <div id="searchResults">        
-        <s:if test="results!=null && results.empty">
-            <div align="center">
-            No Persons found. Please verify search criteria and/or broaden your search by removing one or more search criteria.
-            </div>
-        </s:if>        
-		<s:if test="results!=null && !results.empty">
-		    <h2><fmt:message key="person.search.results"/></h2>		
-		    <s:set name="persons" value="results" scope="request" />
-		    <display:table class="data" sort="list" pagesize="10" uid="row" name="persons" export="false"
-		        requestURI="personsSearchquery.action">
-		        <display:setProperty name="basic.msg.empty_list"
-		            value="No Persons found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
-		        <display:column escapeXml="false" title="PO-ID" headerClass="sortable" sortable="true">
-		              <a href="javascript:void(0);" onclick="displayPersonDetails(<c:out value="${row.id}"/>)"><c:out value="${row.id}"/></a>
-		        </display:column>
-		        <display:column escapeXml="true" title="CTEP ID" property="ctepId" headerClass="sortable"  sortable="true"/>
-			    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="First Name" property="firstName"  headerClass="sortable" sortable="true"/>			    		    
-			    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="Last Name" property="lastName" sortable="true" headerClass="sortable" />			    
-			    <display:column escapeXml="true" title="Email" property="email" sortable="true"/>
-		        <display:column escapeXml="false" title="Organization Affiliation" sortable="false">
-		            <c:forEach items="${row.organizations}" var="org">
-		                <c:out value="${org.name.part[0].value}" />
-		                <br />
-		            </c:forEach>
-		        </display:column>
-                <display:column escapeXml="false" title="Role" sortable="false">
-                    <c:forEach items="${row.roles}" var="role">
-                        <c:out value="${role}" />
-                        <br />
-                    </c:forEach>
-                </display:column>		        
-		        <display:column escapeXml="true" title="City" property="city" sortable="true"/>
-		        <display:column escapeXml="true" title="State" property="state" sortable="true"/>
-		        
-		    </display:table>		
-		</s:if>        
+        </div>
+        <s:if test="results!=null">
+        <div id="search-results" class="tab-pane fade active in">        
+	        <s:if test="results!=null && results.empty">
+	            <div class="alert alert-warning">
+	            No Persons found. Please verify search criteria and/or broaden your search by removing one or more search criteria.
+	            </div>
+	        </s:if>        
+			<s:if test="results!=null && !results.empty">
+			    <h2><fmt:message key="person.search.results"/></h2>		
+			    <s:set name="persons" value="results" scope="request" />
+			    <div class="table-wrapper">
+            	<div class="table-responsive">
+			    <display:table class="table table-striped table-bordered sortable" sort="list" pagesize="10" uid="row" name="persons" export="false"
+			        requestURI="personsSearchquery.action">
+			        <display:setProperty name="basic.msg.empty_list"
+			            value="No Persons found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
+			        <display:column escapeXml="false" title="PO-ID"  sortable="true">
+			              <a href="javascript:void(0);" onclick="displayPersonDetails(<c:out value="${row.id}"/>)"><c:out value="${row.id}"/></a>
+			        </display:column>
+			        <display:column escapeXml="true" title="CTEP ID" property="ctepId"   sortable="true"/>
+				    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="First Name" property="firstName"   sortable="true"/>			    		    
+				    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="Last Name" property="lastName" sortable="true"  />			    
+				    <display:column escapeXml="true" title="Email" property="email" sortable="true"/>
+			        <display:column escapeXml="false" title="Organization Affiliation" sortable="false">
+			            <c:forEach items="${row.organizations}" var="org">
+			                <c:out value="${org.name.part[0].value}" />
+			                <br />
+			            </c:forEach>
+			        </display:column>
+	                <display:column escapeXml="false" title="Role" sortable="false">
+	                    <c:forEach items="${row.roles}" var="role">
+	                        <c:out value="${role}" />
+	                        <br />
+	                    </c:forEach>
+	                </display:column>		        
+			        <display:column escapeXml="true" title="City" property="city" sortable="true"/>
+			        <display:column escapeXml="true" title="State" property="state" sortable="true"/>
+			    </display:table>
+			    </div>
+			    </div>		
+			</s:if>        
         </div>     
+        </s:if>
         
-        </div></div></div>   
+        </div></div>   
