@@ -162,14 +162,4 @@ public class EligibilityCriteriaActionTest extends AbstractPaActionTest {
     	eligibilityCriteriaAction.setEligibilityList(webDTOList);
     	assertEquals("eligibility",eligibilityCriteriaAction.reOrder());
     }
-    @Test
-    public void testRequestToCreateCDE() {
-    	assertEquals("requestToCreateCDE",eligibilityCriteriaAction.requestToCreateCDE());
-    }
-    @Test
-    public void testsendCDERequestEmail() {
-    	getRequest().setupAddParameter("fromEmail", "a@a.com");
-		getRequest().setupAddParameter("emailMsg", "test");
-    	assertEquals("requestToCreateCDE",eligibilityCriteriaAction.sendCDERequestEmail());
-    }
 }

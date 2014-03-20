@@ -78,14 +78,9 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.cadsr.domain.ClassSchemeClassSchemeItem;
-import gov.nih.nci.cadsr.domain.ClassificationScheme;
+
 import gov.nih.nci.cadsr.domain.ClassificationSchemeItem;
 import gov.nih.nci.cadsr.domain.DataElement;
-import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
-import gov.nih.nci.cadsr.domain.ReferenceDocument;
-import gov.nih.nci.cadsr.domain.ValueDomain;
-import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
@@ -108,16 +103,11 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.BaseLookUpService;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.CacheUtils;
-import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.system.applicationservice.ApplicationService;
-import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -132,9 +122,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
-import org.springframework.remoting.RemoteAccessException;
 
 
 /**
@@ -154,9 +141,7 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     private static final String ELIGIBILITYADD = "eligibilityAdd";
     private static final int MAXIMUM_CHAR_POPULATION = 800;
     private static final int MAXIMUM_CHAR_DESCRIPTION = 5000;
-    private static final int MAX_CADSR_RESULT = 200;
     private static final String SP = " ";
-    private static final String BR = " ;";
     private ISDesignDetailsWebDTO webDTO = new ISDesignDetailsWebDTO();
     private Long id = null;
     private String page;
@@ -173,22 +158,11 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     private String studyPopulationDescription;
     private String samplingMethodCode;
     private List<CaDSRWebDTO> cadsrResult = new ArrayList<CaDSRWebDTO>();
-    private static long cadsrCsId;
-    private static float cadsrCsVersion;
     private static List<ClassificationSchemeItem> csisResult = null;
-    private static final String CSIS = "csisResult";
-    private static final String CDES_BY_CSI = "cdesByCsiResult";
-    private static final String REQUEST_TO_CREATE_CDE = "requestToCreateCDE";
     private DataElement cdeResult;
     private static List<String> permValues;
     private static String cdeDatatype;
-    private static final String DISPLAY_CDE = "displaycde";
     private static String cdeCategoryCode;
-    private static String cdeRequestToEmail;
-    private static String cdeRequestSubject;
-    private static String cdeRequestText;
-    private static Long labTestPubId;
-    private static Long labTestUofMPubId;
     private static final int TOTAL_COUNT = 3;
     private String minValueUnit;
     private String maxValueUnit;
@@ -200,8 +174,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     public String query() {
         try {
             eligibilityList = null;
-            retrieveFromPaProperties();
-            getClassSchemeItems();
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.STUDY_PROTOCOL_II);
             List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
@@ -249,255 +221,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         return ELIGIBILITY;
     }
 
-    /**
-     * this is will return list of category.
-     * @return result List<ClassificationSchemeItem>
-     * @throws PAException PAException
-     */
-    @SuppressWarnings("unchecked")
-    public String getClassSchemeItems() throws PAException {
-        csisResult = (List<ClassificationSchemeItem>) CacheUtils
-                .getFromCacheOrBackend(
-                        CacheUtils.getCaDSRClassificationSchemesCache(), CSIS,
-                        new Closure() {
-                            @Override
-                            public Object execute() throws PAException {                                
-                                try {
-                                    List<ClassificationSchemeItem> results = new ArrayList<ClassificationSchemeItem>();
-                                    ClassificationScheme cs = new ClassificationScheme();
-                                    cs.setPublicID(cadsrCsId);
-                                    cs.setVersion(cadsrCsVersion);
-                                    ApplicationService appService = ApplicationServiceProvider
-                                            .getApplicationService();
-                                    Collection<Object> csResult = appService
-                                            .search(ClassificationScheme.class,
-                                                    cs);
-                                    ClassificationScheme classifSch = (ClassificationScheme) csResult
-                                            .iterator().next();
-                                    Collection<ClassSchemeClassSchemeItem> csItem = classifSch
-                                            .getClassSchemeClassSchemeItemCollection();
-                                    for (ClassSchemeClassSchemeItem csCsi : csItem) {
-                                        results.add(csCsi
-                                                .getClassificationSchemeItem());
-                                    }
-                                    return results;
-                                } catch (RemoteAccessException e) {
-                                    LOG.error(
-                                            "Error attempting to instantiate caDSR Application Service.",
-                                            e);
-                                } catch (Exception e) {
-                                    LOG.error(e, e);
-                                    ServletActionContext.getRequest()
-                                            .setAttribute(
-                                                    Constants.FAILURE_MESSAGE,
-                                                    e.getMessage());
-                                }
-                                return null;
-                            }
-                        });
-        if (csisResult == null) {
-            csisResult = new ArrayList<ClassificationSchemeItem>();
-        }
-        return CSIS;
-    }
-
-    /**
-     * call this from pop-search.
-     * @return result
-     */
-    public String getClassifiedCDEs() {
-        cadsrResult.clear();
-        String csiName = ServletActionContext.getRequest().getParameter("csiName");
-        String deName = ServletActionContext.getRequest().getParameter("searchName");        
-        try {
-            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
-
-            DetachedCriteria criteria = DetachedCriteria.forClass(DataElement.class, "de");
-            criteria.add(Expression.eq("workflowStatusName", "RELEASED"));
-            criteria.createAlias("referenceDocumentCollection", "refDoc")
-            .add(Expression.eq("refDoc.type", "Preferred Question Text"))
-            .add(Expression.ilike("refDoc.doctext", "%" + deName + "%"));
-            DetachedCriteria csCsiCriteria = criteria.createCriteria("administeredComponentClassSchemeItemCollection")
-            .createCriteria("classSchemeClassSchemeItem");
-            DetachedCriteria csCriteria = csCsiCriteria.createCriteria("classificationScheme");
-            csCriteria.add(Expression.eq("publicID", cadsrCsId));
-            csCriteria.add(Expression.eq("version", cadsrCsVersion));
-            DetachedCriteria csiCriteria = csCsiCriteria.createCriteria("classificationSchemeItem");
-            csiCriteria.add(Expression.eq("longName", csiName));
-
-            List<Object> classCes = appService.query(criteria);
-            for (Object obj : classCes) {
-                CaDSRWebDTO cadsrWebDTO = new CaDSRWebDTO();
-                DataElement de = (DataElement) obj;
-                cadsrWebDTO.setId(de.getId());
-                cadsrWebDTO.setPublicId(de.getPublicID());
-                cadsrWebDTO.setVersion(Float.toString(de.getVersion()));
-                cadsrWebDTO.setPreferredQuestion(getPreferredQuestionText(de));
-                cadsrResult.add(cadsrWebDTO);
-            }
-            if (cadsrResult.size() > MAX_CADSR_RESULT) {
-                    ServletActionContext.getRequest()
-                    .setAttribute(Constants.FAILURE_MESSAGE, "Search results too large returned more than 200 records");
-                    cadsrResult.clear();
-                    return CDES_BY_CSI;
-            }
-            webDTO.setCdeCategoryCode(csiName);
-            setCdeCategoryCode(csiName);
-        } catch (RemoteAccessException e) {
-            LOG.error("Error while instantiating caDSR Application Service.", e);
-        } catch (Exception e) {
-            LOG.error(e, e);
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        }
-        return CDES_BY_CSI;
-    }
-
-    private String getPreferredQuestionText(DataElement de) {
-        // defaults to the DEC long name in case this CDE does not have reference documents
-        String result = de.getDataElementConcept().getLongName();
-
-        if (CollectionUtils.isNotEmpty(de.getReferenceDocumentCollection())) {
-            for (ReferenceDocument refDoc : de.getReferenceDocumentCollection()) {
-                if (refDoc.getType().equals("Preferred Question Text")) {
-                    result = refDoc.getDoctext();
-                }
-            }
-
-        }
-        return result;
-    }
-
-    /**
-     * Gets the classified cd es display tag.
-     *
-     * @return the classified cd es display tag
-     */
-    public String getClassifiedCDEsDisplayTag() {
-        getClassifiedCDEs();
-        return "cdeDisplayTag";
-    }
-
-    private DataElement getCdeByPublicID(Long publicId) throws PAException {
-        ApplicationService appService;
-        DataElement dEle = null;
-        try {
-            appService = ApplicationServiceProvider.getApplicationService();
-            DataElement de = new DataElement();
-            de.setPublicID(publicId);
-            de.setLatestVersionIndicator("Yes");
-            Collection<Object> collResult = appService.search(DataElement.class, de);            
-            dEle =  (DataElement) collResult.iterator().next();
-        } catch (RemoteAccessException e) {
-            LOG.error("Error during instantiating caDSR Application Service.", e);
-        } catch (Exception e) {
-            throw new PAException(e);
-        }
-        return dEle;
-    }
-
-    /**
-     * display the cdes.
-     * @return String
-     */
-    public String displaycde() {
-        String cdeid = ServletActionContext.getRequest().getParameter("cdeid");
-        boolean isSpecialLabTestCase = false;
-        try {
-            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
-
-            DataElement de = new DataElement();
-            de.setId(cdeid);
-            Collection<Object> collResult = appService.search(DataElement.class, de);
-            cdeResult = (DataElement) collResult.iterator().next();
-            if (labTestPubId.equals(cdeResult.getPublicID())) {
-                isSpecialLabTestCase = true;
-            }
-            webDTO.setCriterionName(getPreferredQuestionText(cdeResult));
-            permValues = null;
-            List<String> labTestNameValues = null;
-            List<String> labTestUoMValues = null;
-            ValueDomain vd = cdeResult.getValueDomain();
-            if (vd instanceof EnumeratedValueDomain) {
-                EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
-                if (isSpecialLabTestCase) {
-                    labTestNameValues = getPermValues(evd);
-                    DataElement uOfMdE = getCdeByPublicID(labTestUofMPubId);
-                    labTestUoMValues = getPermValues((EnumeratedValueDomain) uOfMdE.getValueDomain());
-                } else {
-                    permValues = getPermValues(evd);
-                }
-            }
-            if (isSpecialLabTestCase) {
-                cdeDatatype = "NUMBER";
-            } else {
-                cdeDatatype = vd.getDatatypeName();
-            }
-            webDTO.setCdePublicIdentifier(Long.toString(vd.getPublicID()));
-            webDTO.setCdeVersionNumber(Float.toString(vd.getVersion()));
-            webDTO.setCdeCategoryCode(getCdeCategoryCode());
-            ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_VALUES, labTestNameValues);
-            ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_UOM_VALUES, labTestUoMValues);
-        } catch (RemoteAccessException e) {
-            LOG.error("Error attempting to instantiate caDSR Application Service.", e);
-        } catch (Exception e) {
-            LOG.error(e, e);
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        }
-
-        return DISPLAY_CDE;
-    }
-
-    private List<String> getPermValues(EnumeratedValueDomain evd) {
-        List<String> returnValues = new ArrayList<String>();
-        Collection<ValueDomainPermissibleValue> vdPvList = evd.getValueDomainPermissibleValueCollection();
-        for (ValueDomainPermissibleValue vdPv : vdPvList) {
-            returnValues.add(vdPv.getPermissibleValue().getValueMeaning().getLongName());
-        }
-        return returnValues;
-    }
-
-    /**
-     * Request to create cde.
-     *
-     * @return the string
-     */
-    public String requestToCreateCDE() {
-        webDTO.setToEmail(cdeRequestToEmail);
-        webDTO.setSubject(cdeRequestSubject);
-        webDTO.setMessage(cdeRequestText);
-        return REQUEST_TO_CREATE_CDE;
-    }
-
-    /**
-     * Send email to request to create cde.
-     * @return the string
-     */
-    public String sendCDERequestEmail() {
-        try {
-            StringBuffer err = new StringBuffer();
-            String fromEmail = ServletActionContext.getRequest().getParameter("fromEmail");
-            String emailMessage = ServletActionContext.getRequest().getParameter("emailMsg");
-            if (StringUtils.isEmpty(fromEmail)) {
-                err.append("Please enter an email address").append(BR);
-            }
-            if (!PAUtil.isValidEmail(fromEmail)) {
-                err.append("Please enter a valid email address").append(BR);
-            }
-            if (StringUtils.isEmpty(emailMessage)) {
-                err.append("Please enter a request to CDE message").append(BR);
-            }
-            if (err.length() > 0) {
-                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, err.toString());
-                return requestToCreateCDE();
-            }
-            PaRegistry.getMailManagerService().sendCDERequestMail(fromEmail, emailMessage);
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, 
-                    "New Permissible value Request sent successfully");
-        } catch (PAException e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-        }
-        return requestToCreateCDE();
-    }
 
     /**
      * @return res
@@ -1353,15 +1076,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         return csisResult;
     }
 
-    private void retrieveFromPaProperties() throws PAException {
-        cadsrCsId = Long.parseLong(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_ID"));
-        cadsrCsVersion = Float.parseFloat(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_CS_VERSION"));
-        cdeRequestToEmail = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL");
-        cdeRequestSubject = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQ_TO_EMAIL_SUB_PERMISSIBLE");
-        cdeRequestText = PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL_TEXT");
-        labTestPubId = Long.valueOf(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_LABTEST_ID"));
-        labTestUofMPubId = Long.valueOf(PaRegistry.getLookUpTableService().getPropertyValue("CADSR_LABTEST_UoM_ID"));
-    }
 
     /**
      *
