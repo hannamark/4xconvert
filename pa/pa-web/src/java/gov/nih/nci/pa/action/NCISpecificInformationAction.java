@@ -366,11 +366,12 @@ public class NCISpecificInformationAction extends ActionSupport {
                 UUID.randomUUID().toString(), orgId, selectedOrgDTO.getName().getPart().get(0).getValue());
         if (summary4SponsorsList == null) {
             summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
-        } else if (!summary4SponsorsList.contains(summarySp)) {
-            summary4SponsorsList.add(summarySp);
-        }  else if (summary4SponsorsList.contains(summarySp)) {
+        } 
+        if (summary4SponsorsList.contains(summarySp)) {
             addFieldError("nciSpecificInformationWebDTO.organizationName", 
                              "Selected Sponsor already exists for this trial");
+        } else if (!summary4SponsorsList.contains(summarySp)) {
+            summary4SponsorsList.add(summarySp);
         }
         nciSpecificInformationWebDTO.getSummary4Sponsors().addAll(summary4SponsorsList);
         return DISPLAY_ORG_FLD;

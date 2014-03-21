@@ -551,12 +551,13 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
             selectedSummary4Sponsor.getName().getPart().get(0).getValue());
             if (summary4SponsorsList == null) {
                 summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
-            } else if (!summary4SponsorsList.contains(summarySp)) {
-                summary4SponsorsList.add(summarySp);
-            } else if (summary4SponsorsList.contains(summarySp)) {
+            } 
+            if (summary4SponsorsList.contains(summarySp)) {
                 addFieldError("summary4FundingSponsor", 
                                               "Selected Sponsor already exists for this trial");
-            }
+            } else if (!summary4SponsorsList.contains(summarySp)) {
+                summary4SponsorsList.add(summarySp);
+            } 
             gtdDTO.getSummaryFourOrgIdentifiers().addAll(summary4SponsorsList);
         } catch (Exception e) {
             LOG.error(e.getMessage());
