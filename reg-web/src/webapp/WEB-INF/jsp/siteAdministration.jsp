@@ -48,12 +48,12 @@
 	      <label for="filtercheckbox">Hide Search Criteria</label>
 	    </div>
         <c:set var="topic" scope="request" value="siteadmin"/>
-        <div  id="filters">
         	<h1 class="heading"><span><fmt:message key="siteadministration.page.header"/></span></h1>
             <reg-web:failureMessage/>
             <reg-web:sucessMessage/>
             <s:form name="formSiteAdministration" action="siteAdministrationview.action" cssClass="form-horizontal" role="form">
                 <s:token/>
+                <div  id="filters">
                  <div class="form-group">
                  	<label for="firstName" class="col-xs-4 control-label"> <fmt:message key="siteadministration.criteria.firstname"/></label>
                     <div class="col-xs-4">    
@@ -75,6 +75,7 @@
 				<div class="bottom no-border">
 					<button type="button" class="btn btn-icon btn-primary" onclick="submitForm();"><i class="fa-search"></i><fmt:message key="siteadministration.buttons.search"/> </button>
         			<button type="button" class="btn btn-icon btn-default" onclick="resetSearch();"><i class="fa-repeat"></i><fmt:message key="siteadministration.buttons.reset"/></button>	                        
+                </div>
                 </div>
                 <div class="line"></div>
                 <jsp:include page="/WEB-INF/jsp/siteAdministrationResults.jsp"/>
