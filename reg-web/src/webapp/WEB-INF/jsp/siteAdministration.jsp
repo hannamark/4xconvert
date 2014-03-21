@@ -42,61 +42,47 @@
     </head>
     <body>
         <!-- main content begins-->
+      <div class="container">
+	    <div class="filter-checkbox">
+	      <input type="checkbox" onclick="toggledisplay('filters', this)" id="filtercheckbox" name="checkbox">
+	      <label for="filtercheckbox">Hide Search Criteria</label>
+	    </div>
         <c:set var="topic" scope="request" value="siteadmin"/>
-        <h1><fmt:message key="siteadministration.page.header"/></h1>
-        <div class="box" id="filters">
+        <div  id="filters">
+        	<h1 class="heading"><span><fmt:message key="siteadministration.page.header"/></span></h1>
             <reg-web:failureMessage/>
             <reg-web:sucessMessage/>
-            <s:form name="formSiteAdministration" action="siteAdministrationview.action">
+            <s:form name="formSiteAdministration" action="siteAdministrationview.action" cssClass="form-horizontal" role="form">
                 <s:token/>
-                <table class="form">
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="firstName"> <fmt:message key="siteadministration.criteria.firstname"/></label>
-                        </td>
-                        <td>
-                            <s:textfield id="firstName" name="criteria.firstName" maxlength="200" size="100"  cssStyle="width:200px" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="lastName"> <fmt:message key="siteadministration.criteria.lastname"/></label>
-                        </td>
-                        <td>
-                            <s:textfield id="lastName" name="criteria.lastName"   maxlength="200" size="100"  cssStyle="width:200px" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="emailAddress"> <fmt:message key="siteadministration.criteria.email"/></label>
-                        </td>
-                        <td>
-                            <s:textfield id="emailAddress" name="criteria.emailAddress"  maxlength="200" size="100"  cssStyle="width:200px" />
-                        </td>
-                    </tr>
-                </table>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="submitForm();"><span class="btn_img"><span class="search"><fmt:message key="siteadministration.buttons.search"/></span></span></s:a>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="resetSearch();"><span class="btn_img"><span class="cancel"><fmt:message key="siteadministration.buttons.reset"/></span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
+                 <div class="form-group">
+                 	<label for="firstName" class="col-xs-4 control-label"> <fmt:message key="siteadministration.criteria.firstname"/></label>
+                    <div class="col-xs-4">    
+                    	<s:textfield id="firstName" name="criteria.firstName" maxlength="200" size="100"  cssClass="form-control"/>
+                    </div>
+                 </div>
+				 <div class="form-group">	
+                 	<label for="lastName"  class="col-xs-4 control-label"> <fmt:message key="siteadministration.criteria.lastname"/></label>
+                    <div class="col-xs-4">
+                        <s:textfield id="lastName" name="criteria.lastName"   maxlength="200" size="100"  cssClass="form-control" />
+                    </div>
+                 </div>
+				 <div class="form-group">
+					<label for="emailAddress" class="col-xs-4 control-label"> <fmt:message key="siteadministration.criteria.email"/></label>
+                    <div class="col-xs-4">
+                        <s:textfield id="emailAddress" name="criteria.emailAddress"  maxlength="200" size="100"  cssClass="form-control" />
+                    </div>
+                 </div>
+				<div class="bottom no-border">
+					<button type="button" class="btn btn-icon btn-primary" onclick="submitForm();"><i class="fa-search"></i><fmt:message key="siteadministration.buttons.search"/> </button>
+        			<button type="button" class="btn btn-icon btn-default" onclick="resetSearch();"><i class="fa-repeat"></i><fmt:message key="siteadministration.buttons.reset"/></button>	                        
                 </div>
                 <div class="line"></div>
                 <jsp:include page="/WEB-INF/jsp/siteAdministrationResults.jsp"/>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="save();"><span class="btn_img"><span class="save"><fmt:message key="siteadministration.buttons.save"/></span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
+                <div class="mt10 mb20 align-center scrollable">
+                	<button type="button" class="btn btn-icon btn-primary" onclick="save();"><i class="fa-floppy-o"></i><fmt:message key="siteadministration.buttons.save"/></button>
                 </div>
             </s:form>
+          </div>
         </div>
     </body>
 </html>
