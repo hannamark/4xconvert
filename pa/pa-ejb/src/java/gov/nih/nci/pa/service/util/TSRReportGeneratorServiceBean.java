@@ -627,8 +627,12 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                 statusDate.setCompletionDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
                         studyProtocolDto.getCompletionDate()).toString())
                         + "-" + getValue(studyProtocolDto.getCompletionDateTypeCode()));
-            } else {
-                statusDate.setCompletionDate(getValue(studyProtocolDto.getCompletionDateTypeCode()));
+            } else if (ISOUtil.isTsNull(studyProtocolDto.getCompletionDate())
+                    && !ISOUtil.isCdNull(studyProtocolDto.getCompletionDateTypeCode())) {
+                statusDate.setCompletionDate(INFORMATION_NOT_PROVIDED
+                        + "-" + getValue(studyProtocolDto.getCompletionDateTypeCode()));
+            } else {   
+                statusDate.setCompletionDate(INFORMATION_NOT_PROVIDED);
             }
             tsrReportGenerator.setStatusDate(statusDate);
         }

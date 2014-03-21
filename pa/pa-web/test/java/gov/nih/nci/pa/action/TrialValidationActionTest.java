@@ -33,6 +33,7 @@ import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceR
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -120,6 +121,10 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
         getRequest().setupAddParameter("orgId", "1");
         assertEquals("display_summary4funding_sponsor", trialValidationAction.displaySummary4FundingSponsor());
         assertEquals("1", trialValidationAction.getGtdDTO().getSummaryFourOrgIdentifiers().get(0).getOrgId());
+        getRequest().getSession().setAttribute("summary4Sponsors", 
+        		Arrays.asList(trialValidationAction.getGtdDTO().getSummaryFourOrgIdentifiers().get(0)));
+        getRequest().setupAddParameter("orgId", "1");
+        assertEquals("display_summary4funding_sponsor", trialValidationAction.displaySummary4FundingSponsor());
     }
 
     @Test

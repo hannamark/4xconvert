@@ -236,24 +236,23 @@ public class PopupAction extends ActionSupport implements Preparable {
      * 
      * @return s
      */
-    @SuppressWarnings("unchecked")
     public String addSummaryFourOrg() {     
         try {
             BaseTrialDTO trialDTO =  (BaseTrialDTO) ServletActionContext.getRequest().getSession()
                     .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE); 
             String orgId = ServletActionContext.getRequest().getParameter("orgId");
             String chosenName = ServletActionContext.getRequest().getParameter("chosenName");
-            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
-            summarySp.setOrgId(orgId);
-            summarySp.setOrgName(chosenName);
-            summarySp.setRowId(UUID.randomUUID().toString());
+            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
+                              UUID.randomUUID().toString(), orgId, chosenName);
             if (trialDTO == null) {
                 trialDTO = new BaseTrialDTO();
                 trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
                 ServletActionContext.getRequest().getSession()
                 .setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
-            } else {
+            } else if (!trialDTO.getSummaryFourOrgIdentifiers().contains(summarySp)) {
                 trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+            } else if (trialDTO.getSummaryFourOrgIdentifiers().contains(summarySp)) {
+                addFieldError("summary4FundingSponsor", "Selected Sponsor already exists for this trial");
             }
         } catch (Exception e) {
             LOG.error("Exception occured while adding SummaryFourOrg " + e);

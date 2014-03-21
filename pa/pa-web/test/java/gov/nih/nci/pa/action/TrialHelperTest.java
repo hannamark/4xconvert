@@ -150,10 +150,7 @@ public class TrialHelperTest extends AbstractPaActionTest {
         gtdDTO.setCtGovXmlRequired(true);
         gtdDTO.setPiIdentifier("1");
         List<SummaryFourSponsorsWebDTO> webDtoList = new ArrayList<SummaryFourSponsorsWebDTO>();
-        SummaryFourSponsorsWebDTO dto = new SummaryFourSponsorsWebDTO();
-        dto.setOrgId("1");
-        dto.setOrgName("OrgName");
-        dto.setRowId("1");
+        SummaryFourSponsorsWebDTO dto = new SummaryFourSponsorsWebDTO("1", "1", "OrgName");
         webDtoList.add(dto);
         gtdDTO.setSummaryFourOrgIdentifiers(webDtoList);
         gtdDTO.setSummaryFourFundingCategoryCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getName());

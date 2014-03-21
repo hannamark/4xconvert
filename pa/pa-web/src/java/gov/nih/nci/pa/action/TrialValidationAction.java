@@ -137,6 +137,7 @@ import com.opensymphony.xwork2.Preparable;
 *
 */
 public class TrialValidationAction extends AbstractGeneralTrialDesignAction implements Preparable {
+
     private static final long serialVersionUID = -6587531774808791496L;
 
     private static final String EDIT = "edit";
@@ -165,6 +166,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
     private static RegistryUserService regUserSvc = null;
 
     private TrialHelper trialHelper = new TrialHelper();
+    private static final String DISPLAY_SUMMARY4FUNDING_SPONSOR = "display_summary4funding_sponsor";
 
     static {
         setRegistryUserService(PaRegistry.getRegistryUserService());
@@ -538,25 +540,28 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         OrganizationDTO criteria = new OrganizationDTO();
         OrganizationDTO selectedSummary4Sponsor = null;
         if (UNDEFINED.equalsIgnoreCase(orgId)) {
-            return "display_summary4funding_sponsor";
+            return DISPLAY_SUMMARY4FUNDING_SPONSOR;
         }
         criteria.setIdentifier(EnOnConverter.convertToOrgIi(Long.valueOf(orgId)));
         LimitOffset limit = new LimitOffset(1, 0);
         try {
             selectedSummary4Sponsor = organizationEntityService.search(criteria, limit).get(0);
-            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
-            summarySp.setOrgId(selectedSummary4Sponsor.getIdentifier().getExtension());
-            summarySp.setOrgName(selectedSummary4Sponsor.getName().getPart().get(0).getValue());
-            summarySp.setRowId(UUID.randomUUID().toString());
+            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(UUID.randomUUID().toString(),
+            selectedSummary4Sponsor.getIdentifier().getExtension(),
+            selectedSummary4Sponsor.getName().getPart().get(0).getValue());
             if (summary4SponsorsList == null) {
                 summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
+            } else if (!summary4SponsorsList.contains(summarySp)) {
+                summary4SponsorsList.add(summarySp);
+            } else if (summary4SponsorsList.contains(summarySp)) {
+                addFieldError("summary4FundingSponsor", 
+                                              "Selected Sponsor already exists for this trial");
             }
-            summary4SponsorsList.add(summarySp);
             gtdDTO.getSummaryFourOrgIdentifiers().addAll(summary4SponsorsList);
         } catch (Exception e) {
             LOG.error(e.getMessage());
         }
-        return "display_summary4funding_sponsor";
+        return DISPLAY_SUMMARY4FUNDING_SPONSOR;
     }
     
     /**
@@ -575,7 +580,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
             }
         }
         gtdDTO.getSummaryFourOrgIdentifiers().addAll(summary4SponsorsList);
-        return "display_summary4funding_sponsor";
+        return DISPLAY_SUMMARY4FUNDING_SPONSOR;
     }
 
     /**

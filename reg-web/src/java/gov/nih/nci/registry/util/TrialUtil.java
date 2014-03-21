@@ -301,11 +301,11 @@ public class TrialUtil extends TrialConvertUtils {
                  if (dto.getOrganizationIdentifier() != null
                          && StringUtils.isNotEmpty(dto.getOrganizationIdentifier().getExtension())) {
                     Organization o = getCorrelationUtils().getPAOrganizationByIi(dto.getOrganizationIdentifier());
-                    SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
-                    summarySp.setOrgId(o.getIdentifier());
-                    summarySp.setOrgName(o.getName());
-                    summarySp.setRowId(UUID.randomUUID().toString());
-                    trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+                    SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
+                            UUID.randomUUID().toString(), o.getIdentifier(), o.getName());
+                    if (!trialDTO.getSummaryFourOrgIdentifiers().contains(summarySp)) {
+                        trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+                    }
                  }
             }
         }

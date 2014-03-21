@@ -9,9 +9,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.registry.dto.BaseTrialDTO;
+import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
@@ -630,5 +634,22 @@ public class PopupActionTest extends AbstractRegWebTest {
     @Test
     public void testDisplayPasswordReset() {
         assertEquals("displayPasswordReset", new PopupAction().displayPasswordReset());
+    }
+    @Test
+    public void testAddSummary4OrgPopup() throws Exception {
+    	popUpAction = new PopupAction();
+    	assertEquals("summaryFourOrg", popUpAction.addSummaryFourOrg());
+    	MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession sess =  new MockHttpSession();
+        request.setSession(sess);
+    	request.setupAddParameter("orgId", "1");
+    	assertEquals("summaryFourOrg", popUpAction.addSummaryFourOrg());
+    	SummaryFourSponsorsWebDTO dto = new SummaryFourSponsorsWebDTO("1", "1", "orgName");
+    	BaseTrialDTO trialDTO = new BaseTrialDTO();
+        trialDTO.getSummaryFourOrgIdentifiers().add(dto);        
+    	sess.setAttribute("trialDTO", trialDTO);
+    	assertEquals("summaryFourOrg", popUpAction.addSummaryFourOrg());
+    	request.setupAddParameter("uuid", "1");
+    	assertEquals("summaryFourOrg", popUpAction.deleteSummaryFourOrg());
     }
 }

@@ -448,10 +448,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
         TrialDTO tDto = getMockTrialDTO();
-        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
-        summarySp.setOrgId("1");
-        summarySp.setOrgName("summaryFourOrgName");
-        summarySp.setRowId(UUID.randomUUID().toString());
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
+        		UUID.randomUUID().toString(), "1", "summaryFourOrgName");
         tDto.getSummaryFourOrgIdentifiers().add(summarySp);
         tDto.setIdentifier("3");
         tDto.setFundingDtos(getfundingDtos());

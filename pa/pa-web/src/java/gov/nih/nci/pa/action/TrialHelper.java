@@ -583,11 +583,11 @@ public class TrialHelper {
             if (dto.getOrganizationIdentifier() != null
                     && StringUtils.isNotEmpty(dto.getOrganizationIdentifier().getExtension())) {
                 Organization o = getCorrelationUtils().getPAOrganizationByIi(dto.getOrganizationIdentifier());
-                SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
-                summarySp.setOrgId(o.getIdentifier());
-                summarySp.setOrgName(o.getName());
-                summarySp.setRowId(UUID.randomUUID().toString());
-                gtdDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+                SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
+                        UUID.randomUUID().toString(), o.getIdentifier(), o.getName());
+                if (!gtdDTO.getSummaryFourOrgIdentifiers().contains(summarySp)) {
+                    gtdDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+                }
             }
         }
     }

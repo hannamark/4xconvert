@@ -295,7 +295,7 @@ public class TSRReportLabelText { //NOPMD
     /**
      * completion date.
      */
-    public static final String SD_COMPLETION_DATE = "Study Completion Date";
+    public static final String SD_COMPLETION_DATE = "Trial Completion Date";
 
     // Regulatory Information
     /**

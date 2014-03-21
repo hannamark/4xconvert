@@ -14,6 +14,7 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -76,31 +77,26 @@ public class NCISpecificInformationActionTest extends AbstractPaActionTest {
     
     @Test
     public void testDisplayOrg2() {
-    	//MockHttpServletRequest request = new MockHttpServletRequest();
     	getRequest().setupAddParameter("orgId", "1");
-    	/*request.setServletPath("");
-        request.setSession(new MockHttpSession());
-        ServletActionContext.setRequest(request);*/
         String result = nciSpecificInformationAction.displayOrg();
+        SummaryFourSponsorsWebDTO dto = new SummaryFourSponsorsWebDTO("1", "1", "OrgName");
+        assertEquals("displayOrgFld", result);
+        getRequest().getSession().setAttribute("summary4Sponsors", Arrays.asList(dto));
+        getRequest().setupAddParameter("orgId", "1");
+        result = nciSpecificInformationAction.displayOrg();
         assertEquals("displayOrgFld", result);
     }
 
     
     @Test
     public void testDelete() {
-    	//MockHttpServletRequest request = new MockHttpServletRequest();
     	getRequest().setupAddParameter("uuid", "1");
-    	//request.setServletPath("");
-        //request.setSession(new MockHttpSession());
         List<SummaryFourSponsorsWebDTO> summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
-        SummaryFourSponsorsWebDTO webDto = new SummaryFourSponsorsWebDTO();
-        webDto.setRowId("1");        
+        SummaryFourSponsorsWebDTO webDto = new SummaryFourSponsorsWebDTO("1", null, null);     
         summary4SponsorsList.add(webDto);
-        webDto = new SummaryFourSponsorsWebDTO();
-        webDto.setRowId("2");        
+        webDto = new SummaryFourSponsorsWebDTO("2", null, null);
         summary4SponsorsList.add(webDto);
         getSession().setAttribute("summary4Sponsors", summary4SponsorsList);
-        //ServletActionContext.setRequest(request);
         String result = nciSpecificInformationAction.deleteSummaryFourOrg();
         assertEquals("displayOrgFld", result);
     }

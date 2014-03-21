@@ -737,9 +737,11 @@ public class BatchCreateProtocols {
             summary4Sponsor = lookUpOrgs(summ4Sponsor); // look up for org only when dto is not empty
         }
         if (summary4Sponsor != null) {
-            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
-            summarySp.setOrgId(summary4Sponsor.getExtension());
-            trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
+                    null, summary4Sponsor.getExtension(), null);
+            if (!trialDTO.getSummaryFourOrgIdentifiers().contains(summarySp)) {
+                trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
+            }
         }
         
         trialDTO.setDocDtos(addDocDTOToList(batchDTO, folderPath)); // add doc to the dto

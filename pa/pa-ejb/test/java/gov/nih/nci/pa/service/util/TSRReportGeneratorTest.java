@@ -362,7 +362,7 @@ public class TSRReportGeneratorTest {
         result = matcher.group(2).trim();
         assertTrue(result.equals("01/28/2010 - Anticipated"));
         
-        regexp = Pattern.compile("(Study Completion Date)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(Trial Completion Date)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
