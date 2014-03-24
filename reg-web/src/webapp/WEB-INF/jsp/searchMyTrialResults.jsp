@@ -2,7 +2,7 @@
 <head>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript">
-$(document).ready(function () {	
+jQuery(document).ready(function () {	
 	
 	jQuery('#nav li').hover(
 		function () {
