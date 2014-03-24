@@ -394,8 +394,10 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     public void testAmendWithSummaryFour(){
         TrialDTO dto = getMockTrialDTO();
         dto.setSummaryFourFundingCategoryCode("National");
-        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
-        		UUID.randomUUID().toString(), "2", "SummaryFourOrgName");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setRowId(UUID.randomUUID().toString());
+        summarySp.setOrgId("2");
+        summarySp.setOrgName("SummaryFourOrgName");
         dto.getSummaryFourOrgIdentifiers().add(summarySp);
         setTrialDTOInSession(dto);
         assertEquals("redirect_to_search", trialAction.amend());

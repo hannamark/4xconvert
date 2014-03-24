@@ -321,8 +321,10 @@ public class NCISpecificInformationAction extends ActionSupport {
             for (StudyResourcingDTO dto : srDTO) {
                 if (dto.getOrganizationIdentifier() != null) {
                     Organization org = getPAOrganizationById(dto.getOrganizationIdentifier());
-                    SummaryFourSponsorsWebDTO webDto = new SummaryFourSponsorsWebDTO(
-                            UUID.randomUUID().toString(), org.getIdentifier(), org.getName());                    
+                    SummaryFourSponsorsWebDTO webDto = new SummaryFourSponsorsWebDTO();
+                    webDto.setRowId(UUID.randomUUID().toString());
+                    webDto.setOrgId(org.getIdentifier());
+                    webDto.setOrgName(org.getName());                    
                     if (!nciSpDTO.getSummary4Sponsors().contains(webDto)) {
                         nciSpDTO.getSummary4Sponsors().add(webDto);
                     }
@@ -362,8 +364,10 @@ public class NCISpecificInformationAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return DISPLAY_ORG_FLD;
         }
-        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
-                UUID.randomUUID().toString(), orgId, selectedOrgDTO.getName().getPart().get(0).getValue());
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setRowId(UUID.randomUUID().toString());
+        summarySp.setOrgId(orgId);
+        summarySp.setOrgName(selectedOrgDTO.getName().getPart().get(0).getValue());
         if (summary4SponsorsList == null) {
             summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
         } 

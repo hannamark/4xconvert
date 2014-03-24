@@ -1252,8 +1252,10 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
                 if (orgName.equalsIgnoreCase(NULLIFIED_ORGANIZATION)) {
                     orgId = null;
                 }
-                SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
-                        UUID.randomUUID().toString(), orgId, orgName);
+                SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+                summarySp.setRowId(UUID.randomUUID().toString());
+                summarySp.setOrgId(orgId);
+                summarySp.setOrgName(orgName);
                 if (!trialDto.getSummaryFourOrgIdentifiers().contains(summarySp)) {
                     trialDto.getSummaryFourOrgIdentifiers().add(summarySp);
                 }

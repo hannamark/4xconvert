@@ -12,17 +12,6 @@ public class SummaryFourSponsorsWebDTO {
     private String orgName;
     
     /**
-     * @param rowId the UUID
-     * @param orgId the orgId
-     * @param orgName the orgName
-     */
-    public SummaryFourSponsorsWebDTO(String rowId, String orgId, String orgName) {
-        this.rowId = rowId;
-        this.orgId = orgId;
-        this.orgName = orgName;
-    }
-    
-    /**
      * @return the rowId
      */
     public String getRowId() {

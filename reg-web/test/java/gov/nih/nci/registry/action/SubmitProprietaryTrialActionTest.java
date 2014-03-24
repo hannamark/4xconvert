@@ -240,8 +240,10 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         assertEquals(StudySourceCode.REGISTRY, tDto.getStudySource());
 
         tDto.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
-        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
-        		UUID.randomUUID().toString(), "2", "summaryFourOrgName");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setRowId(UUID.randomUUID().toString());
+        summarySp.setOrgId("2");
+        summarySp.setOrgName("summaryFourOrgName");
         tDto.getSummaryFourOrgIdentifiers().add(summarySp);
         tDto.setOfficialTitle("testthrowException");
         sess.setAttribute("trialDTO", tDto);

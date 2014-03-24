@@ -644,9 +644,12 @@ public class PopupActionTest extends AbstractRegWebTest {
         request.setSession(sess);
     	request.setupAddParameter("orgId", "1");
     	assertEquals("summaryFourOrg", popUpAction.addSummaryFourOrg());
-    	SummaryFourSponsorsWebDTO dto = new SummaryFourSponsorsWebDTO("1", "1", "orgName");
+    	SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setRowId("1");
+        summarySp.setOrgId("1");
+        summarySp.setOrgName("orgName");
     	BaseTrialDTO trialDTO = new BaseTrialDTO();
-        trialDTO.getSummaryFourOrgIdentifiers().add(dto);        
+        trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);        
     	sess.setAttribute("trialDTO", trialDTO);
     	assertEquals("summaryFourOrg", popUpAction.addSummaryFourOrg());
     	request.setupAddParameter("uuid", "1");

@@ -242,8 +242,10 @@ public class PopupAction extends ActionSupport implements Preparable {
                     .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE); 
             String orgId = ServletActionContext.getRequest().getParameter("orgId");
             String chosenName = ServletActionContext.getRequest().getParameter("chosenName");
-            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
-                              UUID.randomUUID().toString(), orgId, chosenName);
+            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+            summarySp.setRowId(UUID.randomUUID().toString());
+            summarySp.setOrgId(orgId);
+            summarySp.setOrgName(chosenName);
             if (trialDTO == null) {
                 trialDTO = new BaseTrialDTO();
                 trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);

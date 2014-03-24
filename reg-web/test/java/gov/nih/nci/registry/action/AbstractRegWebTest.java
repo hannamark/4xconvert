@@ -158,8 +158,10 @@ public abstract class AbstractRegWebTest {
         trialDTO.setStartDateType("Actual");
         trialDTO.setStartDate("01/20/2008");
         trialDTO.setReason("");
-        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
-        		UUID.randomUUID().toString(), "1", "SummaryFourOrgName");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setRowId(UUID.randomUUID().toString());
+        summarySp.setOrgId("1");
+        summarySp.setOrgName("SummaryFourOrgName");
         trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
         trialDTO.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
         trialDTO.setNctIdentifier("nctIdentifier");
@@ -286,8 +288,10 @@ public abstract class AbstractRegWebTest {
         trialDTO.setLeadOrgTrialIdentifier("leadOrgTrialIdentifier");
         trialDTO.setIdentifier("1");
         trialDTO.setStudyProtocolId("1");
-        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(
-        		UUID.randomUUID().toString(), "1", "SummaryFourOrgName");
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setRowId(UUID.randomUUID().toString());
+        summarySp.setOrgId("1");
+        summarySp.setOrgName("SummaryFourOrgName");
         trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
         trialDTO.setNctIdentifier("nctIdentifier");
 

@@ -546,9 +546,10 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         LimitOffset limit = new LimitOffset(1, 0);
         try {
             selectedSummary4Sponsor = organizationEntityService.search(criteria, limit).get(0);
-            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(UUID.randomUUID().toString(),
-            selectedSummary4Sponsor.getIdentifier().getExtension(),
-            selectedSummary4Sponsor.getName().getPart().get(0).getValue());
+            SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+            summarySp.setRowId(UUID.randomUUID().toString());
+            summarySp.setOrgId(selectedSummary4Sponsor.getIdentifier().getExtension());
+            summarySp.setOrgName(selectedSummary4Sponsor.getName().getPart().get(0).getValue());
             if (summary4SponsorsList == null) {
                 summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
             } 

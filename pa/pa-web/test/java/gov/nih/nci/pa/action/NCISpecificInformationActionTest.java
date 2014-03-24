@@ -79,7 +79,10 @@ public class NCISpecificInformationActionTest extends AbstractPaActionTest {
     public void testDisplayOrg2() {
     	getRequest().setupAddParameter("orgId", "1");
         String result = nciSpecificInformationAction.displayOrg();
-        SummaryFourSponsorsWebDTO dto = new SummaryFourSponsorsWebDTO("1", "1", "OrgName");
+        SummaryFourSponsorsWebDTO dto = new SummaryFourSponsorsWebDTO();
+        dto.setRowId("1");
+        dto.setOrgId("1");
+        dto.setOrgName("OrgName");
         assertEquals("displayOrgFld", result);
         getRequest().getSession().setAttribute("summary4Sponsors", Arrays.asList(dto));
         getRequest().setupAddParameter("orgId", "1");
@@ -92,9 +95,11 @@ public class NCISpecificInformationActionTest extends AbstractPaActionTest {
     public void testDelete() {
     	getRequest().setupAddParameter("uuid", "1");
         List<SummaryFourSponsorsWebDTO> summary4SponsorsList = new ArrayList<SummaryFourSponsorsWebDTO>();
-        SummaryFourSponsorsWebDTO webDto = new SummaryFourSponsorsWebDTO("1", null, null);     
+        SummaryFourSponsorsWebDTO webDto = new SummaryFourSponsorsWebDTO(); 
+        webDto.setRowId("1");    
         summary4SponsorsList.add(webDto);
-        webDto = new SummaryFourSponsorsWebDTO("2", null, null);
+        webDto = new SummaryFourSponsorsWebDTO();
+        webDto.setRowId("2");
         summary4SponsorsList.add(webDto);
         getSession().setAttribute("summary4Sponsors", summary4SponsorsList);
         String result = nciSpecificInformationAction.deleteSummaryFourOrg();
