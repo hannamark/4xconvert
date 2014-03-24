@@ -124,6 +124,7 @@ import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
@@ -306,12 +307,22 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("Extension should be null, but got  = " + ispDTO.getIdentifier().getExtension());
 
         }
+        setStudySource(ispDTO);
+            
         enForceBusinessRules(ispDTO, null);
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
         Session session = PaHibernateUtil.getCurrentSession();
         setDefaultValues(isp, ispDTO, CREATE);
         session.save(isp);
         return IiConverter.convertToStudyProtocolIi(isp.getId());
+    }
+
+    private void setStudySource(StudyProtocolDTO dto) {
+        Cd src = dto.getStudySource();
+        if (src == null || StringUtils.isEmpty(CdConverter.convertCdToString(src))) {
+            dto.setStudySource(CdConverter.convertToCd(StudySourceCode.OTHER));
+            LOG.warn("Replacing Empty Study Source Audit");
+        }
     }
 
     /**
@@ -371,6 +382,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("Extension should be null, but got  = " + ospDTO.getIdentifier().getExtension());
 
         }
+        setStudySource(ospDTO);
         enForceBusinessRules(ospDTO, null);
         NonInterventionalStudyProtocol osp = NonInterventionalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         Session session = PaHibernateUtil.getCurrentSession();

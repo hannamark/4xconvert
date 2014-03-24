@@ -47,6 +47,7 @@ import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyModelCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
@@ -527,6 +528,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             title = study.getOfficialTitle();
 
             StudyProtocolDTO studyProtocolDTO = instantiateStudyProtocolDTO(study);
+            studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.CLINICAL_TRIALS_GOV));
 
             final String protocolID = verifyPopulateAndPersist(
                     studyProtocolDTO, study, nctIdStr, xml, false);

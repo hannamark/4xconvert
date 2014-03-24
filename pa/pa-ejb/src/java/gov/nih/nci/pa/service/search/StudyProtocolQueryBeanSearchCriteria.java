@@ -225,6 +225,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String ACTIVE_MILESTONES_PARAM = "activeMilestones";
         private static final String INACTIVE_MILESTONES_PARAM = "inactiveMilestones";
         private static final String PROCESSING_PRIORITY_PARAM = "processingPriorityParam";
+        private static final String STUDY_SOURCE_PARAM = "studySourceParam";
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;        
 
@@ -287,6 +288,13 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" %s %s.ctgovXmlRequiredIndicator = :%s" , operator,  
                          SearchableUtils.ROOT_OBJ_ALIAS, CTGOV_XML_REQUIRED_INDICATOR));
                 params.put(CTGOV_XML_REQUIRED_INDICATOR, spo.getCtgovXmlRequiredIndicator());
+            }
+            
+            if (spo.getStudySource() != null) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s %s.studySource = :%s" , operator,  
+                         SearchableUtils.ROOT_OBJ_ALIAS, STUDY_SOURCE_PARAM));
+                params.put(STUDY_SOURCE_PARAM, spo.getStudySource());
             }
         }
 

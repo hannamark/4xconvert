@@ -80,6 +80,7 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 
@@ -133,6 +134,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private boolean verifyData = false;
     private Date verificationDueDate;
     private Set<StudyAlternateTitleDTO> studyAlternateTitles;
+    private String studySource;
    
 
     /**
@@ -727,4 +729,34 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
             Set<StudyAlternateTitleDTO> studyAlternateTitles) {
         this.studyAlternateTitles = studyAlternateTitles;
     }
+
+    /**
+     * 
+     * @return the source where the study was created.
+     */
+    public String getStudySource() {
+        return studySource;
+    }
+
+    /**
+     * 
+     * @param studySource sets which pathway was used to submit the study.
+     */
+    public void setStudySource(StudySourceCode studySource) {
+        if (studySource == null) {
+            this.studySource = "";
+        } else {
+            this.studySource = studySource.getCode();
+        }
+    }
+    
+    /**
+     * 
+     * @param studySource sets which pathway was used to submit the study.
+     */
+    public void setStudySource(String studySource) {
+        this.studySource = studySource;
+    }
+    
+    
 }

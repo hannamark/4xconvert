@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.dto;
 
+import gov.nih.nci.pa.enums.StudySourceCode;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,7 @@ public class BaseTrialDTO { // NOPMD
     private String leadOrgTrialIdentifier;
     private String leadOrganizationIdentifier;
     private String leadOrganizationName;
+    private StudySourceCode studySource;
 
     private List<SummaryFourSponsorsWebDTO> summaryFourOrgIdentifiers = new ArrayList<SummaryFourSponsorsWebDTO>();
     private String summaryFourFundingCategoryCode;
@@ -459,5 +462,17 @@ public class BaseTrialDTO { // NOPMD
         this.nciGrant = nciGrant;
     }
 
+    /**
+     * @return the source o the study.
+     */
+    public StudySourceCode getStudySource() {
+        return studySource;
+    }
+    /**
+     * @param studySource the value to set the study source to.
+     */
+    public void setStudySource(StudySourceCode studySource) {
+        this.studySource = studySource;
+    }
 
 }

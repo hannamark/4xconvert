@@ -133,6 +133,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Ii assignedUser;    
     private Bl nciGrant;
     private Set<StudyAlternateTitleDTO> studyAlternateTitles;
+    private Cd studySource;
 
     /**
      *
@@ -570,5 +571,21 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     public void setStudyAlternateTitles(
             Set<StudyAlternateTitleDTO> studyAlternateTitles) {
         this.studyAlternateTitles = studyAlternateTitles;
+    }
+    
+    /**
+     * Returns where the study was created
+     * @return the source that created the study
+     */
+    public Cd getStudySource() {
+        return studySource;
+    }
+    
+    /**
+     * Sets where the study was created
+     * @param source the source that created the study.
+     */
+    public void setStudySource(Cd source) {
+        studySource = source;
     }
 }

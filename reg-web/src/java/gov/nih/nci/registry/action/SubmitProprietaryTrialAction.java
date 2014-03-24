@@ -6,6 +6,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -255,6 +256,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         }
         try {
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
+            trialDTO.setStudySource(StudySourceCode.REGISTRY);
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             StudySiteAccrualStatusDTO siteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);

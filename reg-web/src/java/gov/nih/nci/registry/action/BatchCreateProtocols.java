@@ -95,6 +95,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -492,6 +493,7 @@ public class BatchCreateProtocols {
         } else {
             studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
         }
+        studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.BATCH));
         studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(userName));
         StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
         List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());

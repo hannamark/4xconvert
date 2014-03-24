@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -218,6 +219,7 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         HttpSession session = ServletActionContext.getRequest().getSession();
         session.setAttribute("trialDTO", dto);
         assertEquals("redirect_to_search", action.create());
+        assertEquals(StudySourceCode.REGISTRY, dto.getStudySource());
     }
     
     @Test

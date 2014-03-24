@@ -86,6 +86,7 @@ import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 
 import java.util.ArrayList;
@@ -142,6 +143,7 @@ public class StudyProtocolOptions {
     private List<OnholdReasonCode> onholdReasons = new ArrayList<OnholdReasonCode>();    
     private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();    
     private List<Integer> processingPriority = new ArrayList<Integer>();
+    private StudySourceCode studySource;
     
     /**
      * @return excludeRejectedTrials
@@ -776,5 +778,22 @@ public class StudyProtocolOptions {
         this.excludeTerminatedTrials = excludeTerminatedTrials;
     }
 
+    /**
+     * 
+     * @return the study source to filter by.
+     */
+    public StudySourceCode getStudySource() {
+        return studySource;
+    }
+
+    /**
+     * 
+     * @param studySource The study source to filet by or none for all sources
+     */
+    public void setStudySource(StudySourceCode studySource) {
+        this.studySource = studySource;
+    }
+
+    
     
 }

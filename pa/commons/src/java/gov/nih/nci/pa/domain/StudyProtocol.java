@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.LastCreatedComparator;
 import gov.nih.nci.pa.util.NotEmptyIiExtension;
@@ -179,6 +180,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private User assignedUser;
     private Boolean ctroOverride;
     private Boolean nciGrant;
+    private StudySourceCode studySource;
 
     private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(new LastCreatedComparator());
     private Set<DocumentWorkflowStatus> documentWorkflowStatuses =
@@ -988,5 +990,23 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     public void setStudyAlternateTitles(
             Set<StudyAlternateTitle> studyAlternateTitles) {
         this.studyAlternateTitles = studyAlternateTitles;
+    }
+    
+    /**
+     * Gets the source of the study, ie i it was entered through registry, through batch, etc.
+     * @return the source
+     */
+    @Column(name = "STUDY_SOURCE")
+    @Enumerated(EnumType.STRING)
+    public StudySourceCode getStudySource() {
+        return studySource;
+    }
+  
+    /**
+     * Sets the source of the study, ie i it was entered through registry, through batch, etc.
+     * @param source the source
+     */
+    public void setStudySource(StudySourceCode source) {
+        studySource = source;
     }
 }

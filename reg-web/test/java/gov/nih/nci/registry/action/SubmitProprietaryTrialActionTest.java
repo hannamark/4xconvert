@@ -9,6 +9,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
@@ -234,7 +235,9 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(sess);
         ServletActionContext.setRequest(request);
+        assertNull(tDto.getStudySource());
         assertEquals("review", action.create());
+        assertEquals(StudySourceCode.REGISTRY, tDto.getStudySource());
 
         tDto.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
         SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO(

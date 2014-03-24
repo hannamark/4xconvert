@@ -1640,6 +1640,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     .setExpandedAccessIndicator(studyProtocolDTO
                             .getExpandedAccessIndicator());
         }
+        if (!ISOUtil.isCdNull(studyProtocolDTO.getStudySource())) {
+            createStudyProtocolDTO.setStudySource(studyProtocolDTO.getStudySource());
+        }
         return createStudyProtocolDTO;
     }
 

@@ -264,6 +264,21 @@
                                 value="criteria.ctepDcpCategory" cssStyle="width:206px" />                        
                         </td>                                            
                     </tr>
+                    <tr>
+                    	<td scope="row" class="label">
+                            <label for="studySource"> <fmt:message key="studyProtocol.studySourceType"/></label>
+                        </td>
+                    	<td>
+                           <s:set name="studySourceCodeValues" value="@gov.nih.nci.pa.enums.StudySourceCode@getDisplayNames()" />                          
+                           <s:select headerKey="" headerValue="All" id="studySourceType" 
+                           name="criteria.studySource" list="#studySourceCodeValues"  
+                           cssStyle="width:206px" />                         
+                        </td>   
+                        <td scope="row" class="label">
+                        </td>
+                        <td>
+                        </td>                                            
+                    </tr>
                 </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">

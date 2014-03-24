@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -159,6 +160,7 @@ public class StudyProtocolConverter {
             StudyProtocolDTO studyProtocolDTO) {
         AbstractStudyProtocolConverter.convertFromDomainToDTO(studyProtocol, studyProtocolDTO);
         convertSecondaryPurposeToDto(studyProtocol, studyProtocolDTO);
+        studyProtocolDTO.setStudySource(CdConverter.convertToCd(studyProtocol.getStudySource()));
         studyProtocolDTO.setAcronym(StConverter.convertToSt(studyProtocol.getAcronym()));
         studyProtocolDTO.setAccrualReportingMethodCode(
                 CdConverter.convertToCd(studyProtocol.getAccrualReportingMethodCode()));
@@ -240,6 +242,8 @@ public class StudyProtocolConverter {
        AbstractStudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, studyProtocol);
        convertSecondaryPurposeToDomain(studyProtocolDTO, studyProtocol);
        studyProtocol.setId(IiConverter.convertToLong(studyProtocolDTO.getIdentifier()));
+       studyProtocol.setStudySource(CdConverter.convertCdToEnum(
+               StudySourceCode.class, studyProtocolDTO.getStudySource()));
        studyProtocol.setAcronym(StConverter.convertToString(studyProtocolDTO.getAcronym()));
        setSecondaryIdentifiers(studyProtocolDTO, studyProtocol);
        studyProtocol.setSummary4AnatomicSites(AnatomicSiteConverter

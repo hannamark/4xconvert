@@ -82,7 +82,7 @@ public class DisplayTrialOwnershipActionTest extends AbstractRegWebTest{
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
         
-        final ArrayList list = new ArrayList();
+        final ArrayList<DisplayTrialOwnershipInformation> list = new ArrayList<DisplayTrialOwnershipInformation>();
         final DisplayTrialOwnershipInformation webDTO = new DisplayTrialOwnershipInformation();
         webDTO.setUserId("1");
         webDTO.setTrialId("1");

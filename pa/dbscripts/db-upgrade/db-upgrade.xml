@@ -1529,4 +1529,8 @@
         <comment>update to pa_properties to change the n_value</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7071.sql"/>
      </changeSet>
+     <changeSet id="PO-6677" author="walterd">
+        <comment>add study source</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6677.sql"/>
+     </changeSet>
 </databaseChangeLog>

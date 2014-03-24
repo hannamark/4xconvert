@@ -81,6 +81,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -209,6 +210,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             }
             TrialUtil util = new TrialUtil();
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.YES);
+            trialDTO.setStudySource(StudySourceCode.REGISTRY);
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);

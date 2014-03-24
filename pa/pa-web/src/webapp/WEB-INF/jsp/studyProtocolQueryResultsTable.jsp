@@ -64,6 +64,7 @@
             <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdReasons" property="onHoldReasons"  headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdDates" property="onHoldDate" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.submissionType" property="submissionTypeCode"  headerClass="sortable"/>
+            <display:column escapeXml="true" titleKey="studyProtocol.studySource" property="studySource"  headerClass="sortable"/>
             
             <c:if test="${empty isBare}">
 	            <display:column titleKey="studyProtocol.adminCheckOutBy"  sortable="true" headerClass="sortable" >

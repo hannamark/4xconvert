@@ -92,6 +92,7 @@ import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -224,8 +225,10 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
         } catch (CurationException e) {
             throw new PAException("CurationException during updateTrial " , e);
         }
+        StudyProtocolDTO dto = getStudyProtocol(parser.getStudyProtocolDTO(), userName, null);
+        dto.setStudySource(CdConverter.convertToCd(StudySourceCode.PDQ));
         return PaRegistry.getTrialRegistrationService().createCompleteInterventionalStudyProtocol(
-                getStudyProtocol(parser.getStudyProtocolDTO(), userName, null),
+                dto,
                 getOverallStatusDTO(parser.getStudyOverallStatusDTO()),
                 getStudyIndIde(parser.getStudyIndldeDTOs(), parser.getStudyIdentifierMap()), null,
                 getDocumentDtos(parser.getUrl()), findOrCreateEntity(parser.getLeadOrganizationDTO()),

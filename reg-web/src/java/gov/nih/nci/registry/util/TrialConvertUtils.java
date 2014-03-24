@@ -271,6 +271,7 @@ public class TrialConvertUtils {
      */
     protected void convertToStudyProtocolDTO(TrialDTO trialDTO, StudyProtocolDTO isoDto) {
         setPrimaryPurposeToDTO(trialDTO, isoDto);
+        isoDto.setStudySource(CdConverter.convertToCd(trialDTO.getStudySource()));
         isoDto.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO.getStartDate())));
         isoDto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(trialDTO
                 .getStartDateType())));

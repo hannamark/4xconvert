@@ -81,6 +81,7 @@ package gov.nih.nci.pa.dto;
 import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 
@@ -183,6 +184,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private List<String> states = new ArrayList<String>();
     private List<Long> summary4AnatomicSites = new ArrayList<Long>();
     private List<OnholdReasonCode> onholdReasons = new ArrayList<OnholdReasonCode>();
+    private StudySourceCode studySource;
     
     private String familyId = "0";
     private String participatingSiteFamilyId = "0";
@@ -1321,5 +1323,36 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setExcludeTerminatedTrials(Boolean excludeTerminatedTrials) {
         this.excludeTerminatedTrials = excludeTerminatedTrials;
     }
+
+
+    /**
+     * 
+     * @return the study source to filter on.
+     */
+    public StudySourceCode getStudySource() {
+        return studySource;
+    }
+
+    /**
+     * 
+     * @param studySource the study source to fileter on, null for all.
+     */
+    public void setStudySource(StudySourceCode studySource) {
+        this.studySource = studySource;
+    }
+    
+    /**
+     * 
+     * @param studySource the study source to filter on
+     */
+    public void setStudySource(String studySource) {
+        if (studySource == null || studySource.isEmpty() || studySource.equalsIgnoreCase("All")) {
+            this.studySource = null;
+        }
+        
+        this.studySource = StudySourceCode.getByCode(studySource);
+    }
+    
+    
     
 }
