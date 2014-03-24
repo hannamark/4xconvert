@@ -1,11 +1,11 @@
 
 jQuery(document).ready(function() {
-jQuery('.navbar-nav .dropdown').hover(function() {
-  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(0).slideDown(200);
-}, function() {
-  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(100).slideUp(200)
-});
-
+	jQuery('.navbar-nav .dropdown').hover(function() {
+	  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(0).slideDown(200);
+	}, function() {
+	  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(100).slideUp(200)
+	});
+	
    jQuery(function (jQuery) {
         jQuery('[rel=tooltip]').tooltip()
     });
@@ -99,6 +99,37 @@ jQuery(function (jQuery) {
 	});   
  });
 
+ /*
+ bootstrap 3.0 with prototype.js breaks for tooltip, popover, dropdown menu
+ adding this function to check for bootstrap namespace for the event for these items
+ The issue is explained over here: https://github.com/twbs/bootstrap/issues/6921
+ */
+(function() {
+    var isBootstrapEvent = false;
+    if (window.jQuery) {
+        var all = jQuery('*');
+        jQuery.each(['hide.bs.dropdown', 
+            'hide.bs.collapse', 
+            'hide.bs.modal', 
+            'hide.bs.tooltip',
+            'hide.bs.popover'], function(index, eventName) {
+            all.on(eventName, function( event ) {
+                isBootstrapEvent = true;
+            });
+        });
+    }
+    var originalHide = Element.hide;
+    Element.addMethods({
+        hide: function(element) {
+            if(isBootstrapEvent) {
+                isBootstrapEvent = false;
+                return element;
+            }
+            return originalHide(element);
+        }
+    });
+})();
+
 
 // Increase/Decrease text size 
 
@@ -115,9 +146,9 @@ jQuery('#incfont').click(function(){
 
 // Show/Hide Search Criteria  
   
-  function toggledisplay (it, box) {
-var vis = (box.checked) ? "none" : "block";
-document.getElementById(it).style.display = vis;
+function toggledisplay (it, box) {
+	var vis = (box.checked) ? "none" : "block";
+	document.getElementById(it).style.display = vis;
 }
 
   /*
@@ -127,9 +158,9 @@ document.getElementById(it).style.display = vis;
 			        });
 	
 // affix the navbar after scroll below header 
-jQuery('#nav-new').affix({
+jQuery('#nav').affix({
       offset: {
-        top: jQuery('header').height()+jQuery('#nav-new').height()
+        top: jQuery('header').height()+jQuery('#nav').height()
       }
 });	
 
