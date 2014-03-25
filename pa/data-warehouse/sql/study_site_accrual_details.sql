@@ -18,6 +18,7 @@ CREATE TABLE stg_dw_study_site_accrual_details (
     registration_group character varying(200),
     sdc_disease_code character varying(10),
     sdc_disease_term character varying,
+    site_id bigint,
     site_org_id bigint,
     status character varying(200),
     study_subject_id character varying(200),

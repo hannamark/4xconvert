@@ -12,7 +12,7 @@ def sql = """
        pat.race_code AS race,
        pact.registration_date AS registration_date,
        registration_group_id AS registration_group,
-       ssub.study_site_identifier AS site_org_id,
+       ssub.study_site_identifier AS site_id,
        ssub.status_code AS status,
        ssub.assigned_identifier AS study_subject_id,
        ssub.user_last_created_id,
@@ -50,7 +50,7 @@ sourceConnection.eachRow(sql) { row ->
         race : row.race,
         registration_date : row.registration_date,
         registration_group : row.registration_group,
-        site_org_id : row.site_org_id,
+        site_id : row.site_id,
         status : row.status,
         study_subject_id : row.study_subject_id,
         user_last_created_id : row.user_last_created_id,
@@ -70,8 +70,9 @@ destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
    
 destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
                                  SET org_name = ps.org_name, 
-                                     org_org_family = ps.org_org_family
-                                 FROM stg_dw_study_participating_site ps where ssad.site_org_id = ps.internal_system_id""");
+                                     org_org_family = ps.org_org_family,
+                                     site_org_id = ps.org_po_id
+                                 FROM stg_dw_study_participating_site ps where ssad.site_id = ps.internal_system_id""");
 
 destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
                                  SET icd9_disease_code = disease_code,
