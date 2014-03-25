@@ -1030,6 +1030,33 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
     
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings(UNCHECKED)
+    public List<Long> getByPublicTitle(String publicTitle) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        List<Long> resultSet = new ArrayList<Long>();
+        List<Object> queryList = null;
+        SQLQuery query = session
+        .createSQLQuery("select DISTINCT(sp.identifier) " 
+                + " from study_protocol as sp where sp.status_code ='ACTIVE'"
+                + " and UPPER(sp.public_tittle) = UPPER(:title)");
+        query.setParameter("title", publicTitle);
+        queryList = query.list();
+        for (Object oArr : queryList) {
+            BigInteger ret = null;
+            if (oArr instanceof BigInteger) { 
+                ret =  (BigInteger) oArr;
+                if (oArr != null) {
+                    resultSet.add(ret.longValue());
+                }
+            }       
+        }
+        return resultSet;
+    }
+    
+    /**
      * @param studyIndldeService the studyIndldeService to set
      */
     public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {

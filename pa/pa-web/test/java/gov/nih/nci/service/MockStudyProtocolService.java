@@ -446,4 +446,10 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public List<Long> getByPublicTitle(String publicTitle) 
+            throws PAException {
+        return new ArrayList<Long>();
+    }
 }

@@ -368,4 +368,11 @@ public interface StudyProtocolService {
      * @throws PAException PAException
      */
     List<Long> getActiveAndInActiveTrialsByspId(Long id) throws PAException;
+    
+    /**
+     * @param publicTitle publicTitle
+     * @return List<Long>
+     * @throws PAException PAException
+     */
+    List<Long> getByPublicTitle(String publicTitle) throws PAException;
 }

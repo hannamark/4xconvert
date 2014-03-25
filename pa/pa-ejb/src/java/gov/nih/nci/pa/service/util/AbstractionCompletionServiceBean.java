@@ -128,6 +128,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
@@ -1311,7 +1312,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     }
 
     private void enforceTrialDescriptionDetails(StudyProtocolDTO studyProtocolDTO,
-            AbstractionMessageCollection messages) {
+            AbstractionMessageCollection messages) throws PAException {
         if (studyProtocolDTO.getPublicTitle().getValue() == null) {
             messages.addError(SELECT_TRIAL_DESCRIPTION, "Brief Title must be Entered", ErrorMessageTypeEnum.SCIENTIFIC,
                     11);
@@ -1319,6 +1320,10 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             if (!PAUtil.isWithinRange(studyProtocolDTO.getPublicTitle(), PAAttributeMaxLen.LEN_18,
                                       PAAttributeMaxLen.LEN_300)) {
                 messages.addError(SELECT_TRIAL_DESCRIPTION, "Brief Title must be between 18 and 300 characters ", 
+                        ErrorMessageTypeEnum.SCIENTIFIC, 11);
+            }
+            if  (!hasUniqueBriefTitle(studyProtocolDTO)) {
+                messages.addError(SELECT_TRIAL_DESCRIPTION, "Brief Title must be unique.", 
                         ErrorMessageTypeEnum.SCIENTIFIC, 11);
             }
         }
@@ -1333,6 +1338,16 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
+    private boolean hasUniqueBriefTitle(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        List<Long> protocolIdList = studyProtocolService.getByPublicTitle(StConverter
+                .convertToString(studyProtocolDTO.getPublicTitle()));
+        for (Long id : protocolIdList) {
+            if (id != IiConverter.convertToLong(studyProtocolDTO.getIdentifier()).longValue()) {
+               return false;
+            }
+        }
+        return true;
+    }
     private void enforceNCISpecificInfo(StudyProtocolDTO studyProtocolDTO, AbstractionMessageCollection messages) {
         if (studyProtocolDTO.getAccrualReportingMethodCode().getCode() == null) {
             messages.addError("Select NCI Specific Information from Administrative Data menu.",

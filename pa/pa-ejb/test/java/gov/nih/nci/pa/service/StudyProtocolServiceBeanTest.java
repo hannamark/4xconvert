@@ -1331,6 +1331,21 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     }
     
     @Test
+    public void testGetByPublicTitle() throws PAException {
+        InterventionalStudyProtocolDTO study1 = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        study1.setPublicTitle(StConverter.convertToSt("Test BriefTitle for complete"));
+        Ii id1 = remoteEjb.createInterventionalStudyProtocol(study1);
+        InterventionalStudyProtocolDTO study2 = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        study2.setPublicTitle(StConverter.convertToSt("Test BriefTitle for complete"));
+        Ii id2 = remoteEjb.createInterventionalStudyProtocol(study2);
+        List<Long> ids = remoteEjb.getByPublicTitle("Test BriefTitle for complete");
+        assertTrue(ids.size() > 0);
+        assertTrue(ids.size() == 2);
+        assertTrue(ids.get(0).equals(IiConverter.convertToLong(id1)));
+        assertTrue(ids.get(1).equals(IiConverter.convertToLong(id2)));
+    }
+    
+    @Test
     public void junitCoverage() throws PAException {
     	createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1", false);
     	
@@ -1364,5 +1379,6 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         
         dto.setStudyAlternateTitles(titles);
     }
+    
     
 }
