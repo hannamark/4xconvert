@@ -332,4 +332,9 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             throws PAException {
         return null;
     }
+
+    @Override
+    public List<Long> getByPublicTitle(String publicTitle) throws PAException {
+        return null;
+    }
 }
