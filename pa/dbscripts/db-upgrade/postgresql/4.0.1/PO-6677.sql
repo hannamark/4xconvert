@@ -33,4 +33,3 @@ CREATE OR REPLACE VIEW rv_search_results AS
    LEFT JOIN rv_last_hold hold ON sp.identifier = hold.study_protocol_identifier
    LEFT JOIN rv_trial_id_cdr cdr ON sp.identifier = cdr.study_protocol_id;
 
-ALTER TABLE rv_search_results OWNER TO pauser;
