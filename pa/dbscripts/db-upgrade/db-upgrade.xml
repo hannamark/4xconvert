@@ -1533,4 +1533,8 @@
         <comment>add study source</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6677.sql"/>
      </changeSet>
+     <changeSet id="PO-6677-2" author="walterd">
+        <comment>fix rv_search_results</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6677-2.sql"/>
+     </changeSet>
 </databaseChangeLog>
