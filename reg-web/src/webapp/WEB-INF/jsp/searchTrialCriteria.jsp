@@ -34,10 +34,16 @@
          document.forms[0].action="searchTrialquery.action";
          document.forms[0].submit();
     }
-    function sendXml(pId){
-         document.forms[0].action="searchTrialsendXml.action?studyProtocolId="+pId;
+    function viewXml(pId){
+         document.forms[0].target = "XML Generation";
+         document.forms[0].action="searchTrialviewXML.action?studyProtocolId="+pId;
          document.forms[0].submit();
     }
+    
+    function viewTsr(pId){
+        document.forms[0].action="searchTrialviewTSR.action?studyProtocolId="+pId;
+        document.forms[0].submit();
+   }
     
     function addMySite(pId) {
     	alert('Not yet implemented.');

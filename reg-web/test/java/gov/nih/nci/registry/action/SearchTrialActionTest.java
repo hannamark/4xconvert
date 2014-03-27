@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
@@ -21,12 +22,25 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolService;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockPAPersonServiceRemote;
@@ -35,6 +49,8 @@ import gov.nih.nci.registry.util.ComparableOrganizationDTO;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -44,6 +60,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.plaf.basic.BasicIconFactory;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -54,7 +71,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import com.fiveamsolutions.nci.commons.web.filter.UsernameFilter;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
@@ -68,6 +84,9 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
     private static final int MAX_CACHE_SIZE = 10;
     private SearchTrialAction action;
     private RegistryUserServiceLocal registryUserService;
+    private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService = mock(CTGovXmlGeneratorServiceLocal.class);
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService = mock(TSRReportGeneratorServiceRemote.class);
+    private StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
     /**
      * Initialization.
      * @throws Exception in case of error
@@ -115,6 +134,8 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         CSMUserService.setInstance(new MockCSMUserService());
         registryUserService = mock(RegistryUserServiceLocal.class);
         action.setRegistryUserService(registryUserService);
+        action.setCtGovXmlGeneratorService(ctGovXmlGeneratorService);
+        action.setTsrReportGeneratorService(tsrReportGeneratorService);
     }
 
     @Test
@@ -176,6 +197,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         action.setCriteria(criteria);
         assertEquals("success", action.query());
     }
+    
 
     @Test
     public void testQueryWithException() {
@@ -268,11 +290,28 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void testView() {
+    public void testView() throws PAException {
         action.setStudyProtocolId(1L);
+        registryUserService = mock(RegistryUserServiceLocal.class);
+        action.setRegistryUserService(registryUserService);
+        when(registryUserService.hasTrialAccess("user",action.getStudyProtocolId())).thenReturn(false);
         assertEquals("view", action.view());
     }
 
+    @Test
+    public void testViewProp() throws PAException {
+        action.setStudyProtocolId(1L);
+        registryUserService = mock(RegistryUserServiceLocal.class);
+        action.setRegistryUserService(registryUserService);
+        action.setStudyProtocolService(studyProtocolService);
+        when(registryUserService.hasTrialAccess("user",action.getStudyProtocolId())).thenReturn(true);
+        StudyProtocolDTO protocolDTO = new StudyProtocolDTO();
+        protocolDTO.setIdentifier(IiConverter.convertToIi(action.getStudyProtocolId()));
+        protocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(true));
+        when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(protocolDTO);
+        assertEquals("view", action.view());
+    }
+    
     @Test
     public void testViewDoc() throws Exception {
         action.setIdentifier(1L);
@@ -301,14 +340,69 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         assertEquals("partialView", action.partiallySubmittedView());
     }
 
+
     @Test
-    public void testSendXmlEmail() {
+    public void testViewXml() throws IOException, PAException {
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        queryCriteria.setNciIdentifier("NCI-2009-00001");
+        queryCriteria.setCtgovXmlRequiredIndicator("true");
+        ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
+        assertEquals("success", action.viewXML());
+        
+        action.setStudyProtocolId(1L);
+        Ii spIi = IiConverter.convertToStudyProtocolIi(action.getStudyProtocolId());
+        when(ctGovXmlGeneratorService.generateCTGovXml(spIi)).thenReturn("xmlData");
+        when(ctGovXmlGeneratorService.generateCTGovXml(spIi,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)).thenReturn("xmlData");
+        String result = action.viewXML();
+        assertEquals("success", result);
+        HttpServletResponse response = ServletActionContext.getResponse();
+        assertEquals("Wrong content type", "application/xml", response.getContentType());
+        assertEquals("", "UTF-8", response.getCharacterEncoding());
+        verify(ctGovXmlGeneratorService).generateCTGovXml(spIi,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
+    }
+    
+    @Test
+    public void testViewXmlException() throws IOException, PAException {
+        action.setStudyProtocolId(1L);
+        Ii spIi = IiConverter.convertToStudyProtocolIi(action.getStudyProtocolId());
+        when(ctGovXmlGeneratorService.generateCTGovXml(spIi)).thenThrow(new NullPointerException());
+        when(ctGovXmlGeneratorService.generateCTGovXml(spIi,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)).thenThrow(new NullPointerException());
+        String result = action.viewXML();
+        assertEquals("success", result);
+        verify(ctGovXmlGeneratorService).generateCTGovXml(spIi,
+                CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
+    }
+    
+    @Test
+    public void testViewTSR() throws IOException, PAException {
         StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
         queryCriteria.setNciIdentifier("NCI-2009-00001");
         ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
-        assertEquals("success", action.sendXml());
+        queryCriteria.setStudyProtocolId(1L);
+        assertEquals("success", action.viewTSR());
+        action.setStudyProtocolId(1L);
+        Ii spIi = IiConverter.convertToIi(action.getStudyProtocolId());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        output.write("rtfData".getBytes());
+        when(tsrReportGeneratorService.generateRtfTsrReport(any(Ii.class))).thenReturn(output);
+        String result = action.viewTSR();
+        assertEquals("success", result);
+        MockHttpServletResponse response = (MockHttpServletResponse) ServletActionContext.getResponse();
+        assertEquals("Wrong content type", "application/rtf;", response.getContentType());
+        verify(tsrReportGeneratorService).generateRtfTsrReport(spIi);
     }
-
+    
+    @Test
+    public void testViewTSRFailure() {
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        queryCriteria.setNciIdentifier("NCI-2009-00001");
+        ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
+        assertEquals("success", action.viewTSR());
+    }
+    
     @Test
     public void testMyTrialsOnly() {
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
@@ -598,6 +692,50 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         }
         assertEquals(MAX_CACHE_SIZE, cache.getSize());
 
+    }
+    @Test
+    public void testQueryShow() throws PAException, InterruptedException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
+
+            Cache cache = CacheUtils.getSearchResultsCache();
+            cache.removeAll();
+
+            SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+            criteria.setIdentifier("");
+            criteria.setIdentifierType("");
+            criteria.setOfficialTitle("");
+            criteria.setOrganizationType("");
+            criteria.setPhaseCode("");
+            criteria.setPrimaryPurposeCode("");
+            criteria.setMyTrialsOnly(true); // this will cause the mock to return
+                                            // entire MockProtocolQueryService.list.
+            List<StudyProtocolQueryDTO> searchResults = MockProtocolQueryService.list;
+            StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+            dto.setLeadOrganizationId(3L);
+            dto.setStudyProtocolId(3L);
+            dto.setNciIdentifier("NCI-2009-00015");
+            dto.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier3");
+            dto.setOfficialTitle("officialTitle test");
+            dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
+            dto.setProprietaryTrial(false);
+            dto.setStudyStatusDate(PAUtil.dateStringToTimestamp("4/15/2009"));
+            dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
+            dto.setCtgovXmlRequiredIndicator(true);
+            dto.setSummary4FundingSponsorType(SummaryFourFundingCategoryCode.INSTITUTIONAL.getName());
+            dto.getLastCreated().setUserLastCreated("firstName");
+            dto.setSearcherTrialOwner(true);
+            dto.setCurrentUserIsSiteOwner(true);
+            searchResults.add(dto);
+            action.setCriteria(criteria);
+
+            StudyProtocolQueryCriteria studyProtocolQueryCriteria = action
+                    .convertToStudyProtocolQueryCriteria();
+            String key = studyProtocolQueryCriteria.getUniqueCriteriaKey();
+
+            // Make sure results are cached.
+            ((MockHttpServletRequest) ServletActionContext.getRequest())
+                    .setMethod("POST");
+            assertEquals("success", action.query());
+            assertTrue(action.getRecords() == searchResults);
     }
 
     private void initializeCache(String name, int ttl, int tti)

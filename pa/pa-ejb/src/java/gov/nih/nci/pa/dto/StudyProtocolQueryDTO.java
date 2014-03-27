@@ -112,6 +112,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private boolean proprietaryTrial;
     private Date recordVerificationDate;
     private Boolean showSendXml = false;
+    private Boolean showViewTSR = false;
     private String summ4FundingSrcCategory;
     private boolean searcherTrialOwner = false;
     private String nctNumber;
@@ -249,7 +250,21 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     public void setShowSendXml(Boolean showSendXml) {
         this.showSendXml = showSendXml;
     }
-    
+    /**
+     * 
+     * @return showViewTSR
+     */
+    public Boolean getShowViewTSR() {
+        return showViewTSR;
+    }
+    /**
+     * 
+     * @param showViewTSR showViewTSR
+     */
+    public void setShowViewTSR(Boolean showViewTSR) {
+        this.showViewTSR = showViewTSR;
+    }
+
     /**
      * This field is set to true if and only if the person performing the search is considered a trial owner.
      * @return the isSearcherTrialOwner
@@ -523,6 +538,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
             || StringUtils.isNotEmpty(getAmend()) 
             || StringUtils.isNotEmpty(getStatusChangeLinkText()) 
             || getShowSendXml().booleanValue() 
+            || getShowViewTSR().booleanValue() 
             || isCurrentUserCanAddSite() 
             || isCurrentUserCanEditSite();
     }

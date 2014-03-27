@@ -125,10 +125,15 @@
 				                    </s:if>
 								</li>
 								<li>
-									<s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
-				                         <a href="javascript:void(0)" onclick="sendXml('${row.studyProtocolId}');">Send XML/TSR</a>
-				                    </s:if>
-								</li>
+                                    <s:if test="%{#attr.row.showViewTSR.booleanValue() == true}">
+                                         <a href="javascript:void(0)" onclick="viewTsr('${row.studyProtocolId}');">View TSR</a>
+                                    </s:if>
+                                </li>
+                                <li>
+                                    <s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
+                                         <a href="javascript:void(0)" onclick="viewXml('${row.studyProtocolId}');">View XML</a>
+                                    </s:if>
+                                </li>
 								<li>
 									<s:if test="%{#attr.row.currentUserCanAddSite}">
 				                        <s:url id="addMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>

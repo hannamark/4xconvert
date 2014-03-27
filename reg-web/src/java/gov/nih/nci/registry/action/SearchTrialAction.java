@@ -95,6 +95,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
@@ -104,34 +105,38 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
-import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.ComparableOrganizationDTO;
 import gov.nih.nci.registry.util.Constants;
-import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -201,7 +206,9 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyProtocolStageServiceLocal studyProtocolStageService;
     private CTGovSyncServiceLocal ctGovSyncService;
-    
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService; 
     private List<StudyProtocolQueryDTO> records;
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId;
@@ -232,6 +239,9 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         studyProtocolService = PaRegistry.getStudyProtocolService();
         studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
         ctGovSyncService = PaRegistry.getCTGovSyncService();
+        documentWorkflowStatusService = PaRegistry.getDocumentWorkflowStatusService();
+        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+        ctGovXmlGeneratorService = PaRegistry.getCTGovXmlGeneratorService(); 
     }
     
     /**
@@ -401,12 +411,24 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         checkVerifyData();
     }
     
-    private void checkToShow() {
+    private void checkToShow() throws PAException {
         for (StudyProtocolQueryDTO queryDto : records) {
             DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
-            if (!queryDto.isProprietaryTrial() && ABSTRACTED_CODES.contains(dwfs)
+            DocumentWorkflowStatusDTO lastDwfs = documentWorkflowStatusService.getPreviousStatus(IiConverter
+                       .convertToIi(queryDto.getStudyProtocolId()));
+            if (!queryDto.isProprietaryTrial() && (ABSTRACTED_CODES.contains(dwfs)
+                    || (lastDwfs != null 
+                    && ABSTRACTED_CODES.contains(CdConverter
+                          .convertCdToEnum(DocumentWorkflowStatusCode.class, lastDwfs.getStatusCode()))))
+                    && queryDto.isSearcherTrialOwner()) {
+                  queryDto.setShowViewTSR(true);
+            }
+            if (!queryDto.isProprietaryTrial() && (ABSTRACTED_CODES.contains(dwfs)
+                    || (lastDwfs != null 
+                    && ABSTRACTED_CODES.contains(CdConverter
+                          .convertCdToEnum(DocumentWorkflowStatusCode.class, lastDwfs.getStatusCode()))))
                     && queryDto.getCtgovXmlRequiredIndicator() && queryDto.isSearcherTrialOwner()) {
-                queryDto.setShowSendXml(true);
+                  queryDto.setShowSendXml(true);
             }
             queryDto.setUpdate("");
             queryDto.setStatusChangeLinkText("");
@@ -414,15 +436,6 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         }
     }
    
-//    private void checkVerifyData() {
-//        for (StudyProtocolQueryDTO queryDto : records) {
-//            DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
-//            if (ABSTRACTED_CODES.contains(dwfs) && queryDto.isSearcherTrialOwner() 
-//                    || queryDto.getLastCreated().getUserLastCreated().equals(currentUser)) {
-//                queryDto.setVerifyData(true);
-//            }  
-//        }
-//    }
     private void checkUpdatable(StudyProtocolQueryDTO queryDto, DocumentWorkflowStatusCode dwfs) {
         if (isUpdateableNonProperietaryTrial(queryDto, dwfs, queryDto.getStudyStatusCode())
                 || isUpdateableProprietaryTrial(queryDto, dwfs)) {
@@ -814,27 +827,70 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     }
 
     /**
-     * Send xml.
-     * 
-     * @return the string
+     * View TSR
+     * @return query
      */
-    public String sendXml() {
+    public String viewTSR() {
         Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-        String loginName = ServletActionContext.getRequest().getRemoteUser();
-        RegistryUserWebDTO regUserWebDto = RegistryUtil.getRegistryUserWebDto(loginName);
-        String fullName = regUserWebDto.getFirstName() + " " + regUserWebDto.getLastName();
-        String emailAddress = regUserWebDto.getEmailAddress();
         try {
             List<AbstractionCompletionDTO> errorList =
                     abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
             if (CollectionUtils.isEmpty(errorList) || !hasAnyAbstractionErrors(errorList)) {
-                mailManagerService.sendXMLAndTSREmail(fullName, emailAddress, studyProtocolIi);
+               try {
+                    HttpServletResponse servletResponse = ServletActionContext.getResponse();
+                    ByteArrayOutputStream reportData =
+                            tsrReportGeneratorService.generateRtfTsrReport(studyProtocolIi);
+                    servletResponse.setHeader("Content-disposition", "inline; filename=TsrReport.rtf");
+                    servletResponse.setContentType("application/rtf;");
+                    servletResponse.setContentLength(reportData.size());
+                    ServletOutputStream servletout = servletResponse.getOutputStream();
+                    reportData.writeTo(servletout);
+                    servletout.flush();
+                } catch (Exception e) {
+                    LOG.error("Error while generating TSR Summary report ", e);
+                }
             } else {
                 ServletActionContext.getRequest()
-                    .setAttribute(FAILURE_MESSAGE, "As Abstraction is not valid, sending letter is disabled .");
+                    .setAttribute(FAILURE_MESSAGE, "As Abstraction is not valid, viewing TSR is disabled .");
             }
         } catch (PAException e) {
-            addActionError("Exception while sending XML email:" + e.getMessage());
+            addActionError("Exception while viewing TSR:" + e.getMessage());
+        }
+        return query();
+    }
+    
+
+    /**
+     * view XML
+     * @return query
+     */
+    public String viewXML() {
+        Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+        try {
+            List<AbstractionCompletionDTO> errorList =
+                    abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
+            if (CollectionUtils.isEmpty(errorList) || !hasAnyAbstractionErrors(errorList)) {
+               try {
+                    HttpServletResponse servletResponse = ServletActionContext.getResponse();
+                    String xmlData = ctGovXmlGeneratorService.generateCTGovXml(
+                            IiConverter.convertToStudyProtocolIi(getStudyProtocolId()),
+                            CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
+                    servletResponse.setContentType("application/xml");
+                    servletResponse.setCharacterEncoding("UTF-8");
+                    servletResponse.setContentLength(xmlData.getBytes("UTF-8").length);
+                    OutputStreamWriter writer = new OutputStreamWriter(servletResponse.getOutputStream(), "UTF-8");
+                    writer.write(xmlData);
+                    writer.flush();
+                    writer.close();
+                } catch (Exception e) {
+                    LOG.error("Error while generating XML report ", e);
+                }
+            } else {
+                ServletActionContext.getRequest()
+                    .setAttribute(FAILURE_MESSAGE, "As Abstraction is not valid, viewing XML is disabled .");
+            }
+        } catch (PAException e) {
+            addActionError("Exception while viewing XML:" + e.getMessage());
         }
         return query();
     }
@@ -1117,7 +1173,29 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     public void setCtGovSyncService(CTGovSyncServiceLocal ctGovSyncService) {
         this.ctGovSyncService = ctGovSyncService;
     }
-
+    /**
+     * 
+     * @param documentWorkflowStatusService documentWorkflowStatusService
+     */
+    public void setDocumentWorkflowStatusService(
+         DocumentWorkflowStatusServiceLocal documentWorkflowStatusService) {
+        this.documentWorkflowStatusService = documentWorkflowStatusService;
+    }
+    
+    /**
+     * @param tsrReportGeneratorService the tsrReportGeneratorService to set
+     */
+    public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+        this.tsrReportGeneratorService = tsrReportGeneratorService;
+    }
+    
+    /**
+     * @param ctGovXmlGeneratorService the ctGovXmlGeneratorService to set
+     */
+    public void setCtGovXmlGeneratorService(CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService) {
+        this.ctGovXmlGeneratorService = ctGovXmlGeneratorService;
+    }
+    
     /**
      * @return the showAddMySite
      */
@@ -1131,4 +1209,5 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     public void setShowAddMySite(boolean showAddMySite) {
         this.showAddMySite = showAddMySite;
     }
+
 }
