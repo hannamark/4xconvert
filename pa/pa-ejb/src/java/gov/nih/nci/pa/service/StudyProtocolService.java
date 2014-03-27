@@ -112,7 +112,7 @@ public interface StudyProtocolService {
      * NCI assigned identifier; The ii.root is used to differentiate between DCP, NCT, CTEP identifiers; otherwise,
      * it is assumed to be the internal ID.
      * The NCI, DCP, NCT and CTEP identifiers must be the full identifier, as an exact match is performed,
-     * not a starts-with search.
+     * not a starts-with search. Trials having REJECTED workflow status will be excluded from search.
      * @param ii Primary DB ID or NCI assigned identifier, DCP Identifier, CTEP identifier or NCT identifier
      * of the study protocol to get. The ID must uniquely identify a study protocol.
      * @return StudyProtocolDTO

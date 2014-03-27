@@ -179,6 +179,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -839,6 +840,16 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     @SuppressWarnings(UNCHECKED)
     private StudyProtocolDTO getStudyProtocolByIi(Ii studyProtocolIi) throws PAException {
         List<StudyProtocol> results = searchProtocolsByIdentifier(studyProtocolIi);
+        CollectionUtils.filter(results, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                StudyProtocol sp = (StudyProtocol) arg0;
+                return sp.getDocumentWorkflowStatuses().isEmpty()
+                        || (!DocumentWorkflowStatusCode.REJECTED.equals(sp
+                                .getDocumentWorkflowStatuses().iterator()
+                                .next().getStatusCode()));
+            }
+        });
         checkResults(results, studyProtocolIi);
         
         final StudyProtocol sp = results.get(0);

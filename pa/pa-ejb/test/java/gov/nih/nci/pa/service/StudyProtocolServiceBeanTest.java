@@ -751,6 +751,41 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         spDTO = remoteEjb.getStudyProtocol(ii);
         assertNotNull(spDTO);
     }
+    
+    @Test
+    public void testGetStudyProtocolExcludingRejected() throws Exception {
+        List<InterventionalStudyProtocol> list = createStudyProtocols(2,
+                PAConstants.CTEP_ORG_NAME, "CTEP-123-REJTEST", false);
+
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("CTEP-123-REJTEST");
+        
+        try {
+            remoteEjb.getStudyProtocol(ii);
+            fail("This should have failed due to two trials with the same ctep id");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Reject one of them.
+        InterventionalStudyProtocol sp = list.get(0);
+        DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+        dws.setStudyProtocol(sp);
+        dws.setStatusCode(DocumentWorkflowStatusCode.REJECTED);
+        dws.setCommentText("Rejected");
+        dws.setUserLastUpdated(sp.getUserLastUpdated());
+        TestSchema.addUpdObject(dws);
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);
+        assertEquals(spDTO.getIdentifier().getExtension(), list.get(1).getId().toString());
+        
+        
+    }
+
 
     @Test
     public void loadStudyProtocol() throws Exception {
@@ -903,12 +938,14 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
      * @param identifierAssignerId the id of the identifier assigner
      * @param abstracted whether the trial should be abstracted
      */
-    private void createStudyProtocols(int count, String sponsorName, String identifierAssignerId, boolean abstracted) {
+    private List<InterventionalStudyProtocol> createStudyProtocols(int count,
+            String sponsorName, String identifierAssignerId, boolean abstracted) {
+        List<InterventionalStudyProtocol> list = new ArrayList<InterventionalStudyProtocol>();
         for (int i = 1; i <= count; i++) {
             InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
             sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
             sp = TestSchema.createInterventionalStudyProtocolObj(sp);
-
+            
             Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
             Ii spSecId = new Ii();
             spSecId.setExtension("NCI-2010-0000" + i);
@@ -1015,8 +1052,11 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
                 }
                 sp.getStudySites().add(studySite);
                 TestSchema.addUpdObject(studySite);
+                
             }
+            list.add(sp);
         }
+        return list;
     }
 
     @Test
