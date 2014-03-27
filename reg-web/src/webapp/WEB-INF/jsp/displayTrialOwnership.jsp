@@ -65,74 +65,62 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
 </SCRIPT>
 <body>
 <!-- main content begins-->
-<c:set var="topic" scope="request" value="displayownership"/>
-<h1><fmt:message key="displaytrialownership.page.header"/></h1>
-<div class="box" id="filters">
+ <div class="container">
+    
+	<c:set var="topic" scope="request" value="displayownership"/>
+	<h1 class="heading"><span><fmt:message key="displaytrialownership.page.header"/></span></h1>
     <reg-web:failureMessage/>
     <reg-web:sucessMessage/>
-    
-          <div id="ajaxIndicator" class="info" style="display: none;">
-                <img alt="Indicator" align="middle" src="../images/loading.gif"/>&nbsp;<fmt:message key="displaytrialownership.saving"/>
-          </div>
-          <div class="confirm_msg" style="display: none;" id="prefSaveConfirmation">
-              <strong>Message.</strong>&nbsp;<fmt:message key="displaytrialownership.saved"/>
-          </div>
-          <div class="error_msg" style="display: none;" id="prefSaveError">
-              <strong>Message.</strong>&nbsp;<fmt:message key="displaytrialownership.error"/>
-          </div>         
-    
-    
-    <s:form name="formDisplayTrialOwnership" action="displayTrialOwnershipview.action">
-        <table class="form">
-            <tr>
-                <td scope="row" class="label">
-                    <label for="firstName"> <fmt:message key="displaytrialownership.criteria.firstname"/></label>
-                </td>
-                <td>
-                    <s:textfield id="firstName" name="criteria.firstName" maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="lastName"> <fmt:message key="displaytrialownership.criteria.lastname"/></label>
-                </td>
-                <td>
-                    <s:textfield id="lastName" name="criteria.lastName"   maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="emailAddress"> <fmt:message key="displaytrialownership.criteria.email"/></label>
-                </td>
-                <td>
-                    <s:textfield id="emailAddress" name="criteria.emailAddress"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="nciIdentifier"> <fmt:message key="displaytrialownership.criteria.nciidentifier"/></label>
-                </td>
-                <td>
-                    <s:textfield id="nciIdentifier" name="criteria.nciIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                </td>
-            </tr>
-        </table>
-        <div class="actionsrow">
-            <del class="btnwrapper">
-                <ul class="btnrow">
-                    <li>
-                       <s:a href="javascript:void(0)" cssClass="btn" onclick="submitForm();"><span class="btn_img"><span class="search"><fmt:message key="displaytrialownership.buttons.search"/></span></span></s:a>
-                       <s:a href="javascript:void(0)" cssClass="btn" onclick="resetSearch();"><span class="btn_img"><span class="cancel"><fmt:message key="displaytrialownership.buttons.reset"/></span></span></s:a>
-                    </li>
-                </ul>
-            </del>
+      <div id="ajaxIndicator" class="info" style="display: none;">
+            <img alt="Indicator" align="middle" src="../images/loading.gif"/>&nbsp;<fmt:message key="displaytrialownership.saving"/>
+      </div>
+      <div class="confirm_msg" style="display: none;" id="prefSaveConfirmation">
+          <strong>Message.</strong>&nbsp;<fmt:message key="displaytrialownership.saved"/>
+      </div>
+      <div class="error_msg" style="display: none;" id="prefSaveError">
+          <strong>Message.</strong>&nbsp;<fmt:message key="displaytrialownership.error"/>
+      </div>         
+      <div class="filter-checkbox">
+	      <input type="checkbox" onclick="toggledisplay('filters', this)" id="filtercheckbox" name="checkbox">
+	      <label for="filtercheckbox">Hide Search Criteria</label>
+      </div>
+      <s:form name="formDisplayTrialOwnership" action="displayTrialOwnershipview.action"  cssClass="form-horizontal" role="form">
+      	 <div id="filters">
+		 <div class="form-group">
+        	<label for="firstName" class="col-xs-4 control-label"> <fmt:message key="displaytrialownership.criteria.firstname"/></label>
+            <div class="col-xs-4">    
+                <s:textfield id="firstName" name="criteria.firstName" maxlength="200" size="100" cssClass="form-control" />
+           </div>
+	     </div>
+	     <div class="form-group">
+            <label for="lastName" class="col-xs-4 control-label"> <fmt:message key="displaytrialownership.criteria.lastname"/></label>
+            <div class="col-xs-4">
+                <s:textfield id="lastName" name="criteria.lastName"   maxlength="200" size="100"  cssClass="form-control" />
+            </div>
+     	 </div>
+	     <div class="form-group">
+            <label for="emailAddress" class="col-xs-4 control-label"> <fmt:message key="displaytrialownership.criteria.email"/></label>
+            <div class="col-xs-4">
+         	   <s:textfield id="emailAddress" name="criteria.emailAddress"  maxlength="200" size="100"  cssClass="form-control" />
+            </div>
+      	 </div>
+         <div class="form-group">
+            <label for="nciIdentifier" class="col-xs-4 control-label"> <fmt:message key="displaytrialownership.criteria.nciidentifier"/></label>
+            <div class="col-xs-4">
+               <s:textfield id="nciIdentifier" name="criteria.nciIdentifier"  maxlength="200" size="100"  cssClass="form-control" />
+            </div>
+      	 </div>
+		<div class="bottom no-border">
+	        <button type="button" class="btn btn-icon btn-primary" onclick="submitForm();"> <i class="fa-search"></i><fmt:message key="displaytrialownership.buttons.search"/> </button>
+	        <button type="button" class="btn btn-icon btn-default" onclick="resetSearch();"><i class="fa-repeat"></i><fmt:message key="displaytrialownership.buttons.reset"/></button>
+      	</div>                      
         </div>
         <div class="line"></div>
         <s:set name="records" value="trialOwnershipInfo" scope="request"/>
-        <h2 id="search_results">Search Results</h2>
+        <h3 class="heading mt20"><span>Search Results</span></h3>
         <div id="viewAll" style="display:'none'">
            <s:a href="javascript:void(0)" onclick="viewPagination();" id="pageView"> View Pagination </s:a>
-           <display:table class="data" summary="This table contains your search results."
+           <display:table class="data table table-striped sortable" summary="This table contains your search results."
                      sort="list" id="row" name="records" requestURI="displayTrialOwnershipview.action" export="false">
             <display:column escapeXml="true" titleKey="displaytrialownership.results.firstname" property="firstName" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column escapeXml="true" titleKey="displaytrialownership.results.lastname" property="lastName" sortable="true" headerClass="sortable" headerScope="col"/>
@@ -158,7 +146,7 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
         </div>
         <div id="viewPagination">
            <s:a href="javascript:void(0)" onclick="viewAll();" id="allView"> View All </s:a>
-           <display:table class="data" summary="This table contains your search results."
+           <display:table class="data table table-striped sortable" summary="This table contains your search results."
                      sort="list" pagesize="50" id="row"
                          name="records" requestURI="displayTrialOwnershipview.action" export="false">
             <display:column escapeXml="true" titleKey="displaytrialownership.results.firstname" property="firstName" maxLength= "200" sortable="true" headerClass="sortable" headerScope="col"/>
