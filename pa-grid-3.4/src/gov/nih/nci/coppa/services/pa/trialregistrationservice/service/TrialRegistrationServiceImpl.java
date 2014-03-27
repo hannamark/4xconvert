@@ -26,6 +26,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.EDTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -36,6 +37,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -107,7 +109,8 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO =
                 StudyRegulatoryAuthorityTransformer.INSTANCE.toDto(studyRegulatoryAuthority);
-
+            studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.GRID_SERVICE));
+            
             Ii ii = trialRegService.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                             documentDTOs, leadOrganizationDTO, principalInvestigatorDTO, sponsorOrganizationDTO,
                             leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs, studyContactDTO,
@@ -144,7 +147,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
             Bl isBatch = new Bl();
             isBatch.setValue(Boolean.FALSE);
             defaultingUserLoggedIn(studyProtocolDTO);
-
+            studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.GRID_SERVICE));
             trialRegService.update(studyProtocolDTO, overallStatusDTO, studyIdentifierDTOs, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs, studyContactDTO, studySiteContactDTO, summary4organizationDTO,
                     summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs,
@@ -213,6 +216,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
           StudyRegulatoryAuthorityDTO studyRegAuthDTO =
               StudyRegulatoryAuthorityTransformer.INSTANCE.toDto(studyRegulatoryAuthority);
 
+          studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.GRID_SERVICE));
           Ii ii = trialRegService.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                           studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                           sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
@@ -253,6 +257,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
           isBatch.setValue(Boolean.FALSE);
           defaultingUserLoggedIn(studyProtocolDTO);
 
+          studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.GRID_SERVICE));
           Ii ii = trialRegService.createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                           documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                           studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summaryFourOrgList,
@@ -321,6 +326,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                     .convert(participatingSiteAccrualStatuses);
             List<DocumentDTO> documentDTOs = DocumentTransformer.INSTANCE
                     .convert(documents);
+            studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.GRID_SERVICE));
             propTrialMgmtService.update(studyProtocolDTO, leadOrganizationDTO,
                     summary4OrganizationDTO, leadOrganizationIdentifierDTO,
                     nctIdentifierDTO, summary4TypeCodeDTO, documentDTOs,
