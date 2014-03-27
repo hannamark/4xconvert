@@ -1656,7 +1656,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(studyProtocolIi);
             TrialRegistrationValidator validator = createValidator();
-            validator.validateRejection(studyProtocolDto);
+            validator.validateRejection(studyProtocolDto, milestoneCode);
             // Original trial Rejection
             if (studyProtocolDto.getSubmissionNumber().getValue().intValue() == 1) {
                 createStudyMileStone(studyProtocolIi, rejectionReason, 

@@ -105,6 +105,7 @@ import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -1284,15 +1285,30 @@ public class TrialRegistrationValidatorTest {
      * Test the validateUpdate method.
      * @throws PAException if an error occurs
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testValidateRejection() throws PAException {
         validator = mock(TrialRegistrationValidator.class);
         Ii spIi = IiConverter.convertToIi(1L);
         studyProtocolDTO.setIdentifier(spIi);
-        doCallRealMethod().when(validator).validateRejection(studyProtocolDTO);
-        validator.validateRejection(studyProtocolDTO);
+        doCallRealMethod().when(validator).validateRejection(studyProtocolDTO, MilestoneCode.READY_FOR_TSR);
+        validator.validateRejection(studyProtocolDTO, MilestoneCode.READY_FOR_TSR);
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Reject"), eq(false), (StringBuilder) any());
         verify(validator).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_REJECT),
+                                       eq(TrialRegistrationValidator.ERROR_MESSAGE_DWFS_FOR_REJECT),
+                                       (StringBuilder) any());
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testValidateLateRejection() throws PAException {
+        validator = mock(TrialRegistrationValidator.class);
+        Ii spIi = IiConverter.convertToIi(1L);
+        studyProtocolDTO.setIdentifier(spIi);
+        doCallRealMethod().when(validator).validateRejection(studyProtocolDTO, MilestoneCode.LATE_REJECTION_DATE);
+        validator.validateRejection(studyProtocolDTO, MilestoneCode.LATE_REJECTION_DATE);
+        verify(validator).validateUser(eq(studyProtocolDTO), eq("Reject"), eq(false), (StringBuilder) any());
+        verify(validator, never()).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_REJECT),
                                        eq(TrialRegistrationValidator.ERROR_MESSAGE_DWFS_FOR_REJECT),
                                        (StringBuilder) any());
     }

@@ -90,6 +90,7 @@ import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -185,7 +186,7 @@ public class TrialRegistrationValidator {
     static final Set<DocumentWorkflowStatusCode> ERROR_DWFS_FOR_REJECT = EnumSet.complementOf(EnumSet
         .of(DocumentWorkflowStatusCode.SUBMITTED, DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED, 
                 DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.ABSTRACTED, 
-                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE, 
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, 
                 DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE, 
                 DocumentWorkflowStatusCode.VERIFICATION_PENDING));
     /**
@@ -995,12 +996,17 @@ public class TrialRegistrationValidator {
     /**
      * Validates the input for a trial amendment.
      * @param studyProtocolDTO The study protocol
+     * @param milestoneCode MilestoneCode
      * @throws PAException If any validation error happens
      */
-    public void validateRejection(StudyProtocolDTO studyProtocolDTO) throws PAException {
+    public void validateRejection(StudyProtocolDTO studyProtocolDTO, MilestoneCode milestoneCode) throws PAException {
         StringBuilder errorMsg = new StringBuilder();
         validateUser(studyProtocolDTO, REJECTION, false, errorMsg);
-        validateDWFS(studyProtocolDTO.getIdentifier(), ERROR_DWFS_FOR_REJECT, ERROR_MESSAGE_DWFS_FOR_REJECT, errorMsg);
+        if (!MilestoneCode.LATE_REJECTION_DATE.equals(milestoneCode)) {
+            validateDWFS(studyProtocolDTO.getIdentifier(),
+                    ERROR_DWFS_FOR_REJECT, ERROR_MESSAGE_DWFS_FOR_REJECT,
+                    errorMsg);
+        }
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);
         }
