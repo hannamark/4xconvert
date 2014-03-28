@@ -35,8 +35,17 @@
             }
 
             function assignOwner(userId) {
-                document.forms[0].action="assignOwnershipsave.action?userId=" + userId;
-                document.forms[0].submit();
+             var trialCategory = $('trialCategory').value;
+             if(trialCategory == 'Abbreviated Trial') {
+                if (confirm("<fmt:message key='assignOwnership.industrial.Confirm' />")) {
+                    document.forms[0].action="assignOwnershipsave.action?userId=" + userId;
+                    document.forms[0].submit();
+                }
+             } else {
+                 document.forms[0].action="assignOwnershipsave.action?userId=" + userId;
+                 document.forms[0].submit();
+             }
+             
             }
 
             function removeOwner(userId) {
@@ -90,7 +99,7 @@
         <h1><fmt:message key="assignOwbership.title"/></h1>
         <c:set var="topic" scope="request" value="recordownership"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
-            
+        <input type="hidden" name="trialCategory" id="trialCategory" value="${sessionScope.trialSummary.trialCategory}"/>
         <s:set name="trialOwners" value="trialOwners" scope="request"/>
         <div style="font-weight:bold;color:#333333">
         <fmt:message key="trialOwners.title"/>
