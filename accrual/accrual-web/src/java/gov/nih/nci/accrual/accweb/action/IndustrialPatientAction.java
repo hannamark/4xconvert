@@ -94,10 +94,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -112,10 +110,8 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
     private static final long serialVersionUID = 1L;
     private Long studyProtocolId;
     private List<StudySiteSubjectAccrualCount> studySiteCounts;
-    private List<Long> sitesToSave;
-    private List<Long> submittedSiteIds = new ArrayList<Long>();
-    private List<String> submittedCounts = new ArrayList<String>();
-    private List<Long> sitesToDelete;
+    private String submittedCounts;
+    private String selectedRowIdentifier;
     
     /**
      * {@inheritDoc}
@@ -175,15 +171,12 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
      */
     public String update() {
         try {
-            if (getSitesToSave() != null) {
                 List<StudySiteSubjectAccrualCount> counts = getCounts();
-                parseCounts(counts);
+                parseCount(counts);
                 AccrualServiceLocator.getInstance().getSubjectAccrualCountService().save(counts);
                 ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                         AccrualConstants.UPDATE_MESSAGE);
-                setSitesToSave(null);
                 checkIfNonInterventionalTrialChanges();
-            }
         } catch (PAException e) {
             addActionError(e.getMessage());
             loadSiteSubjectAccrualCount();
@@ -198,18 +191,11 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
      */
     public String delete() {
         try {
-            if (CollectionUtils.isEmpty(getSitesToDelete())) {
-                throw new PAException("Please select one or more record(s) to delete");
-            } else {
-                for (Long id : getSitesToDelete()) {
-                    AccrualServiceLocator.getInstance().getSubjectAccrualCountService().delete(
-                            IiConverter.convertToIi(id), getSpIi());
-                }
+                AccrualServiceLocator.getInstance().getSubjectAccrualCountService().delete(
+                            IiConverter.convertToIi(getSelectedRowIdentifier()), getSpIi());
                 ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                         AccrualConstants.COUNT_DELETE_MESSAGE);
-                setSitesToDelete(null);
                 checkIfNonInterventionalTrialChanges();
-            }
         } catch (PAException e) {
             addActionError(e.getMessage());
             loadSiteSubjectAccrualCount();
@@ -218,17 +204,9 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
         return "saved";
     }
 
-    private void parseCounts(List<StudySiteSubjectAccrualCount> counts) throws PAException {
-        for (int i = 0; i < getSubmittedSiteIds().size(); i++) {
-            if (getSitesToSave().contains(getSubmittedSiteIds().get(i))) {
-                parseCount(counts, i);
-            }
-        }
-    }
-
-    private void parseCount(List<StudySiteSubjectAccrualCount> counts, int countIndex) throws PAException {
-        StudySiteSubjectAccrualCount count = getSiteCount(counts, getSubmittedSiteIds().get(countIndex));
-        updateCountForSiteIfSet(count, getSubmittedCounts().get(countIndex));
+    private void parseCount(List<StudySiteSubjectAccrualCount> counts) throws PAException {
+        StudySiteSubjectAccrualCount count = getSiteCount(counts, Long.valueOf(getSelectedRowIdentifier()));
+        updateCountForSiteIfSet(count, getSubmittedCounts());
     }
 
     StudySiteSubjectAccrualCount getSiteCount(List<StudySiteSubjectAccrualCount> counts, Long siteId)
@@ -294,58 +272,29 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
     }
 
     /**
-     * @param submittedSiteIds the submittedSiteIds to set
-     */
-    public void setSubmittedSiteIds(List<Long> submittedSiteIds) {
-        this.submittedSiteIds = submittedSiteIds;
-    }
-
-    /**
-     * @return the submittedSiteIds
-     */
-    public List<Long> getSubmittedSiteIds() {
-        return submittedSiteIds;
-    }
-
-    /**
      * @return the submittedCounts
      */
-    public List<String> getSubmittedCounts() {
+    public String getSubmittedCounts() {
         return submittedCounts;
     }
 
     /**
      * @param submittedCounts the submittedCounts to set
      */
-    public void setSubmittedCounts(List<String> submittedCounts) {
+    public void setSubmittedCounts(String submittedCounts) {
         this.submittedCounts = submittedCounts;
     }
-
+    
     /**
-     * @return the sitesToSave
+     * @return the selectedRowIdentifier
      */
-    public List<Long> getSitesToSave() {
-        return sitesToSave;
+    public String getSelectedRowIdentifier() {
+        return selectedRowIdentifier;
     }
-
     /**
-     * @param sitesToSave the sitesToSave to set
+     * @param selectedRowIdentifier the selectedRowIdentifier to set
      */
-    public void setSitesToSave(List<Long> sitesToSave) {
-        this.sitesToSave = sitesToSave;
-    }
-
-    /**
-     * @return the sitesToDelete
-     */
-    public List<Long> getSitesToDelete() {
-        return sitesToDelete;
-    }
-
-    /**
-     * @param sitesToDelete the sitesToDelete to set
-     */
-    public void setSitesToDelete(List<Long> sitesToDelete) {
-        this.sitesToDelete = sitesToDelete;
+    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
+        this.selectedRowIdentifier = selectedRowIdentifier;
     }
 }

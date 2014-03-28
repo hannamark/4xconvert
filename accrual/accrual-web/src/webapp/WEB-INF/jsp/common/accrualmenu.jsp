@@ -1,122 +1,31 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<li class="stdnav"><div>NCI CTRP</div>
-    <ul>
-        <c:choose>
-           <c:when test="${requestScope.topic == 'home'}">
-              <li><a href="home.action" class="selected">Home</a></li>
-           </c:when>
-           <c:otherwise>
-              <li><a href="home.action">Home</a></li>
-           </c:otherwise>
-        </c:choose>
-        <c:choose>
-            <c:when test="${pageContext.request.remoteUser != null}">
-                 <c:choose>
-                    <c:when test="${requestScope.topic == 'trialsintro'}">
-                       <li><a href="viewTrials.action" class="selected">Trial Search</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="viewTrials.action" >Trial Search</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.trialType.value == sessionScope.interTrial}">
-                        <c:choose>
-	                        <c:when test="${!sessionScope.trialSummary.industrial.value}">
-		                        <c:choose>
-		                            <c:when test="${(requestScope.topic == 'subjectsintro') || (requestScope.topic == 'subjectsadding') || (requestScope.topic == 'subjectsupdate')}">
-		                                <li><a href="patients.action" class="selected">Study Subject Search</a></li> 
-		                            </c:when>
-		                            <c:otherwise>
-		                                <li><a href="patients.action" >Study Subject Search</a></li>
-		                            </c:otherwise>
-		                        </c:choose>
-	                        </c:when>
-                        </c:choose>
-	                    <c:choose>
-		                    <c:when test="${sessionScope.trialSummary.industrial.value}">
-		                        <c:choose>
-		                            <c:when test="${(requestScope.topic == 'accrualcount')}">
-		                                <li><a href="industrialPatients.action" class="selected">Record Accrual Count</a></li> 
-		                            </c:when>
-		                            <c:otherwise>
-		                                <li><a href="industrialPatients.action" >Record Accrual Count</a></li>
-		                            </c:otherwise>
-		                        </c:choose>
-		                    </c:when>
-	                   </c:choose>                    
-                    </c:when>
-                    <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial}">
-                        <c:choose>
-                            <c:when test="${sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.patientLevel}">
-                                <c:choose>
-                                    <c:when test="${(requestScope.topic == 'subjectsintro') || (requestScope.topic == 'subjectsadding') || (requestScope.topic == 'subjectsupdate')}">
-                                        <li><a href="patients.action" class="selected">Study Subject Search</a></li> 
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li><a href="patients.action" >Study Subject Search</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:when>
-                            <c:otherwise>                                
-		                        <c:choose>
-		                            <c:when test="${(requestScope.topic == 'accrualcount')}">
-		                                <li><a href="industrialPatients.action" class="selected">Record Accrual Count</a></li> 
-		                            </c:when>
-		                            <c:otherwise>
-		                                <li><a href="industrialPatients.action" >Record Accrual Count</a></li>
-		                            </c:otherwise>
-		                        </c:choose>
-                            </c:otherwise>                        
-                        </c:choose>
-                    </c:when>                    
-                </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'batchupload'}">
-                        <li><a href="batchUpload.action" class="selected">Batch Upload</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                        <li><a href="batchUpload.action" >Batch Upload</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'priorsubmissions'}">
-                        <li><a href="priorSubmissions.action" class="selected">Prior Submissions</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                        <li><a href="priorSubmissions.action" >Prior Submissions</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'accrualcounts'}">
-                        <li><a href="accrualCounts.action" class="selected">Accrual Counts</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                        <li><a href="accrualCounts.action">Accrual Counts</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'diseasesearch'}">
-                        <li><a href="diseaseSearch.action" class="selected">Disease Search</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                        <li><a href="diseaseSearch.action" >Disease Search</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <li><a href="/accrual/logout.action" >Log Out</a></li>
-            </c:when>
-            <c:otherwise>
-               <c:choose>
-                   <c:when test="${requestScope.topic == 'login'}">
-                      <li><a href="/accrual/protected/welcome.action" class="selected">Log In</a></li>
-                   </c:when>
-                   <c:otherwise>
-                      <li><a href="/accrual/protected/welcome.action" >Log In</a></li>
-                   </c:otherwise>
-               </c:choose>
-            </c:otherwise>
-        </c:choose>
-    </ul>
-</li>
+<!-- Fixed navbar -->
+  <div class="navbar navbar-custom navbar-inverse navbar-static-top" id="nav">
+    <div class="container">
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="viewTrials.action">Trial Search</a></li>
+          <li><a href="batchUpload.action">Batch Upload</a></li>
+          <li><a href="priorSubmissions.action">Prior Submissions</a></li>
+          <li><a href="accrualCounts.action">Accrual Counts</a></li>
+          <li><a href="diseaseSearch.action">Disease Search</a></li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Quick Links <b class="caret"></b></a>
+            <ul class="dropdown-menu external-links">
+              <li><a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main">Clinical Trials Reporting Program (CTRP)</a></li>
+              <li><a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources">Useful Templates and Documentation</a></li>
+              <li><a href="http://www.cancer.gov/">National Cancer Institute (NCI)</a></li>
+              <li><a href="http://cbiit.nci.nih.gov/">NCI Center for Biomedical Informatics and Information Technology (CBIIT)</a></li>
+              <li><a href="https://cabig.nci.nih.gov/">caBIG&#0153; - Cancer Biomedical Informatics Grid&#0153; </a></li>
+            </ul>
+          </li>
+          <li><a href="#" data-toggle="modal" data-target="#contactUs">Contact Us</a></li>
+        </ul>
+        <div class="pull-right text-sizer"><a href="#" id="incfont">A+</a><a href="#" id="decfont">A-</a></div>
+      </div>
+      <!--/.nav-collapse --> 
+    </div>
+    <!--/.container --> 
+  </div>
+        <div id="stickyalias"></div>
 
-
+  <!--/.navbar --> 

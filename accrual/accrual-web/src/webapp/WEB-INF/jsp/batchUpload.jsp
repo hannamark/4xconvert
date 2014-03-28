@@ -1,36 +1,54 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <c:set var="topic" scope="request" value="batchupload"/>
-    <head>
-        <title><fmt:message key="accrual.batchUpload.title"/></title>
-        <s:head />
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/overlib.js"/>"></script>
-    </head>
-    <body>
-        <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
-        <s:if test="hasActionMessages()"><div class="confirm_msg"><s:actionmessage /></div></s:if>
-        <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
-        <h1><fmt:message key="accrual.batchUpload.title"/></h1>
-        <s:form action="batchUploaddoUpload" method="POST" enctype="multipart/form-data">
-            <s:token/>
-            <table class="form">
-                <tr>
-                   <td class="value" style="width:250px">
-                    <accrual:displayTooltip tooltip="tooltip.browse">
-                        <label for="upload"><fmt:message key="accrual.batchUpload.label"/></label><s:file id="upload" name="upload" label="File"/>
-                    </accrual:displayTooltip>
-                   </td>
-                </tr>
-            </table>
-            <div class="actionsrow">
-                <div class="btnwrapper">
-                    <ul class="btnrow">
-                        <accrual:button labelKey="button.submit" href="#" style="save" onclick="document.forms[0].submit();"/>
-                    </ul>
-                </div>
-            </div>
-        </s:form>
-    </body>
+<html lang="en">
+<c:set var="topic" scope="request" value="batchupload" />
+<head>
+<title><fmt:message key="accrual.batchUpload.title" /></title>
+<s:head />
+</head>
+<body>
+	<s:if test="hasActionErrors()">
+		<div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong>
+			<s:actionerror />.
+		</div>
+	</s:if>
+	<s:if test="hasActionMessages()">
+		<div class="alert alert-success"> <i class="fa-check-circle"></i><strong>Message:</strong> 
+			<s:actionmessage />.
+		</div>
+	</s:if>
+	<div class="container">
+		<h1 class="heading">
+			<span><fmt:message key="accrual.batchUpload.title" /></span>
+		</h1>
+		<div class="row">
+			<div class="col-xs-5">
+				<p>Click Browse and select the ZIP or TXT file that contains the
+					accrual data. Then click Submit.</p>
+				<hr>
+				<s:form role="form" cssClass="form-horizontal mt20"
+					action="batchUploaddoUpload" method="POST"
+					enctype="multipart/form-data">
+					<s:token />
+					<div class="form-group">
+						<label for="upload" class="col-xs-4 control-label left-align"><fmt:message
+								key="accrual.batchUpload.label" /></label>
+						<div class="col-xs-8">
+							<s:file id="upload" name="upload" label="File" />
+						</div>
+					</div>
+					<hr>
+					<div class="form-group">
+						<button type="button" style="margin-left: 95px;"
+							class="btn btn-icon-alt btn-primary"
+							onclick="document.forms[0].submit();">
+							Submit<i class="fa-arrow-circle-right"></i>
+						</button>
+					</div>
+				</s:form>
+			</div>
+		</div>
+	</div>
+</body>
 </html>

@@ -1,21 +1,13 @@
-<!DOCTYPE html PUBLIC
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <c:set var="topic" scope="request" value="priorsubmissions"/>
 <head>
     <title><fmt:message key="priorSubmissions.title"/></title>
     <s:head/>
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/overlib.js"/>"></script>
     <script type="text/javascript" language="javascript">
-      addCalendar("CalFrom", "Select Date", "dateFrom", "listForm");
-      addCalendar("CalTo", "Select Date", "dateTo", "listForm");
-      setWidth(90, 1, 15, 1);
-      setFormat("mm/dd/yyyy");
       function handleSearch(){
         document.forms[0].action="priorSubmissions.action";
         document.forms[0].submit();
@@ -23,48 +15,49 @@
     </script>
 </head>
 <body>
-<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
-<h1><fmt:message key="priorSubmissions.title"/></h1>
-  <s:form name="listForm">
-   <h3><fmt:message key="priorSubmissions.dates.label"/></h3>
-    <table class="form">
-      <tr>
-        <td class="label">
-          <accrual:displayTooltip tooltip="tooltip.from">
-          <label for="dateFrom"><fmt:message key="priorSubmissions.dates.from"/></label>
-          </accrual:displayTooltip>
-        </td>
-        <td>
-          <s:textfield id ="dateFrom" name="dateFrom" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-          <a href="javascript:showCal('CalFrom')"><img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
-        </td>
-      </tr>
-      <tr>
-        <td class="label">       
-          <accrual:displayTooltip tooltip="tooltip.to">
-          <label for="dateTo"><fmt:message key="priorSubmissions.dates.to"/></label>
-          </accrual:displayTooltip>
-        </td>
-        <td> 
-          <s:textfield id ="dateTo" name="dateTo" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-          <a href="javascript:showCal('CalTo')"><img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" /></a>
-        </td>
-      </tr>
-    </table>
-    <div class="actionsrow">
-        <del class="btnwrapper">
-           <ul class="btnrow">
-            <li>
-            <s:a href="#" cssClass="btn" onclick="handleSearch()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-            </li>
-           </ul>
-        </del>
-    </div>
+<script>
+$(function()
+		{
+		    var export1 = document.getElementById('export');
+		    if(export1 != null)
+		    {
+		        var export2 = export1.cloneNode(true);
+		        var datagrid = document.getElementById('datagrid');
+		        datagrid.insertBefore(export2, datagrid.firstChild);
+		    }
+		});
+</script>
+<div class="container">
+    <h1 class="heading"><span><fmt:message key="priorSubmissions.title"/></span></h1>
+  <s:form name="listForm" cssClass="form-horizontal" role="form">
+    <div class="form-group">
+        <label for="" class="col-xs-3 control-label"><fmt:message key="priorSubmissions.dates.label"/><br/>
+          <small>(optional)</small> </label>
+        <div class="col-xs-2 p0">
+          <div id="datetimepicker" class="datetimepicker input-append">
+            <p class="form-control-static pull-left mr10"><label for="dateFrom"><em><fmt:message key="priorSubmissions.dates.from"/></em></label></p>
+            <input data-format="MM/dd/yyyy" type="text" class="form-control" placeholder="mm/dd/yyyy" id ="dateFrom" name="dateFrom"/>
+            <span class="add-on btn-default"><i class="fa-calendar"></i></span><accrual:displayTooltip tooltip="tooltip.from"/></div>
+            
+        </div>
+        <div class="col-xs-2">
+          <div id="datetimepicker" class="datetimepicker input-append">
+            <p class="form-control-static pull-left mr10"><label for="dateTo"><em><fmt:message key="priorSubmissions.dates.to"/></em></label></p>
+            <input data-format="MM/dd/yyyy" type="text" class="form-control" placeholder="mm/dd/yyyy"/>
+            <span class="add-on btn-default"><i class="fa-calendar"></i></span><accrual:displayTooltip tooltip="tooltip.to"/> </div>
+            
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-xs-4 col-xs-offset-3 mt20">
+          <button type="button" class="btn btn-icon btn-primary" onclick="handleSearch()"> <i class="fa-search"></i>Search</button>
+        </div>
+      </div>
   </s:form>
-  <div class="line"></div>
-  <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
-
-  <display:table class="data" summary="This table contains list of submissions.  Please use column headers to sort results"
+  <s:if test="hasActionErrors()"><div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong><s:actionerror />.</div></s:if>
+<h3 class="heading mt20"><span>Search Results</span></h3>
+  <div id="datagrid">
+  <display:table class="table table-striped sortable" summary="This table contains list of submissions.  Please use column headers to sort results"
                   sort="list" pagesize="10" id="row" name="displayTagList" requestURI="priorSubmissions.action" export="true">                                             
        <display:setProperty name="export.xml" value="false"/>
        <display:setProperty name="export.excel.filename" value="resultsPriorSubmissions.xls"/>
@@ -108,6 +101,8 @@
        <display:column titleKey="priorSubmissions.list.date" property="date" format="{0,date,yyyy-MM-dd HH.mm.ss}" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="priorSubmissions.list.user" property="username" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="priorSubmissions.list.result" property="result" sortable="true" headerClass="sortable" headerScope="col"/>
-   </display:table>    
+   </display:table>
+   </div>   
+   </div> 
 </body>
 </html>

@@ -1,33 +1,18 @@
-<!DOCTYPE html PUBLIC 
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">    
+<!DOCTYPE html>    
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 
-<div class="summarybox">
-    <div class="row">
-       <span class="label">
+<div class="row summary-box">
+    <div class="col-xs-5">
+       <p><strong>
           <c:out value="${sessionScope.trialSummary.assignedIdentifier.value}"/>:
-       </span>
-        <span class="value">
-          <c:out value="${sessionScope.trialSummary.officialTitle.value}"/>
-        </span>
-    </div>        
-    <div class="float33_first">
-      <div class="row">
-          <span class="label"> <fmt:message key="accrual.trialSummary.lead.organization.trialID"/></span> 
-          <span class="value"><c:out value="${sessionScope.trialSummary.leadOrgTrialIdentifier.value}"/></span>
+       </strong><span id="popover" rel="popover" data-content='<c:out value="${sessionScope.trialSummary.officialTitle.value}"/>'>
+       <c:out value="${sessionScope.trialSummary.officialTitle.value}"/></span></p>
+      </div> 
+    <div class="col-xs-4">
+          <p><strong><fmt:message key="accrual.trialSummary.lead.organization.trialID"/></strong> <c:out value="${sessionScope.trialSummary.leadOrgTrialIdentifier.value}"/></p>
+      <p> <strong><fmt:message key="accrual.trialSummary.lead.organization"/></strong> <c:out value="${sessionScope.trialSummary.leadOrgName.value}"/></p>
       </div>
-      <div class="row">
-          <span class="label"><fmt:message key="accrual.trialSummary.lead.organization"/></span> 
-          <span class="value"><c:out value="${sessionScope.trialSummary.leadOrgName.value}"/></span>
-      </div>
-     
-    </div>
-    <div class="float33">
-      <div class="row">
-          <span class="label"><fmt:message key="accrual.trialSummary.principal.investigator"/></span> 
-          <span class="value"> <c:out value="${sessionScope.trialSummary.principalInvestigator.value}"/></span>
+    <div class="col-xs-3">
+          <p><strong><fmt:message key="accrual.trialSummary.principal.investigator"/></strong> <span class="text-muted"><c:out value="${sessionScope.trialSummary.principalInvestigator.value}"/></span></p>
       </div>
     </div>
-    <div class="clear"></div>
-</div>

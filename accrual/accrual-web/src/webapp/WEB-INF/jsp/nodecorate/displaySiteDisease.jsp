@@ -1,12 +1,10 @@
 <%@ taglib prefix="s" uri="/struts-tags"%> 
-<div class="padme5">
-  <s:textfield id ="sitedisease" readonly="true" name="patient.siteDiseasePreferredName" maxlength="400" size="50" 
-               cssStyle="width:280px;float:left" cssClass="readonly"/> 
+<div class="col-xs-3">
+  <s:textfield id ="sitedisease" readonly="true" name="patient.siteDiseasePreferredName" cssClass="form-control"/> 
   <s:hidden name="patient.siteDiseaseIdentifier"/>
-  <ul>
-      <li style="padding-left: 0"><a href="#" class="btn"
-          onclick="lookup('true');" /><span class="btn_img"><span
-          class="search">Look Up</span></span></a>
-      </li>
-  </ul>
-</div>
+  
+  </div>
+        <div class="col-xs-3" style="padding-left: 0">
+          <button type="button" class="btn btn-icon btn-default" onclick="lookup('true');"><i class="fa-search"></i>Look Up</button>
+          <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Site applies ONLY if ICD-O-3 disease terminology is being used. Either Site or Disease is required for ICD-O-3."  data-placement="top" data-trigger="hover"></i>       
+         </div> 

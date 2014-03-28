@@ -14,7 +14,4 @@
     </c:when>
     <c:otherwise><c:set var="tooltipText" value=""/></c:otherwise>
 </c:choose>
-<script type="text/javascript" language="javascript">
-    var ${tooltipName} = "${tooltipText}";
-</script>
-<span onfocus="this.blur()" onmouseout="return nd();" onmouseover="return overlib(${tooltipName}, BORDER, 4, MOUSEOFF, RIGHT, WRAP, CELLPAD, 5)"><jsp:doBody/></span>
+<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="${tooltipText}"  data-placement="top" data-trigger="hover"></i>

@@ -1,88 +1,139 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <page:applyDecorator name="main">
-<c:set var="topic" scope="request" value="login"/>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
-</head>
-<c:url value="/../registry/registerUser.action" var="createAccountUrl"/>
-<c:url value="/../registry/registerUser.action?resetPassword=true" var="resetPasswordUrl"/>
-<body>
-<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
-<h1>Login</h1>
-<div class="box">
-    <form action="j_security_check" method="post" id="loginForm" onsubmit="return validate();">
-    <table style="margin:0 auto">
-        <c:if test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) > 1}">
-            <p><fmt:message key="login.instructions"/></p>
-        </c:if>
-        <p>If you have not yet registered, you may do so by clicking <a title="To Create an Account" href="${createAccountUrl}">here</a>.</p>
-        <c:if test="${not empty param.failedLogin}">
-          <p class="directions"><fmt:message key="errors.password.mismatch"/></p>
-        </c:if>
-        <tr><td class="space" colspan="2">&nbsp;</td></tr>
-        <tr>
-            <td class="label" scope="row">
-                <label for="j_username">Username:</label>
-            </td>
-            <td class="value">
-                <input id="j_username" name="j_username" maxlength="100" size="25" type="text">
-            </td>
-        </tr>
-        <tr>
-            <td class="label" scope="row">
-                <label for="j_password">Password:</label>
-            </td>
-            <td class="value"><input id="j_password" name="j_password" maxlength="100" size="25" type="password" autocomplete="off"/></td>
-        </tr>
-         <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
-                <c:choose>
-                  <c:when test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) == 1}">
-                    <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
-                     <input type="hidden" name="authenticationServiceURL"
-                         value="<c:out value="${item.value}"/>" />
-                    </c:forEach>
-                  </c:when>
-                 <c:otherwise>   
-        <tr>
-            <td class="label" scope="row">
-                <label for="authenticationServiceURL">Account Source:</label>
-            </td>
-            <td class="value">
-                     <select name="authenticationServiceURL" id="authenticationServiceURL" size="1">
-                        <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
-                        <option value="<c:out value="${item.value}" />">
-                            <c:out value="${item.key}" />
-                        </option>
-                        </c:forEach>
-                    </select>
-            </td>
-                 </c:otherwise>
-                </c:choose>
-               </c:if>
-        <tr>
-			<td>&nbsp;</td>
-			<td>
-				<span class="small"><a title="To Reset Password" href="${resetPasswordUrl}">(Forgot Your Password?)</a></span>
-			</td>
-			</tr>
-			<tr>
-                <td>&nbsp;</td>
-                <td>
-                    <span class="small"><a title="To Create an Account" href="${createAccountUrl}">(Create an Account)</a></span>
-                </td>
-            </tr>
-    </table>
-    <div class="actionsrow">
-        <del class="btnwrapper">
-            <ul class="btnrow">
-                <li>
-                    <s:submit type="image" src="../images/btn_login.gif" cssClass="btn" title="Log In" value="Log In" id="loginButton" align="center" />
-                </li>
-            </ul>
-        </del>
-    </div>
-</form>
+	<c:set var="topic" scope="request" value="login" />
+<script type="text/javascript" language="javascript"
+	src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
+	<c:url value="/../registry/registerUser.action" var="createAccountUrl" />
+	<%-- <c:url value="/../registry/registerUser.action?resetPassword=true"
+		var="resetPasswordUrl" /> --%>
+	<body>
+	<script>
+	$('#wrap').addClass("login");
+	</script>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-6 intro">
+				<img src="<%=request.getContextPath()%>/images/nci-logo.png"
+					class="pull-left" />
+				<h4>Welcome to NCI's Clinical Trials Reporting Program</h4>
+				<p>This site allows you to upload non-CTEP/DCP supported trial
+					accrual data for a specific NCI-supported trial. If you are part of
+					a CTEP/DCP supported trial, please go to the CDUS/CDS web interface
+					to upload your data (these data will be transferred internally to
+					CTRP).</p>
+				<p>
+					Want to learn more about the Reporting Program? Visit the <a
+						href="#">NCI Clinical Trials Reporting Program</a> website. You
+					can also email NCICB Application Support at <a
+						href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if
+					you have questions or need assistance.
+				</p>
+			</div>
+			<div class="col-xs-6">
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#sign-in" data-toggle="tab"><i
+							class="fa-sign-in"></i>Sign In</a></li>
+					<li><a href="#sign-up" data-toggle="tab"><i
+							class="fa-pencil-square-o"></i>Sign Up</a></li>
+					<li><a href="#forgot-password" data-toggle="tab"><i
+							class="fa-key"></i>Forgot Password</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade in active" id="sign-in">
+						<form class="form-horizontal" role="form"
+							action="j_security_check" method="post" id="loginForm"
+							name="loginForm" onsubmit="return validate();">
+							<c:if test="${not empty param.failedLogin}">
+								<p class="directions">
+									<fmt:message key="errors.password.mismatch" />
+								</p>
+							</c:if>
+							<div class="form-group">
+								<label for="j_username" class="col-xs-3 control-label">Username</label>
+								<div class="col-xs-7">
+									<input type="text" class="form-control" id="j_username"
+										name="j_username" maxlength="100" size="25"
+										placeholder="Enter your username">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="j_password" class="col-xs-3 control-label">Password</label>
+								<div class="col-xs-7">
+									<input type="password" class="form-control" id="j_password"
+										name="j_password" maxlength="100" size="25" autocomplete="off"
+										placeholder="Enter your password">
+								</div>
+							</div>
+							<c:if
+								test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">
+								<c:choose>
+									<c:when
+										test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) == 1}">
+										<c:forEach var="item"
+											items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
+											<input type="hidden" name="authenticationServiceURL"
+												value="<c:out value="${item.value}"/>" />
+										</c:forEach>
+									</c:when>
+									<c:otherwise>
+										<div class="form-group">
+											<label for="authenticationServiceURL"
+												class="col-xs-3 control-label">Account Source:</label>
+											<div class="col-xs-7">
+												<select class="form-control" name="authenticationServiceURL"
+													id="authenticationServiceURL" size="1">
+													<c:forEach var="item"
+														items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
+														<option value="<c:out value="${item.value}" />">
+															<c:out value="${item.key}" />
+														</option>
+													</c:forEach>
+												</select>
+											</div>
+										</div>
+									</c:otherwise>
+								</c:choose>
+							</c:if>
+							<div class="bottom">
+								<button type="button" class="btn btn-icon-alt btn-primary"
+									onClick="document.loginForm.submit();">
+									Sign In<i class="fa-arrow-circle-right"></i>
+								</button>
+							</div>
+						</form>
+					</div>
+					<div class="tab-pane fade" id="sign-up">
+						<div class="tab-inside">
+							<h4 class="heading">
+								<span>To Create an Account</span>
+							</h4>
+							<p>
+								If you have not yet registered, you may do so by clicking <a
+									title="To Create an Account" href="${createAccountUrl}">here</a>.
+							</p>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="forgot-password">
+						<div class="tab-inside">
+							<h4 class="heading">
+								<span>Resetting Your Password</span>
+							</h4>
+							<p>
+								If you forgot your password, please visit the NCI Password
+								Station at <a href="mailto:http://password.nci.nih.gov">http://password.nci.nih.gov</a>
+								and follow the instructions there.
+							</p>
+							<p>
+								If you need additional assistance or have questions, you can
+								email NCI CBIIT Application Support at <a
+									href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a>,
+								or call <strong>240-276-5541</strong> or toll free <strong>888-478-4423</strong>.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 </div>
-</body>
+	</body>
 </page:applyDecorator>

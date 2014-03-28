@@ -1,14 +1,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <script language="javascript">
-function setCheckbox(index) {
-    if (document.countform.sitesToSave[index] == undefined) {
-        document.countform.sitesToSave.checked=true;
-    } else {
-        document.countform.sitesToSave[index].checked=true;
-    }
+function handleUpdate(rowId) {
+	document.countform.selectedRowIdentifier.value = rowId;
+	document.countform.submittedCounts.value = document.getElementById("submittedCounts[" +  rowId+ "]").value;
+	document.countform.action = "industrialPatientsupdate.action";
+    document.countform.submit(); 
 }
-function handleDelete(){
+function handleDelete(rowId){
+	document.countform.selectedRowIdentifier.value = rowId;
     var msg = 'Click OK to remove selected site(s) accrual counts. Cancel to abort.';
     var result = confirm(msg);
     if (result == true) {
@@ -20,79 +19,85 @@ function handleDelete(){
         return false;
     }
 }
+function handleSwitchUrl(spId) {
+	document.forms[0].action = "patients.action?studyProtocolId=" + spId;
+    document.forms[0].submit(); 	
+} 
 </script>
-<c:set var="topic" scope="request" value="accrualcount"/>
+<c:set var="topic" scope="request" value="accrualcount" />
+<div class="container">
+	<jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+	<h3 class="heading mt20">
+		<span> <fmt:message key="participatingsite.accrual.count.title" />
+		</span>
+		<c:if
+			test="${sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial && sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.both}">
+			<button type="button"
+				class="btn btn-icon-alt btn-sm btn-light pull-right"
+				onclick="handleSwitchUrl('<c:out value='${studyProtocolId}'/>')">
+				Switch to Subject Level Accrual<i class="fa-angle-right"></i>
+			</button>
+		</c:if>
+	</h3>
+	<accrual:sucessMessage />
+	<s:if test="hasActionErrors()">
+		<div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong>
+			<s:actionerror />.
+		</div>
+	</s:if>
 
-<c:if test="${sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial && sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.both}">
-    <s:url id="url" action="patients"><s:param name="studyProtocolId" value="%{studyProtocolId}" /></s:url>
-    <s:a cssClass="btn" href="%{url}"><span class="btn_img"><span class="save">Switch to Subject Level Accrual</span></span></s:a><br/><br/>
-</c:if>
+	<s:form name="countform" cssClass="form-horizontal" role="form">
+		<s:token />
+		<s:hidden name="selectedRowIdentifier" />
+		<s:hidden name="submittedCounts" />
+		<display:table class="table table-striped" sort="list" pagesize="10"
+			uid="row" name="studySiteCounts" export="false"
+			decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator"
+			requestURI="industrialPatients.action">
+			<display:column titleKey="participatingsite.accrual.count.siteid"
+				headerClass="sortable" headerScope="col" property="siteId" />
+			<display:column titleKey="participatingsite.accrual.count.sitename"
+				headerClass="sortable" headerScope="col" property="siteName" />
+			<display:column
+				titleKey="participatingsite.accrual.count.numOfSubjectEnrolled"
+				headerClass="sortable" headerScope="col">
+				<s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
+					<s:textfield name="submittedCounts[%{#attr.row.studySite.id}]"
+					    id="submittedCounts[%{#attr.row.studySite.id}]"
+						value="%{#attr.row.accrualCount}" cssClass="form-control"
+						cssStyle="width:20%" />
+				</s:if>
+				<s:else>
+					<s:property value="%{#attr.row.accrualCount}" />
+				</s:else>
+			</display:column>
+			<display:column
+				titleKey="participatingsite.accrual.count.dateLastUpdated"
+				headerClass="sortable" property="dateLastUpdated" headerScope="col" />
+			<display:column title="Actions" headerClass="align-center"
+				class="actions">
+				<s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
 
-<h1>
-    <fmt:message key="participatingsite.accrual.count.title" />
-</h1>
-<accrual:sucessMessage />
-<s:if test="hasActionErrors()">
-    <div class="error_msg">
-        <s:actionerror />
-    </div>
-</s:if>
-
-<s:form name="countform" action="industrialPatientsupdate">
-    <s:token/>
-    <%--  If it is only one checkbox and it isn't checked, Struts2 (just in case) sets false value.Workaround for this 
-    is to add hidden field with checkbox name prefixed with __checkbox_ to the form. Then it won't be single checkbox and false will not be submitted. --%>
-    <s:hidden name="__checkbox_sitesToSave"/>
-    <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
-        decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator" requestURI="industrialPatients.action">
-        <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-            <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
-            <s:if test="%{#attr.row.studySite.id in sitesToSave}">
-               <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="true" />
-            </s:if>
-            <s:else>
-               <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" value="false"/>
-            </s:else>       
-            </display:column> 
-        </s:if>
-        <display:column titleKey="participatingsite.accrual.count.siteid" headerClass="sortable" headerScope="col" property="siteId"/>
-        <display:column titleKey="participatingsite.accrual.count.sitename" headerClass="sortable" headerScope="col" property="siteName"/>
-        <display:column titleKey="participatingsite.accrual.count.numOfSubjectEnrolled" headerClass="sortable" headerScope="col" >
-            <s:hidden name="submittedSiteIds" value="%{#attr.row.studySite.id}" />
-            <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-                <s:textfield name="submittedCounts" value="%{#attr.row.accrualCount}" size="9" maxlength="9" onfocus="setCheckbox(%{#attr.row_rowNum-1});"/>
-            </s:if>
-            <s:else>
-                <s:property value="%{#attr.row.accrualCount}"/>
-            </s:else>
-        </display:column>
-        <display:column titleKey="participatingsite.accrual.count.dateLastUpdated" headerClass="sortable"
-            property="dateLastUpdated" headerScope="col" />
-        <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-            <display:column titleKey="participatingsite.accrual.count.delete.checkbox" headerClass="sortable" headerScope="col">
-               <s:if test="%{#attr.row.dateLastUpdated != null}"> 
-                   <s:checkbox name="sitesToDelete" fieldValue="%{#attr.row.studySite.id}" value="%{#attr.row.studySite.id in sitesToDelete}" />                   
-                   <c:set var="deleteCBFlag" scope="request" value="true"/> 
-               </s:if>
-            </display:column> 
-        </s:if>
-    </display:table>
-    <c:if test= "${deleteCBFlag}">
-        <s:hidden name="__checkbox_sitesToDelete"/>    
-    </c:if>
-    <div class="actionsrow">
-        <del class="btnwrapper">
-            <ul class="btnrow">
-                <li>
-                    <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-                        <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-                        <c:if test= "${deleteCBFlag}">
-                            <s:a href="#" cssClass="btn" onclick="handleDelete()"><span class="btn_img"><span class="delete">Delete</span></span></s:a>
-                        </c:if>
-                    </s:if>
-                    <s:a href="#" cssClass="btn" onclick="document.countform.reset();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                </li>
-            </ul>
-        </del>
-    </div>
-</s:form>
+					<s:a href="#" data-placement="top" rel="tooltip"
+						data-original-title="Save"
+						onclick="handleUpdate(%{#attr.row.studySite.id})">
+						<i class="fa-floppy-o"></i>
+					</s:a>
+					<s:if test="%{#attr.row.dateLastUpdated != null}">
+						<s:a href="#" data-placement="top" rel="tooltip"
+							data-original-title="Delete"
+							onclick="handleDelete(%{#attr.row.studySite.id})">
+							<i class="fa-trash-o"></i>
+						</s:a>
+					</s:if>
+				</s:if>
+			</display:column>
+		</display:table>
+		<div class="align-center mb20">
+			<button class="btn btn-icon btn-default" type="button"
+				onclick="document.countform.reset();return false">
+				<i class="fa-repeat"></i>Reset
+			</button>
+		</div>
+	</s:form>
+</div>

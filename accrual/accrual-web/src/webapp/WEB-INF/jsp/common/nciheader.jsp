@@ -1,4 +1,3 @@
-	<div id="nciheader">		
-	    <div id="ncilogo"><a href="http://www.cancer.gov" target="_blank"><img src="<%=request.getContextPath()%>/images/logotype.gif" width="283" height="37" alt="Logo: National Cancer Institute" /></a></div>
-	    <div id="nihtag"><a href="http://www.cancer.gov" target="_blank"><img src="<%=request.getContextPath()%>/images/tagline.gif" width="295" height="37" alt="Logo: U.S. National Institutes of Health | www.cancer.gov" /></a></div>
-	</div>		
+	<div id="nci-banner">
+        <div class="container"> <a class="pull-left" target="_blank" href="http://www.cancer.gov"><img width="286" height="43" border="0" title="National Cancer Institute" alt="National Cancer Institute" src="<%=request.getContextPath()%>/images/nci.jpg"></a> <a class="pull-right" target="_blank" href="http://www.cancer.gov"><img width="322" height="43" border="0" title="at the National Institutes of Health" alt="at the National Institutes of Health" src="<%=request.getContextPath()%>/images/nih.jpg"></a> </div>
+    </div>

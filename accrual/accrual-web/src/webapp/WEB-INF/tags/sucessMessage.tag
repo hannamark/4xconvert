@@ -3,8 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%-- Success Messages --%>
 <c:if test="${successMessage != null}">
-<div class="confirm_msg">
-	<strong>Message:</strong> <c:out value = "${successMessage}"/>
-</div>
+<div class="alert alert-success"> <i class="fa-check-circle"></i><strong>Message:</strong> <c:out value="${successMessage}"/>.</div>
 <c:remove var="successMessage" scope="request"/>
 </c:if>

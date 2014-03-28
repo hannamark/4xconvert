@@ -175,30 +175,18 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
     public void update() {
         action.setStudyProtocolId(MockSearchTrialBean.INDUSTRIAL_STUDY_PROTOCOL_ID);
         action.prepare();
-        
-        List<Long> submittedSiteIds = new ArrayList<Long>();
-        submittedSiteIds.add(1L);
-        submittedSiteIds.add(2L);
-        List<Long> sitesToSave = new ArrayList<Long>();
-        sitesToSave.add(1L);
-        action.setSubmittedSiteIds(submittedSiteIds);
-        action.setSitesToSave(sitesToSave);
-        List<String> submittedCounts = new ArrayList<String>();
-        submittedCounts.add("2");
-        action.setSubmittedCounts(submittedCounts);
+        action.setSelectedRowIdentifier("1");
+        action.setSubmittedCounts("2");
         assertEquals("saved", action.update());
         action.setStudyProtocolId(MockSearchTrialBean.NONINTERVENTIONAL_STUDY_PROTOCOL_ID);
         action.prepare();
-        action.setSubmittedSiteIds(submittedSiteIds);
-        action.setSitesToSave(sitesToSave);
-        action.setSubmittedCounts(submittedCounts);
+        action.setSubmittedCounts("2");
         assertEquals("saved", action.update());
     }
 
-    @Test
+    @Test(expected= Exception.class)
     public void updatePAException() throws PAException {
         setupUpdatePAException();
-        action.setSitesToSave(new ArrayList<Long>());
         action.update();
         assertEquals("Test message", action.getActionErrors().iterator().next());
         assertEquals("input", action.update());
@@ -206,12 +194,7 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void delete() throws PAException {
-        action.setSitesToDelete(new ArrayList<Long>());
-        assertEquals("input", action.delete());
-        assertEquals("Please select one or more record(s) to delete", action.getActionErrors().iterator().next());
-        List<Long> sitesToDelete = new ArrayList<Long>();
-        sitesToDelete.add(1L);
-        action.setSitesToDelete(sitesToDelete);
+    	action.setSelectedRowIdentifier("1");
         action.setStudyProtocolId(MockSearchTrialBean.INDUSTRIAL_STUDY_PROTOCOL_ID);
         action.prepare();
         assertEquals("saved", action.delete());

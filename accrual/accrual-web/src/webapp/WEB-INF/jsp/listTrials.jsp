@@ -1,11 +1,12 @@
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+ <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%> 
 
-<h1><fmt:message key="accrual.list.trials.page.header"/></h1>
+<h3 class="heading mt20"><span><fmt:message key="accrual.list.trials.page.header"/></span></h3>
     <accrual:sucessMessage />
-    <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
-    <display:table class="data" summary="This table contains your trial search results.
+    <s:if test="hasActionErrors()"><div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong><s:actionerror />.</div></s:if>   
+      <s:set name="selectedPageSize" value="10" scope="request"/>
+    <display:table class="table table-striped sortable" summary="This table contains your trial search results.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.accweb.decorator.SearchTrialResultDecorator"
-      sort="list" pagesize="10" id="row" name="displayTagList" requestURI="viewTrials.action" export="false">
+      sort="list" pagesize="${selectedPageSize}" id="row" name="displayTagList" requestURI="viewTrials.action" export="false">
        <display:column titleKey="accrual.list.trials.protocolNumber" sortable="true" sortProperty="assignedIdentifier.value" headerClass="sortable" headerScope="col">
            <s:if test="%{#attr.row.industrial.value && #attr.row.trialType.value == 'Interventional'}">
                 <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>

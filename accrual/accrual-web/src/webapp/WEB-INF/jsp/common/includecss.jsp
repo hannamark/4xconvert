@@ -1,6 +1,15 @@
 <link href="<%=request.getContextPath()%>/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
 <link href="<%=request.getContextPath()%>/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
-<link href="<%=request.getContextPath()%>/styles/style.css" rel="stylesheet" type="text/css" media="all"/>
-<link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.ico" />
-<link rel="icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
-<link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
+<link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.png" />
+<link rel="icon" href="<%=request.getContextPath()%>/images/favicon.png" type="image/x-icon" />
+<link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.png" type="image/x-icon" />
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet" href="<%=request.getContextPath()%>/styles/bootstrap.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath()%>/styles/bootstrap-multiselect.css" type="text/css">
+<link rel="stylesheet" href="<%=request.getContextPath()%>/styles/bootstrap-datetimepicker.min.css" type="text/css">
+<!-- Custom styles for this template -->
+<link href="<%=request.getContextPath()%>/styles/ctrp.css" rel="stylesheet" >
+<link href="<%=request.getContextPath()%>/styles/ctrp-dark.css" rel="alternate stylesheet" title="alternate 1" >
+
+<!-- Font Awesome icons -->
+<link href="<%=request.getContextPath()%>/styles/font-awesome.min.css" rel="stylesheet">

@@ -1,43 +1,29 @@
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<!DOCTYPE html PUBLIC 
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title><decorator:title default="NCI CTRP Accrual Site"/></title>    
-    <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
-    <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
-    <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
-    <decorator:head/>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="">
+<title><decorator:title default="NCI CTRP Accrual Site" /></title>
+<%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>
+<!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
+<decorator:head />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery-1.10.2.min.js'/>"></script>
 </head>
-<style type="text/css">
-   BODY { width:1221px }
-</style>
 <body>
-<a href="#content" id="navskip">Skip to Page Content</a> 
-<div id="wrapper">
-    <jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
-    <jsp:include page="/WEB-INF/jsp/common/accrualheader.jsp"/>
-    <div id="main">    
-       <div id="contentwrapper">
-           <div id="content">
-               <decorator:body/>
-           </div> 
-           <div class="clear"></div>
-       </div>
-       <div id="leftnav">
-           <ul class="menu">
-                <c:if test="${sessionScope.disclaimerAccepted}">
-               <jsp:include page="/WEB-INF/jsp/common/accrualmenu.jsp"/> 
-               </c:if>
-               <jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
-           </ul>
-       </div> 
-    </div> 
-    <div class="clear"><br /></div>
-    <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
-</div>
+	<div id="wrap">
+		<jsp:include page="/WEB-INF/jsp/common/nciheader.jsp" />
+		<jsp:include page="/WEB-INF/jsp/common/accrualheader.jsp" />
+		<c:if test="${sessionScope.disclaimerAccepted}">
+			<jsp:include page="/WEB-INF/jsp/common/accrualmenu.jsp" />
+		</c:if>
+			<decorator:body />	
+	</div>
+	<jsp:include page="/WEB-INF/jsp/common/footer.jsp" />
+<%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 </body>
 </html>

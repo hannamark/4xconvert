@@ -1,89 +1,80 @@
-<!DOCTYPE html PUBLIC 
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<c:set var="topic" scope="request" value="trialsintro"/>
+<!DOCTYPE html>
+
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<html lang="en">
+<c:set var="topic" scope="request" value="trialsintro" />
 <head>
-    <title><fmt:message key="accrual.search.trials.page.title"/></title>   
-    <s:head/>
-    <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/overlib.js"/>"></script>
+<title><fmt:message key="accrual.search.trials.page.title" /></title>
+<s:head />
+<%-- <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/overlib.js"/>"></script> --%>
 <SCRIPT LANGUAGE="JavaScript">
+	function resetValues() {
+		document.searchTrial.reset();
+		document.getElementById("officialTitle").value = "";
+		document.getElementById("assignedIdentifier").value = "";
+		document.getElementById("leadOrgTrialIdentifier").value = "";
 
-function resetValues(){
-    document.searchTrial.reset();
-    document.getElementById("officialTitle").value="";
-    document.getElementById("assignedIdentifier").value="";
-    document.getElementById("leadOrgTrialIdentifier").value="";
-   
-}
-function handleAction(){
-     document.forms[0].action="viewTrials.action";
-     document.forms[0].submit();  
-}
-
+	}
+	function handleAction() {
+		document.forms[0].action = "viewTrials.action";
+		document.forms[0].submit();
+	}
 </SCRIPT>
 </head>
 <body>
 
-<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
-<h1><fmt:message key="accrual.search.trials.page.header"/></h1>
-  <s:form name="searchTrial">
-    <table class="form">
-    <tr>     
-        <td scope="row" class="label">
-         <accrual:displayTooltip tooltip="tooltip.nci_trial_identifier">
-          <label for="assignedIdentifier">
-              <fmt:message key="accrual.search.trials.nciTrialNumber"/>
-          </label>
-          </accrual:displayTooltip>
-         </td>
-         <td class="value">
-            <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
-           </td>
-      </tr> 
-      <tr>     
-        <td scope="row" class="label">
-         <accrual:displayTooltip tooltip="tooltip.nct_number">
-          <label for="leadOrgTrialIdentifier">
-              <fmt:message key="accrual.search.trials.nctTrialNumber"/>
-          </label>
-          </accrual:displayTooltip>
-         </td>
-         <td class="value">
-            <s:textfield id ="leadOrgTrialIdentifier" name="criteria.leadOrgTrialIdentifier.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
-           </td>
-      </tr> 
-            
-            <tr>
-                <td scope="row" class="label">
-                <accrual:displayTooltip tooltip="tooltip.official_title">
-                 <label for="OfficialTitle">
-                    <fmt:message key="accrual.search.trials.officialTitle"/>
-                </label>
-                </accrual:displayTooltip>
-                </td>
-                <td colspan="4">
-                <s:textfield id ="officialTitle" name="criteria.officialTitle.value" maxlength="400" size="50"  cssStyle="width:98%;max-width:250px" />
-                </td>
-            </tr>
-    
-    </table>
-    
-        <div class="actionsrow">
-            <del class="btnwrapper">
-               <ul class="btnrow">
-                <li>
-                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search Trials</span></span></s:a>
-                <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                </li>
-               </ul>
-            </del>
-         </div>
-       </s:form>
-       
-       <div class="line"></div>
-       <jsp:include page="/WEB-INF/jsp/listTrials.jsp"/>
- </body>
+	<div class="container">
+		<h1 class="heading">
+			<span><fmt:message key="accrual.search.trials.page.header" /></span>
+		</h1>
+		<s:form cssClass="form-horizontal" role="form" name="searchTrial">
+			<div class="form-group">
+				<label for="assignedIdentifier" class="col-xs-4 control-label">
+					<fmt:message key="accrual.search.trials.nciTrialNumber" />
+				</label>
+				<div class="col-xs-4">
+					<s:textfield cssClass="form-control" id="assignedIdentifier"
+						name="criteria.assignedIdentifier.value" />
+				</div>
+				<accrual:displayTooltip tooltip="tooltip.nci_trial_identifier" />
+			</div>
+
+			<div class="form-group">
+				<label for="leadOrgTrialIdentifier" class="col-xs-4 control-label">
+					<fmt:message key="accrual.search.trials.nctTrialNumber" />
+				</label>
+				<div class="col-xs-4">
+					<s:textfield cssClass="form-control" id="leadOrgTrialIdentifier"
+						name="criteria.leadOrgTrialIdentifier.value" />
+				</div>
+				<accrual:displayTooltip tooltip="tooltip.nct_number" />
+			</div>
+			<div class="form-group">
+				<label for="OfficialTitle" class="col-xs-4 control-label"> <fmt:message
+						key="accrual.search.trials.officialTitle" />
+				</label>
+				<div class="col-xs-4">
+					<s:textfield cssClass="form-control" id="officialTitle" name="criteria.officialTitle.value" />
+				</div>
+				<accrual:displayTooltip tooltip="tooltip.official_title" />
+			</div>
+
+			<div class="form-group">
+				<div class="col-xs-4 col-xs-offset-4 mt20">
+					<button type="button" class="btn btn-icon btn-primary mr20"
+						onclick="handleAction()">
+						<i class="fa-search"></i>Search Trials
+					</button>
+					<button type="button" class="btn btn-icon btn-default"
+						onclick="resetValues();return false">
+						<i class="fa-repeat"></i>Reset
+					</button>
+				</div>
+			</div>
+		</s:form>
+
+		<div class="clearfix"></div>
+		<jsp:include page="/WEB-INF/jsp/listTrials.jsp" />
+	</div>
+</body>
 </html>

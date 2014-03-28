@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.accweb.action;
 
+import gov.nih.nci.accrual.accweb.dto.util.RegistryUserWebDTO;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.PatientServiceLocal;
@@ -161,7 +162,23 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     public String execute() {
         // make sure user authorized
         if (getUserRole() == null || !getUserRole().equals(AccrualConstants.ROLE_PUBLIC)) {
-            return AccrualConstants.AR_LOGOUT;
+             return AccrualConstants.AR_LOGOUT;
+        }
+        RegistryUserWebDTO registryUserWebDTO = (RegistryUserWebDTO)
+        ServletActionContext.getRequest().getSession().getAttribute("registryUserWebDTO");
+        if (registryUserWebDTO == null) {
+            String loginName = ServletActionContext.getRequest().getRemoteUser();
+            RegistryUser registryUser = null;
+            try {
+                // retrieve user info
+                registryUser = PaServiceLocator.getInstance().getRegistryUserService().getUser(loginName);
+            } catch (Exception ex) {
+                LOG.error("error while displaying My Account page for user :" + loginName);
+            }
+            if (registryUser != null && registryUser.getCsmUser() != null) {            
+                registryUserWebDTO = new RegistryUserWebDTO(registryUser);
+                ServletActionContext.getRequest().getSession().setAttribute("registryUserWebDTO", registryUserWebDTO);
+            }
         }
         return SUCCESS;
     }
@@ -194,7 +211,8 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         if (!StConverter.convertToString(trialSummary.getTrialType()).equals(AccrualUtil.INTERVENTIONAL)
                 && !ISOUtil.isStNull(trialSummary.getAccrualSubmissionLevel())
                 && (trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.BOTH)
-                        || trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.SUBJECT_LEVEL))) {
+                        || trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.SUBJECT_LEVEL)
+                        || trialSummary.getAccrualSubmissionLevel().getValue().equals(AccrualUtil.SUMMARY_LEVEL))) {
             loadTrialSummaryIntoSession();
         }
     }

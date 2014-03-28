@@ -1,10 +1,8 @@
-<!DOCTYPE html PUBLIC
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <c:set var="topic" scope="request" value="subjectsintro"/>
 <c:url value="/protected/ajaxpatientsgetDeleteReasons.action" var="deleteReason"/>        
 <%@ include file="/WEB-INF/jsp/nodecorate/tableTagParameters.jsp" %>
@@ -42,81 +40,67 @@ function handleDelete(rowId){
 }
 function setDeleteReason(reason){
     document.forms[0].deleteReason.value = reason;
-}
+} 
+function handleSwitchUrl(spId) {
+    document.forms[0].action = "industrialPatients.action?studyProtocolId=" + spId;
+    document.forms[0].submit();     
+} 
 </script>
 </head>
 <body>
+<div class="container">
+  <div class="scroller_anchor"></div>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
-<a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
-<h1><fmt:message key="patient.search.title"/></h1>
-  <s:form name="listForm">
+<h1 class="heading"><span><fmt:message key="patient.search.title"/></span>
+<c:if test="${sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial && sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.both}">
+    <button type="button"  class="btn btn-icon-alt btn-sm btn-light pull-right" onclick="handleSwitchUrl('<c:out value='${studyProtocolId}'/>')">Switch to Summary Level Accrual<i class="fa-angle-right"></i></button>
+</c:if>
+</h1>
+  <s:form name="listForm" cssClass="form-horizontal" role="form">
     <s:token/>
     <s:hidden name="selectedRowIdentifier"/>
     <s:hidden name="deleteReason"/>
-    <table class="form">
-
-
-      <tr>
-        <td class="label">
-           <label for="assignedIdentifier">
+    <div class="form-group">
+           <label for="assignedIdentifier" class="col-xs-4 control-label">
               <fmt:message key="patient.assignedIdentifier"/>
            </label>
-         </td>
-         <td class="value">
-           <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier" maxlength="400" size="50"
-                  cssStyle="width:98%;max-width:206px" />
-         </td>
-      </tr>
-      <tr>
-        <td class="label">
-          <label for="organizationName">
+         <div class="col-xs-3">
+           <s:textfield id ="assignedIdentifier" name="criteria.assignedIdentifier" cssClass="form-control" />
+         </div>
+      </div>
+      <div class="form-group">
+          <label for="organizationName" class="col-xs-4 control-label">
              <fmt:message key="patient.organizationName"/>
           </label>
-         </td>
-         <td class="value">
+         <div class="col-xs-3">
              <s:select id="organizationName" name="criteria.studySiteId" list="listOfStudySites" headerKey=""
-                       listKey="ssIi" listValue="orgName" headerValue="--Select--"/>
-         </td>
-      </tr>
-      <tr>
-          <td class="label">
-           <label for="birthDate">
+                       listKey="ssIi" listValue="orgName" headerValue="--Select--" cssClass="form-control"/>
+        </div>
+      </div>
+      <div class="form-group">
+           <label for="birthDate" class="col-xs-4 control-label">
               <fmt:message key="patient.birthDate"/>
           </label>
-          </td>
-          <td colspan="4">
-          <s:textfield id ="birthDate" name="criteria.birthDate" maxlength="400" size="50"
-                cssStyle="width:98%;max-width:128px" />
-          </td>
-      </tr>
-    </table>
-
-    <div class="actionsrow">
-        <del class="btnwrapper">
-           <ul class="btnrow">
-            <li>
-            <s:a href="#" cssClass="btn" onclick="handleSearch()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-            <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-            <s:a href="#" cssClass="btn" onclick="handleCreate()"><span class="btn_img"><span class="add">Add New Study Subject</span></span></s:a>
-            </s:if>
-            </li>
-           </ul>
-        </del>
-    </div>
+         <div class="col-xs-3">
+          <s:textfield id ="birthDate" name="criteria.birthDate"  cssClass="form-control" placeholder="mm/yyyy" />
+          </div>
+      </div>
+    <div class="form-group">
+        <div class="col-xs-4 col-xs-offset-4 mt20">
+          <button type="button" class="btn btn-icon btn-primary mr20" onclick="handleSearch()"> <i class="fa-search"></i>Search</button>
+          <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
+          <button type="button" class="btn btn-icon btn-default" onclick="handleCreate()"><i class="fa-plus"></i>Add New Study Subject</button>
+          </s:if>
+        </div>
+      </div>
   </s:form>
 
 
-<c:if test="${sessionScope.trialSummary.trialType.value == sessionScope.nonInterTrial && sessionScope.trialSummary.accrualSubmissionLevel.value == sessionScope.both}">
-    <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{studyProtocolId}" /></s:url>
-    <s:a cssClass="btn" href="%{url}"><span class="btn_img"><span class="save">Switch to Summary Level Accrual</span></span></s:a><br/><br/>
-</c:if>
-
-   <div class="line"></div>
-   <h1><fmt:message key="patient.list.header"/></h1>
+<h3 class="heading mt20"><span><fmt:message key="patient.list.header"/></span></h3>
    <accrual:sucessMessage />
-   <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
+   <s:if test="hasActionErrors()"><div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong><s:actionerror />.</div></s:if>
 
-   <display:table class="data" summary="This table contains your Study Subject search results.  Please use column headers to sort results"
+   <display:table class="table table-striped sortable" summary="This table contains your Study Subject search results.  Please use column headers to sort results"
                   decorator="gov.nih.nci.accrual.accweb.decorator.SearchPatientDecorator"
                   sort="list" pagesize="10" id="row" name="displayTagList" requestURI="patients.action" export="false">
        <display:column titleKey="patient.assignedIdentifier"
@@ -127,17 +111,12 @@ function setDeleteReason(reason){
        <display:column escapeXml="true" titleKey="patient.organizationName" property="organizationName" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="patient.lastUpdateDateTime" property="dateLastUpdated" headerClass="sortable" headerScope="col" />
        <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-	       <display:column titleKey="patient.update" headerClass="centered" class="action">
-	            <s:a href="#" onclick="handleUpdate(%{#attr.row.identifier})">
-	                <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Update" width="16" height="16" />
-	            </s:a>
-	       </display:column>
-	       <display:column titleKey="patient.delete" headerClass="centered" class="action">
-	           <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
-	               <img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16" />
-	           </s:a>
+	       <display:column title="Actions" headerClass="align-center" class="actions">
+	            <s:a href="#" data-placement="top" rel="tooltip" data-original-title="Delete" data-toggle="modal" data-target="#delete" onclick="handleDelete(%{#attr.row.identifier})"><i class="fa-trash-o"></i></s:a>
+	            <s:a href="#" data-placement="top" rel="tooltip" data-original-title="Edit" onclick="handleUpdate(%{#attr.row.identifier})"><i class="fa-pencil"></i></s:a>
 	       </display:column>
        </s:if>
    </display:table>
+   </div>
 </body>
 </html>

@@ -95,6 +95,8 @@ import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.accweb.util.MockSearchTrialBean;
 import gov.nih.nci.accrual.accweb.util.MockServiceLocator;
 import gov.nih.nci.accrual.accweb.util.MockStudySubjectBean;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
@@ -104,6 +106,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -190,8 +193,15 @@ public class PatientActionTest extends AbstractAccrualActionTest {
 
     @Override
     @Test
-    public void executeTest() {
+    public void executeTest() throws PAException {
+    	RegistryUser ru = new RegistryUser();
+        ru.setId(1L);
+        User csmUser = new User();
+        csmUser.setLoginName(AbstractAccrualActionTest.TEST_USER);
+        ru.setCsmUser(csmUser);
+        when(PaServiceLocator.getInstance().getRegistryUserService().getUser(any(String.class))).thenReturn(ru);
         assertEquals(ActionSupport.SUCCESS, action.execute());
+        assertNotNull(ServletActionContext.getRequest().getSession().getAttribute("registryUserWebDTO"));
     }
 
     @Override

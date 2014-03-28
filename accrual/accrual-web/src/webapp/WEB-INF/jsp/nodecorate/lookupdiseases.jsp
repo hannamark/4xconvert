@@ -9,96 +9,84 @@
         </s:else>
         <title>${pageTitle}</title>        
         <s:head/>
-        <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery-1.7.1.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
-        <script type="text/javascript" language="javascript">
+        <%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery-1.10.2.min.js'/>"></script>
         
-	        jQuery(function(){
-	            jQuery(window).keypress(function(e) {
-	                if(e.keyCode == 13) {                 
-	                	loadDiv();
-	                }
-	              });           
-	        });
-	        
+        <script type="text/javascript">	        
             function submitform(disid, type) {
-                top.window.loadDiv(disid, type, $("siteLookUp").value);
+                top.window.loadDiv(disid, type, $("#siteLookUp").val());
                 window.top.hidePopWin(true); 
             }
             
             function loadDiv() {     
-                var url = '/accrual/protected/popupdisplayList.action?siteLookUp=' + $("siteLookUp").value;
-                var params = { searchName: $("searchName").value,
-                		searchCode: $("searchCode").value,
+                var url = '/accrual/protected/popupdisplayList.action?siteLookUp=' + $("#siteLookUp").val();
+                var params = { searchName: $("#searchName").val(),
+                		searchCode: $("#searchCode").val(),
                         page: "searchLookup",
-                        searchCodeSystem: $("searchCodeSystem").value
+                        searchCodeSystem: $("#searchCodeSystem").val()
                 		};
-                var div = $('getDiseases');
-                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
-                var aj = callAjaxPost(div, url, params);   
+                $('#getDiseases').load(url, params);
+                //div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
+                //var aj = callAjaxPost(div, url, params);   
             }
         </script>
     </head> 
     <body>
-        <div class="box">
-            <s:form id="diseases" name="diseases" >
+        
+    <div class="container">
+    <s:form id="diseases" name="diseases" cssClass="form-horizontal" role="form">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            
                 <s:hidden id="siteLookUp" name="siteLookUp"/>
-                <h2>
+                <h4 class="modal-title" id="myModalLabel">
 	                <s:if test="%{siteLookUp}">
 	                     <fmt:message key="site.search"/>
 	                </s:if>
 	                <s:else>
 	                    <fmt:message key="disease.search"/>
 	                </s:else>
-                </h2>
-                <table class="form">
-                    <tr>
-                        <td scope="row" class="label"><label for="searchName">
+                </h4></div>
+      <div class="modal-body">
+                    <div class="form-group"><label for="searchName" class="col-xs-4 control-label">
                         <s:if test="%{siteLookUp}">
                             <fmt:message key="site.name"/>
                         </s:if>
                         <s:else>
                             <fmt:message key="disease.name"/>
                         </s:else>
-                        </label></td>
-                        <td><s:textfield id="searchName" name="searchName" maxlength="60" size="60" cssStyle="width:200px" /></td>
-                        <td scope="row" class="label"><label for="searchCode">
+                        </label>
+                        <div class="col-xs-2">
+                        <s:textfield id="searchName" name="searchName" cssClass="form-control" /></div>
+          </div>
+                        <div class="form-group"><label for="searchCode" class="col-xs-4 control-label">
 	                        <s:if test="%{siteLookUp}">
 	                            <fmt:message key="site.code"/>
 	                        </s:if>
 	                        <s:else>
 	                            <fmt:message key="disease.code"/>
 	                        </s:else>
-                        </label></td>
-                        <td><s:textfield id="searchCode" name="searchCode" maxlength="60" size="60" cssStyle="width:200px" /></td>
-                    </tr>
-                    <tr> 
-                        <td scope="row" class="label"><label for="includeSDC">
+                        </label>
+                        <div class="col-xs-2"><s:textfield id="searchCode" name="searchCode"  cssClass="form-control" /></div>
+          </div>
+                     <div class="form-group"><label for="includeSDC" class="col-xs-4 control-label">
 	                        <s:if test="%{siteLookUp}">
 	                            <fmt:message key="site.codeSystem"/>
 	                        </s:if>
 	                        <s:else>
 	                            <fmt:message key="disease.codeSystem"/>
 	                        </s:else>    
-                        </label></td>
-                        <td>
-                            <s:select id ="searchCodeSystem" name="searchCodeSystem" list="listOfDiseaseCodeSystems"/>
-                        </td>
-                    </tr>
-                </table>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="#" cssClass="btn" onclick="loadDiv()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
+                        </label><div class="col-xs-2">
+                            <s:select id ="searchCodeSystem" name="searchCodeSystem" list="listOfDiseaseCodeSystems"  cssClass="form-control"/>
+                       </div>
+          </div>
+          </div>
+                <div class="form-group">
+        <div class="col-xs-4 col-xs-offset-3 mt20">
+                                <button type="button" class="btn btn-icon btn-default" onclick="loadDiv()"><i class="fa-search"></i>Search</span></button>
+                                <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin();"><i class="fa-times"></i>Cancel</button>                           
                 </div>
-                <div class="line"></div>
+                </div>
                 <div id="getDiseases" align="center">   
                     <jsp:include page="/WEB-INF/jsp/nodecorate/lookupdiseasesdisplayList.jsp"/>
                 </div>
