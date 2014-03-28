@@ -162,7 +162,7 @@ jQuery('#nav').affix({
       offset: {
         top: jQuery('header').height()+jQuery('#nav').height()
       }
-});	
+});	*/
 
 //Date Picker
 jQuery(function() {
@@ -170,5 +170,4 @@ jQuery(function() {
       pickTime: false
     });
   });
-*/
 	

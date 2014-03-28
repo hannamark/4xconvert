@@ -2,7 +2,7 @@
 <reg-web:failureMessage/>
 <c:choose>
 <c:when test="${fn:length(sessionScope.grantList) >0}">
-<display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
+<display:table class="data table table-striped table-bordered" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
      name="${sessionScope.grantList}" requestURI="searchTrialview.action" export="false">
      <display:column titleKey="search.trial.view.fundingMechanism" property="fundingMechanismCode"   sortable="true" headerClass="sortable"/>
      <display:column titleKey="search.trial.view.nihInstitutionCode" property="nihInstitutionCode"   sortable="true" headerClass="sortable"/>
@@ -24,7 +24,7 @@
 <div class="box">
 <h3>NIH Grant Information (for NIH funded Trials)</h3>
 Is this trial funded by an NCI grant? <s:radio name="trialDTO.nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" disabled="true"/>
-<display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
+<display:table class="data table table-striped table-bordered" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
      name="${trialDTO.fundingDtos}" requestURI="searchTrialview.action" export="false">
     <display:column titleKey="search.trial.view.fundingMechanism" property="fundingMechanismCode"   sortable="true" headerClass="sortable"/>
     <display:column titleKey="search.trial.view.nihInstitutionCode" property="nihInstitutionCode"   sortable="true" headerClass="sortable"/>

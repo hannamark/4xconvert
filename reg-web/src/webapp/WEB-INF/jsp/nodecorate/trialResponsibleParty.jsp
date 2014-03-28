@@ -1,122 +1,81 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
-<table>
-	<tr>
-		<th colspan="2"><fmt:message key="submit.trial.sponsorResParty" /></th>
-	</tr>
-	<tr>
-		<td colspan="2" class="space">&nbsp;</td>
-	</tr>
-	<tr>
-		<td scope="row" class="label"><reg-web:displayTooltip
-				tooltip="tooltip.sponsor">
-				<label for="trialDTO.sponsorName"> Sponsor:<span
-					class="required">*</span></label>
-			</reg-web:displayTooltip></td>
-		<td class="value">
-			<div id="loadSponsorField">
-				<%@ include file="/WEB-INF/jsp/nodecorate/trialSponsor.jsp"%>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td scope="row" class="label-noinput"><reg-web:displayTooltip
-				tooltip="tooltip.responsible_party">
-				<label for="trialDTO.responsiblePartyType"><fmt:message key="submit.trial.responsibleParty" /></label>
-				<span class="required">*</span>
-			</reg-web:displayTooltip></td>
-		<td><s:select onchange="respPartyTypeChanged()"
-		        headerKey=""
-                headerValue="--Select--"
-				id="trialDTO.responsiblePartyType"
-				name="trialDTO.responsiblePartyType"
-				list="#{'sponsor':'Sponsor','pi':'Principal Investigator','si':'Sponsor-Investigator'}"
-				value="trialDTO.responsiblePartyType" cssStyle="width:206px" />
-			<span class="formErrorMsg"> <s:fielderror>
-					<s:param>trialDTO.responsiblePartyType</s:param>
-				</s:fielderror>
-		</span></td>
-	</tr>
-	
-	<tr style="display:none" class="resppartysection">
-        <td scope="row" class="label">
-            <label for="trialDTO.responsiblePersonName">Investigator:<span class="required">*</span></label> 
-        </td>               
-        <td class="value">
-            <div id="loadResponsibleContactField">
-                <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
-                <table>
-                    <tr>
-                        <td>
-                            <s:textfield name="trialDTO.responsiblePersonName" id="trialDTO.responsiblePersonName" size="30"  
-                                cssStyle="width:200px; " readonly="true" cssClass="readonly"/>                            
-                        </td>
-                        <td id="investigatorlookupcell"> 
-                          <ul style="margin-top:-1px;">             
-                                <li style="padding-left:0"><a href="javascript:void(0)" class="btn" onclick="lookupInvestigator();">
-                                <span class="btn_img"><span class="person">Look Up Person</span></span></a></li>
-                          </ul>
-                        </td>
-                    </tr>
-                </table>
-                <span class="formErrorMsg" id="responsiblePersonNameErr"> 
-                    <s:fielderror>
-                    <s:param>responsiblePersonName</s:param>
-                    </s:fielderror>                            
-                </span>
-            </div>                                    
-        </td>
-    </tr>
-        
-    <tr style="display:none" class="resppartysection">
-        <td scope="row" class="label">
-           <label for="trialDTO.responsiblePersonTitle">Investigator Title:<span class="required">*</span></label> 
-        </td>
-        <td class="value">
-            <s:textfield name="trialDTO.responsiblePersonTitle"  id="trialDTO.responsiblePersonTitle" maxlength="200" cssStyle="width:200px; " />
-            <span class="formErrorMsg"> 
-                <s:fielderror>
-                <s:param>responsiblePersonTitle</s:param>
-               </s:fielderror>                            
-             </span>
-        </td>
-    </tr>
-    
-    <tr style="display:none" class="resppartysection">
-        <td scope="row" class="label">
-            <label for="trialDTO.responsiblePersonAffiliationOrgName">Investigator Affiliation:<span class="required">*</span></label> 
-        </td>               
-        <td class="value">
-            <div id="investigatorAffiliationDiv">
-                <s:hidden name="trialDTO.responsiblePersonAffiliationOrgId" id="trialDTO.responsiblePersonAffiliationOrgId"/>
-                <table>
-                    <tr>
-                        <td>
-                            <s:textfield name="trialDTO.responsiblePersonAffiliationOrgName" id="trialDTO.responsiblePersonAffiliationOrgName" size="30"  
-                                cssStyle="width:200px; " readonly="true" cssClass="readonly"/>                            
-                        </td>
-                        <td id="affiliationLookupcell"> 
-                              <ul style="margin-top:-1px;">
-                                <li style="padding-left:0">
-                                    <a href="javascript:void(0)" class="btn" onclick="lookupAffiliation();">
-                                        <span class="btn_img"><span class="organization">Look Up Organization</span></span>
-                                    </a>
-                                </li>
-                              </ul>
-                        </td>
-                    </tr>
-                </table>
-                <span class="formErrorMsg" id="affiliationOrgErr"> 
-                    <s:fielderror>
-                    <s:param>responsiblePersonAffiliationOrgName</s:param>
-                    </s:fielderror>                            
-                </span>
-            </div>                                    
-        </td>
-    </tr> 
-</table>
-
+<div class="accordion">
+    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section5"><fmt:message key="submit.trial.sponsorResParty"/><span class="required">*</span></a>
+    </div>
+        <div id="section5" class="accordion-body in">
+            <div class="container"> 
+                <div class="form-group">
+                    <label for="trialDTO.sponsorName" class="col-xs-4 control-label">Sponsor <span class="required">*</span></label>
+                    <div id="loadSponsorField">
+                        <%@ include file="/WEB-INF/jsp/nodecorate/trialSponsor.jsp"%>
+                    </div>                
+                </div>
+                <div class="form-group">
+                    <label for="trialDTO.responsiblePartyType" class="col-xs-4 control-label"><fmt:message key="submit.trial.responsibleParty"/><span class="required">*</span></label>
+                    <div class="col-xs-4">
+                     <s:select onchange="respPartyTypeChanged()" headerKey="" headerValue="--Select--" id="trialDTO.responsiblePartyType" 
+                         name="trialDTO.responsiblePartyType" list="#{'sponsor':'Sponsor','pi':'Principal Investigator','si':'Sponsor-Investigator'}" 
+                         value="trialDTO.responsiblePartyType" cssStyle="width:206px" cssClass="form-control"/>
+                     <span class="formErrorMsg">
+                         <s:fielderror>
+                             <s:param>trialDTO.responsiblePartyType</s:param>
+                         </s:fielderror>
+                     </span>
+                    </div>    
+                </div>   
+                <div class="form-group resppartysection" style="display: none;">
+                    <label for="trialDTO.responsiblePersonName" class="col-xs-4 control-label">Investigator:<span class="required">*</span></label>
+                    <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
+                    <div id="loadResponsibleContactField">
+                        <div class="col-xs-3">                                    
+                            <s:textfield name="trialDTO.responsiblePersonName" id="trialDTO.responsiblePersonName" size="30" 
+                                cssStyle="width:200px; " readonly="true" cssClass="readonly"/>
+                            <span class="formErrorMsg" id="responsiblePersonNameErr"> 
+                                <s:fielderror>
+                                    <s:param>responsiblePersonName</s:param>
+                                </s:fielderror>                            
+                            </span>
+                        </div>
+                        <div class="col-xs-4" id="investigatorlookupcell">
+                            <button type="button" class="btn btn-icon btn-default" onclick="lookupInvestigator();"><i class="fa-user"></i>Look Up Person</button>
+                        </div>
+                    </div>                    
+                </div> 
+            <div class="form-group resppartysection" style="display: none;">
+                <label for="trialDTO.responsiblePersonTitle" class="col-xs-4 control-label">Investigator Title:<span class="required">*</span></label>
+                <div class="col-xs-3">
+                    <s:textfield name="trialDTO.responsiblePersonTitle"  id="trialDTO.responsiblePersonTitle" maxlength="200" 
+                        cssClass="form-control" cssStyle="width:200px; " />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                            <s:param>responsiblePersonTitle</s:param>
+                        </s:fielderror>                            
+                    </span>
+                </div>
+            </div>
+            <div class="form-group resppartysection" style="display: none;">
+                <label for="trialDTO.responsiblePersonAffiliationOrgName" class="col-xs-4 control-label">Investigator Affiliation:<span class="required">*</span></label>         
+                <div id="investigatorAffiliationDiv">
+                    <s:hidden name="trialDTO.responsiblePersonAffiliationOrgId" id="trialDTO.responsiblePersonAffiliationOrgId"/>
+                    <div class="col-xs-3">
+                        <s:textfield name="trialDTO.responsiblePersonAffiliationOrgName" id="trialDTO.responsiblePersonAffiliationOrgName" size="30" 
+                            cssStyle="width:200px; " readonly="true" cssClass="readonly"/>
+                            <span class="formErrorMsg" id="affiliationOrgErr"> 
+                                <s:fielderror>
+                                   <s:param>responsiblePersonAffiliationOrgName</s:param>
+                                </s:fielderror>                            
+                            </span>
+                    </div>
+                    <div class="col-xs-4" id="affiliationLookupcell">
+                        <button type="button" onclick="lookupAffiliation();" class="btn btn-icon btn-default"><i class="fa-sitemap"></i>Look Up Organization</button>
+                    </div>
+                </div>    
+        </div>
+        </div>
+    </div>
+</div> 
 <script type="text/javascript">
       
       Event.observe(window, "load", prepareResponsiblePartySection);
@@ -124,9 +83,9 @@
       function prepareResponsiblePartySection() {
           var partyType = $F('trialDTO.responsiblePartyType');
           if (partyType=='' || partyType=='sponsor') {
-              $$('tr.resppartysection').each(function(el) {el.hide()});
+              $$('div.resppartysection').each(function(el) {el.hide()});              
           } else {
-              $$('tr.resppartysection').each(function(el) {el.show()});
+              $$('div.resppartysection').each(function(el) {el.show()});
           }
           if (partyType=='pi') {                
               $('investigatorlookupcell').hide();

@@ -1,22 +1,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<table>
-    <tr>
-        <td>
-            <s:textfield label="poLeadPi Full Name" name="trialDTO.piName" id="trialDTO.piName" size="30"  readonly="true" cssClass="readonly" cssStyle="width:200px"/>
-        </td>
-        <td class="value">
-            <ul style="margin-top:-5px;">              
-                <li style="padding-left:0">
-                    <a href="javascript:void(0)" class="btn" onclick="lookup4loadleadpers();" title="Opens a popup form to select Principal Investigator">
-                        <span class="btn_img"><span class="person">Look Up Person</span></span>
-                    </a>
-                </li>
-            </ul>
-        </td>
-    </tr>
-</table>
-<span class="formErrorMsg" id="piIdentifierErr"> 
+<div class="col-xs-3">
+    <s:textfield label="poLeadPi Full Name" name="trialDTO.piName" id="trialDTO.piName" size="30"  readonly="true" cssClass="readonly" cssStyle="width:200px"/>
+    <span class="formErrorMsg" id="piIdentifierErr"> 
     <s:fielderror>
         <s:param>trialDTO.piIdentifier</s:param>
     </s:fielderror>                            
 </span>
+</div>
+<div class="col-xs-4">
+    <button type="button" class="btn btn-icon btn-default" onclick="lookup4loadleadpers();" title="Opens a popup form to select Principal Investigator"><i class="fa-user"></i>Look Up Person</button>
+    <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter the name of the individual who is responsible for all aspects of the conduct of the study."  data-placement="top" data-trigger="hover"></i>
+</div>

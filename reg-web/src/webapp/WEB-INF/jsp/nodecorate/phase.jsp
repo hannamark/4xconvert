@@ -1,31 +1,26 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-          <tr>
-                <td  scope="row" class="label">
-                    <reg-web:displayTooltip tooltip="tooltip.phase">
-                        <label for="trialDTO.phaseCode"> <fmt:message key="submit.trial.phase"/><span class="required">*</span></label>
-                    </reg-web:displayTooltip>
-                </td>
-                <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
-                <td>
-                    <s:select headerKey="" headerValue="--Select--" name="trialDTO.phaseCode" id ="trialDTO.phaseCode" 
-                    list="#phaseCodeValues" cssStyle="width:206px" value="trialDTO.phaseCode" onchange="displayPhaseAdditonalCode();"/>
-                    <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>trialDTO.phaseCode</s:param>
-                       </s:fielderror>
-                     </span>
-                </td>
-          </tr>
-          <tr id ="phaseOtherDiv" style="display:'none'">
-                <td scope="row" class="label">
-                    <label for="trialDTO.phaseAdditionalQualifier"> <fmt:message key="submit.trial.otherPhaseText"/></label>
-                </td>
-                <td>                    
-                    <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-                    <s:select id="trialDTO.phaseAdditionalQualifier" headerKey="" headerValue="No" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues" 
-                        value="trialDTO.phaseAdditionalQualifier" cssStyle="width:120px" /> 
-                </td>
-          </tr>
+ <div class="form-group">
+      <label for="trialDTO.phaseCode" class="col-xs-4 control-label"><fmt:message key="submit.trial.phase"/><span class="required">*</span></label>
+      <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
+      <div class="col-xs-4">
+         <s:select headerKey="" headerValue="--Select--" name="trialDTO.phaseCode" id ="trialDTO.phaseCode" 
+             list="#phaseCodeValues" cssClass="form-control" cssStyle="width:206px" value="trialDTO.phaseCode" onchange="displayPhaseAdditonalCode();"/>
+         <span class="formErrorMsg">
+             <s:fielderror>
+             <s:param>trialDTO.phaseCode</s:param>
+             </s:fielderror>
+         </span>
+         <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the phase of the investigation, as defined by the US FDA for trials involving investigational new drugs." data-placement="top" data-trigger="hover"></i>
+      </div>
+ </div>
+ <div class="form-group" id ="phaseOtherDiv" style="display:'none'">
+     <label for="trialDTO.phaseAdditionalQualifier" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherPhaseText"/></label>
+     <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
+     <div class="col-xs-4">
+         <s:select id="trialDTO.phaseAdditionalQualifier" headerKey="" headerValue="No" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues" 
+                        value="trialDTO.phaseAdditionalQualifier" cssStyle="width:120px" cssClass="form-control"/>
+     </div>
+ </div> 
 <SCRIPT LANGUAGE="JavaScript">
 displayPhaseAdditonalCode();
 function displayPhaseAdditonalCode(){

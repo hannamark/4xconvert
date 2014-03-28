@@ -2,7 +2,6 @@
 <script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>
 
 <script type="text/javascript" src="${scriptPath}/js/jquery-1.10.2.min.js"></script> 
-<script type="text/javascript" src="${scriptPath}/js/jquery-ui-1.8.16.custom.min.js"></script>
 
 <script type="text/javascript">
 jQuery.noConflict();
@@ -33,7 +32,7 @@ var registryApp = {
     var contextPath = '${pageContext.request.contextPath}';
 </script>
 <script type="text/javascript" src="${scriptPath}/js/overlib.js"></script>
-<script type="text/javascript" src="${scriptPath}/js/cal2.js"></script>
+<%-- <script type="text/javascript" src="${scriptPath}/js/cal2.js"></script> --%>
 <script type="text/javascript" src="${scriptPath}/js/ajaxHelper.js"></script>
 <!-- Javascript -->
 <script type='text/javascript' src="${scriptPath}/js/css3-mediaqueries.js"></script>

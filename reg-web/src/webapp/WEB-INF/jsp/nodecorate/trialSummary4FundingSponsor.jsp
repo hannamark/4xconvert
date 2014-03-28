@@ -1,42 +1,29 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<table>
-    <tr>
-        <td>
-             <s:textfield label="Summary4sponsorName"  id="trialDTO.summaryFourOrgName" size="30" readonly="true" cssClass="readonly" cssStyle="width:200px" /> 
-        </td>
-        <td class="value">
-            <ul style="margin-top:-5px;">              
-                <li style="padding-left:0">
-                 <a href="javascript:void(0)" class="btn" onclick="lookup4loadSummary4Sponsor();" title="Opens a popup form to select Summary4 Sponsor">
-                    <span class="btn_img"><span class="organization">Add Sponsor</span></span>
-                 </a>
-                </li>
-            </ul>
-        </td>
-    </tr>
-    <c:forEach items="${sessionScope.trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers" varStatus="stat">
-    <tr>
-        <td>
-            <input type="text" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${summaryFourOrgIdentifiers.orgName}" size="30" readonly class="readonly" style="width:200px" />
-            <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${summaryFourOrgIdentifiers.orgId}"/> 
-            <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" value="${summaryFourOrgIdentifiers.rowId}"/> 
-        </td>
-        <td class="value">
-            <ul style="margin-top:-5px;">              
-                <li style="padding-left:0">
-                 <a href="javascript:void(0)" class="btn" onclick="deleteSummary4SponsorRow('${summaryFourOrgIdentifiers.rowId}');" title="Opens a popup form to select Summary4 Sponsor">
-                    <span class="btn_img"><span class="organization">Delete Sponsor</span></span>
-                 </a>
-                </li>
-            </ul>
-        </td>
-    </tr>
-    
-    </c:forEach>
-    
-</table>
-<span class="formErrorMsg"> 
+<div class="col-xs-3">
+    <s:textfield label="Summary4sponsorName"  id="trialDTO.summaryFourOrgName" size="30" readonly="true" 
+        cssClass="readonly" cssStyle="width:200px" />
+    <span class="formErrorMsg"> 
     <s:fielderror>
         <s:param>summary4FundingSponsor</s:param>
     </s:fielderror>                            
-</span>
+</span>    
+</div>
+<div class="col-xs-3">
+    <button onclick="lookup4loadSummary4Sponsor();" title="Opens a popup form to select Summary4 Sponsor" type="button" class="btn btn-icon btn-default"><i class="fa-plus"></i>Add Sponsor</button>
+    <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Add Sponsor, and select the name of the external sponsor or funding source as defined by the Summary 4 report."  data-placement="top" data-trigger="hover"></i>
+</div>
+
+ <c:forEach items="${sessionScope.trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers" varStatus="stat">
+ <div class="form-group">
+     <div class="col-xs-4"></div>
+     <div class="col-xs-3">
+        <input type="text" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${summaryFourOrgIdentifiers.orgName}" size="30" readonly 
+            class="readonly" style="width:200px" />
+        <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${summaryFourOrgIdentifiers.orgId}"/> 
+        <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" value="${summaryFourOrgIdentifiers.rowId}"/>
+    </div>
+    <div class="col-xs-4">
+        <button onclick="deleteSummary4SponsorRow('${summaryFourOrgIdentifiers.rowId}');" title="Opens a popup form to select Summary4 Sponsor" type="button" class="btn btn-icon btn-default"><i class="fa-minus"></i>Delete Sponsor</button>
+    </div>
+ </div>     
+</c:forEach>
