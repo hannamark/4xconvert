@@ -13,6 +13,17 @@
 
     <target name="populate" depends="gen" description="Rename from staging to final tables, add indexes">
         <stopwatch name="timer1"/>
+        <echo message = "Running miscellaneous tasks (add tree to study_disease...)"/>
+        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+            expandproperties="true" autocommit="true">
+            <transaction src="${basedir}/sql/misc.sql"/>
+            <classpath>
+                <path refid="bda-utils.classpath"/>
+            </classpath>
+        </sql>
+        <stopwatch name="timer1" action="total"/>
+        <stopwatch name="timer1"/>
         <echo message = "Renaming stage tables"/>
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
@@ -40,16 +51,6 @@
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
             expandproperties="true" autocommit="true">
             <transaction src="${basedir}/sql/trial_type.sql"/>
-            <classpath>
-                <path refid="bda-utils.classpath"/>
-            </classpath>
-        </sql>
-        <stopwatch name="timer1" action="total"/>
-        <echo message = "Running miscellaneous tasks (add tree to study_disease...)"/>
-        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
-            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
-            expandproperties="true" autocommit="true">
-            <transaction src="${basedir}/sql/misc.sql"/>
             <classpath>
                 <path refid="bda-utils.classpath"/>
             </classpath>
