@@ -82,40 +82,8 @@
 							<display:column escapeXml="true" property="nciIdentifier"
 								sortable="true" titleKey="plannedMarker.protocolId" 
 								headerClass="sortable"/>
-							<display:column escapeXml="true" property="trialStatus" sortable="false" 
-							titleKey="plannedMarker.TrialStatus" headerClass="sortable"/>
 							<display:column escapeXml="true" property="name" sortable="true" 
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
-							<display:column titleKey="plannedMarker.edit"
-								headerClass="centered" class="action">
-								<del class="btnwrapper">
-									<ul class="btnrow">
-										<li><s:url id="editUrl" namespace="/protected"
-												action="bioMarkers" method="edit">
-												<s:param name="selectedRowIdentifier"
-													value="%{#attr.row.id}" />
-											</s:url> <s:a href="%{editUrl}" cssClass="btn">
-												<span class="btn_img">Edit</span>
-											</s:a>
-										</li>
-									</ul>
-								</del>
-							</display:column>
-							<display:column titleKey="plannedMarker.question"
-								headerClass="centered" class="action">
-								<del class="btnwrapper">
-									<ul class="btnrow">
-										<li><s:url id="sendQuestionUrl" namespace="/protected"
-												action="bioMarkers" method="sendQuestion">
-												<s:param name="selectedRowIdentifier"
-													value="%{#attr.row.id}" />
-											</s:url> <s:a href="%{sendQuestionUrl}" cssClass="btn">
-												<span class="btn_img">?</span>
-											</s:a>
-										</li>
-									</ul>
-								</del>
-							</display:column>
 							<display:column titleKey="plannedMarker.action"
 								headerClass="centered" class="action">
 								<del class="btnwrapper">
