@@ -136,14 +136,14 @@ WHERE summary_level_accrual = false
                 AND std.primary_completion_date_type_code = 'ACTUAL'))
   AND dt4.nci_id NOT IN (SELECT nci_id
                          FROM dw_study_overall_status
-                         WHERE date_trunc('day', status_date) < '01-JAN-2012'
+                         WHERE date_trunc('day', status_date) < $P{Calculated_Start_Date}
                            AND status in ('ADMINISTRATIVELY_COMPLETE','CLOSED_TO_ACCRUAL',
                                           'CLOSED_TO_ACCRUAL_AND_INTERVENTION', 'COMPLETE')
                            AND nci_id NOT IN (SELECT nci_id
                                               FROM dw_study_overall_status
                                               WHERE status = 'ACTIVE'
                                                AND date_trunc('day', status_date)
-                                                   BETWEEN '01-JAN-2012' AND '31-DEC-2012'))
+                                                   BETWEEN $P{Calculated_Start_Date} AND $P{End_Date}))
   AND (std.current_trial_status IS NULL OR std.current_trial_status != 'Withdrawn')
 UNION
 SELECT
@@ -315,14 +315,14 @@ WHERE summary_level_accrual = true
                 AND std.primary_completion_date_type_code = 'ACTUAL'))
   AND dt4.nci_id NOT IN (SELECT nci_id
                          FROM dw_study_overall_status
-                         WHERE date_trunc('day', status_date) < '01-JAN-2012'
+                         WHERE date_trunc('day', status_date) < $P{Calculated_Start_Date}
                            AND status in ('ADMINISTRATIVELY_COMPLETE','CLOSED_TO_ACCRUAL',
                                           'CLOSED_TO_ACCRUAL_AND_INTERVENTION', 'COMPLETE')
                            AND nci_id NOT IN (SELECT nci_id
                                               FROM dw_study_overall_status
                                               WHERE status = 'ACTIVE'
                                                AND date_trunc('day', status_date)
-                                                   BETWEEN '01-JAN-2012' AND '31-DEC-2012'))
+                                                   BETWEEN $P{Calculated_Start_Date} AND $P{End_Date}))
   AND (std.current_trial_status IS NULL OR std.current_trial_status != 'Withdrawn')
 ORDER BY clinical_research_cat, nci_id]]>
 	</queryString>

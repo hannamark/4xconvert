@@ -26,15 +26,25 @@ System.getProperty( "os.name" ).toLowerCase().indexOf( "win" ) >= 0
 	<queryString>
 		<![CDATA[SELECT soi.extension, si.open_date, si.admin, si.scientific,
        si.close_date, si.admin_close_date, si.scientific_close_date,
-       ru.first_name, ru.middle_name, ru.last_name
+       ru.first_name AS ru_first_name, ru.last_name AS ru_last_name,
+       cu.first_name AS cu_first_name, cu.last_name AS cu_last_name
 FROM study_inbox si
 JOIN study_otheridentifiers soi ON (si.study_protocol_identifier = soi.study_protocol_id)
-JOIN registry_user ru ON (ru.csm_user_id = si.user_last_updated_id)
+LEFT JOIN registry_user ru ON (ru.csm_user_id = si.user_last_updated_id)
+LEFT JOIN csm_user cu ON (cu.user_id = si.user_last_updated_id)
 WHERE si.comments LIKE 'Trial has been updated from ClinicalTrials.gov%'
-  AND si.close_date IS NOT NULL
+  AND (si.close_date IS NOT NULL OR si.admin_close_date IS NOT NULL OR si.scientific_close_date IS NOT NULL)
   AND soi.root = '2.16.840.1.113883.3.26.4.3'
-  AND ($P{Start_Date_o}::DATE IS NULL OR $P{Start_Date_o}::DATE <= si.open_date)
-  AND ($P{End_Date_o}::DATE IS NULL OR $P{End_Date_o}::DATE >= si.open_date)
+  AND ($P{Start_Date_o}::DATE IS NULL
+       OR $P{Start_Date_o}::DATE <= date_trunc('day', si.close_date)
+       OR $P{Start_Date_o}::DATE <= date_trunc('day', si.admin_close_date)
+       OR $P{Start_Date_o}::DATE <= date_trunc('day', si.scientific_close_date)
+      )
+  AND ($P{End_Date_o}::DATE IS NULL
+       OR $P{End_Date_o}::DATE >= date_trunc('day', si.close_date)
+       OR $P{End_Date_o}::DATE >= date_trunc('day', si.admin_close_date)
+       OR $P{End_Date_o}::DATE >= date_trunc('day', si.scientific_close_date)
+      )
   AND ($P{NCI_Trial_ID_po} IS NULL OR soi.extension LIKE ( '%' || $P{NCI_Trial_ID_po} || '%'))
 ORDER BY soi.extension, si.open_date, si.close_date]]>
 	</queryString>
@@ -45,9 +55,17 @@ ORDER BY soi.extension, si.open_date, si.close_date]]>
 	<field name="close_date" class="java.sql.Timestamp"/>
 	<field name="admin_close_date" class="java.sql.Timestamp"/>
 	<field name="scientific_close_date" class="java.sql.Timestamp"/>
-	<field name="first_name" class="java.lang.String"/>
-	<field name="middle_name" class="java.lang.String"/>
-	<field name="last_name" class="java.lang.String"/>
+	<field name="ru_first_name" class="java.lang.String"/>
+	<field name="ru_last_name" class="java.lang.String"/>
+	<field name="cu_first_name" class="java.lang.String"/>
+	<field name="cu_last_name" class="java.lang.String"/>
+	<variable name="name" class="java.lang.String">
+		<variableExpression><![CDATA[(org.apache.commons.lang.StringUtils.isBlank($F{cu_last_name}))
+ ? (org.apache.commons.lang.StringUtils.isBlank($F{ru_first_name})
+    ? $F{ru_last_name} : ($F{ru_first_name} + " " + $F{ru_last_name}))
+ : (org.apache.commons.lang.StringUtils.isBlank($F{cu_first_name})
+    ? $F{cu_last_name} : ($F{cu_first_name} + " " + $F{cu_last_name}))]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -198,9 +216,7 @@ ORDER BY soi.extension, si.open_date, si.close_date]]>
 				<textFieldExpression><![CDATA[$F{admin_close_date} == null ? ""
   : (($F{scientific_close_date} == null
      || $F{scientific_close_date} < $F{admin_close_date})
-    ? ($F{first_name}
-       + (org.apache.commons.lang.StringUtils.isEmpty($F{first_name}) ? "" : " ")
-       + $F{last_name})
+    ? $V{name}
     : "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
@@ -230,9 +246,7 @@ ORDER BY soi.extension, si.open_date, si.close_date]]>
 				<textFieldExpression><![CDATA[$F{scientific_close_date} == null ? ""
   : (($F{admin_close_date} == null
      || $F{admin_close_date} < $F{scientific_close_date})
-    ? ($F{first_name}
-       + (org.apache.commons.lang.StringUtils.isEmpty($F{first_name}) ? "" : " ")
-       + $F{last_name})
+    ? $V{name}
     : "")]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
@@ -250,9 +264,7 @@ ORDER BY soi.extension, si.open_date, si.close_date]]>
 					<font size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA[($F{admin} == true || $F{scientific} == true)
-  ?  "" : ($F{first_name}
-       + (org.apache.commons.lang.StringUtils.isEmpty($F{first_name}) ? "" : " ")
-       + $F{last_name})]]></textFieldExpression>
+  ?  "" : $V{name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
