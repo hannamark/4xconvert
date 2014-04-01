@@ -115,7 +115,7 @@
                     
                     <tr>
                         <td nowrap="nowrap" scope="row" class="labelDupe">
-                            NCT Number 
+                            ClinicalTrials.gov Identifier 
                         </td>
                         <td nowrap="nowrap" >
                             <c:out value="${sessionScope.nctIdentifier }"/>

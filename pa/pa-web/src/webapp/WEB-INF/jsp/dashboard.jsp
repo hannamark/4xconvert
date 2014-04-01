@@ -545,7 +545,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
 										</td>
 									</tr>
 									<tr>
-										<td scope="row" class="label">NCT #</td>
+										<td scope="row" class="label">ClinicalTrials.gov Identifier</td>
 										<td><c:out value="${nctIdentifier}"></c:out></td>
 										<td scope="row" class="label">Admin Check-out</td>
 										<td><c:out value="${queryDTO.adminCheckout.fullName}" />
