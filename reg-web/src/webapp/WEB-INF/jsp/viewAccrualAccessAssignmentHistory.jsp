@@ -9,49 +9,46 @@
 <s:head />
 </head>
 <body>
-	<!-- main content begins-->
+    <!-- main content begins-->
 	<c:set var="topic" scope="request" value="assignmentHistory" />
-	<h1>
-		<fmt:message key="manage.accrual.access.history.header" />
-	</h1>
-
-	<div class="box" id="filters">
-
-		<reg-web:failureMessage />
-		<reg-web:sucessMessage />
-
-		<s:form name="manageAccrualAccess"
-			action="manageAccrualAccesshistoryPaging.action">
-			<table class="form">
-			    <c:if test="${empty model.history}">
+	<div class="container">
+	    <h1 class="heading"><span><fmt:message key="manage.accrual.access.history.header" /></span></h1>
+	    <div class="form-group" id="filters">
+        <reg-web:failureMessage />
+        <reg-web:sucessMessage />
+        <s:form name="manageAccrualAccess" 
+            action="manageAccrualAccesshistoryPaging.action">
+            <table class="form">
+                <c:if test="${empty model.history}">
                     <tr height="200">
                         <td align="center" class="info">
                            <fmt:message key="manage.accrual.access.history.norecords" />
                         </td>
-                    </tr>  			    
-			    </c:if>
-				<tr>
-					<td><display:table class="data" sort="list" pagesize="20"
-							uid="row" name="model.history" export="false"
-							requestURI="manageAccrualAccesshistoryPaging.action">
-							<display:setProperty name="basic.msg.empty_list"
-								value="" />					
-							<display:column escapeXml="true" title="Date"
-								property="date" headerClass="sortable" sortable="true" />
-							<display:column escapeXml="true" title="Assignee"
-								property="assignee" headerClass="sortable nowrap" sortable="true" />
-							<display:column escapeXml="true" title="Trial ID"
-								property="trialNciId" headerClass="sortable nowrap" sortable="true" />
-							<display:column escapeXml="true" title="Assignment Action" property="action"
-								sortable="true" />							
-							<display:column escapeXml="true" title="Comments" property="comments"
-								sortable="true" />
-							<display:column escapeXml="true" title="Assigner" property="assigner"
-								sortable="true" />
-						</display:table></td>
-				</tr>
-			</table>
-		</s:form>
-	</div>
+                    </tr>               
+                </c:if>
+                <tr>
+                    <td>
+                        <display:table class="data table table-striped table-bordered sortable" sort="list" pagesize="20" 
+                            uid="row" name="model.history" export="false" requestURI="manageAccrualAccesshistoryPaging.action">
+                            <display:setProperty name="basic.msg.empty_list" value="" />                 
+                            <display:column escapeXml="true" title="Date" property="date" 
+                                headerClass="sortable" sortable="true" />
+                            <display:column escapeXml="true" title="Assignee" property="assignee" 
+                                headerClass="sortable nowrap" sortable="true" />
+                            <display:column escapeXml="true" title="Trial ID" property="trialNciId" 
+                                headerClass="sortable nowrap" sortable="true" />
+                            <display:column escapeXml="true" title="Assignment Action" property="action" 
+                                sortable="true" />                          
+                            <display:column escapeXml="true" title="Comments" property="comments"
+                                sortable="true" />
+                            <display:column escapeXml="true" title="Assigner" property="assigner" 
+                                sortable="true" />
+                       </display:table>
+                   </td>
+                </tr>
+            </table>
+        </s:form>
+    </div>
+    </div>	
 </body>
 </html>
