@@ -123,7 +123,7 @@
 	</s:if>
 	<reg-web:sucessMessage />
     <reg-web:failureMessage/>
-    <p class="mb20"><fmt:message key="search.instructions"/></p> 
+    <p class="mb20"><fmt:message key="search.trial.instructions"/></p> 
         
     <s:hidden name="criteria.myTrialsOnly" id="criteria.myTrialsOnly"/>
     <div class="form-group">
