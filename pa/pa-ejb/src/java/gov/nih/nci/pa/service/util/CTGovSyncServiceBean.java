@@ -799,7 +799,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         verifyTrialCategory(study);
 
         // convert into CTRP DTOs, piece by piece
-        extractStudyProtocolDTOFields(study, studyProtocolDTO);
+        extractStudyProtocolDTOFields(study, studyProtocolDTO, isUpdate);
         List<ArmDTO> arms = extractArms(study);
         List<PlannedEligibilityCriterionDTO> eligibility = extractEligibility(study
                 .getEligibility());
@@ -1549,7 +1549,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     @SuppressWarnings("PMD.ExcessiveMethodLength")
     private void extractStudyProtocolDTOFields(ClinicalStudy study,
-            StudyProtocolDTO dto) throws PAException {
+            StudyProtocolDTO dto, boolean isUpdate) throws PAException {
 
         dto.setAcronym(getSt(study.getAcronym(), L_200));
         dto.setPublicDescription(getSt(study.getBriefSummary(), L_5000));
@@ -1572,8 +1572,17 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         dto.setFdaRegulatedIndicator(getYesNoAsBl(study.getIsFdaRegulated()));
         dto.setSection801Indicator(getYesNoAsBl(study.getIsSection801()));
         dto.setKeywordText(getSt(study.getKeyword(), L_4000));
-        dto.setOfficialTitle(getSt(defaultString(study.getOfficialTitle()),
-                L_4000));
+        //For the case where official title is null/empty in XML.
+        if (StringUtils.isEmpty(study.getOfficialTitle())) {
+            //For new study set brief title as official title 
+            if (!isUpdate) {
+                dto.setOfficialTitle(getSt(defaultString(study.getBriefTitle()), L_4000));
+            }
+            //For updates don't update the official title.
+        } else {
+            dto.setOfficialTitle(getSt(defaultString(study.getOfficialTitle()), 
+                    L_4000));
+        }
         dto.setPhaseCode(CdConverter.convertStringToCd(convertPhaseCode(study
                 .getPhase())));
         dto.setStartDate(startDate);

@@ -495,6 +495,51 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     
     @SuppressWarnings("unchecked")
     @Test
+    public final void testPO6968() throws PAException {
+        String nctID = "NCT01727869";
+        String newNctID = "NCT01727870";
+        String officialTitle = "Study of REGN1400 Alone and in Combination With Erlotinib or Cetuximab in Patients With Certain Types of Cancer";
+        //Exercise new import trial
+        String nciID = serviceBean.importTrial(nctID);
+        assertTrue(StringUtils.isNotEmpty(nciID));
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        
+        final long id = getProtocolIdByNciId(nciID, session);
+        try {
+            InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
+                    .get(InterventionalStudyProtocol.class, id);
+            assertNotNull(sp.getOfficialTitle());
+            assertTrue("Official title must match", sp.getOfficialTitle().equals(officialTitle));            
+                        
+            // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML 
+            //that actually belongs to a different trial.
+            changeNCTNumber(nctID, newNctID);
+            
+            // Apply update on top of the existing record.
+            String newNciID = serviceBean.importTrial(newNctID);
+            final long newId = getProtocolIdByNciId(newNciID, session);
+            
+            session.flush();
+            session.clear();
+            
+            // Make sure we didn't create two protocols.
+            assertEquals(nciID, newNciID);
+            assertEquals(id, newId);
+            
+            sp = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class, id);
+            assertNotNull(sp.getOfficialTitle());
+            assertTrue("Official title must match", sp.getOfficialTitle().equals(officialTitle));
+            
+        } finally {
+            deactivateTrial(session, id);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
     public final void testPO6438EligCriteriaHandling() throws PAException, ParseException {
         String nciID = serviceBean.importTrial("NCT00324155");
         assertTrue(StringUtils.isNotEmpty(nciID));
