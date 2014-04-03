@@ -1537,4 +1537,8 @@
         <comment>fix rv_search_results</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6677-2.sql"/>
      </changeSet>
+     <changeSet id="PO-7126" author="walterd">
+        <comment>Update PA_PROPERTIES.rss.leadOrgs to include NCTN Organizations</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7126.sql"/>
+     </changeSet>
 </databaseChangeLog>
