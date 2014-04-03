@@ -85,7 +85,9 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -97,15 +99,23 @@ import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-
+import org.apache.struts2.ServletActionContext;
 import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -114,6 +124,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Gaurav Gupta
  *
  */
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class BioMarkersQueryAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = -2137469104765932059L;
@@ -134,9 +145,11 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private StudyProtocolService studyProtocolService;
     private PlannedMarkerSyncWithCaDSRServiceLocal permissibleService;
     private String selectedRowIdentifier;
+    private String selectedRowDocument;
     private String trialId;
     private String markerName;
-
+    private Long id = null;
+    
     @Override
     public void prepare() {
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
@@ -155,11 +168,15 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         }
         Map<Long, String> identifierMap = studyProtocolService.getTrialNciId(identifiersList);
         Map<Long, String> trialStatusList = studyProtocolService.getTrialProcessingStatus(identifiersList);
+        Map<Long, DocumentDTO> trialProtocolDocumentList = PaRegistry.getDocumentService()
+                .getDocumentByIDListAndType(identifiersList, DocumentTypeCode.PROTOCOL_DOCUMENT);
         for (PlannedMarkerDTO dto : plannedMarkers) {
             if (dto.getUserLastCreated() != null 
                     && !StringUtils.equalsIgnoreCase("REJECTED", trialStatusList
-                            .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))) {
-                    pmList.add(populateWebDTO(dto, identifierMap, trialStatusList));    
+                            .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))
+                    && identifierMap.containsKey(IiConverter
+                            .convertToLong(dto.getStudyProtocolIdentifier()))) {
+                    pmList.add(populateWebDTO(dto, identifierMap, trialStatusList, trialProtocolDocumentList));
             }         
         } 
         setPlannedMarkerList(pmList);
@@ -174,7 +191,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public String edit() throws PAException {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-        plannedMarker = populateWebDTO(marker, null, null);
+        plannedMarker = populateWebDTO(marker, null, null, null);
         return MARKER_EDIT;
     }
     /**
@@ -201,13 +218,18 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                 }
                 Map<Long, String> identifierMap = studyProtocolService.getTrialNciId(identifiersList);
                 Map<Long, String> trialStatusList = studyProtocolService.getTrialProcessingStatus(identifiersList);
+                Map<Long, DocumentDTO> trialProtocolDocumentList = PaRegistry.getDocumentService()
+                        .getDocumentByIDListAndType(identifiersList, DocumentTypeCode.PROTOCOL_DOCUMENT);
                 for (PlannedMarkerDTO dto : markers) {
                     if (dto.getUserLastCreated() != null 
                             && !StringUtils.equalsIgnoreCase("REJECTED", trialStatusList
-                                    .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))) {
-                            pmList.add(populateWebDTO(dto, identifierMap, trialStatusList));    
+                                    .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))
+                            && identifierMap.containsKey(IiConverter
+                                    .convertToLong(dto.getStudyProtocolIdentifier()))) {
+                            pmList.add(populateWebDTO(dto, identifierMap, trialStatusList
+                                  , trialProtocolDocumentList));    
                     }         
-                } 
+                }
                 setPlannedMarkerList(pmList);
             }
         } 
@@ -221,7 +243,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public String sendQuestion() throws PAException {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-        plannedMarker = populateWebDTO(marker, null, null);
+        plannedMarker = populateWebDTO(marker, null, null, null);
         try {
             String emailId = PaRegistry.getMailManagerService().getMarkerEmailAddress(marker);
             plannedMarker.setCsmUserEmailId(emailId);
@@ -242,7 +264,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public String sendQuestionMail() throws PAException {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(plannedMarker.getId()));
-        PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null);
+        PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null, null);
         try {
             PaRegistry.getMailManagerService().sendMarkerQuestionToCTROMail(webDTO.getNciIdentifier(),
                     webDTO.getCsmUserEmailId(), marker, plannedMarker.getQuestion());
@@ -259,7 +281,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
      */
     public String update() throws PAException {
             PlannedMarkerDTO marker = plannedMarkerService.get(IiConverter.convertToIi(getPlannedMarker().getId()));
-            PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null);
+            PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null, null);
             
          // check the value with the planned_marker_sync_cadsr table  as this table is in sync with the cadsr. 
             List<PlannedMarkerDTO> markerDTOs = plannedMarkerService
@@ -305,11 +327,11 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public String accept() throws PAException {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-        PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null);
-        Long id = IiConverter.convertToLong(marker.getPermissibleValue());
+        PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null, null);
+        Long pvId = IiConverter.convertToLong(marker.getPermissibleValue());
         // check the value with the planned_marker_sync_cadsr table  as this table is in sync with the cadsr. 
-        List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkerWithSyncID(id);
-        List<PlannedMarkerSyncWithCaDSRDTO> acceptValues = permissibleService.getValuesById(id);
+        List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkerWithSyncID(pvId);
+        List<PlannedMarkerSyncWithCaDSRDTO> acceptValues = permissibleService.getValuesById(pvId);
         if (!acceptValues.isEmpty()) {
             if (StringUtils.equals(acceptValues.get(0).getStatusCode().toString(), 
                     ActiveInactivePendingCode.ACTIVE.getName())) {
@@ -342,21 +364,22 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
      * @return plannedMarkerWebDTO
      * @throws PAException exception
      */
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     private PlannedMarkerWebDTO populateWebDTO(PlannedMarkerDTO markerDTO, Map<Long, String> map, 
-            Map<Long, String> statusMap) throws PAException {
+            Map<Long, String> statusMap, Map<Long, DocumentDTO> docMap) throws PAException {
         PlannedMarkerWebDTO webDTO = new PlannedMarkerWebDTO();
         webDTO.setId(IiConverter.convertToLong(markerDTO.getIdentifier()));
         webDTO.setName(StConverter.convertToString(markerDTO.getName()));
         webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
         webDTO.setStatus(CdConverter.convertCdToString(markerDTO.getStatusCode()));
-        
         String nciIdentifier = "";
         String userId = "";
         User csmUser;
         String emailId = "";
         String status = "";
+        String fileName = "";
         if (markerDTO.getStudyProtocolIdentifier() != null) {
-            if (map == null && statusMap == null) {
+            if (map == null && statusMap == null && docMap == null) {
              // For checking inActive trials to avoid exception in edit, question and accept mode 
                 // inActive trials does not have Marker's userLastCreated. 
                 if (markerDTO.getUserLastCreated() != null) { 
@@ -366,9 +389,21 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                     nciIdentifier = studyProtocolQueryDTO.getNciIdentifier();
                 }
             } else {
-                status = DocumentWorkflowStatusCode.valueOf(statusMap.get(IiConverter.convertToLong(markerDTO
-                        .getStudyProtocolIdentifier()))).getDisplayName();
+                if (statusMap.containsKey(IiConverter
+                        .convertToLong(markerDTO.getStudyProtocolIdentifier()))) {
+                    status = DocumentWorkflowStatusCode.valueOf(statusMap.get(IiConverter
+                          .convertToLong(markerDTO.getStudyProtocolIdentifier())))
+                          .getDisplayName();
+                }
                 nciIdentifier = map.get(IiConverter.convertToLong(markerDTO.getStudyProtocolIdentifier()));
+                if (docMap.containsKey(IiConverter
+                        .convertToLong(markerDTO.getStudyProtocolIdentifier()))) {
+                  fileName = StConverter.convertToString(docMap.get(IiConverter.convertToLong(markerDTO
+                          .getStudyProtocolIdentifier())).getFileName());
+                  webDTO.setProtocolDocumentID(IiConverter.convertToString(docMap
+                         .get(IiConverter.convertToLong(markerDTO
+                          .getStudyProtocolIdentifier())).getIdentifier())); 
+                }
             }
             if (markerDTO.getUserLastCreated() != null) {
                 userId = StConverter.convertToString(markerDTO.getUserLastCreated());
@@ -380,10 +415,46 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         webDTO.setQuestion("");
         webDTO.setNciIdentifier(nciIdentifier);
         webDTO.setCsmUserEmailId(emailId);
-        //List<PlannedMarkerSyncWithCaDSRDTO> listofValues = 
-     //       permissibleService.getValuesById(IiConverter.convertToLong(markerDTO.getPermissibleValue()));
+        webDTO.setProtocolDocument(fileName);
         webDTO.setPermissibleValue(markerDTO.getPermissibleValue());
         return webDTO;
+    }
+    /**
+     * @return result
+     * @throws PAException  PAException
+     */
+    public String saveFile() throws PAException {
+        try {
+            DocumentDTO  docDTO = 
+                PaRegistry.getDocumentService().get(IiConverter.convertToIi(getSelectedRowDocument()));
+            PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
+                    .get(IiConverter.convertToIi(id));
+            PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null, null);
+            StringBuffer fileName = new StringBuffer();
+            fileName.append(webDTO.getNciIdentifier()).append('-').append(docDTO.getFileName().getValue());
+            HttpServletResponse servletResponse = ServletActionContext.getResponse();
+            servletResponse.setContentType("application/octet-stream");
+            servletResponse.setContentLength(docDTO.getText().getData().length);
+            servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName.toString() + "\"");
+            servletResponse.setHeader("Pragma", "public");
+            servletResponse.setHeader("Cache-Control", "max-age=0");
+            ByteArrayInputStream bStream = new ByteArrayInputStream(docDTO.getText().getData());
+            ServletOutputStream out = servletResponse.getOutputStream();
+            IOUtils.copy(bStream, out);
+            out.flush();
+            out.close();
+        } catch (FileNotFoundException err) {
+            LOG.error("TrialDocumentAction failed with FileNotFoundException: "
+                    + err);
+            this.addActionError("File not found: " + err.getLocalizedMessage());
+            execute();
+            return ERROR;
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            execute();
+            return ERROR;
+        }
+        return NONE;
     }
 
     /**
@@ -537,6 +608,34 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         this.permissibleService = permissibleService;
     }
     
+    
+    /**
+     * @return id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+    /**
+     * 
+     * @return selectedRowDocument
+     */
+    public String getSelectedRowDocument() {
+        return selectedRowDocument;
+    }
+    /**
+     * 
+     * @param selectedRowDocument selectedRowDocument
+     */
+    public void setSelectedRowDocument(String selectedRowDocument) {
+        this.selectedRowDocument = selectedRowDocument;
+        }
     
     
 }

@@ -118,6 +118,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -550,4 +551,30 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         docDTO.setInactiveCommentText(reasonToDelete);
         super.update(docDTO);        
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public  Map<Long, DocumentDTO> getDocumentByIDListAndType(List<Long> listOfTrialIDs
+           , DocumentTypeCode type) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Map<Long, DocumentDTO> resultSet = new HashMap<Long, DocumentDTO>();
+        for (Long identifier : listOfTrialIDs) {
+           String hql = "from Document as doc where doc.studyProtocol.id = :id and doc.activeIndicator=true"
+                    + " and doc.typeCode=:type";
+              Query query = session.createQuery(hql);
+              query.setParameter("id", identifier);
+              query.setParameter("type", type);
+              List<Document> documents = query.list();
+              if (!documents.isEmpty()) {
+                  DocumentDTO dto = (DocumentDTO) convertFromDomainToDto(documents.get(0));
+                  resultSet.put(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()), dto);
+              }
+            }
+        return resultSet;
+    }
+
+    
 }

@@ -80,10 +80,12 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Bala Nair
@@ -181,4 +183,13 @@ public interface DocumentService extends StudyPaService <DocumentDTO> {
      * @throws PAException PAException
      */
     void delete(Ii docID, St reasonToDelete) throws PAException;   
+    /**
+     * 
+     * @param listOfTrialIDs listOfTrialIDs
+     * @param type type
+     * @return map
+     * @throws PAException PAException
+     */
+    Map<Long, DocumentDTO> getDocumentByIDListAndType(List<Long> listOfTrialIDs
+         , DocumentTypeCode type) throws PAException;
 }

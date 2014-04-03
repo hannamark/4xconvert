@@ -974,6 +974,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         return resultSet;
     }
+    
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -987,7 +990,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             SQLQuery query = session
             .createSQLQuery("select dws.study_protocol_identifier,"
                     + " dws.status_code from document_workflow_status as dws"
-                    + " WHERE dws.study_protocol_identifier = (:id)"
+                    + " WHERE dws.study_protocol_identifier = (select"
+                    + " sp.identifier from study_protocol as sp where sp.identifier = (:id)"
+                    + " and sp.status_code ='ACTIVE')"
                     + " order by dws.identifier desc LIMIT 1");
             query.setParameter("id", identifier);
             queryList = query.list();

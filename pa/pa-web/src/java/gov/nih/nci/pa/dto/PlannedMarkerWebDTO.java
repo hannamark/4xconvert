@@ -83,7 +83,6 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
-
 import java.util.List;
 /**
  * Web DTO for planned markers.
@@ -120,6 +119,8 @@ public class PlannedMarkerWebDTO {
     private List<String> selectedAssayPurpose;
     private List<String> selectedTissueSpecType;
     private List<String> selectedEvaluationType;
+    private String protocolDocument;
+    private String protocolDocumentID;
     private Ii permissibleValue;
     private Long cadsrId;
     /**
@@ -530,6 +531,34 @@ public class PlannedMarkerWebDTO {
      */
     public void setCadsrId(Long cadsrId) {
         this.cadsrId = cadsrId;
+    }
+    /**
+     * 
+     * @return protocolDocument protocolDocument
+     */
+    public String getProtocolDocument() {
+        return protocolDocument;
+    }
+    /**
+     * 
+     * @param protocolDocument protocolDocument
+     */
+    public void setProtocolDocument(String protocolDocument) {
+        this.protocolDocument = protocolDocument;
+        }
+    /**
+     * 
+     * @return protocolDocumentID protocolDocumentID
+     */
+    public String getProtocolDocumentID() {
+        return protocolDocumentID;
+        }
+    /**
+     * 
+     * @param protocolDocumentID protocolDocumentID
+     */
+    public void setProtocolDocumentID(String protocolDocumentID) {
+        this.protocolDocumentID = protocolDocumentID;
     }
     
     

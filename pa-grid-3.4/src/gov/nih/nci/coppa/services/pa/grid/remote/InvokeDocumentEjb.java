@@ -3,12 +3,14 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper class for invoking the Document remote EJB.
@@ -109,5 +111,13 @@ public class InvokeDocumentEjb extends InvokeStudyPaServiceEjb<DocumentDTO> impl
      */
     public void delete(Ii docID, St reasonToDelete) throws PAException {
         throw new PAException("Unavailable from the grid services");        
+    }
+
+    @Override
+    public Map<Long, DocumentDTO> getDocumentByIDListAndType(
+              List<Long> listOfTrialIDs, DocumentTypeCode type)
+              throws PAException {
+        // TODO Auto-generated method stub
+        throw new PAException("Unavailable from the grid services");
     }
 }

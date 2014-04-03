@@ -205,6 +205,7 @@
 			</result>
 			<result name="question">/WEB-INF/jsp/scientific/plannedMarker/biomarkerQuestion.jsp
 			</result>
+			<result name="error">/WEB-INF/jsp/bioMarkersView.jsp</result>
 		</action>
         <action name="inboxProcessing*" class="gov.nih.nci.pa.action.InboxProcessingAction" method="{1}">
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>

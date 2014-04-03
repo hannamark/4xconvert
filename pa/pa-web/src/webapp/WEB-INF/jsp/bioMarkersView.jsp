@@ -70,18 +70,29 @@
                         </ul>
                     </del>
                 </div>
+                <pa:sucessMessage/>
+                 <pa:failureMessage/>
 			 <table class="form">
 			 <tr>
                     <td colspan="2">
                     <s:set name="plannedMarkerList" value="plannedMarkerList" scope="request" /> 
                     
-							<display:table
-							name="plannedMarkerList" htmlId="plannedMarkerTable" id="row"
-							class="data" defaultsort="1" sort="list" pagesize="200"
+			<display:table name="plannedMarkerList" htmlId="plannedMarkerTable" id="row"
+							class="data" sort="list" pagesize="200"
 							requestURI="bioMarkerssearch.action">
-							<display:column escapeXml="true" property="nciIdentifier"
-								sortable="true" titleKey="plannedMarker.protocolId" 
-								headerClass="sortable"/>
+				<display:column sortable="true" titleKey="plannedMarker.protocolId" 
+								headerClass="sortable" style="width:15%">
+								<s:property value="%{#attr.row.nciIdentifier}" /> 
+								&nbsp;  &nbsp;  &nbsp; 
+					<s:if test="%{#attr.row.protocolDocument != '' }">
+                          <s:url id="url" action="bioMarkerssaveFile"><s:param name="id" value="%{#attr.row.id}" />
+                        <s:param name="selectedRowDocument" value="%{#attr.row.protocolDocumentID}"/></s:url>
+                         <s:a href="%{url}">
+                                  <img src="<c:url value='/images/document.gif'/>" alt="view" width="14" height="14" />
+                          </s:a>
+                          </s:if>
+				</display:column>
+
 							<display:column escapeXml="true" property="name" sortable="true" 
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
 							<display:column titleKey="plannedMarker.action"

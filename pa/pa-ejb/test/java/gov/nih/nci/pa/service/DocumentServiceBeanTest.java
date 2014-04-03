@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -96,11 +97,14 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -270,5 +274,18 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
         docDTO = remoteEjb.create(docDTO);
         docDTO = remoteEjb.get(docDTO.getIdentifier());
         remoteEjb.delete(docDTO.getIdentifier());
+    }
+    
+    @Test
+    public void testGetDocumentByIDListAndType() throws PAException {
+        List<Long> listOfTrialIDs = new ArrayList<Long>();
+        listOfTrialIDs.add(1L);
+        listOfTrialIDs.add(2L);
+        Map<Long, DocumentDTO> map = remoteEjb.getDocumentByIDListAndType(listOfTrialIDs,
+             DocumentTypeCode.PROTOCOL_DOCUMENT);
+        assertTrue(map.size() > 0);
+        assertEquals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), 
+             map.get(1L).getTypeCode().getCode());
+        assertEquals("1", IiConverter.convertToLong(map.get(1L).getStudyProtocolIdentifier()).toString());
     }
 }
