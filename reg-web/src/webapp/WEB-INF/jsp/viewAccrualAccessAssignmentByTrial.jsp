@@ -10,27 +10,19 @@
 <body>
 	<!-- main content begins-->
 	<c:set var="topic" scope="request" value="assignmentByTrial" />
-	<h1>
-		<fmt:message key="manage.accrual.access.byTrial.header" />
-	</h1>
+	<h1 class="heading"><span><fmt:message key="manage.accrual.access.byTrial.header" /></span></h1>
 
 	<div class="box" id="filters">
-
 		<reg-web:failureMessage />
 		<reg-web:sucessMessage />
-
 		<s:form name="manageAccrualAccess"
 			action="manageAccrualAccessbyTrialPaging.action">
-			<table class="form">
 			    <s:set var="byTrial" scope="request" value="%{model.byTrial}" />			    			
                 <c:forEach var="entry" items="${requestScope['byTrial']}">
-	                <tr>
-	                    <td align="left" class="accrual_trial_cat_title" nowrap="nowrap">
-	                        <c:out value="${entry.key.code}"/>
-	                    </td>
-	                </tr>
-                     <tr>
-                        <td><display:table class="data" sort="list" pagesize="20"
+                	<div class="mb20">
+	                	<h3 class="table-title"><c:out value="${entry.key.code}"/></h3>
+	                </div>
+	                <display:table class="data table table-striped b1px mb40 sortable" sort="list" pagesize="20"
                             uid="${entry.key.code}" name="${entry.value}" export="false"
                             requestURI="manageAccrualAccessbyTrialPaging.action">
                             <display:setProperty name="basic.msg.empty_list"
@@ -50,20 +42,11 @@
                                     <c:out value="${submitter}"></c:out><br/>
                                 </c:forEach>
                             </display:column>                            
-                        </display:table></td>
-                     </tr>
-                     <tr>
-                        <td>&nbsp;</td>
-                     </tr>
+                     </display:table>
                 </c:forEach>
                 <c:if test="${empty byTrial}">
-                    <tr height="200">
-                        <td align="center" class="info">
                            <fmt:message key="manage.accrual.access.byTrial.norecords" />
-                        </td>
-                    </tr>                
                 </c:if>
-			</table>
 		</s:form>
 	</div>
 </body>

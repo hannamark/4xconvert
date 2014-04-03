@@ -6,6 +6,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><fmt:message key="manage.accrual.access.page.title" /></title>
+
 <s:head />
 <script>
 
@@ -179,86 +180,80 @@
 <body>
 	<!-- main content begins-->
 	<c:set var="topic" scope="request" value="accrualaccess" />
-	<h1>
-		<fmt:message key="manage.accrual.access.page.header" />
-	</h1>
+	<h1 class="heading"><span><fmt:message key="manage.accrual.access.page.header" /></span></h1>
 
 	<div class="box" id="filters">
 
 		<reg-web:failureMessage />
 		<reg-web:sucessMessage />
 
-		<s:form name="manageAccrualAccess" action="manageAccrualAccess.action">
+		<s:form name="manageAccrualAccess" action="manageAccrualAccess.action" cssClass="form-horizontal" role="form">
 		    <s:token/>
 		    <s:hidden name="trialsToAssign" value=""/>
 		    <s:hidden name="trialsToUnassign" value=""/>
             <s:hidden name="families"/>
             <s:hidden name="organization.name"/>
-			<table class="form">
-			    <tr><td><label>Affiliated Site: </label><c:out value="${organization.name}"/></td>
-			        <td><label>Member of Family(s): </label><c:out value="${families}"/></td>
-			    </tr>
-				<tr>
-					<td scope="row" class="label"><label
-						for="trialCategory"> <fmt:message
-								key="manage.accrual.access.selectTrialCat" /></label></td>
-					<td>					   
-					   <s:select name="trialCategory" id="trialCategory" cssStyle="width:300px;"
+			
+		    <p>Affiliated Site: <strong><c:out value="${organization.name}"/></strong></p>
+			<p>Member of Family(s): <strong><c:out value="${families}"/></strong></p>
+			 <div class="form-group">   
+			    <label for="trialCategory" class="col-xs-3 control-label"><fmt:message
+								key="manage.accrual.access.selectTrialCat" /></label>
+				<div class="col-xs-4">
+					<s:select name="trialCategory" id="trialCategory" cssClass="form-control"
                                 onchange="change(this);"
                                 list="trialCategoryList" 
                                     listKey="name" listValue="code"
-                                 value="model.trialCategory.name" /></td>
-				</tr>
-                <tr>
-                    <td scope="row" class="label"><label
-                        for="userId"> <fmt:message
-                                key="manage.accrual.access.selectUser" /></label></td>
-                    <td>                       
-                       <s:select name="userId" id="userId" cssStyle="width:300px;"
-                                onchange="change(this);"
-                                list="model.users" 
-                                    listKey="id"  
-                                    listValue="%{siteAccrualSubmitter == true ? lastName + ', ' +  firstName + '(site submitter)' : lastName + ', ' +  firstName}"                                      
-                                headerKey="" headerValue=" " value="model.user.id" />
-                     <input type="button" value="Assign/Unassign Site Accrual Submitter"
-                                                    onclick="assignUnassignSASubmitter(this);" />  </td> 
-                </tr>
-                <tr>
-                    <td scope="row" class="label"><label
-                        for="ofUserId"> <fmt:message key="manage.accrual.access.family.selectUser" /></label></td>
-                    <td>                       
-                       <s:select name="ofUserId" id="ofUserId" cssStyle="width:300px;"
-                                onchange="change(this);"
-                                list="model.ofUsers" 
-                                listKey="id"  
-                                listValue="%{familyAccrualSubmitter == true ? lastName + ', ' +  firstName + '(org family submitter)' : lastName + ', ' +  firstName}"                                      
-                                headerKey="" headerValue=" " value="ofUserId" />
-                       <input type="button" value="Assign/Unassign Org Family Accrual Submitter" onclick="assignUnassignOFSubmitter(this);" />
-                    </td> 
-                </tr>
-                <tr>
-                    <td height="20px"> </td>
-                </tr>
+                                 value="model.trialCategory.name" />
+				</div>
+				<i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                            key="manage.accrual.access.selectTrial.help"/>' data-placement="top" data-trigger="hover"></i></div>
+			<div class="form-group">
+          		<label for="userId" class="col-xs-3 control-label"> <fmt:message
+                            key="manage.accrual.access.selectUser" /></label>
+                <div class="col-xs-4">
+                   <s:select name="userId" id="userId" cssClass="form-control"
+                            onchange="change(this);"
+                            list="model.users" 
+                            listKey="id"  
+                            listValue="%{siteAccrualSubmitter == true ? lastName + ', ' +  firstName + '(site submitter)' : lastName + ', ' +  firstName}"                                      
+                            headerKey="" headerValue=" " value="model.user.id" />
+				</div>
+				<i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                            key="manage.accrual.access.selectUser.help"/>' data-placement="top" data-trigger="hover"></i>
+                <button type="button" class="btn btn-icon btn-primary" value="Assign/Unassign Site Accrual Submitter" onclick="assignUnassignSASubmitter(this);" ><i class="fa-save"></i>Assign/Unassign Site Accrual Submitter</button>
+             </div>
+             <div class="form-group">
+                 <label for="ofUserId" class="col-xs-3 control-label"><fmt:message key="manage.accrual.access.family.selectUser" /></label>
+                 <div class="col-xs-4">                       
+                    <s:select name="ofUserId" id="ofUserId" cssClass="form-control"
+                             onchange="change(this);"
+                             list="model.ofUsers" 
+                             listKey="id"  
+                             listValue="%{familyAccrualSubmitter == true ? lastName + ', ' +  firstName + '(org family submitter)' : lastName + ', ' +  firstName}"                                      
+                             headerKey="" headerValue=" " value="ofUserId" />
+                 </div>
+                 <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message key="manage.accrual.access.selectUser.help"/>' data-placement="top" data-trigger="hover"></i>
+                    <button type="button" class="btn btn-icon btn-primary" value="Assign/Unassign Org Family Accrual Submitter" onclick="assignUnassignOFSubmitter(this);"><i class="fa-save"></i>Assign/Unassign Org Family Accrual Submitter</button> 
+            </div>
+                
                 <c:if test="${model.user != null}">	
                 <c:if test="${!(not empty model.assignedTrials || not empty model.unassignedTrials)}"> 
                     <tr>
                         <td colspan="2" class="info" align="center"> <fmt:message key="manage.accrual.access.noTrials"/> </td>
                     </tr>                
                 </c:if>
-                <c:if test="${(not empty model.assignedTrials || not empty model.unassignedTrials)}">    
+                <c:if test="${(not empty model.assignedTrials || not empty model.unassignedTrials)}">  
+                <table class="accrualAccess">
+                <tbody>  
                 <tr>
                     <td colspan="2">
                         <table width="100%">
                             <tr>
-                                <td class="info" align="center"><fmt:message key="manage.accrual.access.selectHelp"/></td>
+                                <td width="45%" nowrap="nowrap" align="center"><h3 class="notAssigned"><fmt:message key="manage.accrual.access.notAssigned"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message key="manage.accrual.access.selectHelp"/>' data-placement="top" data-trigger="hover"></i></h3></td>
                                 <td></td>
-                                <td class="info" align="center"><fmt:message key="manage.accrual.access.selectHelp"/></td>
+                                <td width="45%" nowrap="nowrap" align="center"><h3 class="assigned"><fmt:message key="manage.accrual.access.assigned"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message key="manage.accrual.access.selectHelp"/>' data-placement="top" data-trigger="hover"></i></h3></td>
                             </tr>                        
-                            <tr>
-                                <td width="45%" align="center" nowrap="nowrap"><h3><fmt:message key="manage.accrual.access.notAssigned"/></h3></td>
-                                <td></td>
-                                <td width="45%"  align="center" nowrap="nowrap"><h3><fmt:message key="manage.accrual.access.assigned"/></h3></td>
-                            </tr>
                             <tr>
                                 <td>
                                     <div class="accrual_trial_list_container">
@@ -297,14 +292,14 @@
 	                                            <b><fmt:message key="manage.accrual.access.assign"/></b>
 	                                        </div>
 	                                        <div>
-	                							<input class="accrual_btn" type="button" value="&gt;"
+	                							<button type="button" value="&gt;"
 	                							    onclick="assignSelected(this);" onkeypress="assignSelected(this);"
-	                							    />                                      
+	                							    class="btn btn-light" data-placement="left" rel="tooltip" data-original-title="Assign selected"><i class="fa-angle-right"></i></button>                                      
 	                                        </div>
 	                                        <div>
-	                                            <input class="accrual_btn"
+	                                            <button type="button"
 	                                               onclick="assignAll(this);" onkeypress="assignAll(this);"
-	                                               type="button" value="&gt;&gt;"/>                                      
+	                                               class="btn btn-light" data-placement="left" rel="tooltip" data-original-title="Assign all"><i class="fa-angle-double-right"></i></button>                                      
 	                                        </div>  
 	                                        <br/><br/>
                                         </c:if>
@@ -313,14 +308,14 @@
 	                                            <b><fmt:message key="manage.accrual.access.unassign"/></b>
 	                                        </div>
 	                                        <div>
-	                                            <input class="accrual_btn" type="button" value="&lt;" 
+	                                            <button type="button" 
 	                                               onclick="unassignSelected(this);" onkeypress="unassignSelected(this);"
-                                                    />                                     
+	                                               class="btn btn-default" data-placement="right" rel="tooltip" data-original-title="Unassign selected"><i class="fa-angle-left"></i></button>                                    
 	                                        </div>
 	                                        <div>
-	                                            <input class="accrual_btn" type="button" value="&lt;&lt;"
+	                                            <button type="button"
 	                                               onclick="unassignAll(this);" onkeypress="unassignAll(this);"
-	                                               />                                      
+	                                               class="btn btn-default" data-placement="right" rel="tooltip" data-original-title="Unassign all"><i class="fa-angle-double-left"></i></button>                                      
 	                                        </div>                         
                                         </c:if>        
                                     </div>
@@ -364,19 +359,27 @@
                 </c:if>
                 </c:if>
 			</table>
-	        <div id="comments-dialog" style="display:none;">
-	           <div class="header"><fmt:message key="manage.accrual.access.comments"/></div>
-	           <div class="body">
-	           <div><label for="comments">Please provide an <i>optional</i> comment for this action and then click either
-	           Save to execute or Cancel to abort</label>:</div>
-	           <div>
-	               <s:textarea id="comments" name="comments" value="" rows="8"></s:textarea>
-	           </div>
-	           <div align="center">
-	               <input type="button" value="Save" 
-	                   onclick="$('comments-dialog').hide();displayWaitPanel();this.form.submit();"/>&nbsp;<input type="button" value="Cancel"
-	                   onclick="$('comments-dialog').hide();"/>
-	           </div>
+	        <div id="comments-dialog" style="display: none">
+	        	<div class="modal-dialog">
+	    			<div class="modal-content">
+		      			<div class="modal-header">
+			      			<h4 class="modal-title" id="myModalLabel"><fmt:message key="manage.accrual.access.comments"/></h4>
+			      		</div>
+			           <div class="modal-body">
+			           	   <div>
+				           <label for="comments">Please provide an <i>optional</i> comment for this action and then click either
+				           Save to execute or Cancel to abort:</label>
+				           <s:textarea id="comments" name="comments" value="" rows="8" cssClass="form-control"/>
+				           </div>
+				           <br/>
+				           <div align="center">
+				               <button type="button" class="btn btn-icon btn-default" data-dismiss="modal"value="Save" 
+				                   onclick="$('comments-dialog').hide();displayWaitPanel();this.form.submit();"><i class="fa-save"></i>Save</button>
+				                  <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" value="Cancel"
+				                   onclick="$('comments-dialog').hide();"><i class="fa-times-circle"></i>Cancel</button>
+				           </div>
+			           </div>
+		           </div>
 	           </div>
 	        </div>
 		</s:form>
