@@ -48,6 +48,7 @@
             <div class="clear"><br/></div>
         </div>
         <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
+        <jsp:include page="/WEB-INF/jsp/common/misc.jsp"/>
         <s:form id="xsrfForm"><s:token/></s:form>
     </body>
 </html>
