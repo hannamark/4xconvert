@@ -524,15 +524,14 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         final String currentUser = getCurrentUser();
         try {
             ClinicalStudy study = unmarshallClinicalStudy(xml);
-            nctIdStr = study.getIdInfo().getNctId();
-            title = study.getOfficialTitle();
+            nctIdStr = study.getIdInfo().getNctId();            
 
             StudyProtocolDTO studyProtocolDTO = instantiateStudyProtocolDTO(study);
             studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.CLINICAL_TRIALS_GOV));
 
             final String protocolID = verifyPopulateAndPersist(
                     studyProtocolDTO, study, nctIdStr, xml, false);
-
+            title = StConverter.convertToString(studyProtocolDTO.getOfficialTitle());            
             String trialNciId = paServiceUtils.getTrialNciId(Long
                     .valueOf(protocolID));
             createImportLogEntry(trialNciId, nctIdStr, title, NEW_TRIAL_ACTION,
@@ -557,8 +556,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         final String currentUser = getCurrentUser();
         try {            
             ClinicalStudy study = unmarshallClinicalStudy(xml);
-            nctIdStr = study.getIdInfo().getNctId();
-            title = study.getOfficialTitle();
+            nctIdStr = study.getIdInfo().getNctId();            
 
             StudyProtocolDTO studyProtocolDTO = existentStudy;
             if (!BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator())) {
@@ -568,6 +566,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             ProtocolSnapshot before = protocolComparisonService.captureSnapshot(id);
             verifyPopulateAndPersist(studyProtocolDTO, study, nctIdStr, xml,
                     true);
+            title = StConverter.convertToString(studyProtocolDTO.getOfficialTitle());
             ProtocolSnapshot after = protocolComparisonService.captureSnapshot(id);
             
             final boolean needsReview = needsReview(before, after);
