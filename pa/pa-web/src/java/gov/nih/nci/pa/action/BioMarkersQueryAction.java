@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
@@ -106,8 +107,11 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -179,6 +183,14 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                     pmList.add(populateWebDTO(dto, identifierMap, trialStatusList, trialProtocolDocumentList));
             }         
         } 
+        if (CollectionUtils.isNotEmpty(pmList)) {
+            Collections.sort(pmList, new Comparator<PlannedMarkerWebDTO>() {
+                public int compare(PlannedMarkerWebDTO o1, PlannedMarkerWebDTO o2) {
+                    return o2.getCreationDate().compareTo(
+                           o1.getCreationDate());
+                }
+            });              
+        }
         setPlannedMarkerList(pmList);
         return SUCCESS;
     }
@@ -229,6 +241,14 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                             pmList.add(populateWebDTO(dto, identifierMap, trialStatusList
                                   , trialProtocolDocumentList));    
                     }         
+                }
+                if (CollectionUtils.isNotEmpty(pmList)) {
+                    Collections.sort(pmList, new Comparator<PlannedMarkerWebDTO>() {
+                        public int compare(PlannedMarkerWebDTO o1, PlannedMarkerWebDTO o2) {
+                            return o2.getCreationDate().compareTo(
+                                   o1.getCreationDate());
+                        }
+                    });              
                 }
                 setPlannedMarkerList(pmList);
             }
@@ -372,6 +392,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         webDTO.setName(StConverter.convertToString(markerDTO.getName()));
         webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
         webDTO.setStatus(CdConverter.convertCdToString(markerDTO.getStatusCode()));
+        webDTO.setCreationDate(TsConverter.convertToTimestamp(markerDTO.getDateLastCreated()));
         String nciIdentifier = "";
         String userId = "";
         User csmUser;

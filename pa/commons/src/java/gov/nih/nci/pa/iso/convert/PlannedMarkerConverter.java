@@ -89,12 +89,12 @@ import java.util.Iterator;
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
 /**
@@ -154,6 +154,9 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
         dto.setStatusCode(CdConverter.convertToCd(marker.getStatusCode()));
         if (marker.getUserLastCreated() != null) {
             dto.setUserLastCreated(StConverter.convertToSt(marker.getUserLastCreated().getUserId().toString()));
+        }
+        if (marker.getDateLastCreated() != null) {
+            dto.setDateLastCreated(TsConverter.convertToTs(marker.getDateLastCreated()));
         }
         return dto;
     }

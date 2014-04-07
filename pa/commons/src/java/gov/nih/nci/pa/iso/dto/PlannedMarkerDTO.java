@@ -87,6 +87,7 @@ import java.util.List;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Ts;
 /**
  * DTO for representing a study's planned markers.
  *
@@ -116,6 +117,7 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     private List<String> selectedEvaluationType; 
     private Ii permissibleValue;
     private Ii cadsrId;
+    private Ts dateLastCreated;
     /**
      * @return the name
      */
@@ -388,4 +390,18 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
         this.cadsrId = cadsrId;
     }
     
+    /**
+     * 
+     * @return dateLastCreated dateLastCreated
+     */
+    public Ts getDateLastCreated() {
+        return dateLastCreated;
+    }
+    /**
+     * 
+     * @param dateLastCreated dateLastCreated
+     */
+    public void setDateLastCreated(Ts dateLastCreated) {
+        this.dateLastCreated = dateLastCreated;
+    }
 }

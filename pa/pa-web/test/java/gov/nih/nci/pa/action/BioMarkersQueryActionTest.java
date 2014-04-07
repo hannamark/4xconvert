@@ -86,21 +86,34 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.opensymphony.module.sitemesh.tapestry.Util;
 
 /**
  * @author Gaurav Gupta
@@ -109,7 +122,6 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     private BioMarkersQueryAction bioMarkersQueryAction;
     StudyProtocolService studyProtocolService = mock(StudyProtocolService.class);
     PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
-    
     @Before
     public void setUp() throws Exception {
         bioMarkersQueryAction = new BioMarkersQueryAction();
@@ -123,7 +135,7 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         webDTO.setId(1L);
         List<PlannedMarkerWebDTO> plannedMarkerWebDTOs = new ArrayList<PlannedMarkerWebDTO>();
         plannedMarkerWebDTOs.add(webDTO);
-        
+        CSMUserService.setInstance(new MockCSMUserService());
         bioMarkersQueryAction.setPlannedMarkerList(plannedMarkerWebDTOs);
         
     }
@@ -136,11 +148,21 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         identifierMap.put(123457L, "NCI-2012-00261");
         identifiersList.add(123456L);
         identifiersList.add(123457L);
+        PlannedMarkerDTO dto = new PlannedMarkerDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setName(StConverter.convertToSt("Marker #1"));
+        dto.setLongName(StConverter.convertToSt("Marker #1"));
+        dto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
+        dto.setUserLastCreated(StConverter.convertToSt("1"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(123457L));
+        List<PlannedMarkerDTO> dtos = new ArrayList<PlannedMarkerDTO>();
+        dtos.add(dto);
         Map<Long, String> statusMap = new HashMap<Long, String>();
         statusMap.put(123456L, "REJECTED");
         statusMap.put(123457L, "VERIFICATION_PENDING");
-        when(studyProtocolService.getTrialNciId(identifiersList)).thenReturn(identifierMap);
-        when(studyProtocolService.getTrialProcessingStatus(identifiersList)).thenReturn(statusMap);
+        when(plannedMarkerService.getPlannedMarkers()).thenReturn(dtos);
+        when(studyProtocolService.getTrialNciId((List<Long>) any(Util.class))).thenReturn(identifierMap);
+        when(studyProtocolService.getTrialProcessingStatus((List<Long>) any(Util.class))).thenReturn(statusMap);
         assertEquals(bioMarkersQueryAction.execute(), "success");
         assertNotNull(bioMarkersQueryAction.getPlannedMarkerList());
     }
@@ -226,6 +248,7 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         dto1.setName(StConverter.convertToSt("Marker #2"));
         dto1.setLongName(StConverter.convertToSt("Marker #2"));
         dto1.setStudyProtocolIdentifier(IiConverter.convertToIi(123457L));
+        dto1.setDateLastCreated(TsConverter.convertToTs(new Date()));
         markers.add(dto);
         markers.add(dto1);
         identifierMap.put(123456L, "NCI-2012-00260");
@@ -239,6 +262,15 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         when(studyProtocolService.getTrialProcessingStatus(identifiersList)).thenReturn(statusMap);
         assertEquals(bioMarkersQueryAction.search(), "success");
         assertNotNull(bioMarkersQueryAction.getPlannedMarkerList());   
+    }
+    
+    @Test
+    public void testSaveFile() throws PAException {
+        String result = bioMarkersQueryAction.saveFile();
+        assertEquals("none",result);
+        HttpServletResponse response = ServletActionContext.getResponse();
+        assertEquals("application/octet-stream", response.getContentType());
+        assertEquals("ISO-8859-1", response.getCharacterEncoding());
     }
 
 }

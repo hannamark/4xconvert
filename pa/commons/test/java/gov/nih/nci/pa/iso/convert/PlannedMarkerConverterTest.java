@@ -83,6 +83,9 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
+
+import java.util.Date;
+
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -90,6 +93,8 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
@@ -104,6 +109,10 @@ public class PlannedMarkerConverterTest
      */
     @Override
     public PlannedMarker makeBo() {
+        User user = new User();
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setUserId(1L);
         PlannedMarker bo = new PlannedMarker();
         PlannedMarkerSyncWithCaDSR permissibleValue = new PlannedMarkerSyncWithCaDSR();
         permissibleValue.setCaDSRId(12345L);
@@ -113,8 +122,6 @@ public class PlannedMarkerConverterTest
         permissibleValue.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         bo.setId(ID);
         bo.setStudyProtocol(getStudyProtocol());
-        // bo.setName("Biomarker");
-        // bo.setLongName("Biomarker long name");
         bo.setHugoBiomarkerCode("HUGO Biomarker Code");
         bo.setAssayTypeCode("Other");
         bo.setAssayTypeOtherText("Assay Type Other Text");
@@ -124,6 +131,8 @@ public class PlannedMarkerConverterTest
         bo.setTissueCollectionMethodCode("Mandatory");
         bo.setStatusCode(ActiveInactivePendingCode.PENDING);
         bo.setPermissibleValue(permissibleValue);
+        bo.setDateLastCreated(new Date());
+        bo.setUserLastCreated(user);
         return bo;
     }
 
@@ -151,6 +160,9 @@ public class PlannedMarkerConverterTest
                 .convertStringToCd("Mandatory"));
         dto.setStatusCode(CdConverter
                 .convertToCd(ActiveInactivePendingCode.PENDING));
+        dto.setDateLastCreated(TsConverter.convertToTs(new Date()));
+        dto.setUserLastCreated(StConverter.convertToSt("1"));
+        dto.setPermissibleValue(IiConverter.convertToIi(1L));
         return dto;
     }
 

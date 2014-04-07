@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
+import java.util.Date;
 import java.util.List;
 /**
  * Web DTO for planned markers.
@@ -123,6 +124,7 @@ public class PlannedMarkerWebDTO {
     private String protocolDocumentID;
     private Ii permissibleValue;
     private Long cadsrId;
+    private Date creationDate;
     /**
      * @return the id
      */
@@ -561,5 +563,18 @@ public class PlannedMarkerWebDTO {
         this.protocolDocumentID = protocolDocumentID;
     }
     
-    
+    /**
+     * 
+     * @return creationDate creationDate
+     */ 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+    /**
+     * 
+     * @param creationDate creationDate
+     */
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 }
