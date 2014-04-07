@@ -27,6 +27,12 @@
                 $("trialId").value="";
                 $("markerName").value="";
             }
+            
+            function viewMarker(pId){
+                document.forms[0].target = "marker";
+                document.forms[0].action="plannedMarkerviewSelectedProtocolMarker.action?nciIdentifier="+pId;
+                document.forms[0].submit();
+           }
    </script>
 </head>
 <body>
@@ -80,10 +86,10 @@
 			<display:table name="plannedMarkerList" htmlId="plannedMarkerTable" id="row"
 							class="data" sort="list" pagesize="200"
 							requestURI="bioMarkerssearch.action">
-				<display:column sortable="true" titleKey="plannedMarker.protocolId" 
-								headerClass="sortable" style="width:15%">
-								<s:property value="%{#attr.row.nciIdentifier}" /> 
-								&nbsp;  &nbsp;  &nbsp; 
+				<display:column sortable="true" titleKey="plannedMarker.protocolId" headerClass="sortable" style="width:15%">
+				<a href="javascript:void(0)" onclick="viewMarker('${row.nciIdentifier}');">
+				<s:property value="%{#attr.row.nciIdentifier}" /></a>
+					&nbsp;  &nbsp;  &nbsp; 
 					<s:if test="%{#attr.row.protocolDocument != '' }">
                           <s:url id="url" action="bioMarkerssaveFile"><s:param name="id" value="%{#attr.row.id}" />
                         <s:param name="selectedRowDocument" value="%{#attr.row.protocolDocumentID}"/></s:url>

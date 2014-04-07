@@ -305,4 +305,11 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
         assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
     }
+    
+    @Test
+    public void testViewSelectedProtocolMarker() throws PAException {
+       plannedMarkerAction.setNciIdentifier("NCI-000-0001");
+       String result = plannedMarkerAction.viewSelectedProtocolMarker();
+       assertEquals("list", result);
+    }
 }

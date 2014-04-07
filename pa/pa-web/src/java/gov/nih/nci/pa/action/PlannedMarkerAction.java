@@ -83,11 +83,14 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -95,6 +98,9 @@ import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -106,6 +112,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -133,6 +140,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     private boolean saveResetMarker = false;
     private String cadsrId = "";
     private boolean pendingStatus;
+    private String nciIdentifier;
     private PlannedMarkerDTO newlyCreatedMarker;
     /**
      * to compare the Attribute values with Other
@@ -372,6 +380,31 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             pmList.add(populateWebDTO(dto, values));
         }
         setPlannedMarkerList(pmList);
+    }
+    
+    /**
+     * 
+     * @return string
+     * @throws PAException PAException
+     */
+    public String viewSelectedProtocolMarker() throws PAException {
+        try {
+            Ii protocolID = IiConverter.convertToIi(getNciIdentifier()); 
+            protocolID.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+            StudyProtocolDTO dto = PaRegistry.getStudyProtocolService()
+                .getStudyProtocol(protocolID);
+            if (dto !=  null) {
+                 setSpIi(dto.getIdentifier());
+                 loadListForm();
+                 StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry.getProtocolQueryService()
+                    .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(dto.getIdentifier()));
+                 ActionUtils.loadProtocolDataInSession(studyProtocolQueryDTO, new CorrelationUtils(),
+                        new PAServiceUtils());  
+            } 
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+        }
+        return AR_LIST;
     }
 
     /**
@@ -911,4 +944,19 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public void setCadsrId(String cadsrId) {
         this.cadsrId = cadsrId;
     }
+    /**
+     * 
+     * @return nciIdentifier nciIdentifier
+     */
+    public String getNciIdentifier() {
+        return nciIdentifier;
+    }
+    /**
+     * 
+     * @param nciIdentifier nciIdentifier
+     */
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
+    }
+    
 }
