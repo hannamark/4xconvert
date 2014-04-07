@@ -34,7 +34,6 @@
 	padding: 0px;
 }
 #popupInner {
-	border: 2px solid #000000;
 	background-color: #ffffff;
 }
 
@@ -45,23 +44,7 @@
 	position: relative;
 	z-index: 202;
 }
-#popupTitleBar {
-	background-color: #486CAE;
-	color: #ffffff;
-	font-weight: bold;
-	height: 1.3em;
-	padding: 5px;
-	border-bottom: 2px solid #000000;
-	border-top: 1px solid #78A3F2;
-	border-left: 1px solid #78A3F2;
-	border-right: 1px solid #204095;
-	position: relative;
-	z-index: 203;
-}
-#popupTitle {
-	float:left;
-	font-size: 1.1em;
-}
+
 #popupControls {
 	float: right;
 	cursor: pointer;
