@@ -15,7 +15,7 @@
 <script type="text/javascript" language="javascript">            
             function displayOrgDetails(orgID) {
                 var width = 650;
-                var height = 450;
+                var height = 500;
                 /*if (Prototype.Browser.IE) {
                     width = 670;
                     height = 500;                   
@@ -24,128 +24,101 @@
             }            
         </script>
 </head>
-<body class="popupwin">
-	<table class="form">
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Prefix:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.preFix!=null?person.preFix:'N/A'" /></td>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>PO
-					ID:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.id" /></td>
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>First
-					Name:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.firstName" /></td>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>CTEP
-					ID:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.ctepId!=null?person.ctepId:'N/A'" /></td>
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Middle
-					Name:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.middleName!=null?person.middleName:'N/A'" /></td>
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Last
-					Name:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.lastName" /></td>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Role:</b></td>
-			<td class="value" style="width: 250px"><c:forEach
-					items="${person.roles}" var="role">
-					<c:out value="${role}" />
-					<br />
-				</c:forEach> <c:if test="${empty person.roles}">N/A</c:if></td>
-		</tr>
-
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Address:</b></td>
-			<td class="value" style="width: 250px"><s:property
+<body>
+      <div class="modal-body">
+        <div class="row form-horizontal">
+        	<div class="col-xs-6">
+	            <div class="form-group m0">
+	              <label class="col-xs-4 ">Prefix</label>
+	              <div class="col-xs-8"><s:property value="person.preFix!=null?person.preFix:'N/A'" /></div>
+	            </div>
+	            <div class="form-group m0">
+	              <label class="col-xs-4 ">First Name</label>
+	              <div class="col-xs-8"><s:property value="person.firstName" /></div>
+	            </div>
+	            <div class="form-group m0">
+	              <label class="col-xs-4 ">Middle Name</label>
+	              <div class="col-xs-8"><s:property value="person.middleName!=null?person.middleName:'N/A'" /></div>
+	            </div>
+	            <div class="form-group m0">
+	              <label class="col-xs-4 ">Last Name</label>
+	              <div class="col-xs-8"><s:property	value="person.lastName" /></div>
+	            </div>
+          	</div>
+          	 
+          	<div class="col-xs-6">
+	            <div class="form-group m0">
+	              <label class="col-xs-4 ">PO ID</label>
+	              <div class="col-xs-8"><s:property value="person.id" /></div>
+	            </div>
+	            <div class="form-group m0">
+	              <label class="col-xs-4 ">CTEP ID</label>
+	              <div class="col-xs-8"><s:property value="person.ctepId!=null?person.ctepId:'N/A'" /></div>
+	            </div>
+	            <div class="form-group m0">
+	              <label class="col-xs-4 "></label>
+	              <div class="col-xs-8"></div>
+	            </div>
+	            <div class="form-group m0">
+	              <label class="col-xs-4 ">Role</label>
+	              <div class="col-xs-8"><c:forEach
+						items="${person.roles}" var="role">
+						<c:out value="${role}" />
+						<br />
+					</c:forEach> <c:if test="${empty person.roles}">N/A</c:if></div>
+	            </div>
+           </div>
+           </div>
+           <div class="row form-horizontal">
+          	<div class="col-xs-6">
+            <div class="form-group m0">
+              <label class="col-xs-4 ">Address</label>
+              <div class="col-xs-8"><s:property
 					value="person.streetAddress" /> <s:if
 					test="person.streetAddress2!=null">
 					<br />
 					<s:property value="person.streetAddress2" />
-				</s:if></td>
-			
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>City:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.city" /></td>
-            					
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>State:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.state" /></td>
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Postal
-					Code:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.zip" /></td>
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Country:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="person.country" /></td>
-		</tr>
-
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-
+				</s:if></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4 ">City</label>
+              <div class="col-xs-8"><s:property value="person.city" /></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4 ">Postal Code</label>
+              <div class="col-xs-8"><s:property	value="person.zip" /></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4 ">Country</label>
+              <div class="col-xs-8"><s:property	value="person.country" /></div>
+            </div>
+          </div>
+          </div>
+        <div class="row form-horizontal">
 		<s:if test="!person.organizations.empty">
-			<tr>
-				<td colspan="4" align="left">
-					<h2>Organization Affiliation</h2> <s:set name="orgs"
-						value="person.organizations" scope="request" /> <display:table
-						class="data" sort="list" pagesize="3" uid="row" name="orgs"
-						export="false"
-						requestURI="personsSearchshowDetailspopup.action">
-						<display:column escapeXml="false" title="PO ID"
-							headerClass="sortable">
-							<a href="javascript:void(0);" onclick="displayOrgDetails(${row.identifier.extension});"><c:out
-								value="${row.identifier.extension}" />
-							</a>
-						</display:column>
-						<display:column escapeXml="true" title="Name" property="name.part[0].value"
-							headerClass="sortable" />
-					</display:table>
-				</td>
-			</tr>
+			<h3 class="heading mt20"><span>Organization Affiliation</span></h3>
+			<s:set name="orgs"
+					value="person.organizations" scope="request" />
+			 <display:table
+				class="data table table-striped" sort="list" pagesize="3" uid="row" name="orgs"
+				export="false"
+				requestURI="personsSearchshowDetailspopup.action">
+				
+				<display:column escapeXml="false" title="PO ID"
+					headerClass="sortable">
+					<a href="javascript:void(0);" onclick="displayOrgDetails(${row.identifier.extension});"><c:out
+						value="${row.identifier.extension}" />
+					</a>
+				</display:column>
+				<display:column escapeXml="true" title="Name" property="name.part[0].value"
+					headerClass="sortable" />
+			</display:table>
 		</s:if>
-		<tr>
-			<td colspan="4" align="center">
-				<div class="actionsrow">
-					<del class="btnwrapper">
-						<ul class="btnrow">
-							<li><a href="javascript:void(0)" class="btn"
-								onclick="window.top.hidePopWin(true);"><span class="btn_img"><span
-										class="logout">Close</span></span></a></li>
-						</ul>
-					</del>
-				</div>
-			</td>
-		</tr>
-	</table>
+		<hr class="spacer"/>
+      </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-icon btn-default" data-dismiss="modal" onclick="window.top.hidePopWin(true);"><i class="fa-times"></i>Close</button>
+      </div>
 </body>
 </html>

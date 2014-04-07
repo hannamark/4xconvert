@@ -45,15 +45,15 @@ function initPopUp() {
     theBody = document.getElementsByTagName('BODY')[0];
     popmask = document.createElement('div');
     popmask.id = 'popupMask';
+    popmask.class='modal-dialog modal-lg'
     popcont = document.createElement('div');
     popcont.id = 'popupContainer';
+    popcont.class='modal-content'
     popcont.innerHTML = '' +
-        '<div id="popupInner">' +
-            '<div id="popupTitleBar">' +
-                '<div id="popupTitle"></div>' +
-                '<div id="popupControls">' +
-                    '<img alt="Close" src="'+ gCloseGif +'" onclick="hidePopWin(false);" id="popCloseBox" />' +
-                '</div>' +
+        '<div id="popupInner" >' +
+            '<div id="popupTitleBar" class="modal-header">' +
+            	'<button id="popCloseBox" type="button" class="close" onclick="hidePopWin(false);" data-dismiss="modal" aria-hidden="true">&times;</button>'+
+            	'<h4 class="modal-title" id="popupTitle"></h4>'+
             '</div>' +
             '<iframe src="'+ gDefaultPage +'" style="width:100%;height:100%;background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="popupFrame" name="popupFrame" width="100%" height="100%"></iframe>' +
         '</div>';

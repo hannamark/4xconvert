@@ -26,8 +26,8 @@
     }
     
     function displayPersonDetails(personID) {
-    	var width = 700;
-    	var height = 550;
+    	var width = 950;
+    	var height = 620;
     	/*if (Prototype.Browser.IE) {
     		width = 670;
             height = 500;            		

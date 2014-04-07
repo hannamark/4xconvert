@@ -27,11 +27,11 @@
     }
     
     function displayOrgDetails(orgID) {
-    	var width = 650;
-    	var height = 450;
+    	var width = 850;
+    	var height = 520;
     	if (Prototype.Browser.IE) {
-    		width = 670;
-            height = 500;            		
+    		width = 870;
+            height = 570;            		
     	}
     	showPopWin('organizationsSearchshowDetailspopup.action?orgID='+orgID, width, height, '', 'Organization Details');            	
     }
@@ -144,8 +144,8 @@
 			<s:if test="results!=null && !results.empty">
 			    <h2><fmt:message key="organization.search.results"/></h2>		
 			    <s:set name="orgs" value="results" scope="request" />
-			<div class="table-wrapper">
-            <div class="table-responsive">
+				<div class="table-wrapper">
+	            <div class="table-responsive">
 			    <display:table class="table table-striped table-bordered sortable" sort="list" pagesize="10" uid="row" name="orgs" export="false"
 			        requestURI="organizationsSearchquery.action">
 			        <display:setProperty name="basic.msg.empty_list"
@@ -167,7 +167,9 @@
 			        <display:column escapeXml="true" title="State" property="state" headerClass="sortable"  sortable="true"/>
 			        <display:column escapeXml="true" title="Country" property="country" headerClass="sortable"  sortable="true"/>
 			        <display:column escapeXml="true" title="Zip" property="zip" headerClass="sortable"  sortable="true"/>
-			    </display:table>		
+			    </display:table>	
+			 	</div>
+			 	</div>	
 			</s:if>        
         </div>        
      </s:if>

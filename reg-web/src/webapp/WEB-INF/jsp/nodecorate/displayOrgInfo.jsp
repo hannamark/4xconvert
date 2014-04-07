@@ -12,121 +12,128 @@
 <%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 <%@ include file="/WEB-INF/jsp/common/includeextrajs.jsp"%>
 </head>
-<body class="popupwin">
-	<table class="form">
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Name:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="organization.name" /></td>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>PO
-					ID:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="organization.id" /></td>
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Family
-					Name:</b></td>
-			<td class="value" style="width: 250px"><c:forEach
+      <div class="modal-body">
+      <div class="row form-horizontal">
+          <div class="col-xs-6">
+            <div class="form-group m0">
+              <label class="col-xs-4">Name</label>
+              <div class="col-xs-8"><s:property	value="organization.name" /></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4">Family Name</label>
+              <div class="col-xs-8"><c:forEach
 					items="${organization.families}" var="family">
 					<c:out value="${family.value}" />
 					<br />
-				</c:forEach> <c:if test="${empty organization.families}">N/A</c:if></td>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>CTEP
-					ID:</b></td>
-			<td class="value" style="width: 250px"><s:property
+				</c:forEach> <c:if test="${empty organization.families}">N/A</c:if></div>
+            </div>
+          <div class="form-group m0">
+              <label class="col-xs-4"></label>
+              <div class="col-xs-8"></div>
+            </div>
+            
+          </div>
+          <div class="col-xs-6">
+            <div class="form-group m0">
+              <label class="col-xs-4">PO ID</label>
+              <div class="col-xs-8"><s:property
+					value="organization.id" /></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4">CTEP ID</label>
+              <div class="col-xs-8"><s:property
 					value="organization.ctepId" /> <c:if
-					test="${empty organization.ctepId}">N/A</c:if></td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Address:</b></td>
-			<td class="value" style="width: 250px"><s:property
+					test="${empty organization.ctepId}">N/A</c:if></div>
+            </div>
+            
+          </div>
+        </div>
+        <div class="row form-horizontal">
+          <div class="col-xs-6">
+            <div class="form-group m0">
+              <label class="col-xs-4">Address</label>
+              <div class="col-xs-8"><s:property
 					value="organization.address1" /> <s:if
 					test="organization.address2!=null">
 					<br />
 					<s:property value="organization.address2" />
-				</s:if></td>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Type:</b></td>
-			<td class="value" style="width: 250px"><c:forEach
+				</s:if></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4">City</label>
+              <div class="col-xs-8"><s:property
+					value="organization.city" /></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4">State</label>
+              <div class="col-xs-8"><s:property
+					value="organization.state" /></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4">Postal Code</label>
+              <div class="col-xs-8"><s:property
+					value="organization.zip" /></div>
+            </div>
+            <div class="form-group m0">
+                <label class="col-xs-4">Country</label>
+                <div class="col-xs-8"><s:property
+					value="organization.country" /></div>
+              </div>
+            </div>
+          <div class="col-xs-6">
+              <div class="form-group m0">
+                <label class="col-xs-4">Type</label>
+                <div class="col-xs-8"><c:forEach
 					items="${organization.organizationTypes}" var="orgType">
 					<c:out value="${orgType}" />
 					<br />
-				</c:forEach> <c:if test="${empty organization.organizationTypes}">N/A</c:if></td>
-		</tr>
-
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>City:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="organization.city" /></td>
-		</tr>
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>State:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="organization.state" /></td>
-		</tr>
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Postal
-					Code:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="organization.zip" /></td>
-		</tr>
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Country:</b></td>
-			<td class="value" style="width: 250px"><s:property
-					value="organization.country" /></td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Phone:</b></td>
-			<td class="value" style="width: 250px"><c:forEach
+				</c:forEach> <c:if test="${empty organization.organizationTypes}">N/A</c:if></div>
+              </div>
+            </div>
+          </div>
+          <div class="row form-horizontal">
+          <div class="col-xs-6">
+            <div class="form-group m0">
+              <label class="col-xs-4">Phone</label>
+              <div class="col-xs-8"><c:forEach
 					items="${organization.contactInfo.phones}" var="val">
 					<c:out value="${val}" />
 					<br />
-				</c:forEach> <c:if test="${empty organization.contactInfo.phones}">N/A</c:if></td>
-		</tr>
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Fax:</b></td>
-			<td class="value" style="width: 250px"><c:forEach
+				</c:forEach> <c:if test="${empty organization.contactInfo.phones}">N/A</c:if></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4">Fax</label>
+              <div class="col-xs-8"><c:forEach
 					items="${organization.contactInfo.faxes}" var="val">
 					<c:out value="${val}" />
 					<br />
-				</c:forEach> <c:if test="${empty organization.contactInfo.faxes}">N/A</c:if></td>
-		</tr>
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Email:</b></td>
-			<td class="value" style="width: 250px"><c:forEach
+				</c:forEach> <c:if test="${empty organization.contactInfo.faxes}">N/A</c:if></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4">Email</label>
+              <div class="col-xs-8"><c:forEach
 					items="${organization.contactInfo.emails}" var="val">
 					<a href="mailto:<c:out value="${val}" />"><c:out value="${val}" /></a>
 					<br />
-				</c:forEach> <c:if test="${empty organization.contactInfo.emails}">N/A</c:if></td>
-		</tr>
-		<tr>
-			<td scope="row" class="label" style="width: 150px" align="right"><b>Website:</b></td>
-			<td class="value" style="width: 250px"><c:forEach
+				</c:forEach> <c:if test="${empty organization.contactInfo.emails}">N/A</c:if></div>
+            </div>
+            <div class="form-group m0">
+              <label class="col-xs-4">Website</label>
+              <div class="col-xs-8"><c:forEach
 					items="${organization.contactInfo.websites}" var="val">
 					<a href="<c:out value="${val}" />"><c:out value="${val}" /></a>
 					<br />
-				</c:forEach> <c:if test="${empty organization.contactInfo.websites}">N/A</c:if>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="4" align="center">
-				<div class="actionsrow">
-					<del class="btnwrapper">
-						<ul class="btnrow">
-							<li><a href="javascript:void(0)" class="btn"
-								onclick="window.parent.hidePopWin(true);"><span class="btn_img"><span
-										class="logout">Close</span></span></a></li>
-						</ul>
-					</del>
-				</div>
-			</td>
-		</tr>
-	</table>
+				</c:forEach> <c:if test="${empty organization.contactInfo.websites}">N/A</c:if></div>
+            </div>
+           
+          </div>
+          <div class="col-xs-6">
+              
+           </div>
+         </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-icon btn-default" data-dismiss="modal" onclick="window.parent.hidePopWin(true);"><i class="fa-times"></i>Close</button>
+    </div>
 </body>
 </html>
