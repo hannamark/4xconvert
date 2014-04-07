@@ -27,7 +27,14 @@
     </head>
     <body>
         <a href="#content" id="navskip">Skip to Page Content</a> 
-        <div id="wrap" class="login">
+        <c:choose>
+	        <c:when test="${sessionScope.disclaimerAccepted}">
+	        	<div id="wrap">
+	        </c:when>
+	        <c:otherwise>
+	        	<div id="wrap" class="login">
+	        </c:otherwise>
+        </c:choose>
             <jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
             <jsp:include page="/WEB-INF/jsp/common/registryheader.jsp"/>
             <c:if test="${sessionScope.disclaimerAccepted}">
@@ -36,17 +43,10 @@
             <div class="container">
             	<decorator:body/>
             </div> 
-            <div class="clear"></div>
-            
-<!--             <div id="leftnav"> -->
-<!--                     <ul class="menu"> -->
-<%--                         <c:if test="${sessionScope.disclaimerAccepted}"> --%>
-<%--                             <jsp:include page="/WEB-INF/jsp/common/registrymenu.jsp"/>  --%>
-<%--                         </c:if>  --%>
-<!--                     </ul> -->
-<!--                 </div> -->
-            <div class="clear"><br/></div>
         </div>
+        <jsp:include page="/WEB-INF/jsp/nodecorate/categoryDefinitions.jsp"/>
+        <jsp:include page="/WEB-INF/jsp/nodecorate/contactus.jsp"/>
+        <jsp:include page="/WEB-INF/jsp/myAccount.jsp"/> <!-- TODO : move this file to no decoreate folder. Also remove createAccount.jsp(NOT used) -->
         <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
         <jsp:include page="/WEB-INF/jsp/common/misc.jsp"/>
         <s:form id="xsrfForm"><s:token/></s:form>

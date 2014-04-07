@@ -1,13 +1,12 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <div class="accordion">
-    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section8"><fmt:message key="update.trial.statusDates"/><span class="required">*</span></a>
-    </div>
+    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section8"><fmt:message key="update.trial.statusDates"/><span class="required">*</span></a></div>
     <div id="section8" class="accordion-body in">
         <div class="container">
             <div class="form-group">
                 <label for="trialDTO_statusCode" class="col-xs-4 control-label"><fmt:message key="update.trial.currentTrialStatus"/><span class="required">*</span></label>
                 <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNamesForAmend()" />
-                <div class="col-xs-3">
+                <div class="col-xs-4">
                     <s:select headerKey="" headerValue="--Select--" id="trialDTO_statusCode" name="trialDTO.statusCode" list="#statusCodeValues" 
                         value="trialDTO.statusCode" onchange="displayTrialStatusDefinition('trialDTO_statusCode');" 
                         cssClass="form-control"/> 
@@ -20,15 +19,14 @@
                 <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the current stage or state of a clinical trial or study relative to other stages and its ability to enroll participants/patients."  data-placement="top" data-trigger="hover"></i>
             </div>
             <div class="form-group">
-                 <div class="col-xs-4"></div>
                   <div class="col-xs-4">
                   <%@ include file="/WEB-INF/jsp/nodecorate/trialStatusDefinitions.jsp"%>
                   </div>
             </div>
             <div class="form-group">
                <label for="trialDTO_reason" class="col-xs-4 control-label"><fmt:message key="update.trial.trialStatusReason"/><span class="required">*</span><em>Required for Administratively Complete, Withdrawn<br>and Temporarily Closed statuses only</em></label>
-               <div class="col-xs-3">
-                  <s:textarea id="trialDTO_reason" name="trialDTO.reason" cols="50" rows="2" maxlength="160" 
+               <div class="col-xs-4">
+                  <s:textarea id="trialDTO_reason" name="trialDTO.reason" cols="50" rows="3" maxlength="160" 
                       cssClass="form-control charcounter"/>
                   <span class="formErrorMsg">
                       <s:fielderror>
@@ -53,7 +51,7 @@
                     </span>
                   </div>
                 </div>                                
-                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter or select the date of the current trial status."  data-placement="top" data-trigger="hover"></i>
+                <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter or select the date of the current trial status."  data-placement="top" data-trigger="hover"></i></div>
              </div>
              <div class="form-group">
                 <label for="trialDTO_startDate" class="col-xs-4 control-label"><fmt:message key="update.trial.trialStartDate"/><span class="required">*</span></label>
@@ -69,15 +67,15 @@
                   </span>
                  </div>                 
                 </div>
-                <div class="col-xs-3">
+                <div class="col-xs-5">
                   <s:radio cssClass="radio-inline" id="trialDTO_startDateType" name="trialDTO.startDateType" list="#dateTypeList" />                 
-                  <span class="formErrorMsg">
+                  <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial starts, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i>
+            	  <span class="formErrorMsg">
                       <s:fielderror>
                           <s:param>trialDTO.startDateType</s:param>
                       </s:fielderror>
-                  </span>                                  
-               </div>
-               <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial starts, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i>
+                  </span>   
+             </div>
           </div>
           <div class="form-group">
               <label for="trialDTO_primaryCompletionDate" class="col-xs-4 control-label"><fmt:message key="update.trial.primaryCompletionDate"/>
@@ -98,15 +96,15 @@
                       </span>
                    </div>               
                </div>               
-               <div class="col-xs-3">
+               <div class="col-xs-5">
                    <s:radio cssClass="radio-inline" id="trialDTO_primaryCompletionDateType" name="trialDTO.primaryCompletionDateType" list="#dateTypeList" />                   
-                   <span class="formErrorMsg">
+                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial reaches/reached its primary completion date, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i> 
+          	 		<span class="formErrorMsg">
                        <s:fielderror>
                            <s:param>trialDTO.primaryCompletionDateType</s:param>
                        </s:fielderror>
                    </span>
                </div>
-               <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial reaches/reached its primary completion date, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i> 
           </div>
           <div class="form-group">
               <label for="trialDTO_completionDate" class="col-xs-4 control-label"><fmt:message key="update.trial.completionDate"/></label>
@@ -121,16 +119,16 @@
                     </span>
                   </div>
               </div>
-              <div class="col-xs-3">
-                  <s:radio  cssClass="radio-inline" id="trialDTO_completionDateType" name="trialDTO.completionDateType" list="#dateTypeList" />                  
+              <div class="col-xs-5">
+                  <s:radio  cssClass="radio-inline" id="trialDTO_completionDateType" name="trialDTO.completionDateType" list="#dateTypeList" />
+                  <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial reaches/reached its completion date, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i>
                   <span class="formErrorMsg">
                      <s:fielderror>
                          <s:param>trialDTO.completionDateType</s:param>
                      </s:fielderror>
                   </span>
-              </div>
-              <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial reaches/reached its completion date, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i>
-          </div>
+                  </div>
+           </div>
           <span class="info">Please refer to <a href="https://wiki.nci.nih.gov/x/l4CNC" target="newPage">Trial Status Rules for Start and Completion dates</a>.</span>
         </div>
     </div>

@@ -2,11 +2,11 @@
 <reg-web:failureMessage/>
 <c:choose>
     <c:when test="${fn:length(sessionScope.secondaryIdentifiersList) >0}">
-        <display:table class="data table table-striped table-bordered" decorator="" sort="list" size="false" id="row"
+        <display:table class="table table-bordered" decorator="" sort="list" size="false" id="row"
                        name="${sessionScope.secondaryIdentifiersList}" requestURI="" export="false">
             <display:column escapeXml="true" titleKey="submit.trial.otherIdentifier" property="extension" sortable="true" headerClass="sortable"/>
             <display:column title="Action" class="action" sortable="false">
-                <input type="button" value="Delete" onclick="deleteOtherIdentifierRow('${row_rowNum}')"/>
+                <button type="button" class="btn btn-icon btn-default" onclick="deleteOtherIdentifierRow('${row_rowNum}');">Delete</button>
             </display:column>
         </display:table>
     </c:when>

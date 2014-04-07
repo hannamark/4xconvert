@@ -4,21 +4,21 @@
       <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
       <div class="col-xs-4">
          <s:select headerKey="" headerValue="--Select--" name="trialDTO.phaseCode" id ="trialDTO.phaseCode" 
-             list="#phaseCodeValues" cssClass="form-control" cssStyle="width:206px" value="trialDTO.phaseCode" onchange="displayPhaseAdditonalCode();"/>
+             list="#phaseCodeValues" cssClass="form-control"  value="trialDTO.phaseCode" onchange="displayPhaseAdditonalCode();"/>
          <span class="formErrorMsg">
              <s:fielderror>
              <s:param>trialDTO.phaseCode</s:param>
              </s:fielderror>
          </span>
-         <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the phase of the investigation, as defined by the US FDA for trials involving investigational new drugs." data-placement="top" data-trigger="hover"></i>
       </div>
+      <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the phase of the investigation, as defined by the US FDA for trials involving investigational new drugs." data-placement="top" data-trigger="hover"></i></div>
  </div>
  <div class="form-group" id ="phaseOtherDiv" style="display:'none'">
      <label for="trialDTO.phaseAdditionalQualifier" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherPhaseText"/></label>
      <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
      <div class="col-xs-4">
          <s:select id="trialDTO.phaseAdditionalQualifier" headerKey="" headerValue="No" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues" 
-                        value="trialDTO.phaseAdditionalQualifier" cssStyle="width:120px" cssClass="form-control"/>
+                        value="trialDTO.phaseAdditionalQualifier" cssClass="form-control"/>
      </div>
  </div> 
 <SCRIPT LANGUAGE="JavaScript">

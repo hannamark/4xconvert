@@ -209,63 +209,69 @@
 <s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 <s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
 
-<table class="form">
-    <tbody>
+<div class="table-wrapper">
+   <div class="table-responsive">
+     <table class="table table-bordered">
+       <thead>
         <tr>
-            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_type"> <label for="group3">IND/IDE Types</label></reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_number"> <label for="indidenumber">IND/IDE Number</label></reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_grantor"> <label for="SubCat">IND/IDE Grantor</label></reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.ind_ide_holder_type"> <label for="holderType">IND/IDE Holder Type</label></reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.nih_institution_nci_division_program_code">
-            	<label id=programcodenoneselected_label for="programcodenoneselected">NIH Institution, NCI Division/Program Code (if applicable)</label>
-            	<label id=programcodenihselectedvalue_label for="programcodenihselectedvalue" style="display:none">NIH Institution, NCI Division/Program Code (if applicable)</label>
-            	<label id=programcodenciselectedvalue_label for="programcodenciselectedvalue" style="display:none">NIH Institution, NCI Division/Program Code (if applicable)</label>
-            </reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_access_indicator"> <label  for="group4">Expanded Access?</label></reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.has_expanded_status"> <label for="expanded_status">Expanded Access Type (if applicable)</label></reg-web:displayTooltip></th>
-            <th><reg-web:displayTooltip tooltip="tooltip.has_exempt_indicator"> <label for="exemptIndicator">Exempt? (if applicable)</label></reg-web:displayTooltip></th>
-            <th></th>
+	        <th><label for="group3">IND/IDE Types</label> <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="If the trial involves an Investigational New Drug Application, select IND. If the trial involves an Investigational Device Exemption, select IDE."  data-placement="top" data-trigger="hover"></i></th>
+	        <th><label for="indidenumber">IND/IDE Number</label> <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter the number assigned to an Investigational New Drug Application (IND) or Investigational Device Exemption (IDE). You can enter the IND number in many formats. For example, for a biologics (BB) IND that contains the number 1234, you can type BB1234, 1234, or BB_1234."  data-placement="top" data-trigger="hover"></i></th>
+	        <th><label for="SubCat">IND/IDE Grantor</label> <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the organization that holds the IND/IDE approval."  data-placement="top" data-trigger="hover"></i></th>
+	        <th><label for="holderType">IND/IDE Holder Type</label> <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the type of IND/IDE holder."  data-placement="top" data-trigger="hover"></i></th>
+	        <th><label id=programcodenoneselected_label for="programcodenoneselected">NIH Institution, NCI Division/Program Code <small>(if applicable)</small></label>
+            	<label id=programcodenihselectedvalue_label for="programcodenihselectedvalue" style="display:none">NIH Institution, NCI Division/Program Code <small>(if applicable)</small></label>
+            	<label id=programcodenciselectedvalue_label for="programcodenciselectedvalue" style="display:none">NIH Institution, NCI Division/Program Code <small>(if applicable)</small></label><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="If the holder type is NIH or NCI, select the NIH or NCI Division/Program code."  data-placement="top" data-trigger="hover"></i></th>
+	        <th><label  for="group4">Expanded Access?</label> <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select Yes if an experimental drug or device is available outside any clinical trial protocol."  data-placement="top" data-trigger="hover"></i></th>
+	        <th><label for="expanded_status">Expanded Access Type <small>(if applicable)</small></label> <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="If the study includes expanded access, select the access type indicating availability of an experimental drug or device outside any clinical trial protocol."  data-placement="top" data-trigger="hover"></i></th>
+	        <th><label for="exemptIndicator">Exempt? <small>(if applicable)</small></label> <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select Yes if the trial is associated with the U.S. FDA and does not require IRB approval."  data-placement="top" data-trigger="hover"></i></th>
+	        <th>&nbsp;</th>
         </tr>
+        </thead>
+        <tbody>
         <tr>
             <td style="white-space:nowrap;">
-                <s:select id="group3" name="indldeType" headerKey="" headerValue="-Select-" onblur="SelectSubCat(this);" cssStyle="width:75px" onclick="SelectSubCat(this);"
+                <s:select id="group3" name="indldeType" headerKey="" headerValue="-Select-" onblur="SelectSubCat(this);" onclick="SelectSubCat(this);" cssClass="form-control"
                 list="#{'IND':'IND','IDE':'IDE'}"/>
 
             </td>
             <td>
-                <input id="indidenumber" name="indidenumber"  type="text" size="10" />
+                <input class="form-control" id="indidenumber" name="indidenumber"  type="text" size="10" />
             </td>
             <td>
-                <SELECT id="SubCat" name="SubCat" style="width:75px">
+                <SELECT id="SubCat" name="SubCat" class="form-control">
                     <Option value="">-Select-</option>
                 </SELECT>
             </td>
             <td>
-                <s:select id="holderType" name="holderType" headerKey="" headerValue="-Select-" onblur="setProgramCodes(this);bindNIHToolTipOnLoad();bindNCIToolTipOnLoad();" cssStyle="width:75px" onclick="setProgramCodes(this);"
+                <s:select id="holderType" name="holderType" headerKey="" headerValue="-Select-" onblur="setProgramCodes(this);bindNIHToolTipOnLoad();bindNCIToolTipOnLoad();" cssClass="form-control" onclick="setProgramCodes(this);"
                 list="#{'Investigator':'Investigator','Organization':'Organization','Industry':'Industry','NIH':'NIH','NCI':'NCI'}"/>
 
             </td>
             <td>
                 <div id="programcodeid" style="display:''">
-                    <s:select id="programcodenoneselected" list="#{'-Select-':'-Select-'}"  cssStyle="width:300px"/>
+                    <s:select id="programcodenoneselected" list="#{'-Select-':'-Select-'}"  cssClass="form-control"/>
                 </div>
-                <div id="programcodenihid" style="display:none"><s:select id="programcodenihselectedvalue" headerKey="" headerValue="-Select-" name="programcodenihselectedvalue" list="#phaseCodeValuesNIH" onmouseover="enableTooltip('nih');"  cssStyle="width:300px"/></div>
-                <div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="programcodenciselectedvalue" list="#phaseCodeValuesNCI" onmouseover="enableTooltip('nci');"  cssStyle="width:300px"/></div>
+                <div id="programcodenihid" style="display:none"><s:select id="programcodenihselectedvalue" headerKey="" headerValue="-Select-" name="programcodenihselectedvalue" list="#phaseCodeValuesNIH" onmouseover="enableTooltip('nih');"  cssClass="form-control"/></div>
+                <div id="programcodenciid" style="display:none"><s:select id="programcodenciselectedvalue" headerKey="" headerValue="-Select-" name="programcodenciselectedvalue" list="#phaseCodeValuesNCI" onmouseover="enableTooltip('nci');"  cssClass="form-control"/></div>
             </td>
             <td>
-                <input type="checkbox" name="group4" id="group4" onclick="setExpandedStatus(this);"/> Yes
+            	<div class="checkbox">
+                	<label><input type="checkbox" name="group4" id="group4" onclick="setExpandedStatus(this);"/>Yes</label>
+                </div>
             </td>
             <td>
                 <s:select id="expanded_status" headerKey="" headerValue="-Select-" name="expanded_status" disabled="true"
-                list="#expandedAccessStatusCodeValues"/>
+                list="#expandedAccessStatusCodeValues" cssClass="form-control"/>
 
             </td>
             <td>
-                <input type="checkbox" name="exemptIndicator" id="exemptIndicator" /> Yes
+                <div class="checkbox">
+                	<label><input type="checkbox" name="exemptIndicator" id="exemptIndicator" /> Yes</label>
+                </div>
             </td>
-            <td>
-                <input type="button" id="addbtn" onclick="callAddIndIde();" value="Add IND/IDE" >
-            </td>
+            <td><button type="button" class="btn btn-icon btn-default" id="addbtn" onclick="callAddIndIde();"><i class="fa-plus"></i>Add IND/IDE</button></td>
         </tr>
-    </tbody>
-</table>
+      </tbody>
+    </table>
+  </div>
+</div>

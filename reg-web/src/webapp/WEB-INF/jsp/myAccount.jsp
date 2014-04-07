@@ -1,48 +1,44 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-        <title><fmt:message key="register.user.myaccount.title"/></title>
-        <s:head/>
-        <%@include file="nodecorate/accountScripts.jsp" %>
-    </head>
-    <body>
-        <!-- main content begins-->
-        <h1><fmt:message key="register.user.myaccount.header"/></h1>
-        <c:set var="topic" scope="request" value="myaccount"/>
-        <div class="box" id="filters">
-            <reg-web:sucessMessage/>
-            <p>You may update your account information. Please note: asterisks (<span class="required">*</span>)
-            indicate required fields.<br>
-            <b><i> Please provide professional contact information only. </i></b>
-            </p>
-            <s:form name="myAccount" method="POST" >
-                <s:token/>
-                <s:actionmessage cssClass="confirm_msg"/>
-                <s:actionerror/>
-                <s:hidden name="registryUserWebDTO.id" />
-                <s:hidden name="registryUserWebDTO.csmUserId" />
-                <s:hidden name="userWebDTO.username" />
-                <s:hidden name="page" />
-                <table class="form">
-                    <tbody>
-	                    <reg-web:valueRow labelKey="register.user.username" noLabelTag="true">
-                            <c:out value="${userName}"/>
-                        </reg-web:valueRow>
-                        <%@include file="nodecorate/accountCommonForm.jsp" %>
-                    </tbody>
-                </table>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="login">Submit</span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
-                </div>
-            </s:form>
-        </div>
-    </body>
-</html>
+<%@include file="/WEB-INF/jsp/nodecorate/accountScripts.jsp" %>
+<div class="modal fade" id="myAccount" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">My Account</h4>
+			</div>
+			<div class="modal-body">
+	            <c:set var="topic" scope="request" value="myaccount"/>
+	            <s:form cssClass="form-horizontal" role="form" name="myAccount" method="POST" >
+	                <s:token/>
+	                <s:actionmessage cssClass="confirm_msg"/>
+	                <s:actionerror/>
+	                <s:hidden name="registryUserWebDTO.id" />
+	                <s:hidden name="registryUserWebDTO.csmUserId" />
+	                <s:hidden name="userWebDTO.username" />
+	                <s:hidden name="page" />
+                     <%@include file="nodecorate/accountCommonForm.jsp" %>
+	                <div class="form-group">
+			            <label for="notifications" class="col-xs-4 control-label">Color Scheme</label>
+			            <div class="col-xs-7">
+			              <div class="btn-group" data-toggle="buttons">
+			                <label class="btn btn-default active" onClick="setActiveStyleSheet('default'); return false;">
+			                  <input type="radio" name="options" id="option1">
+			                  Light </label>
+			                <label class="btn btn-default" onClick="setActiveStyleSheet('alternate 1'); return false;">
+			                  <input type="radio" name="options" id="option3">
+			                  Dark </label>
+			              </div>
+			              <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Select a color scheme to change the colors on all pages of the application" data-placement="top" data-trigger="hover"></i> </div>
+			          </div>
+	                <div class="modal-footer">
+				        <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" onClick="handleAction()"><i class="fa-floppy-o"></i>Save</button>
+				        <button type="button" class="btn btn-icon btn-default" data-dismiss="modal"><i class="fa-times-circle"></i>Cancel</button>
+				      </div>
+	            </s:form>
+	        </div>
+	    </div>
+	</div>
+</div>

@@ -78,7 +78,7 @@
             </form>
           </div>
           <div class="tab-pane fade" id="sign-up">
-            <form class="form-horizontal" role="form" name="myAccount" method="POST" action="registerUsercreateAccount">
+            <s:form cssClass="form-horizontal" role="form"name="myAccount" method="POST" action="registerUsercreateAccount">
                 <s:actionerror />
                 <s:token/>
                 <s:hidden name="userWebDTO.username" />
@@ -87,7 +87,7 @@
 	                <button type="button" class="btn btn-icon-alt btn-primary" onClick="document.myAccount.submit();">Sign Up<i class="fa-arrow-circle-right"></i></button>
 	                <button type="button" class="btn btn-icon btn-default" onClick="reset();"><i class="fa-repeat"></i>Reset</button>
 	              </div>
-            </form>
+            </s:form>
           </div>
           <div class="tab-pane fade" id="forgot-password">
             <div class="tab-inside">
@@ -100,6 +100,5 @@
         </div>
       </div>
     </div>
-  </div>
 
 

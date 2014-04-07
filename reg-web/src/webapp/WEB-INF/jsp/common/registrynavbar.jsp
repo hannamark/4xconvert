@@ -17,7 +17,7 @@
               <li><a href="${pageContext.request.contextPath}/protected/submitTrial.action?sum4FundingCatCode=Externally Peer-Reviewed">Externally Peer-Reviewed<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="R01s, SPORES, U01s, U10s, P01s, CTEP, or any other clinical research study mechanism supported by the NIH or an approved peer-reviewed funding organization." data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
               <li><a href="${pageContext.request.contextPath}/protected/submitTrial.action?sum4FundingCatCode=Institutional">Institutional<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="In-house clinical research studies authored or co-authored by Cancer Center investigators and undergoing scientific peer-review solely by the Protocol Review and Monitoring System of the Cancer Center. The Cancer Center investigator has primary responsibility for conceptualizing, designing and implementing the clinical research study and reporting results." data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
               <li><a href="${pageContext.request.contextPath}/protected/submitProprietaryTrialinputNct.action?sum4FundingCatCode=Industrial">Industrial/Other<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Design and implementation of the study is controlled by the pharmaceutical company or by another organization." data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
-              <li><a href="javascript:void(0)">View Category Definitions<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="View category definitions" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
+              <li><a href="#" data-toggle="modal" data-target="#myModal">View Category Definitions</a></li>
               <li class="batch">
                 <button type="button" class="btn btn-icon btn-sm btn-default" id="popover" rel="popover" data-content="Use this option to register multiple trials." data-placement="bottom" data-trigger="hover" data-toggle="modal" data-target="#batchUpload"><i class="fa-upload"></i> Batch Upload</button>
               </li>
@@ -62,3 +62,4 @@
     <!--/.container --> 
   </div>
   <!--/.navbar --> 
+  <div id="stickyalias"></div>

@@ -20,7 +20,7 @@
     <label for="trialDTO.studySubtypeCode" class="col-xs-4 control-label"><fmt:message key="submit.trial.studySubtypeCode"/><span class="required">*</span></label>
     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
     <div class="col-xs-4">
-        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode" list="#typeCodeValues"  cssStyle="width:206px" 
+        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode" list="#typeCodeValues" 
             cssClass="form-control" value="trialDTO.studySubtypeCode"/>
            <span class="formErrorMsg">
               <s:fielderror>

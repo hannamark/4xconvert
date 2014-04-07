@@ -17,7 +17,7 @@
                     <div class="col-xs-4">
                      <s:select onchange="respPartyTypeChanged()" headerKey="" headerValue="--Select--" id="trialDTO.responsiblePartyType" 
                          name="trialDTO.responsiblePartyType" list="#{'sponsor':'Sponsor','pi':'Principal Investigator','si':'Sponsor-Investigator'}" 
-                         value="trialDTO.responsiblePartyType" cssStyle="width:206px" cssClass="form-control"/>
+                         value="trialDTO.responsiblePartyType" cssClass="form-control"/>
                      <span class="formErrorMsg">
                          <s:fielderror>
                              <s:param>trialDTO.responsiblePartyType</s:param>
@@ -29,9 +29,9 @@
                     <label for="trialDTO.responsiblePersonName" class="col-xs-4 control-label">Investigator:<span class="required">*</span></label>
                     <s:hidden name="trialDTO.responsiblePersonIdentifier" id="trialDTO.responsiblePersonIdentifier"/>
                     <div id="loadResponsibleContactField">
-                        <div class="col-xs-3">                                    
+                        <div class="col-xs-4">                                    
                             <s:textfield name="trialDTO.responsiblePersonName" id="trialDTO.responsiblePersonName" size="30" 
-                                cssStyle="width:200px; " readonly="true" cssClass="readonly"/>
+                                 readonly="true" cssClass="form-control"/>
                             <span class="formErrorMsg" id="responsiblePersonNameErr"> 
                                 <s:fielderror>
                                     <s:param>responsiblePersonName</s:param>
@@ -45,9 +45,8 @@
                 </div> 
             <div class="form-group resppartysection" style="display: none;">
                 <label for="trialDTO.responsiblePersonTitle" class="col-xs-4 control-label">Investigator Title:<span class="required">*</span></label>
-                <div class="col-xs-3">
-                    <s:textfield name="trialDTO.responsiblePersonTitle"  id="trialDTO.responsiblePersonTitle" maxlength="200" 
-                        cssClass="form-control" cssStyle="width:200px; " />
+                <div class="col-xs-4">
+                    <s:textfield name="trialDTO.responsiblePersonTitle"  id="trialDTO.responsiblePersonTitle" maxlength="200" cssClass="form-control" />
                     <span class="formErrorMsg"> 
                         <s:fielderror>
                             <s:param>responsiblePersonTitle</s:param>
@@ -59,9 +58,9 @@
                 <label for="trialDTO.responsiblePersonAffiliationOrgName" class="col-xs-4 control-label">Investigator Affiliation:<span class="required">*</span></label>         
                 <div id="investigatorAffiliationDiv">
                     <s:hidden name="trialDTO.responsiblePersonAffiliationOrgId" id="trialDTO.responsiblePersonAffiliationOrgId"/>
-                    <div class="col-xs-3">
+                    <div class="col-xs-4">
                         <s:textfield name="trialDTO.responsiblePersonAffiliationOrgName" id="trialDTO.responsiblePersonAffiliationOrgName" size="30" 
-                            cssStyle="width:200px; " readonly="true" cssClass="readonly"/>
+                             readonly="true" cssClass="form-control"/>
                             <span class="formErrorMsg" id="affiliationOrgErr"> 
                                 <s:fielderror>
                                    <s:param>responsiblePersonAffiliationOrgName</s:param>

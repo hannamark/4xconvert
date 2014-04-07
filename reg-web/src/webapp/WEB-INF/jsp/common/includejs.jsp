@@ -40,3 +40,4 @@ var registryApp = {
 <script type='text/javascript' src="${scriptPath}/js/bootstrap-datetimepicker.min.js"></script> 
 <script type='text/javascript' src="${scriptPath}/js/bootstrap-multiselect.js"></script> 
 <script type='text/javascript' src="${scriptPath}/js/custom.js"></script>
+<script type='text/javascript' language="javascript" src="${scriptPath}/js/styleswitcher.js"></script>

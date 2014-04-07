@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<div class="col-xs-3">
-    <s:textfield label="poLeadPi Full Name" name="trialDTO.piName" id="trialDTO.piName" size="30"  readonly="true" cssClass="readonly" cssStyle="width:200px"/>
+<div class="col-xs-4">
+    <s:textfield label="poLeadPi Full Name" name="trialDTO.piName" id="trialDTO.piName" size="30"  readonly="true" cssClass="form-control"/>
     <span class="formErrorMsg" id="piIdentifierErr"> 
     <s:fielderror>
         <s:param>trialDTO.piIdentifier</s:param>

@@ -1,11 +1,28 @@
+/* affix the navbar after scroll below header */
+
+var stickyHeaderTop = null ;
+
+jQuery(window).scroll(function(){
+        if( jQuery(window).scrollTop() > stickyHeaderTop ) {
+                jQuery('#nav').css({position: 'fixed', top: '-1px'});
+                jQuery('#stickyalias').css('display', 'block');
+        } else {
+                jQuery('#nav').css({position: 'static', top: '0px'});
+                jQuery('#stickyalias').css('display', 'none');
+        }
+});
+		
+/* animate the Bootstrap dropdown transition */
 
 jQuery(document).ready(function() {
+	stickyHeaderTop = jQuery('#nav').offset().top;
+	
 	jQuery('.navbar-nav .dropdown').hover(function() {
 	  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(0).slideDown(200);
 	}, function() {
 	  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(100).slideUp(200)
 	});
-	
+
    jQuery(function (jQuery) {
         jQuery('[rel=tooltip]').tooltip()
     });
@@ -31,7 +48,8 @@ jQuery(function(){
 });
 
 //Collapse / Expand
-jQuery('.expandcollapse').click(function() {
+jQuery(function() {
+	jQuery('.expandcollapse').click(function() {
 
         var newstate = jQuery(this).attr('state') ^ 1,
             icon = newstate ? "plus" : "minus",
@@ -61,6 +79,7 @@ jQuery('.expandcollapse').click(function() {
 
     });
 
+
     jQuery('a[data-toggle="tab"]').on('shown', function (e) {
 
         var myState = jQuery(this).attr('state'),
@@ -71,7 +90,8 @@ jQuery('.expandcollapse').click(function() {
           jQuery(this).attr('state',state);
         }
 
-    })
+    });
+});
 
     function toggleTab(id){
 
@@ -90,6 +110,19 @@ jQuery('.expandcollapse').click(function() {
         jQuery('[rel=popover]').popover()
     });
 	
+// Date Picker
+jQuery(function() {
+    jQuery('.datetimepicker').datetimepicker({
+      pickTime: false
+    });
+  });
+
+jQuery(function() {
+    jQuery('.datetimepicker').on('changeDate', function(ev){
+    	jQuery(this).datetimepicker('hide');
+    });
+  });
+
 
 
 jQuery(function (jQuery) {
@@ -98,6 +131,33 @@ jQuery(function (jQuery) {
 		trigger: "hover"
 	});   
  });
+
+
+// Increase/Decrease text size 
+
+jQuery('#incfont').click(function(){    
+        curSize= parseInt(jQuery('#wrap').css('font-size')) + 2;
+  if(curSize<=19)
+        jQuery('#wrap').css('font-size', curSize);
+        });  
+  jQuery('#decfont').click(function(){    
+        curSize= parseInt(jQuery('#wrap').css('font-size')) - 2;
+  if(curSize>=11)
+        jQuery('#wrap').css('font-size', curSize);
+}); 
+
+// Show/Hide Search Criteria  
+  
+ function toggledisplay (it, box) {
+	var vis = (box.checked) ? "none" : "block";
+	document.getElementById(it).style.display = vis;
+}
+
+// Multi-select Dropdown  
+	jQuery('#multi-select').multiselect({
+	        	includeSelectAllOption: true
+	        });
+	
 
  /*
  bootstrap 3.0 with prototype.js breaks for tooltip, popover, dropdown menu
@@ -130,44 +190,3 @@ jQuery(function (jQuery) {
     });
 })();
 
-
-// Increase/Decrease text size 
-
-jQuery('#incfont').click(function(){    
-        curSize= parseInt(jQuery('#wrap').css('font-size')) + 2;
-  if(curSize<=19)
-        jQuery('#wrap').css('font-size', curSize);
-        });  
-  jQuery('#decfont').click(function(){    
-        curSize= parseInt(jQuery('#wrap').css('font-size')) - 2;
-  if(curSize>=11)
-        jQuery('#wrap').css('font-size', curSize);
-}); 
-
-// Show/Hide Search Criteria  
-  
-function toggledisplay (it, box) {
-	var vis = (box.checked) ? "none" : "block";
-	document.getElementById(it).style.display = vis;
-}
-
-  /*
-// Multi-select Dropdown  
-	jQuery('#multi-select').multiselect({
-			        	includeSelectAllOption: true
-			        });
-	
-// affix the navbar after scroll below header 
-jQuery('#nav').affix({
-      offset: {
-        top: jQuery('header').height()+jQuery('#nav').height()
-      }
-});	*/
-
-//Date Picker
-jQuery(function() {
-    jQuery('.datetimepicker').datetimepicker({
-      pickTime: false
-    });
-  });
-	

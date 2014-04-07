@@ -6,9 +6,9 @@
     <s:set name="interventionalTypeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames(@gov.nih.nci.pa.enums.StudyTypeCode@INTERVENTIONAL)" />
     <s:set name="noninterventionalTypeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames(@gov.nih.nci.pa.enums.StudyTypeCode@NON_INTERVENTIONAL)" />
     <div class="col-xs-4">
-        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.primaryPurposeCode" name="trialDTO.primaryPurposeCode" list="#interventionalTypeCodeValues"  cssStyle="width:206px" 
+        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.primaryPurposeCode" name="trialDTO.primaryPurposeCode" list="#interventionalTypeCodeValues" 
             cssClass="form-control interventional interventional-input-ctr" value="trialDTO.primaryPurposeCode" onchange="displayPrimaryPurposeOtherCode(this);"/>
-        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.primaryPurposeCode2" name="trialDTO.primaryPurposeCode" list="#noninterventionalTypeCodeValues"  cssStyle="width:206px; display: none;" 
+        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.primaryPurposeCode2" name="trialDTO.primaryPurposeCode" list="#noninterventionalTypeCodeValues"  cssStyle="display: none;" 
             cssClass="form-control non-interventional non-interventional-input-ctr" value="trialDTO.primaryPurposeCode" onchange="displayPrimaryPurposeOtherCode(this);" disabled="true"/>                                        
         <span class="formErrorMsg">
             <s:fielderror>
@@ -16,6 +16,7 @@
             </s:fielderror>
         </span>
     </div>
+    <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the phase of the investigation, as defined by the US FDA for trials involving investigational new drugs." data-placement="top" data-trigger="hover"></i> </div>
 </div>
 <div class="form-group" id="purposeOtherTextDiv" style="display:'none'">
     <label class="col-xs-4 control-label" for="trialDTO.primaryPurposeOtherText"><fmt:message key="submit.trial.otherPurposeText"/></label>
@@ -34,7 +35,7 @@
     <label class="col-xs-4 control-label" for="trialDTO.secondaryPurposes"><fmt:message key="submit.trial.secondaryPurpose"/></label>
     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.service.util.PAServiceUtils@getSecondaryPurposeList()" />
     <div class="col-xs-4">
-        <s:select id ="trialDTO.secondaryPurposes" name="trialDTO.secondaryPurposes" list="#typeCodeValues"  cssStyle="width:206px" 
+        <s:select id ="trialDTO.secondaryPurposes" name="trialDTO.secondaryPurposes" list="#typeCodeValues"  
             cssClass="form-control" headerKey="" headerValue="--Select--" onchange="displaySecondaryPurposeOtherCode(this);" 
             value="trialDTO.secondaryPurposes"/>
     </div>
@@ -55,7 +56,7 @@
     <label class="col-xs-4 control-label" for="trialDTO.studyModelCode"><fmt:message key="submit.trial.studyModelCode"/><span class="required">*</span></label>
     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudyModelCode@getDisplayNames()" />
     <div class="col-xs-4">
-        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studyModelCode" name="trialDTO.studyModelCode" list="#typeCodeValues"  cssStyle="width:206px" 
+        <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studyModelCode" name="trialDTO.studyModelCode" list="#typeCodeValues"  
             cssClass="form-control" onchange="displayStudyModelOtherTextDiv();" value="trialDTO.studyModelCode"/>
         <span class="formErrorMsg">
             <s:fielderror>
@@ -82,7 +83,7 @@
     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.TimePerspectiveCode@getDisplayNames()" />
     <div class="col-xs-4">
         <s:select headerKey="" headerValue="--Select--" id ="trialDTO.timePerspectiveCode" 
-            name="trialDTO.timePerspectiveCode" list="#typeCodeValues"  cssStyle="width:206px"
+            name="trialDTO.timePerspectiveCode" list="#typeCodeValues" 
             cssClass="form-control" onchange="displayTimePerspectiveOtherTextDiv();" value="trialDTO.timePerspectiveCode"/>
         <span class="formErrorMsg">
             <s:fielderror>
