@@ -11,7 +11,7 @@
 			</div>
 			<div class="modal-body">
 	            <c:set var="topic" scope="request" value="myaccount"/>
-	            <s:form cssClass="form-horizontal" role="form" name="myAccount" method="POST" >
+	            <s:form cssClass="form-horizontal" role="form" id="myAccountForm" name="myAccountForm" method="POST" >
 	                <s:token/>
 	                <s:actionmessage cssClass="confirm_msg"/>
 	                <s:actionerror/>
@@ -34,7 +34,7 @@
 			              <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Select a color scheme to change the colors on all pages of the application" data-placement="top" data-trigger="hover"></i> </div>
 			          </div>
 	                <div class="modal-footer">
-				        <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" onClick="handleAction()"><i class="fa-floppy-o"></i>Save</button>
+				        <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" onClick="handleRegisterUserAction();"><i class="fa-floppy-o"></i>Save</button>
 				        <button type="button" class="btn btn-icon btn-default" data-dismiss="modal"><i class="fa-times-circle"></i>Cancel</button>
 				      </div>
 	            </s:form>

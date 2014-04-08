@@ -19,8 +19,8 @@
       
       <div class="col-xs-6">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#sign-in" data-toggle="tab"><i class="fa-sign-in"></i>Sign In</a></li>
-          <li><a href="#sign-up" data-toggle="tab"><i class="fa-pencil-square-o"></i>Sign Up</a></li>
+          <li class="active"><a href="<s:url action='protected/disClaimerAction.action?actionName=searchTrial.action' />" ><i class="fa-sign-in"></i>Sign In</a></li>
+          <li><a href="<s:url action='registerUser.action' />" ><i class="fa-pencil-square-o"></i>Sign Up</a></li>
           <li><a href="#forgot-password" data-toggle="tab"><i class="fa-key"></i>Forgot Password</a></li>
         </ul>
         <div class="tab-content">
@@ -78,16 +78,6 @@
             </form>
           </div>
           <div class="tab-pane fade" id="sign-up">
-            <s:form cssClass="form-horizontal" role="form"name="myAccount" method="POST" action="registerUsercreateAccount">
-                <s:actionerror />
-                <s:token/>
-                <s:hidden name="userWebDTO.username" />
-                 <%@ include file="/WEB-INF/jsp/nodecorate/accountCommonForm.jsp" %>
-                 <div class="bottom">
-	                <button type="button" class="btn btn-icon-alt btn-primary" onClick="document.myAccount.submit();">Sign Up<i class="fa-arrow-circle-right"></i></button>
-	                <button type="button" class="btn btn-icon btn-default" onClick="reset();"><i class="fa-repeat"></i>Reset</button>
-	              </div>
-            </s:form>
           </div>
           <div class="tab-pane fade" id="forgot-password">
             <div class="tab-inside">

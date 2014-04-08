@@ -13,8 +13,8 @@
         chosenname = oname.replace(/&apos;/g,"'");
     }
     
-    function handleAction(){
-        var form = document.forms[0];
+    function handleRegisterUserAction(){
+        var form = document.myAccountForm;
         form.page.value = "Submit";
         form.action="registerUserupdateAccount.action";
         form.submit();

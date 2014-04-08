@@ -15,7 +15,11 @@ jQuery(window).scroll(function(){
 /* animate the Bootstrap dropdown transition */
 
 jQuery(document).ready(function() {
-	stickyHeaderTop = jQuery('#nav').offset().top;
+	if(jQuery('#nav').length >0) {
+		stickyHeaderTop = jQuery('#nav').offset().top;
+	} else {
+		stickyHeaderTop = 0;
+	}
 	
 	jQuery('.navbar-nav .dropdown').hover(function() {
 	  jQuery(this).find('.dropdown-menu').first().stop(true, true).delay(0).slideDown(200);

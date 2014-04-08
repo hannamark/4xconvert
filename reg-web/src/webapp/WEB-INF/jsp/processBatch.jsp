@@ -1,18 +1,12 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<head>
-    <title><fmt:message key="process.batch.page.title"/></title>   
-    <s:head/>
-</head>
 <SCRIPT LANGUAGE="JavaScript">
-function handleAction(){
-	document.forms[0].page.value = "Submit";
-	document.forms[0].action="batchUploadprocess.action";
-    document.forms[0].submit();
+function handleBatchUploadAction(){
+	var form = document.batchUploadForm;
+	form.page.value = "Submit";
+	form.action="/registry/admin/batchUploadprocess.action";
+    form.submit();
 }
 </SCRIPT>
-
-<c:set var="topic" scope="request" value="batchupload"/>
-<reg-web:failureMessage/>
 <div class="modal fade" id="batchUpload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -21,6 +15,8 @@ function handleAction(){
         <h4 class="modal-title" id="myModalLabel">Batch Trial Upload</h4>
       </div>
       <div class="modal-body">
+      	<c:set var="topic" scope="request" value="batchupload"/>
+		<reg-web:failureMessage/>
         <p> Register multiple trials in the NCI Clinical Trials Reporting Program by uploading the Trial Data file and the Zip file that contains trial documents.
           Note the following requirements:</p>
         <ol>
@@ -29,7 +25,7 @@ function handleAction(){
           <li>Zip file containing trial documents is mandatory for a Trial data file consisting of new submissions and amendments.</li>
           <li>Zip file containing trial documents is optional for a Trial data file consisting of only trial updates.</li>
         </ol>
-        <form id="batchUpload" role="form" class="form-horizontal" method="POST" enctype="multipart/form-data">
+        <form id="batchUploadForm" name="batchUploadForm" role="form" class="form-horizontal" method="POST" enctype="multipart/form-data">
         	<s:token/>
         <s:actionerror/>
         <s:hidden name="page" />
@@ -69,7 +65,7 @@ function handleAction(){
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" onclick="handleAction()"><i class="fa-upload"></i>Upload Trials</button>
+        <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" onclick="handleBatchUploadAction();"><i class="fa-upload"></i>Upload Trials</button>
         <button type="button" class="btn btn-icon btn-default" data-dismiss="modal"><i class="fa-times"></i>Close</button>
       </div>
     </div>

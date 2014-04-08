@@ -1,42 +1,43 @@
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-        <title><fmt:message key="register.user.myaccount.title"/></title>
-        <s:head/>
-        <%@ include file="/WEB-INF/jsp/nodecorate/accountScripts.jsp" %>
-    </head>
-    <body>
-        <!-- main content begins-->
-        <h1><fmt:message key="register.user.myaccount.header"/></h1>
-        <c:set var="topic" scope="request" value="myaccount"/>
-        <div class="box" id="filters">
-            <reg-web:sucessMessage />
-            <p>To register for NCI Clinical Trials Reporting Program, please begin by creating an account. <br>
-            Please note: asterisks (<span class="required">*</span>) indicate required fields.<br>
-            <b><i> Please provide professional contact information only.</i></b>
-            </p>
-            <s:form name="myAccount" method="POST" action="registerUsercreateAccount">
-                <s:actionerror />
-                <s:token/>
-                <s:hidden name="userWebDTO.username" />
-                <table class="form">
-                    <tbody>
-                        <%@ include file="/WEB-INF/jsp/nodecorate/accountCommonForm.jsp" %>
-                    </tbody>
-                </table>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="document.forms[0].submit()"><span class="btn_img"><span class="login">Submit</span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
-                </div>
-            </s:form>
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script> 
+
+<%@ include file="/WEB-INF/jsp/nodecorate/accountScripts.jsp" %>
+
+<!-- Begin page content -->
+ <div class="row">
+   <%@ include file="/WEB-INF/jsp/nodecorate/loginInfo.jsp" %>
+   <div class="col-xs-6">
+     <ul class="nav nav-tabs">
+       <li><a href="<s:url action='protected/disClaimerAction.action?actionName=searchTrial.action' />" ><i class="fa-sign-in"></i>Sign In</a></li>
+       <li class="active"><a href="<s:url action='registerUser.action' />" ><i class="fa-pencil-square-o"></i>Sign Up</a></li>
+       <li><a href="#forgot-password" data-toggle="tab"><i class="fa-key"></i>Forgot Password</a></li>
+     </ul>
+     <div class="tab-content">
+       <div class="tab-pane fade" id="sign-in">
        </div>
-    </body>
-</html>
-        
+       <div class="tab-pane fade in active" id="sign-up">
+         <s:form cssClass="form-horizontal" role="form" id="myAccount" name="myAccount" method="POST" action="registerUsercreateAccount">
+             <s:actionerror />
+             <s:token/>
+             <s:hidden name="userWebDTO.username" />
+              <%@ include file="/WEB-INF/jsp/nodecorate/accountCommonForm.jsp" %>
+              <div class="bottom">
+	              <button type="button" class="btn btn-icon-alt btn-primary" onClick="document.myAccount.submit();">Sign Up<i class="fa-arrow-circle-right"></i></button>
+	              <button type="button" class="btn btn-icon btn-default" onClick="reset();"><i class="fa-repeat"></i>Reset</button>
+            </div>
+         </s:form>
+       </div>
+       <div class="tab-pane fade" id="forgot-password">
+         <div class="tab-inside">
+           <h4 class="heading"><span>Resetting Your Password</span></h4>
+           <p>If you forgot your password, please visit the NCI Password Station at <a href="mailto:http://password.nci.nih.gov">http://password.nci.nih.gov</a> and follow the instructions there.</p>
+           <p>If you need additional assistance or have questions, you can email NCI CBIIT Application Support at <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a>,
+             or call <strong>240-276-5541</strong> or toll free <strong>888-478-4423</strong>.</p>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>

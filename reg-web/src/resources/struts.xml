@@ -128,7 +128,7 @@
             <result>/index.jsp</result>
         </action>
         <action name="registerUser*" class="gov.nih.nci.registry.action.RegisterUserAction" method="{1}">
-            <result>/WEB-INF/jsp/registerUser.jsp</result>
+            <result>/WEB-INF/jsp/createAccount.jsp</result>
             <result name="myAccount">/WEB-INF/jsp/myAccount.jsp</result>
             <result name="createAccount">/WEB-INF/jsp/createAccount.jsp</result>
             <result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
