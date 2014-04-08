@@ -268,7 +268,7 @@ header .pull-right > .dropdown-menu > li.sign-out .btn-default.btn-sm {
 /* customize nav style */
 
 .navbar-brand {
-	background: url("../img/dark-logo.png") no-repeat;
+	background: url("../images/dark-logo.png") no-repeat;
 	height: 58px;
 	margin-top: 10px;
 	padding: 0;
