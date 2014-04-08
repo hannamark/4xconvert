@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
+<div class="row form-horizontal details">
+<display:table class="data table table-striped table-bordered" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
     				name="${requestScope.studyIndIde}" requestURI="searchTrialview.action" export="false">
 	<display:column titleKey="search.trial.view.indldeTypeCode" property="indIde"   sortable="true" headerClass="sortable"/>
 	<display:column escapeXml="true" titleKey="search.trial.view.indldeNumber" property="number"   sortable="true" headerClass="sortable"/>
@@ -11,5 +12,6 @@
 	<display:column titleKey="search.trial.view.expandedAccessStatusCode" property="expandedAccessType"   sortable="true" headerClass="sortable"/>
     <display:column titleKey="search.trial.view.exemptIndicator" property="exemptIndicator"   sortable="true" headerClass="sortable"/>
 </display:table>
+</div>
 
 
