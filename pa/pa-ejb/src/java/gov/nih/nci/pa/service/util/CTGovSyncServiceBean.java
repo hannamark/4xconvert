@@ -179,6 +179,11 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
      */
     public static final String SUCCESS = "Success";
 
+    /**
+     * CTGOV Import user name.
+     */
+    public static final String CTGOVIMPORT_USERNAME = "ClinicalTrials.gov Import";
+    
     private static final int INDEX_3 = 3;
 
     private static final String MASKING = "Masking";
@@ -188,9 +193,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private static final String UPDATE_ACTION = "Update";
 
     private static final String EMPTY = "";
-
-    private static final String CTGOVIMPORT_USERNAME = "ctgovimport";
-
+    
     private static final String EXCLUSION_CRITERIA_MARKER = 
             "(?:(?:\\sExclusion (?:C|c)riteria\\s*:?)|(?:\\s{3,}Exclusion:\\s))(?=\\s+-\\s{2})";
 
@@ -530,7 +533,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             studyProtocolDTO.setStudySource(CdConverter.convertToCd(StudySourceCode.CLINICAL_TRIALS_GOV));
 
             final String protocolID = verifyPopulateAndPersist(
-                    studyProtocolDTO, study, nctIdStr, xml, false);
+                    studyProtocolDTO, study, nctIdStr, xml, false);            
             title = StConverter.convertToString(studyProtocolDTO.getOfficialTitle());            
             String trialNciId = paServiceUtils.getTrialNciId(Long
                     .valueOf(protocolID));
@@ -565,7 +568,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             
             ProtocolSnapshot before = protocolComparisonService.captureSnapshot(id);
             verifyPopulateAndPersist(studyProtocolDTO, study, nctIdStr, xml,
-                    true);
+                    true);            
             title = StConverter.convertToString(studyProtocolDTO.getOfficialTitle());
             ProtocolSnapshot after = protocolComparisonService.captureSnapshot(id);
             
@@ -929,8 +932,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
      */
     private String getCurrentUser() throws PAException {
         User csmUser = CSMUserService.getInstance().getCSMUser(
-                UsernameHolder.getUser());
-        RegistryUser ru = registryUserService.getUser(csmUser.getLoginName());
+                UsernameHolder.getUser());        
+        RegistryUser ru = registryUserService.getUser(csmUser.getLoginName());        
         if (ru != null) {
             return ru.getFullName();
         } else {
@@ -1617,12 +1620,10 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         } else {
             extractNonInterventionalStudyProtocolDTO(
                     (NonInterventionalStudyProtocolDTO) dto, study);
-        }
-
-        dto.setUserLastCreated(StConverter.convertToSt(CTGOVIMPORT_USERNAME));
-
-    }
-
+        }        
+        dto.setUserLastCreated(StConverter.convertToSt(CTGOVIMPORT_USERNAME));        
+    }    
+    
     /**
      * @param dto
      */

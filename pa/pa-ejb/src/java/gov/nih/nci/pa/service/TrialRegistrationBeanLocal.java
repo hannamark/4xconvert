@@ -141,6 +141,7 @@ import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServic
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceBean;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -896,7 +897,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 centralContactDTO, collaborators);
        
         try {
-            updateStudyProtocol(studyProtocolDTO);            
+            updateStudyProtocol(studyProtocolDTO);                        
+            updateUserLastCreated(studyProtocolDTO);
             
             if (sponsorDTO != null) {
                 getPAServiceUtils().manageSponsor(spIi, sponsorDTO);
@@ -1201,6 +1203,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
             documentService.markAsOriginalSubmission(savedDocs);
+            
+            updateUserLastCreated(studyProtocolDTO);
             
             studyProtocolService
                     .updatePendingTrialAssociationsToActive(IiConverter
@@ -2162,6 +2166,19 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         }
     }
 
+    /**
+     * Updates last created user to "ClinicalTrials.govImport".
+     * @param studyProtocolDTO study protocol DTO
+     * @throws PAException 
+     */
+    private void updateUserLastCreated(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        Long studyProtocolId = IiConverter.convertToLong(studyProtocolDTO.getIdentifier());
+        User ctgovimportUser = CSMUserService.getInstance().getCSMUser(CTGovSyncServiceBean.CTGOVIMPORT_USERNAME);
+        String spUpdate = "update study_protocol set user_last_created_id = " + ctgovimportUser.getUserId() 
+                + " where identifier = " + studyProtocolId; 
+        getPAServiceUtils().executeSql(spUpdate);
+    }
+    
     /**
      * Save the given documents.
      * 

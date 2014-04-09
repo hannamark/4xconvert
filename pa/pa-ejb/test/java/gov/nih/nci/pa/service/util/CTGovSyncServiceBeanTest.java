@@ -57,6 +57,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.AbstractTrialRegistrationTestBase;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -255,10 +256,11 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
 
     /**
      * @throws HibernateException
+     * @throws PAException 
      */
-    private void setUpCtgovUser() throws HibernateException {
+    private void setUpCtgovUser() throws HibernateException, PAException {
         ctgovimportUser = new User();
-        ctgovimportUser.setLoginName("ctgovimport");
+        ctgovimportUser.setLoginName(CTGovSyncServiceBean.CTGOVIMPORT_USERNAME);
         ctgovimportUser.setFirstName("ctgovimport");
         ctgovimportUser.setLastName("ctgovimport");
         ctgovimportUser.setUpdateDate(new Date());
@@ -287,6 +289,9 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         MockCSMUserService.users.add(ctgovimportUser);
         MockCSMUserService.users.add(this.notCtgovimportUser);
         UsernameHolder.setUser(ctgovimportUser.getLoginName());
+        CSMUserUtil csmUserService = mock(CSMUserService.class);
+        CSMUserService.setInstance(csmUserService);
+        when(CSMUserService.getInstance().getCSMUser(any(String.class))).thenReturn(ctgovimportUser);
     }
 
     private void startNctApiMock() throws IOException {
