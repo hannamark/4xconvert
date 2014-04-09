@@ -38,7 +38,6 @@
     </head>
 
     <body onload="setFocusToFirstControl();">
-        <div id="contentwide">
             <h1 class="heading"><span><fmt:message key="search.trial.view.page.title" /></h1>            
             <c:set var="topic" scope="request" value="viewresult"/>
                 <reg-web:sucessMessage/>
@@ -416,6 +415,5 @@
 				    </div>
                     </c:if>
                 </s:form>
-        </div>
     </body>
 </html>
