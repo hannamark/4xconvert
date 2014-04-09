@@ -52,22 +52,6 @@
           contactPhone = phone;
       }
       
-      function lookup4loadleadorg() {
-          showPopup('${lookupOrgUrl}',loadLeadOrgDiv, 'Select Lead Organization');
-      }
-      
-      function lookup4loadleadpers() {
-          showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
-      }
-      
-      function lookup4sponsor() {
-          showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
-      }
-      
-      function lookup4loadSummary4Sponsor() {
-          showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
-      }
-      
       function loadLeadOrgDiv() {
           $("trialDTO.leadOrganizationIdentifier").value = orgid;
           $('trialDTO.leadOrganizationName').value = chosenname;

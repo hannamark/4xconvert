@@ -13,75 +13,68 @@ function formReset(){
 }
 </SCRIPT>
 </head>
-    <p align="center" class="info">
-        Type a string of characters in any of the text fields in the upper frame, or, 
-        enter the exact PO ID, or CTEP ID in the lower frame.
-    </p> 
+
+<p align="center" class="info">
+    Type a string of characters in any of the text fields in the upper frame, or, 
+    enter the exact PO ID, or CTEP ID in the lower frame.
+</p> 
 </p>
-<table class="form">
-    <tr>
-        <td scope="row" class="label"><label for="orgNameSearch"> <fmt:message
-            key="popUpOrg.name" /></label></td>
-        <td><s:textfield id="orgNameSearch" name="orgSearchCriteria.orgName" maxlength="200" size="100"
-            cssStyle="width:195px" /></td>
-        <td scope="row" class="label"><label for="orgCitySearch"> <fmt:message
-            key="popUpOrg.city" /></label></td>
-        <td colspan="3"><s:textfield id="orgCitySearch" name="orgSearchCriteria.orgCity" maxlength="200"
-            size="100" cssStyle="width:195px" /></td>
-    </tr>
-    <tr>
-        <td scope="row" class="label"><label for="orgFamilyNameSearch"> <fmt:message
-            key="popUpOrg.familyName" /></label></td>
-        <td><s:textfield id="orgFamilyNameSearch" name="orgSearchCriteria.familyName" maxlength="200" size="100"
-            cssStyle="width:195px" /></td>
-        <td scope="row" class="label"><label for="orgCountrySearch"> <fmt:message
-            key="popUpOrg.country" /></label></td>
-        <td colspan="3"><s:select id="orgCountrySearch" name="orgSearchCriteria.orgCountry" list="countryList"
-            listKey="alpha3" listValue="name" headerKey="" headerValue="" cssStyle="width:270px" />
-        </td>
-    </tr>
-    <tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td scope="row" class="label"><label for="orgStateSearch"> <fmt:message
-            key="popUpOrg.state" /></label></td>
-        <td><s:textfield id="orgStateSearch" name="orgSearchCriteria.orgState" maxlength="55" size="30"
-            cssStyle="width:135px" /><br>
-        <font size="1"><span class="info">please enter two letter <br>
-        identifier for US states for ex:<br>
-        'MD' for Maryland</span></font></td>
-
-        <td scope="row" class="value"><label for="orgZipSearch"> <fmt:message
-            key="popUpOrg.zip" /> </label></td>
-        <td><s:textfield id="orgZipSearch" name="orgSearchCriteria.orgZip" maxlength="15" size="20"
-            cssStyle="width:100px" /></td>
-
-    </tr>
-    <tr>
-        <td colspan="6">
-        <hr>
-        </td>
-    </tr>
-    <tr>
-        <td><label for="orgPOIdSearch">PO ID (Exact Match)</label></td>
-        <td><s:textfield id="orgPOIdSearch" name="orgSearchCriteria.id" maxlength="10" size="100" cssStyle="width:200px" /></td>
-        <td><label for="orgCtepIdSearch">CTEP ID</label></td>
-        <td><s:textfield id="orgCtepIdSearch" name="orgSearchCriteria.ctepId" maxlength="200" size="100"
-            cssStyle="width:200px" /></td>
-    </tr>
-</table>
-<div class="actionsrow">
-<div class="btnwrapper">
-<ul class="btnrow">
-    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="loadDiv();" id="search_organization_btn">
-        <span class="btn_img"><span class="search">Search</span></span>
-    </s:a> <s:a href="javascript:void(0)" cssClass="btn" onclick="setCreateFormVisible();" id="add_organization_btn">
-        <span class="btn_img"><span class="add">Add Org</span></span>
-    </s:a> <s:a href="javascript:void(0)" cssClass="btn" onclick="formReset();" id="search_organization_reset_btn">
-        <span class="btn_img"><span class="cancel">Reset</span></span>
-    </s:a> <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();" id="search_organization_close_btn">
-        <span class="btn_img"><span class="close">Cancel</span></span>
-    </s:a></li>
-</ul>
+<div class="container">
+<div class="form-group">
+    <label for="orgNameSearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.name"/></label>
+    <div class="col-xs-3">
+        <s:textfield id="orgNameSearch" name="orgSearchCriteria.orgName" maxlength="200" size="100" cssClass="form-control" />
+    </div>
+   	<label for="orgCitySearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.city"/></label>
+    <div class="col-xs-3">
+        <s:textfield id="orgCitySearch" name="orgSearchCriteria.orgCity" maxlength="200" size="100" cssClass="form-control" />
+    </div>
 </div>
+
+<div class="form-group">
+    <label for="orgFamilyNameSearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.familyName"/></label>
+    <div class="col-xs-3">
+        <s:textfield id="orgFamilyNameSearch" name="orgSearchCriteria.familyName" maxlength="200" size="100" cssClass="form-control" />
+    </div>
+   	<label for="orgCountrySearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.country"/></label>
+    <div class="col-xs-3">
+        <s:select id="orgCountrySearch" name="orgSearchCriteria.orgCountry" list="countryList"
+            listKey="alpha3" listValue="name" headerKey="" headerValue="" cssClass="form-control" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="orgStateSearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.state"/></label>
+    <div class="col-xs-3">
+        <s:textfield id="orgStateSearch" name="orgSearchCriteria.orgState" maxlength="55" size="30" cssClass="form-control" />
+        <span class="info">please enter two letter identifier for US states, for ex: 'MD' for Maryland</span>
+    </div>
+   	<label for="orgZipSearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.zip"/></label>
+    <div class="col-xs-3">
+        <s:textfield id="orgZipSearch" name="orgSearchCriteria.orgZip" maxlength="15" size="20" cssClass="form-control" />
+         <span class="info">&nbsp;</span>
+    </div>
+</div>
+</div>
+
+<hr>
+<div class="container">
+<div class="form-group">
+    <label for="orgPOIdSearch" class="col-xs-3 control-label">PO ID (Exact Match)</label>
+    <div class="col-xs-3">
+        <s:textfield id="orgPOIdSearch" name="orgSearchCriteria.id" maxlength="10" size="100" cssClass="form-control" />
+    </div>
+   	<label for="orgCtepIdSearch" class="col-xs-3 control-label">CTEP ID</label>
+    <div class="col-xs-3">
+        <s:textfield id="orgCtepIdSearch" name="orgSearchCriteria.ctepId" maxlength="200" size="100" cssClass="form-control" />
+    </div>
+</div>
+</div>
+
+<hr>
+<div class="bottom align-center">
+	  <button type="button" class="btn btn-icon btn-primary" onclick="loadDiv();" id="search_organization_btn"><i class="fa-search"></i>Search</button>
+	  <button type="button" class="btn btn-icon btn-primary" onclick="setCreateFormVisible();" id="add_organization_btn"><i class="fa-plus"></i>Add Org</button>
+	  <button type="button" class="btn btn-icon btn-default" onclick="formReset();" id="search_organization_reset_btn"><i class="fa-repeat"></i>Reset</button>
+	  <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin();" id="search_organization_close_btn"><i class="fa-times-circle"></i>Cancel</button>
 </div>

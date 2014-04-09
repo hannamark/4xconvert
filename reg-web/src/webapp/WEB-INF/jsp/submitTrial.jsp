@@ -11,15 +11,30 @@
   <c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="submitProtocol"/>
   <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
   <c:url value="/protected/ajaxorganizationGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
+  
   <script type="text/javascript" src="${scriptPath}/js/submitTrial.js"></script>
   <script type="text/javascript">
-  
-  document.observe("dom:loaded", function() {
-                                     displayTrialStatusDefinition('trialDTO_statusCode');
-                                 });
-  
-             
-  Event.observe(window, "load", setDisplayBasedOnTrialType);
+	  function lookup4loadleadorg() {
+	      showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
+	  }
+	  
+	  function lookup4loadleadpers() {
+	      showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
+	  }
+	  
+	  function lookup4sponsor() {
+	      showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
+	  }
+	  
+	  function lookup4loadSummary4Sponsor() {
+	      showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+	  }
+	  document.observe("dom:loaded", function() {
+	                                     displayTrialStatusDefinition('trialDTO_statusCode');
+	                                 });
+	  
+	             
+	  Event.observe(window, "load", setDisplayBasedOnTrialType);
   
   </script>
 </head>
@@ -105,9 +120,9 @@
                       <div class="container">
                       <div class="form-group">                                
                           <label for="trialDTO.leadOrganizationName" class="col-xs-4 control-label"><fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span></label>
-                          <!-- <div id="loadOrgField"> -->
+                          <div id="loadOrgField">
                               <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
-                          <!-- </div> -->
+                          </div>
                       </div>                
                       <div class="form-group">
                           <label for="trialDTO.piName" class="col-xs-4 control-label"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
