@@ -1,7 +1,4 @@
-<!DOCTYPE html>
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<html lang="en">
 <c:set var="topic" scope="request" value="diseasesearch" />
 <head>
 <title><fmt:message key="disease.search" /></title>
@@ -27,7 +24,9 @@
 				loadDiv();
 			}
 		});
-	</script>
+		
+		$('#diseaseSearch').addClass("active");
+		</script>
 	<div class="container">
 		<h1 class="heading">
 			<span><fmt:message key="disease.search" /></span>
@@ -73,4 +72,3 @@
 		</s:form>
 	</div>
 </body>
-</html>

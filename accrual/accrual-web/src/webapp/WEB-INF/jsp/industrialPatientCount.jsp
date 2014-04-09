@@ -46,6 +46,9 @@ function handleSwitchUrl(spId) {
 		</div>
 	</s:if>
 
+<script>
+$('#viewTrials').addClass("active");
+</script>
 	<s:form name="countform" cssClass="form-horizontal" role="form">
 		<s:token />
 		<s:hidden name="selectedRowIdentifier" />
@@ -62,8 +65,7 @@ function handleSwitchUrl(spId) {
 				titleKey="participatingsite.accrual.count.numOfSubjectEnrolled"
 				headerClass="sortable" headerScope="col">
 				<s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
-					<s:textfield name="submittedCounts[%{#attr.row.studySite.id}]"
-					    id="submittedCounts[%{#attr.row.studySite.id}]"
+					<s:textfield id="submittedCounts[%{#attr.row.studySite.id}]"
 						value="%{#attr.row.accrualCount}" cssClass="form-control"
 						cssStyle="width:20%" />
 				</s:if>

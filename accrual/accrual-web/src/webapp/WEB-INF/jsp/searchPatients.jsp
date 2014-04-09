@@ -1,8 +1,5 @@
-<!DOCTYPE html>
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<html lang="en">
 <c:set var="topic" scope="request" value="subjectsintro"/>
 <c:url value="/protected/ajaxpatientsgetDeleteReasons.action" var="deleteReason"/>        
 <%@ include file="/WEB-INF/jsp/nodecorate/tableTagParameters.jsp" %>
@@ -48,6 +45,9 @@ function handleSwitchUrl(spId) {
 </script>
 </head>
 <body>
+<script>
+$('#viewTrials').addClass("active");
+</script>
 <div class="container">
   <div class="scroller_anchor"></div>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
@@ -99,7 +99,7 @@ function handleSwitchUrl(spId) {
 <h3 class="heading mt20"><span><fmt:message key="patient.list.header"/></span></h3>
    <accrual:sucessMessage />
    <s:if test="hasActionErrors()"><div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong><s:actionerror />.</div></s:if>
-
+   
    <display:table class="table table-striped sortable" summary="This table contains your Study Subject search results.  Please use column headers to sort results"
                   decorator="gov.nih.nci.accrual.accweb.decorator.SearchPatientDecorator"
                   sort="list" pagesize="10" id="row" name="displayTagList" requestURI="patients.action" export="false">
@@ -119,4 +119,3 @@ function handleSwitchUrl(spId) {
    </display:table>
    </div>
 </body>
-</html>

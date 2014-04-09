@@ -1,13 +1,13 @@
-<!DOCTYPE html>
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<html lang="en">
 <c:set var="topic" scope="request" value="batchupload" />
 <head>
 <title><fmt:message key="accrual.batchUpload.title" /></title>
 <s:head />
 </head>
 <body>
+<script>
+$('#batchUpload').addClass("active");
+</script>
 	<s:if test="hasActionErrors()">
 		<div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong>
 			<s:actionerror />.
@@ -51,4 +51,3 @@
 		</div>
 	</div>
 </body>
-</html>

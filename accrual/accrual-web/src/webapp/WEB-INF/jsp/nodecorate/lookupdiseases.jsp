@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
     <head>
         <s:if test="%{siteLookUp}">
             <fmt:message key="site.title" var="pageTitle" />
@@ -25,19 +25,14 @@
                         page: "searchLookup",
                         searchCodeSystem: $("#searchCodeSystem").val()
                 		};
-                $('#getDiseases').load(url, params);
-                //div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
-                //var aj = callAjaxPost(div, url, params);   
+                $('#getDiseases').load(url, params);  
             }
         </script>
     </head> 
     <body>
         
-    <div class="container">
     <s:form id="diseases" name="diseases" cssClass="form-horizontal" role="form">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            
+      <div class="modal-header">            
                 <s:hidden id="siteLookUp" name="siteLookUp"/>
                 <h4 class="modal-title" id="myModalLabel">
 	                <s:if test="%{siteLookUp}">
@@ -48,7 +43,7 @@
 	                </s:else>
                 </h4></div>
       <div class="modal-body">
-                    <div class="form-group"><label for="searchName" class="col-xs-4 control-label">
+                    <div class="form-group"><label for="searchName" class="col-xs-3 control-label">
                         <s:if test="%{siteLookUp}">
                             <fmt:message key="site.name"/>
                         </s:if>
@@ -58,8 +53,8 @@
                         </label>
                         <div class="col-xs-2">
                         <s:textfield id="searchName" name="searchName" cssClass="form-control" /></div>
-          </div>
-                        <div class="form-group"><label for="searchCode" class="col-xs-4 control-label">
+      
+                        <label for="searchCode" class="col-xs-1 control-label">
 	                        <s:if test="%{siteLookUp}">
 	                            <fmt:message key="site.code"/>
 	                        </s:if>
@@ -69,7 +64,7 @@
                         </label>
                         <div class="col-xs-2"><s:textfield id="searchCode" name="searchCode"  cssClass="form-control" /></div>
           </div>
-                     <div class="form-group"><label for="includeSDC" class="col-xs-4 control-label">
+                     <div class="form-group"><label for="includeSDC" class="col-xs-3 control-label">
 	                        <s:if test="%{siteLookUp}">
 	                            <fmt:message key="site.codeSystem"/>
 	                        </s:if>
@@ -83,7 +78,7 @@
           </div>
                 <div class="form-group">
         <div class="col-xs-4 col-xs-offset-3 mt20">
-                                <button type="button" class="btn btn-icon btn-default" onclick="loadDiv()"><i class="fa-search"></i>Search</span></button>
+                                <button type="button" class="btn btn-icon btn-default" onclick="loadDiv()"><i class="fa-search"></i>Search</button>
                                 <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin();"><i class="fa-times"></i>Cancel</button>                           
                 </div>
                 </div>
@@ -91,6 +86,5 @@
                     <jsp:include page="/WEB-INF/jsp/nodecorate/lookupdiseasesdisplayList.jsp"/>
                 </div>
             </s:form>
-        </div>
     </body>
 </html>

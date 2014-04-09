@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <accrual:failureMessage/>
 <c:if test="${disWebList != null}">
-<display:table class="table table-striped sortable" sort="list" uid="row" name="disWebList" export="false">
+<display:table class="table table-striped sortable" sort="list" uid="row" name="disWebList" export="false" style="font-size: 90% !important; font-family: arial,helvetica,sans-serif;">
     <display:column escapeXml="true" title="Name" property="preferredName"  headerClass="sortable"/>
     <display:column title="Code" property="diseaseCode"  headerClass="sortable"/>
     <display:column title="System" property="codeSystem"  headerClass="sortable"/>

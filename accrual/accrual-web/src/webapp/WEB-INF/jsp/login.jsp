@@ -4,10 +4,14 @@
 <script type="text/javascript" language="javascript"
 	src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
 	<c:url value="/../registry/registerUser.action" var="createAccountUrl" />
-	<%-- <c:url value="/../registry/registerUser.action?resetPassword=true"
-		var="resetPasswordUrl" /> --%>
 	<body>
 	<script>
+	$(document).keypress(function(event) {
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        if (keycode == '13') {
+        	document.loginForm.submit();
+        }
+    });
 	$('#wrap').addClass("login");
 	</script>
 	<div class="container">

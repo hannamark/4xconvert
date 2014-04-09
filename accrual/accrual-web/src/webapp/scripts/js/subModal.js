@@ -52,7 +52,7 @@ function initPopUp() {
 			'<div id="popupTitleBar">' +
 				'<div id="popupTitle"></div>' +
 				'<div id="popupControls">' +
-					'<img alt="Close" src="../images/close.gif" onclick="hidePopWin(false);" id="popCloseBox" />' +
+					'<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="hidePopWin(false);" id="popCloseBox"><img alt="Close" src="../images/close.gif"/></button>' +
 				'</div>' +
 			'</div>' +
 			'<iframe src="'+ gDefaultPage +'" style="width:100%;height:100%;background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="popupFrame" name="popupFrame" width="100%" height="100%"></iframe>' +

@@ -1,8 +1,5 @@
-<!DOCTYPE html>
-    
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<html lang="en">
     <c:url value="/protected/popup.action" var="lookupUrl" />
     <%@ include file="/WEB-INF/jsp/nodecorate/tableTagParameters.jsp" %>
     <head>
@@ -80,7 +77,11 @@
         </script>
     </head>
     <body>
+    <script>
+$('#viewTrials').addClass("active");
+</script>
     <div class="container">
+    <div class="scroller_anchor"></div>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <h1 class="heading"><span>${pageTitle}</span></h1>
             <s:if test="hasActionErrors()">
@@ -359,4 +360,3 @@
 		</div>
         </div>
     </body>
-</html>

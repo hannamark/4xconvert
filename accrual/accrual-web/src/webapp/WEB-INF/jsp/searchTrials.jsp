@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<html lang="en">
 <c:set var="topic" scope="request" value="trialsintro" />
 <head>
 <title><fmt:message key="accrual.search.trials.page.title" /></title>
 <s:head />
-<%-- <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/overlib.js"/>"></script> --%>
 <SCRIPT LANGUAGE="JavaScript">
 	function resetValues() {
 		document.searchTrial.reset();
@@ -22,7 +18,9 @@
 </SCRIPT>
 </head>
 <body>
-
+<script>
+$('#viewTrials').addClass("active");
+</script>
 	<div class="container">
 		<h1 class="heading">
 			<span><fmt:message key="accrual.search.trials.page.header" /></span>
@@ -77,4 +75,3 @@
 		<jsp:include page="/WEB-INF/jsp/listTrials.jsp" />
 	</div>
 </body>
-</html>

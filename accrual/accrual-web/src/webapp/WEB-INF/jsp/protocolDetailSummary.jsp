@@ -1,4 +1,3 @@
-<!DOCTYPE html>    
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
 
 <div class="row summary-box">
