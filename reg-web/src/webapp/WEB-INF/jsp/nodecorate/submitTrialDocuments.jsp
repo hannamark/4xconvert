@@ -11,7 +11,7 @@
       <s:else>
         <s:file id="protocolDoc" name="protocolDoc" value="true" />
         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload the protocol document."  data-placement="top" data-trigger="hover"></i>
-        <span class="formErrorMsg">
+        <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.protocolDocFileName</s:param>
           </s:fielderror>
@@ -29,7 +29,7 @@
       <s:else>
         <s:file id="irbApproval" name="irbApproval" />
         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload the IRB approval document."  data-placement="top" data-trigger="hover"></i>
-        <span class="formErrorMsg">
+        <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.irbApprovalFileName</s:param>
           </s:fielderror>
@@ -47,7 +47,7 @@
       <s:else>
         <s:file id="participatingSites" name="participatingSites" />
         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload the Participating Sites document. This document includes site recruitment status and date, target accrual, and site principal investigators."  data-placement="top" data-trigger="hover"></i> 
-      	<span class="formErrorMsg">
+      	<span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.participatingSitesFileName</s:param>
           </s:fielderror>
@@ -65,7 +65,7 @@
     <s:else>
       <s:file id="informedConsentDocument" name="informedConsentDocument" />
       <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="If the informed consent is not included in the protocol document, click Browse to locate and upload the Informed Consent document."  data-placement="top" data-trigger="hover"></i>
-        <span class="formErrorMsg">
+        <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.informedConsentDocumentFileName</s:param>
           </s:fielderror>

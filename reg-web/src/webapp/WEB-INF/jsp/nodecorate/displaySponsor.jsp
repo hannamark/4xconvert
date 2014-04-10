@@ -19,6 +19,6 @@
 		</td>
 	</tr>
 </table>
-<span class="formErrorMsg"> <s:fielderror>
+<span class="alert-danger"> <s:fielderror>
 		<s:param>SponsorNotSelected</s:param>
 	</s:fielderror> </span>

@@ -25,7 +25,7 @@
         </s:if>
         <s:else>
           <s:file name="protocolDoc" id="protocolDoc" value="true" cssStyle="width:270px" />
-          <span class="formErrorMsg"> 
+          <span class="alert-danger"> 
             <s:fielderror>
               <s:param>trialDTO.protocolDocFileName</s:param>
             </s:fielderror> 
@@ -48,7 +48,7 @@
         </s:if> 
         <s:else>
           <s:file name="changeMemoDoc" id="changeMemoDoc" cssStyle="width:270px" />
-          <span class="formErrorMsg"> 
+          <span class="alert-danger"> 
             <s:fielderror>
               <s:param>trialDTO.changeMemoDocFileName</s:param>
             </s:fielderror>
@@ -70,7 +70,7 @@
         </s:if> 
         <s:else>
           <s:file name="protocolHighlightDocument" id="protocolHighlightDocument" cssStyle="width:270px" />
-          <span class="formErrorMsg"> 
+          <span class="alert-danger"> 
             <s:fielderror>
               <s:param>trialDTO.protocolHighlightDocumentFileName</s:param>
             </s:fielderror>
@@ -93,7 +93,7 @@
         </s:if>
         <s:else>
           <s:file name="irbApproval" id="irbApproval" cssStyle="width:270px" />
-          <span class="formErrorMsg">
+          <span class="alert-danger">
             <s:fielderror>
               <s:param>trialDTO.irbApprovalFileName</s:param>
             </s:fielderror> </span>
@@ -114,7 +114,7 @@
         </s:if> 
         <s:else>
           <s:file name="participatingSites" id="participatingSites" cssStyle="width:270px" />
-          <span class="formErrorMsg">
+          <span class="alert-danger">
             <s:fielderror>
               <s:param>trialDTO.participatingSitesFileName</s:param>
             </s:fielderror> 
@@ -136,7 +136,7 @@
         </s:if>
         <s:else>
           <s:file name="informedConsentDocument" id="informedConsentDocument" cssStyle="width:270px" />
-          <span class="formErrorMsg"> 
+          <span class="alert-danger"> 
             <s:fielderror>
               <s:param>trialDTO.informedConsentDocumentFileName</s:param>
             </s:fielderror>

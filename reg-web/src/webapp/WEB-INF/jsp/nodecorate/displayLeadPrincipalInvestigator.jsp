@@ -13,7 +13,7 @@
 </td>
 </tr>
 </table>
- <span class="formErrorMsg"> 
+ <span class="alert-danger"> 
      <s:fielderror>
      <s:param>LeadPINotSelected</s:param>
     </s:fielderror>                            

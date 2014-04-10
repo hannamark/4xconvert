@@ -32,7 +32,7 @@
                     </td>
                 </tr>
             </table>
-            <span class="formErrorMsg">
+            <span class="alert-danger">
                 <s:fielderror>
                     <s:param>trialDTO.leadOrganizationIdentifier</s:param>
                 </s:fielderror>
@@ -62,7 +62,7 @@
                     </td>
                 </tr>
             </table>
-            <span class="formErrorMsg" id="piIdentifierErr"> 
+            <span class="alert-danger" id="piIdentifierErr"> 
                 <s:fielderror>
                     <s:param>trialDTO.piIdentifier</s:param>
                 </s:fielderror>                            

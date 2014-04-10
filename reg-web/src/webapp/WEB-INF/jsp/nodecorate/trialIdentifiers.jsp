@@ -7,7 +7,7 @@
              <label for="trialDTO.leadOrgTrialIdentifier"  class="col-xs-4 control-label"><fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span></label>
              <div class="col-xs-4">
                  <s:textfield id="trialDTO.leadOrgTrialIdentifier" name="trialDTO.leadOrgTrialIdentifier" maxlength="30" size="100" cssClass="form-control charcounter"/>
-             	 <span class="formErrorMsg">
+             	 <span class="alert-danger">
              	 	<s:fielderror>
              	 		<s:param>trialDTO.leadOrgTrialIdentifier</s:param>
              	 	</s:fielderror>
@@ -19,7 +19,7 @@
             <label for="trialDTO.nctIdentifier" class="col-xs-4 control-label"><fmt:message key="submit.trial.nctNumber"/></label>
             <div class="col-xs-4">
                 <s:textfield id="trialDTO.nctIdentifier" name="trialDTO.nctIdentifier"  maxlength="200" size="100" cssClass="form-control"/>
-                <span class="formErrorMsg">
+                <span class="alert-danger">
                     <s:fielderror cssStyle = "white-space:pre-line;">
                         <s:param>trialDTO.nctIdentifier</s:param>
                     </s:fielderror>

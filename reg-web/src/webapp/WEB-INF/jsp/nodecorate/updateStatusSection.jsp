@@ -10,7 +10,7 @@
                     <s:select headerKey="" headerValue="--Select--" id="trialDTO_statusCode" name="trialDTO.statusCode" list="#statusCodeValues" 
                         value="trialDTO.statusCode" onchange="displayTrialStatusDefinition('trialDTO_statusCode');" 
                         cssClass="form-control"/> 
-                    <span class="formErrorMsg"> 
+                    <span class="alert-danger"> 
                         <s:fielderror>
                             <s:param>trialDTO.statusCode</s:param>
                         </s:fielderror>
@@ -28,7 +28,7 @@
                <div class="col-xs-4">
                   <s:textarea id="trialDTO_reason" name="trialDTO.reason" cols="50" rows="3" maxlength="160" 
                       cssClass="form-control charcounter"/>
-                  <span class="formErrorMsg">
+                  <span class="alert-danger">
                       <s:fielderror>
                           <s:param>trialDTO.reason</s:param>
                       </s:fielderror> 
@@ -44,7 +44,7 @@
                   <div id="datetimepicker" class="datetimepicker input-append">                    
                     <s:textfield id="trialDTO_statusDate" name="trialDTO.statusDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy"/>
                     <span class="add-on btn-default"><i class="fa-calendar"></i></span>
-                    <span class="formErrorMsg">
+                    <span class="alert-danger">
                         <s:fielderror>
                             <s:param>trialDTO.statusDate</s:param>
                         </s:fielderror>
@@ -60,7 +60,7 @@
                   <div id="datetimepicker" class="datetimepicker input-append">
                     <s:textfield id="trialDTO_startDate" name="trialDTO.startDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy" />                    
                     <span class="add-on btn-default"><i class="fa-calendar"></i></span>
-                    <span class="formErrorMsg">
+                    <span class="alert-danger">
                       <s:fielderror>
                           <s:param>trialDTO.startDate</s:param>
                       </s:fielderror>
@@ -70,7 +70,7 @@
                 <div class="col-xs-5">
                   <s:radio cssClass="radio-inline" id="trialDTO_startDateType" name="trialDTO.startDateType" list="#dateTypeList" />                 
                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial starts, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i>
-            	  <span class="formErrorMsg">
+            	  <span class="alert-danger">
                       <s:fielderror>
                           <s:param>trialDTO.startDateType</s:param>
                       </s:fielderror>
@@ -89,7 +89,7 @@
                    <div id="datetimepicker" class="datetimepicker input-append">
                        <s:textfield id="trialDTO_primaryCompletionDate" name="trialDTO.primaryCompletionDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy" />
                        <span class="add-on btn-default"><i class="fa-calendar"></i></span>
-                       <span class="formErrorMsg">
+                       <span class="alert-danger">
                           <s:fielderror>
                              <s:param>trialDTO.primaryCompletionDate</s:param>
                          </s:fielderror>
@@ -99,7 +99,7 @@
                <div class="col-xs-5">
                    <s:radio cssClass="radio-inline" id="trialDTO_primaryCompletionDateType" name="trialDTO.primaryCompletionDateType" list="#dateTypeList" />                   
                    <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial reaches/reached its primary completion date, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i> 
-          	 		<span class="formErrorMsg">
+          	 		<span class="alert-danger">
                        <s:fielderror>
                            <s:param>trialDTO.primaryCompletionDateType</s:param>
                        </s:fielderror>
@@ -112,7 +112,7 @@
                   <div id="datetimepicker" class="datetimepicker input-append">
                     <s:textfield id="trialDTO_completionDate" name="trialDTO.completionDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy"/>
                     <span class="add-on btn-default"><i class="fa-calendar"></i></span>                 
-                    <span class="formErrorMsg">
+                    <span class="alert-danger">
                       <s:fielderror>
                           <s:param>trialDTO.completionDate</s:param>
                       </s:fielderror>
@@ -122,7 +122,7 @@
               <div class="col-xs-5">
                   <s:radio  cssClass="radio-inline" id="trialDTO_completionDateType" name="trialDTO.completionDateType" list="#dateTypeList" />
                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial reaches/reached its completion date, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i>
-                  <span class="formErrorMsg">
+                  <span class="alert-danger">
                      <s:fielderror>
                          <s:param>trialDTO.completionDateType</s:param>
                      </s:fielderror>

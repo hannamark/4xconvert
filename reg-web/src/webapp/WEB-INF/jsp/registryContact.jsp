@@ -9,7 +9,6 @@
     <s:head />
 </head>
 
-
 <body onload="setFocusToFirstControl();">
 <!-- <div id="contentwide"> -->
  <h1><fmt:message key="contact.page.header" /></h1>

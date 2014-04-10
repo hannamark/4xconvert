@@ -158,7 +158,7 @@
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="trialDTO.leadOrgTrialIdentifier" labelKey="submit.trial.leadOrgidentifier" required="true" tooltip="tooltip.trial_id">
                         <s:textfield id="trialDTO.leadOrgTrialIdentifier" name="trialDTO.leadOrgTrialIdentifier"  maxlength="30 " size="100"  cssStyle="width:200px" cssClass="charcounter" />
-                        <span class="formErrorMsg">
+                        <span class="alert-danger">
                             <s:fielderror>
                                 <s:param>trialDTO.leadOrgTrialIdentifier</s:param>
                             </s:fielderror>
@@ -171,7 +171,7 @@
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="trialDTO.localSiteIdentifier" labelKey="submit.proprietary.trial.siteidentifier" required="true" tooltip="tooltip.submitting_organization_local_trial_identifier">
                         <s:textfield id="trialDTO.localSiteIdentifier" name="trialDTO.localSiteIdentifier"  maxlength="200" size="100"  cssStyle="width:200px"  />
-                        <span class="formErrorMsg">
+                        <span class="alert-danger">
                             <s:fielderror>
                               <s:param>trialDTO.localSiteIdentifier</s:param>
                             </s:fielderror>
@@ -180,7 +180,7 @@
                     <reg-web:valueRow labelFor="trialDTO.nctIdentifier" labelKey="submit.trial.nctNumber" tooltip="tooltip.nct_number">
                         <s:textfield id="trialDTO.nctIdentifier" name="trialDTO.nctIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
                         <span class="info">(Mandatory if Exists)</span>
-                        <span class="formErrorMsg">
+                        <span class="alert-danger">
                             <s:fielderror cssStyle = "white-space:pre-line;">
                                 <s:param>trialDTO.nctIdentifier</s:param>
                             </s:fielderror>
@@ -189,7 +189,7 @@
                     <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
                     <reg-web:valueRow labelFor="trialDTO.officialTitle" labelKey="submit.trial.title" required="true" tooltip="tooltip.title">
                         <s:textarea id="trialDTO.officialTitle" name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="charcounter"/>                        
-                        <span class="formErrorMsg">
+                        <span class="alert-danger">
                             <s:fielderror>
                                 <s:param>trialDTO.officialTitle</s:param>
                             </s:fielderror>
@@ -208,7 +208,7 @@
                                 ${trialDTO.trialType=='NonInterventional'?'checked=checked':''}
                                 onclick="setDisplayBasedOnTrialType();" 
                                 id="trialDTO.trialType.Noninterventional"><label for="trialDTO.trialType.Noninterventional"> Non-interventional</label>
-                            <span class="formErrorMsg">
+                            <span class="alert-danger">
                                 <s:fielderror>
                                     <s:param>trialDTO.trialType</s:param>
                                 </s:fielderror>
@@ -223,7 +223,7 @@
 					      <td>
 					          <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode" list="#typeCodeValues"  cssStyle="width:206px" 
 					                    value="trialDTO.studySubtypeCode"/>
-					           <span class="formErrorMsg">
+					           <span class="alert-danger">
 					              <s:fielderror>
 					              <s:param>trialDTO.studySubtypeCode</s:param>
 					             </s:fielderror>
@@ -250,7 +250,7 @@
                                   name="trialDTO.summaryFourFundingCategoryCode"
                                   list="#{'National':'National', 'Externally Peer-Reviewed':'Externally Peer-Reviewed','Institutional':'Institutional','Industrial':'Industrial/Other'}"
                                   cssStyle="width:206px" disabled="true" />
-                         <span class="formErrorMsg">
+                         <span class="alert-danger">
                                <s:fielderror>
                                    <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
                                </s:fielderror>
@@ -269,7 +269,7 @@
                                   name="trialDTO.consortiaTrialCategoryCode"
                                   list="consortiaTrialCategoryValueMap"
                                   cssStyle="width:206px" />
-                         <span class="formErrorMsg">
+                         <span class="alert-danger">
                                <s:fielderror>
                                    <s:param>trialDTO.consortiaTrialCategoryCode</s:param>
                                </s:fielderror>
@@ -278,7 +278,7 @@
                                         
                     <reg-web:valueRow labelFor="trialDTO.siteProgramCodeText" labelKey="submit.proprietary.trial.sitePrgCode" tooltip="tooltip.summary_4_site_program_code">
                         <s:textfield id="trialDTO.siteProgramCodeText" name="trialDTO.siteProgramCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
-                        <span class="formErrorMsg">
+                        <span class="alert-danger">
                             <s:fielderror>
                                 <s:param>trialDTO.programCodeText</s:param>
                             </s:fielderror>
@@ -292,7 +292,7 @@
                         <reg-web:valueRow labelFor="trialDTO.siteStatusCode" labelKey="submit.trial.siteRecruitmentStatus" required="true" tooltip="tooltip.site_recruitment_status">
                             <s:set name="recruitmentStatusValues" value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
                             <s:select id="trialDTO.siteStatusCode" headerKey="" headerValue="--Select--" name="trialDTO.siteStatusCode" list="#recruitmentStatusValues" value="trialDTO.siteStatusCode" />
-                            <span class="formErrorMsg">
+                            <span class="alert-danger">
                                 <s:fielderror>
                                     <s:param>trialDTO.siteStatusCode</s:param>
                                 </s:fielderror>
@@ -303,7 +303,7 @@
                             <a href="javascript:showCal('Cal1')">
                                 <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                             </a> (mm/dd/yyyy)
-                            <span class="formErrorMsg">
+                            <span class="alert-danger">
                                 <s:fielderror>
                                     <s:param>trialDTO.siteStatusDate</s:param>
                                 </s:fielderror>
@@ -314,7 +314,7 @@
                             <a href="javascript:showCal('Cal2')">
                                 <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                             </a> (mm/dd/yyyy)
-                            <span class="formErrorMsg">
+                            <span class="alert-danger">
                                 <s:fielderror>
                                     <s:param>trialDTO.dateOpenedforAccrual</s:param>
                                 </s:fielderror>
@@ -326,7 +326,7 @@
                                 <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                             </a> (mm/dd/yyyy)
                             <span class="info"><fmt:message key="error.proprietary.submit.dateOpenReq" /></span>
-                            <span class="formErrorMsg">
+                            <span class="alert-danger">
                                 <s:fielderror>
                                     <s:param>trialDTO.dateClosedforAccrual</s:param>
                                 </s:fielderror>

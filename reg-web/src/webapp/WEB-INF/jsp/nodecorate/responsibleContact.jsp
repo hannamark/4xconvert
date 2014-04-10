@@ -8,7 +8,7 @@
 		<input type="button" id="lookupbtn4RP" value="Look Up" onclick="lookup4loadresponsibleparty();" title="Opens a popup form to select Responsible Party Contact" disabled="disabled"/>
 	</c:otherwise>
 </c:choose>
-<span class="formErrorMsg"> 
+<span class="alert-danger"> 
      <s:fielderror>
      <s:param>ResponsiblePartyNotSelected</s:param>
     </s:fielderror>                            

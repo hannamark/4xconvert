@@ -18,7 +18,7 @@
                      <s:select onchange="respPartyTypeChanged()" headerKey="" headerValue="--Select--" id="trialDTO.responsiblePartyType" 
                          name="trialDTO.responsiblePartyType" list="#{'sponsor':'Sponsor','pi':'Principal Investigator','si':'Sponsor-Investigator'}" 
                          value="trialDTO.responsiblePartyType" cssClass="form-control"/>
-                     <span class="formErrorMsg">
+                     <span class="alert-danger">
                          <s:fielderror>
                              <s:param>trialDTO.responsiblePartyType</s:param>
                          </s:fielderror>
@@ -32,7 +32,7 @@
                         <div class="col-xs-4">                                    
                             <s:textfield name="trialDTO.responsiblePersonName" id="trialDTO.responsiblePersonName" size="30" 
                                  readonly="true" cssClass="form-control"/>
-                            <span class="formErrorMsg" id="responsiblePersonNameErr"> 
+                            <span class="alert-danger" id="responsiblePersonNameErr"> 
                                 <s:fielderror>
                                     <s:param>responsiblePersonName</s:param>
                                 </s:fielderror>                            
@@ -47,7 +47,7 @@
                 <label for="trialDTO.responsiblePersonTitle" class="col-xs-4 control-label">Investigator Title:<span class="required">*</span></label>
                 <div class="col-xs-4">
                     <s:textfield name="trialDTO.responsiblePersonTitle"  id="trialDTO.responsiblePersonTitle" maxlength="200" cssClass="form-control" />
-                    <span class="formErrorMsg"> 
+                    <span class="alert-danger"> 
                         <s:fielderror>
                             <s:param>responsiblePersonTitle</s:param>
                         </s:fielderror>                            
@@ -61,7 +61,7 @@
                     <div class="col-xs-4">
                         <s:textfield name="trialDTO.responsiblePersonAffiliationOrgName" id="trialDTO.responsiblePersonAffiliationOrgName" size="30" 
                              readonly="true" cssClass="form-control"/>
-                            <span class="formErrorMsg" id="affiliationOrgErr"> 
+                            <span class="alert-danger" id="affiliationOrgErr"> 
                                 <s:fielderror>
                                    <s:param>responsiblePersonAffiliationOrgName</s:param>
                                 </s:fielderror>                            

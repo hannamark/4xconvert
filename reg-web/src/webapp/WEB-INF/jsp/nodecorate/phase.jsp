@@ -5,7 +5,7 @@
       <div class="col-xs-4">
          <s:select headerKey="" headerValue="--Select--" name="trialDTO.phaseCode" id ="trialDTO.phaseCode" 
              list="#phaseCodeValues" cssClass="form-control"  value="trialDTO.phaseCode" onchange="displayPhaseAdditonalCode();"/>
-         <span class="formErrorMsg">
+         <span class="alert-danger">
              <s:fielderror>
              <s:param>trialDTO.phaseCode</s:param>
              </s:fielderror>

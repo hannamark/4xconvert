@@ -373,7 +373,7 @@
                     <reg-web:spaceRow/>
                     <reg-web:valueRow labelKey="view.trial.amendmentNumber" labelFor="trialDTO.localAmendmentNumber">
                         <s:textfield id="trialDTO.localAmendmentNumber" name="trialDTO.localAmendmentNumber" maxlength="200" size="100" cssStyle="width:200px"  />
-                        <span class="formErrorMsg">
+                        <span class="alert-danger">
                             <s:fielderror>
                                 <s:param>trialDTO.localAmendmentNumber</s:param>
                             </s:fielderror>
@@ -385,7 +385,7 @@
                         <a href="javascript:showCal('Cal5')">
                             <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                         </a> (mm/dd/yyyy)
-                        <span class="formErrorMsg">
+                        <span class="alert-danger">
                             <s:fielderror>
                                 <s:param>trialDTO.amendmentDate</s:param>
                             </s:fielderror>
@@ -479,7 +479,7 @@
                             <div id="grantdiv">
                                 <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
                             </div>
-                            <span class="formErrorMsg">
+                            <span class="alert-danger">
                                 <s:fielderror>
                                     <s:param>trialDTO.nciGrant</s:param>
                                 </s:fielderror>

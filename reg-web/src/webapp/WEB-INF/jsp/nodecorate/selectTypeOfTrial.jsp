@@ -65,7 +65,7 @@
                                         id = "summaryFourFundingCategoryCode"
                                         list="#{'National':'National', 'Externally Peer-Reviewed':'Externally Peer-Reviewed','Institutional':'Institutional','Industrial':'Industrial/Other'}"
                                         cssStyle="width:206px" />
-                                <span class="formErrorMsg">
+                                <span class="alert-danger">
                                     <s:fielderror>
                                         <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
                                     </s:fielderror>

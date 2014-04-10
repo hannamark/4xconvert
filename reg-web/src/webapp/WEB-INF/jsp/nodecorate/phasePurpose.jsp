@@ -9,7 +9,7 @@
         <input type="radio" name="trialDTO.trialType" value="NonInterventional" id="trialDTO.trialType.Noninterventional"
             ${trialDTO.trialType=='NonInterventional'?'checked=checked':''}
             onclick="hidePrimaryCompletionDate(), setDisplayBasedOnTrialType();"><label for = "trialDTO.trialType.Noninterventional">Non-interventional</label>
-        <span class="formErrorMsg">
+        <span class="alert-danger">
             <s:fielderror>
                 <s:param>trialDTO.trialType</s:param>
             </s:fielderror>
@@ -22,7 +22,7 @@
     <div class="col-xs-4">
         <s:select headerKey="" headerValue="--Select--" id ="trialDTO.studySubtypeCode" name="trialDTO.studySubtypeCode" list="#typeCodeValues" 
             cssClass="form-control" value="trialDTO.studySubtypeCode"/>
-           <span class="formErrorMsg">
+           <span class="alert-danger">
               <s:fielderror>
               <s:param>trialDTO.studySubtypeCode</s:param>
              </s:fielderror>

@@ -2,7 +2,7 @@
 <div class="col-xs-12">
 <div class="col-xs-6">
     <s:textfield label="Summary4sponsorName"  id="trialDTO.summaryFourOrgName" size="30" readonly="true" cssClass="form-control"  />
-    <span class="formErrorMsg"> 
+    <span class="alert-danger"> 
     <s:fielderror>
         <s:param>summary4FundingSponsor</s:param>
     </s:fielderror>                            

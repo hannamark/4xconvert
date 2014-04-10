@@ -13,7 +13,7 @@
                       onchange="loadRegAuthoritiesDiv();"
                       cssClass="form-control"
                       />
-                    <span class="formErrorMsg">
+                    <span class="alert-danger">
                        <s:fielderror>
                        <s:param>trialDTO.lst</s:param>
                       </s:fielderror>
@@ -32,7 +32,7 @@
           <div class="col-xs-4">
           	<s:radio cssClass="radio-inline" id ="trialDTO.fdaRegulatoryInformationIndicator" name="trialDTO.fdaRegulatoryInformationIndicator" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkFDADropDown();" value="trialDTO.fdaRegulatoryInformationIndicator"/>
        		<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Indicate whether this trial includes an intervention subject to US Food and Drug Administration regulation under section 351 of the Public Health Service Act or any of the following sections of the Federal Food, Drug and Cosmetic Act: 505, 510(k), 515, 52." data-placement="top" data-trigger="hover"></i> 
-     		<span class="formErrorMsg"><s:fielderror><s:param>trialDTO.fdaRegulatoryInformationIndicator</s:param></s:fielderror></span>
+     		<span class="alert-danger"><s:fielderror><s:param>trialDTO.fdaRegulatoryInformationIndicator</s:param></s:fielderror></span>
      	</div>
       </div>
      <!--   Section 801 Indicator-->
@@ -41,7 +41,7 @@
         <div class="col-xs-4">
             <s:radio cssClass="radio-inline" id="trialDTO.section801Indicator" name="trialDTO.section801Indicator" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkSection108DropDown();" value="trialDTO.section801Indicator"/>
          	<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Indicate whether this is an ''applicable clinical trial'' as defined in US Public Law 110-85, Title VIII, Section 801." data-placement="top" data-trigger="hover"></i>
-     		<span class="formErrorMsg"><s:fielderror><s:param>trialDTO.section801Indicator</s:param></s:fielderror></span>
+     		<span class="alert-danger"><s:fielderror><s:param>trialDTO.section801Indicator</s:param></s:fielderror></span>
      	</div>
      </div>
 
@@ -51,7 +51,7 @@
           <div class="col-xs-4">
             <s:radio cssClass="radio-inline" id="trialDTO.delayedPostingIndicator" name="trialDTO.delayedPostingIndicator" list="#{'No':'No', 'Yes':'Yes'}" value="trialDTO.delayedPostingIndicator" />
          	<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Indicate whether this trial includes a device NOT previously approved or cleared by the US FDA for any use, as specified in US Public Law 110-85, Title VIII, Section 801." data-placement="top" data-trigger="hover"></i>
-     		<span class="formErrorMsg"><s:fielderror><s:param>trialDTO.delayedPostingIndicator</s:param></s:fielderror></span>
+     		<span class="alert-danger"><s:fielderror><s:param>trialDTO.delayedPostingIndicator</s:param></s:fielderror></span>
      	</div>
      </div>
      <!--   Data Monitoring Committee Appointed Indicator -->

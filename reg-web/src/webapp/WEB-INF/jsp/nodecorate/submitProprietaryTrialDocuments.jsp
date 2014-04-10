@@ -32,7 +32,7 @@
       </s:if>
       <s:else>
         <s:file id="irbApproval" name="irbApproval" cssStyle="width:270px"/>
-        <span class="formErrorMsg">
+        <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.irbApprovalFileName</s:param>
           </s:fielderror>
@@ -55,7 +55,7 @@
     </s:if>
     <s:else>
       <s:file id="informedConsentDocument" name="informedConsentDocument" cssStyle="width:270px"/>
-        <span class="formErrorMsg">
+        <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.informedConsentDocumentFileName</s:param>
           </s:fielderror>
@@ -97,7 +97,7 @@
     </td>
     <td class="value">
         <input id="submitProprietaryTrial_otherDocument_${varStatus.index}" type="file" style="width:270px" value="" name="otherDocument">
-        <span class="formErrorMsg">
+        <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>
           </s:fielderror>

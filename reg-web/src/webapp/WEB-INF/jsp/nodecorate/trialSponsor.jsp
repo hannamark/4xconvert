@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <div class="col-xs-4">
     <s:textfield label="First Name" name="trialDTO.sponsorName" id="trialDTO.sponsorName" size="30" readonly="true" cssClass="form-control" />
-    <span class="formErrorMsg" id="sponsorErr"> 
+    <span class="alert-danger" id="sponsorErr"> 
      <s:fielderror>
         <s:param>trialDTO.sponsorIdentifier</s:param>
     </s:fielderror>                            

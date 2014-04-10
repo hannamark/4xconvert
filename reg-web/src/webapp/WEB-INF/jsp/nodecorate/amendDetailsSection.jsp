@@ -14,7 +14,7 @@
     <td>
         <s:textarea id="submitTrial_protocolWebDTO_trialTitle" name="trialDTO.officialTitle" cols="75" rows="4" 
             maxlength="4000" cssClass="charcounter"/>       
-        <span class="formErrorMsg">
+        <span class="alert-danger">
             <s:fielderror>
                 <s:param>trialDTO.officialTitle</s:param>
             </s:fielderror>

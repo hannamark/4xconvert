@@ -33,7 +33,7 @@ function handleBatchUploadAction(){
             <label for="OrgName" class="col-xs-4 control-label" for=""> <fmt:message key="process.batch.orgName"/><span class="required">*</span></label>
             <div class="col-xs-7">
               <s:textfield name="orgName"  maxlength="200"  cssStyle="form-control" />
-                    <span class="formErrorMsg"> 
+                    <span class="alert-danger"> 
                         <s:fielderror>
                         <s:param>orgName</s:param>
                        </s:fielderror>                            
@@ -44,7 +44,7 @@ function handleBatchUploadAction(){
             <label for="trialData" class="col-xs-4 control-label"><fmt:message key="process.batch.trialData"/><span class="required">*</span></label>
             <div class="col-xs-8">
               <s:file id="trialData" name="trialData" value="true" />
-                 <span class="formErrorMsg"> 
+                 <span class="alert-danger"> 
                     <s:fielderror>
                     <s:param>trialDataFileName</s:param>
                    </s:fielderror>                            
@@ -55,7 +55,7 @@ function handleBatchUploadAction(){
             <label for="docZip" class="col-xs-4 control-label"><fmt:message key="process.batch.docZip"/></label>
             <div class="col-xs-8">
               <s:file id="docZip" name="docZip" />
-                 <span class="formErrorMsg"> 
+                 <span class="alert-danger"> 
                     <s:fielderror>
                     <s:param>docZipFileName</s:param>
                    </s:fielderror>                            

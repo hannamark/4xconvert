@@ -3,7 +3,7 @@
  <div class="col-xs-4">
    <div id="loadAuthField">
     <s:select id="trialDTO.selectedRegAuth" name="trialDTO.selectedRegAuth" list="trialDTO.regIdAuthOrgList" listKey="id" listValue="name" cssClass="form-control" />  
-    <span class="formErrorMsg"> 
+    <span class="alert-danger"> 
 	    <s:fielderror>
 	    <s:param>regulatory.oversight.auth.name</s:param>
 	    </s:fielderror>                            

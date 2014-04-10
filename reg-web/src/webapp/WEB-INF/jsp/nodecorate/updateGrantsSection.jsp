@@ -50,7 +50,7 @@
                                          id="nihInstitutionCode"
                                          value="nihInstitutionCode"
                                          cssStyle="width:150px"  />
-                                    <span class="formErrorMsg" >
+                                    <span class="alert-danger" >
                                         <s:fielderror>
                                             <s:param>nihInstitutionCode</s:param>
                                        </s:fielderror>
@@ -58,7 +58,7 @@
                                 </td>
                                 <td>
                                     <s:textfield name="serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px"  />
-                                    <span class="formErrorMsg">
+                                    <span class="alert-danger">
                                         <s:fielderror>
                                             <s:param>serialNumber</s:param>
                                         </s:fielderror>
@@ -67,7 +67,7 @@
                                 <s:set name="programCodes" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
                                 <td>
                                     <s:select headerKey="" headerValue="--Select--" name="nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  value="nciDivisionProgramCode" cssStyle="width:150px" />
-                                    <span class="formErrorMsg">
+                                    <span class="alert-danger">
                                         <s:fielderror>
                                             <s:param>nciDivisionProgramCode</s:param>
                                         </s:fielderror>
@@ -75,7 +75,7 @@
                                 </td>
                                 <td style="display:none">
                                     <s:textfield name="fundingPercent" id="fundingPercent" maxlength="5" size="5"  cssStyle="width:50px" />%
-                                    <span class="formErrorMsg">
+                                    <span class="alert-danger">
                                         <s:fielderror>
                                             <s:param>fundingPercent</s:param>
                                         </s:fielderror>

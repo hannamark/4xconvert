@@ -101,7 +101,7 @@
                                <label for="trialDTO.officialTitle" class="col-xs-4 control-label"><fmt:message key="submit.trial.title"/><span class="required">*</span></label>
                                    <div class="col-xs-4">
                                     <s:textarea id="trialDTO.officialTitle" name="trialDTO.officialTitle"  cols="75" rows="4" maxlength="4000" cssClass="form-control charcounter"/>
-                                    <span class="formErrorMsg">
+                                    <span class="alert-danger">
                                         <s:fielderror>
                                             <s:param>trialDTO.officialTitle</s:param>
                                         </s:fielderror>
@@ -155,7 +155,7 @@
                                  <s:select headerKey="" headerValue="--Select--" id="trialDTO.summaryFourFundingCategoryCode" 
                                      name="trialDTO.summaryFourFundingCategoryCode" list="#summaryFourFundingCategoryCodeValues" 
                                      cssClass="form-control" disabled="true"/>
-                                 <span class="formErrorMsg">
+                                 <span class="alert-danger">
                                      <s:fielderror>
                                          <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
                                      </s:fielderror>
@@ -175,7 +175,7 @@
                               <label for="trialDTO.programCodeText" class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
                               <div class="col-xs-4">
                                   <s:textfield id="trialDTO.programCodeText" name="trialDTO.programCodeText"  maxlength="100" size="100"  cssClass="form-control"/>
-                                  <span class="formErrorMsg">
+                                  <span class="alert-danger">
                                       <s:fielderror>
                                           <s:param>trialDTO.programCodeText</s:param>
                                       </s:fielderror>
@@ -250,7 +250,7 @@
                           <div class="form-group" id="grantdiv">
                               <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
                           </div>
-                          <span class="formErrorMsg">
+                          <span class="alert-danger">
                               <s:fielderror>
                                   <s:param>trialDTO.nciGrant</s:param>
                               </s:fielderror>

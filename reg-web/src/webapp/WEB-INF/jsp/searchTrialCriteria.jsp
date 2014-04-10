@@ -164,7 +164,7 @@
                  value="criteria.identifierType"
                  cssClass="form-control"
                  />
-                 <span class="formErrorMsg">
+                 <span class="alert-danger">
                      <s:fielderror>
                      <s:param>criteria.identifierType</s:param>
                     </s:fielderror>
@@ -173,7 +173,7 @@
         <label for="identifier" class="col-xs-2 control-label"> <fmt:message key="search.trial.identifier"/></label>
         <div class="col-xs-4">
 	       	<s:textfield id="identifier" name="criteria.identifier"  maxlength="200" size="100"  cssClass="form-control" placeholder="Examples: NCI-2008-00015; ECOG-1234"/>
-	             <span class="formErrorMsg">
+	             <span class="alert-danger">
 	                 <s:fielderror>
 	                 <s:param>criteria.identifier</s:param>
 	                </s:fielderror>
@@ -190,7 +190,7 @@
 		<s:set name="protocolOrgs" value="getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
 		<div class="col-xs-4">                    
 			<s:select id="organizationId" name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" value="criteria.organizationId" cssClass="form-control"/>
-             <span class="formErrorMsg">
+             <span class="alert-danger">
                  <s:fielderror>
                  <s:param>criteria.organizationId</s:param>
                 </s:fielderror>
@@ -202,7 +202,7 @@
 		    <s:set name="participatingSites" value="getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
 		<div class="col-xs-4">
 			<s:select id="participatingSiteId" name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssClass="form-control"/>
-            <span class="formErrorMsg">
+            <span class="alert-danger">
                 <s:fielderror>
                 <s:param>criteria.organizationId</s:param>
                </s:fielderror>
@@ -214,7 +214,7 @@
         <s:set name="leadAndParticipatingOrgs" value="getLeadAndParticipatingOrganizations()" />
         <div class="col-xs-4">                
 			<s:select id="leadAndParticipatingOrgId" name="criteria.leadAndParticipatingOrgId" list="#leadAndParticipatingOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.leadAndParticipatingOrgId" cssClass="form-control"/>
-            <span class="formErrorMsg">
+            <span class="alert-danger">
                 <s:fielderror>
                 <s:param>criteria.organizationId</s:param>
                </s:fielderror>

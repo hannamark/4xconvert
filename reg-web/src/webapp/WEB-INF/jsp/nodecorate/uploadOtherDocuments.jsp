@@ -21,7 +21,7 @@
 	    <div class="col-xs-4">
 	      <s:file id="submitTrial_otherDocument" name="submitTrial_otherDocument" />
 	      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload any other trial-related document(s)."  data-placement="top" data-trigger="hover"></i>
-	        <span class="formErrorMsg">
+	        <span class="alert-danger">
 	          <s:fielderror>
 	            <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>
 	          </s:fielderror>

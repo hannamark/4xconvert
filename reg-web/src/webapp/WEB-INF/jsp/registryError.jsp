@@ -17,7 +17,7 @@
     <h1><fmt:message key="error.application.header"/></h1>
     <div class="box" id="filters">
          <p>
-            <span class="formErrorMsg">
+            <span class="alert-danger">
                 <fmt:message key="error.application.msg"/>
              </span> 
           </p>

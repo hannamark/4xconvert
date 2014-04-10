@@ -39,7 +39,7 @@ function handleAction(){
             <fmt:message
                 key="register.user.emailAddress" /><span class="required">*</span></label></td>
             <td><s:textfield id="registerUser_registryUserWebDTO_emailAddress" name="registryUserWebDTO.emailAddress" maxlength="200" size="100"
-                cssStyle="width:200px" /> <span class="formErrorMsg"> <s:fielderror>
+                cssStyle="width:200px" /> <span class="alert-danger"> <s:fielderror>
                 <s:param>registryUserWebDTO.emailAddress</s:param>
             </s:fielderror> </span></td>
         </tr>

@@ -13,7 +13,7 @@
 </td>
 </tr>
 </table>
- <span class="formErrorMsg"> 
+ <span class="alert-danger"> 
      <s:fielderror>
      <s:param>trialDTO.siteOrganizationIdentifier</s:param>
     </s:fielderror>                            

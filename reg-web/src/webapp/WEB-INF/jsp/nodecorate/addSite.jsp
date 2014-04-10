@@ -88,7 +88,7 @@
 				labelKey="add.site.orgName" required="true">
 				<s:textfield id="organizationName" name="siteDTO.name" cssClass="readonly"
 					readonly="true" cssStyle="width:250px; float:left" />
-				<span class="formErrorMsg"> <s:fielderror>
+				<span class="alert-danger"> <s:fielderror>
 						<s:param>organizationName</s:param>
 					</s:fielderror>
 				</span>
@@ -97,7 +97,7 @@
 				labelKey="add.site.localID" required="true">
 				<s:textfield id="localIdentifier" name="siteDTO.siteLocalTrialIdentifier"
 					cssStyle="width:250px; float:left" />
-				<span class="formErrorMsg"> <s:fielderror>
+				<span class="alert-danger"> <s:fielderror>
 						<s:param>localIdentifier</s:param>
 					</s:fielderror>
 				</span>
@@ -116,7 +116,7 @@
 					</a></li>
 				</ul>
 
-				<span class="formErrorMsg"> <s:fielderror>
+				<span class="alert-danger"> <s:fielderror>
 						<s:param>investigator</s:param>
 					</s:fielderror>
 				</span>
@@ -127,7 +127,7 @@
 				labelKey="add.site.programCode">
 				<s:textfield id="programCode" name="siteDTO.programCode"
 					cssStyle="width:250px; float:left" />
-				<span class="formErrorMsg"> <s:fielderror>
+				<span class="alert-danger"> <s:fielderror>
 						<s:param>programCode</s:param>
 					</s:fielderror>
 				</span>
@@ -140,7 +140,7 @@
 				<s:select headerKey="" headerValue="--Select--" id="statusCode"
 					name="siteDTO.recruitmentStatus" list="#statusCodeValues"
 					value="siteDTO.recruitmentStatus" />
-				<span class="formErrorMsg"> <s:fielderror>
+				<span class="alert-danger"> <s:fielderror>
 						<s:param>statusCode</s:param>
 					</s:fielderror>
 				</span>
@@ -154,7 +154,7 @@
 					src="${pageContext.request.contextPath}/images/ico_calendar.gif"
 					alt="Select a date" class="calendaricon" />
 				</a> (mm/dd/yyyy)                     
-                <span class="formErrorMsg"> <s:fielderror>
+                <span class="alert-danger"> <s:fielderror>
 						<s:param>statusDate</s:param>
 					</s:fielderror>
 				</span>
@@ -168,7 +168,7 @@
 					src="${pageContext.request.contextPath}/images/ico_calendar.gif"
 					alt="Select a date" class="calendaricon" />
 				</a> (mm/dd/yyyy)                     
-                <span class="formErrorMsg"> <s:fielderror>
+                <span class="alert-danger"> <s:fielderror>
 						<s:param>accrualOpenedDate</s:param>
 					</s:fielderror>
 				</span>
@@ -184,7 +184,7 @@
 				</a> (mm/dd/yyyy)
 				<span class="info"><fmt:message
 						key="error.proprietary.dateOpenReq" /></span>
-				<span class="formErrorMsg"> <s:fielderror>
+				<span class="alert-danger"> <s:fielderror>
 						<s:param>accrualClosedDate</s:param>
 					</s:fielderror>
 				</span>

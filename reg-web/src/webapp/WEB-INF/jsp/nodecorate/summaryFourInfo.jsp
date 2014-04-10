@@ -32,7 +32,7 @@
                             value ="trialDTO.summaryFourFundingCategoryCode"
                             cssStyle="width:206px" />
                      </c:if>
-                     <span class="formErrorMsg">
+                     <span class="alert-danger">
                         <s:fielderror>
                         <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
                        </s:fielderror>
@@ -50,7 +50,7 @@
                         <div id="loadSummary4FundingSponsorField">
                             <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
                         </div>
-                        <span class="formErrorMsg">
+                        <span class="alert-danger">
                         <s:fielderror>
                         <s:param>trialDTO.summaryFourOrgIdentifier</s:param>
                        </s:fielderror>
@@ -65,7 +65,7 @@
              </td>
              <td class="value">
                 <s:textfield id="trialDTO.programCodeText" name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
-                <span class="formErrorMsg">
+                <span class="alert-danger">
                     <s:fielderror>
                             <s:param>trialDTO.programCodeText</s:param>
                     </s:fielderror>

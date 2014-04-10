@@ -27,7 +27,7 @@
                                             <label><s:select headerKey="" headerValue="--Select--"
                                                 name="participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
                                                 list="#recruitmentStatusValues" cssStyle="text-align:left;"/></label>
-                                            <span class="formErrorMsg">
+                                            <span class="alert-danger">
                                                 <s:fielderror>
                                                     <s:param>participatingsite.recStatus<s:property value="%{#psstats.index}"/></s:param>
                                                 </s:fielderror>
@@ -35,7 +35,7 @@
                                         </td>
                                         <td>
                                             <label><s:textfield  name="participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}"/></label>
-                                            <span class="formErrorMsg">
+                                            <span class="alert-danger">
                                                 <s:fielderror>
                                                     <s:param>participatingsite.recStatusDate<s:property value="%{#psstats.index}"/></s:param>
                                                 </s:fielderror>
