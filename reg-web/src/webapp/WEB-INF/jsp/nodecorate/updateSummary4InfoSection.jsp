@@ -1,43 +1,29 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<tr style="display:none">
-    <td>
-        <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
-        <s:hidden name="trialDTO.programCodeText" id="trialDTO.programCodeText" />
-    </td>
-</tr>
-<!--  summary4 information -->
-<reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
-<tr>
-    <td colspan="2" class="space">&nbsp;</td>
-</tr>
-<tr>
-    <td scope="row" class="label-noinput">
-        Summary 4 Funding Sponsor Type:<span class="required">*</span>
-    </td>
-    <td class="value">
+<s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
+<s:hidden name="trialDTO.programCodeText" id="trialDTO.programCodeText" />
+<div class="accordion">
+<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section6"><fmt:message key="update.proprietary.trial.summary4Info"/><span class="required">*</span></a></div>
+<div id="section6" class="accordion-body in">
+<div class="container">
+<div class="form-group">
+	<label class="col-xs-4 control-label">Summary 4 Funding Sponsor Type:<span class="required">*</span></label>
+	<div class="col-xs-4">
         <s:property value="trialDTO.summaryFourFundingCategoryCode"/>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label-noinput">
-        Summary 4 Funding Sponsor: <span class="required">*</span>
-    </td>    
-    <td class="value">    
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-xs-4 control-label">Summary 4 Funding Sponsor: <span class="required">*</span></label>
+    <div class="col-xs-4">    
 	    <s:iterator value="trialDTO.summaryFourOrgIdentifiers" id="trialDTO.summaryFourOrgIdentifiers" status="stat">
 	        <s:property value="%{orgName}"/><br/>
             <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${orgId}"/>
             <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${orgName}"/>
 	    </s:iterator>
-    </td>
-</tr>
-<tr>
-    <td scope="row" class="label-noinput">
-        <fmt:message key="studyProtocol.summaryFourPrgCode"/>
-    </td>
-    <td class="value">
-        <s:property value="trialDTO.programCodeText"/>
-    </td>
-</tr>
-<tr>  
-    <td colspan="2" class="space">&nbsp;</td>
-</tr>
+	</div>
+</div>
+<div class="form-group">
+    <label class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
+    <div class="col-xs-4"><s:property value="trialDTO.programCodeText"/></div></div>
+</div>
+</div>
+</div>

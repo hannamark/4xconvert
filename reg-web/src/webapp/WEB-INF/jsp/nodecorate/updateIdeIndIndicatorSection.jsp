@@ -1,26 +1,18 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<tr style="display:none">
-    <td>
-        <s:hidden name="indIdeUpdateDtosLen" id="indIdeUpdateDtosLen"/>
-    </td>
-</tr>        
-<tr>
-    <th colspan="2">FDA IND/IDE Information for applicable trials</th>
-</tr>
-<tr>
-    <td colspan="2" class="space">&nbsp;</td>
-</tr>
-<tr>
-    <td colspan="2" class="space">
-        <table class="data2">
+<s:hidden name="indIdeUpdateDtosLen" id="indIdeUpdateDtosLen"/>
+<div class="accordion">
+<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section9">FDA IND/IDE Information for applicable trials<span class="required">*</span></a></div>
+<div id="section9" class="accordion-body in">
+<div class="container">
+<div class="form-group">
+       <table class="data2">
             <tr>
                 <td class="space">
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateIdeIndIndicator.jsp" %>
                 </td>
             </tr>
         </table>
-    </td>
-</tr>
-<tr>
-    <td colspan="2" class="space">&nbsp;</td>
-</tr>
+</div>
+</div>
+</div>
+</div>

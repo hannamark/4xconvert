@@ -77,7 +77,7 @@
                               <div class="form-group">
                                   <label for="otherIdentifierOrg" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherIdentifier"/></label>
                                   <div class="col-xs-4">
-                                      <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value="" size="100" class="form-control"/>
+                                      <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value="" size="100" cssClass="form-control"/>
                                   </div>
                                   <div class="col-xs-4">
                                       <button onclick="addOtherIdentifier();" id="otherIdbtnid" type="button" class="btn btn-icon btn-default"><i class="fa-plus"></i> Add Other Identifier</button>

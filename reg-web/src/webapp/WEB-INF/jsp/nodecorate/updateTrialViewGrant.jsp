@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <reg-web:failureMessage/>
 <s:if test="fundingDtos != null && fundingDtos.size() > 0">
-    <table class="form">
-        <tbody> 
+    <table class="table table-striped table-bordered">
+         <thead>
             <tr>
                 <th>Funding Mechanism</th>
                 <th>Institute Code</th>
@@ -10,6 +10,8 @@
                 <th>NCI Division/Program Code</th>
                 <th style="display:none">% Grant Funding This Trial</th>
              </tr>
+        </thead>
+             <tbody>
         <s:iterator id="fundingDtos" value="fundingDtos" status="fundstats">
             <tr>
                 <td>                     

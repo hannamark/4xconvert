@@ -184,14 +184,13 @@
         </script>
     </head>
     <body>
-    
         <!-- main content begins-->
-        <h1><fmt:message key="update.trial.page.header"/></h1>
+        <h1 class="heading"><span><fmt:message key="update.trial.page.header"/></span></h1>
         <c:set var="topic" scope="request" value="updatetrial"/>
-        <div class="box" id="filters">
+        
             <reg-web:failureMessage/>
             <div id="general_trial_errors"></div>
-            <s:form name="updateTrial" id="updateTrial" method="POST" validate="false" enctype="multipart/form-data" cssStyle="display:block; width:100%;">
+            <s:form name="updateTrial" id="updateTrial" method="POST" validate="false" enctype="multipart/form-data" cssClass="form-horizontal" role="form">
                 <s:token/>
                 <s:if test="hasActionErrors()">
                     <div class="error_msg"><s:actionerror/></div>
@@ -206,40 +205,33 @@
                 <s:hidden name="page" />
                 <s:hidden name="uuidhidden"/>
                 <p>Use this form to update trial information. You can not change the information in certain fields, including the trial title.</p>
-                <table class="form">
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateIdentifiersSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/trialOtherIdsSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateDetailsSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateLeadOrganizationSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateSponsorResponsiblePartySection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateSummary4InfoSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateGrantsSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>  
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateIdeIndIndicatorSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateRegulatoryInformationSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateParticipatingSitesSection.jsp" %>      
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateCollaboratorsSection.jsp" %>   
-                    <%@ include file="/WEB-INF/jsp/nodecorate/updateTrialDocumentsSection.jsp" %>
-                </table>     
+                <div class="accordion-group">
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateIdentifiersSection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/trialOtherIdsSection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateDetailsSection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateLeadOrganizationSection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateSponsorResponsiblePartySection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateSummary4InfoSection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateGrantsSection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>  
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateIdeIndIndicatorSection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateRegulatoryInformationSection.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateParticipatingSitesSection.jsp" %>      
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateCollaboratorsSection.jsp" %>   
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateTrialDocumentsSection.jsp" %>
                               
                 <div id="uploadDocDiv">
                     <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
                 </div>
+                </div>
                 <p>
                     Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.
                 </p>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="reviewProtocolUpdate()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
-                </div>
+                <div class="align-center button-row">
+			      <button type="button" class="btn btn-icon btn-primary" onclick="reviewProtocolUpdate()"><i class="fa-floppy-o"></i>Review Trial</button>
+			      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
+		    	</div>
             </s:form>
-        </div>
         <div id="general_trial_errors_container" style="display: none;">
             <span class="info">
                 The following errors may not be related to the update you are trying to submit, but rather may indicate a general problem

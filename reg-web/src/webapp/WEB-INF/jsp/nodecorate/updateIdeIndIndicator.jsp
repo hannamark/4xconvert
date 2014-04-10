@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
     
 <s:if test="indIdeUpdateDtos != null && indIdeUpdateDtos.size > 0">
-    <table class="form">    
-        <tbody>
+    <table class="table table-bordered table-stripped">    
+        <thead>
             <tr>
                 <th>IND/IDE Types</th>
                 <th>IND/IDE Number</th>
@@ -14,6 +14,8 @@
                 <th>Exempt? (if applicable)</th>
                 <th></th>
             </tr>
+        </thead>
+        <tbody>
             <s:iterator id="indIdeUpdateDtos" value="indIdeUpdateDtos" status="indidestats">
                 <tr>
                     <td style="white-space:nowrap;">     

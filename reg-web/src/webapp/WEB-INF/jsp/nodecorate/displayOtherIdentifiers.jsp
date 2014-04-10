@@ -6,7 +6,7 @@
                        name="${sessionScope.secondaryIdentifiersList}" requestURI="" export="false">
             <display:column escapeXml="true" titleKey="submit.trial.otherIdentifier" property="extension" sortable="false" headerClass="sortable"/>
             <display:column title="Action" class="action" sortable="false">
-                <button type="button" class="btn btn-icon btn-default" onclick="deleteOtherIdentifierRow('${row_rowNum}');">Delete</button>
+                <button type="button" class="btn btn-icon btn-default" onclick="deleteOtherIdentifierRow('${row_rowNum}');"><i class="fa-minus"></i>Delete</button>
             </display:column>
         </display:table>
     </c:when>

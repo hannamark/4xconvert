@@ -1,9 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <table class="form">
   <tr>
-    <th colspan="2"><fmt:message key="update.trial.documents"/></th>
-  </tr>
-  <tr>
     <td colspan="2" class="space">&nbsp;</td>
   </tr>
   <tr>
@@ -139,10 +136,11 @@
   <tr style="${(hideUploadRow && !addMoreRendered)?'':'display:none'}" id="addMoreRow_${varStatus.index}">
     <td></td>
     <td>
-        <a href="javascript:void(0);" 
+    	<br/><br/>
+    	  <button type="button" id="grantbtnid" class="btn btn-icon btn-default" 
            onclick="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
-           onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
-           >Add more...</a>
+           onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();">
+           <i class="fa-plus"></i>Add more...</button>
     </td>
   </tr> 
      
