@@ -2,9 +2,21 @@
 <%@page import="gov.nih.nci.pa.util.CsmHelper"%>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<script type="text/javascript" language="javascript">
+	function displayMyAccount() {
+		var width = 850;
+		var height = 520;
+		if (Prototype.Browser.IE) {
+			width = 870;
+	        height = 570;            		
+		}
+		showPopWin('registerUsershowMyAccount.action', width, height, '', 'My Account1');
+	}
+</script>
 <header class="masthead">
     <div class="container">
     	<div class="row">
+    	 
        <!--User Details-->
       <c:choose>
         <c:when test="${(pageContext.request.remoteUser != null && sessionScope.disclaimerAccepted)}">
@@ -13,9 +25,9 @@
 	        </div>
 	        <div class="col-xs-3">
 	          <div class="dropdown pull-right">
-	          	<a href="#" data-toggle="dropdown" class="dropdown-toggle nav-user">User:<c:out value="${CsmHelper.firstName}"/> <c:out value="${CsmHelper.lastName}"/></a>
+	          	<a href="#" data-toggle="dropdown" class="dropdown-toggle nav-user"><c:out value="${CsmHelper.firstName}"/> <c:out value="${CsmHelper.lastName}"/></a>
 	            <ul class="dropdown-menu">
-	              <li><a href="#" class="account" data-toggle="modal" data-target="#myAccount">My Account</a></li>
+	              <li><a href="javascript:void(0);" class="account" onclick="displayMyAccount();">My Account</a></li>
 	              <li><a id="helpMenuOption" href="javascript:void(0)" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a></li>
 	              <li class="divider"></li>
 	              <li class="sign-out">

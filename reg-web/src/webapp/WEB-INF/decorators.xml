@@ -12,6 +12,7 @@
         <pattern>*popup*</pattern>
         <pattern>*orgPop*</pattern>
         <pattern>*Ajax.action*</pattern>
+        <pattern>*myAccount*</pattern>
         <pattern>*ajax*</pattern>
         <pattern>*nodecor*</pattern>
         <pattern>*lookup*</pattern>

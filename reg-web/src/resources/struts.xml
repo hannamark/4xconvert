@@ -129,11 +129,11 @@
         </action>
         <action name="registerUser*" class="gov.nih.nci.registry.action.RegisterUserAction" method="{1}">
             <result>/WEB-INF/jsp/createAccount.jsp</result>
-            <result name="myAccount">/WEB-INF/jsp/myAccount.jsp</result>
+            <result name="myAccount">/WEB-INF/jsp/nodecorate/myAccount.jsp</result>
             <result name="createAccount">/WEB-INF/jsp/createAccount.jsp</result>
             <result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
             <result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
-            <result name="myAccountError">/WEB-INF/jsp/myAccount.jsp</result>
+            <result name="myAccountError">/WEB-INF/jsp/nodecorate/myAccount.jsp</result>
             <result name="confirmation">WEB-INF/jsp/registerUserConfirmation.jsp</result>
             <result name="existingGridAccount">/WEB-INF/jsp/existingGridAccount.jsp</result>
             <result name="activation">/WEB-INF/jsp/registerUserConfirmation.jsp</result>
