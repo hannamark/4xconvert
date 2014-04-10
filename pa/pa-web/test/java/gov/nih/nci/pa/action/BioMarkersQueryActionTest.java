@@ -87,7 +87,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
-import gov.nih.nci.iso21090.Ii;
+import static org.mockito.Matchers.eq;
+import gov.nih.nci.cadsr.domain.DataElement;
+import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
+import gov.nih.nci.cadsr.domain.PermissibleValue;
+import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
+import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
@@ -97,9 +102,12 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.system.applicationservice.ApplicationService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,6 +118,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.criterion.DetachedCriteria;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -122,6 +131,7 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     private BioMarkersQueryAction bioMarkersQueryAction;
     StudyProtocolService studyProtocolService = mock(StudyProtocolService.class);
     PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
+    PlannedMarkerSyncWithCaDSRServiceLocal permissibleService = mock(PlannedMarkerSyncWithCaDSRServiceLocal.class);
     @Before
     public void setUp() throws Exception {
         bioMarkersQueryAction = new BioMarkersQueryAction();
@@ -202,7 +212,38 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     }
 
     @Test
-    public void testAccept() throws PAException{
+    public void testAccept() throws Exception {
+        bioMarkersQueryAction.setCaDsrId("1");
+        bioMarkersQueryAction.setSelectedRowIdentifier("1");
+        getSession().setAttribute(Constants.LOGGED_USER_NAME, "login1");
+        EnumeratedValueDomain vd = new EnumeratedValueDomain();
+        vd.setId("1");
+        DataElement de = new DataElement();
+        de.setValueDomain(vd);
+        List<Object> deResults = new ArrayList<Object>();
+        deResults.add(de);
+        ApplicationService appService = mock(ApplicationService.class);
+        when(appService.search(eq(DataElement.class), any(DataElement.class))).thenReturn(deResults);
+        PermissibleValue pv = new PermissibleValue();
+        pv.setValue("N-Cadherin");
+        ValueMeaning vm = new ValueMeaning();
+        vm.setLongName("N-Cadherin");
+        vm.setDescription("cadherin");
+        vm.setPublicID(2578250L);
+        pv.setValueMeaning(vm);
+        ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
+        vdpv.setPermissibleValue(pv);
+        vdpv.setId("1");
+        List<Object> results = new ArrayList<Object>();
+        results.add(vdpv);
+        when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
+        bioMarkersQueryAction.setAppService(appService);
+        assertEquals(bioMarkersQueryAction.accept(), "success");
+        bioMarkersQueryAction.setPermissibleService(permissibleService);
+        List<Number> idList = new ArrayList<Number>();
+        idList.add(1);
+        when(permissibleService.getIdentifierByCadsrId(Long.parseLong("1"))).thenReturn(idList);
+        bioMarkersQueryAction.setAppService(appService);
         assertEquals(bioMarkersQueryAction.accept(), "success");
     }
     

@@ -107,8 +107,11 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
             }
         }
     }
-
-    private void deleteById(Long identifier) {
+    /**
+     * deletes PlannedMarkerSyncWithCaDSRDTO values based on identifier.
+     * @param identifier identifier
+     */
+    public void deleteById(Long identifier) {
         Session session = PaHibernateUtil.getCurrentSession();
         SQLQuery query = session
                 .createSQLQuery("Delete from planned_marker_sync_cadsr where identifier=:identifier");

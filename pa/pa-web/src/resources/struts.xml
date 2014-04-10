@@ -205,6 +205,8 @@
 			</result>
 			<result name="question">/WEB-INF/jsp/scientific/plannedMarker/biomarkerQuestion.jsp
 			</result>
+			<result name="results">/WEB-INF/jsp/displayCadsrResult.jsp
+            </result>
 			<result name="error">/WEB-INF/jsp/bioMarkersView.jsp</result>
 		</action>
         <action name="inboxProcessing*" class="gov.nih.nci.pa.action.InboxProcessingAction" method="{1}">
@@ -464,6 +466,7 @@
             <result>/WEB-INF/jsp/scientific/plannedMarker/cadsrLookup.jsp</result>
             <result name="results">/WEB-INF/jsp/scientific/plannedMarker/cadsrLookupResults.jsp</result>
             <result name="email">/WEB-INF/jsp/scientific/plannedMarker/requestEmail.jsp</result>
+            <result name="accept">/WEB-INF/jsp/displayCadsrResult.jsp</result>
         </action>
         <action name="popupOrg*" class="gov.nih.nci.pa.action.PopUpOrgAction" method="{1}">
             <interceptor-ref name="paDefaultInterceptor" />

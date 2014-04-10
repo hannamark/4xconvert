@@ -70,4 +70,14 @@ public interface PlannedMarkerSyncWithCaDSRServiceRemote {
      * @param name name
      */
     List<PlannedMarkerSyncWithCaDSRDTO> getValuesByName(String name) throws PAException;
+    /**
+     * 
+     * @param caDSRId caDSRId
+     * @param name name
+     * @param meaning meaning
+     * @param description description
+     * @param statusCode statusCode
+     */
+    void insertValues(Long caDSRId, String name, String meaning,
+            String description, String statusCode);
 }

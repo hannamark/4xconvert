@@ -260,4 +260,10 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         plannedMarkerAction.setPassedValidation(true);
         assertTrue(plannedMarkerAction.isPassedValidation());
     }
+    
+    @Test
+    public void testAccept() throws PAException {
+        String result = plannedMarkerAction.accept();
+        assertTrue(result.equals("accept"));
+    }
 }

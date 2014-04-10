@@ -23,6 +23,12 @@
                     document.forms[0].submit();
                  }
             }
+            
+            function accept(selectedId) {
+            	var caDsrIdValue = jQuery('#caDsrId_'+selectedId).val();
+                var updatedUrl ='/pa/protected/popupPlannedMarkeraccept.action?selectedRowIdentifier='+selectedId+'&caDsrId='+caDsrIdValue;
+                showPopWin(updatedUrl, 950, 200, '', 'Marker Search in caDSR');
+            }
             function resetValues() {
                 $("trialId").value="";
                 $("markerName").value="";
@@ -33,6 +39,11 @@
                 document.forms[0].action="plannedMarkerviewSelectedProtocolMarker.action?nciIdentifier="+pId;
                 document.forms[0].submit();
            }
+            function loadDiv(markerId, caDsrId) {
+                window.top.hidePopWin(true);
+                document.forms[0].action ='/pa/protected/bioMarkersaccept.action?selectedRowIdentifier='+markerId+'&caDsrId='+caDsrId;
+                document.forms[0].submit();
+            }
    </script>
 </head>
 <body>
@@ -98,20 +109,19 @@
                           </s:a>
                           </s:if>
 				</display:column>
-
 							<display:column escapeXml="true" property="name" sortable="true" 
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
+               <display:column titleKey="plannedMarker.caDSR.id" headerClass="centered" >
+                    <s:textfield id="caDsrId_%{#attr.row.id}" name="caDsrId_%{#attr.row.id}" maxlength="200" size="100" cssStyle="width:200px" />
+               </display:column>
 							<display:column titleKey="plannedMarker.action"
 								headerClass="centered" class="action">
 								<del class="btnwrapper">
 									<ul class="btnrow">
-										<li><s:url id="addUrl" namespace="/protected"
-												action="bioMarkers" method="accept">
-												<s:param name="selectedRowIdentifier"
-													value="%{#attr.row.id}" />
-											</s:url> <s:a href="%{addUrl}" cssClass="btn">
-												<span class="btn_img">Accept</span>
-											</s:a>
+										<li>
+                                        <s:a cssClass="btn" href="javascript:void(0)" id="acceptid" onclick="accept('%{#attr.row.id}');">
+                                          <span class="btn_img">Accept</span>
+                                         </s:a>
 										</li>
 									</ul>
 								</del>

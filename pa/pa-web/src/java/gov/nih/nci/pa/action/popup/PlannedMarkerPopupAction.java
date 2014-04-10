@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -112,6 +113,7 @@ import org.apache.struts2.ServletActionContext;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
+
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -128,6 +130,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     private static final Long CDE_PUBLIC_ID = 5473L;
     private static final String CADSR_RESULTS = "results";
+    private static final String MARKER_ACCEPT = "accept";
     private static final String EMAIL = "email";
     private String name;
     private String meaning;
@@ -139,12 +142,16 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private boolean passedValidation = false;
     private ApplicationService appService;
+    private PlannedMarkerServiceLocal plannedMarkerService;
+    private String selectedRowIdentifier;
+    private String caDsrId;
     private static final Logger LOG = Logger.getLogger(PlannedMarkerPopupAction.class);
     /**
      * {@inheritDoc}
      */
     public void prepare() {
         markers = new ArrayList<CaDSRWebDTO>();
+        plannedMarkerService = PaRegistry.getPlannedMarkerService();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
@@ -177,7 +184,17 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         }
         return CADSR_RESULTS;
     }
-   
+    
+    /**
+     * Changes marker status to ACTIVE.
+     * @return string
+     * @throws PAException exception
+     */
+    public String accept() throws PAException {
+        setPublicId(getCaDsrId());
+        lookup();
+        return MARKER_ACCEPT;
+    }   
     /**
      * Setup CDE creation request.
      * @return email
@@ -463,5 +480,53 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public void setToEmail(String toEmail) {
         this.toEmail = toEmail;
+    }
+    
+
+    /**
+     * 
+     * @return selectedRowIdentifier
+     */
+    public String getSelectedRowIdentifier() {
+        return selectedRowIdentifier;
+    }
+
+    /**
+     * 
+     * @param selectedRowIdentifier selectedRowIdentifier
+     */
+    public void setSelectedRowIdentifier(String selectedRowIdentifier) {
+        this.selectedRowIdentifier = selectedRowIdentifier;
+    }
+    
+    /**
+     * @return plannedMarkerService
+     */
+    public PlannedMarkerServiceLocal getPlannedMarkerService() {
+        return plannedMarkerService;
+    }
+
+    /**
+     * 
+     * @param plannedMarkerService plannedMarkerService
+     */
+    public void setPlannedMarkerService(
+            PlannedMarkerServiceLocal plannedMarkerService) {
+        this.plannedMarkerService = plannedMarkerService;
+    }
+    
+    /**
+     * 
+     * @return caDsrId caDsrId
+     */
+    public String getCaDsrId() {
+        return caDsrId;
+    }
+    /**
+     * 
+     * @param caDsrId caDsrId
+     */
+    public void setCaDsrId(String caDsrId) {
+        this.caDsrId = caDsrId;
     }
 }

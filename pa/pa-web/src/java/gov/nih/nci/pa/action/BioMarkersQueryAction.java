@@ -82,6 +82,11 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.cadsr.domain.DataElement;
+import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
+import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
+import gov.nih.nci.cadsr.domain.ValueMeaning;
+import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -103,10 +108,13 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.system.applicationservice.ApplicationService;
+import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -115,6 +123,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Expression;
+
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
@@ -128,7 +139,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Gaurav Gupta
  *
  */
-@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class BioMarkersQueryAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = -2137469104765932059L;
@@ -140,7 +151,10 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
      * to submit marker question.
      */
     protected static final String MARKER_QUESTION = "question";
-
+    /**
+     * The Public ID of the Marker CDE.
+     */
+    private static final Long CDE_PUBLIC_ID = 5473L;
     private PlannedMarkerServiceLocal plannedMarkerService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private List<PlannedMarkerDTO> plannedMarkers;
@@ -148,11 +162,13 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private StudyProtocolService studyProtocolService;
     private PlannedMarkerSyncWithCaDSRServiceLocal permissibleService;
+    private ApplicationService appService;
     private String selectedRowIdentifier;
     private String selectedRowDocument;
     private String trialId;
     private String markerName;
     private Long id = null;
+    private String caDsrId;
     
     @Override
     public void prepare() {
@@ -160,6 +176,11 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         permissibleService = PaRegistry.getPMWithCaDSRService();
+        try {
+            appService = ApplicationServiceProvider.getApplicationService();
+        } catch (Exception e) {
+            LOG.error("Error attempting to instantiate caDSR Application Service.", e);
+        } 
     }
 
     @Override
@@ -347,24 +368,32 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public String accept() throws PAException {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        String newcaDsrId = getCaDsrId();
         PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null, null);
-        Long pvId = IiConverter.convertToLong(marker.getPermissibleValue());
-        // check the value with the planned_marker_sync_cadsr table  as this table is in sync with the cadsr. 
-        List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkerWithSyncID(pvId);
-        List<PlannedMarkerSyncWithCaDSRDTO> acceptValues = permissibleService.getValuesById(pvId);
-        if (!acceptValues.isEmpty()) {
-            if (StringUtils.equals(acceptValues.get(0).getStatusCode().toString(), 
-                    ActiveInactivePendingCode.ACTIVE.getName())) {
-                for (PlannedMarkerDTO markerDTO : markerDTOs) {
-                    markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                    plannedMarkerService.update(markerDTO);
-                }
-            } else {
-                addActionError("An exact match in caDSR could not be found. Please check" 
-                        + " the permissible value name. Unable to accept new Biomarker."); 
+        // already present in planned_marker_sync_cadsr table?
+        List<Number> newPvId = permissibleService.getIdentifierByCadsrId(Long.parseLong(newcaDsrId));
+        if (!newPvId.isEmpty()) { 
+            // update the marker with the new pv value
+            marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+            marker.setPermissibleValue(IiConverter.convertToIi(newPvId.get(0).longValue()));
+            plannedMarkerService.update(marker);
+        } else {
+            // Insert the new Cadsr value and update the marker with the insertec PV value. 
+            List<Object> permissibleValues = caDsrLookUp(newcaDsrId);
+            if (!permissibleValues.isEmpty()) {
+                  CaDSRWebDTO caDsrdto = getSearchResults(permissibleValues.get(0));
+                  permissibleService.insertValues(caDsrdto.getPublicId(), caDsrdto.getVmName()
+                      , caDsrdto.getVmMeaning(), caDsrdto.getVmDescription()
+                      , ActiveInactivePendingCode.ACTIVE.getName());
+                  List<Number> insertedPvId = permissibleService.getIdentifierByCadsrId(Long.parseLong(newcaDsrId));
+                  marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                  if (!insertedPvId.isEmpty()) {
+                      marker.setPermissibleValue(IiConverter.convertToIi(insertedPvId.get(0).longValue()));
+                  }
+                  plannedMarkerService.update(marker);
             }
         }
-       
+        //send acceptance email
         if (!hasActionErrors()) {
             marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
             try {            
@@ -374,10 +403,42 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                 addActionError(e.getMessage());
             }
         }
-        
         return execute();
     }        
-
+    
+    private List<Object> caDsrLookUp(String newcaDsrId) {
+        List<Object> permissibleValues = new ArrayList<Object>();
+        try {
+            DataElement dataElement = new DataElement();
+            dataElement.setPublicID(CDE_PUBLIC_ID);
+            dataElement.setLatestVersionIndicator("Yes");
+            Collection<Object> results = appService.search(DataElement.class, dataElement);
+            DataElement de = (DataElement) results.iterator().next();
+            String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
+            DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class, "vdpv");
+            criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
+            criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
+            criteria.add(Expression.eq("vm.publicID", Long.valueOf(newcaDsrId)));
+            permissibleValues = appService.query(criteria);
+            
+        } catch (Exception e) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
+                    getText("error.plannedMarker.request.caDSRLookup"));
+        }
+        return permissibleValues;
+    }
+    
+    private CaDSRWebDTO getSearchResults(Object permissibleValue) {
+        ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) permissibleValue;
+        CaDSRWebDTO dto = new CaDSRWebDTO();
+        ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
+        dto.setId(vdpv.getId());
+        dto.setVmName(vdpv.getPermissibleValue().getValue());
+        dto.setVmMeaning(vm.getLongName());
+        dto.setVmDescription(vm.getDescription());
+        dto.setPublicId(vm.getPublicID());
+        return dto;
+    }
     /**
      * Creates plannedMarkerWebDTO from plannedMarkerDTO.
      * @param markerDTO plannedMarkerDTO
@@ -657,6 +718,31 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public void setSelectedRowDocument(String selectedRowDocument) {
         this.selectedRowDocument = selectedRowDocument;
         }
-    
-    
+    /**
+     * 
+     * @return caDsrId caDsrId
+     */
+    public String getCaDsrId() {
+        return caDsrId;
+    }
+    /**
+     * 
+     * @param caDsrId caDsrId
+     */
+    public void setCaDsrId(String caDsrId) {
+        this.caDsrId = caDsrId;
+    }
+    /**
+     * @return the appService
+     */
+    public ApplicationService getAppService() {
+        return appService;
+    }
+
+    /**
+     * @param appService the appService to set
+     */
+    public void setAppService(ApplicationService appService) {
+        this.appService = appService;
+    }
 }

@@ -6,6 +6,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
 import java.util.List;
 
 
+
 import javax.ejb.Local;
 /**
  * 
@@ -72,4 +73,9 @@ public interface PlannedMarkerSyncWithCaDSRServiceLocal extends PlannedMarkerSyn
      * @param name name
      */
     List<PlannedMarkerSyncWithCaDSRDTO> getValuesByName(String name) throws PAException;
+    /**
+     * deletes PlannedMarkerSyncWithCaDSRDTO values based on identifier.
+     * @param identifier identifier
+     */
+    void deleteById(Long identifier);
 }
