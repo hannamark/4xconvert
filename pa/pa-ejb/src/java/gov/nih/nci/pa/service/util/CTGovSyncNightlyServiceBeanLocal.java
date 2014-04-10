@@ -53,14 +53,12 @@ public class CTGovSyncNightlyServiceBeanLocal implements
     private LookUpTableServiceRemote lookUpTableService;
     
     @EJB 
-    private MailManagerServiceLocal mailManagerService;
-    
-    private static final String CTGOVIMPORT_USERNAME = "ctgovimport";
+    private MailManagerServiceLocal mailManagerService;        
     
     @Override
     public void updateIndustrialAndConsortiaTrials() throws PAException {     
         if (isSyncEnabled()) {
-            UsernameHolder.setUser(CTGOVIMPORT_USERNAME);
+            UsernameHolder.setUser(CTGovSyncServiceBean.CTGOVIMPORT_USERNAME);
             try {
                 findAndUpdateTrials();
             } finally {
