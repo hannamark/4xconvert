@@ -2,7 +2,7 @@
 <reg-web:failureMessage/>
 <c:choose>
 <c:when test="${fn:length(ideInd) > 0}">
-	<display:table class="data" sort="list"  uid="row"  name="ideInd" requestURI="submitTrialdisplayIndIde.action">
+	<display:table class="data table table-striped table-bordered sortable" sort="list"  uid="row"  name="ideInd" requestURI="submitTrialdisplayIndIde.action">
 		<display:column title="IND/IDE Type" property="indIde"  headerClass="sortable"/>
 		<display:column title="Number" property="number"  headerClass="sortable"/>
 		<display:column escapeXml="true" title="Grantor" property="grantor"  headerClass="sortable"/>
@@ -24,7 +24,7 @@
 </c:when>
 <c:when test="${sessionScope.indIdeList != null}">
     <c:if test="${fn:length(sessionScope.indIdeList) > 0}">
-	<display:table class="data" sort="list"  uid="row"  name="${sessionScope.indIdeList}" requestURI="submitTrialdisplayIndIde.action">
+	<display:table class="data table table-striped table-bordered sortable" sort="list"  uid="row"  name="${sessionScope.indIdeList}" requestURI="submitTrialdisplayIndIde.action">
 		<display:column title="IND/IDE Type" property="indIde"  headerClass="sortable"/>
 		<display:column title="Number" property="number"  headerClass="sortable"/>
 		<display:column escapeXml="true" title="Grantor" property="grantor"  headerClass="sortable"/>
@@ -47,7 +47,7 @@
 	</c:if>
 </c:when>
 <c:when test="${trialDTO.indIdeDtos != null && fn:length(trialDTO.indIdeDtos) >0}">
-    <display:table class="data" sort="list"  uid="row"  name="${trialDTO.indIdeDtos}" requestURI="submitTrialdisplayIndIde.action">
+    <display:table class="data table table-striped table-bordered sortable" sort="list"  uid="row"  name="${trialDTO.indIdeDtos}" requestURI="submitTrialdisplayIndIde.action">
         <display:column title="IND/IDE Type" property="indIde"  headerClass="sortable"/>
         <display:column title="Number" property="number"  headerClass="sortable"/>
         <display:column escapeXml="true" title="Grantor" property="grantor"  headerClass="sortable"/>

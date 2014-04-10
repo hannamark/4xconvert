@@ -2,7 +2,7 @@
 <reg-web:failureMessage/>
 <c:choose>
     <c:when test="${fn:length(sessionScope.secondaryIdentifiersList) >0}">
-        <display:table class="table table-bordered" decorator="" sort="list" size="false" id="row"
+        <display:table class="data table table-striped table-bordered" decorator="" sort="list" size="false" id="row"
                        name="${sessionScope.secondaryIdentifiersList}" requestURI="" export="false">
             <display:column escapeXml="true" titleKey="submit.trial.otherIdentifier" property="extension" sortable="false" headerClass="sortable"/>
             <display:column title="Action" class="action" sortable="false">

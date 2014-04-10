@@ -42,7 +42,7 @@
                 <label for="trialDTO_statusDate" class="col-xs-4 control-label"><fmt:message key="update.trial.currentTrialStatusDate"/><span class="required">*</span></label>
                 <div class="col-xs-2">
                   <div id="datetimepicker" class="datetimepicker input-append">                    
-                    <input id="trialDTO_statusDate" name="trialDTO.statusDate" data-format="MM/dd/yyyy" type="text" class="form-control" placeholder="mm/dd/yyyy"/>
+                    <s:textfield id="trialDTO_statusDate" name="trialDTO.statusDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy"/>
                     <span class="add-on btn-default"><i class="fa-calendar"></i></span>
                     <span class="formErrorMsg">
                         <s:fielderror>
@@ -58,7 +58,7 @@
                 <s:set name="dateTypeList" value="@gov.nih.nci.pa.enums.ActualAnticipatedTypeCode@getDisplayNames()" />
                 <div class="col-xs-2">
                   <div id="datetimepicker" class="datetimepicker input-append">
-                    <input id="trialDTO_startDate" name="trialDTO.startDate" data-format="MM/dd/yyyy" type="text" class="form-control" placeholder="mm/dd/yyyy"/>                    
+                    <s:textfield id="trialDTO_startDate" name="trialDTO.startDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy" />                    
                     <span class="add-on btn-default"><i class="fa-calendar"></i></span>
                     <span class="formErrorMsg">
                       <s:fielderror>
@@ -87,7 +87,7 @@
               </label>
                <div class="col-xs-2">
                    <div id="datetimepicker" class="datetimepicker input-append">
-                       <input id="trialDTO_primaryCompletionDate" name="trialDTO.primaryCompletionDate" data-format="MM/dd/yyyy" type="text" class="form-control" placeholder="mm/dd/yyyy"/>
+                       <s:textfield id="trialDTO_primaryCompletionDate" name="trialDTO.primaryCompletionDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy" />
                        <span class="add-on btn-default"><i class="fa-calendar"></i></span>
                        <span class="formErrorMsg">
                           <s:fielderror>
@@ -110,7 +110,7 @@
               <label for="trialDTO_completionDate" class="col-xs-4 control-label"><fmt:message key="update.trial.completionDate"/></label>
               <div class="col-xs-2">
                   <div id="datetimepicker" class="datetimepicker input-append">
-                    <input id="trialDTO_completionDate" name="trialDTO.completionDate" data-format="MM/dd/yyyy" type="text" class="form-control" placeholder="mm/dd/yyyy"/>
+                    <s:textfield id="trialDTO_completionDate" name="trialDTO.completionDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy"/>
                     <span class="add-on btn-default"><i class="fa-calendar"></i></span>                 
                     <span class="formErrorMsg">
                       <s:fielderror>

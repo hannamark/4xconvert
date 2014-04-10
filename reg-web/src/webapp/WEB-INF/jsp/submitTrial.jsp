@@ -160,12 +160,14 @@
                                          <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
                                      </s:fielderror>
                                  </span>
-                                 <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Trial category you selected for trial submission."  data-placement="top" data-trigger="hover"></i>
+                              </div>
+                              <div class="col-xs-4">
+                              <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Trial category you selected for trial submission."  data-placement="top" data-trigger="hover"></i>
                               </div>
                           </div>
                           <div class="form-group">
                               <label id="trialDTO.summaryFourOrgNameTR" for="trialDTO.summaryFourOrgName" class="col-xs-4 control-label"><fmt:message key="update.proprietary.trial.summary4Sponsor"/><span class="required">*</span></label>
-                              <div id="loadSummary4FundingSponsorField">
+                              <div id="loadSummary4FundingSponsorField"  class="col-xs-8">
                                   <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
                               </div>                                    
                           </div>
