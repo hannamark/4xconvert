@@ -10,7 +10,6 @@
 <title>My Account</title>
 <%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>
 <%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
-<%@ include file="/WEB-INF/jsp/common/includeextrajs.jsp"%>
 <%@ include file="/WEB-INF/jsp/nodecorate/accountScripts.jsp" %>
 </head>
 <body>
