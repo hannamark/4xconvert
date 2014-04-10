@@ -76,5 +76,5 @@ function formReset(){
 	  <button type="button" class="btn btn-icon btn-primary" onclick="loadDiv();" id="search_organization_btn"><i class="fa-search"></i>Search</button>
 	  <button type="button" class="btn btn-icon btn-primary" onclick="setCreateFormVisible();" id="add_organization_btn"><i class="fa-plus"></i>Add Org</button>
 	  <button type="button" class="btn btn-icon btn-default" onclick="formReset();" id="search_organization_reset_btn"><i class="fa-repeat"></i>Reset</button>
-	  <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin();" id="search_organization_close_btn"><i class="fa-times-circle"></i>Cancel</button>
+	  <button type="button" class="btn btn-icon btn-default" onclick="window.parent.hidePopWin(true);" data-dismiss="modal" aria-hidden="true" id="search_organization_close_btn"><i class="fa-times-circle"></i>Cancel</button>
 </div>

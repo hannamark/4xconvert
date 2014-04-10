@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
-<c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+<c:url value="popuplookuporgs.action" var="lookupOrgUrl"/>
 <c:url value="/registry/ajaxUsersviewAdminUsers.action" var="displayUrl"/>
 
 <script type="text/javascript" language="javascript">
@@ -30,7 +30,7 @@
             return;
           }
         }
-        showPopup('${lookupOrgUrl}', loadAffliatedOrgDiv, 'Select Affiliated Organization');
+        showPopWin('${lookupOrgUrl}', 850, 550, loadAffliatedOrgDiv, 'Select Affiliated Organization');
     }
 
     function loadAffliatedOrgDiv() {

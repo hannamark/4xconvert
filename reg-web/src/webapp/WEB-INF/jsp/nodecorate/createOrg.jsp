@@ -87,5 +87,5 @@
 <div class="bottom align-center">
 	  <button type="button" class="btn btn-icon btn-primary" onclick="createOrg()"><i class="fa-floppy-o"></i>Save</button>
 	  <button type="button" class="btn btn-icon btn-primary" onclick="setSearchFormVisible();"><i class="fa-search"></i>Search</button>
-	  <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin();" id="search_organization_close_btn"><i class="fa-times-circle"></i>Cancel</button>
+	  <button type="button" class="btn btn-icon btn-default" onclick="window.parent.hidePopWin();" id="search_organization_close_btn"><i class="fa-times-circle"></i>Cancel</button>
 </div>

@@ -4,13 +4,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script type="text/javascript" language="javascript">
 	function displayMyAccount() {
-		var width = 850;
-		var height = 520;
+		var width = 900;
+		var height = 600;
 		if (Prototype.Browser.IE) {
-			width = 870;
-	        height = 570;            		
+			width = 920;
+	        height = 620;            		
 		}
-		showPopWin('registerUsershowMyAccount.action', width, height, '', 'My Account1');
+		showPopWin('registerUsershowMyAccount.action', width, height, '', 'My Account');
 	}
 </script>
 <header class="masthead">
