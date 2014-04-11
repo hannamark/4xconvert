@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util.report;
 
+import gov.nih.nci.pa.dto.StudyIdentifierDTO;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.service.PAException;
@@ -387,7 +388,9 @@ public abstract class AbstractTsrReportGenerator {
         final TSRReportTrialIdentification trialInfo = getTrialIdentification();
         final TSRReportGeneralTrialDetails gtd = getGeneralTrialDetails();
         if (trialInfo != null) {
-            Table table = getOuterTable(TSRReportLabelText.TABLE_TRIAL_IDENTIFICATION, false);
+            Table table = getOuterTable(
+                    TSRReportLabelText.TABLE_TRIAL_IDENTIFICATION, false, // CHECKSTYLE:OFF
+                    new float[] {1.3f, 1.7f}); // CHECKSTYLE:ON 
             addTableRow(table, TSRReportLabelText.TI_TRIAL_CATEGORY, trialInfo.getTrialCategory());            
             addTableRow(table, TSRReportLabelText.TRIAL_TYPE, gtd.getType());
             if (StringUtils.isNotBlank(gtd.getSubType())) {
@@ -395,21 +398,33 @@ public abstract class AbstractTsrReportGenerator {
                         gtd.getSubType());
             }
             addTableRow(table, TSRReportLabelText.TI_NCI_IDENTIFIER, trialInfo.getNciIdentifier());
-            addTableRow(table, TSRReportLabelText.TI_LEAD_ORG_IDENTIFIER, trialInfo
-                    .getLeadOrgIdentifier());
+            
+            table.addCell(getItemCell(TSRReportLabelText.TI_OTHER_IDENTIFIER, 2));
+            
+            addTableRow(table, TSRReportLabelText.SPACER
+                    + TSRReportLabelText.TI_LEAD_ORG_IDENTIFIER,
+                    trialInfo.getLeadOrgIdentifier());
+            addTableRow(table, TSRReportLabelText.SPACER
+                    + TSRReportLabelText.TI_NCT_NUMBER, trialInfo.getNctNumber());
+            if (!isProprietaryTrial()) {
+                addTableRow(table, TSRReportLabelText.SPACER
+                        + TSRReportLabelText.TI_DCP_IDENTIFIER,
+                        trialInfo.getDcpIdentifier());
+                addTableRow(table, TSRReportLabelText.SPACER
+                        + TSRReportLabelText.TI_CTEP_IDENTIFIER,
+                        trialInfo.getCtepIdentifier());
+            }
+            for (StudyIdentifierDTO dto : trialInfo.getIdentifiers()) {
+                if (!dto.getType().isStudySiteBased()) {
+                    addTableRow(table, TSRReportLabelText.SPACER
+                            + dto.getType().getCode(), dto.getValue());
+                }
+            }
 
             if (isProprietaryTrial()) {
                 addTableRow(table, TSRReportLabelText.TI_LEAD_ORGANIZATION, trialInfo
                         .getLeadOrganization());
-            } else {
-                addTableRow(table, TSRReportLabelText.TI_OTHER_IDENTIFIER, trialInfo
-                        .getOtherIdentifiers());
-            }
-
-            addTableRow(table, TSRReportLabelText.TI_NCT_NUMBER, trialInfo.getNctNumber());
-            if (!isProprietaryTrial()) {
-                addTableRow(table, TSRReportLabelText.TI_DCP_IDENTIFIER, trialInfo.getDcpIdentifier());
-                addTableRow(table, TSRReportLabelText.TI_CTEP_IDENTIFIER, trialInfo.getCtepIdentifier());
+            } else {      
                 addTableRow(table, TSRReportLabelText.TI_AMENDMENT_NUMBER, trialInfo
                         .getAmendmentNumber());
                 addTableRow(table, TSRReportLabelText.TI_AMENDMENT_DATE, trialInfo.getAmendmentDate());
@@ -891,18 +906,6 @@ public abstract class AbstractTsrReportGenerator {
         }
     }
 
-    private void addPhaseRow(Table table, String label, String phase, String additionalQualifier)
-            throws BadElementException {
-        if (!StringUtils.isEmpty(phase)) {
-            StringBuffer phaseBuffer = new StringBuffer(phase);
-            if (StringUtils.isNotEmpty(additionalQualifier)
-                    && PhaseAdditionalQualifierCode.PILOT.getCode().equals(additionalQualifier)) {
-                phaseBuffer.append(", ").append(additionalQualifier);
-            }
-            addTableRow(table, label, phaseBuffer.toString());
-        }
-    }
-    
     private void addPhaseAdditionalQualifierRow(Table table, String label, String additionalQualifier)
             throws BadElementException {
         if (!StringUtils.isEmpty(additionalQualifier)) {
@@ -974,12 +977,16 @@ public abstract class AbstractTsrReportGenerator {
         return siteTable;
     }
 
-    private Table getOuterTable(String tableHeader, boolean singleCell) throws BadElementException {
+    private Table getOuterTable(String tableHeader, boolean singleCell)
+            throws BadElementException {
+        return getOuterTable(tableHeader, singleCell, new float[] {1f, 2f});
+    }
+    
+    private Table getOuterTable(String tableHeader, boolean singleCell, float[] colsWidth) throws BadElementException {
         Table table = null;
         if (singleCell) {
             table = new Table(1);
-        } else {
-            float[] colsWidth = {1f, 2f};
+        } else {           
             table = new Table(INT_2);
             table.setWidths(colsWidth);
         }

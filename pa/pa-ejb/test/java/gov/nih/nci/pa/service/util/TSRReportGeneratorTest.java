@@ -81,6 +81,8 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import gov.nih.nci.pa.dto.StudyIdentifierDTO;
+import gov.nih.nci.pa.enums.StudyIdentifierType;
 import gov.nih.nci.pa.iso.dto.StudyProtocolAssociationDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -182,24 +184,43 @@ public class TSRReportGeneratorTest {
         value = new String(x.toByteArray(), "UTF-8");
         assertNotNull(x);
         assertTrue(x.size() > 0);
+        
         regexp = Pattern.compile("(NCI([-])?\\d{4}([-])?\\d{5})+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         String result = matcher.group(4).trim();
-        assertTrue(result.equals("Lead Organization Trial Identifier"));
-        assertFalse(result.equals("Other Trial Identifiers"));
+        assertTrue(result.equals("Other Trial Identifiers"));
         
-        regexp = Pattern.compile("(DCP Trial Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(DCP)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
         assertTrue(result.equals("5678"));
         
-        regexp = Pattern.compile("(CTEP Trial Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(CTEP)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
         assertTrue(result.equals("3442323"));
+        
+        regexp = Pattern.compile("(Duplicate NCI Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("NCI-2020-1111"));
+        
+        regexp = Pattern.compile("(Obsolete ClinicalTrials.gov Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("NCT999999999999"));
+        
+        regexp = Pattern.compile("(>\\s*Other\\s*<)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.equals("OID - 1"));
+
         
         regexp = Pattern.compile("(Detailed Description)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
@@ -231,30 +252,13 @@ public class TSRReportGeneratorTest {
         result = matcher.group(2).trim();
         assertTrue(result.contains("NCI-2010-00001. This is unnecessary. To see if this spans correctly"));
         
-        regexp = Pattern.compile("(Lead Organization Trial Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(Lead Organization)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
         assertTrue(result.equals("5AM_NCI"));
         
-        regexp = Pattern.compile("(Other Trial Identifiers)+.*?<td.*?>(.*?)</td>.*?",Pattern.DOTALL);
-        matcher = regexp.matcher(value);
-        matcher.find();
-        result = matcher.group(2).trim();
-        regexp = Pattern.compile(".*?<span.*?>(.*?)</span>.*?");
-        matcher = regexp.matcher(result);
-        matcher.find();
-        result = matcher.group(1).trim();
-        assertTrue(result.equals("OID - 1"));
-        matcher.find();
-        result = matcher.group(1).trim();
-        assertTrue(result.equals("OID - 2"));
-        matcher.find();
-        result = matcher.group(1).trim();
-        assertTrue(result.equals("OID - 3"));
-        assertFalse(matcher.find());
-        
-        regexp = Pattern.compile("(NCT Number)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(ClinicalTrials.gov)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
@@ -302,11 +306,9 @@ public class TSRReportGeneratorTest {
         result = matcher.group(2).trim();
         assertTrue(result.equals("Mayo Clinic"));
         
-        regexp = Pattern.compile("(Lead Organization\n\t\t\t\t\t)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(Lead Organization\n\t\t\t\t\t)+.*?<span.*?>\\s*Mayo Clinic\\s*</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
-        matcher.find();
-        result = matcher.group(2).trim();
-        assertTrue(result.equals("Mayo Clinic"));
+        assertTrue(matcher.find());       
         
         regexp = Pattern.compile("(Principal Investigator)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
@@ -683,6 +685,11 @@ public class TSRReportGeneratorTest {
         trialIdentification.getOtherIdentifiers().add("OID - 1");
         trialIdentification.getOtherIdentifiers().add("OID - 2");
         trialIdentification.getOtherIdentifiers().add("OID - 3");
+        
+        trialIdentification.getIdentifiers().add(new StudyIdentifierDTO(StudyIdentifierType.DUPLICATE_NCI, "NCI-2020-1111"));
+        trialIdentification.getIdentifiers().add(new StudyIdentifierDTO(StudyIdentifierType.OBSOLETE_CTGOV, "NCT999999999999"));
+        trialIdentification.getIdentifiers().add(new StudyIdentifierDTO(StudyIdentifierType.OTHER, "OID - 1"));
+        
         tsrReportGenerator.setTrialIdentification(trialIdentification);
         
         StudyProtocolAssociationDTO association = new StudyProtocolAssociationDTO();

@@ -1,64 +1,72 @@
 <%@page import="org.springframework.web.context.request.RequestScope"%>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<c:if test="${requestScope.duplicateIdentifier != null && requestScope.duplicateIdentifier != ''}">
-		<div style="color: red">			
-			<%= request.getAttribute("duplicateIdentifier") %>
-			<% request.removeAttribute("duplicateIdentifier"); %>
-		</div>
-</c:if>
+<pa:sucessMessage/>
+<pa:failureMessage/>
 <c:choose>	
     <c:when test="${fn:length(sessionScope.otherIdentifiersList) > 0}">
-		<display:table class="data" decorator="" sort="list" size="false"
+		<display:table class="data"  
 			id="row" name="${sessionScope.otherIdentifiersList}" requestURI=""
 			export="false">
-			<display:column title="Other Identifier" sortable="true"
-				headerClass="sortable">
-				<div id="identifierDiv_${row_rowNum}">
-					<c:out value="${row.extension}" />
-				</div>
-				<div id="identifierInputDiv_${row_rowNum}" style="display: none;">
-					<label for="identifier_${row_rowNum}" style="display:none">Identifier</label>
-					<input id="identifier_${row_rowNum}" type="text"
-						value="<c:out value="${row.extension}"/>" />
-				</div>
-			</display:column>
-			<display:column title="Identifier Type" sortable="true"
+			<display:column title="Identifier Type" 
 				headerClass="sortable">
 				<div id="identifierTypeDiv_${row_rowNum}">
-					<c:out value="${row.identifierName}" />
-				</div>
-				<div id="identifierTypeInputDiv_${row_rowNum}"
-					style="display: none;">
-					<label for="identifierType_${row_rowNum}" style="display:none">Identifier Type</label>
-					<select id="identifierType_${row_rowNum}"
-						name="otherIdentifierType" id="otherIdentifierType"
-						style="margin-top: 0px;">
-						<option value="0">Other</option>
-						<option value="1">Obsolete NCT ID</option>
-						<option value="2">Duplicate NCI ID</option>
-					</select>
-				</div>
-			</display:column>	
-			<display:column title="Action" class="action" sortable="false" style="width:110px">
-				<div id="actionEdit_${row_rowNum}">
-					<input type="button" value="Edit"
-						onclick="editIdentifierRow('${row_rowNum}')" />&nbsp;
-					<input type="button" value="Delete"
-						onclick="if (confirm('Click OK to remove selected identifier from the study. Cancel to abort.')) {deleteOtherIdentifierRow('${row_rowNum}')}" />
-				</div>
-				<div id="actionSave_${row_rowNum}" style="display: none;">
-					<input type="button" value="Done"
-						onclick="saveIdentifierRow('${row_rowNum}')" />&nbsp;
-					<input type="button" value="Delete"
-						onclick="if (confirm('Click OK to remove selected identifier from the study. Cancel to abort.')) {deleteOtherIdentifierRow('${row_rowNum}')}" />
+					<c:out value="${row.type.code}" />
+					<c:if test="${row.type.required}">
+					   <span class="required">*</span>
+					</c:if>
 				</div>				
 			</display:column>
+			
+		    <display:column title="Value" 
+                headerClass="sortable">
+                <div id="identifierDiv_${row_rowNum}">
+                    <c:out value="${row.value}" />
+                </div>
+                <div id="identifierInputDiv_${row_rowNum}" style="display: none;">
+                    <label for="identifier_${row_rowNum}" style="display:none">Identifier</label>
+                    <input id="identifier_${row_rowNum}" type="text"
+                        value="<c:out value="${row.value}"/>" />
+                </div>
+            </display:column>
+
+            <c:if test="${otherIdentifiersEditable}">				
+				<display:column title="Action" class="action" style="width:110px; text-align:left;">
+					<div id="actionEdit_${row_rowNum}">
+						<input type="button" value="Edit"
+							onclick="editIdentifierRow('${row_rowNum}')" />&nbsp;
+						<c:if test="${!row.type.required}">
+						   <input type="button" value="Delete"
+							  onclick="if (confirm('Click OK to remove selected identifier from the study. Cancel to abort.')) {deleteOtherIdentifierRow('${row_rowNum}')}" />
+						</c:if>
+					</div>
+					<div id="actionSave_${row_rowNum}" style="display: none;">
+						<input type="button" value="Save"
+							onclick="saveIdentifierRow('${row_rowNum}')" />&nbsp;
+						<input type="button" value="Cancel"
+							onclick="initializeOtherIdentifiersSection();" />
+					</div>				
+				</display:column>
+			</c:if>
 		</display:table>
 	</c:when>
-    <c:when test="${gtdDTO.otherIdentifiers != null && fn:length(gdtDTO.otherIdentifiers) > 0}">
-        <display:table class="data" decorator="" sort="list" size="false" id="row" name="${gtdDTO.otherIdentifiers}" requestURI="" export="false">
-            <display:column escapeXml="true" titleKey="Other Identifier" property="extension" sortable="true" headerClass="sortable" />
-            <display:column escapeXml="true" title="Identifier Type" property="identifierName" sortable="true" headerClass="sortable" />
-        </display:table>
-    </c:when>
 </c:choose>
+
+<script type="text/javascript" language="javascript">
+
+    var opt;
+	var listEl = $('otherIdentifierType');
+	if (listEl!=null) {
+		var curSelection = $F(listEl);
+			                
+		listEl.options.length = 0;
+		
+		<c:forEach items="${otherIdentifiersTypesList}" var="idType">
+		    opt = document.createElement("option");
+		    opt.value= '<c:out value="${idType.code}"/>';
+		    opt.innerHTML = '<c:out value="${idType.code}"/>';              
+		    listEl.options.add(opt);
+	    </c:forEach>
+	    
+	    listEl.setValue(curSelection);
+	}
+</script>

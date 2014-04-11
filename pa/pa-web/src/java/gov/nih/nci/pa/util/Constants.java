@@ -147,6 +147,8 @@ public class Constants {
     public static final String NCI = "NCI";
     /** OTHER_IDENTIFIERS_LIST. */
     public static final String OTHER_IDENTIFIERS_LIST = "otherIdentifiersList";
+    /** OTHER_IDENTIFIERS_TYPES_LIST. */
+    public static final String OTHER_IDENTIFIERS_TYPES_LIST = "otherIdentifiersTypesList";
     /** Trial Submitter Organization.  */
     public static final String TRIAL_SUBMITTER_ORG = "trialSubmitterOrg";
     /** Trial Submitter Organization.  */

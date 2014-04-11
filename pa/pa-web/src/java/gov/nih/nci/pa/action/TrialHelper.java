@@ -1,7 +1,5 @@
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -54,7 +52,6 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -158,21 +155,8 @@ public class TrialHelper {
     public void saveTrial(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO, String operation) throws PAException,
             NullifiedEntityException, NullifiedRoleException {
         updateStudyProtocol(studyProtocolIi, gtdDTO);
-
-        StudySiteDTO identifierDTO;
-        identifierDTO = new StudySiteDTO();
-        identifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getLocalProtocolIdentifier()));
-        identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-        PaRegistry.getOrganizationCorrelationService()
-            .createResearchOrganizationCorrelations(gtdDTO.getLeadOrganizationIdentifier());
-        identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService()
-            .getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO
-                                                             .getLeadOrganizationIdentifier())));
-        getPaServiceUtils().manageStudyIdentifiers(identifierDTO);
-        
-        manageLeadOrgAndPI(studyProtocolIi, gtdDTO);
-        
+        manageLeadOrganization(studyProtocolIi, gtdDTO);
+        managePI(studyProtocolIi, gtdDTO);        
         manageCtGovElement(studyProtocolIi, gtdDTO);
         if (ABSTRACTION.equalsIgnoreCase(operation)) {
             createOrUpdateCentralContact(studyProtocolIi, gtdDTO);
@@ -180,17 +164,32 @@ public class TrialHelper {
         if (VALIDATION.equalsIgnoreCase(operation)) {
             saveSummary4Information(studyProtocolIi, gtdDTO.getSummaryFourOrgIdentifiers(), 
                     gtdDTO.getSummaryFourFundingCategoryCode());
-        }
-        // nct
-        saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getNctIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE);
-        // copied from trial identification screen
-        if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator())) {
-            saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getCtepIdentifier(), PAConstants.CTEP_IDENTIFIER_TYPE);
-            saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getDcpIdentifier(), PAConstants.DCP_IDENTIFIER_TYPE);
-        }
+        }        
         PaRegistry.getStudyProtocolService()
                 .updatePendingTrialAssociationsToActive(
                         IiConverter.convertToLong(studyProtocolIi));
+    }
+
+    private void manageLeadOrganization(Ii studyProtocolIi,
+            GeneralTrialDesignWebDTO gtdDTO) throws PAException {
+
+        StudySiteDTO identifierDTO = new StudySiteDTO();
+        identifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+        identifierDTO.setLocalStudyProtocolIdentifier(StConverter
+                .convertToSt(getPaServiceUtils().getStudyIdentifier(
+                        studyProtocolIi, PAConstants.LEAD_IDENTIFER_TYPE)));
+        identifierDTO.setFunctionalCode(CdConverter
+                .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        PaRegistry.getOrganizationCorrelationService()
+                .createResearchOrganizationCorrelations(
+                        gtdDTO.getLeadOrganizationIdentifier());
+        identifierDTO.setResearchOrganizationIi(PaRegistry
+                .getOrganizationCorrelationService()
+                .getPoResearchOrganizationByEntityIdentifier(
+                        IiConverter.convertToPoOrganizationIi(gtdDTO
+                                .getLeadOrganizationIdentifier())));
+        getPaServiceUtils().manageStudyIdentifiers(identifierDTO);
+
     }
 
     private void manageCtGovElement(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO) throws PAException {
@@ -213,7 +212,7 @@ public class TrialHelper {
         }
     }
 
-    private void manageLeadOrgAndPI(Ii studyProtocolIi,
+    private void managePI(Ii studyProtocolIi,
             GeneralTrialDesignWebDTO gtdDTO) throws PAException {
         if (StringUtils.isNotBlank(gtdDTO.getPiIdentifier())) {
             PersonDTO principalInvestigatorDto = new PersonDTO();
@@ -255,41 +254,6 @@ public class TrialHelper {
                 sum4OrgDtoList.add(sum4OrgDto);
             }
             getPaServiceUtils().manageSummaryFour(studyProtocolIi, sum4OrgDtoList, summary4ResoureDTO);
-        }
-    }
-
-    private void saveOtherTrialIdentifier(Ii studyProtocolIi, String otherTrialIdentifier,
-            String otherTrialIdentifierType) throws PAException {
-        String dbTrialIdentifier = getPaServiceUtils().getStudyIdentifier(studyProtocolIi, otherTrialIdentifierType);
-        String dcpTrialIdentifer = getPaServiceUtils().getStudyIdentifier(
-                studyProtocolIi, PAConstants.DCP_IDENTIFIER_TYPE);
-        StudySiteDTO trialIdentifierDTO = new StudySiteDTO();
-        trialIdentifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(otherTrialIdentifier));
-        trialIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        trialIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-        String poOrgId = PaRegistry.getOrganizationCorrelationService().getPOOrgIdentifierByIdentifierType(
-            otherTrialIdentifierType);
-        trialIdentifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-            getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId)));
-        if (StringUtils.isNotEmpty(otherTrialIdentifier) && !dbTrialIdentifier.equals(otherTrialIdentifier)) {
-            getPaServiceUtils().manageStudyIdentifiers(trialIdentifierDTO);
-        } else if (StringUtils.isNotEmpty(dbTrialIdentifier)
-                && !StringUtils.equals(dbTrialIdentifier, otherTrialIdentifier)) {
-            LimitOffset pagingParams = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-            //delete from db
-            try {
-                List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService().search(trialIdentifierDTO, pagingParams);
-                PaRegistry.getStudySiteService().delete(((StudySiteDTO) PAUtil.getFirstObj(spDtos)).getIdentifier());
-                if (PAConstants.NCT_IDENTIFIER_TYPE
-                        .equals(otherTrialIdentifierType)
-                        && StringUtils.isNotEmpty(dcpTrialIdentifer)) {
-                    PaRegistry.getMailManagerService()
-                            .sendNCTIDChangeNotificationMail(studyProtocolIi, "Null",
-                                    dbTrialIdentifier);
-                }
-            } catch (TooManyResultsException e) {
-                throw new PAException(e);
-            }
         }
     }
 
@@ -441,15 +405,6 @@ public class TrialHelper {
                 spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(gtdDTO.isCtGovXmlRequired()));
             }
             setPhaseAndPurpose(gtdDTO, spDTO);
-            Set<Ii> allIdentifiers = new HashSet<Ii>();
-            allIdentifiers.add(gtdDTO.getNonOtherIdentifiers());
-            List<Ii> secondaryIds = (List<Ii>) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
-            if (secondaryIds != null) {
-                allIdentifiers.addAll(secondaryIds);
-            }
-            spDTO.setSecondaryIdentifiers(null);
-            spDTO.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(allIdentifiers));
         }
         List<StudyAlternateTitleDTO> studyAlternateTitlesList = (List<StudyAlternateTitleDTO>)
                 ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_ALTERNATE_TITLES_LIST);

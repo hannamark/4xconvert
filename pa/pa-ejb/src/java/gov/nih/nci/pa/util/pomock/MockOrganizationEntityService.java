@@ -47,7 +47,7 @@ import org.apache.commons.lang.StringUtils;
 public class MockOrganizationEntityService implements
         OrganizationEntityServiceRemote {
 
-    public static int PO_ID_SEQ = 1; // NOPMD
+    public static int PO_ID_SEQ = 100; // NOPMD
 
     public static final Map<String, OrganizationDTO> STORE = new HashMap<String, OrganizationDTO>();
 

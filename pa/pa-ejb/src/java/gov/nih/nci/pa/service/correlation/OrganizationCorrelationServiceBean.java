@@ -553,11 +553,14 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @throws PAException on error
      */
     @Override
-    public String getPOOrgIdentifierByIdentifierType(String identifierType) throws PAException {
-        if (cacheTimeout.before(new Date())) {
-            resetCache();
-        }
-        String orgName = convertIdTypeToName(identifierType);
+    public String getPOOrgIdentifierByIdentifierType(String identifierType) throws PAException {       
+        String orgName = convertIdTypeToName(identifierType);       
+        return getPOOrgIdentifierByOrgName(orgName);
+    }
+    
+    @Override
+    public String getPOOrgIdentifierByOrgName(String orgName) throws PAException {
+        resetCacheIfNeeded();
         String identifier = dcpCtepCtgovOrgIdCache.get(orgName);
         if (identifier == null) {
             identifier = updateCache(orgName);
@@ -566,6 +569,15 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             }
         }
         return identifier;
+    }
+
+    /**
+     * 
+     */
+    private void resetCacheIfNeeded() {
+        if (cacheTimeout.before(new Date())) {
+            resetCache();
+        }
     }
 
     private String updateCache(String orgName) throws PAException {
@@ -650,4 +662,6 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         }
         return result;
     }
+
+    
 }

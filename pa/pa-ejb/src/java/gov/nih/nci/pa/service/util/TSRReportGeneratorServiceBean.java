@@ -143,6 +143,7 @@ import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyIdentifiersServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
@@ -208,6 +209,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.annotation.IgnoreDependency;
 
 /**
  * service bean for generating TSR.
@@ -262,6 +264,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     private StratumGroupServiceLocal stratumGroupService;
     @EJB
     private PlannedMarkerServiceLocal plannedMarkerService;
+    @EJB
+    @IgnoreDependency
+    private StudyIdentifiersServiceLocal studyIdentifiersService;
 
     private final CorrelationUtils correlationUtils = new CorrelationUtils();
 
@@ -437,6 +442,9 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         for (Ii otherIdIi : otherIdentifierIis) {
             trialIdentification.getOtherIdentifiers().add(otherIdIi.getExtension());
         }
+        trialIdentification.getIdentifiers().addAll(
+                studyIdentifiersService.getStudyIdentifiers(studyProtocolDto
+                        .getIdentifier()));
         
         trialIdentification.setNciIdentifier(PAUtil.getAssignedIdentifierExtension(studyProtocolDto));
         trialIdentification.setLeadOrgIdentifier(getTiLeadOrgIdentifier(studyProtocolDto));
@@ -1474,5 +1482,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
      */
     public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
         this.plannedMarkerService = plannedMarkerService;
+    }
+
+
+    /**
+     * @param studyIdentifiersService the studyIdentifiersService to set
+     */
+    public void setStudyIdentifiersService(
+            StudyIdentifiersServiceLocal studyIdentifiersService) {
+        this.studyIdentifiersService = studyIdentifiersService;
     }
 }

@@ -3,13 +3,9 @@
  */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.Constants;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -84,20 +80,7 @@ class AbstractGeneralTrialDesignAction extends ActionSupport {
                 || gtdDTO.getProprietarytrialindicator().equalsIgnoreCase(FALSE);
     }
     
-    /**
-     * 
-     */
-    protected void validateNctIdentifier() {
-        if (StringUtils.isNotEmpty(gtdDTO.getNctIdentifier())) {
-            PAServiceUtils util = new PAServiceUtils();
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.STUDY_PROTOCOL_II);
-            String nctValidationResultString = util.validateNCTIdentifier(gtdDTO.getNctIdentifier(), studyProtocolIi);
-            if (StringUtils.isNotEmpty(nctValidationResultString)) {
-                addFieldError("gtdDTO.nctIdentifier", nctValidationResultString);
-            }
-        }
-    }
+    
 
     /**
      * 

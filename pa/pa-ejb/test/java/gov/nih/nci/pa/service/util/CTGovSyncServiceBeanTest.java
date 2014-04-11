@@ -9,7 +9,7 @@ import static gov.nih.nci.iso21090.EntityNamePartType.PFX;
 import static gov.nih.nci.iso21090.EntityNamePartType.SFX;
 import static gov.nih.nci.pa.iso.util.EnPnConverter.convertToEnPn;
 import static gov.nih.nci.pa.iso.util.EnPnConverter.getNamePart;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -146,6 +146,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     private void setUpCorrelationMocks() throws PAException {
         when(ocsr.getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE)).thenCallRealMethod();
+        when(ocsr.getPOOrgIdentifierByOrgName("ClinicalTrials.gov")).thenCallRealMethod();
         when(ocsr.createResearchOrganizationCorrelations(any(String.class)))
                 .thenAnswer(new Answer<Long>() {
                     @Override
@@ -1017,7 +1018,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
 
     /**
      * @param session
-     * @param id
+     * @param spID
      * @param sp
      * @throws PAException
      * @throws NumberFormatException

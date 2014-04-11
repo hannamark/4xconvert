@@ -191,4 +191,11 @@ public interface OrganizationCorrelationServiceRemote {
      * @throws PAException onError
      */
     boolean isAffiliatedWithTrial(Long spId, Long orgId, StudySiteFunctionalCode type) throws PAException;
+
+    /**
+     * @param orgName orgName
+     * @return POOrgIdentifier
+     * @throws PAException  PAException
+     */
+    String getPOOrgIdentifierByOrgName(String orgName) throws PAException;
 }

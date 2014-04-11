@@ -10,6 +10,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js?7b391da0-c0d3-11e3-8a33-0800200c9a66'/>"></script>
         <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
         <script type="text/javascript" language="javascript"> 
             var orgid;
@@ -105,52 +106,64 @@
                 showPopup('${lookupOrgGenericContactsUrl}?orgGenericContactIdentifier='+orgid,  createOrgGenericContactDiv, 'Select Responsible Party Generic Contact');
             }
         
-            function deleteOtherIdentifierRow(rowid) { 
+            // Other Identifiers handling code.
+            Event.observe(window, 'load', initializeOtherIdentifiersSection);            
+            
+            function initializeOtherIdentifiersSection() {
+                 var  url = 'ajaxManageOtherIdentifiersActionquery.action';
+                 var params = {};
+                 var div = $('otherIdentifierdiv');
+                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
+                 var aj = callAjaxPost(div, url, params, {evalScripts:true});  
+            }
+
+            function deleteOtherIdentifierRow(rowid){ 
                 var  url = 'ajaxManageOtherIdentifiersActiondeleteOtherIdentifier.action';
                 var params = { uuid: rowid };
                 var div = $('otherIdentifierdiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
-                var aj = callAjaxPost(div, url, params);           
-            }
-
+                var aj = callAjaxPost(div, url, params, {evalScripts:true});
+            }            
+            
             function saveIdentifierRow(rowid){
-            	var orgValue = $("identifier_"+rowid).value;
-                var otherIdentifierTypeValue = $("identifierType_"+rowid).value;
+                var orgValue = $("identifier_"+rowid).value;                
                 if (orgValue != null && orgValue != '') {
-	            	var  url = 'ajaxManageOtherIdentifiersActionsaveOtherIdentifierRow.action';
-	                var params = { uuid: rowid, otherIdentifier : orgValue,
-	    	                 otherIdentifierType : otherIdentifierTypeValue };
-	                var div = $('otherIdentifierdiv');
-	                div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Saving...</div>';
-	                var aj = callAjaxPost(div, url, params); 
+                    var  url = 'ajaxManageOtherIdentifiersActionsaveOtherIdentifierRow.action';
+                    var params = { uuid: rowid, otherIdentifier : orgValue };
+                    var div = $('otherIdentifierdiv');
+                    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Saving...</div>';
+                    var aj = callAjaxPost(div, url, params, {evalScripts:true}); 
                 } else {
-                    alert("Please enter a valid Other identifier.");
+                    alert("Please enter a valid Other Identifier.");
                 }
-            }
-
-            function editIdentifierRow(rowid){
-            	jQuery("#identifierDiv_"+rowid).hide();
-            	jQuery("#identifierInputDiv_"+rowid).show(); 
-            	jQuery("#identifierTypeDiv_"+rowid).hide();
-            	jQuery("#identifierTypeInputDiv_"+rowid).show();
-            	jQuery("#actionEdit_"+rowid).hide();
-            	jQuery("#actionSave_"+rowid).show();            	            	
-            }
-        
-            function addOtherIdentifier() {
+            }            
+            
+             function editIdentifierRow(rowid){
+                jQuery("#identifierDiv_"+rowid).hide();
+                jQuery("#identifierInputDiv_"+rowid).show();
+                jQuery("#actionEdit_"+rowid).hide();
+                jQuery("#actionSave_"+rowid).show();                                
+             }
+             
+             function addOtherIdentifier() {
                 var orgValue = $("otherIdentifierOrg").value;
                 var otherIdentifierTypeValue = $("otherIdentifierType").value;
                 if (orgValue != null && orgValue != '') {
-                    var  url = 'ajaxManageOtherIdentifiersActionaddOtherIdentifier.action';   
-                    var params = { otherIdentifier: orgValue, otherIdentifierType: otherIdentifierTypeValue}; 
+                    var  url = 'ajaxManageOtherIdentifiersActionaddOtherIdentifier.action';
+                    var params = { otherIdentifier: orgValue, otherIdentifierType: otherIdentifierTypeValue };  
+                                      
                     var div = $('otherIdentifierdiv');   
                     div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
-                    var aj = callAjaxPost(div, url, params);
+                    var aj = callAjaxPost(div, url, params, {evalScripts:true});
                     $("otherIdentifierOrg").value="";
                 } else {
-                    alert("Please enter a valid Other identifier.");
+                    alert("Please enter a valid Other Identifier.");
                 }
             }
+
+
+
+        
         </script>
     </head>
     <body>
@@ -169,8 +182,6 @@
                 <s:hidden name="gtdDTO.nonOtherIdentifiers.extension" id="gtdDTO.nonOtherIdentifiers.extension"/>
                 <s:hidden name="gtdDTO.nonOtherIdentifiers.root" id="gtdDTO.nonOtherIdentifiers.root"/>
                 <s:hidden name="gtdDTO.nonOtherIdentifiers.identifierName" id="gtdDTO.nonOtherIdentifiers.identifierName"/>
-                <s:hidden name="gtdDTO.ctepIdentifier"  id="gtdDTO.ctepIdentifier"/>
-                <s:hidden name="gtdDTO.dcpIdentifier" id ="gtdDTO.dcpIdentifier"/>
                 <s:hidden name="gtdDTO.keywordText" id ="gtdDTO.keywordText"/>
                 <h2><fmt:message key="trialValidation.trialDetails" /></h2>
                 <table class="form">
@@ -192,23 +203,6 @@
                             <s:hidden name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired"/>
                         </c:otherwise>
                     </c:choose>
-                    <pa:valueRow labelFor="localProtocolIdentifier" labelKey="studyCoordinatingCenterLead.localProtocolIdentifer" required="true">
-                        <s:textfield id="localProtocolIdentifier" name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" maxlength="50"/> 
-                        <pa:fieldError fieldName="gtdDTO.LocalProtocolIdentifier"/>
-                    </pa:valueRow>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="nctIdentifier"><fmt:message key="studyProtocol.nctNumber"/></label> 
-                        </td>
-                        <td class="value">
-                            <s:textfield id="nctIdentifier" name="gtdDTO.nctIdentifier" cssStyle="width:206px" maxlength="50"/>
-                            <span class="formErrorMsg">
-                                <s:fielderror cssStyle = "white-space:pre-line;">
-                                    <s:param>gtdDTO.nctIdentifier</s:param>
-                                </s:fielderror>
-                            </span> 
-                        </td>
-                    </tr>
                     <pa:valueRow labelKey="studyProtocol.proprietaryTrial">
                         <s:property value="gtdDTO.proprietarytrialindicator"/>
                     </pa:valueRow>
@@ -217,33 +211,35 @@
                         <pa:fieldError fieldName="gtdDTO.OfficialTitle"/>
                     </pa:valueRow>
                     <%@ include file="/WEB-INF/jsp/nodecorate/phaseAndPurpose.jsp" %>
-                    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                    
                         <pa:titleRow titleKey="trialValidation.otherIdentifiers"/>
                         <pa:valueRow labelKey="studyProtocol.otherId">
-						<table>
-							<tr>								
-								<td><select name="otherIdentifierType"
-									id="otherIdentifierType" style="margin-top: 0px;">
-										<option value="0">Other</option>
-										<option value="1">Obsolete NCT ID</option>
-										<option value="2">Duplicate NCI ID</option>
-								</select></td>
-								<td><input type="text" name="otherIdentifierOrg"
-									id="otherIdentifierOrg" value="" />&nbsp;</td>
-								<td><input type="button" id="otherIdbtnid"
-									value="Add Other Identifier" onclick="addOtherIdentifier();" />
-								</td>
-							</tr>
-						</table>
+                        <c:remove var="otherIdentifiersEditable"/>
+                        <pa:displayWhenCheckedOut>
+                            <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted' || sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Amendment Submitted' }">                            
+								<table>
+		                                    <tr>                                
+		                                        <td><s:select id="otherIdentifierType" name="otherIdentifierType" 
+		                                              list="#{}"  cssStyle="margin-top: 0px;" /></td>
+		                                        <td>
+		                                        <label for="otherIdentifierOrg" style="display:none">orgid</label>
+		                                        <input type="text" name="otherIdentifierOrg"
+		                                            id="otherIdentifierOrg" value="" />&nbsp;</td>
+		                                        <td><input type="button" id="otherIdbtnid"
+		                                            value="Add Other Identifier" onclick="addOtherIdentifier();" />
+		                                        </td>
+		                                    </tr>
+		                        </table>
+		                        <c:set var="otherIdentifiersEditable" value="${true}" scope="session"/>
+		                   </c:if>
+		                </pa:displayWhenCheckedOut>
 					</pa:valueRow>
                         <tr>
                             <td colspan="2" class="space">
-                                <div id="otherIdentifierdiv">
-                                    <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp"%>
-                                </div>
+                                 <div id="otherIdentifierdiv"></div>
                             </td>
                         </tr>
-                    </c:if>
+                    
                     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>  
                     <pa:titleRow titleKey="trialValidation.summary4Info"/>  
                     <pa:valueRow labelFor="summaryFourFundingCategoryCode" labelKey="studyProtocol.summaryFourFundingCategoryCode">

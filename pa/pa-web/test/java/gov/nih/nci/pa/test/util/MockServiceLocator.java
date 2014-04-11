@@ -142,6 +142,7 @@ import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
@@ -231,6 +232,7 @@ import com.fiveamsolutions.nci.commons.audit.AuditType;
  */
 public class MockServiceLocator implements ServiceLocator {
 
+    private final StudyIdentifiersService studyIdentifiersService = Mockito.mock(StudyIdentifiersService.class);
     private final StudyProtocolServiceLocal studyProtocolService = new MockStudyProtocolService();
     private final StudyOverallStatusServiceLocal studyOverallStatusService = new MockStudyOverallStatusService();
     private final StudySiteServiceLocal studySiteService = new MockStudySiteService();
@@ -1006,6 +1008,11 @@ public class MockServiceLocator implements ServiceLocator {
 	@Override
 	public PendingPatientAccrualsServiceLocal getPendingPatientAccrualsService() {
 		return Mockito.mock(PendingPatientAccrualsServiceLocal.class);
-	}  
+	}
+
+    @Override
+    public StudyIdentifiersService getStudyIdentifiersService() {
+        return studyIdentifiersService;
+    }  
     
 }

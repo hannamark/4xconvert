@@ -15,17 +15,14 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationBean;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -39,7 +36,6 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -97,6 +93,8 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected HealthCareProviderCorrelationServiceRemote hcpSvc ;
     protected StudyMilestoneServiceBean studyMilestoneSvc;
     protected StudyInboxServiceLocal studyInboxSvc;
+    protected MailManagerServiceLocal mailSvc;
+    
     public AbstractTrialRegistrationTestBase() {
         super();
     }
@@ -180,7 +178,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         });
         when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(ocsr);
     
-        MailManagerServiceLocal mailSvc = mock(MailManagerServiceLocal.class);
+        mailSvc = mock(MailManagerServiceLocal.class);
         studyInboxSvc = new StudyInboxServiceBean();
         studyMilestoneSvc = new StudyMilestoneServiceBean();
         AbstractionCompletionServiceRemote abstractionCompletionSvc = mock(AbstractionCompletionServiceRemote.class);

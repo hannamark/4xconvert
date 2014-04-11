@@ -416,9 +416,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         }
     }
 
-    private void enforceBusinessRules(String operation) {
-        addErrors(gtdDTO.getLocalProtocolIdentifier(), "gtdDTO.LocalProtocolIdentifier",
-                  "Organization Trial ID must be Entered");
+    private void enforceBusinessRules(String operation) {        
         addErrors(gtdDTO.getOfficialTitle(), "gtdDTO.OfficialTitle", "OfficialTitle must be Entered");
         if (StringUtils.equalsIgnoreCase(REJECT_OPERATION, operation)) {
             if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator())) {
@@ -435,7 +433,7 @@ public class TrialValidationAction extends AbstractGeneralTrialDesignAction impl
         }
         
         validateResponsibleParty();        
-        validateNctIdentifier();
+       
         
     }
     

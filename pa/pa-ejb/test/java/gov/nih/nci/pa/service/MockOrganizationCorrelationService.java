@@ -298,6 +298,12 @@ public class MockOrganizationCorrelationService implements
         return poOrgId;
 
     }
+    
+    @Override
+    public String getPOOrgIdentifierByOrgName(String orgName)
+            throws PAException {     
+        return getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE);
+    }
 
     public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier)
             throws PAException {

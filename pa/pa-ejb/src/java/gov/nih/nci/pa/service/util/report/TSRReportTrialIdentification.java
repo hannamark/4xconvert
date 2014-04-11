@@ -83,6 +83,8 @@
 
 package gov.nih.nci.pa.service.util.report;
 
+import gov.nih.nci.pa.dto.StudyIdentifierDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,6 +106,7 @@ public class TSRReportTrialIdentification {
     private String amendmentNumber;
     private String amendmentDate;
     private final List<String> otherIdentifiers = new ArrayList<String>();
+    private final List<StudyIdentifierDTO> identifiers = new ArrayList<StudyIdentifierDTO>();
 
     /**
     * Default Constructor.
@@ -244,6 +247,13 @@ public class TSRReportTrialIdentification {
      */
     public List<String> getOtherIdentifiers() {
         return otherIdentifiers;
+    }
+
+    /**
+     * @return the identifiers
+     */
+    public List<StudyIdentifierDTO> getIdentifiers() {
+        return identifiers;
     }
 
 }

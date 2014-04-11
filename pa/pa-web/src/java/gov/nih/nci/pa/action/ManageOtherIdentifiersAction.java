@@ -83,14 +83,21 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.dto.StudyIdentifierDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.StudyIdentifierType;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -101,132 +108,132 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class ManageOtherIdentifiersAction extends ActionSupport {
+    private static final String OTHER_IDENTIFIER = "otherIdentifier";
+    private static final String UUID = "uuid";
     private static final long serialVersionUID = 1L;
     private static final String DISPLAY_OTHER_IDENTIFIERS = "display_otherIdentifiers";
-    private static final String DUPLICATE_IDENTIFIER = "duplicateIdentifier";
-
+    
+    private static final Logger LOG = Logger.getLogger(ManageOtherIdentifiersAction.class);
+    
     /**
-     * @return s
+     * @return result
+     * @throws PAException PAException
      */
     @SuppressWarnings("unchecked")
-    public String addOtherIdentifier() {
-        String otherIdentifier = ServletActionContext.getRequest().getParameter("otherIdentifier");
-        String otherIdentifierType = ServletActionContext.getRequest().getParameter("otherIdentifierType");
-        
-        ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, "");
-        if (validateUniqueOtherIdentifier(otherIdentifier, otherIdentifierType)) {
-            String duplicateErrorMessage = otherIdentifier + " already exist.";
-            ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, duplicateErrorMessage);
-            return DISPLAY_OTHER_IDENTIFIERS; 
-        }
-        if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.STUDY_PROTOCOL_II);
-            PAServiceUtils util = new PAServiceUtils();
-            String nctValidationResultString = util.validateTrialObsoleteNctId(
-                    IiConverter.convertToLong(studyProtocolIi), otherIdentifier);
-            if (StringUtils.isNotEmpty(nctValidationResultString)) {
-                String duplicateErrorMessage = otherIdentifier + " already exist for " + nctValidationResultString;
-                ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, duplicateErrorMessage);
-                return DISPLAY_OTHER_IDENTIFIERS;
-            }
-        }
-        List<Ii> secondaryIds =
-            (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
-        Ii otherId = new Ii();
-        otherId.setExtension(otherIdentifier);
-        otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
-        if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
-            otherId.setIdentifierName(IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME);   
-        } else if (otherIdentifierType != null && otherIdentifierType.equals("2")) {
-            otherId.setIdentifierName(IiConverter.DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME);
-        } else {
-            otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
-        }
-        if (secondaryIds == null) {
-            secondaryIds = new ArrayList<Ii>();
-        }
-        secondaryIds.add(otherId);
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
+    public String query() throws PAException {
+        final HttpSession session = ServletActionContext.getRequest()
+                .getSession();
+        Ii studyProtocolIi = (Ii) session
+                .getAttribute(Constants.STUDY_PROTOCOL_II);
+        final List<StudyIdentifierDTO> studyIdentifiers = PaRegistry.getStudyIdentifiersService().getStudyIdentifiers(
+                studyProtocolIi);
+        session.setAttribute(
+                Constants.OTHER_IDENTIFIERS_LIST,
+                studyIdentifiers);
+        populateIdentifierTypesAvailableToAdd(session, studyIdentifiers);
         return DISPLAY_OTHER_IDENTIFIERS;
-    } 
-    
-    private boolean validateUniqueOtherIdentifier(String otherIdentifier, String otherIdentifierType) {
-        String nciIdentifier = (String) ServletActionContext.getRequest()
-                                        .getSession().getAttribute("nciIdentifier");
-        String nctIdentifier = (String) ServletActionContext.getRequest()
-                                        .getSession().getAttribute("nctIdentifier");
-        
-        String otherIdentifierExtension = "";
-        if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
-            otherIdentifierExtension = IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME;   
-        } else if (otherIdentifierType != null && otherIdentifierType.equals("2")) {
-            otherIdentifierExtension = IiConverter.DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME;
-        } else {
-            otherIdentifierExtension = IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME;
-        }
-        
-        if (nciIdentifier != null && nciIdentifier.equals(otherIdentifier) && otherIdentifierType.equals("2")) {
-            return true;
-        }
-        if (nctIdentifier != null && nctIdentifier.equals(otherIdentifier) && otherIdentifierType.equals("1")) {
-            return true;
-        }
-        List<Ii> secondaryIds =
-            (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
-        for (Ii ii : secondaryIds) {
-            if (otherIdentifier.equals(ii.getExtension()) 
-                    && ii.getIdentifierName().equals(otherIdentifierExtension)) {
-              return true;  
+    }
+
+    private void populateIdentifierTypesAvailableToAdd(HttpSession session,
+            List<StudyIdentifierDTO> studyIdentifiers) {
+        List<StudyIdentifierType> list = new ArrayList<StudyIdentifierType>(Arrays.asList(StudyIdentifierType
+                .values()));
+        session.setAttribute(Constants.OTHER_IDENTIFIERS_TYPES_LIST, list);
+
+        for (StudyIdentifierDTO dto : studyIdentifiers) {
+            if (dto.getType().isStudySiteBased()) {
+                list.remove(dto.getType());
             }
-        }        
-        return false;
+        }
+
+        if (session.getAttribute(Constants.TRIAL_SUMMARY) instanceof StudyProtocolQueryDTO) {
+            StudyProtocolQueryDTO summary = (StudyProtocolQueryDTO) session
+                    .getAttribute(Constants.TRIAL_SUMMARY);
+            if (summary.isProprietaryTrial()) {
+                list.remove(StudyIdentifierType.CTEP);
+                list.remove(StudyIdentifierType.DCP);
+            }
+        }
+
     }
 
     /**
-     * @return result
+     * @return s
+     * @throws PAException  PAException
      */
     @SuppressWarnings("unchecked")
-    public String deleteOtherIdentifier() {
-        int rowid =  Integer.valueOf(ServletActionContext.getRequest().getParameter("uuid"));
-        List<Ii> secondaryIds =
-            (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
-        secondaryIds.remove(rowid - 1);
-
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
-        return DISPLAY_OTHER_IDENTIFIERS;
+    public String addOtherIdentifier() throws PAException {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        String otherIdentifier = request
+                .getParameter(OTHER_IDENTIFIER);
+        String otherIdentifierType = request
+                .getParameter("otherIdentifierType");
+        Ii studyProtocolIi = (Ii) request
+                .getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        try {
+            PaRegistry.getStudyIdentifiersService().add(
+                    studyProtocolIi,
+                    new StudyIdentifierDTO(StudyIdentifierType
+                            .getByCode(otherIdentifierType), otherIdentifier));
+            request.setAttribute(Constants.SUCCESS_MESSAGE, "Identifier added to the trial");
+        } catch (PAException e) {
+            LOG.error(e, e);
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        return query();
+        
+    } 
+    
+    /**
+     * @return result
+     * @throws PAException  PAException
+     */
+    @SuppressWarnings("unchecked")
+    public String deleteOtherIdentifier() throws PAException {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        int rowid = Integer.valueOf(request
+                .getParameter(UUID));
+        List<StudyIdentifierDTO> secondaryIds = (List<StudyIdentifierDTO>) request.getSession()
+                .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
+        Ii studyProtocolIi = (Ii) request.getSession()
+                .getAttribute(Constants.STUDY_PROTOCOL_II);
+        StudyIdentifierDTO dto = secondaryIds.get(rowid - 1);
+        try {
+            PaRegistry.getStudyIdentifiersService().delete(studyProtocolIi, dto);
+            request.setAttribute(Constants.SUCCESS_MESSAGE, "Identifier deleted from the trial");
+        } catch (PAException e) {
+            LOG.error(e, e);
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+        }
+        return query();        
     }
     
     /**
      * 
      * @return string
+     * @throws PAException  PAException
      */
-    public String saveOtherIdentifierRow() {
-        int rowid =  Integer.valueOf(ServletActionContext.getRequest().getParameter("uuid"));
-        String otherIdentifier = ServletActionContext.getRequest().getParameter("otherIdentifier");
-        String otherIdentifierType = ServletActionContext.getRequest().getParameter("otherIdentifierType");
-        ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, "");
-                
-        List<Ii> secondaryIds =
-            (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
+    @SuppressWarnings("unchecked")
+    public String saveOtherIdentifierRow() throws PAException {
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        int rowid = Integer.valueOf(request
+                .getParameter(UUID));
+        String newValue = request.getParameter(
+                OTHER_IDENTIFIER);
+        List<StudyIdentifierDTO> secondaryIds = (List<StudyIdentifierDTO>) request.getSession()
+                .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
+        StudyIdentifierDTO dto = secondaryIds.get(rowid - 1);
+        Ii studyProtocolIi = (Ii) request.getSession()
+                .getAttribute(Constants.STUDY_PROTOCOL_II);
         
-        if (validateUniqueOtherIdentifier(otherIdentifier, otherIdentifierType)) {
-            String duplicateErrorMessage = otherIdentifier + " already exist.";
-            ServletActionContext.getRequest().setAttribute(DUPLICATE_IDENTIFIER, duplicateErrorMessage);           
-            return DISPLAY_OTHER_IDENTIFIERS; 
+        try {
+            PaRegistry.getStudyIdentifiersService().update(studyProtocolIi, dto, newValue);
+            request.setAttribute(Constants.SUCCESS_MESSAGE, "New identifier value saved");
+        } catch (PAException e) {
+            LOG.error(e, e);
+            request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
-        Ii otherId = secondaryIds.get(rowid - 1);
-        otherId.setExtension(otherIdentifier);
-        otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
-        if (otherIdentifierType != null && otherIdentifierType.equals("1")) {
-            otherId.setIdentifierName(IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME);
-        } else if (otherIdentifierType != null && otherIdentifierType.equals("2")) {
-            otherId.setIdentifierName(IiConverter.DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME);
-        } else {
-            otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
-        }       
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.OTHER_IDENTIFIERS_LIST, secondaryIds);
-        return DISPLAY_OTHER_IDENTIFIERS;
+        return query();
     }
 
     /**

@@ -25,6 +25,7 @@ import gov.nih.nci.pa.service.StratumGroupServiceRemote;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
@@ -690,4 +691,9 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
 	public PendingPatientAccrualsServiceLocal getPendingPatientAccrualsService() {
 		return null;
 	}
+
+    @Override
+    public StudyIdentifiersService getStudyIdentifiersService() {       
+        return mock(StudyIdentifiersService.class);
+    }
 }

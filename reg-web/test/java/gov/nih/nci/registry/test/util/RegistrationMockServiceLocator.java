@@ -52,6 +52,7 @@ import gov.nih.nci.pa.service.StratumGroupServiceLocal;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
@@ -864,4 +865,9 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 	public PendingPatientAccrualsServiceLocal getPendingPatientAccrualsService() {
 		return mock(PendingPatientAccrualsServiceLocal.class);
 	}
+
+    @Override
+    public StudyIdentifiersService getStudyIdentifiersService() {
+        return mock(StudyIdentifiersService.class);
+    }
 }

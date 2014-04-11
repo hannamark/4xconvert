@@ -146,8 +146,6 @@ public class GeneralTrialDesignAction extends AbstractGeneralTrialDesignAction {
         enforceBusinessRules();
         final HttpServletRequest req = ServletActionContext.getRequest();
         
-        validateNctIdentifier();
-        
         if (hasFieldErrors()) {
             req.setAttribute(
                     Constants.FAILURE_MESSAGE,
@@ -225,9 +223,6 @@ public class GeneralTrialDesignAction extends AbstractGeneralTrialDesignAction {
     }
 
     private void enforceBusinessRules() {
-        if (StringUtils.isEmpty(gtdDTO.getLocalProtocolIdentifier())) {
-            addFieldError("gtdDTO.localProtocolIdentifier", getText("Organization Trial ID must be Entered"));
-        }
         if (StringUtils.isEmpty(gtdDTO.getOfficialTitle())) {
             addFieldError("gtdDTO.officialTitle", getText("OfficialTitle must be Entered"));
         }
