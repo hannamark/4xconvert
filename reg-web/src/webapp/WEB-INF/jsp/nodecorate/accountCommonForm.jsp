@@ -140,6 +140,10 @@
    </div>
  </div>
  
+ <div id="adminAccessDiv">
+     <%@ include file="/WEB-INF/jsp/nodecorate/adminUsers.jsp" %>
+ </div>
+ 
  <div class="form-group">
    <label for="registryUserWebDTO.prsOrgName" class="col-xs-4 control-label"><fmt:message key="register.user.prsOrgName"/></label>
    <div class="col-xs-7">

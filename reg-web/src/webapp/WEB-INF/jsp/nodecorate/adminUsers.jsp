@@ -1,17 +1,17 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<table>
 <c:if test="${sessionScope.adminUsers != null && fn:length(sessionScope.adminUsers) > 0 && registryUserWebDTO.affiliatedOrganizationId != null}">
-       <tr>
-        <td colspan="2" class="space">
-            <li><a href="javascript:void(0)" onclick="viewAdmin();"/>View Admins</a></li>
-        </td>
-       </tr>          
+       <div class="form-group">
+       		<div class="col-xs-4"> 
+       			<button type="button" class="btn btn-icon btn-primary" onclick="viewAdmin();"><i class="fa-users"></i>View Admins</button>
+       		</div>
+        </div>         
  </c:if>
  <c:if test="${requestScope.orgSelected != null && fn:length(sessionScope.adminUsers) == 0}">
-     <tr>
-        <td scope="row" class="label"> Request for Admin Access</td>
-        <td><s:checkbox name="registryUserWebDTO.requestAdminAccess" fieldValue="true"/></td>
-    </tr>
+     <div class="form-group"> 
+     	<label class="col-xs-4 control-label">Request for Admin Access</label>
+     	<div class="col-xs-7">
+        <s:checkbox name="registryUserWebDTO.requestAdminAccess" fieldValue="true"/>
+        </div>
+    </div>
  </c:if>
- </table>
  
