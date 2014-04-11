@@ -25,16 +25,13 @@
 </head>
 <body>
 	<!-- main content begins-->
-	<h1>
-		<fmt:message key="importctgov.title" />
-	</h1>
+	<h1 class="heading"><span><fmt:message key="importctgov.title" /></span></h1>
 	<c:set var="topic" scope="request" value="importctgov" />
-	<div class="box" id="filters">
-		<s:form id="importCtGovForm">
+	<s:form id="importCtGovForm" cssClass="form-horizontal" role="form">
 			<s:token name="struts.token.importctgov" />
 			<s:hidden name="searchPerformed"></s:hidden>
 			<s:if test="hasActionErrors()">
-				<div class="error_msg">
+				<div class="alert alert-danger">
 					<s:actionerror />
 				</div>
 			</s:if>
@@ -50,14 +47,14 @@
 
 				<div id="searchResults">
 					<s:if test="study==null">
-						<div align="center">No studies found.</div>
+						<p align="center" class="info">No studies found.</div>
 					</s:if>
 					<s:if test="study!=null">
 						<s:hidden id="nctIdToImport" name="nctIdToImport"
 							value="%{study.nctId}" />
-						<h2>Studies on ClinicalTrials.gov</h2>
+						<h2 class="heading"><span>Studies on ClinicalTrials.gov</span></h2>
 						<s:set name="studies" value="study" scope="request" />
-						<display:table class="data" sort="list" pagesize="10" uid="row"
+						<display:table class="table table-striped table-bordered sortable" sort="list" pagesize="10" uid="row"
 							name="studies" export="false"
 							requestURI="importCtGovquery.action">
 							<display:setProperty name="basic.msg.empty_list"
@@ -74,20 +71,10 @@
 								<b>Intervention(s)</b>: <c:out value="${row.interventions}" />
 							</display:column>
 						</display:table>
-						<div class="actionsrow">
-							<del class="btnwrapper">
-								<ul class="btnrow">
-									<li><s:a href="javascript:void(0)" cssClass="btn"
-											onclick="handleAction('importTrial')">
-											<span class="btn_img"><span class="search">Import
-													Trial From ClinicalTrials.gov</span></span>
-										</s:a> <c:url value="/protected/searchTrial.action" var="cancelUrl" />
-										<s:a action="searchTrial.action" cssClass="btn">
-											<span class="btn_img"><span class="cancel">Cancel</span></span>
-										</s:a></li>
-								</ul>
-							</del>
-						</div>
+						<div class="bottom">
+				    		<button type="button" class="btn btn-icon btn-primary" onclick="handleAction('importTrial')"> <i class="fa-cloud-download"></i>Import Trial From ClinicalTrials.gov </button>
+				    		<button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false"><i class="fa-times-circle"></i><s:a action="searchTrial.action">Cancel</s:a></button>
+  						</div>
 					</s:if>
 				</div>
 			</c:if>
