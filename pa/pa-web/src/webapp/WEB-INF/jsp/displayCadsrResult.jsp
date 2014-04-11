@@ -12,8 +12,6 @@
               function loadTopDiv(value) {
                 var caDsrId = $('caDsrId').value;
                 var selectedRowIdentifier = $('selectedRowIdentifier').value;
-                alert(caDsrId);
-                alert(selectedRowIdentifier);
                 top.window.loadDiv(selectedRowIdentifier, caDsrId);
              }
         </script>
