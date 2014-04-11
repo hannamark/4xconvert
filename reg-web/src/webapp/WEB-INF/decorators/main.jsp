@@ -26,7 +26,6 @@
         </script>
     </head>
     <body>
-        <a href="#content" id="navskip">Skip to Page Content</a> 
         <c:choose>
 	        <c:when test="${sessionScope.disclaimerAccepted}">
 	        	<div id="wrap">

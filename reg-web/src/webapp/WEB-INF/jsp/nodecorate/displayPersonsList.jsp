@@ -13,9 +13,7 @@
         <display:column escapeXml="true" title="Email" property="email"  sortable="false"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Address" property="address"  sortable="false"  headerClass="sortable"  headerScope="col"/>
         <display:column title="Action" class="action" sortable="false"  headerScope="col">
-            <a href="javascript:void(0)" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.lastName)}' + ',' + '${func:escapeJavaScript(row.firstName)}')">
-                <span class="btn_img"><span class="confirm">Select</span></span>
-            </a>
+            <button type="button" class="btn btn-icon btn-primary" onclick="submitform('${row.id}','${func:escapeJavaScript(row.lastName)}' + ',' + '${func:escapeJavaScript(row.firstName)}')"> <i class="fa-check"></i>Select</button>
         </display:column>
     </display:table>
 </s:if>

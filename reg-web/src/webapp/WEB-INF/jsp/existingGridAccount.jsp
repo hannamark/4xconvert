@@ -1,21 +1,15 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-        <title>Register with existing NIH account</title>
-        <s:head/>
-    </head>
-
-    <SCRIPT LANGUAGE="JavaScript">
+<%@ include file="/WEB-INF/jsp/nodecorate/accountScripts.jsp" %>
+<SCRIPT LANGUAGE="JavaScript">
         function handleAction(){
-            document.forms[0].page.value = "Submit";
-            document.forms[0].action="registerUserregisterExistingGridAccount.action";
+            document.existingAccount.page.value = "Submit";
+            document.existingAccount.action="registerUserregisterExistingGridAccount.action";
             if (validate()) {
-                document.forms[0].submit()
+                document.existingAccount.submit()
              }
         }
         function validate() {
-            var box = document.forms[0].username;
+            var box = document.existingAccount.username;
             
             re = /^[0-9a-zA-Z\_\.\-]*$/;
 
@@ -25,56 +19,62 @@
             }
             return true;
         }
-    </SCRIPT>
-    <body>
-        <c:set var="topic" scope="request" value="register"/>
-        <h1>Register for a CTRP Account</h1>
-        <div class="box">
-            <s:form name="existingAccount" method="POST">
-                <s:actionerror/>
+</SCRIPT>
+
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<!-- B egin page content -->
+ <div class="row">
+   <%@ include file="/WEB-INF/jsp/nodecorate/loginInfo.jsp" %>
+   <div class="col-xs-6">
+     <ul class="nav nav-tabs">
+       <li><a href="<s:url action='protected/disClaimerAction.action?actionName=searchTrial.action' />" ><i class="fa-sign-in"></i>Sign In</a></li>
+       <li class="active"><a href="<s:url action='registerUser.action' />" ><i class="fa-pencil-square-o"></i>Sign Up</a></li>
+       <li><a href="#forgot-password" data-toggle="tab"><i class="fa-key"></i>Forgot Password</a></li>
+     </ul>
+     <div class="tab-content">
+       <div class="tab-pane fade" id="sign-in">
+       </div>
+       <div class="tab-pane fade in active" id="sign-up">
+             <s:form name="existingAccount" id="existingAccount" method="POST" cssClass="form-horizontal" role="form" >
+             <s:if test="hasActionErrors()">
+             	<div class="alert alert-danger">
+                	<s:actionerror/>
+               	</div>
+             </s:if>
                 <s:hidden name="page" />
-                <table style="margin: 0 auto">
-                    <tr>
-                        <td class="space" colspan="2">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td class="label" scope="row">
-                            <label for="username"><fmt:message key="register.user.username"/></label>
-                        </td>
-                        <td class="value"><s:textfield name="userWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" id="username"/></td>
-                    </tr>
-                    <tr>
-                        <td class="label" scope="row">
-                            <label for="password"> <fmt:message key="register.user.password"/></label>
-                        </td>
-                        <td class="value">
-                            <s:password  name="userWebDTO.password"  showPassword="true" maxlength="100" size="35"  cssStyle="width:200px"  id="password"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <s:if test="%{identityProviders.size == 1}">
-                            <s:iterator var="idp" value="identityProviders">
-                                <s:hidden name="selectedIdentityProvider"/>
-                            </s:iterator>
-                        </s:if>
-                        <s:else>
-                            <td class="label" scope="row"><label for="selectedIdentityProvider">Account Source:</label></td>
-                            <td class="value">
-                                <s:select name="selectedIdentityProvider" list="identityProviders" listKey="value" listValue="key" id="selectedIdentityProvider"/>
-                            </td>
-                        </s:else>
-                    </tr>
-                </table>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="login">Next</span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
-                </div>
-            </s:form>
-        </div>
-    </body>
-</html>
+                 <div class="form-group">
+                    <label for="username" class="col-xs-4 control-label"><fmt:message key="register.user.username"/></label>
+                    <div class="col-xs-7"><s:textfield name="userWebDTO.username" maxlength="15" size="20" cssClass="form-control" id="username"/></div>
+                 </div>
+                 <div class="form-group">
+                    <label for="password" class="col-xs-4 control-label"><fmt:message key="register.user.password"/></label>
+                    <div class="col-xs-7"><s:password  name="userWebDTO.password"  showPassword="true" maxlength="100" size="35"   cssClass="form-control" id="password"/></div>
+				</div>
+				<s:if test="%{identityProviders.size == 1}">
+                    <s:iterator var="idp" value="identityProviders">
+                        <s:hidden name="selectedIdentityProvider"/>
+                    </s:iterator>
+                </s:if>
+                <s:else>
+                 <div class="form-group">
+					<label for="selectedIdentityProvider" class="col-xs-4 control-label">Account Source:</label></td>
+                    <div class="col-xs-7"><s:select name="selectedIdentityProvider" list="identityProviders" listKey="value" listValue="key" id="selectedIdentityProvider" cssClass="form-control"/></div>
+                 </div>          
+               </s:else>
+               <div class="bottom">
+	              <button type="button" class="btn btn-icon-alt btn-primary" onClick="handleAction();">Next<i class="fa-arrow-circle-right"></i></button>
+               </div>
+         </s:form>
+       </div>
+       <div class="tab-pane fade" id="forgot-password">
+         <div class="tab-inside">
+           <h4 class="heading"><span>Resetting Your Password</span></h4>
+           <p>If you forgot your password, please visit the NCI Password Station at <a href="mailto:http://password.nci.nih.gov">http://password.nci.nih.gov</a> and follow the instructions there.</p>
+           <p>If you need additional assistance or have questions, you can email NCI CBIIT Application Support at <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a>,
+             or call <strong>240-276-5541</strong> or toll free <strong>888-478-4423</strong>.</p>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>

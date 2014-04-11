@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
-<c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
+<c:url value="/orgPoplookuporgs.action" var="lookupOrgUrl"/>
 <c:url value="/registry/ajaxUsersviewAdminUsers.action" var="displayUrl"/>
 
 <script type="text/javascript" language="javascript">

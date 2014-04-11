@@ -18,9 +18,7 @@
         <display:column escapeXml="true" title="Country" property="country"  sortable="false"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Zip" property="zip"  sortable="false"  headerClass="sortable"  headerScope="col"/>
         <display:column title="Action" class="action" sortable="false">
-            <a href="javascript:void(0)" class="btn" onclick="submitform('${row.id}','${func:escapeJavaScript(row.name)}','${func:escapeJavaScript(row.p30GrantSerialNumber)}')">
-                <span class="btn_img"><span class="confirm">Select</span></span>
-            </a>
+            <button type="button" class="btn btn-icon btn-primary" onclick="submitform('${row.id}','${func:escapeJavaScript(row.name)}','${func:escapeJavaScript(row.p30GrantSerialNumber)}')"> <i class="fa-check"></i>Select</button>
         </display:column>
     </display:table>
 </s:if>

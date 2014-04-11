@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
@@ -72,19 +72,17 @@
         </script>
     </head> 
     <body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">
-        <div class="box">
-            <s:form id="poOrganizations" name="poOrganizations" >
-                <s:label name="orgErrorMessage"/>
-                <div id="searchOrgJsp">
-                	<jsp:include page="/WEB-INF/jsp/nodecorate/searchOrgForm.jsp"/>
-                </div>
-                <div id="createOrgJsp" style="display:none">
-                	<jsp:include page="/WEB-INF/jsp/nodecorate/createOrg.jsp"/>
-                </div>
-                <div id="getOrgs" align="center">	
-                	<jsp:include page="/WEB-INF/jsp/nodecorate/displayAffOrgList.jsp"/>        	      
-                </div>
-            </s:form>
-        </div>
+        <s:form id="poOrganizations" name="poOrganizations" cssClass="form-horizontal" role="form">
+            <s:label name="orgErrorMessage"/>
+            <div id="searchOrgJsp">
+            	<jsp:include page="/WEB-INF/jsp/nodecorate/searchOrgForm.jsp"/>
+            </div>
+            <div id="createOrgJsp" style="display:none">
+            	<jsp:include page="/WEB-INF/jsp/nodecorate/createOrg.jsp"/>
+            </div>
+            <div id="getOrgs" align="center">	
+            	<jsp:include page="/WEB-INF/jsp/nodecorate/displayAffOrgList.jsp"/>        	      
+            </div>
+        </s:form>
     </body>
 </html>

@@ -128,7 +128,7 @@
    <label for="registryUserWebDTO.affiliateOrg" class="col-xs-4 control-label"><fmt:message key="register.user.affiliateOrg"/> <span class="required">*</span></label>
    <div class="col-xs-5">
    	 <s:hidden name="registryUserWebDTO.affiliatedOrganizationId" id="registryUserWebDTO.affiliatedOrganizationId"/>
-     <s:textfield type="text" cssClass="form-control" id="registryUserWebDTO.affiliateOrg" readonly="true" />
+     <s:textfield type="text" cssClass="form-control" name="registryUserWebDTO.affiliateOrg" id="registryUserWebDTO.affiliateOrg" readonly="true" />
      <span class="alert-danger">
             <s:fielderror>
                 <s:param>registryUserWebDTO.affiliateOrg</s:param>
