@@ -51,7 +51,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
        ) AS center_total,
 
@@ -59,7 +59,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date < $P{Calculated_Start_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
        ) AS center_total_before,
 
@@ -67,7 +67,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
        ) AS affiliate_total,
 
@@ -75,7 +75,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <  $P{Calculated_Start_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
        ) AS affiliate_total_before,
 
@@ -83,7 +83,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) NOT IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) NOT IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
            AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total,
@@ -92,7 +92,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date < $P{Calculated_Start_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_org_id) NOT IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) NOT IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
            AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total_before,

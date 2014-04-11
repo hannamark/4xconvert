@@ -19,20 +19,20 @@ System.getProperty( "os.name" ).toLowerCase().indexOf( "win" ) >= 0
 	</parameter>
 	<parameter name="IMAGES_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{OS_WINDOWS}.booleanValue() ?
-"C:\\Users\\ctrp\\dw-3.10-code\\reg-web\\src\\webapp\\images\\" :
+"C:\\Users\\ctrp\\code\\reg-web\\src\\webapp\\images\\" :
 "repo:"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT COALESCE(famorg.family_name, 'Other') AS family_name, sps.org_name AS organization_name, 'detailed accrual' AS accrual_type,
  ( SELECT COUNT(*)
    FROM dw_study_site_accrual_details ssad
-   WHERE ssad.site_org_id = sps.internal_system_id
+   WHERE ssad.site_id = sps.internal_system_id
      AND ssad.status = 'ACTIVE'
      AND registration_date <= $P{Start_Date}
  ) AS start_count,
  ( SELECT COUNT(*)
    FROM dw_study_site_accrual_details ssad
-   WHERE ssad.site_org_id = sps.internal_system_id
+   WHERE ssad.site_id = sps.internal_system_id
      AND ssad.status = 'ACTIVE'
      AND registration_date <= $P{End_Date}
  ) AS end_count
