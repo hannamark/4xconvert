@@ -223,10 +223,14 @@ public class TrialIndideAction extends AbstractMultiObjectDeleteAction {
         if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
             studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(
                 studyIndldeWebDTO.getNihInstHolder()));
+        } else {
+            studyIndldeDTO.setNihInstHolderCode(CdConverter.convertStringToCd(null));
         }
         if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
             studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(
                 studyIndldeWebDTO.getNciDivProgHolder()));
+        } else {
+            studyIndldeDTO.setNciDivProgHolderCode(CdConverter.convertStringToCd(null));
         }
         studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd(studyIndldeWebDTO.getIndldeType()));
         studyIndldeDTO.setExemptIndicator(BlConverter.convertToBl(studyIndldeWebDTO.getExemptIndicator()));
@@ -290,10 +294,14 @@ public class TrialIndideAction extends AbstractMultiObjectDeleteAction {
           if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NIH.getCode().toString())) {
           addFieldErrorIfEmpty(studyIndldeWebDTO.getNihInstHolder(), "studyIndldeWebDTO.nihInstHolder",
                   getText("error.trialIndide.nihInstHolder"));
+          } else {
+              studyIndldeWebDTO.setNihInstHolder(null);
           }
           if (studyIndldeWebDTO.getHolderType().equalsIgnoreCase(HolderTypeCode.NCI.getCode().toString())) {
               addFieldErrorIfEmpty(studyIndldeWebDTO.getNciDivProgHolder(), "studyIndldeWebDTO.nciDivProgHolder",
                       getText("error.trialIndide.nciDivProgHolder"));
+          } else {
+              studyIndldeWebDTO.setNciDivProgHolder(null);
           }
       }
       if (BooleanUtils.isFalse(studyIndldeWebDTO.getExemptIndicator())) {

@@ -226,7 +226,7 @@ public class StudyIndIdeStageConverterTest extends AbstractConverterTest<StudyIn
 
         assertEquals(HolderTypeCode.NIH, bo.getHolderTypeCode());
         assertEquals(NihInstituteCode.NCMHD, bo.getNihInstHolderCode());
-        assertEquals(NciDivisionProgramCode.CCR, bo.getNciDivPrgHolderCode());
+        assertNull(bo.getNciDivPrgHolderCode());
         assertFalse(bo.getExemptIndicator());
     }
 

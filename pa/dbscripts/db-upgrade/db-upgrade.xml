@@ -1545,4 +1545,8 @@
         <comment>Change the submitter for imported trials to clinicaltrials.gov</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6967.sql"/>
      </changeSet>
+     <changeSet id="PO-6852" author="walterd">
+        <comment>fix rv_active_milestone and rv_other_milestone</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6852.sql"/>
+     </changeSet>
 </databaseChangeLog>

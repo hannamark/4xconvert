@@ -160,13 +160,17 @@ public class StudyIndldeConverter extends AbstractConverter<StudyIndldeDTO, Stud
     }
 
     private void convertHolderTypeToDomain(StudyIndldeDTO siDTO, StudyIndlde si) {
-        if (siDTO.getHolderTypeCode() != null && siDTO.getHolderTypeCode().getCode().equals("NIH")) {
-            si.setNihInstHolderCode(NihInstituteCode.getByCode(siDTO.getNihInstHolderCode().getCode()));
-        }
-        if (siDTO.getHolderTypeCode() != null && siDTO.getHolderTypeCode().getCode().equals("NCI")) {
-            si.setNciDivProgHolderCode(NciDivisionProgramCode.getByCode(siDTO.getNciDivProgHolderCode().getCode()));
-        }
         if (siDTO.getHolderTypeCode() != null) {
+            if (siDTO.getHolderTypeCode().getCode().equals("NIH")) {
+                si.setNihInstHolderCode(NihInstituteCode.getByCode(siDTO.getNihInstHolderCode().getCode()));
+            } else {
+                si.setNihInstHolderCode(null);
+            }
+            if (siDTO.getHolderTypeCode().getCode().equals("NCI")) {
+                si.setNciDivProgHolderCode(NciDivisionProgramCode.getByCode(siDTO.getNciDivProgHolderCode().getCode()));
+            } else {
+                si.setNciDivProgHolderCode(null);
+            }
             si.setHolderTypeCode(HolderTypeCode.getByCode(siDTO.getHolderTypeCode().getCode()));
         }
     }

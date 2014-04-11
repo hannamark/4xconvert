@@ -99,17 +99,20 @@ public class StudyIndIdeStageConverter extends AbstractConverter<StudyIndIdeStag
     }
 
     private void convertHolderTypeToDomain(StudyIndIdeStageDTO studyIndIdeStageDTO, StudyIndIdeStage studyIndIdeStage) {
-        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())
-                && studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NIH")) {
-            studyIndIdeStage.setNihInstHolderCode(NihInstituteCode.getByCode(
-                    studyIndIdeStageDTO.getNihInstHolderCode().getCode()));
-        }
-        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())
-                && studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NCI")) {
-            studyIndIdeStage.setNciDivPrgHolderCode(NciDivisionProgramCode.getByCode(
-                    studyIndIdeStageDTO.getNciDivProgHolderCode().getCode()));
-        }
         if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())) {
+            if (studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NIH")) {
+                studyIndIdeStage.setNihInstHolderCode(NihInstituteCode.getByCode(
+                        studyIndIdeStageDTO.getNihInstHolderCode().getCode()));
+            } else {
+                studyIndIdeStage.setNihInstHolderCode(null);
+            }
+            if (studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NCI")) {
+                studyIndIdeStage.setNciDivPrgHolderCode(NciDivisionProgramCode.getByCode(
+                        studyIndIdeStageDTO.getNciDivProgHolderCode().getCode()));
+            } else {
+                studyIndIdeStage.setNciDivPrgHolderCode(null);
+            }
+            
             studyIndIdeStage.setHolderTypeCode(HolderTypeCode.getByCode(
                     studyIndIdeStageDTO.getHolderTypeCode().getCode()));
         }
