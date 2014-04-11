@@ -1,10 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+        <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
+        <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
         
         <script type="text/javascript" language="javascript">
             function submitform(persid, name) {

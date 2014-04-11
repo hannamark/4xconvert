@@ -10,7 +10,7 @@
       jQuery(function() {
       	//TODO : Enable this function after bringing in jquery-ui*.js support for ajax calls
       	
-          /*jQuery("#serialNumber").autocomplete({delay: 250,
+          jQuery("#serialNumber").autocomplete({delay: 250,
                 source: function(req, responseFn) {
                   var instCode = jQuery("#nihInstitutionCode").val();
                   if ('CA' != instCode) {
@@ -26,7 +26,7 @@
                          }));
                   });
               }
-          });*/
+          });
       });
 
       function countLeft(field, count, max) {

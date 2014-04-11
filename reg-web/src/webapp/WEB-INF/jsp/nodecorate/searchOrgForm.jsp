@@ -23,18 +23,18 @@ function formReset(){
 <div class="form-group">
     <label for="orgNameSearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.name"/></label>
     <div class="col-xs-3">
-        <s:textfield id="orgNameSearch" name="orgSearchCriteria.orgName" maxlength="200" size="100" cssClass="form-control" />
+        <s:textfield id="orgNameSearch" name="orgSearchCriteria.orgName" maxlength="200" cssClass="form-control" />
     </div>
    	<label for="orgCitySearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.city"/></label>
     <div class="col-xs-3">
-        <s:textfield id="orgCitySearch" name="orgSearchCriteria.orgCity" maxlength="200" size="100" cssClass="form-control" />
+        <s:textfield id="orgCitySearch" name="orgSearchCriteria.orgCity" maxlength="200" cssClass="form-control" />
     </div>
 </div>
 
 <div class="form-group">
     <label for="orgFamilyNameSearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.familyName"/></label>
     <div class="col-xs-3">
-        <s:textfield id="orgFamilyNameSearch" name="orgSearchCriteria.familyName" maxlength="200" size="100" cssClass="form-control" />
+        <s:textfield id="orgFamilyNameSearch" name="orgSearchCriteria.familyName" maxlength="200" cssClass="form-control" />
     </div>
    	<label for="orgCountrySearch" class="col-xs-3 control-label"><fmt:message key="popUpOrg.country"/></label>
     <div class="col-xs-3">
