@@ -19,8 +19,9 @@
                 <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the current stage or state of a clinical trial or study relative to other stages and its ability to enroll participants/patients."  data-placement="top" data-trigger="hover"></i>
             </div>
             <div class="form-group">
+            	  <label class="col-xs-4 control-label">&nbsp;</label>
                   <div class="col-xs-4">
-                  <%@ include file="/WEB-INF/jsp/nodecorate/trialStatusDefinitions.jsp"%>
+                  <em><%@ include file="/WEB-INF/jsp/nodecorate/trialStatusDefinitions.jsp"%></em>
                   </div>
             </div>
             <div class="form-group">

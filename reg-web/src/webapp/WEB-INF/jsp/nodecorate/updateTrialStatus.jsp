@@ -30,13 +30,11 @@
     <body>
         <reg-web:failureMessage/>
         <reg-web:actionErrorsAndMessages />
-        <s:form name="updateTrialStatusForm" id="updateTrialStatusForm" action="updateTrialStatuspopupupdate">
+        <s:form name="updateTrialStatusForm" id="updateTrialStatusForm" action="updateTrialStatuspopupupdate"  cssClass="form-horizontal" role="form">
             <s:token/>
             <s:hidden name="trialDTO.identifier"/>
             <s:hidden name="studyProtocolId"/>
-            <table class="form">
-                <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
-            </table>    
+            <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
             <reg-web:saveAndCloseBtn/>        
         </s:form>
     </body>

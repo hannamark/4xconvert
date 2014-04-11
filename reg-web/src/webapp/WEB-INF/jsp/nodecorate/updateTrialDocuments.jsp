@@ -1,28 +1,14 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<table class="form">
-  <tr>
-    <td colspan="2" class="space">&nbsp;</td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <fmt:message key="update.trial.docInstructionalText"/>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a>
-    </td>
-  </tr>
-  <tr>
-    <td scope="row" class="label">
+<p><fmt:message key="update.trial.docInstructionalText"/></p>
+<p class="mb20"><a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a></p>
+<div class="form-group">
       <reg-web:displayTooltip tooltip="tooltip.protocol_document">
-        <label for="updateTrial_protocolDoc"><fmt:message key="update.trial.protocolDocument"/></label>
+        <label for="updateTrial_protocolDoc" class="col-xs-4 control-label"><fmt:message key="update.trial.protocolDocument"/></label>
       </reg-web:displayTooltip>
-    </td>
-    <td class="value">
+      <div class="col-xs-4">
       <s:if test="%{#session.protocolDoc.typeCode.equals('Protocol Document')}">
         <s:property value="%{#session.protocolDoc.fileName}"/>
-        <input type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"/>
+        <button type="button" class="btn btn-icon btn-default"  onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
       </s:if>
       <s:else>
         <s:file name="protocolDoc" value="true" cssStyle="width:270px"/>
@@ -32,18 +18,16 @@
           </s:fielderror>
         </span>
       </s:else>
-    </td>
-  </tr>
-  <tr>
-    <td scope="row" class="label">
+      </div>
+</div>
+<div class="form-group">
       <reg-web:displayTooltip tooltip="tooltip.irb_approval">
-        <label for="updateTrial_irbApproval"><fmt:message key="update.trial.irbApproval"/></label>
+        <label for="updateTrial_irbApproval" class="col-xs-4 control-label"><fmt:message key="update.trial.irbApproval" /></label>
       </reg-web:displayTooltip>
-    </td>
-    <td class="value">
+ 	<div class="col-xs-4">
       <s:if test="%{#session.irbApprovalDoc.typeCode.equals('IRB Approval Document')}">
         <s:property value="%{#session.irbApprovalDoc.fileName}"/>
-        <input type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.irbApprovalDoc.typeCode}'/>')"/>
+        <button type="button" class="btn btn-icon btn-default"  onclick="deleteDocument('<s:property value='%{#session.irbApprovalDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
       </s:if>
       <s:else>
         <s:file name="irbApproval" cssStyle="width:270px"/>
@@ -53,18 +37,16 @@
           </s:fielderror>
         </span>
       </s:else>
-    </td>
-  </tr>
-  <tr>
-    <td scope="row" class="label">
+	</div>
+</div>
+<div class="form-group">
       <reg-web:displayTooltip tooltip="tooltip.list_of_participating_sites">
-        <label for="updateTrial_participatingSites"><fmt:message key="update.trial.participatingSites"/></label>
+        <label for="updateTrial_participatingSites" class="col-xs-4 control-label"><fmt:message key="update.trial.participatingSites"/></label>
       </reg-web:displayTooltip>
-    </td>
-    <td class="value">
+	<div class="col-xs-4">
       <s:if test="%{#session.participatingSitesDoc.typeCode.equals('Participating sites')}">
         <s:property value="%{#session.participatingSitesDoc.fileName}"/>
-        <input type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.participatingSitesDoc.typeCode}'/>')"/>
+        <button type="button" class="btn btn-icon btn-default"  onclick="deleteDocument('<s:property value='%{#session.participatingSitesDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
       </s:if>
       <s:else>
         <s:file name="participatingSites" cssStyle="width:270px"/>
@@ -74,18 +56,16 @@
           </s:fielderror>
         </span>
       </s:else>
-    </td>
-  </tr>
-  <tr>
-  <td scope="row" class="label">
+   </div>
+</div>
+<div class="form-group">
     <reg-web:displayTooltip tooltip="tooltip.informed_consent_document">
-      <label for="updateTrial_informedConsentDocument"><fmt:message key="update.trial.informedConsent"/></label>
+      <label for="updateTrial_informedConsentDocument" class="col-xs-4 control-label"><fmt:message key="update.trial.informedConsent"/></label>
     </reg-web:displayTooltip>
-  </td>
-  <td class="value">
+  <div class="col-xs-4">
     <s:if test="%{#session.informedConsentDoc.typeCode.equals('Informed Consent Document')}">
       <s:property value="%{#session.informedConsentDoc.fileName}"/>
-      <input type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.informedConsentDoc.typeCode}'/>')"/>
+      <button type="button" class="btn btn-icon btn-default"  onclick="deleteDocument('<s:property value='%{#session.informedConsentDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
     </s:if>
     <s:else>
       <s:file name="informedConsentDocument" cssStyle="width:270px"/>
@@ -95,55 +75,47 @@
           </s:fielderror>
         </span>
       </s:else>
-    </td>
-  </tr>
-  <c:set var="hasOtherDocs" scope="request" value="${not empty sessionScope.otherDoc}"/>
-  <c:forEach items="${sessionScope.otherDoc}" var="doc" varStatus="varStatus">
-  <tr>
-    <td scope="row" class="label">
+</div>
+</div>
+<c:set var="hasOtherDocs" scope="request" value="${not empty sessionScope.otherDoc}"/>
+<c:forEach items="${sessionScope.otherDoc}" var="doc" varStatus="varStatus">
+	<div class="form-group">
       <reg-web:displayTooltip tooltip="tooltip.other">
-        <label for="updateTrial_otherDocument"><fmt:message key="update.trial.otherDocument"/></label>
+        <label for="updateTrial_otherDocument" class="col-xs-4 control-label"><fmt:message key="update.trial.otherDocument"/></label>
       </reg-web:displayTooltip>
-    </td>
-    <td class="value">   
-        <c:out value="${doc.fileName}"/>
-        <input type="button" value="Remove" onclick="deleteDocument('Other',${varStatus.index})"/>      
-    </td>
-  </tr>
-  </c:forEach>
+    <div class="col-xs-4">
+      <c:out value="${doc.fileName}"/>
+      <button type="button" class="btn btn-icon btn-default"  onclick="deleteDocument('Other',${varStatus.index})"><i class="fa-minus"></i>Remove</button>
+           
+	</div>
+	</div>
+</c:forEach>
   
-  <c:set var="addMoreRendered" value="${false}" scope="page"/>
-  <c:forEach begin="0" end="50" varStatus="varStatus">
-  <c:set var="fieldErrorKey" scope="page" value="trialDTO.otherDocumentFileName[${varStatus.index}]"/>
-  <c:set var="hasFieldError" scope="page" value="${not empty request.action.fieldErrors[fieldErrorKey]}"/>
-  <c:set var="hideUploadRow" value="${(!hasFieldError && (hasOtherDocs || varStatus.index>0))}"/>
-  
-  <tr style="${hideUploadRow?'display:none':''}" id="otherUploadRow_${varStatus.index}">
-    <td scope="row" class="label">
+<c:set var="addMoreRendered" value="${false}" scope="page"/>
+<c:forEach begin="0" end="50" varStatus="varStatus">
+<c:set var="fieldErrorKey" scope="page" value="trialDTO.otherDocumentFileName[${varStatus.index}]"/>
+<c:set var="hasFieldError" scope="page" value="${not empty request.action.fieldErrors[fieldErrorKey]}"/>
+<c:set var="hideUploadRow" value="${(!hasFieldError && (hasOtherDocs || varStatus.index>0))}"/>
+
+<div style="${hideUploadRow?'display:none':''}" class="form-group" id="otherUploadRow_${varStatus.index}">
       <reg-web:displayTooltip tooltip="tooltip.other">
-        <label for="updateTrial_otherDocument_${varStatus.index}"><fmt:message key="update.trial.otherDocument"/></label>
+        <label for="updateTrial_otherDocument_${varStatus.index}" class="col-xs-4 control-label"><fmt:message key="update.trial.otherDocument"/></label>
       </reg-web:displayTooltip>
-    </td>
-    <td class="value">
+    <div class="col-xs-4">
         <input id="updateTrial_otherDocument_${varStatus.index}" type="file" style="width:270px" value="" name="otherDocument">
         <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>
           </s:fielderror>
         </span>        
-    </td>
-  </tr>
-  <tr style="${(hideUploadRow && !addMoreRendered)?'':'display:none'}" id="addMoreRow_${varStatus.index}">
-    <td></td>
-    <td>
-    	<br/><br/>
-    	  <button type="button" id="grantbtnid" class="btn btn-icon btn-default" 
-           onclick="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
-           onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();">
-           <i class="fa-plus"></i>Add more...</button>
-    </td>
-  </tr> 
-     
-  <c:set var="addMoreRendered" value="${addMoreRendered || (hideUploadRow && !addMoreRendered)}" scope="page"/>
-  </c:forEach>  
-</table>
+	</div>
+</div>
+<div style="${(hideUploadRow && !addMoreRendered)?'':'display:none'}" class="form-group" id="addMoreRow_${varStatus.index}">
+ <label class="col-xs-4 control-label">&nbsp;</label>
+ 	  <button type="button" id="grantbtnid" class="btn btn-icon btn-default" 
+        onclick="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
+        onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();">
+        <i class="fa-plus"></i>Add more...</button>
+</div>
+<c:set var="addMoreRendered" value="${addMoreRendered || (hideUploadRow && !addMoreRendered)}" scope="page"/>
+</c:forEach>  

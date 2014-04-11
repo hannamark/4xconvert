@@ -205,6 +205,7 @@
                 <s:hidden name="page" />
                 <s:hidden name="uuidhidden"/>
                 <p>Use this form to update trial information. You can not change the information in certain fields, including the trial title.</p>
+                <button type="button" class="expandcollapse btn btn-icon btn-sm btn-default" state="0"><i class="fa-minus-circle"></i> Collapse All</button>
                 <div class="accordion-group">
                 <%@ include file="/WEB-INF/jsp/nodecorate/updateIdentifiersSection.jsp" %>
                 <%@ include file="/WEB-INF/jsp/nodecorate/trialOtherIdsSection.jsp" %>
@@ -224,9 +225,10 @@
                     <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
                 </div>
                 </div>
-                <p>
-                    Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.
-                </p>
+                <br/>
+                <p align="center" class="info">
+                    <b>Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.</b>
+                </p>                
                 <div class="align-center button-row">
 			      <button type="button" class="btn btn-icon btn-primary" onclick="reviewProtocolUpdate()"><i class="fa-floppy-o"></i>Review Trial</button>
 			      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>

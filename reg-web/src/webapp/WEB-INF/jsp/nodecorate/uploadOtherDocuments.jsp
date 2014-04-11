@@ -5,7 +5,7 @@
 	      <label for="deleteOtherDoc_${varStatus.index}" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherDocument"/></label>
 	    <div class="col-xs-4">
 	      <c:out value="${doc.fileName}"/>
-	      <input id="deleteOtherDoc_${varStatus.index}" type="button" value="Remove" onclick="deleteDocument('<c:out value="${doc.fileName}"/>')"/>
+	      <button type="button" class="btn btn-icon btn-default"  id="deleteOtherDoc_${varStatus.index}"  onclick="deleteDocument('<c:out value="${doc.fileName}"/>')"><i class="fa-minus"></i>Remove</button>
 	    </div>
 	  </div> 
   </c:forEach>
@@ -32,10 +32,10 @@
 	  <div class="form-group" style="${(hideUploadRow && !addMoreRendered)?'':'display:none'}" id="addMoreRow_${varStatus.index}">
 	    <label class="col-xs-4 control-label">&nbsp;</label>
 	    <div class="col-xs-4">
-	      <a href="javascript:void(0);" 
-	           onclick="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
-	           onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
-	           >Add more...</a>
+	           <button type="button" class="btn btn-icon btn-default" 
+       				onclick="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
+	           		onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
+        			<i class="fa-plus"></i>Add more...</button>
 	    </div>
 	  </div>  
 	     
