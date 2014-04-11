@@ -113,7 +113,7 @@
     </head> 
     <body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">
         <div class="box">
-            <s:form id="poOrganizations" name="poOrganizations" >
+            <s:form id="poOrganizations" name="poOrganizations" cssClass="form-horizontal" role="form">
                 <div id="searchPersJsp">
                     <jsp:include page="/WEB-INF/jsp/nodecorate/searchPerson.jsp"/>
                 </div>

@@ -73,7 +73,7 @@
         </script>
     </head> 
    <body>
-          <s:form id="poOrganizations" name="poOrganizations" >
+          <s:form id="poOrganizations" name="poOrganizations" cssClass="form-horizontal" role="form">
               <s:label name="orgErrorMessage"/>
               <div id="searchOrgJsp">
               	<jsp:include page="/WEB-INF/jsp/nodecorate/searchOrgForm.jsp"/>

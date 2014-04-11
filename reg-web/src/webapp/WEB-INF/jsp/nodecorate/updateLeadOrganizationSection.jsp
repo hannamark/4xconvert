@@ -15,9 +15,13 @@
         <s:property value="trialDTO.leadOrganizationName"/>
     </div>
 </div>
+<div class="form-group">
 	<label class="col-xs-4 control-label">
         <fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
     <div class="col-xs-4">
         <s:property value="trialDTO.piName"/>
     </div>
+</div>
+</div>
+</div>
 </div>

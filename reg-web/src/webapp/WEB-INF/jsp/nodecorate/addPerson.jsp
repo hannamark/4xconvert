@@ -14,71 +14,61 @@
       }  
       
    </script>
+<div class="container">
 <h2>Add Person</h2>
 <s:set name="usStates" value="@gov.nih.nci.pa.enums.USStateCode@getAbbreviatedNames()" />
-<br><p><b><i>Please provide professional contact information only.</i></b></p>
-<table  class="form">  
-   <tr>             
-        <td scope="row" class="label"><label for="poOrganizations_firstName">First Name :</label><span class="required">*</span></td><td><s:textfield name="firstName"  maxlength="50" size="100"  cssStyle="width:200px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_lastName">Last Name :</label><span class="required">*</span></td><td><s:textfield name="lastName"  maxlength="50" size="100"  cssStyle="width:200px" /></td>
-   </tr>
-    <tr>   
-        <td scope="row" class="label"><label for="poOrganizations_preFix">Prefix :</label></td><td><s:textfield name="preFix"  maxlength="10" size="100"  cssStyle="width:200px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_middleName">Middle Name :</label></td><td><s:textfield name="middleName"  maxlength="50" size="100"  cssStyle="width:200px" /></td>
-    </tr>   
-    <tr>   
-        <td scope="row" class="label"><label for="poOrganizations_suffix">Suffix :</label></td><td><s:textfield name="suffix"  maxlength="10" size="100"  cssStyle="width:200px" /></td>
-   <td scope="row" class="label"><label for="poOrganizations_country">Country :</label><span class="required">*</span></td><td>
+<p align="center" class="info">Please provide professional contact information only.</p><br/>
+<div class="form-group">
+   <label for="poOrganizations_firstName" class="col-xs-3 control-label">First Name :<span class="required">*</span></label><div class="col-xs-3"><s:textfield name="firstName"  maxlength="50" size="100"  cssClass="form-control" /></div>
+   <label for="poOrganizations_lastName" class="col-xs-3 control-label">Last Name :<span class="required">*</span></label><div class="col-xs-3"><s:textfield name="lastName"  maxlength="50" size="100"  cssClass="form-control" /></div>
+</div>
+<div class="form-group">  
+   <label for="poOrganizations_preFix" class="col-xs-3 control-label">Prefix :</label><div class="col-xs-3"><s:textfield name="preFix"  maxlength="10" size="100"  cssClass="form-control" /></div>
+   <label for="poOrganizations_middleName" class="col-xs-3 control-label">Middle Name :</label><div class="col-xs-3"><s:textfield name="middleName"  maxlength="50" size="100"  cssClass="form-control" /></div>
+</div>
+<div class="form-group">  
+   <label for="poOrganizations_suffix" class="col-xs-3 control-label">Suffix :</label><div class="col-xs-3"><s:textfield name="suffix"  maxlength="10" size="100"  cssClass="form-control" /></div>
+   <label for="poOrganizations_country" class="col-xs-3 control-label">Country :<span class="required">*</span></label><div class="col-xs-3">
             <s:select
              name="country" 
              list="countryList"  
-             listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" onblur="alertMsgState(this);" cssStyle="width:206px" onclick="alertMsgState(this);" />
-        </td>   
-       
-    </tr>   
-   <tr>
-        <td scope="row" class="label"><label for="poOrganizations_streetAddress">Street Address :</label><span class="required">*</span></td><td><s:textfield name="streetAddress"  maxlength="254" size="100"  cssStyle="width:200px"  /></td>
-        <td scope="row" class="label"><label for="poOrganizations_city">City :</label><span class="required">*</span></td><td><s:textfield name="city"  maxlength="50" size="100"  cssStyle="width:200px" /></td>
-        
-   </tr>
-   <tr>
-   
-     <td scope="row" class="label"><label for="poOrganizations_orgStateSelect">State :<br></label></td>
-     <td>
+             listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" onblur="alertMsgState(this);" cssClass="form-control" onclick="alertMsgState(this);" />
+        </div>   
+</div>       
+<div class="form-group">
+   <label for="poOrganizations_streetAddress" class="col-xs-3 control-label">Street Address :<span class="required">*</span></label><div class="col-xs-3"><s:textfield name="streetAddress"  maxlength="254" size="100"  cssClass="form-control"  /></div>
+   <label for="poOrganizations_city" class="col-xs-3 control-label">City :<span class="required">*</span></label><div class="col-xs-3"><s:textfield name="city"  maxlength="50" size="100"  cssClass="form-control" /></div>
+</div>
+<div class="form-group">
+     <label for="poOrganizations_orgStateSelect" class="col-xs-3 control-label">State :<br></label><div class="col-xs-3">
       <div id="poOrganizations_orgStateDivSelect" style="display:''">
-       <s:select id="poOrganizations_orgStateSelect" name="state" headerKey="" headerValue="-Select a State-"  list="#usStates" />
+       <s:select id="poOrganizations_orgStateSelect" name="state" headerKey="" headerValue="-Select a State-"  list="#usStates" cssClass="form-control" />
       </div>
       <div id="poOrganizations_orgStateDivText" style="display:none">
-       <s:textfield id ="poOrganizations_orgStateText" name="state"  maxlength="50" size="100"  cssStyle="width:200px"/>
+       <s:textfield id ="poOrganizations_orgStateText" name="state"  maxlength="50" size="100"  cssClass="form-control"/>
        <br><span class="tiny">(2-letter state code for Canada <br> and 2 or 3-letter state code for Australia.)</span>
       </div> 
-     </td>
-     <td scope="row" class="label"><label for="poOrganizations_zip">ZIP :</label></td><td><s:textfield name="zip"  maxlength="20" size="100"  cssStyle="width:200px" /></td>
-  </tr>
-   <tr>
-       <td scope="row" class="label"><label for="poOrganizations_email">Email :</label></td><td><s:textfield name="email"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
-       <td scope="row" class="label"><label for="poOrganizations_phone">Phone :</label></td><td><s:textfield name="phone"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
-    </tr>
-   <tr>
-        <td scope="row" class="label"><label for="poOrganizations_url">URL :</label></td><td><s:textfield name="url"  maxlength="254" size="100"  cssStyle="width:200px" /></td>
-        <td scope="row" class="label"><label for="poOrganizations_tty">TTY :</label></td><td><s:textfield name="tty"  maxlength="30" size="100"  cssStyle="width:200px" /></td>       
-   </tr>
-   <tr> 
-        
-        <td scope="row" class="label"><label for="poOrganizations_fax">Fax :</label></td><td><s:textfield name="fax"  maxlength="30" size="100"  cssStyle="width:200px" /></td>
-   </tr>        
-</table>
- <div align="center">
- <p><b><I>Contact information required for internal administrative use only; not revealed to public</I></b></p>
+     </div>
+     <label for="poOrganizations_zip" class="col-xs-3 control-label">ZIP :</label><div class="col-xs-3"><s:textfield name="zip"  maxlength="20" size="100"  cssClass="form-control" /></div>
+     <div class="col-xs-3"></div><div class="col-xs-3"></div>
  </div>
- <div class="actionsrow">
- <del class="btnwrapper">
-    <ul class="btnrow">
-       <li>
-           <s:a href="javascript:void(0)" cssClass="btn" onclick="createPerson()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-           <s:a href="javascript:void(0)" cssClass="btn" onclick="setSearchFormVisible();"><span class="btn_img"><span class="search">Search</span></span></s:a>
-           <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>          
-       </li>
-       </ul>   
-  </del>
-  </div>
+<div class="form-group">
+    <label for="poOrganizations_email" class="col-xs-3 control-label">Email :</label><div class="col-xs-3"><s:textfield name="email"  maxlength="254" size="100"  cssClass="form-control" /></div>
+    <label for="poOrganizations_phone" class="col-xs-3 control-label">Phone :</label><div class="col-xs-3"><s:textfield name="phone"  maxlength="30" size="100"  cssClass="form-control" /></div>
+</div>
+<div class="form-group">
+    <label for="poOrganizations_url" class="col-xs-3 control-label">URL :</label><div class="col-xs-3"><s:textfield name="url"  maxlength="254" size="100"  cssClass="form-control" /></div>
+    <label for="poOrganizations_tty" class="col-xs-3 control-label">TTY :</label><div class="col-xs-3"><s:textfield name="tty"  maxlength="30" size="100"  cssClass="form-control" /></div>
+</div>      
+<div class="form-group">
+     <label for="poOrganizations_fax" class="col-xs-3 control-label">Fax :</label><div class="col-xs-3"><s:textfield name="fax"  maxlength="30" size="100"  cssClass="form-control" /></div>
+</div>      
+ 
+<p align="center" class="info">Contact information required for internal administrative use only; not revealed to public</p>
+ 
+<div class="bottom align-center">
+  <button type="button" class="btn btn-icon btn-primary" onclick="createPerson()"><i class="fa-floppy-o"></i>Save</button>
+  <button type="button" class="btn btn-icon btn-primary" onclick="setSearchFormVisible();"><i class="fa-search"></i>Search</button>
+  <button type="button" class="btn btn-icon btn-default" onclick="window.parent.hidePopWin();" ><i class="fa-times-circle"></i>Cancel</button>     
+</div>
+</div>

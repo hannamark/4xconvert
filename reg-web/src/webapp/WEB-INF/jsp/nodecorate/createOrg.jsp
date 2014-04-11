@@ -21,7 +21,7 @@
 	    <div class="col-xs-3">
 	        <s:textfield  id = "orgName"  name="createOrg.orgName;" maxlength="159" size="100" cssClass="form-control" />
 	    </div>
-	   	<label for="poOrganizations_createOrg_orgCountry;" class="col-xs-3 control-label">Country :</label><span class="required">*</span></label>
+	   	<label for="poOrganizations_createOrg_orgCountry;" class="col-xs-3 control-label">Country :<span class="required">*</span></label>
 	    <div class="col-xs-3">
 	        <s:select id = "orgCountry" name="createOrg.orgCountry;"  list="countryList" listKey="alpha3" listValue="name" 
 	             headerKey="USA" headerValue="United States" onblur="alertMsg(this);" onclick="alertMsg(this);" cssClass="form-control" />
@@ -32,7 +32,7 @@
 	    <div class="col-xs-3">
 	        <s:textfield id ="orgAddress" name="createOrg.orgStreetAddress;"  maxlength="254" size="100" cssClass="form-control" />
 	    </div>
-	   	<label for="poOrganizations_createOrg_orgCity;" class="col-xs-3 control-label">City :</label><span class="required">*</span></label>
+	   	<label for="poOrganizations_createOrg_orgCity;" class="col-xs-3 control-label">City :<span class="required">*</span></label>
 	    <div class="col-xs-3">
 	        <s:textfield id="orgCity" name="createOrg.orgCity;" maxlength="50" size="100"  cssClass="form-control" />
 	    </div>
