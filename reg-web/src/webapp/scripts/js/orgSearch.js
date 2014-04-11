@@ -1,11 +1,11 @@
     function submitform(orgid, name) {
-        top.window.setorgid(orgid, name);
-        window.top.hidePopWin(true); 
+        window.parent.setorgid(orgid, name);
+        window.parent.hidePopWin(true); 
     }
 
     function submitform(orgid, name, p30grant) {
-        top.window.setorgid(orgid, name, p30grant);
-        window.top.hidePopWin(true); 
+        window.parent.setorgid(orgid, name, p30grant);
+        window.parent.hidePopWin(true); 
     }
 
     function setSearchFormVisible() {
@@ -19,7 +19,7 @@
     }   
     
     function closePopup() {
-        window.top.hidePopWin(true);
+        window.parent.hidePopWin(true);
     }
 
     function setFocusToFirstControl() {
