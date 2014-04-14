@@ -13,7 +13,7 @@
     <h2>Trial Cannot be Amended</h2>
     <div class="box" id="filters">
         <s:if test="hasActionErrors()">
-            <div class="error_msg"><s:actionerror/></div>
+            <div class="alert alert-danger"><s:actionerror/></div>
         </s:if>
     </div>
 </body>

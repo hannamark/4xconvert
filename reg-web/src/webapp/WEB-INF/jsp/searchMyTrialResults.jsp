@@ -72,7 +72,7 @@
                     <c:out value="${row.nciIdentifier}"/>
                 </display:column>
                 <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength="200" sortable="true" headerClass="sortable" headerScope="col" media="excel csv"/>
-                <display:column escapeXml="false" titleKey="search.trial.officialTitle" maxLength="200" sortable="true" headerClass="sortable" headerScope="col" media="html">
+                <display:column escapeXml="false" titleKey="search.trial.officialTitle" maxLength="100" sortable="true" headerClass="sortable" headerScope="col" media="html">
                     <!-- <c:out value="${row.officialTitle}"/> -->
                     <c:if test="${not empty row.studyAlternateTitles}">                    
                         <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${row.studyProtocolId}')">(*)</a>
