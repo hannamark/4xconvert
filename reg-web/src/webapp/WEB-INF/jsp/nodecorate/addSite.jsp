@@ -58,141 +58,145 @@
 	<reg-web:failureMessage/>
 	<reg-web:sucessMessage/>
 	<reg-web:actionErrorsAndMessages />
-	<s:form name="addSiteForm" id="addSiteForm" action="addSitepopupsave">
+	<div class="modal-body">
+	<s:form name="addSiteForm" id="addSiteForm" action="addSitepopupsave" cssClass="form-horizontal" role="form" >
 		<s:token />
 		<s:hidden name="studyProtocolId" />		
-		<s:hidden name="siteDTO.id" />		
-		<table class="form">
-		    <c:choose>
-		      <c:when test="${not empty ssID}">
-		          <reg-web:titleRow titleKey="update.site.title" />
-		      </c:when>
-		      <c:otherwise>
-		          <reg-web:titleRow titleKey="add.site.title" />
-		      </c:otherwise>
-		    </c:choose>			
-			<reg-web:spaceRow />
-            <reg-web:valueRow labelKey="add.site.trial.nciIdentifier" noLabelTag="true">
-                 <c:out value="${sessionScope.NCI_ID}"/>
-            </reg-web:valueRow>
-			<reg-web:valueRow labelKey="add.site.trial.localStudyProtocolIdentifier" noLabelTag="true">
-			     <c:out value="${sessionScope.LEAD_ORG_ID}"/>
-			</reg-web:valueRow>
-			<reg-web:valueRow labelKey="add.site.trial.officialTitle" noLabelTag="true">
-                 <c:out value="${sessionScope.TITLE}"/>
-                 <c:if test="${not empty trialSummary.studyAlternateTitles}">
-                     <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
-                 </c:if>
-            </reg-web:valueRow>			
-			<reg-web:valueRow labelFor="organizationName"
-				labelKey="add.site.orgName" required="true">
-				<s:textfield id="organizationName" name="siteDTO.name" cssClass="readonly"
-					readonly="true" cssStyle="width:250px; float:left" />
-				<span class="alert-danger"> <s:fielderror>
-						<s:param>organizationName</s:param>
-					</s:fielderror>
-				</span>
-			</reg-web:valueRow>
-			<reg-web:valueRow labelFor="localIdentifier"
-				labelKey="add.site.localID" required="true">
-				<s:textfield id="localIdentifier" name="siteDTO.siteLocalTrialIdentifier"
-					cssStyle="width:250px; float:left" />
-				<span class="alert-danger"> <s:fielderror>
-						<s:param>localIdentifier</s:param>
-					</s:fielderror>
-				</span>
-			</reg-web:valueRow>
-			<reg-web:valueRow labelFor="investigator"
-				labelKey="add.site.investigator" required="true">
-				<s:textfield id="investigator" name="siteDTO.investigator" cssClass="readonly"
-					readonly="true" cssStyle="width:250px; float:left" />
-
-				<ul style="margin-top: -5px;">
-					<li style="padding-left: 0"><a href="javascript:void(0);"
-						class="btn" onclick="lookupSiteInvestigator();"
-						title="Opens a popup form to select Site Principal Investigator">
-							<span class="btn_img"><span class="person">Look Up
-									Person</span></span>
-					</a></li>
-				</ul>
-
-				<span class="alert-danger"> <s:fielderror>
+		<s:hidden name="siteDTO.id" />
+			<div class="form-group">
+				<label class="col-xs-4  control-label"> <fmt:message key="add.site.trial.nciIdentifier"/></label> 
+				 <div class="col-xs-4">
+				 <c:out value="${sessionScope.NCI_ID}"/>
+				 </div>
+			</div>
+            <div class="form-group">
+				<label class="col-xs-4  control-label"> <fmt:message key="add.site.trial.localStudyProtocolIdentifier"/><span class="required">*</span></label> 
+				 <div class="col-xs-4">
+				 <c:out value="${sessionScope.LEAD_ORG_ID}"/>
+				 </div>
+			</div>
+			<div class="form-group">
+				<label class="col-xs-4  control-label"> <fmt:message key="add.site.trial.officialTitle"/></label> 
+				 <div class="col-xs-4">
+				 	<c:out value="${sessionScope.TITLE}"/>
+				   	<c:if test="${not empty trialSummary.studyAlternateTitles}">
+                    	<a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
+                 	</c:if>
+				 </div>
+			</div>
+			<div class="form-group">
+				<label class="col-xs-4 control-label" for="organizationName"> <fmt:message key="add.site.orgName"/><span class="required">*</span></label> 
+				 <div class="col-xs-4">
+				 	<s:textfield id="organizationName" name="siteDTO.name"
+					readonly="true" cssClass="form-control readonly" />
+					<span class="alert-danger"> <s:fielderror>
+							<s:param>organizationName</s:param>
+						</s:fielderror>
+					</span>
+				 </div>
+			</div>
+			<div class="form-group">
+				<label class="col-xs-4 control-label" for="localIdentifier"> <fmt:message key="add.site.localID"/><span class="required">*</span></label> 
+				 <div class="col-xs-4">
+				 	<s:textfield id="localIdentifier" name="siteDTO.siteLocalTrialIdentifier"
+					cssClass="form-control" />
+					<span class="alert-danger"> <s:fielderror>
+							<s:param>localIdentifier</s:param>
+						</s:fielderror>
+					</span>
+				 </div>
+			</div>
+			<div class="form-group">
+				<label class="col-xs-4 control-label" for="investigator"> <fmt:message key="add.site.investigator"/><span class="required">*</span></label> 
+				 <div class="col-xs-4">
+				 	<s:textfield id="investigator" name="siteDTO.investigator" 
+					readonly="true" cssClass="form-control readonly" />
+					<span class="alert-danger"> <s:fielderror>
 						<s:param>investigator</s:param>
 					</s:fielderror>
-				</span>
-				<s:hidden id="investigator.id" name="siteDTO.investigatorId" />
-			</reg-web:valueRow>
-
-			<reg-web:valueRow labelFor="programCode"
-				labelKey="add.site.programCode">
-				<s:textfield id="programCode" name="siteDTO.programCode"
-					cssStyle="width:250px; float:left" />
-				<span class="alert-danger"> <s:fielderror>
-						<s:param>programCode</s:param>
-					</s:fielderror>
-				</span>
-			</reg-web:valueRow>
-
-			<reg-web:valueRow labelFor="statusCode"
-				labelKey="add.site.statusCode" required="true">
-				<s:set name="statusCodeValues"
+				 </div>
+				 <div class="col-xs-2">
+					<button type="button" class="btn btn-icon btn-default" onclick="lookupSiteInvestigator();"><i class="fa-search"></i>Look Up</button>
+				 </div>
+				 <s:hidden id="investigator.id" name="siteDTO.investigatorId" />
+			</div>
+		
+			<div class="form-group">
+				<label class="col-xs-4 control-label" for="programCode"> <fmt:message key="add.site.programCode"/></label> 
+				 <div class="col-xs-4">
+				 	<s:textfield id="programCode" name="siteDTO.programCode"
+					cssClass="form-control" />
+					<span class="alert-danger"> <s:fielderror>
+							<s:param>programCode</s:param>
+						</s:fielderror>
+					</span>
+				 </div>
+			</div>
+			
+			<div class="form-group">
+				<label class="col-xs-4 control-label" for="statusCode"> <fmt:message key="add.site.statusCode"/><span class="required">*</span></label> 
+				 <div class="col-xs-4">
+				 	<s:set name="statusCodeValues"
 					value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
-				<s:select headerKey="" headerValue="--Select--" id="statusCode"
-					name="siteDTO.recruitmentStatus" list="#statusCodeValues"
-					value="siteDTO.recruitmentStatus" />
-				<span class="alert-danger"> <s:fielderror>
-						<s:param>statusCode</s:param>
-					</s:fielderror>
-				</span>
-			</reg-web:valueRow>
+					<s:select headerKey="" headerValue="--Select--" id="statusCode"
+						name="siteDTO.recruitmentStatus" list="#statusCodeValues"
+						value="siteDTO.recruitmentStatus" cssClass="form-control" />
+					<span class="alert-danger"> <s:fielderror>
+							<s:param>statusCode</s:param>
+						</s:fielderror>
+					</span>
+				 </div>
+			</div>
 
-			<reg-web:valueRow labelFor="statusDate" required="true"
-				labelKey="add.site.statusDate">
-				<s:textfield id="statusDate" name="siteDTO.recruitmentStatusDate"
-					maxlength="10" size="10" cssStyle="width:70px;float:left" />
-				<a href="javascript:showCal('Cal1')"> <img
-					src="${pageContext.request.contextPath}/images/ico_calendar.gif"
-					alt="Select a date" class="calendaricon" />
-				</a> (mm/dd/yyyy)                     
-                <span class="alert-danger"> <s:fielderror>
-						<s:param>statusDate</s:param>
-					</s:fielderror>
-				</span>
-			</reg-web:valueRow>
+			<div class="form-group">
+				<label class="col-xs-4 control-label" for="statusDate"><fmt:message key="add.site.statusDate"/><span class="required">*</span></label> 
+				 <div class="col-xs-4">
+				 	<div id="datetimepicker" class="datetimepicker input-append">
+					<s:textfield id="statusDate" name="siteDTO.recruitmentStatusDate"
+						maxlength="10" size="10" cssClass="form-control" data-format="MM/dd/yyyy" placeholder="mm/dd/yyyy"/>
+					<span class="add-on btn-default"><i class="fa-calendar"></i></span>	
+	                <span class="alert-danger"> <s:fielderror>
+							<s:param>statusDate</s:param>
+						</s:fielderror>
+					</span>
+					</div>
+				 </div>
+			</div>	
 
-			<reg-web:valueRow labelFor="accrualOpenedDate"
-				labelKey="add.site.accrualOpenedDate">
-				<s:textfield id="accrualOpenedDate" name="siteDTO.dateOpenedforAccrual"
-					maxlength="10" size="10" cssStyle="width:70px;float:left" />
-				<a href="javascript:showCal('Cal2')"> <img
-					src="${pageContext.request.contextPath}/images/ico_calendar.gif"
-					alt="Select a date" class="calendaricon" />
-				</a> (mm/dd/yyyy)                     
-                <span class="alert-danger"> <s:fielderror>
-						<s:param>accrualOpenedDate</s:param>
-					</s:fielderror>
-				</span>
-			</reg-web:valueRow>
+			<div class="form-group">
+				<label class="col-xs-4 control-label" for="accrualOpenedDate"><fmt:message key="add.site.accrualOpenedDate"/></label> 
+				 <div class="col-xs-4">
+				 	<div id="datetimepicker" class="datetimepicker input-append">
+					<s:textfield id="accrualOpenedDate" name="siteDTO.dateOpenedforAccrual"
+						maxlength="10" size="10" cssClass="form-control" data-format="MM/dd/yyyy" placeholder="mm/dd/yyyy"/>
+					<span class="add-on btn-default"><i class="fa-calendar"></i></span>	
+	                <span class="alert-danger"> <s:fielderror>
+							<s:param>accrualOpenedDate</s:param>
+						</s:fielderror>
+					</span>
+					</div>
+				 </div>
+			</div>	
 
-			<reg-web:valueRow labelFor="accrualClosedDate"
-				labelKey="add.site.accrualClosedDate">
-				<s:textfield id="accrualClosedDate" name="siteDTO.dateClosedforAccrual"
-					maxlength="10" size="10" cssStyle="width:70px;float:left" />
-				<a href="javascript:showCal('Cal3')"> <img
-					src="${pageContext.request.contextPath}/images/ico_calendar.gif"
-					alt="Select a date" class="calendaricon" />
-				</a> (mm/dd/yyyy)
-				<span class="info"><fmt:message
-						key="error.proprietary.dateOpenReq" /></span>
-				<span class="alert-danger"> <s:fielderror>
-						<s:param>accrualClosedDate</s:param>
-					</s:fielderror>
-				</span>
-			</reg-web:valueRow>
-
-		</table>
+			<div class="form-group">
+				<label class="col-xs-4 control-label" for="accrualClosedDate"><fmt:message key="add.site.accrualClosedDate"/></label> 
+				 <div class="col-xs-4">
+				 	<div id="datetimepicker" class="datetimepicker input-append">
+						<s:textfield id="accrualClosedDate" name="siteDTO.dateClosedforAccrual"
+						maxlength="10" size="10" cssClass="form-control" data-format="MM/dd/yyyy" placeholder="mm/dd/yyyy"/>
+						<span class="add-on btn-default"><i class="fa-calendar"></i></span>	
+						<span class="info"><br/><fmt:message
+								key="error.proprietary.dateOpenReq" /></span>
+						<span class="alert-danger"> <s:fielderror>
+								<s:param>accrualClosedDate</s:param>
+							</s:fielderror>
+						</span>
+					</div>
+				 </div>
+			</div>	
 		<reg-web:saveAndCloseBtn />
 	</s:form>
+	</div>
 	</s:if>
 </body>
 </html>
