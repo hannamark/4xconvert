@@ -1,120 +1,87 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<table class="form">
-  <tr>
-    <th colspan="2"><fmt:message key="submit.trial.documents"/></th>
-  </tr>
-  <tr>
-    <td colspan="2" class="space">&nbsp;</td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <fmt:message key="submit.proprietary.trial.docInstructionalText"/>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a>
-    </td>
-  </tr>
-  
-  <tr>
-    <td scope="row" class="label">
-      <reg-web:displayTooltip tooltip="tooltip.irb_approval">
-        <label for="irbApproval"><fmt:message key="submit.trial.irbApproval"/></label>
-      </reg-web:displayTooltip>
-    </td>
-    <td class="value">
+<p class="info"><fmt:message key="submit.proprietary.trial.docInstructionalText"/></p>
+<p class="mb20"><a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a></p>
+ <div class="form-group">
+ 	<label for="irbApproval" class="col-xs-4 control-label"><fmt:message key="submit.trial.irbApproval"/></label>
+    <div class="col-xs-4">
       <s:if test="%{#session.irbApprovalDoc.typeCode.equals('IRB Approval Document')}">
         <s:property value="%{#session.irbApprovalDoc.fileName}"/>
         <c:if test="${!(disableDocumentDeletion==true)}">
-            <input id="irbApproval" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.irbApprovalDoc.typeCode}'/>')"/>
+        <button id="irbApproval" type="button" class="btn btn-icon btn-primary" onclick="deleteDocument('<s:property value='%{#session.irbApprovalDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
         </c:if>
       </s:if>
       <s:else>
-        <s:file id="irbApproval" name="irbApproval" cssStyle="width:270px"/>
+        <s:file id="irbApproval" name="irbApproval" />
+        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload the IRB approval document."  data-placement="top" data-trigger="hover"></i>
         <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.irbApprovalFileName</s:param>
           </s:fielderror>
         </span>
       </s:else>
-    </td>
-  </tr>
-  <tr>
-  <td scope="row" class="label">
-    <reg-web:displayTooltip tooltip="tooltip.informed_consent_document">
-      <label for="informedConsentDocument"><fmt:message key="submit.trial.informedConsent"/></label>
-    </reg-web:displayTooltip>
-  </td>
-  <td class="value">
+    </div>
+  </div>
+  <div class="form-group">
+      <label for="informedConsentDocument" class="col-xs-4 control-label"><fmt:message key="submit.trial.informedConsent"/></label>
+  	<div class="col-xs-4">
     <s:if test="%{#session.informedConsentDoc.typeCode.equals('Informed Consent Document')}">
       <s:property value="%{#session.informedConsentDoc.fileName}"/>
       <c:if test="${!(disableDocumentDeletion==true)}">
-        <input id="informedConsentDocument" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.informedConsentDoc.typeCode}'/>')"/>
+        <button id="informedConsentDocument" type="button" class="btn btn-icon btn-primary" onclick="deleteDocument('<s:property value='%{#session.informedConsentDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
       </c:if>
     </s:if>
     <s:else>
-      <s:file id="informedConsentDocument" name="informedConsentDocument" cssStyle="width:270px"/>
+      <s:file id="informedConsentDocument" name="informedConsentDocument" />
+      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="If the informed consent is not included in the protocol document, click Browse to locate and upload the Informed Consent document."  data-placement="top" data-trigger="hover"></i>
         <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.informedConsentDocumentFileName</s:param>
           </s:fielderror>
         </span>
       </s:else>
-    </td>
-  </tr>  
+   </div> 
+   </div>
   
   
   
-  <c:set var="hasOtherDocs" scope="request" value="${not empty sessionScope.otherDoc}"/>
-  <c:forEach items="${sessionScope.otherDoc}" var="doc" varStatus="varStatus">
-  <tr>
-    <td scope="row" class="label">
-      <reg-web:displayTooltip tooltip="tooltip.other">
-        <label><fmt:message key="submit.trial.otherDocument"/></label>
-      </reg-web:displayTooltip>
-    </td>
-    <td class="value">   
+<c:set var="hasOtherDocs" scope="request" value="${not empty sessionScope.otherDoc}"/>
+<c:forEach items="${sessionScope.otherDoc}" var="doc" varStatus="varStatus">
+ <div class="form-group">
+    <label class="col-xs-4 control-label"><fmt:message key="submit.trial.otherDocument"/></label>
+    <div class="col-xs-4">
         <c:out value="${doc.fileName}"/>
         <c:if test="${!(disableDocumentDeletion==true)}">
-            <input type="button" value="Remove" onclick="deleteDocument('Other',${varStatus.index})"/>
+           <button type="button" class="btn btn-icon btn-primary" onclick="deleteDocument('Other',${varStatus.index})"><i class="fa-minus"></i>Remove</button>
         </c:if>      
-    </td>
-  </tr>
-  </c:forEach>
+	</div>
+</div>
+</c:forEach>
   
-  <c:set var="addMoreRendered" value="${false}" scope="page"/>
-  <c:forEach begin="0" end="50" varStatus="varStatus">
-  <c:set var="fieldErrorKey" scope="page" value="trialDTO.otherDocumentFileName[${varStatus.index}]"/>
-  <c:set var="hasFieldError" scope="page" value="${not empty request.action.fieldErrors[fieldErrorKey]}"/>
-  <c:set var="hideUploadRow" value="${(!hasFieldError && (hasOtherDocs || varStatus.index>0))}"/>
+<c:set var="addMoreRendered" value="${false}" scope="page"/>
+<c:forEach begin="0" end="50" varStatus="varStatus">
+<c:set var="fieldErrorKey" scope="page" value="trialDTO.otherDocumentFileName[${varStatus.index}]"/>
+<c:set var="hasFieldError" scope="page" value="${not empty request.action.fieldErrors[fieldErrorKey]}"/>
+<c:set var="hideUploadRow" value="${(!hasFieldError && (hasOtherDocs || varStatus.index>0))}"/>
   
-  <tr style="${hideUploadRow?'display:none':''}" id="otherUploadRow_${varStatus.index}">
-    <td scope="row" class="label">
-      <reg-web:displayTooltip tooltip="tooltip.other">
-        <label for="submitProprietaryTrial_otherDocument_${varStatus.index}"><fmt:message key="submit.trial.otherDocument"/></label>
-      </reg-web:displayTooltip>
-    </td>
-    <td class="value">
-        <input id="submitProprietaryTrial_otherDocument_${varStatus.index}" type="file" style="width:270px" value="" name="otherDocument">
-        <span class="alert-danger">
-          <s:fielderror>
-            <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>
-          </s:fielderror>
-        </span>        
-    </td>
-  </tr>
-  <tr style="${(hideUploadRow && !addMoreRendered)?'':'display:none'}" id="addMoreRow_${varStatus.index}">
-    <td></td>
-    <td>
-        <a href="javascript:void(0);" 
-           onclick="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
-           onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
-           >Add more...</a>
-    </td>
-  </tr> 
-     
-  <c:set var="addMoreRendered" value="${addMoreRendered || (hideUploadRow && !addMoreRendered)}" scope="page"/>
-  </c:forEach>  
-
-</table>
+<div style="${hideUploadRow?'display:none':''}" class="form-group" id="otherUploadRow_${varStatus.index}">
+  <label for="submitProprietaryTrial_otherDocument_${varStatus.index}" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherDocument"/></label>
+  <div class="col-xs-4">
+      <input id="submitProprietaryTrial_otherDocument_${varStatus.index}" type="file" style="width:270px" value="" name="otherDocument">
+      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload  any other trial-related document(s)."  data-placement="top" data-trigger="hover"></i>
+      <span class="alert-danger">
+        <s:fielderror>
+          <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>
+        </s:fielderror>
+      </span>
+</div>
+</div>
+<div style="${(hideUploadRow && !addMoreRendered)?'':'display:none'}" id="addMoreRow_${varStatus.index}">
+    <div class="col-xs-4"></div>
+    <div class="col-xs-4">
+	      <button type="button" class="btn btn-icon btn-primary" 
+	        onclick="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
+      		onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"><i class="fa-plus"></i>Add More...</button>
+	</div> 
+</div>     
+<c:set var="addMoreRendered" value="${addMoreRendered || (hideUploadRow && !addMoreRendered)}" scope="page"/>
+</c:forEach>  

@@ -93,11 +93,10 @@
     </head>
     <body>
     <!-- main content begins-->
-        <h1><fmt:message key="update.trial.page.header"/></h1>
+       <h1 class="heading"><span><fmt:message key="update.trial.page.header"/></span></h1>
         <c:set var="topic" scope="request" value="updatetrial"/>
-        <div class="box" id="filters">
             <reg-web:failureMessage/>
-            <s:form name="updateProprietaryTrial" method="POST" enctype="multipart/form-data">
+            <s:form name="updateProprietaryTrial" method="POST" enctype="multipart/form-data" cssClass="form-horizontal" role="form">
                 <s:token/>
                 <s:if test="hasActionErrors()">
                     <div class="error_msg">
@@ -115,179 +114,186 @@
                     <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
                 </c:if>
                 <s:hidden name="page" />
-                <table class="form">
-                    <reg-web:titleRow titleKey="submit.proprietary.trial.trialIdentification"/>
-                    <reg-web:spaceRow/>
-                    <reg-web:valueRow labelKey="view.trial.identifier" noLabelTag="true">
+                <div class="accordion-group">
+                <div class="accordion">
+				<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section1"><fmt:message key="submit.proprietary.trial.trialIdentification"/><span class="required">*</span></a></div>
+				<div id="section1" class="accordion-body in">
+				<div class="container">
+                    <reg-web:valueRowDiv labelKey="view.trial.identifier" noLabelTag="true">
                         <s:property value="trialDTO.assignedIdentifier"/>
-                    </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialDTO.leadOrganizationName" labelKey="view.trial.leadOrganization">
+                    </reg-web:valueRowDiv>
+                    <reg-web:valueRowDiv labelFor="trialDTO.leadOrganizationName" labelKey="view.trial.leadOrganization">
                        <s:property value="trialDTO.leadOrganizationName" />
-                    </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialDTO.leadOrgTrialIdentifier" labelKey="submit.trial.leadOrgidentifier">
+                    </reg-web:valueRowDiv>
+                    <reg-web:valueRowDiv labelFor="trialDTO.leadOrgTrialIdentifier" labelKey="submit.trial.leadOrgidentifier">
                         <s:property value="trialDTO.leadOrgTrialIdentifier" />                        
-                    </reg-web:valueRow>
-                    <tr>
-                        <td scope="row" class="label-noinput">
-                            <fmt:message key="submit.trial.nctNumber"/>
-                        </td>
-                        <td>
-                            <%@ include file="/WEB-INF/jsp/nodecorate/addNctIdentifier.jsp" %>                    
-                        </td>
-                    </tr>
-                    <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
-                    <reg-web:valueRow labelFor="trialDTO.officialTitle" labelKey="submit.trial.title">
+                    </reg-web:valueRowDiv>
+                    <div class="form-group m0">
+                      <label class="col-xs-2 control-label"><fmt:message key="submit.trial.nctNumber"/></label>
+                      <div class="col-xs-10">
+                      	<%@ include file="/WEB-INF/jsp/nodecorate/addNctIdentifier.jsp" %>
+                      </div>                    
+  					</div>
+                 </div>
+                 </div>
+                 </div>
+                 <div class="accordion">
+				 <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section2"><fmt:message key="submit.trial.trialDetails"/><span class="required">*</span></a></div>
+			     <div id="section2" class="accordion-body in">
+			     <div class="container">
+                  <reg-web:valueRowDiv labelFor="trialDTO.officialTitle" labelKey="submit.trial.title">
                         <s:property value="trialDTO.officialTitle"/>
-                    </reg-web:valueRow>
-                    <reg-web:valueRow labelFor="trialType" labelKey="submit.trial.type">
+                    </reg-web:valueRowDiv>
+                    <reg-web:valueRowDiv labelFor="trialType" labelKey="submit.trial.type">
                         <c:out value="${trialDTO.trialType!='NonInterventional'?'Interventional':'Non-interventional'}"></c:out>
-                    </reg-web:valueRow>
+                    </reg-web:valueRowDiv>
                     
                     <c:if test="${trialDTO.trialType=='NonInterventional'}">
-						<reg-web:valueRow labelFor="trialDTO.studySubtypeCode" labelKey="submit.trial.studySubtypeCode">
+						<reg-web:valueRowDiv labelFor="trialDTO.studySubtypeCode" labelKey="submit.trial.studySubtypeCode">
 						     <s:property value="trialDTO.studySubtypeCode"/>						      
-						</reg-web:valueRow>                   
+						</reg-web:valueRowDiv>                   
                     </c:if>
         
-                    <reg-web:valueRow labelFor="trialDTO.primaryPurposeCode" labelKey="submit.trial.purpose">
+                    <reg-web:valueRowDiv labelFor="trialDTO.primaryPurposeCode" labelKey="submit.trial.purpose">
                         <s:property value="trialDTO.primaryPurposeCode" />
-                    </reg-web:valueRow>
+                    </reg-web:valueRowDiv>
           
 		            <c:if test="${trialDTO.primaryPurposeOtherText=='Other'}">	       
-		                <reg-web:valueRow labelFor="submit.trial.otherPurposeText" labelKey="submit.trial.otherPurposeText">
+		                <reg-web:valueRowDiv labelFor="submit.trial.otherPurposeText" labelKey="submit.trial.otherPurposeText">
 		                    <s:property value="trialDTO.primaryPurposeOtherText"/>
-		                </reg-web:valueRow>
+		                </reg-web:valueRowDiv>
 		            </c:if>
           
 		          <c:if test="${trialDTO.trialType!='NonInterventional'}">	    
-		                <reg-web:valueRow labelFor="submit.trial.secondaryPurpose" labelKey="submit.trial.secondaryPurpose">
+		                <reg-web:valueRowDiv labelFor="submit.trial.secondaryPurpose" labelKey="submit.trial.secondaryPurpose">
 		                    <s:property value="trialDTO.secondaryPurposesAsString" />
-		                </reg-web:valueRow>   
+		                </reg-web:valueRowDiv>   
 		                <c:if test="${trialDTO.secondaryPurposeAsReadableString == 'Other'}">
-                                <reg-web:valueRow labelKey="view.trial.secOtherPurposeText" noLabelTag="true">
+                                <reg-web:valueRowDiv labelKey="view.trial.secOtherPurposeText" noLabelTag="true">
                                     <c:out value="${trialDTO.secondaryPurposeOtherText}"/>
-                                </reg-web:valueRow>
+                                </reg-web:valueRowDiv>
                         </c:if>                    
 		          </c:if>
           
                  <c:if test="${trialDTO.trialType=='NonInterventional'}">
-		             <reg-web:valueRow labelFor="submit.trial.studyModelCode" labelKey="submit.trial.studyModelCode">
+		             <reg-web:valueRowDiv labelFor="submit.trial.studyModelCode" labelKey="submit.trial.studyModelCode">
 		                 <s:property value="trialDTO.studyModelCode"/>
-		             </reg-web:valueRow>
+		             </reg-web:valueRowDiv>
 	    
 		             <c:if test="${trialDTO.studyModelCode=='Other'}">  
-			             <reg-web:valueRow labelFor="submit.trial.studyModelOtherText" labelKey="submit.trial.studyModelOtherText">
+			             <reg-web:valueRowDiv labelFor="submit.trial.studyModelOtherText" labelKey="submit.trial.studyModelOtherText">
 			                <s:property value="trialDTO.studyModelOtherText"/>
-			             </reg-web:valueRow>
+			             </reg-web:valueRowDiv>
 			         </c:if>
 
-		             <reg-web:valueRow labelFor="submit.trial.timePerspectiveCode" labelKey="submit.trial.timePerspectiveCode">
+		             <reg-web:valueRowDiv labelFor="submit.trial.timePerspectiveCode" labelKey="submit.trial.timePerspectiveCode">
 		                    <s:property value="trialDTO.timePerspectiveCode"/>
-		             </reg-web:valueRow>
+		             </reg-web:valueRowDiv>
       
 			        <c:if test="${trialDTO.timePerspectiveCode=='Other'}">
-			              <reg-web:valueRow labelFor="submit.trial.timePerspectiveOtherText" labelKey="submit.trial.timePerspectiveOtherText">
+			              <reg-web:valueRowDiv labelFor="submit.trial.timePerspectiveOtherText" labelKey="submit.trial.timePerspectiveOtherText">
 			                <s:property value="trialDTO.timePerspectiveOtherText"/>
-			              </reg-web:valueRow>
+			              </reg-web:valueRowDiv>
 			        </c:if>        
                 </c:if>
                     
-                <reg-web:valueRow labelFor="submit.trial.phase" labelKey="submit.trial.phase">
+                <reg-web:valueRowDiv labelFor="submit.trial.phase" labelKey="submit.trial.phase">
                     <s:property value="trialDTO.phaseCode" />
-                </reg-web:valueRow>
+                </reg-web:valueRowDiv>
                     
 	            <c:if test="${trialDTO.phaseCode=='NA'}">                    
-	               <reg-web:valueRow labelFor="submit.trial.otherPhaseText" labelKey="submit.trial.otherPhaseText">	                  
+	               <reg-web:valueRowDiv labelFor="submit.trial.otherPhaseText" labelKey="submit.trial.otherPhaseText">	                  
 	                  <c:out value="${trialDTO.phaseAdditionalQualifier=='Pilot'?'Yes':'No'}"/>
-	               </reg-web:valueRow>
+	               </reg-web:valueRowDiv>
 	            </c:if>
-                    
-                    
-                    <reg-web:spaceRow/>
-                    <reg-web:spaceRow/>
-                    <!--  summary4 information -->
-                    <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
-                    <reg-web:spaceRow/>
-                    <reg-web:valueRow labelFor="trialDTO.summaryFourFundingCategoryCode" labelKey="update.proprietary.trial.summary4FundingCategory">
-                               <s:property value="trialDTO.summaryFourFundingCategoryCode" />                    
-                    </reg-web:valueRow>
-                    <reg-web:valueRow id="trialDTO.summaryFourOrgNameTR" labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
-                        <s:iterator value="trialDTO.summaryFourOrgIdentifiers" id="trialDTO.summaryFourOrgIdentifiers" status="stat">
-                            <s:property value="%{orgName}"/><br/>
-                            <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${orgId}"/> 
-                            <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${orgName}"/>
-                        </s:iterator>
-                    </reg-web:valueRow>
-                    <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
-                                    <c:out value="${empty trialDTO.consortiaTrialCategoryCode?'Yes':'No - '}"/>
-                                    <c:out value="${trialDTO.consortiaTrialCategoryCode}"/>
-                    </reg-web:valueRow>
-                    <reg-web:spaceRow/>
-                    <reg-web:spaceRow/>
-                    
-                    <table class="data2">
-                         <tr>
-                            <th colspan="2">Participating Sites</th>
-                         </tr>
-                         <tr> 
-                            <td>
-                                <table class="form">
-                                    <tbody>
-                                        <tr>
-                                            <th>Organization/Investigator</th>
-                                            <th>Local Trial<br/> Identifier<span class="required">*</span></th>
-                                            <th>Program Code</th>
-                                            <th>Current Site<br/> Recruitment Status<span class="required">*</span></th>
-                                            <th>Current Site<br/> Recruitment <br/>Status Date<span class="required">*</span><br/>(mm/dd/yyyy) </th>
-                                            <th>Date Opened <br/>for Accrual <br/>(mm/dd/yyyy) </th>
-                                            <th>Date Closed <br/>for Accrual <br/>(mm/dd/yyyy) </th>
-                                        </tr>
-                                        <s:iterator id="trialDTO.participatingSitesList" value="trialDTO.participatingSitesList" status="psstats">
-                                        <tr>
-                                            <td>
-                                                <label><s:textarea  name="trialDTO.participatingSitesList[%{#psstats.index}].nameInvestigator" value="%{nameInvestigator}" readonly="true" cssStyle="width:200px;border: 1px solid #FFFFFF" rows="2"/></label>
-                                                <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].name" value="%{name}"/>
-                                                <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].investigator" value="%{investigator}"/>
-                                            </td>
-                                            <td>
-                                                <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].siteLocalTrialIdentifier" value="%{siteLocalTrialIdentifier}"/></label>
-                                            </td>
-                                            <td>
-                                                <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}"/></label>
-                                                <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].id" value="%{id}"/>
-                                            </td>
-                                            <s:set name="recruitmentStatusValues" value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()"  />
-                                            <td class="value">
-                                                <label><s:select headerKey="" headerValue="--Select--"
-                                                          name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
-                                                          list="#recruitmentStatusValues" cssStyle="text-align:left;"/></label>
-                                            </td>
-                                            <td nowrap="nowrap">
-                                                <label><s:textfield name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" size="12"/></label>
-                                                <a href="javascript:showCal('Cal1-<s:property value="%{#psstats.index}"/>')"> 
-                                                    <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                                </a>
-                                            </td>
-                                            <td nowrap="nowrap">
-                                                <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" value="%{dateOpenedforAccrual}" size="12"/></label>
-                                                <a href="javascript:showCal('Cal2-<s:property value="%{#psstats.index}"/>')"> 
-                                                    <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                                </a>
-                                            </td>
-                                            <td nowrap="nowrap">
-                                                <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateClosedforAccrual" value="%{dateClosedforAccrual}" size="12"/></label>
-                                                <a href="javascript:showCal('Cal3-<s:property value="%{#psstats.index}"/>')"> 
-                                                    <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        </s:iterator >
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
+
+				</div>
+				</div>
+				</div>
+                <!--  summary4 information -->
+                <div class="accordion">
+				<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section3"><fmt:message key="update.proprietary.trial.summary4Info"/><span class="required">*</span></a></div>
+				<div id="section3" class="accordion-body in">
+				<div class="container">
+                <reg-web:valueRowDiv labelFor="trialDTO.summaryFourFundingCategoryCode" labelKey="update.proprietary.trial.summary4FundingCategory">
+                           <s:property value="trialDTO.summaryFourFundingCategoryCode" />                    
+                </reg-web:valueRowDiv>
+                <reg-web:valueRowDiv id="trialDTO.summaryFourOrgNameTR" labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
+                    <s:iterator value="trialDTO.summaryFourOrgIdentifiers" id="trialDTO.summaryFourOrgIdentifiers" status="stat">
+                        <s:property value="%{orgName}"/><br/>
+                        <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${orgId}"/> 
+                        <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${orgName}"/>
+                    </s:iterator>
+                </reg-web:valueRowDiv>
+                <reg-web:valueRowDiv labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
+                                <c:out value="${empty trialDTO.consortiaTrialCategoryCode?'Yes':'No - '}"/>
+                                <c:out value="${trialDTO.consortiaTrialCategoryCode}"/>
+                </reg-web:valueRowDiv>
+                </div>
+                </div>
+                </div>
+                <div class="accordion">
+				<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section4">Participating Sites<span class="required">*</span></a></div>
+				<div id="section4" class="accordion-body in">
+				<div class="container">
+                  <table class="table table-striped table-bordered sortable">
+                        <thead>
+                            <tr>
+                                <th>Organization/Investigator</th>
+                                <th>Local Trial<br/> Identifier<span class="required">*</span></th>
+                                <th>Program Code</th>
+                                <th>Current Site<br/> Recruitment Status<span class="required">*</span></th>
+                                <th>Current Site<br/> Recruitment <br/>Status Date<span class="required">*</span><br/>(mm/dd/yyyy) </th>
+                                <th>Date Opened <br/>for Accrual <br/>(mm/dd/yyyy) </th>
+                                <th>Date Closed <br/>for Accrual <br/>(mm/dd/yyyy) </th>
+                            </tr>
+                         </thead>
+                         <tbody>
+                            <s:iterator id="trialDTO.participatingSitesList" value="trialDTO.participatingSitesList" status="psstats">
+                            <tr>
+                                <td>
+                                    <label><s:textarea  name="trialDTO.participatingSitesList[%{#psstats.index}].nameInvestigator" value="%{nameInvestigator}" readonly="true" cssClass="form-control" rows="2"/></label>
+                                    <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].name" value="%{name}"/>
+                                    <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].investigator" value="%{investigator}"/>
+                                </td>
+                                <td>
+                                    <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].siteLocalTrialIdentifier" value="%{siteLocalTrialIdentifier}" cssClass="form-control" /></label>
+                                </td>
+                                <td>
+                                    <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}" cssClass="form-control" /></label>
+                                    <s:hidden  name="trialDTO.participatingSitesList[%{#psstats.index}].id" value="%{id}"/>
+                                </td>
+                                <s:set name="recruitmentStatusValues" value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()"  />
+                                <td class="value">
+                                    <label><s:select headerKey="" headerValue="--Select--"
+                                              name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
+                                              list="#recruitmentStatusValues" cssClass="form-control" /></label>
+                                </td>
+                                <td nowrap="nowrap">
+                                    <label><s:textfield name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" size="12" cssClass="form-control" /></label>
+                                    <a href="javascript:showCal('Cal1-<s:property value="%{#psstats.index}"/>')"> 
+                                        <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                    </a>
+                                </td>
+                                <td nowrap="nowrap">
+                                    <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" value="%{dateOpenedforAccrual}" size="12" cssClass="form-control" /></label>
+                                    <a href="javascript:showCal('Cal2-<s:property value="%{#psstats.index}"/>')"> 
+                                        <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                    </a>
+                                </td>
+                                <td nowrap="nowrap">
+                                    <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateClosedforAccrual" value="%{dateClosedforAccrual}" size="12" cssClass="form-control" /></label>
+                                    <a href="javascript:showCal('Cal3-<s:property value="%{#psstats.index}"/>')"> 
+                                        <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                    </a>
+                                </td>
+                            </tr>
+                            </s:iterator >
+                        </tbody>
                     </table>
-                </table>
+                </div>
+                </div>
+                </div>
                 
                 <div id="existingDocsDiv">
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateProprietaryTrialDocumentsSection.jsp" %>
@@ -301,18 +307,13 @@
                    Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.
                    <br>Once you submit the trial you will not be able to modify the information.
                 </p>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="reviewProtocol()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
-                </div>
+                <div class="align-center button-row">
+			      <button type="button" class="btn btn-icon btn-primary" onclick="reviewProtocol()"><i class="fa-floppy-o"></i>Review Trial</button>
+			      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
+		    	</div>
+		    	<br/>
                 <s:hidden name="uuidhidden"/>
+                </div>
             </s:form>
-        </div>
     </body>
 </html>

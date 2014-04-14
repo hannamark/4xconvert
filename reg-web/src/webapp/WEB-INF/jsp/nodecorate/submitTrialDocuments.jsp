@@ -1,12 +1,12 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-    <p><fmt:message key="submit.trial.docInstructionalText"/></p>
+    <p class="info"><fmt:message key="submit.trial.docInstructionalText"/></p>
   	<p class="mb20"><a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a></p>
   	<div class="form-group">
         <label for="protocolDoc" class="col-xs-4 control-label"><fmt:message key="submit.trial.protocolDocument"/><span class="required">*</span></label>
       <div class="col-xs-4">
       <s:if test="%{#session.protocolDoc.typeCode.equals('Protocol Document')}">
         <s:property value="%{#session.protocolDoc.fileName}"/>
-        <input id="protocolDoc" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"/>
+        <button id="protocolDoc" type="button" class="btn btn-icon btn-primary" onclick="deleteDocument('<s:property value='%{#session.protocolDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
       </s:if>
       <s:else>
         <s:file id="protocolDoc" name="protocolDoc" value="true" />
@@ -24,7 +24,7 @@
       <div class="col-xs-4">
       <s:if test="%{#session.irbApprovalDoc.typeCode.equals('IRB Approval Document')}">
         <s:property value="%{#session.irbApprovalDoc.fileName}"/>
-        <input id="irbApproval" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.irbApprovalDoc.typeCode}'/>')"/>      
+        <button id="irbApproval" type="button" class="btn btn-icon btn-primary" onclick="deleteDocument('<s:property value='%{#session.irbApprovalDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button> 
       </s:if>
       <s:else>
         <s:file id="irbApproval" name="irbApproval" />
@@ -42,7 +42,7 @@
       <div class="col-xs-4">
       <s:if test="%{#session.participatingSitesDoc.typeCode.equals('Participating sites')}">
         <s:property value="%{#session.participatingSitesDoc.fileName}"/>
-        <input id="participatingSites" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.participatingSitesDoc.typeCode}'/>')"/>
+        <button id="participatingSites" type="button" class="btn btn-icon btn-primary" onclick="deleteDocument('<s:property value='%{#session.participatingSitesDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
       </s:if>
       <s:else>
         <s:file id="participatingSites" name="participatingSites" />
@@ -60,7 +60,7 @@
     <div class="col-xs-4">
     <s:if test="%{#session.informedConsentDoc.typeCode.equals('Informed Consent Document')}">
       <s:property value="%{#session.informedConsentDoc.fileName}"/>
-      <input id="informedConsentDocument" type="button" value="Remove" onclick="deleteDocument('<s:property value='%{#session.informedConsentDoc.typeCode}'/>')"/>
+      <button id="informedConsentDocument" type="button" class="btn btn-icon btn-primary" onclick="deleteDocument('<s:property value='%{#session.informedConsentDoc.typeCode}'/>')"><i class="fa-minus"></i>Remove</button>
     </s:if>
     <s:else>
       <s:file id="informedConsentDocument" name="informedConsentDocument" />
