@@ -215,7 +215,7 @@ public class TSRReportGeneratorTest {
         result = matcher.group(2).trim();
         assertTrue(result.equals("NCT999999999999"));
         
-        regexp = Pattern.compile("(>\\s*Other\\s*<)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(>\\s*Other Identifier\\s*<)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();

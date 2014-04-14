@@ -26,6 +26,8 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,7 +93,23 @@ public class StudyIdentifiersBeanLocal extends
         for (Ii otherID : PAUtil.getOtherIdentifiers(spDTO)) {
             addOtherIdentifierToList(list, otherID);
         }
+        sort(list);
         return list;
+    }
+
+    private void sort(List<StudyIdentifierDTO> studyIdentifiers) {
+        // default sort order is the order in which study identifier types
+        // appear in the enum.
+        Collections.sort(studyIdentifiers,
+                new Comparator<StudyIdentifierDTO>() {
+                    @Override
+                    public int compare(StudyIdentifierDTO dto1,
+                            StudyIdentifierDTO dto2) {
+                        return dto1.getType().ordinal()
+                                - dto2.getType().ordinal();
+                    }
+                });
+
     }
 
     private void addOtherIdentifierToList(List<StudyIdentifierDTO> list,
@@ -293,11 +311,20 @@ public class StudyIdentifiersBeanLocal extends
     private void validateNewOtherIdAgainstExistingSet(Ii otherID, // NOPMD
             Ii studyProtocolID, Collection<Ii> existing) throws PAException {
         for (Ii ii : existing) {
-            if (StringUtils.equals(ii.getExtension(), otherID.getExtension())
-                    && StringUtils.equals(ii.getRoot(), otherID.getRoot())
-                    && StringUtils.equals(ii.getIdentifierName(),
-                            otherID.getIdentifierName())) {
-                throw new PAValidationException("Identifier already exists");
+            final boolean sameExt = StringUtils.equals(ii.getExtension(),
+                    otherID.getExtension());
+            final boolean sameRoot = StringUtils.equals(ii.getRoot(),
+                    otherID.getRoot());
+            final boolean sameIdName = StringUtils.equals(
+                    ii.getIdentifierName(), otherID.getIdentifierName());
+            if (sameExt && sameRoot && sameIdName) {
+                throw new PAValidationException(
+                        "An identifier with the given type and value already exists");
+            } else if (sameExt && sameRoot) {
+                throw new PAValidationException(
+                        "An identifier with the given value, albeit a different type, already exists. "
+                                + "Duplicate NCI Identifiers, Obsolete ClinicalTrials.gov Identifier, "
+                                + "and Other Identifier cannot share the same value");
             }
         }
 

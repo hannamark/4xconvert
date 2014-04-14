@@ -97,6 +97,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -164,8 +165,8 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
     @SuppressWarnings("unchecked")
     public String addOtherIdentifier() throws PAException {
         final HttpServletRequest request = ServletActionContext.getRequest();
-        String otherIdentifier = request
-                .getParameter(OTHER_IDENTIFIER);
+        String otherIdentifier = StringUtils.trim(request
+                .getParameter(OTHER_IDENTIFIER));
         String otherIdentifierType = request
                 .getParameter("otherIdentifierType");
         Ii studyProtocolIi = (Ii) request
@@ -218,8 +219,8 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
         final HttpServletRequest request = ServletActionContext.getRequest();
         int rowid = Integer.valueOf(request
                 .getParameter(UUID));
-        String newValue = request.getParameter(
-                OTHER_IDENTIFIER);
+        String newValue = StringUtils.trim(request.getParameter(
+                OTHER_IDENTIFIER));
         List<StudyIdentifierDTO> secondaryIds = (List<StudyIdentifierDTO>) request.getSession()
                 .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
         StudyIdentifierDTO dto = secondaryIds.get(rowid - 1);

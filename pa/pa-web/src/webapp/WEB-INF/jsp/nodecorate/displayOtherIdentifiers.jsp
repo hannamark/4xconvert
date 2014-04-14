@@ -19,9 +19,7 @@
 			
 		    <display:column title="Value" 
                 headerClass="sortable">
-                <div id="identifierDiv_${row_rowNum}">
-                    <c:out value="${row.value}" />
-                </div>
+                <div id="identifierDiv_${row_rowNum}" style="white-space: pre;"><c:out value="${row.value}" /></div>
                 <div id="identifierInputDiv_${row_rowNum}" style="display: none;">
                     <label for="identifier_${row_rowNum}" style="display:none">Identifier</label>
                     <input id="identifier_${row_rowNum}" type="text"

@@ -159,4 +159,8 @@ public class Constants {
     public static final String STUDY_ALTERNATE_TITLES_LIST = "studyAlternateTitlesList";
     /** STUDY ALTERNATE TITLES. */
     public static final String STUDY_ALTERNATE_TITLES = "studyAlternateTitles";
+    /**
+     * STUDY_IDENTIFIERS
+     */
+    public static final String STUDY_IDENTIFIERS = "studyIdentifiers";
 }

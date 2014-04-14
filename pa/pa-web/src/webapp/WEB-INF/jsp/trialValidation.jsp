@@ -203,6 +203,36 @@
                             <s:hidden name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired"/>
                         </c:otherwise>
                     </c:choose>
+                    <tr><td>&nbsp;</td></tr>
+                    <pa:titleRow titleKey="trialValidation.otherIdentifiers"/>
+                    <pa:valueRow labelKey="studyProtocol.otherId">
+	                    <c:remove var="otherIdentifiersEditable"/>
+	                    <pa:displayWhenCheckedOut>
+	                        <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted' || sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Amendment Submitted' }">                            
+	                            <table>
+	                                        <tr>                                
+	                                            <td><s:select id="otherIdentifierType" name="otherIdentifierType" 
+	                                                  list="#{}"  cssStyle="margin-top: 0px;" /></td>
+	                                            <td>
+	                                            <label for="otherIdentifierOrg" style="display:none">orgid</label>
+	                                            <input type="text" name="otherIdentifierOrg"
+	                                                id="otherIdentifierOrg" value="" />&nbsp;</td>
+	                                            <td><input type="button" id="otherIdbtnid"
+	                                                value="Add Other Identifier" onclick="addOtherIdentifier();" />
+	                                            </td>
+	                                        </tr>
+	                            </table>
+	                            <c:set var="otherIdentifiersEditable" value="${true}" scope="session"/>
+	                       </c:if>
+	                    </pa:displayWhenCheckedOut>
+                </pa:valueRow>
+                  <tr>
+                      <td colspan="2" class="space">
+                           <div id="otherIdentifierdiv"></div>
+                      </td>
+                  </tr>
+                    
+                    
                     <pa:valueRow labelKey="studyProtocol.proprietaryTrial">
                         <s:property value="gtdDTO.proprietarytrialindicator"/>
                     </pa:valueRow>
@@ -212,33 +242,6 @@
                     </pa:valueRow>
                     <%@ include file="/WEB-INF/jsp/nodecorate/phaseAndPurpose.jsp" %>
                     
-                        <pa:titleRow titleKey="trialValidation.otherIdentifiers"/>
-                        <pa:valueRow labelKey="studyProtocol.otherId">
-                        <c:remove var="otherIdentifiersEditable"/>
-                        <pa:displayWhenCheckedOut>
-                            <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted' || sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Amendment Submitted' }">                            
-								<table>
-		                                    <tr>                                
-		                                        <td><s:select id="otherIdentifierType" name="otherIdentifierType" 
-		                                              list="#{}"  cssStyle="margin-top: 0px;" /></td>
-		                                        <td>
-		                                        <label for="otherIdentifierOrg" style="display:none">orgid</label>
-		                                        <input type="text" name="otherIdentifierOrg"
-		                                            id="otherIdentifierOrg" value="" />&nbsp;</td>
-		                                        <td><input type="button" id="otherIdbtnid"
-		                                            value="Add Other Identifier" onclick="addOtherIdentifier();" />
-		                                        </td>
-		                                    </tr>
-		                        </table>
-		                        <c:set var="otherIdentifiersEditable" value="${true}" scope="session"/>
-		                   </c:if>
-		                </pa:displayWhenCheckedOut>
-					</pa:valueRow>
-                        <tr>
-                            <td colspan="2" class="space">
-                                 <div id="otherIdentifierdiv"></div>
-                            </td>
-                        </tr>
                     
                     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>  
                     <pa:titleRow titleKey="trialValidation.summary4Info"/>  

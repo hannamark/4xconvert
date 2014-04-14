@@ -259,6 +259,40 @@
                            </td>
                        </tr>
                     </c:if>
+                    <tr><td>&nbsp;</td></tr>
+                   <tr>
+                        <th colspan="2">Other Trial Identifiers</th>
+                    </tr>
+                    <c:remove var="otherIdentifiersEditable"/>
+                    <pa:adminAbstractorDisplayWhenCheckedOut>
+                    <tr>
+                        <td scope="row" class="label">
+                            <label for="otherIdentifierType">Other Identifier</label>
+                        </td>
+                        <td>                          
+                             <table>
+                                <tr>                                
+                                    <td><s:select id="otherIdentifierType" name="otherIdentifierType" 
+                                          list="#{}"  cssStyle="margin-top: 0px;" /></td>
+                                    <td>
+                                    <label for="otherIdentifierOrg" style="display:none">orgid</label>
+                                    <input type="text" name="otherIdentifierOrg"
+                                        id="otherIdentifierOrg" value="" />&nbsp;</td>
+                                    <td><input type="button" id="otherIdbtnid"
+                                        value="Add Other Identifier" onclick="addOtherIdentifier();" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <c:set var="otherIdentifiersEditable" value="${true}" scope="session"/>
+                    </pa:adminAbstractorDisplayWhenCheckedOut>
+                    <tr>
+                        <td colspan="2" class="space">
+                            <div id="otherIdentifierdiv"></div>
+                        </td>
+                    </tr>                       
+                    
                     <tr>
                         <th colspan="2"> Title</th>
                     </tr>
@@ -326,38 +360,6 @@
                         </td>
                     </tr>
                     
-                        <tr>
-                            <th colspan="2">Other Identifiers</th>
-                        </tr>
-                        <c:remove var="otherIdentifiersEditable"/>
-                        <pa:adminAbstractorDisplayWhenCheckedOut>
-                        <tr>
-                            <td scope="row" class="label">
-                                <label for="otherIdentifierType">Other Identifier</label>
-                            </td>
-                            <td>                          
-                                 <table>
-									<tr>								
-										<td><s:select id="otherIdentifierType" name="otherIdentifierType" 
-										      list="#{}"  cssStyle="margin-top: 0px;" /></td>
-										<td>
-										<label for="otherIdentifierOrg" style="display:none">orgid</label>
-										<input type="text" name="otherIdentifierOrg"
-											id="otherIdentifierOrg" value="" />&nbsp;</td>
-										<td><input type="button" id="otherIdbtnid"
-											value="Add Other Identifier" onclick="addOtherIdentifier();" />
-										</td>
-									</tr>
-								</table>
-							</td>
-                        </tr>
-                        <c:set var="otherIdentifiersEditable" value="${true}" scope="session"/>
-                        </pa:adminAbstractorDisplayWhenCheckedOut>
-                        <tr>
-                            <td colspan="2" class="space">
-                                <div id="otherIdentifierdiv"></div>
-                            </td>
-                        </tr>                       
                     <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>
                     
                         <tr>

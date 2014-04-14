@@ -3,6 +3,8 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ResearchOrganization;
@@ -36,10 +38,12 @@ import org.hibernate.Session;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
- * @author Naveen Amiruddin
- * @since 08/26/2008
+ * @author Denis G. Krylov
+ * 
  */
 public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase {
 
@@ -62,7 +66,7 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
         initMocks();
 
         changeTrialLeadOrg(TestSchema.studyProtocolIds.get(0),
-                PAConstants.CTGOV_ORG_NAME);
+                PAConstants.CTGOV_ORG_NAME, "Local SP ID 02");
 
         ensureOtherIDExists(TestSchema.studyProtocolIds.get(0),
                 IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME, "OTHER");
@@ -75,18 +79,37 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
     }
 
     private void initMocks() throws PAException {
-        StudyProtocolQueryDTO queryDTO = new StudyProtocolQueryDTO();
-        queryDTO.setLocalStudyProtocolIdentifier("Local SP ID 02");
-        queryDTO.setDcpId("DCP");
-        queryDTO.setCtepId("CTEP");
-        queryDTO.setNctIdentifier("OBS000000000001");
-        queryDTO.setNciIdentifier(new PAServiceUtils()
-                .getTrialNciId(TestSchema.studyProtocolIds.get(0)));
 
         when(
                 protocolQueryServiceLocal
                         .getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
-                .thenReturn(Arrays.asList(queryDTO));
+                .thenAnswer(new Answer<List<StudyProtocolQueryDTO>>() {
+
+                    @SuppressWarnings("deprecation")
+                    @Override
+                    public List<StudyProtocolQueryDTO> answer(
+                            InvocationOnMock invocation) throws Throwable {
+                        StudyProtocolQueryCriteria criteria = (StudyProtocolQueryCriteria) invocation
+                                .getArguments()[0];
+                        final PAServiceUtils utils = new PAServiceUtils();
+                        StudyProtocolQueryDTO queryDTO = new StudyProtocolQueryDTO();
+                        final Ii spID = IiConverter.convertToIi(criteria
+                                .getStudyProtocolId());
+                        queryDTO.setLocalStudyProtocolIdentifier(utils
+                                .getStudyIdentifier(spID,
+                                        PAConstants.LEAD_IDENTIFER_TYPE));
+                        queryDTO.setDcpId(utils.getStudyIdentifier(spID,
+                                PAConstants.DCP_IDENTIFIER_TYPE));
+                        queryDTO.setCtepId(utils.getStudyIdentifier(spID,
+                                PAConstants.CTEP_IDENTIFIER_TYPE));
+                        queryDTO.setNctIdentifier(utils.getStudyIdentifier(
+                                spID, PAConstants.NCT_IDENTIFIER_TYPE));
+                        queryDTO.setNciIdentifier(utils
+                                .getTrialNciId(TestSchema.studyProtocolIds
+                                        .get(0)));
+                        return Arrays.asList(queryDTO);
+                    }
+                });
 
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(
                 new MockOrganizationEntityService());
@@ -94,6 +117,8 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
                 new MockPersonEntityService());
         when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(
                 new MockResearchOrganizationCorrelationService());
+        when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(
+                organizationCorrelationServiceBean);
     }
 
     @SuppressWarnings({ "unused", "deprecation" })
@@ -101,7 +126,7 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
     public void testGetStudyIdentifiers() throws PAException {
         List<StudyIdentifierDTO> list = bean.getStudyIdentifiers(IiConverter
                 .convertToIi(TestSchema.studyProtocolIds.get(0)));
-        assertEquals(7, list.size());
+        assertEquals(4, list.size());
         assertEquals("Local SP ID 02", list.get(0).getValue());
         assertEquals(StudyIdentifierType.LEAD_ORG_ID, list.get(0).getType());
     }
@@ -165,11 +190,24 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
     @Test
     public void testAddOtherIDDuplicate() throws PAException {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Identifier already exists");
+        thrown.expectMessage("An identifier with the given type and value already exists");
         bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
                 new StudyIdentifierDTO(StudyIdentifierType.OTHER, "OTHER001"));
         bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
                 new StudyIdentifierDTO(StudyIdentifierType.OTHER, "OTHER001"));
+    }
+
+    @Test
+    public void testAddOtherIDDuplicateRootAndExtension() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("An identifier with the given value, albeit a different type, already exists. "
+                + "Duplicate NCI Identifiers, Obsolete ClinicalTrials.gov Identifier, "
+                + "and Other Identifier cannot share the same value");
+        bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
+                new StudyIdentifierDTO(StudyIdentifierType.OTHER, "OTHER12345"));
+        bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
+                new StudyIdentifierDTO(StudyIdentifierType.DUPLICATE_NCI,
+                        "OTHER12345"));
     }
 
     @Test
@@ -203,9 +241,24 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
         bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
                 new StudyIdentifierDTO(StudyIdentifierType.CTGOV,
                         "OBS000000000001"));
+        PaHibernateUtil.getCurrentSession().flush();
         bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
                 new StudyIdentifierDTO(StudyIdentifierType.OBSOLETE_CTGOV,
                         "OBS000000000001"));
+
+    }
+
+    @Test
+    public void testAddObsoleteNCTMatchesAnotherTrial() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("This Obsolete ClinicalTrials.gov Identifier already exist on a different trial: NCI-2009-00001");
+        bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
+                new StudyIdentifierDTO(StudyIdentifierType.OBSOLETE_CTGOV,
+                        "OBS000000000002"));
+        PaHibernateUtil.getCurrentSession().flush();
+        bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(1)),
+                new StudyIdentifierDTO(StudyIdentifierType.OBSOLETE_CTGOV,
+                        "OBS000000000002"));
 
     }
 
@@ -244,6 +297,18 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
         bean.delete(
                 IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
                 new StudyIdentifierDTO(StudyIdentifierType.LEAD_ORG_ID, "ABC"));
+    }
+
+    @Test
+    public void testUpdateNoChange() throws PAException {
+        ensureIdentifierAssignerExists(TestSchema.studyProtocolIds.get(0),
+                PAConstants.CTEP_ORG_NAME, "CTEP_ORG_NAME");
+        bean.update(
+                IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
+                new StudyIdentifierDTO(StudyIdentifierType.CTEP,
+                        "CTEP_ORG_NAME"), "CTEP_ORG_NAME");
+        verifyIdentifierAssignerStudySite(TestSchema.studyProtocolIds.get(0),
+                PAConstants.CTEP_ORG_NAME, "CTEP_ORG_NAME");
     }
 
     @Test
@@ -305,6 +370,7 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
                 new StudyIdentifierDTO(StudyIdentifierType.LEAD_ORG_ID,
                         "Updated lead org id"), "Local SP ID 02");
     }
+   
 
     @Test
     public void testDeleteCtGovId() throws PAException {
@@ -426,6 +492,27 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
                 "DUPE002");
     }
 
+    @SuppressWarnings({ "unused", "deprecation" })
+    @Test
+    public void testNoStudy() throws PAException {
+        thrown.expect(PAException.class);
+        bean.getStudyIdentifiers(IiConverter.convertToIi(999L));
+    }
+
+    @SuppressWarnings({ "unused", "deprecation" })
+    @Test
+    public void testNctChangeEmailGoesOut() throws PAException {
+        final Long spID = TestSchema.studyProtocolIds.get(0);
+        ensureNoIdentifierAssignerExists(spID, PAConstants.CTGOV_ORG_NAME);
+        reset(mailSvc);
+
+        final Ii ii = IiConverter.convertToIi(spID);
+        bean.add(ii, new StudyIdentifierDTO(StudyIdentifierType.CTGOV, "CTGOV"));
+        verifyIdentifierAssignerStudySite(spID, PAConstants.CTGOV_ORG_NAME,
+                "CTGOV");
+        verify(mailSvc).sendNCTIDChangeNotificationMail(ii, "CTGOV", "");
+    }
+
     private void verifyLeadOrgID(Long spID, String value) {
         Session s = PaHibernateUtil.getCurrentSession();
         s.flush();
@@ -471,7 +558,7 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
         s.clear();
     }
 
-    private void changeTrialLeadOrg(Long spID, String orgName)
+    private void changeTrialLeadOrg(Long spID, String orgName, String value)
             throws PAException {
         Session s = PaHibernateUtil.getCurrentSession();
         s.flush();
@@ -481,20 +568,37 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
         for (StudySite ss : sp.getStudySites()) {
             if (StudySiteFunctionalCode.LEAD_ORGANIZATION.equals(ss
                     .getFunctionalCode())) {
-
-                String poOrgId = organizationCorrelationServiceBean
-                        .getPOOrgIdentifierByOrgName(orgName);
-                Long roID = organizationCorrelationServiceBean
-                        .createResearchOrganizationCorrelations(poOrgId);
-                ss.setResearchOrganization((ResearchOrganization) s.load(
-                        ResearchOrganization.class, roID));
-
-                s.save(ss);
-                s.flush();
-                s.clear();
+                s.delete(ss);               
+                addTrialLeadOrg(spID, orgName, value);
                 return;
             }
         }
+
+    }
+
+    private void addTrialLeadOrg(Long spID, String orgName, String value)
+            throws PAException {
+        Session s = PaHibernateUtil.getCurrentSession();
+        s.flush();
+        s.clear();
+
+        StudyProtocol sp = (StudyProtocol) s.load(StudyProtocol.class, spID);
+        StudySite ss = new StudySite();
+        ss.setStudyProtocol(sp);
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setLocalStudyProtocolIdentifier(value);
+        
+        String poOrgId = organizationCorrelationServiceBean
+                .getPOOrgIdentifierByOrgName(orgName);
+        Long roID = organizationCorrelationServiceBean
+                .createResearchOrganizationCorrelations(poOrgId);
+        ss.setResearchOrganization((ResearchOrganization) s.load(
+                ResearchOrganization.class, roID));
+
+        s.save(ss);
+        s.flush();
+        s.clear();
 
     }
 
@@ -537,6 +641,29 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
 
         s.flush();
         s.clear();
+
+    }
+
+    private void ensureNoIdentifierAssignerExists(Long spID, String orgName)
+            throws PAException {
+        Session s = PaHibernateUtil.getCurrentSession();
+        s.flush();
+        s.clear();
+
+        StudyProtocol sp = (StudyProtocol) s.load(StudyProtocol.class, spID);
+        for (StudySite ss : sp.getStudySites()) {
+            if (StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.equals(ss
+                    .getFunctionalCode())
+                    && ss.getResearchOrganization() != null
+                    && ss.getResearchOrganization().getOrganization() != null
+                    && ss.getResearchOrganization().getOrganization().getName()
+                            .equals(orgName)) {
+                s.delete(ss);
+                s.flush();
+                s.clear();
+
+            }
+        }
 
     }
 

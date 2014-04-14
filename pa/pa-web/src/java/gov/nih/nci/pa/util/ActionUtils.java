@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -204,26 +205,22 @@ public final class ActionUtils {
         }
         
         session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+        final Ii spID = IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId());
         session.setAttribute(Constants.STUDY_PROTOCOL_II,
-                IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()));
+                spID);
         // When the study protocol is selected, set its token to be the current time in milliseconds.
         session.setAttribute(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, PreventTrialEditingInterceptor
             .generateToken());
         String loginName = UsernameHolder.getUser();
         session.setAttribute(Constants.LOGGED_USER_NAME, loginName);
          
-        session.setAttribute("nctIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
-            .convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()), PAConstants.NCT_IDENTIFIER_TYPE));
+        session.setAttribute("nctIdentifier", paServiceUtils.getStudyIdentifier(spID, PAConstants.NCT_IDENTIFIER_TYPE));
         if (!studyProtocolQueryDTO.isProprietaryTrial()) {
             session.setAttribute("dcpIdentifier", paServiceUtils
-                    .getStudyIdentifier(IiConverter
-                            .convertToStudyProtocolIi(studyProtocolQueryDTO
-                                    .getStudyProtocolId()),
+                    .getStudyIdentifier(spID,
                             PAConstants.DCP_IDENTIFIER_TYPE));
             session.setAttribute("ctepIdentifier", paServiceUtils
-                    .getStudyIdentifier(IiConverter
-                            .convertToStudyProtocolIi(studyProtocolQueryDTO
-                                    .getStudyProtocolId()),
+                    .getStudyIdentifier(spID,
                             PAConstants.CTEP_IDENTIFIER_TYPE));
         }
         String user = studyProtocolQueryDTO.getLastCreated().getUserLastCreated();
@@ -238,6 +235,8 @@ public final class ActionUtils {
             trialSubmitterOrg = userInfo.getAffiliateOrg();
         }
         session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, trialSubmitterOrg);
+        session.setAttribute(Constants.STUDY_IDENTIFIERS, PaRegistry
+                .getStudyIdentifiersService().getStudyIdentifiers(spID));
     }
     
 

@@ -85,59 +85,7 @@
                             <c:out value="${sessionScope.trialSummary.nciIdentifier }"/>
                         </td>
                     </tr>
-                    <tr>
-                        <td nowrap="nowrap" scope="row" class="labelDupe">
-                           
-                                <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/>
-                           
-                        </td>
-                        <td nowrap="nowrap" >
-                            <c:out value="${sessionScope.trialSummary.localStudyProtocolIdentifier }"/>
-                            <span class="formErrorMsg">
-                                <s:fielderror>
-                                    <s:param>localTrialIdentifier</s:param>
-                                </s:fielderror>
-                            </span>
-                        </td>
-                    </tr>
-                    
-                        <tr>
-                            <td nowrap="nowrap" scope="row" class="labelDupe">
-                               Other Trial Identifiers
-                            </td>
-                            <td>
-                                <c:forEach items="${sessionScope.trialSummary.otherIdentifiers}" var="extension" varStatus="status">
-                                    <c:out value="${extension}"/>
-                                    <c:if test="${not status.last}">,&nbsp;</c:if>
-                                </c:forEach>
-                            </td>
-                        </tr>
-                    
-                    <tr>
-                        <td nowrap="nowrap" scope="row" class="labelDupe">
-                            ClinicalTrials.gov Identifier 
-                        </td>
-                        <td nowrap="nowrap" >
-                            <c:out value="${sessionScope.nctIdentifier }"/>
-                        </td>
-                    </tr>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                        <tr>
-                            <td nowrap="nowrap" scope="row" class="labelDupe">
-                                CTEP Trial Identifier
-                            </td>
-                            <td nowrap="nowrap" >
-                                <c:out value="${sessionScope.ctepIdentifier}"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td nowrap="nowrap" scope="row" class="labelDupe">
-                                 DCP Trial Identifier
-                            </td>
-                            <td nowrap="nowrap" >
-                                <c:out value="${sessionScope.dcpIdentifier }"/>
-                            </td>
-                        </tr>
                         <tr>
                             <td nowrap="nowrap" scope="row" class="labelDupe">
                                  ClinicalTrials.gov XML required?
@@ -146,7 +94,21 @@
                                 <pa:displayBoolean value="${sessionScope.trialSummary.ctgovXmlRequiredIndicator}"/>
                             </td>
                         </tr>
-                    </c:if>
+                    </c:if>       
+                    <tr><td>&nbsp;</td></tr>
+                    <c:forEach var="identifier" items="${studyIdentifiers}">
+                        <c:if test="${not empty identifier.value}">
+		                    <tr>
+		                        <td nowrap="nowrap" scope="row" class="labelDupe">		                           
+		                                <c:out value="${identifier.type.code}"/>
+		                        </td>
+		                        <td nowrap="nowrap" >
+		                            <c:out value="${identifier.value}"/>
+		                        </td>
+		                    </tr>                        
+                        </c:if>
+                    </c:forEach>                                 
+                     <tr><td>&nbsp;</td></tr>
                     <tr>
                         <td nowrap="nowrap" scope="row" class="labelDupe">
                             
