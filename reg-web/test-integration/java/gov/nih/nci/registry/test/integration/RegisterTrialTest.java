@@ -188,7 +188,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("link=Close");
         selenium.waitForPageToLoad("30000");
 
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         clickAndWaitAjax("link=Look Up Org");
         selenium.selectFrame("popupFrame");
         selenium.type("orgNameSearch", "'");
@@ -229,7 +229,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("link=Cancel");
         clickAndWaitAjax("link=Close");
         selenium.waitForPageToLoad("30000");
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         clickAndWaitAjax("link=Look Up Person");
         selenium.selectFrame("popupFrame");
         selenium.type("lastName", "'");

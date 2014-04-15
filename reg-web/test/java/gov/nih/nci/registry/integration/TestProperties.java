@@ -97,11 +97,8 @@ public final class TestProperties {
     public static final String SERVER_HOSTNAME_DEFAULT = "localhost";
     public static final String SERVER_PORT_DEFAULT = "8080";
 
-    public static final String SELENIUM_SERVER_PORT_KEY = "selenium.server.port";
-    public static final String SELENIUM_SERVER_PORT_DEFAULT = "4444";
-
-    public static final String SELENIUM_BROWSER_KEY = "selenium.browser";
-    public static final String SELENIUM_BROWSER_DEFAULT = "*chrome";
+    public static final String WEBDRIVER_CLASS_KEY = "webdriver.class";
+    public static final String WEBDRIVER_CLASS_DEFAULT = "org.openqa.selenium.firefox.FirefoxDriver";
 
     public static final String SELENIUM_DELAY_KEY = "selenium.delay";
     public static final String SELENIUM_DELAY_DEFAULT = "10";
@@ -129,12 +126,8 @@ public final class TestProperties {
         return Integer.parseInt(properties.getProperty(SERVER_PORT_KEY, SERVER_PORT_DEFAULT));
     }
 
-    public static String getSeleniumServerPort() {
-        return properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT);
-    }
-
-    public static String getSeleniumBrowser() {
-        return properties.getProperty(SELENIUM_BROWSER_KEY, SELENIUM_BROWSER_DEFAULT);
+    public static String getDriverClass() {
+        return properties.getProperty(WEBDRIVER_CLASS_KEY, WEBDRIVER_CLASS_DEFAULT);
     }
 
     public static String getSeleniumCommandDelay() {

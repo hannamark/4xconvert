@@ -171,7 +171,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="pa-grid-3.2.dist.dir" value="${dist.exploded.dir}/${pa-grid-3.2.dist.relative.dir}"/>
 
     <!-- Selenium settings -->
-    <property name="selenium.browser" value="*chrome"/>
+    <property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
+	<property name="phantomjs.binary.path" value="/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs"/>
     <property name="selenium.proxy.port" value="4444"/>
     <property name="selenium.jboss.port" value="39480"/>
     <property name="selenium.delay" value="10"/>
@@ -1301,6 +1302,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="test.java.naming.provider" value="localhost"/>
             <property name="pa.server.name" value="${jboss.server.hostname}"/>
             <property name="selenium.server.port" value="${selenium.proxy.port}"/>
+        	<property name="webdriver.class" value="${webdriver.class}"/>
+        	<property name="phantomjs.binary.path" value="${phantomjs.binary.path}"/>
         </ant>
     </target>
     <target name="test:reg-web" depends="init">
@@ -1406,12 +1409,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <attribute name="runDir"/>
         <attribute name="runTarget" default="run-selenium-tests"/>
         <sequential>
-            <ant inheritAll="false" inheritRefs="false" target="start-selenium-server" dir="${pa.base.dir}">
-                <property name="pa.server.name" value="${jboss.server.hostname}"/>
-                <property name="jboss.port" value="${selenium.jboss.port}"/>
-                <property name="selenium.server.port" value="${selenium.proxy.port}"/>
-            </ant>
-
             <ant inheritAll="false" inheritRefs="false" target="@{runTarget}" dir="@{runDir}">
                 <property name="pa.server.name" value="${jboss.server.hostname}"/>
                 <property name="jboss.server.hostname" value="${jboss.server.hostname}"/>
@@ -1419,6 +1416,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <property name="jboss.port" value="${selenium.jboss.port}" />
                 <property name="selenium.server.port" value="${selenium.proxy.port}"/>
                 <property name="selenium.delay" value="${selenium.delay}"/>
+                <property name="webdriver.class" value="${webdriver.class}"/>
+                <property name="phantomjs.binary.path" value="${phantomjs.binary.path}"/>
                 <property name="jboss.deploy.directory" value="${jboss.deploy.dir}"/>
                 <property name="hibernate.dialect" value="${database.dialect}"/>
                 <property name="database.user" value="${database.user}"/>
@@ -1428,13 +1427,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <property name="gridServicePrincipal" value="${grid.security.jndi.principal}"/>
                 <property name="gridServiceCredential" value="${grid.security.jndi.credentials.encrypted}"/>
                 <property name="jboss.deploy.dir" value="${jboss.deploy.dir}" />
-                <property name="application.url" value="${application.url}" />
-           </ant>
-
-            <ant inheritAll="false" inheritRefs="false" target="stop-selenium-server" dir="${pa.base.dir}">
-                <property name="pa.server.name" value="${jboss.server.hostname}"/>
-                <property name="selenium.server.port" value="${selenium.proxy.port}"/>
-            </ant>
+                <property name="application.url" value="${application.url}" />            	
+           </ant>          
         </sequential>
     </macrodef>
 

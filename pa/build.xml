@@ -125,22 +125,12 @@
         <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>
     </target>
 
-    <target name="start-selenium-server" description="Starts the selenium server">
-        <ant target="start-selenium-server" dir="pa-web" inheritAll="false"/>
-    </target>
-
-    <target name="stop-selenium-server" description="Stops the selenium server">
-        <ant target="stop-selenium-server" dir="pa-web" inheritAll="false"/>
-    </target>
-
     <target name="test-integration" depends="clean" description="Runs integration tests against the automatically deploy application.">
         <ant target="init-test-db" dir="pa-web" inheritAll="false"/>
         <ant target="populate-test-db" dir="pa-web" inheritAll="false"/>
         <ant target="deploy"/>
         <ant target="start-jboss-server" dir="pa-ear" inheritAll="false"/>
-        <ant target="start-selenium-server" dir="pa-web" inheritAll="false"/>
-        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>
-        <ant target="stop-selenium-server" dir="pa-web" inheritAll="false"/>
+        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>        
         <ant target="stop-jboss-server" dir="pa-ear" inheritAll="false"/>
     </target>
 

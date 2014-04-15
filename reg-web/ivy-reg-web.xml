@@ -130,13 +130,15 @@ This is the definition of a virtual module called bda-download that has a depend
 
     <dependency org="junit"                  name="junit"                   rev="4.8.2"           conf="selenium->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons-test"      rev="1.3.7"           conf="selenium->master"/>
-    <dependency org="org.seleniumhq.selenium.client-drivers" name="selenium-java-client-driver"    rev="1.0.2" conf="selenium->master"/>
-    <dependency org="org.seleniumhq.selenium.server" name="selenium-server-coreless" rev="1.0.3"               conf="selenium->compile,master">
-        <artifact name="selenium-server-coreless" type="jar"/>
+    
+    <!-- Selenium -->
+    <dependency org="org.seleniumhq.selenium" name="selenium-java"    rev="2.39.0" conf="selenium->master"/>
+    <dependency org="org.seleniumhq.selenium" name="selenium-server" rev="2.39.0"               conf="selenium->compile,master">       
     </dependency>
-    <dependency org="org.seleniumhq.selenium.server" name="selenium-server" rev="1.0.3"               conf="selenium->master">
-        <artifact name="selenium-server" m:classifier="standalone"/>
+    <dependency org="com.google.guava" name="guava"    rev="15.0" conf="selenium->compile,master" force="true">
+        <artifact name="guava" type="jar" conf="*"/>
     </dependency>
+     
     <dependency org="commons-dbutils"                  name="commons-dbutils"                   rev="1.5"           conf="selenium->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="selenium->master"/>
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="selenium->master"/>

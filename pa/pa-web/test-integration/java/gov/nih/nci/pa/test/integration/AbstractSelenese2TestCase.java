@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The pa
+ * source code form and machine readable, binary, object code form. The coppa-commons
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This pa Software License (the License) is between NCI and You. You (or
+ * This coppa-commons Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the pa Software to (i) use, install, access, operate,
+ * its rights in the coppa-commons Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the pa Software; (ii) distribute and
- * have distributed to and by third parties the pa Software and any
+ * and prepare derivative works of the coppa-commons Software; (ii) distribute and
+ * have distributed to and by third parties the coppa-commons Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,91 +80,166 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.accweb.integration;
+package gov.nih.nci.pa.test.integration;
 
-import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
-import gov.nih.nci.pa.test.integration.util.TestProperties;
+import junit.framework.TestCase;
 
-import org.apache.commons.lang.time.FastDateFormat;
-import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverBackedSelenium;
+import org.openqa.selenium.WebElement;
+
+import com.thoughtworks.selenium.Selenium;
 
 /**
- * Abstract base class for selenium tests.
- *
- * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
+ * @author Denis G. Krylov
  */
-@Ignore
-public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCase {
-    public static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
-    
+public abstract class AbstractSelenese2TestCase extends TestCase {
+    private static final int PAGE_TIMEOUT_SECONDS = 60;
+    private static final int SECONDS_PER_MINUTE = 1000;
+    private int serverPort = 39480;
+    private String serverHostname = "localhost";
+    private String driverClass = "org.openqa.selenium.firefox.FirefoxDriver";
+
+    protected Selenium selenium;
+    protected WebDriver driver;
+    protected String url;
+
     @Override
     @Before
     public void setUp() throws Exception {
-        //super.setSeleniumPort(TestProperties.getSeleniumServerPort());
-        super.setServerHostname(TestProperties.getServerHostname());
-        super.setServerPort(TestProperties.getServerPort());
-        //super.setBrowser(TestProperties.getSeleniumBrowser());
-        super.setUp();
-        selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
+        String hostname = getServerHostname();
+        int port = getServerPort();
+        String driverClass = getDriverClass();
+        url = port == 0 ? "http://" + hostname : "http://" + hostname
+                + ":" + port;
+
+        driver = (WebDriver) Class.forName(driverClass).newInstance();
+        selenium = new WebDriverBackedSelenium(driver, url);
+        selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
+       
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        logoutUser();
-        super.tearDown();
+    /**
+     * Converts seconds to milliseconds.
+     * 
+     * @param seconds
+     *            the number of seconds to convert
+     * @return the number of milliseconds in the give seconds
+     */
+    protected static String toMillisecondsString(long seconds) {
+        return String.valueOf(seconds * SECONDS_PER_MINUTE);
     }
 
-    private void logoutUser() {
-        openAndWait("/accrual/login/logout.action");
+    /**
+     * Waits for the page to load.
+     */
+    protected void waitForPageToLoad() {
+        selenium.waitForPageToLoad(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
     }
 
-    protected void login(String username, String password) {
-        openAndWait("/accrual");
-        verifyHomePage();
-        clickAndWait("link=Log In");
-        selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        selenium.select("id=authenticationServiceURL", "label=Training");
-        clickAndWait("id=loginButton");
-        verifyDisclaimerPage();
+    /**
+     * Waits for the given element to load.
+     * 
+     * @param id
+     *            the id of the element to wait for
+     * @param timeoutSeconds
+     *            the number seconds to wait for
+     */
+    protected void waitForElementById(String id, int timeoutSeconds) {
+        selenium.waitForCondition(
+                "selenium.browserbot.getCurrentWindow().document.getElementById('"
+                        + id + "');", toMillisecondsString(timeoutSeconds));
     }
 
-    protected void verifyDisclaimerPage() {
-        assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
-        assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
+    /**
+     * Click and wait for a page to load.
+     * 
+     * @param locator
+     *            the locator of the element to click
+     */
+    protected void clickAndWait(String locator) {
+        selenium.click(locator);
+        waitForPageToLoad();
     }
 
-    protected void verifyHomePage() {
-        assertTrue(selenium.isTextPresent("Log In"));
-        assertTrue(selenium.isTextPresent("CONTACT US"));
-        assertTrue(selenium.isTextPresent("PRIVACY NOTICE"));
-        assertTrue(selenium.isTextPresent("DISCLAIMER"));
-        assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
-        assertTrue(selenium.isTextPresent("SUPPORT"));
+    /**
+     * Click and pause to allow for ajax to complete.
+     * 
+     * @param locator
+     *            the locator of the element to click
+     */
+    protected void clickAndWaitAjax(String locator) {
+        selenium.click(locator);
+        // This pause is to allow for any js associated with an anchor to
+        // complete execution
+        // before moving on.
+        pause(SECONDS_PER_MINUTE / 2);
     }
 
-    protected void disclaimer(boolean accept) {
-        if (accept) {
-            clickAndWaitAjax("id=acceptDisclaimer");
-        } else {
-            clickAndWait("id=rejectDisclaimer");
-            verifyHomePage();
+    protected void clickLinkAndWait(String linkText) {
+        WebElement el = driver.findElement(By.linkText(linkText));
+        el.click();
+        pause(SECONDS_PER_MINUTE / 2);
+    }
+
+    public void pause(int millisecs) {
+        try {
+            Thread.sleep(millisecs);
+        } catch (InterruptedException e) {
         }
     }
 
-    public void loginAsAbstractor() {
-        login("abstractor-ci", "Coppa#12345");
+    /**
+     * Click the save button and wait for the resulting page to load.
+     */
+    protected void clickAndWaitSaveButton() {
+        clickAndWait("save_button");
     }
 
-    protected boolean isLoggedIn() {
-        return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
+    /**
+     * @return the serverPort
+     */
+    public int getServerPort() {
+        return this.serverPort;
     }
 
-    protected void openAndWait(String url) {
-        selenium.open(url);
-        waitForPageToLoad();
+    /**
+     * @param serverPort
+     *            the serverPort to set
+     */
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    /**
+     * @return the serverHostname
+     */
+    public String getServerHostname() {
+        return this.serverHostname;
+    }
+
+    /**
+     * @param serverHostname
+     *            the serverHostname to set
+     */
+    public void setServerHostname(String serverHostname) {
+        this.serverHostname = serverHostname;
+    }
+
+    /**
+     * @return the driverClass
+     */
+    public String getDriverClass() {
+        return driverClass;
+    }
+
+    /**
+     * @param driverClass
+     *            the driverClass to set
+     */
+    public void setDriverClass(String driverClass) {
+        this.driverClass = driverClass;
     }
 }

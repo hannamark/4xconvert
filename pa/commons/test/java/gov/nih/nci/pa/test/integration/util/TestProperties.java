@@ -97,14 +97,20 @@ public final class TestProperties {
     public static final String SERVER_HOSTNAME_DEFAULT = "localhost";
     public static final String SERVER_PORT_DEFAULT = "8080";
 
-    public static final String SELENIUM_SERVER_PORT_KEY = "selenium.server.port";
-    public static final String SELENIUM_SERVER_PORT_DEFAULT = "4444";
-
-    public static final String SELENIUM_BROWSER_KEY = "selenium.browser";
-    public static final String SELENIUM_BROWSER_DEFAULT = "*chrome";
+    public static final String WEBDRIVER_CLASS_KEY = "webdriver.class";
+    public static final String WEBDRIVER_CLASS_DEFAULT = "org.openqa.selenium.firefox.FirefoxDriver";
 
     public static final String SELENIUM_DELAY_KEY = "selenium.delay";
     public static final String SELENIUM_DELAY_DEFAULT = "10";
+    
+    public static final String WEBDRIVER_PHANTOMJS_PATH = "phantomjs.binary.path";
+    private static final String WEBDRIVER_PHANTOMJS_PATH_DEFAULT = 
+            "/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs";
+    
+    public static final String TEST_DB_URL = "test.db.connection.url";
+    public static final String TEST_DB_DRIVER = "test.db.driver";
+    public static final String TEST_DB_USER = "test.db.user";
+    public static final String TEST_DB_PASSWORD = "test.db.password";
 
     private static Properties properties = new Properties();
     static {
@@ -124,15 +130,20 @@ public final class TestProperties {
         return Integer.parseInt(properties.getProperty(SERVER_PORT_KEY, SERVER_PORT_DEFAULT));
     }
 
-    public static String getSeleniumServerPort() {
-        return properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT);
-    }
-
-    public static String getSeleniumBrowser() {
-        return properties.getProperty(SELENIUM_BROWSER_KEY, SELENIUM_BROWSER_DEFAULT);
-    }
-
     public static String getSeleniumCommandDelay() {
         return properties.getProperty(SELENIUM_DELAY_KEY, SELENIUM_DELAY_DEFAULT);
+    }
+    
+    public static String getDriverClass() {
+        return properties.getProperty(WEBDRIVER_CLASS_KEY, WEBDRIVER_CLASS_DEFAULT);
+    }
+    
+    public static String getPhantomJsPath() {
+        return properties.getProperty(WEBDRIVER_PHANTOMJS_PATH, WEBDRIVER_PHANTOMJS_PATH_DEFAULT);
+    }
+
+    
+    public static String getProperty(String name) {
+        return properties.getProperty(name);
     }
 }

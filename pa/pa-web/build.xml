@@ -49,7 +49,9 @@
     <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
     <property name="database.upgrades.dir" value="${basedir}/../dbscripts/db-upgrade"/>
 
-    <property name="selenium.delay" value="10"/>
+    <property name="selenium.delay" value="50"/>
+	<property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
+	<property name="phantomjs.binary.path" value="/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -219,6 +221,12 @@
                 <filter token="jboss.port" value="${jboss.port}" />
                 <filter token="selenium.server.port" value="${selenium.server.port}"/>
                 <filter token="selenium.delay" value="${selenium.delay}" />
+            	<filter token="webdriver.class" value="${webdriver.class}" />
+            	<filter token="phantomjs.binary.path" value="${phantomjs.binary.path}" />
+            	<filter token="jdbc.driver" value="${jdbc.driver}"/>
+                <filter token="jdbc.url" value="${jdbc.url}"/>
+                <filter token="db.username" value="${db.username}"/>
+                <filter token="db.password" value="${db.password}"/>  
             </filterset>
         </copy>
         <replaceregexp file="${pa-web.build.testResourceDir.0}/test.properties" match="\\" replace="/" flags="g"/>
@@ -320,37 +328,10 @@
         </simian>
     </target>
 
-    <!-- ====================================================================== -->
-    <!-- Start the selenium server                                              -->
-    <!-- ====================================================================== -->
-    <target name="start-selenium-server">
-        <sequential>
-            <java classname="org.openqa.selenium.server.SeleniumServer" fork="true" spawn="true">
-                <arg line="-timeout 30"/>
-                <arg line="-port ${selenium.server.port}"/>
-                <classpath>
-                    <path refid="selenium.classpath"/>
-                </classpath>
-            </java>
-            <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
-                <http url="http://${pa.server.name}:${selenium.server.port}/selenium-server/driver/?cmd=testComplete"/>
-            </waitfor>
-        </sequential>
-    </target>
-
-    <!-- ====================================================================== -->
-    <!-- Stop the selenium server                                              -->
-    <!-- ====================================================================== -->
-    <target name="stop-selenium-server">
-        <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
-            <http url="http://${pa.server.name}:${selenium.server.port}/selenium-server/driver/?cmd=shutDownSeleniumServer"/>
-        </waitfor>
-    </target>
 
     <!-- ====================================================================== -->
     <!-- Run JUnit Integration Tests                                            -->
     <!-- ====================================================================== -->
-
     <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
         <mkdir dir="${pa-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">

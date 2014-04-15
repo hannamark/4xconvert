@@ -86,7 +86,6 @@ import static gov.nih.nci.registry.integration.TestProperties.TEST_DB_DRIVER;
 import static gov.nih.nci.registry.integration.TestProperties.TEST_DB_PASSWORD;
 import static gov.nih.nci.registry.integration.TestProperties.TEST_DB_URL;
 import static gov.nih.nci.registry.integration.TestProperties.TEST_DB_USER;
-import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.registry.integration.TestProperties;
 
 import java.io.File;
@@ -111,7 +110,7 @@ import org.junit.Ignore;
  * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
  */
 @Ignore
-public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestCase {
+public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2TestCase {
     protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
     private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
     private static final String IRB_DOCUMENT = "IrbDoc.doc";
@@ -122,11 +121,10 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
     private static Logger LOG = Logger.getLogger(AbstractRegistrySeleniumTest.class.getName());
 
     @Override
-    public void setUp() throws Exception {
-        super.setSeleniumPort(TestProperties.getServerHostname());
+    public void setUp() throws Exception {        
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
-        super.setBrowser(TestProperties.getSeleniumBrowser());
+        super.setDriverClass(TestProperties.getDriverClass());
         super.setUp();
         selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
         
@@ -148,8 +146,13 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
     @Override
     public void tearDown() throws Exception {
         logoutUser();
+        closeBrowser();
         closeDbConnection();
         super.tearDown();
+    }
+
+    private void closeBrowser() {
+        driver.quit();
     }
 
     private void closeDbConnection() {
@@ -259,7 +262,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWaitAjax("link=Submit");
         waitForPageToLoad();
 
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
         selenium.type("trialDTO.leadOrgTrialIdentifier", leadOrgTrialId);
         selenium.type("trialDTO.officialTitle", trialName);
@@ -283,7 +286,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
 
         //Select Principal Investigator
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         clickAndWaitAjax("link=Look Up Person");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
@@ -299,7 +302,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
 
         //Select Sponsor
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         clickAndWaitAjax("//div[@id='loadSponsorField']/table/tbody/tr/td[2]/ul/li/a");
         selenium.selectFrame("popupFrame");
         waitForElementById("search_organization_btn", 15);
@@ -309,7 +312,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
         waitForPageToLoad();
 
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         selenium.select("trialDTO.responsiblePartyType", "label=Sponsor");
 
         //Select Funding Sponsor
@@ -323,7 +326,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
 
         //Trial Status Information
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         selenium.select("trialDTO_statusCode", "label=In Review");
         selenium.type("trialDTO_statusDate", today);
         selenium.type("trialDTO_startDate", tommorrow);
@@ -373,7 +376,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWaitAjax("link=Submit");
         waitForPageToLoad();
 
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 15);
         selenium.type("trialDTO.leadOrgTrialIdentifier", leadOrgTrialId);
         selenium.type("trialDTO.officialTitle", trialName);
@@ -398,7 +401,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
 
         //Select Principal Investigator
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         clickAndWaitAjax("link=Look Up Person");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
@@ -414,7 +417,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
 
         //Select Sponsor
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         clickAndWaitAjax("//div[@id='loadSponsorField']/table/tbody/tr/td[2]/ul/li/a");
         selenium.selectFrame("popupFrame");
         waitForElementById("search_organization_btn", 15);
@@ -424,7 +427,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
         waitForPageToLoad();
 
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         selenium.select("trialDTO.responsiblePartyType", "label=Sponsor");
         
         
@@ -439,7 +442,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
 
         //Trial Status Information
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         selenium.select("trialDTO_statusCode", "label=In Review");
         selenium.type("trialDTO_statusDate", today);
         selenium.type("trialDTO_startDate", tommorrow);

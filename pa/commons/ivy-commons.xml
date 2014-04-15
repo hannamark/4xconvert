@@ -76,7 +76,14 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="checkstyle"                name="checkstyle"              rev="5.0"             conf="test-checkstyle->master,runtime"/>
     <dependency org="net.sourceforge.cobertura" name="cobertura"               rev="1.9.4.1"         conf="test-cobertura->master,runtime"/>
     <dependency org="junit"                     name="junit"                   rev="4.8.2"           conf="test-junit->master"/>
-    <dependency org="org.seleniumhq.selenium.client-drivers" name="selenium-java-client-driver"    rev="1.0.2" conf="test-selenium->master"/>
+    
+    <dependency org="org.seleniumhq.selenium" name="selenium-java"    rev="2.39.0" conf="test-selenium->master"/>
+    <dependency org="org.seleniumhq.selenium" name="selenium-server" rev="2.39.0"               conf="test-selenium->compile,master">       
+    </dependency>
+    <dependency org="com.google.guava" name="guava"    rev="15.0" conf="test-selenium->compile,master" force="true">
+        <artifact name="guava" type="jar" conf="*"/>
+    </dependency>
+    
     <dependency org="pmd"                       name="pmd"                     rev="4.2.5"           conf="test-pmd->master,runtime"/>
     <dependency org="redhill"                   name="simian"                  rev="2.2.4"           conf="test-simian->master,runtime"/>
   </dependencies>

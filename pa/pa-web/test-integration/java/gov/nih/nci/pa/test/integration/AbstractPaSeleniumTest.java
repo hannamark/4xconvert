@@ -82,9 +82,22 @@
  */
 package gov.nih.nci.pa.test.integration;
 
-import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
+import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_DRIVER;
+import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_PASSWORD;
+import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_URL;
+import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_USER;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
 
@@ -94,28 +107,68 @@ import org.junit.Ignore;
  * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
  */
 @Ignore
-public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
+public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
+    
     protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
+    private static final String PHANTOM_JS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
+    private static Logger LOG = Logger.getLogger(AbstractPaSeleniumTest.class.getName());    
+    private Connection connection;
+
 
     @Override
     public void setUp() throws Exception {
-        super.setSeleniumPort(TestProperties.getSeleniumServerPort());
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
-        super.setBrowser(TestProperties.getSeleniumBrowser());
+        super.setDriverClass(TestProperties.getDriverClass());
+        //super.setDriverClass(PHANTOM_JS_DRIVER);
+        System.setProperty("phantomjs.binary.path", TestProperties.getPhantomJsPath());
         super.setUp();
         selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
+        
+        openDbConnection();
+    }
+    
+    private void openDbConnection() {
+        try {
+            DbUtils.loadDriver(TestProperties.getProperty(TEST_DB_DRIVER));
+            this.connection = DriverManager.getConnection(TestProperties.getProperty(TEST_DB_URL),
+                    TestProperties.getProperty(TEST_DB_USER), TestProperties.getProperty(TEST_DB_PASSWORD));
+            LOG.info("Successfully connected to the database at "+TestProperties.getProperty(TEST_DB_URL));
+        } catch (Exception e) {
+            LOG.severe("Unable to open a JDBC connection to the database: tests may fail!");
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
     @Override
     public void tearDown() throws Exception {
         logoutUser();
+        closeBrowser();
         super.tearDown();
+    }
+    
+    private void closeBrowser() {
+        driver.quit();
     }
 
     protected void logoutUser() {
         openAndWait("/pa/logout.action");
     }
+    
+    @SuppressWarnings("deprecation")
+    protected void reInitializeWebDriver() throws Exception {
+        closeBrowser();
+        super.tearDown();
+        setUp();
+    }
+
+    /**
+     * @return
+     */
+    private boolean isPhantomJS() {
+        return driver.getClass().getName().equals(PHANTOM_JS_DRIVER);
+    }
+
 
     protected void login(String username, String password) {
         openAndWait("/pa");
@@ -382,7 +435,44 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
     }
 
     protected void openAndWait(String url) {
-        selenium.open(url);
+        if (!isPhantomJS()) {
+            selenium.open(url);
+        } else {
+            openAndHandleStuckPhantomJsDriver(url);
+        }
         waitForPageToLoad();
     }
+    
+    private void openAndHandleStuckPhantomJsDriver(final String url) {
+        int tries = 0;
+        while (tries < 3) {
+            tries++;
+            Future<Boolean> f = Executors.newSingleThreadExecutor().submit(
+                    new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            selenium.open(url);
+                            return true;
+                        }
+                    });
+            try {
+                if (f.get(30, TimeUnit.SECONDS)) {
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out
+                        .println("PhantomJS stuck in 'get' (an odd issue on Linux); restarting and trying again. Attempt # "
+                                + tries);
+            }
+            f.cancel(true);
+            try {
+                this.reInitializeWebDriver();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 }
