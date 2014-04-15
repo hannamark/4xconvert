@@ -1420,10 +1420,10 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <property name="phantomjs.binary.path" value="${phantomjs.binary.path}"/>
                 <property name="jboss.deploy.directory" value="${jboss.deploy.dir}"/>
                 <property name="hibernate.dialect" value="${database.dialect}"/>
-                <property name="database.user" value="${database.user}"/>
-                <property name="database.password" value="${database.password}"/>
-                <property name="database.url" value="${database.url}"/>
-                <property name="jdbc.driver" value="${database.driver}"/>
+            	<property name="db.username" value="${database.user}"/>
+            	<property name="db.password" value="${database.password}"/>
+            	<property name="jdbc.driver" value="${database.driver}"/>
+            	<property name="jdbc.url" value="${database.url}"/>
                 <property name="gridServicePrincipal" value="${grid.security.jndi.principal}"/>
                 <property name="gridServiceCredential" value="${grid.security.jndi.credentials.encrypted}"/>
                 <property name="jboss.deploy.dir" value="${jboss.deploy.dir}" />
