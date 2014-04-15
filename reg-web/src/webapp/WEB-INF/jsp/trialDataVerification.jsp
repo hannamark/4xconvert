@@ -33,14 +33,12 @@
             </script>
 </head>
     <body>
-        <h1><fmt:message key="trial.data.verification.title" /></h1> 
+        <h1 class="heading"><span><fmt:message key="trial.data.verification.title" /></span></h1> 
         <c:set var="topic" scope="request" value="dataverification"/>
-        <div class="box">
-                <reg-web:sucessMessage/>
-                <table class="form">
-                <s:token/>
-                
-                <reg-web:valueRow labelKey="view.trial.identifier" strong="true" noLabelTag="true">
+        <reg-web:sucessMessage/>
+        <div class="row form-horizontal details">
+                <s:token/>                
+                <reg-web:valueRowDiv labelKey="view.trial.identifier" strong="true" noLabelTag="true">
                             <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                                         || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
                                 <c:out value="${requestScope.trialDTO.assignedIdentifier}"/>
@@ -49,8 +47,8 @@
                                         || requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
                                 <c:out value="${requestScope.assignedIdentifier}"/>
                             </c:if>
-                </reg-web:valueRow>
-                 <reg-web:valueRow labelKey="view.trial.nctNumber" noLabelTag="true">
+                </reg-web:valueRowDiv>
+                 <reg-web:valueRowDiv labelKey="view.trial.nctNumber" noLabelTag="true">
                                 <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                                             || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
                                     <c:out value="${requestScope.trialDTO.nctIdentifier }"/>
@@ -59,8 +57,8 @@
                                             || requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
                                     <c:out value="${requestScope.nctIdentifier }"/>
                                 </c:if>
-                 </reg-web:valueRow>
-                <reg-web:valueRow labelKey="view.trial.leadOrgTrialIdentifier" noLabelTag="true">
+                 </reg-web:valueRowDiv>
+                <reg-web:valueRowDiv labelKey="view.trial.leadOrgTrialIdentifier" noLabelTag="true">
                             <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                                         || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
                                 <c:out value="${requestScope.trialDTO.leadOrgTrialIdentifier}"/>
@@ -69,52 +67,33 @@
                                         || requestScope.trialSummary.proprietaryTrialIndicator.value == 'true'}">
                                 <c:out value="${requestScope.leadOrgTrialIdentifier}"/>
                             </c:if>
-                </reg-web:valueRow>
+                </reg-web:valueRowDiv>
 
-                 <reg-web:valueRow labelKey="view.trial.title" noLabelTag="true">
+                 <reg-web:valueRowDiv labelKey="view.trial.title" noLabelTag="true">
                             <c:out value="${requestScope.trialSummary.officialTitle.value}"/>
                             <c:if test="${not empty trialSummary.studyAlternateTitles}">
                                <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
                             </c:if>
-                 </reg-web:valueRow>
-                 
-                </table>
-               <table class="form">
-                    
-                    <tr>
-                        <td colspan="2">
-                            <s:set name="webDTOList" value="webDTOList" scope="request"/>
-               <display:table name="webDTOList" htmlId="webDTOList" id="row" class="data" sort="list" pagesize="200" requestURI="trialDataVerification.action">
+                 </reg-web:valueRowDiv>
+                 <s:set name="webDTOList" value="webDTOList" scope="request"/>
+               	<display:table name="webDTOList" htmlId="webDTOList" id="row" class="data table table-striped table-bordered sortable" sort="list" pagesize="200" requestURI="trialDataVerification.action">
                       <display:column escapeXml="true" property="updatedDate" sortable="false" titleKey="trial.data.verification.date" headerClass="sortable"/>
                       <display:column escapeXml="true" property="verificationMethod" sortable="false" titleKey="trial.data.verification.verificationMethod" headerClass="sortable"/>
                       <display:column escapeXml="true" property="userLastUpdated" sortable="false" titleKey="trial.data.verification.verifiedBy" headerClass="sortable"/>        
                </display:table>
-               </td>
-                    </tr>
-                </table>
                <br/>
                <br/>
-               <h3>Add Data Verification Record</h3>
+               <h3 class="heading"><span>Add Data Verification Record</span></h3>
                <br/>
                <br/>
-               <fmt:message key="trial.data.verification.review" />                     
+               <p class="info"><strong><fmt:message key="trial.data.verification.review" /></strong></p>                     
                
-           <div class="actionsrow">
-              <del class="btnwrapper">
-                  <ul class="btnrow">
-                       <li>    
-                           <s:url id="addUrl" namespace="/protected" action="trialDataVerificationAction" method="save"/>
-                           <s:a cssClass="btn" href="javascript:void(0)" onclick="javascript:addAction('%{addUrl}');">
-                                <span class="btn_img"><span class="add">Save Verification Record</span></span>
-                           </s:a>
-                           <s:url id="cancelUrl" namespace="/protected" action="searchTrial"/>
-                           <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
-                                <span class="btn_img"><span class="cancel">Cancel</span></span>
-                           </s:a>
-                       </li>
-                   </ul>
-                </del>
-            </div>
+               <div class="align-center button-row">
+               	  <s:url id="addUrl" namespace="/protected" action="trialDataVerificationAction" method="save"/>
+			      <s:a onclick="javascript:addAction('%{addUrl}');" href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-floppy-o"></i>Save Verification Record</button></s:a>
+			      <s:url id="cancelUrl" namespace="/protected" action="searchTrial"/>
+			      <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)"><button type="button" class="btn btn-icon btn-default" ><i class="fa-times-circle"></i>Cancel</button></s:a>
+		    </div>
         </div> 
     </body>
 </html>
