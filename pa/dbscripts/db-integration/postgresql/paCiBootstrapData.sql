@@ -16,4 +16,6 @@ update csm_remote_group set grid_grouper_group_name='COPPA:PA:AdminAbstractor' w
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = '/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=abstractor-ci'), (select group_id from csm_group where group_name = 'Abstractor'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = '/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=abstractor-ci'), (select group_id from csm_group where group_name = 'Submitter'));
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = '/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=submitter-ci'), (select group_id from csm_group where group_name = 'Submitter'));
+
+INSERT INTO csm_remote_group (group_id,application_id,grid_grouper_url,grid_grouper_group_name) VALUES ((select group_id from csm_group where group_name='SuAbstractor'),(select application_id from csm_application where application_name='pa'),'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper','COPPA:PA:SuAbstractor');
         
