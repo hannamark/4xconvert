@@ -82,24 +82,20 @@
  */
 package gov.nih.nci.pa.test.integration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.Test;
 
-/**
- * 
- * Class to control the order that selenium tests are run in.
- * 
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
- */
-@RunWith(Suite.class)
-@SuiteClasses(value = { LoginTest.class, ManageTrialOtherIdentifiersTest.class
-/*
- * , AnatomicSiteTest.class, PlannedMarkerTest.class, StudyOwnershipTest.class,
- * DuplicateTrialEditTest.class, LookupWithApostropheTest.class,
- * TrialStatusTest.class, DiseaseTest.class, TrialRelatedDocumentTest.class,
- * ArmTest.class, TrialMilestoneSearchTest.class
- */})
-public class AllSeleniumTests {
 
+public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
+
+    /**
+     * Tests logging in as abstractor.
+     * @throws Exception on error
+     */
+    @Test
+    public void testLogin() throws Exception {
+        TrialInfo trial = createTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.uuid);
+        logoutUser();
+    }
 }

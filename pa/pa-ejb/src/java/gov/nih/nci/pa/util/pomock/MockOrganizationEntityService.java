@@ -45,9 +45,9 @@ import org.apache.commons.lang.StringUtils;
  */
 // CHECKSTYLE:OFF
 public class MockOrganizationEntityService implements
-        OrganizationEntityServiceRemote {
+        OrganizationEntityServiceRemote { // NOPMD
 
-    public static int PO_ID_SEQ = 100; // NOPMD
+    public static int PO_ID_SEQ; // NOPMD
 
     public static final Map<String, OrganizationDTO> STORE = new HashMap<String, OrganizationDTO>();
 
@@ -56,6 +56,17 @@ public class MockOrganizationEntityService implements
     public static long CT_GOV_ID; // NOPMD
 
     static {
+        reset(1);
+    }
+    
+    
+    /**
+     * @param startingCounter
+     */
+    public static final void reset(int startingCounter) {        
+        PO_ID_SEQ = startingCounter;
+        STORE.clear();
+        PO_ID_TO_CTEP_ID.clear();
         createInitialOrgs();
     }
 

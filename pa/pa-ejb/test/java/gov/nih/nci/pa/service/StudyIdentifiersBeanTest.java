@@ -35,8 +35,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -52,6 +55,11 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
     private final ProtocolQueryServiceLocal protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
 
     private OrganizationCorrelationServiceBean organizationCorrelationServiceBean = new OrganizationCorrelationServiceBean();
+    
+    @BeforeClass
+    public static void beforeClass() {
+        MockOrganizationEntityService.reset(100);
+    }
 
     @SuppressWarnings("unchecked")
     @Before
@@ -119,6 +127,11 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
                 new MockResearchOrganizationCorrelationService());
         when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(
                 organizationCorrelationServiceBean);
+    }
+    
+    @AfterClass
+    public static void teardown() throws Exception {        
+        MockOrganizationEntityService.reset(1);
     }
 
     @SuppressWarnings({ "unused", "deprecation" })

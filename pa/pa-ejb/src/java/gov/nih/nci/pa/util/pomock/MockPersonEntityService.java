@@ -43,6 +43,8 @@ import org.apache.commons.lang.StringUtils;
  */
 // CHECKSTYLE:OFF
 public class MockPersonEntityService implements PersonEntityServiceRemote {
+    
+    public static int PO_ID_SEQ = 1; // NOPMD
 
     public static final Map<String, PersonDTO> STORE = new HashMap<String, PersonDTO>();
 
@@ -70,8 +72,8 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
      * @return
      */
     private static Ii createAndStorePerson(PersonDTO personDTO) {
-        final String poPersonId = (MockOrganizationEntityService.PO_ID_SEQ++)
-                + "";
+        final String poPersonId = (PO_ID_SEQ++)
+                + ""; // NOPMD
         personDTO.setStatusCode(CdConverter
                 .convertToCd(EntityStatusCode.PENDING));
         personDTO.setIdentifier(IiConverter.convertToPoPersonIi(poPersonId));
