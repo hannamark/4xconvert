@@ -84,18 +84,39 @@ package gov.nih.nci.pa.test.integration;
 
 import org.junit.Test;
 
-
 public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
 
     /**
      * Tests logging in as abstractor.
-     * @throws Exception on error
+     * 
+     * @throws Exception
+     *             on error
      */
     @Test
     public void testLogin() throws Exception {
         TrialInfo trial = createTrial();
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.uuid);
+        clickAndWait("link=General Trial Details");
+        pause(2000);
+        verifyOtherTrialIdentifiersSection(trial);
         logoutUser();
+    }
+
+    private void verifyOtherTrialIdentifiersSection(TrialInfo trial) {
+        assertTrue(selenium.isTextPresent("Other Trial Identifiers"));
+        assertTrue(selenium.isTextPresent("Other Identifier"));
+        assertTrue(selenium.isElementPresent("id=otherIdentifierType"));
+        assertTrue(selenium.isElementPresent("id=otherIdentifierOrg"));
+        assertTrue(selenium.isElementPresent("id=otherIdbtnid"));
+        assertTrue(selenium.getText(
+                "xpath=//table[@id='row']//tr[1]//td[1]/div").contains(
+                "Lead Organization Trial ID"));
+        assertTrue(selenium.getText(
+                "xpath=//table[@id='row']//tr[1]//td[2]/div").contains(
+                trial.leadOrgID));
+        assertTrue(selenium
+                .isElementPresent("xpath=//table[@id='row']//tr[1]//td[3]/div/input[@type='button']"));
+
     }
 }
