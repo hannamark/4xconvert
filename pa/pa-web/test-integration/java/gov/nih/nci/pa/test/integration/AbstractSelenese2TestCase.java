@@ -85,10 +85,13 @@ package gov.nih.nci.pa.test.integration;
 import junit.framework.TestCase;
 
 import org.junit.Before;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -152,6 +155,11 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
                 "selenium.browserbot.getCurrentWindow().document.getElementById('"
                         + id + "');", toMillisecondsString(timeoutSeconds));
     }
+    
+    protected void waitForTextToAppear(String text, int timeoutSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
+        wait.until(ExpectedConditions.textToBePresentInElement(By.className("confirm_msg"), text));
+    }
 
     /**
      * Click and wait for a page to load.
@@ -196,6 +204,15 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
      */
     protected void clickAndWaitSaveButton() {
         clickAndWait("save_button");
+    }
+    
+    protected void verifyAlertTextAndAccept(String msg) {
+        Alert javascriptAlert = driver.switchTo().alert();
+        String text = javascriptAlert.getText(); // Get text on alert box
+        assertTrue(text.contains(msg));
+        javascriptAlert.accept();
+        driver.switchTo().defaultContent();
+
     }
 
     /**

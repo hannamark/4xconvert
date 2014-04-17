@@ -82,6 +82,12 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import java.sql.SQLException;
+import java.util.UUID;
+
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
@@ -93,14 +99,210 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
      *             on error
      */
     @Test
-    public void testLogin() throws Exception {
+    public void testAddIdentifiers() throws Exception {
         TrialInfo trial = createTrial();
+        goToGTDScreen(trial);
+
+        verifyStudySiteAssignedIdentifier(trial,
+                "ClinicalTrials.gov Identifier", UUID.randomUUID().toString());
+        verifyStudySiteAssignedIdentifier(trial, "CTEP Identifier", UUID
+                .randomUUID().toString());
+        verifyStudySiteAssignedIdentifier(trial, "DCP Identifier", UUID
+                .randomUUID().toString());
+        verifyOtherIdentifier(trial, "Duplicate NCI Identifier", UUID
+                .randomUUID().toString());
+        verifyOtherIdentifier(trial, "Obsolete ClinicalTrials.gov Identifier",
+                UUID.randomUUID().toString());
+        verifyOtherIdentifier(trial, "Other Identifier", UUID.randomUUID()
+                .toString());
+
+        logoutUser();
+    }
+
+    @Test
+    public void testDeleteIdentifiers() throws Exception {
+        TrialInfo trial = createTrial();
+        goToGTDScreen(trial);
+
+        verifyDeleteStudySiteAssignedIdentifier(trial,
+                "ClinicalTrials.gov Identifier", UUID.randomUUID().toString());
+        verifyDeleteStudySiteAssignedIdentifier(trial, "CTEP Identifier", UUID
+                .randomUUID().toString());
+        verifyDeleteStudySiteAssignedIdentifier(trial, "DCP Identifier", UUID
+                .randomUUID().toString());
+        verifyDeleteOtherIdentifier(trial, "Duplicate NCI Identifier", UUID
+                .randomUUID().toString());
+        verifyDeleteOtherIdentifier(trial,
+                "Obsolete ClinicalTrials.gov Identifier", UUID.randomUUID()
+                        .toString());
+        verifyDeleteOtherIdentifier(trial, "Other Identifier", UUID
+                .randomUUID().toString());
+
+        logoutUser();
+    }
+
+    /**
+     * @param trial
+     */
+    private void goToGTDScreen(TrialInfo trial) {
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.uuid);
         clickAndWait("link=General Trial Details");
         pause(2000);
         verifyOtherTrialIdentifiersSection(trial);
-        logoutUser();
+    }
+
+    private void verifyOtherIdentifier(TrialInfo trial, String type,
+            String value) throws SQLException {
+        addIdentifier(type, value);
+        verifyIdentifiersTableHasRow(type, value);
+        verifyOtherIdentifierAssignerInDb(trial, value);
+    }
+
+    private void verifyDeleteOtherIdentifier(TrialInfo trial, String type,
+            String value) throws SQLException {
+        verifyOtherIdentifier(trial, type, value);
+        deleteIdentifier(type, value);
+        verifyNoOtherIdentifierAssignerInDb(trial, value);
+    }
+
+    private void verifyStudySiteAssignedIdentifier(TrialInfo trial,
+            String type, String value) throws SQLException {
+        addIdentifier(type, value);
+        verifyIdentifiersTableHasRow(type, value);
+        verifyStudySiteIdentifierAssignerInDb(trial, value);
+    }
+
+    private void verifyDeleteStudySiteAssignedIdentifier(TrialInfo trial,
+            String type, String value) throws SQLException {
+        verifyStudySiteAssignedIdentifier(trial, type, value);
+        deleteIdentifier(type, value);
+        verifyNoStudySiteIdentifierAssignerInDb(trial, value);
+    }
+
+    /**
+     * @param type
+     * @param value
+     */
+    private void deleteIdentifier(String type, String value) {
+        int rowNum = findIdentifierRowIndex(type, value);
+        selenium.chooseOkOnNextConfirmation();
+        selenium.click("id=otherIdDeleteBtn_" + rowNum);
+        waitForTextToAppear("Identifier deleted from the trial", 5);
+    }
+
+    private int findIdentifierRowIndex(String type, String value) {
+        int counter = 0;
+        while (counter < 10) {
+            counter++;
+            if (selenium.isElementPresent("id=identifierTypeDiv_" + counter)) {
+                if (StringUtils.trim(
+                        selenium.getText("id=identifierTypeDiv_" + counter))
+                        .equals(type)
+                        && StringUtils
+                                .trim(selenium.getText("id=identifierDiv_"
+                                        + counter)).equals(value)) {
+                    return counter;
+                }
+            }
+        }
+        throw new RuntimeException(
+                "Unable to determine in which table row the identifier is: "
+                        + value);
+    }
+
+    /**
+     * @param type
+     * @param value
+     */
+    private void addIdentifier(String type, String value) {
+        selenium.select("id=otherIdentifierType", "label=" + type);
+        selenium.type("id=otherIdentifierOrg", value);
+        clickAndWait("id=otherIdbtnid");
+        waitForTextToAppear("Identifier added to the trial", 5);
+    }
+
+    private void verifyStudySiteIdentifierAssignerInDb(TrialInfo trial,
+            String value) throws SQLException {
+        Object[] results = getIdentifierAssignerStudySiteId(trial, value);
+        assertNotNull(results);
+        assertTrue(results[0] instanceof Number);
+    }
+
+    /**
+     * @param trial
+     * @param value
+     * @return
+     * @throws SQLException
+     */
+    private Object[] getIdentifierAssignerStudySiteId(TrialInfo trial,
+            String value) throws SQLException {
+        QueryRunner r = new QueryRunner();
+        String sql = "select identifier from study_site ss where ss.study_protocol_identifier="
+                + trial.id
+                + " and ss.functional_code='IDENTIFIER_ASSIGNER' and ss.local_sp_indentifier='"
+                + value + "'";
+        Object[] results = r.query(connection, sql, new ArrayHandler());
+        return results;
+    }
+
+    private void verifyNoStudySiteIdentifierAssignerInDb(TrialInfo trial,
+            String value) throws SQLException {
+        Object[] results = getIdentifierAssignerStudySiteId(trial, value);
+        assertNull(results);
+    }
+
+    private void verifyOtherIdentifierAssignerInDb(TrialInfo trial, String value)
+            throws SQLException {
+        Object[] results = getStudyOtherIdentifierProtocolID(trial, value);
+        assertNotNull(results);
+        assertTrue(results[0] instanceof Number);
+    }
+
+    private void verifyNoOtherIdentifierAssignerInDb(TrialInfo trial,
+            String value) throws SQLException {
+        Object[] results = getStudyOtherIdentifierProtocolID(trial, value);
+        assertNull(results);
+
+    }
+
+    /**
+     * @param trial
+     * @param value
+     * @return
+     * @throws SQLException
+     */
+    private Object[] getStudyOtherIdentifierProtocolID(TrialInfo trial,
+            String value) throws SQLException {
+        QueryRunner r = new QueryRunner();
+        String sql = "select study_protocol_id from study_otheridentifiers ss where ss.study_protocol_id="
+                + trial.id
+                + " and ss.root='2.16.840.1.113883.19' and ss.extension='"
+                + value + "'";
+        Object[] results = r.query(connection, sql, new ArrayHandler());
+        return results;
+    }
+
+    private void verifyIdentifiersTableHasRow(String type, String value) {
+        int counter = 0;
+        while (counter < 10) {
+            counter++;
+            if (selenium.isElementPresent("id=identifierTypeDiv_" + counter)) {
+                if (StringUtils.trim(
+                        selenium.getText("id=identifierTypeDiv_" + counter))
+                        .equals(type)
+                        && StringUtils
+                                .trim(selenium.getText("id=identifierDiv_"
+                                        + counter)).equals(value)) {
+                    return;
+                }
+            } else {
+                fail("Unable to find a row in identifiers table for " + type
+                        + " and " + value);
+            }
+        }
+        fail("Unable to find a row in identifiers table for " + type + " and "
+                + value);
     }
 
     private void verifyOtherTrialIdentifiersSection(TrialInfo trial) {

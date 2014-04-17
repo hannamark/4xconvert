@@ -118,7 +118,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
     private static final String PHANTOM_JS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
     private static Logger LOG = Logger.getLogger(AbstractPaSeleniumTest.class.getName());    
-    private Connection connection;
+    protected Connection connection;
 
 
     @Override

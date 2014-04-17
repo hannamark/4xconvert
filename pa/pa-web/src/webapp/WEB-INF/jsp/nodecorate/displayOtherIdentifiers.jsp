@@ -31,16 +31,20 @@
 				<display:column title="Action" class="action" style="width:110px; text-align:left;">
 					<div id="actionEdit_${row_rowNum}">
 						<input type="button" value="Edit"
+						    id="otherIdEditBtn_${row_rowNum}"
 							onclick="editIdentifierRow('${row_rowNum}')" />&nbsp;
 						<c:if test="${!row.type.required}">
 						   <input type="button" value="Delete"
+						      id="otherIdDeleteBtn_${row_rowNum}"
 							  onclick="if (confirm('Click OK to remove selected identifier from the study. Cancel to abort.')) {deleteOtherIdentifierRow('${row_rowNum}')}" />
 						</c:if>
 					</div>
 					<div id="actionSave_${row_rowNum}" style="display: none;">
 						<input type="button" value="Save"
+						    id="otherIdSaveBtn_${row_rowNum}"
 							onclick="saveIdentifierRow('${row_rowNum}')" />&nbsp;
 						<input type="button" value="Cancel"
+						    id="otherIdCancelBtn_${row_rowNum}"
 							onclick="initializeOtherIdentifiersSection();" />
 					</div>				
 				</display:column>
