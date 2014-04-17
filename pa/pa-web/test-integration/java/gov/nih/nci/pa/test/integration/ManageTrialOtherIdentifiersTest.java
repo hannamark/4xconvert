@@ -120,6 +120,28 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
     }
 
     @Test
+    public void testEditIdentifiers() throws Exception {
+        TrialInfo trial = createTrial();
+        goToGTDScreen(trial);
+
+        verifyEditStudySiteAssignedIdentifier(trial,
+                "ClinicalTrials.gov Identifier", UUID.randomUUID().toString());
+        verifyEditStudySiteAssignedIdentifier(trial, "CTEP Identifier", UUID
+                .randomUUID().toString());
+        verifyEditStudySiteAssignedIdentifier(trial, "DCP Identifier", UUID
+                .randomUUID().toString());
+        verifyEditOtherIdentifier(trial, "Duplicate NCI Identifier", UUID
+                .randomUUID().toString());
+        verifyEditOtherIdentifier(trial,
+                "Obsolete ClinicalTrials.gov Identifier", UUID.randomUUID()
+                        .toString());
+        verifyEditOtherIdentifier(trial, "Other Identifier", UUID.randomUUID()
+                .toString());
+
+        logoutUser();
+    }
+
+    @Test
     public void testDeleteIdentifiers() throws Exception {
         TrialInfo trial = createTrial();
         goToGTDScreen(trial);
@@ -147,8 +169,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
     private void goToGTDScreen(TrialInfo trial) {
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.uuid);
-        clickAndWait("link=General Trial Details");
-        pause(2000);
+        clickAndWait("link=General Trial Details");       
         verifyOtherTrialIdentifiersSection(trial);
     }
 
@@ -166,6 +187,16 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         verifyNoOtherIdentifierAssignerInDb(trial, value);
     }
 
+    private void verifyEditOtherIdentifier(TrialInfo trial, String type,
+            String value) throws SQLException {
+        verifyOtherIdentifier(trial, type, value);
+
+        final String newValue = UUID.randomUUID().toString();
+        editIdentifier(type, value, newValue);
+        verifyNoOtherIdentifierAssignerInDb(trial, value);
+        verifyOtherIdentifierAssignerInDb(trial, newValue);
+    }
+
     private void verifyStudySiteAssignedIdentifier(TrialInfo trial,
             String type, String value) throws SQLException {
         addIdentifier(type, value);
@@ -178,6 +209,27 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         verifyStudySiteAssignedIdentifier(trial, type, value);
         deleteIdentifier(type, value);
         verifyNoStudySiteIdentifierAssignerInDb(trial, value);
+    }
+
+    private void verifyEditStudySiteAssignedIdentifier(TrialInfo trial,
+            String type, String value) throws SQLException {
+        verifyStudySiteAssignedIdentifier(trial, type, value);
+        final String newValue = UUID.randomUUID().toString();
+        editIdentifier(type, value, newValue);
+        verifyNoStudySiteIdentifierAssignerInDb(trial, value);
+        verifyStudySiteIdentifierAssignerInDb(trial, newValue);
+    }
+
+    /**
+     * @param type
+     * @param value
+     */
+    private void editIdentifier(String type, String value, String newValue) {
+        int rowNum = findIdentifierRowIndex(type, value);
+        selenium.click("id=otherIdEditBtn_" + rowNum);
+        selenium.type("id=identifier_" + rowNum, newValue);
+        selenium.click("id=otherIdSaveBtn_" + rowNum);
+        waitForTextToAppear("New identifier value saved", 5);
     }
 
     /**
@@ -306,11 +358,11 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
     }
 
     private void verifyOtherTrialIdentifiersSection(TrialInfo trial) {
+        waitForElementById("otherIdentifierType", 10);
+        waitForElementById("otherIdentifierOrg", 10);
+        waitForElementById("otherIdbtnid", 10);
         assertTrue(selenium.isTextPresent("Other Trial Identifiers"));
-        assertTrue(selenium.isTextPresent("Other Identifier"));
-        assertTrue(selenium.isElementPresent("id=otherIdentifierType"));
-        assertTrue(selenium.isElementPresent("id=otherIdentifierOrg"));
-        assertTrue(selenium.isElementPresent("id=otherIdbtnid"));
+        assertTrue(selenium.isTextPresent("Other Identifier"));       
         assertTrue(selenium.getText(
                 "xpath=//table[@id='row']//tr[1]//td[1]/div").contains(
                 "Lead Organization Trial ID"));
