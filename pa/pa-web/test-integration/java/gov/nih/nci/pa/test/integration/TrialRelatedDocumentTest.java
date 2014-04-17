@@ -82,8 +82,11 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
 import java.io.File;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 
 import org.junit.Test;
 
@@ -95,29 +98,14 @@ import org.junit.Test;
 public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
     private static final String TRIAL_DOCUMENT = "TrialDocument.doc";
 
+    
     @Test
-    public void testListDocuments() {
-        loginAsAdminAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
-        checkOutTrialAsAdminAbstractor();
-        verifyTrialAccepted();
+    public void testAddDocument() throws URISyntaxException, SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
 
-        clickAndWait("link=Trial Related Documents");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        assertTrue(selenium.isElementPresent("link=Add"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[3]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[3]/a"));
-        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[4]/a"));
-        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[4]/a"));
-    }
-
-    @Test
-    public void testAddDocument() throws URISyntaxException {
-        loginAsAdminAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
-
-        clickAndWait("link=Trial Related Documents");
-        assertTrue(selenium.isTextPresent("2 items found"));
+        clickAndWait("link=Trial Related Documents");        
         assertTrue(selenium.isElementPresent("link=Add"));
         clickAndWait("link=Add");
 
@@ -131,58 +119,59 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         selenium.type("id=fileUpload", trialDocPath);
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Created"));
-
-
-        assertTrue(selenium.isTextPresent("3 items found"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[3]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[3]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[3]/a"));
-        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[4]/a"));
-        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[4]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[4]/a"));
+        
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[5]/a"));        
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[6]//input"));
     }
 
     @Test
-    public void testEditDocument() throws URISyntaxException {
-        loginAsAdminAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
+    public void testEditDocument() throws URISyntaxException, SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
 
         clickAndWait("link=Trial Related Documents");
-        assertTrue(selenium.isTextPresent("3 items found"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[3]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[3]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[3]/a"));
-        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[4]/a"));
-        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[4]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[4]/a"));
-
-        clickAndWait("xpath=//table[@id='row']/tbody/tr[3]/td[3]/a");
+        
         String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        addProtocolHighlighDocument();
+
+        clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[5]/a");        
         selenium.type("id=fileUpload", trialDocPath);
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Updated"));
-        assertTrue(selenium.isTextPresent("3 items found"));
+        assertTrue(selenium.isTextPresent("One item found"));
     }
 
     @Test
-    public void testDeleteDocument() {
-        loginAsAdminAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
+    public void testDeleteDocument() throws SQLException, URISyntaxException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
 
         clickAndWait("link=Trial Related Documents");
-        assertTrue(selenium.isTextPresent("3 items found"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[3]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[3]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[3]/a"));
-        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[4]/a"));
-        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[4]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[4]/a"));
+        
+        addProtocolHighlighDocument();
 
-        clickAndWait("xpath=//table[@id='row']/tbody/tr[3]/td[4]/a");
+        selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[6]//input");
+        selenium.chooseOkOnNextConfirmation();
+        clickAndWait("link=Delete");
         selenium.type("inactiveComment", "inactive");
-        clickAndWait("link=Done");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("Record Deleted"));
-        assertTrue(selenium.isTextPresent("2 items found"));
+        clickAndWait("link=Done");       
+        assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial"));
+        
+    }
+
+    /**
+     * @throws URISyntaxException
+     */
+    private void addProtocolHighlighDocument() throws URISyntaxException {
+        assertTrue(selenium.isElementPresent("link=Add"));
+        clickAndWait("link=Add");
+        String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        selenium.select("id=typeCode", "label=Protocol Highlighted Document");
+        selenium.type("id=fileUpload", trialDocPath);
+        clickAndWait("link=Save");
+        assertTrue(selenium.isTextPresent("Record Created"));
+        assertTrue(selenium.isTextPresent("One item found"));
     }
 }
