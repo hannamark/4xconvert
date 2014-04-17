@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
 import org.junit.Test;
 
 /**
@@ -97,9 +99,10 @@ public class AnatomicSiteTest extends AbstractPaSeleniumTest {
      */
     @Test
     public void testAnatomicSite() throws Exception {
+        TrialInfo trial = createSubmittedTrial();
         loginAsScientificAbstractor();
         verifyTrialSearchPage();
-        searchAndSelectTrial("Test Summ 4 Anatomic Site Trial created by Selenium.");
+        searchAndSelectTrial(trial.title);
         checkOutTrialAsScientificAbstractor();
         acceptTrial();
         verifyTrialAccepted();
@@ -133,9 +136,10 @@ public class AnatomicSiteTest extends AbstractPaSeleniumTest {
         assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "Anus");
 
         // test delete.
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[2]//a");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("Record Deleted"));
+        selenium.click("xpath=//table[@id='row']//tr[1]//td[2]//input[@type='checkbox']");
+        selenium.chooseOkOnNextConfirmation();
+        clickAndWait("link=Delete");
+        assertTrue(selenium.isTextPresent("Record(s) Deleted"));
         assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
         assertTrue(selenium.isTextPresent("Nothing found to display."));
     }
