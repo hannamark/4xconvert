@@ -159,6 +159,30 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
                 "Duplicate Trial Submission: A trial exists in the system with the same Lead Organization Trial "
                         + "Identifier for the selected Lead Organization");
 
+        String uuid = UUID.randomUUID().toString();
+        addIdentifier("Other Identifier", uuid);
+        addIdentifierWithFailure("Other Identifier", uuid,
+                "An identifier with the given type and value already exists");
+        addIdentifierWithFailure("Duplicate NCI Identifier", trial2.nciID,
+                "Duplicate NCI Identifier cannot match NCI Identifier of this trial");
+
+        // Test duplicate NCT ID
+        logoutUser();
+        goToGTDScreen(trial1);
+        addIdentifier("ClinicalTrials.gov Identifier", uuid);
+        logoutUser();
+        goToGTDScreen(trial2);
+        addIdentifierWithFailure("ClinicalTrials.gov Identifier", uuid,
+                "The NCT Trial Identifier provided is tied to another trial in CTRP system");
+
+        // Test Obsolete NCT ID cannot match the current one
+        uuid = UUID.randomUUID().toString();
+        addIdentifier("ClinicalTrials.gov Identifier", uuid);
+        addIdentifierWithFailure(
+                "Obsolete ClinicalTrials.gov Identifier",
+                uuid,
+                "Obsolete ClinicalTrials.gov Identifier cannot match the current ClinicalTrials.gov Identifier of this trial");
+
         logoutUser();
     }
 
@@ -328,6 +352,18 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         clickAndWait("id=otherIdbtnid");
         waitForTextToAppear(By.className("confirm_msg"),
                 "Identifier added to the trial", WAIT_FOR_ELEMENT_TIMEOUT);
+    }
+
+    /**
+     * @param type
+     * @param value
+     */
+    private void addIdentifierWithFailure(String type, String value, String msg) {
+        selenium.select("id=otherIdentifierType", "label=" + type);
+        selenium.type("id=otherIdentifierOrg", value);
+        clickAndWait("id=otherIdbtnid");
+        waitForTextToAppear(By.className("error_msg"), msg,
+                WAIT_FOR_ELEMENT_TIMEOUT);
     }
 
     private void verifyStudySiteIdentifierAssignerInDb(TrialInfo trial,
