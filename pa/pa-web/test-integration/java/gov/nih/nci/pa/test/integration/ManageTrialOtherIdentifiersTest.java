@@ -104,7 +104,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
      */
     @Test
     public void testAddIdentifiers() throws Exception {
-        TrialInfo trial = createTrial();
+        TrialInfo trial = createAcceptedTrial();
         goToGTDScreen(trial);
 
         verifyStudySiteAssignedIdentifier(trial,
@@ -125,7 +125,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
 
     @Test
     public void testEditIdentifiers() throws Exception {
-        TrialInfo trial = createTrial();
+        TrialInfo trial = createAcceptedTrial();
         goToGTDScreen(trial);
 
         verifyEditLeadOrgIdentifier(trial, UUID.randomUUID().toString());
@@ -148,8 +148,8 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
 
     @Test
     public void testValidation() throws Exception {
-        TrialInfo trial1 = createTrial();
-        TrialInfo trial2 = createTrial();
+        TrialInfo trial1 = createAcceptedTrial();
+        TrialInfo trial2 = createAcceptedTrial();
         goToGTDScreen(trial2);
 
         verifyEditIdentifierFailure(
@@ -203,7 +203,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
 
     @Test
     public void testDeleteIdentifiers() throws Exception {
-        TrialInfo trial = createTrial();
+        TrialInfo trial = createAcceptedTrial();
         goToGTDScreen(trial);
 
         verifyDeleteStudySiteAssignedIdentifier(trial,

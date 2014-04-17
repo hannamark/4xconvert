@@ -257,8 +257,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isElementPresent("link=On-hold Information"));
         assertTrue(selenium.isElementPresent("link=Manage Accrual Access"));
         assertTrue(selenium.isElementPresent("link=View TSR"));
-        assertTrue(selenium.isElementPresent("link=Assign Ownership"));
-        assertTrue(selenium.isElementPresent("link=Audit Trail"));
+        assertTrue(selenium.isElementPresent("link=Assign Ownership"));        
         assertTrue(selenium.isTextPresent("Validation"));
         assertTrue(selenium.isElementPresent("link=Trial Related Documents"));
         assertTrue(selenium.isElementPresent("link=Trial Status"));
@@ -342,8 +341,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isElementPresent("link=On-hold Information"));
         assertTrue(selenium.isElementPresent("link=Manage Accrual Access"));
         assertTrue(selenium.isElementPresent("link=View TSR"));
-        assertTrue(selenium.isElementPresent("link=Assign Ownership"));
-        assertTrue(selenium.isElementPresent("link=Audit Trail"));
+        assertTrue(selenium.isElementPresent("link=Assign Ownership"));        
 
         assertTrue(selenium.isTextPresent("Administrative Data"));
         assertTrue(selenium.isElementPresent("link=General Trial Details"));
@@ -487,9 +485,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }
     }
     
-    protected TrialInfo createTrial() throws SQLException {
+    protected TrialInfo createSubmittedTrial() throws SQLException {
         TrialInfo info = new TrialInfo();
         info.uuid = UUID.randomUUID().toString();
+        info.title = "Title " + info.uuid;
 
         QueryRunner runner = new QueryRunner();
 
@@ -517,14 +516,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE'))"
                 + ",'ABBREVIATED','Accr',false,false,false,false,"
                 + "false,false,'stage I prostate cancer, stage IIB prostate cancer, stage IIA prostate cancer, stage III prostate cancer'"
-                + ",'Official Title "
-                + info.uuid
+                + ",'"
+                + info.title
                 + "'"
                 + ",null,'II',null,{ts '2018-04-16 12:18:50.572'},'ANTICIPATED',{ts '2013-04-16 12:18:50.572'},'ACTUAL',"
                 + "'TREATMENT',null,'Public Description "
                 + info.uuid
-                + "','Public Title "
-                + info.uuid
+                + "','"
+                + info.title
                 + "',"
                 + "false,null,'Scientific Description','InterventionalStudyProtocol','RANDOMIZED_CONTROLLED_TRIAL',"
                 + "null,null,null,null,'OPEN','PARALLEL',1,'EFFICACY',null,null,null,1,null,null,null,null,null,"
@@ -539,14 +538,21 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         "select identifier from study_protocol order by identifier desc limit 1",
                         new ArrayHandler())[0];
         assignNciId(info);
-        addDWS(info, "ACCEPTED");
-        addMilestone(info, "SUBMISSION_RECEIVED");
-        addMilestone(info, "SUBMISSION_ACCEPTED");
+        addDWS(info, "SUBMITTED");
+        addMilestone(info, "SUBMISSION_RECEIVED");       
         addLeadOrg(info, "ClinicalTrials.gov");
         addPI(info, "1");
         addSOS(info, "APPROVED");
 
         LOG.info("Registered a new trial: " + info);
+        return info;
+
+    }
+    
+    protected TrialInfo createAcceptedTrial() throws SQLException {
+        TrialInfo info = createSubmittedTrial();
+        addDWS(info, "ACCEPTED");
+        addMilestone(info, "SUBMISSION_ACCEPTED");
         return info;
     }
 
@@ -764,6 +770,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     public static final class TrialInfo {
 
         public String uuid;
+        public String title;
         public Long id;
         public String leadOrgID;
         public String nciID;

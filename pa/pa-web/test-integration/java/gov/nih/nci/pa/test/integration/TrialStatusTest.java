@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -100,11 +103,14 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
     /**
      * Tests the standard trial transitions from In Review to Complete, with stops at Approved, Active,
      * Closed to Accrual & Closed to Accrual and Intervention.
+     * @throws SQLException 
      */
     @Test
-    public void testStandardTrialStatusTransitions() {
+    public void testStandardTrialStatusTransitions() throws SQLException {
+        TrialInfo trial = createSubmittedTrial();
+        
         loginAsAdminAbstractor();
-        searchSelectAndAcceptTrial("Test Trial Status Trial created by Selenium.", true, false);
+        searchSelectAndAcceptTrial(trial.title, true, false);
 
         clickAndWait("link=Trial Status");
         changeStatus("Approved", false, false, null);
@@ -117,11 +123,14 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
     /**
      * Tests the standard trial transitions from In Review to Administratively Complete, with stops at Approved, Active,
      * Temporarily Closed to Accrual & Temporarily Closed to Accrual and Intervention.
+     * @throws SQLException 
      */
     @Test
-    public void testAdministrativeTrialStatusTransitions() {
+    public void testAdministrativeTrialStatusTransitions() throws SQLException {
+        TrialInfo trial = createSubmittedTrial();
+        
         loginAsAdminAbstractor();
-        searchSelectAndAcceptTrial("Test Trial Status Trial #2 created by Selenium.", true, false);
+        searchSelectAndAcceptTrial(trial.title, true, false);
 
         clickAndWait("link=Trial Status");
         changeStatus("Approved", false, false, null);
@@ -137,11 +146,14 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
 
     /**
      * Tests going from In Review to Active to Complete.
+     * @throws SQLException 
      */
     @Test
-    public void testSkippedCompleteStatus() {
+    public void testSkippedCompleteStatus() throws SQLException {
+        TrialInfo trial = createSubmittedTrial();
+        
         loginAsAdminAbstractor();
-        searchSelectAndAcceptTrial("Test Trial Status Trial #3 created by Selenium.", true, false);
+        searchSelectAndAcceptTrial(trial.title, true, false);
 
         clickAndWait("link=Trial Status");
         changeStatus("Active", true, false, null);
@@ -150,11 +162,14 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
 
     /**
      * Tests going from In Review to Active to Administratively Complete.
+     * @throws SQLException 
      */
     @Test
-    public void testSkippedAdministrativelyCompleteStatus() {
+    public void testSkippedAdministrativelyCompleteStatus() throws SQLException {
+        TrialInfo trial = createSubmittedTrial();
+        
         loginAsAdminAbstractor();
-        searchSelectAndAcceptTrial("Test Trial Status Trial #4 created by Selenium.", true, false);
+        searchSelectAndAcceptTrial(trial.title, true, false);
 
         clickAndWait("link=Trial Status");
         changeStatus("Active", true, false, null);
