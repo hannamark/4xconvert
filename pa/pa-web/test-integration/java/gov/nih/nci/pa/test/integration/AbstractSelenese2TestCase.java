@@ -156,9 +156,9 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
                         + id + "');", toMillisecondsString(timeoutSeconds));
     }
     
-    protected void waitForTextToAppear(String text, int timeoutSeconds) {
+    protected void waitForTextToAppear(By by, String text, int timeoutSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
-        wait.until(ExpectedConditions.textToBePresentInElement(By.className("confirm_msg"), text));
+        wait.until(ExpectedConditions.textToBePresentInElement(by, text));
     }
 
     /**

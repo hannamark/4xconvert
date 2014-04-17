@@ -89,8 +89,12 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 
 public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
+
+    public static final int WAIT_FOR_ELEMENT_TIMEOUT = 30;
 
     /**
      * Tests logging in as abstractor.
@@ -124,6 +128,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         TrialInfo trial = createTrial();
         goToGTDScreen(trial);
 
+        verifyEditLeadOrgIdentifier(trial, UUID.randomUUID().toString());
         verifyEditStudySiteAssignedIdentifier(trial,
                 "ClinicalTrials.gov Identifier", UUID.randomUUID().toString());
         verifyEditStudySiteAssignedIdentifier(trial, "CTEP Identifier", UUID
@@ -139,6 +144,37 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
                 .toString());
 
         logoutUser();
+    }
+
+    @Test
+    public void testValidation() throws Exception {
+        TrialInfo trial1 = createTrial();
+        TrialInfo trial2 = createTrial();
+        goToGTDScreen(trial2);
+
+        verifyEditIdentifierFailure(
+                trial2,
+                "Lead Organization Trial ID",
+                trial1.leadOrgID,
+                "Duplicate Trial Submission: A trial exists in the system with the same Lead Organization Trial "
+                        + "Identifier for the selected Lead Organization");
+
+        logoutUser();
+    }
+
+    private void verifyEditIdentifierFailure(TrialInfo trial, String type,
+            String newValue, String expectedErrorMsg) throws SQLException {
+        editIdentifierAndExpectMessage("Lead Organization Trial ID",
+                trial.leadOrgID, newValue, expectedErrorMsg);
+        verifyNoLeadOrgAssignerInDb(trial, newValue);
+        verifyLeadOrgAssignerInDb(trial, trial.leadOrgID);
+    }
+
+    private void verifyEditLeadOrgIdentifier(TrialInfo trial, String newValue)
+            throws SQLException {
+        editIdentifier("Lead Organization Trial ID", trial.leadOrgID, newValue);
+        verifyNoLeadOrgAssignerInDb(trial, trial.leadOrgID);
+        verifyLeadOrgAssignerInDb(trial, newValue);
     }
 
     @Test
@@ -169,7 +205,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
     private void goToGTDScreen(TrialInfo trial) {
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.uuid);
-        clickAndWait("link=General Trial Details");       
+        clickAndWait("link=General Trial Details");
         verifyOtherTrialIdentifiersSection(trial);
     }
 
@@ -225,11 +261,29 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
      * @param value
      */
     private void editIdentifier(String type, String value, String newValue) {
+        final String message = "New identifier value saved";
+        editIdentifierAndExpectMessage(type, value, newValue, message);
+    }
+
+    /**
+     * @param type
+     * @param value
+     * @param newValue
+     * @param message
+     */
+    private void editIdentifierAndExpectMessage(String type, String value,
+            String newValue, final String message) {
         int rowNum = findIdentifierRowIndex(type, value);
         selenium.click("id=otherIdEditBtn_" + rowNum);
         selenium.type("id=identifier_" + rowNum, newValue);
         selenium.click("id=otherIdSaveBtn_" + rowNum);
-        waitForTextToAppear("New identifier value saved", 5);
+        try {
+            waitForTextToAppear(By.className("confirm_msg"), message,
+                    WAIT_FOR_ELEMENT_TIMEOUT);
+        } catch (TimeoutException e) {
+            waitForTextToAppear(By.className("error_msg"), message,
+                    WAIT_FOR_ELEMENT_TIMEOUT);
+        }
     }
 
     /**
@@ -240,7 +294,8 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         int rowNum = findIdentifierRowIndex(type, value);
         selenium.chooseOkOnNextConfirmation();
         selenium.click("id=otherIdDeleteBtn_" + rowNum);
-        waitForTextToAppear("Identifier deleted from the trial", 5);
+        waitForTextToAppear(By.className("confirm_msg"),
+                "Identifier deleted from the trial", WAIT_FOR_ELEMENT_TIMEOUT);
     }
 
     private int findIdentifierRowIndex(String type, String value) {
@@ -250,7 +305,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
             if (selenium.isElementPresent("id=identifierTypeDiv_" + counter)) {
                 if (StringUtils.trim(
                         selenium.getText("id=identifierTypeDiv_" + counter))
-                        .equals(type)
+                        .contains(type)
                         && StringUtils
                                 .trim(selenium.getText("id=identifierDiv_"
                                         + counter)).equals(value)) {
@@ -271,7 +326,8 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         selenium.select("id=otherIdentifierType", "label=" + type);
         selenium.type("id=otherIdentifierOrg", value);
         clickAndWait("id=otherIdbtnid");
-        waitForTextToAppear("Identifier added to the trial", 5);
+        waitForTextToAppear(By.className("confirm_msg"),
+                "Identifier added to the trial", WAIT_FOR_ELEMENT_TIMEOUT);
     }
 
     private void verifyStudySiteIdentifierAssignerInDb(TrialInfo trial,
@@ -279,6 +335,21 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         Object[] results = getIdentifierAssignerStudySiteId(trial, value);
         assertNotNull(results);
         assertTrue(results[0] instanceof Number);
+    }
+
+    private void verifyLeadOrgAssignerInDb(TrialInfo trial, String value)
+            throws SQLException {
+        Object[] results = getStudySiteIdByValueAndCode(trial, value,
+                "LEAD_ORGANIZATION");
+        assertNotNull(results);
+        assertTrue(results[0] instanceof Number);
+    }
+
+    private void verifyNoLeadOrgAssignerInDb(TrialInfo trial, String value)
+            throws SQLException {
+        Object[] results = getStudySiteIdByValueAndCode(trial, value,
+                "LEAD_ORGANIZATION");
+        assertNull(results);
     }
 
     /**
@@ -289,11 +360,25 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
      */
     private Object[] getIdentifierAssignerStudySiteId(TrialInfo trial,
             String value) throws SQLException {
+        String functionalCode = "IDENTIFIER_ASSIGNER";
+        return getStudySiteIdByValueAndCode(trial, value, functionalCode);
+    }
+
+    /**
+     * @param trial
+     * @param value
+     * @param functionalCode
+     * @return
+     * @throws SQLException
+     */
+    private Object[] getStudySiteIdByValueAndCode(TrialInfo trial,
+            String value, String functionalCode) throws SQLException {
         QueryRunner r = new QueryRunner();
         String sql = "select identifier from study_site ss where ss.study_protocol_identifier="
                 + trial.id
-                + " and ss.functional_code='IDENTIFIER_ASSIGNER' and ss.local_sp_indentifier='"
-                + value + "'";
+                + " and ss.functional_code='"
+                + functionalCode
+                + "' and ss.local_sp_indentifier='" + value + "'";
         Object[] results = r.query(connection, sql, new ArrayHandler());
         return results;
     }
@@ -358,11 +443,11 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
     }
 
     private void verifyOtherTrialIdentifiersSection(TrialInfo trial) {
-        waitForElementById("otherIdentifierType", 10);
-        waitForElementById("otherIdentifierOrg", 10);
-        waitForElementById("otherIdbtnid", 10);
+        waitForElementById("otherIdentifierType", WAIT_FOR_ELEMENT_TIMEOUT);
+        waitForElementById("otherIdentifierOrg", WAIT_FOR_ELEMENT_TIMEOUT);
+        waitForElementById("otherIdbtnid", WAIT_FOR_ELEMENT_TIMEOUT);
         assertTrue(selenium.isTextPresent("Other Trial Identifiers"));
-        assertTrue(selenium.isTextPresent("Other Identifier"));       
+        assertTrue(selenium.isTextPresent("Other Identifier"));
         assertTrue(selenium.getText(
                 "xpath=//table[@id='row']//tr[1]//td[1]/div").contains(
                 "Lead Organization Trial ID"));
