@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import java.sql.SQLException;
+
 import org.junit.Test;
 
 /**
@@ -90,20 +92,30 @@ import org.junit.Test;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class ArmTest extends AbstractPaSeleniumTest {
-
+    
+  
     @Test
-    public void testListArms() {
-        loginAsScientificAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
+    public void testListArms() throws SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
         clickAndWait("link=Arms");
         assertTrue(selenium.isTextPresent("Nothing found to display."));
         assertTrue(selenium.isElementPresent("link=Add"));
     }
 
     @Test
-    public void testAddArm() {
-        loginAsScientificAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
+    public void testAddArm() throws SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
+        verifyNoArmsAndAddOne();
+    }
+
+    /**
+     * 
+     */
+    private void verifyNoArmsAndAddOne() {
         clickAndWait("link=Arms");
         assertTrue(selenium.isTextPresent("Nothing found to display."));
         assertTrue(selenium.isElementPresent("link=Add"));
@@ -118,15 +130,18 @@ public class ArmTest extends AbstractPaSeleniumTest {
     }
 
     @Test
-    public void testEditArm() {
-        loginAsScientificAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
+    public void testEditArm() throws SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
+        verifyNoArmsAndAddOne();
+        
         clickAndWait("link=Arms");
         assertTrue(selenium.isTextPresent("One item found"));
 
         assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[5]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[6]/a"));
-
+        
         clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[5]/a");
         selenium.select("id=armType", "label=Other");
         clickAndWait("link=Save");
@@ -135,18 +150,21 @@ public class ArmTest extends AbstractPaSeleniumTest {
     }
 
     @Test
-    public void testDeleteArm() {
-        loginAsScientificAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
+    public void testDeleteArm() throws SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
+        verifyNoArmsAndAddOne();
+        
         clickAndWait("link=Arms");
         assertTrue(selenium.isTextPresent("One item found"));
 
         assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[5]/a"));
-        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[6]/a"));
-
-        clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[6]/a");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("Record Deleted"));
+        
+        selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[6]//input[@type='checkbox']");
+        selenium.chooseOkOnNextConfirmation();
+        clickAndWait("link=Delete");
+        assertTrue(selenium.isTextPresent("Record(s) Deleted"));
         assertTrue(selenium.isTextPresent("Nothing found to display."));
     }
 }

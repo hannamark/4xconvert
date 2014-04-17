@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
 import org.junit.Test;
 
 /**
@@ -97,19 +99,20 @@ public class StudyOwnershipTest extends AbstractPaSeleniumTest {
      */
     @Test
     public void testAddRemoveOwnership() throws Exception {
-        loginAsAdminAbstractor();
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
         verifyTrialSearchPage();
-        searchAndSelectTrial("Test Assign Ownership Trial created by Selenium.");
+        searchAndSelectTrial(trial.title);
         clickAndWait("link=Assign Ownership");
         assertTrue(selenium.isElementPresent("link=Search"));
-        selenium.type("id=firstName", "Abstractor");
-        selenium.type("id=lastName", "User");
+        selenium.type("id=firstName", "ClinicalTrials.gov Import");
+        selenium.type("id=lastName", "");
         clickAndWait("link=Search");
-        assertEquals(selenium.getText("xpath=//table[@id='results']//tr[1]//td[4]"), "Remove Ownership");
-        clickAndWait("link=Remove Ownership");
-        assertTrue(selenium.isTextPresent("Ownership has been removed"));
         assertEquals(selenium.getText("xpath=//table[@id='results']//tr[1]//td[4]"), "Assign Ownership");
         clickAndWait("link=Assign Ownership");
         assertTrue(selenium.isTextPresent("Ownership has been assigned"));
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[6]"), "Remove Ownership");
+        clickAndWait("link=Remove Ownership");
+        assertTrue(selenium.isTextPresent("Ownership has been removed"));
     }
 }

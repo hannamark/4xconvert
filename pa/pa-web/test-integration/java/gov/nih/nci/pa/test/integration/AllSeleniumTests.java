@@ -94,12 +94,12 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = { LoginTest.class, ManageTrialOtherIdentifiersTest.class,
-        TrialStatusTest.class, AnatomicSiteTest.class
+        TrialStatusTest.class, AnatomicSiteTest.class, ArmTest.class,
+        StudyOwnershipTest.class
 /*
- * , , PlannedMarkerTest.class, StudyOwnershipTest.class,
- * DuplicateTrialEditTest.class, LookupWithApostropheTest.class, ,
- * DiseaseTest.class, TrialRelatedDocumentTest.class, ArmTest.class,
- * TrialMilestoneSearchTest.class
+ * , , PlannedMarkerTest.class, , DuplicateTrialEditTest.class,
+ * LookupWithApostropheTest.class, , DiseaseTest.class,
+ * TrialRelatedDocumentTest.class, , TrialMilestoneSearchTest.class
  */})
 public class AllSeleniumTests {
 
