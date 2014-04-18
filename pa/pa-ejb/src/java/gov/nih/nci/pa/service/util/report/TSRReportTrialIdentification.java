@@ -102,6 +102,7 @@ public class TSRReportTrialIdentification {
     private String nctNumber;
     private String dcpIdentifier;
     private String ctepIdentifier;
+    private String ccrIdentifier;
     private String leadOrganization;
     private String amendmentNumber;
     private String amendmentDate;
@@ -199,6 +200,8 @@ public class TSRReportTrialIdentification {
     public void setCtepIdentifier(String ctepIdentifier) {
         this.ctepIdentifier = ctepIdentifier;
     }
+    
+    
 
     /**
      * @return the leadOrganization
@@ -254,6 +257,20 @@ public class TSRReportTrialIdentification {
      */
     public List<StudyIdentifierDTO> getIdentifiers() {
         return identifiers;
+    }
+
+    /**
+     * @return the ccrIdentifier
+     */
+    public String getCcrIdentifier() {
+        return ccrIdentifier;
+    }
+
+    /**
+     * @param ccrIdentifier the ccrIdentifier to set
+     */
+    public void setCcrIdentifier(String ccrIdentifier) {
+        this.ccrIdentifier = ccrIdentifier;
     }
 
 }

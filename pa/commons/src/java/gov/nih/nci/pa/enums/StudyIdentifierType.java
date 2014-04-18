@@ -19,6 +19,8 @@ public enum StudyIdentifierType implements CodedEnum<String> {
     CTEP("CTEP Identifier", false, true),
     /** DCP. */
     DCP("DCP Identifier", false, true),
+    /** CCR. */
+    CCR("CCR Identifier", false, true),
     /** Duplicate NCI ID. */
     DUPLICATE_NCI("Duplicate NCI Identifier"),
     /** Obsolete NCT ID. */

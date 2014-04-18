@@ -772,6 +772,14 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.DCP_ORG_NAME));
             sp.getStudySites().add(ss);
         }
+        
+        if (StringUtils.isNotEmpty(crit.getCcrIdentifier())) {
+            StudySite ss = new StudySite();
+            ss.setLocalStudyProtocolIdentifier(crit.getCcrIdentifier());
+            ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CCR_ORG_NAME));
+            sp.getStudySites().add(ss);
+        }
 
 
     }
@@ -838,6 +846,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getOtherIdentifier())
                 && StringUtils.isEmpty(criteria.getNctNumber())
                 && StringUtils.isEmpty(criteria.getDcpIdentifier())
+                && StringUtils.isEmpty(criteria.getCcrIdentifier())
                 && StringUtils.isEmpty(criteria.getCtepIdentifier())
                 && StringUtils.isEmpty(criteria.getAnyTypeIdentifier())
                 && StringUtils.isEmpty(criteria.getCountryName())

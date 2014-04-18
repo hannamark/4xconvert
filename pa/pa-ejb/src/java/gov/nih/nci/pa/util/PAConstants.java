@@ -150,6 +150,12 @@ public class PAConstants {
      * DCP IDENTIFIER.
      */
     public static final String DCP_IDENTIFIER_TYPE = "DCPIdentifier";
+    
+    /**
+     * CCR_IDENTIFIER_TYPE
+     */
+    public static final String CCR_IDENTIFIER_TYPE = "CCRIdentifier";
+    
     /**
      * LEAD IDENTIFIER.
      */
@@ -162,6 +168,12 @@ public class PAConstants {
      * DCP Org Name.
      */
     public static final String DCP_ORG_NAME = "National Cancer Institute Division of Cancer Prevention";
+    
+    /**
+     * CCR_ORG_NAME
+     */
+    public static final String CCR_ORG_NAME = "NCI - Center for Cancer Research";
+
     /**
      * CT.gov Org Name.
      */

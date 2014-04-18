@@ -27,15 +27,17 @@ import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 import gov.nih.nci.pa.util.pomock.MockPersonEntityService;
 import gov.nih.nci.pa.util.pomock.MockResearchOrganizationCorrelationService;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -110,6 +112,8 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
                                 PAConstants.DCP_IDENTIFIER_TYPE));
                         queryDTO.setCtepId(utils.getStudyIdentifier(spID,
                                 PAConstants.CTEP_IDENTIFIER_TYPE));
+                        queryDTO.setCcrId(utils.getStudyIdentifier(spID,
+                                PAConstants.CCR_IDENTIFIER_TYPE));
                         queryDTO.setNctIdentifier(utils.getStudyIdentifier(
                                 spID, PAConstants.NCT_IDENTIFIER_TYPE));
                         queryDTO.setNciIdentifier(utils
@@ -189,6 +193,31 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
                 new StudyIdentifierDTO(StudyIdentifierType.DCP, "DCP"));
         verifyIdentifierAssignerStudySite(TestSchema.studyProtocolIds.get(0),
                 PAConstants.DCP_ORG_NAME, "DCP");
+    }
+    
+    @Test
+    public void testAddCcr() throws PAException {
+        bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
+                new StudyIdentifierDTO(StudyIdentifierType.CCR, "CCR"));
+        verifyIdentifierAssignerStudySite(TestSchema.studyProtocolIds.get(0),
+                PAConstants.CCR_ORG_NAME, "CCR");
+    }
+    
+    @Test
+    public void testAddCcrNoPoOrgExist() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("No org found");
+        try {
+            removeOrgFromPo(PAConstants.CCR_ORG_NAME);
+            bean.add(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
+                    new StudyIdentifierDTO(StudyIdentifierType.CCR, "CCR"));
+            verifyIdentifierAssignerStudySite(TestSchema.studyProtocolIds.get(0),
+                    PAConstants.CCR_ORG_NAME, "CCR");
+            verifyPoOrgExists(PAConstants.CCR_ORG_NAME);
+        } finally {
+            MockOrganizationEntityService.reset(100);
+        }
+        
     }
 
     @SuppressWarnings({ "unused", "deprecation" })
@@ -347,6 +376,18 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
         verifyIdentifierAssignerStudySite(TestSchema.studyProtocolIds.get(0),
                 PAConstants.DCP_ORG_NAME, "DCP_ORG_NAME2");
     }
+    
+    @Test
+    public void testUpdateCcrId() throws PAException {
+        ensureIdentifierAssignerExists(TestSchema.studyProtocolIds.get(0),
+                PAConstants.CCR_ORG_NAME, "CCR_ORG_NAME");
+        bean.update(
+                IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
+                new StudyIdentifierDTO(StudyIdentifierType.CCR, "CCR_ORG_NAME"),
+                "CCR_ORG_NAME2");
+        verifyIdentifierAssignerStudySite(TestSchema.studyProtocolIds.get(0),
+                PAConstants.CCR_ORG_NAME, "CCR_ORG_NAME2");
+    }
 
     @Test
     public void testUpdateCtepId() throws PAException {
@@ -416,6 +457,17 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
                 new StudyIdentifierDTO(StudyIdentifierType.DCP, "DCP1111111111"));
         verifyNoIdentifierAssignerStudySite(TestSchema.studyProtocolIds.get(0),
                 PAConstants.DCP_ORG_NAME);
+    }
+    
+    @Test
+    public void testDeleteCcrId() throws PAException {
+        ensureIdentifierAssignerExists(TestSchema.studyProtocolIds.get(0),
+                PAConstants.CCR_ORG_NAME, "CCR1111111111");
+        bean.delete(
+                IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)),
+                new StudyIdentifierDTO(StudyIdentifierType.CCR, "CCR1111111111"));
+        verifyNoIdentifierAssignerStudySite(TestSchema.studyProtocolIds.get(0),
+                PAConstants.CCR_ORG_NAME);
     }
 
     @Test
@@ -524,6 +576,27 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
         verifyIdentifierAssignerStudySite(spID, PAConstants.CTGOV_ORG_NAME,
                 "CTGOV");
         verify(mailSvc).sendNCTIDChangeNotificationMail(ii, "CTGOV", "");
+    }
+    
+    
+    private void verifyPoOrgExists(String orgName) {
+        for (Map.Entry<String, OrganizationDTO> e : MockOrganizationEntityService.STORE
+                .entrySet()) {
+            if (e.getValue().getName().getPart().get(0).getValue().equals(orgName)) {
+                return;
+            }
+        }
+        Assert.fail();
+    }
+
+    private void removeOrgFromPo(String orgName) {
+        for (Map.Entry<String, OrganizationDTO> e : new HashMap<String, OrganizationDTO>(
+                MockOrganizationEntityService.STORE).entrySet()) {
+            if (e.getValue().getName().getPart().get(0).getValue()
+                    .equals(orgName)) {
+                MockOrganizationEntityService.STORE.remove(e.getKey());
+            }
+        }
     }
 
     private void verifyLeadOrgID(Long spID, String value) {

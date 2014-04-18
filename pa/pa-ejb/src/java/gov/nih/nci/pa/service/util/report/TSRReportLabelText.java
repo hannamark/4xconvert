@@ -176,6 +176,12 @@ public class TSRReportLabelText { //NOPMD
      * DCP Trial Identifier.
      */
     public static final String TI_DCP_IDENTIFIER = "DCP";
+    
+    /**
+     * 
+     */
+    public static final String TI_CCR_IDENTIFIER = "CCR";
+    
     /**
      * CTEP Trial Identifier.
      */

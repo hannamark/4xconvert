@@ -61,9 +61,9 @@ public class VerifyTrialDataHelper {
         for (StudyProtocolQueryDTO record : records) {
             RegistryUser userInfo = getUser(record);
             if (userInfo.getAffiliateOrg() != null 
-                        && (!userInfo.getAffiliateOrg().equalsIgnoreCase("National Cancer Institute") 
+                        && (!userInfo.getAffiliateOrg().equalsIgnoreCase(PAConstants.NCI_ORG_NAME) 
                         && !userInfo.getAffiliateOrg()
-                        .equalsIgnoreCase("National Cancer Institute Division of Cancer Prevention"))) {
+                        .equalsIgnoreCase(PAConstants.DCP_ORG_NAME))) {
                     recordList.add(record);
             }
         }

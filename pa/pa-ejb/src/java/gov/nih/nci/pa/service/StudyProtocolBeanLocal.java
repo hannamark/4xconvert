@@ -665,6 +665,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             if (StringUtils.equals(identifier.getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)) {
                 ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.DCP_ORG_NAME));
             }
+            if (StringUtils.equals(identifier.getRoot(), IiConverter.CCR_STUDY_PROTOCOL_ROOT)) {
+                ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CCR_ORG_NAME));
+            }
             if (StringUtils.equals(identifier.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)) {
                 ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTGOV_ORG_NAME));
             }
@@ -1304,6 +1307,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             updatePendingTrialAssociationsToActive(studyId, nctID, IdentifierType.NCT);
             updatePendingTrialAssociationsToActive(studyId, ctepID, IdentifierType.CTEP);
             updatePendingTrialAssociationsToActive(studyId, dcpID, IdentifierType.DCP);
+            updatePendingTrialAssociationsToActive(studyId, dcpID, IdentifierType.CCR);
             for (String otherID : otherIDs) {
                 updatePendingTrialAssociationsToActive(studyId, otherID, IdentifierType.OTHER_IDENTIFIER);    
             }            

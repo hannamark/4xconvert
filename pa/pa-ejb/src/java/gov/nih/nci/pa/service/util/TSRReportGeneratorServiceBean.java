@@ -451,6 +451,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         trialIdentification.setNctNumber(getIdentifier(studyProtocolDto, PAConstants.NCT_IDENTIFIER_TYPE));
         trialIdentification.setDcpIdentifier(getIdentifier(studyProtocolDto, PAConstants.DCP_IDENTIFIER_TYPE));
         trialIdentification.setCtepIdentifier(getIdentifier(studyProtocolDto, PAConstants.CTEP_IDENTIFIER_TYPE));
+        trialIdentification.setCcrIdentifier(getIdentifier(studyProtocolDto, PAConstants.CCR_IDENTIFIER_TYPE));
         trialIdentification.setAmendmentNumber(getValue(studyProtocolDto.getAmendmentNumber()));
         trialIdentification.setAmendmentDate(PAUtil.convertTsToFormattedDate(studyProtocolDto.getAmendmentDate()));
         Organization lead = ocsr.getOrganizationByFunctionRole(studyProtocolDto.getIdentifier(), CdConverter

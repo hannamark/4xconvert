@@ -681,6 +681,7 @@ public class TSRReportGeneratorTest {
         trialIdentification.setNctNumber("12345");
         trialIdentification.setDcpIdentifier("5678");
         trialIdentification.setCtepIdentifier("3442323");
+        trialIdentification.setCcrIdentifier("CCR00001");
         trialIdentification.setAmendmentNumber("7367632746");
         trialIdentification.getOtherIdentifiers().add("OID - 1");
         trialIdentification.getOtherIdentifiers().add("OID - 2");

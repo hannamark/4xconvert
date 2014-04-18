@@ -118,6 +118,7 @@ public class BaseStudyProtocolQueryDTO {
     private String ctepId;
     private String dcpId;
     private String cdrId;
+    private String ccrId;
     
     
     /**
@@ -397,6 +398,20 @@ public class BaseStudyProtocolQueryDTO {
      */
     public void setCdrId(String cdrId) {
         this.cdrId = cdrId;
+    }
+
+    /**
+     * @return the ccrId
+     */
+    public String getCcrId() {
+        return ccrId;
+    }
+
+    /**
+     * @param ccrId the ccrId to set
+     */
+    public void setCcrId(String ccrId) {
+        this.ccrId = ccrId;
     }
     
 }

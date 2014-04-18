@@ -122,6 +122,11 @@ public class IiConverter {
 
     /** The ii root value CTEP identifier. */
     public static final String CTEP_STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3.17.4";
+    
+    /**
+     * CCR_STUDY_PROTOCOL_ROOT
+     */
+    public static final String CCR_STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3.17.5";
 
     /** Study Outcome Measure Root. */
     public static final String STUDY_OUTCOME_MEASURE_ROOT = "2.16.840.1.113883.3.26.4.3.1";

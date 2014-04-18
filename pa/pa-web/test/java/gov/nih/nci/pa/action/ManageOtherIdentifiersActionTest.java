@@ -64,6 +64,7 @@ public class ManageOtherIdentifiersActionTest extends AbstractPaActionTest {
                 new StudyIdentifierDTO(StudyIdentifierType.CTEP, "CTEP"),
                 new StudyIdentifierDTO(StudyIdentifierType.CTGOV, "CTGOV"),
                 new StudyIdentifierDTO(StudyIdentifierType.DCP, "DCP"),
+                new StudyIdentifierDTO(StudyIdentifierType.CCR, "CCR"),
                 new StudyIdentifierDTO(StudyIdentifierType.LEAD_ORG_ID,
                         "LEAD_ORG_ID"),
                 new StudyIdentifierDTO(StudyIdentifierType.OTHER, "OTHER"), }));
@@ -130,7 +131,7 @@ public class ManageOtherIdentifiersActionTest extends AbstractPaActionTest {
         assertEquals("display_otherIdentifiers", action.addOtherIdentifier());
         List<StudyIdentifierDTO> studyIdentifiers = (List<StudyIdentifierDTO>) session
                 .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
-        assertEquals(6, studyIdentifiers.size());
+        assertEquals(7, studyIdentifiers.size());
         assertEquals("Identifier added to the trial", ServletActionContext
                 .getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
 
@@ -155,7 +156,7 @@ public class ManageOtherIdentifiersActionTest extends AbstractPaActionTest {
         assertEquals("display_otherIdentifiers", action.deleteOtherIdentifier());
         List<StudyIdentifierDTO> studyIdentifiers = (List<StudyIdentifierDTO>) session
                 .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
-        assertEquals(4, studyIdentifiers.size());
+        assertEquals(5, studyIdentifiers.size());
         assertEquals("Identifier deleted from the trial", ServletActionContext
                 .getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
 
@@ -180,7 +181,7 @@ public class ManageOtherIdentifiersActionTest extends AbstractPaActionTest {
                 action.saveOtherIdentifierRow());
         List<StudyIdentifierDTO> studyIdentifiers = (List<StudyIdentifierDTO>) session
                 .getAttribute(Constants.OTHER_IDENTIFIERS_LIST);
-        assertEquals(5, studyIdentifiers.size());
+        assertEquals(6, studyIdentifiers.size());
         assertEquals("New identifier value saved", ServletActionContext
                 .getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
 

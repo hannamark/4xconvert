@@ -112,6 +112,7 @@ public class ProtocolQueryResultsServiceTest {
     private Date onhold_date;
     private Date offhold_date;
     private String cdr_id; 
+    private String ccr_id;
     private String amendment_number;
     private Date admin_checkout_date;
     private Date scientific_checkout_date;
@@ -144,7 +145,7 @@ public class ProtocolQueryResultsServiceTest {
             scientific_checkout_csm_lname, scientific_checkout_reg_fname,
             scientific_checkout_reg_lname, onhold_reason_code, onhold_date,
             offhold_date, cdr_id, amendment_number, admin_checkout_date,
-            scientific_checkout_date, comments, onholdDescription, study_source };
+            scientific_checkout_date, comments, onholdDescription, study_source, ccr_id };
     Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
 
     @Before

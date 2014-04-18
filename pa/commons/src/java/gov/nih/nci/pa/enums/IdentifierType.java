@@ -99,6 +99,10 @@ public enum IdentifierType implements CodedEnum<String> {
     CTEP("CTEP"),
     /** DCP. */
     DCP("DCP"),
+    /**
+     *CCR 
+     */
+    CCR("CCR"),
     /** Other Identifier. */
     OTHER_IDENTIFIER("Other Identifier"),
     /** Lead Organization. */

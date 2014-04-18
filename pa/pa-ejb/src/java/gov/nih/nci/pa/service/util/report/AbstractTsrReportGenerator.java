@@ -414,6 +414,9 @@ public abstract class AbstractTsrReportGenerator {
                         + TSRReportLabelText.TI_CTEP_IDENTIFIER,
                         trialInfo.getCtepIdentifier());
             }
+            addTableRow(table, TSRReportLabelText.SPACER
+                    + TSRReportLabelText.TI_CCR_IDENTIFIER,
+                    trialInfo.getCcrIdentifier());
             for (StudyIdentifierDTO dto : trialInfo.getIdentifiers()) {
                 if (!dto.getType().isStudySiteBased()) {
                     addTableRow(table, TSRReportLabelText.SPACER

@@ -906,6 +906,11 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 appendIdentifierAssignerSearchClause(whereClause,
                         anyTypeIdentifierSQL, PAConstants.DCP_ORG_NAME, params);
                 whereClause.append(" or "); // NOPMD
+                
+                // CCR
+                appendIdentifierAssignerSearchClause(whereClause,
+                        anyTypeIdentifierSQL, PAConstants.CCR_ORG_NAME, params);
+                whereClause.append(" or "); // NOPMD
 
                 // NCT
                 appendIdentifierAssignerSearchClause(whereClause,

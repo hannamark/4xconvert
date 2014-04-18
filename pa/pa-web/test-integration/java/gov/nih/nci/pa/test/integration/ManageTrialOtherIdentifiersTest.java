@@ -113,6 +113,8 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
                 .randomUUID().toString());
         verifyStudySiteAssignedIdentifier(trial, "DCP Identifier", UUID
                 .randomUUID().toString());
+        verifyStudySiteAssignedIdentifier(trial, "CCR Identifier", UUID
+                .randomUUID().toString());        
         verifyOtherIdentifier(trial, "Duplicate NCI Identifier", UUID
                 .randomUUID().toString());
         verifyOtherIdentifier(trial, "Obsolete ClinicalTrials.gov Identifier",
@@ -134,6 +136,8 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         verifyEditStudySiteAssignedIdentifier(trial, "CTEP Identifier", UUID
                 .randomUUID().toString());
         verifyEditStudySiteAssignedIdentifier(trial, "DCP Identifier", UUID
+                .randomUUID().toString());
+        verifyEditStudySiteAssignedIdentifier(trial, "CCR Identifier", UUID
                 .randomUUID().toString());
         verifyEditOtherIdentifier(trial, "Duplicate NCI Identifier", UUID
                 .randomUUID().toString());
@@ -211,6 +215,8 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         verifyDeleteStudySiteAssignedIdentifier(trial, "CTEP Identifier", UUID
                 .randomUUID().toString());
         verifyDeleteStudySiteAssignedIdentifier(trial, "DCP Identifier", UUID
+                .randomUUID().toString());
+        verifyDeleteStudySiteAssignedIdentifier(trial, "CCR Identifier", UUID
                 .randomUUID().toString());
         verifyDeleteOtherIdentifier(trial, "Duplicate NCI Identifier", UUID
                 .randomUUID().toString());

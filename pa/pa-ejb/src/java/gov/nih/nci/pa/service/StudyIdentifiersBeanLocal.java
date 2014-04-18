@@ -88,7 +88,7 @@ public class StudyIdentifiersBeanLocal extends
                 queryDTO.getNctIdentifier());
         addIdentifierToList(list, StudyIdentifierType.CTEP,
                 queryDTO.getCtepId());
-        addIdentifierToList(list, StudyIdentifierType.DCP, queryDTO.getDcpId());
+        addIdentifierToList(list, StudyIdentifierType.CCR, queryDTO.getCcrId());
 
         for (Ii otherID : PAUtil.getOtherIdentifiers(spDTO)) {
             addOtherIdentifierToList(list, otherID);
@@ -186,6 +186,9 @@ public class StudyIdentifiersBeanLocal extends
         } else if (StudyIdentifierType.DCP.equals(dto.getType())) {
             deleteIdentifierAssignerSite(studyProtocolID,
                     PAConstants.DCP_ORG_NAME);
+        } else if (StudyIdentifierType.CCR.equals(dto.getType())) {
+            deleteIdentifierAssignerSite(studyProtocolID,
+                    PAConstants.CCR_ORG_NAME);
         } else {
             deleteOtherIdentifier(studyProtocolID, dto.getType(),
                     dto.getValue());
@@ -270,6 +273,9 @@ public class StudyIdentifiersBeanLocal extends
         } else if (StudyIdentifierType.DCP.equals(type)) {
             addIdentifierAssignerSite(studyProtocolID,
                     PAConstants.DCP_ORG_NAME, value);
+        } else if (StudyIdentifierType.CCR.equals(type)) {
+            addIdentifierAssignerSite(studyProtocolID,
+                    PAConstants.CCR_ORG_NAME, value);
         } else {
             addOtherIdentifier(studyProtocolID, type, value);
         }

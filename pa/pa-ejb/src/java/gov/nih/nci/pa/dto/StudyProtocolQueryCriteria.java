@@ -133,6 +133,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String anyTypeIdentifier;
     private String nciIdentifier;
     private String dcpIdentifier;
+    private String ccrIdentifier;
     private String ctepIdentifier;
     private String nctNumber;
     private String officialTitle;
@@ -832,6 +833,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
         if (ALL.equals(identifierType)) {
             setCtepIdentifier(null);
             setDcpIdentifier(null);
+            setCcrIdentifier(null);
             setLeadOrganizationTrialIdentifier(null);
             setNciIdentifier(null);
             setNctNumber(null);
@@ -846,6 +848,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
             case DCP:
                 setDcpIdentifier(identifier);
                 break;
+            case CCR:
+                setCcrIdentifier(identifier);
+                break;                
             case LEAD_ORG:
                 setLeadOrganizationTrialIdentifier(identifier);
                 break;
@@ -1351,6 +1356,20 @@ public class StudyProtocolQueryCriteria implements Serializable {
         }
         
         this.studySource = StudySourceCode.getByCode(studySource);
+    }
+
+    /**
+     * @return the ccrIdentifier
+     */
+    public String getCcrIdentifier() {
+        return ccrIdentifier;
+    }
+
+    /**
+     * @param ccrIdentifier the ccrIdentifier to set
+     */
+    public void setCcrIdentifier(String ccrIdentifier) {
+        this.ccrIdentifier = ccrIdentifier;
     }
     
     

@@ -538,6 +538,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             name = PAConstants.CTEP_ORG_NAME;
         } else if (identifierType.equalsIgnoreCase(PAConstants.DCP_IDENTIFIER_TYPE)) {
             name = PAConstants.DCP_ORG_NAME;
+        } else if (identifierType.equalsIgnoreCase(PAConstants.CCR_IDENTIFIER_TYPE)) {
+            name = PAConstants.CCR_ORG_NAME;
         }
 
         if (name == null) {

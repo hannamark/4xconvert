@@ -408,7 +408,9 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             sbuf.append(AssignedIdentifierEnum.DCP.getCode());
         } else if (AssignedIdentifierEnum.CTEP.getDisplayValue().equals(spOrgName)) {
             sbuf.append(AssignedIdentifierEnum.CTEP.getCode());
-        }
+        } else if (AssignedIdentifierEnum.CCR.getDisplayValue().equals(spOrgName)) {
+            sbuf.append(AssignedIdentifierEnum.CCR.getCode());
+        } 
 
         return sbuf.append(" Trial Identifier").toString();
     }

@@ -91,6 +91,10 @@ public class MockOrganizationEntityService implements
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.NCI_ORG_NAME));
             createOrg(org);
+            
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn(PAConstants.CCR_ORG_NAME));
+            createOrg(org);
 
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD

@@ -93,6 +93,10 @@ public enum AssignedIdentifierEnum {
     NCT("NCT", "ClinicalTrials.gov"),
     /** CTEP-Cancer Therapy Evaluation Program. */
     CTEP("CTEP", "Cancer Therapy Evaluation Program") ,
+    /**
+     * CCR
+     */
+    CCR("CCR", "NCI - Center for Cancer Research") ,
     /** DCP-Division of Cancer Prevention. */
     DCP("DCP", "Division of Cancer Prevention");
 
