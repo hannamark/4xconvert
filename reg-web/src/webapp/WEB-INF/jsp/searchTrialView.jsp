@@ -42,29 +42,21 @@
             <c:set var="topic" scope="request" value="viewresult"/>
                 <reg-web:sucessMessage/>
                 <reg-web:failureMessage/>
-                 <del class="btnwrapper">
-                  <c:if test="${showVerifyButton == 'true'} && showAddMySite">
-                  <ul class="btnrow" style="align:left">
-                       <li>   
-                          <c:if test="${showVerifyButton == 'true'}"> 
-                                        <s:url id="viewUrl" namespace="/protected" action="trialDataVerificationAction" method="view"/>
-                                        <s:a cssClass="btn" href="javascript:void(0)" onclick="javascript:viewAction('%{viewUrl}');">
-                                            <span class="btn_img">Verify Trial Data</span>
-                                        </s:a>
-                         </c:if>
-                         <s:if test="showAddMySite"> 
-                              <s:url id="addMySiteUrl" action="addSitepopupview">
+                <c:if test="${showVerifyButton or showAddMySite}">
+                  <div class="align-left button-row">
+                  	<c:if test="${showVerifyButton}">
+                   		<s:url id="viewUrl" namespace="/protected" action="trialDataVerificationAction" method="view"/>
+			      		<s:a onclick="javascript:addAction('%{viewUrl}');"  href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-floppy-o"></i>Verify Trial Data</button></s:a>
+			      	</c:if>
+			      	<c:if test="${showAddMySite}"> 
+			     		<s:url id="addMySiteUrl" action="addSitepopupview">
                                 <s:param name="studyProtocolId"><c:out value= "${requestScope.trialIdentifier}"/></s:param>
-                              </s:url>
-                              <s:a cssClass="btn" href="javascript:void(0)" onclick="showPopup('%{addMySiteUrl}', '', 'Add Participating Site');" 
-                                           onkeypress="showPopup('%{addMySiteUrl}', '', 'Add Participating Site');">
-                                 <span class="btn_img">Add My Site</span>
-                              </s:a>
-                         </s:if>
-                       </li>
-                   </ul>
-                   </c:if>
-                </del>
+                        </s:url>
+                        <s:a onclick="showPopup('%{addMySiteUrl}', '', 'Add Participating Site');" onkeypress="showPopup('%{addMySiteUrl}', '', 'Add Participating Site');"  href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-plus"></i>Add My Site</button></s:a>
+			        </c:if>
+                  </div>
+               </c:if>
+                  
             
                 <c:if test="${param.trialAction == 'submit'}">
                     <div class="confirm_msg">
