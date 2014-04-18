@@ -369,28 +369,37 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         String newcaDsrId = getCaDsrId();
+        Long oldPvId = IiConverter.convertToLong(marker.getPermissibleValue());
+        List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkerWithSyncID(oldPvId);
         PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null, null);
         // already present in planned_marker_sync_cadsr table?
         List<Number> newPvId = permissibleService.getIdentifierByCadsrId(Long.parseLong(newcaDsrId));
         if (!newPvId.isEmpty()) { 
-            // update the marker with the new pv value
-            marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-            marker.setPermissibleValue(IiConverter.convertToIi(newPvId.get(0).longValue()));
-            plannedMarkerService.update(marker);
+            // update all pending markers with the new pv value and make them active
+            for (PlannedMarkerDTO markerDTO : markerDTOs) {
+                markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                markerDTO.setPermissibleValue(IiConverter.convertToIi(newPvId.get(0).longValue()));
+                plannedMarkerService.update(markerDTO);
+            }
+            // delete the pending marker now which is just an extra,
+            permissibleService.deleteById(oldPvId); // pending one need to check while debug
         } else {
-            // Insert the new Cadsr value and update the marker with the insertec PV value. 
+            // Insert the new Cadsr value and update the marker with the insert PV value. and delete the old value 
             List<Object> permissibleValues = caDsrLookUp(newcaDsrId);
             if (!permissibleValues.isEmpty()) {
                   CaDSRWebDTO caDsrdto = getSearchResults(permissibleValues.get(0));
                   permissibleService.insertValues(caDsrdto.getPublicId(), caDsrdto.getVmName()
-                      , caDsrdto.getVmMeaning(), caDsrdto.getVmDescription()
-                      , ActiveInactivePendingCode.ACTIVE.getName());
-                  List<Number> insertedPvId = permissibleService.getIdentifierByCadsrId(Long.parseLong(newcaDsrId));
-                  marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                  if (!insertedPvId.isEmpty()) {
-                      marker.setPermissibleValue(IiConverter.convertToIi(insertedPvId.get(0).longValue()));
-                  }
-                  plannedMarkerService.update(marker);
+                    , caDsrdto.getVmMeaning(), caDsrdto.getVmDescription()
+                    , ActiveInactivePendingCode.ACTIVE.getName());
+               List<Number> insertedPvId = permissibleService.getIdentifierByCadsrId(Long.parseLong(newcaDsrId));
+               for (PlannedMarkerDTO markerDTO : markerDTOs) {
+                   markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                   if (!insertedPvId.isEmpty()) {
+                        markerDTO.setPermissibleValue(IiConverter.convertToIi(insertedPvId.get(0).longValue()));
+                   }
+                   plannedMarkerService.update(markerDTO);
+              }
+                 permissibleService.deleteById(oldPvId); 
             }
         }
         //send acceptance email

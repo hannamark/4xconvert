@@ -346,28 +346,33 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
           dto.setPublicId(vm.getPublicID());
           results.add(dto);
        }
-        // Sort the results as per PO-6898
-        List<CaDSRWebDTO> output = RankBasedSorterUtils.sortCaDSRResults(
-             results, getName(), new Serializer<CaDSRWebDTO>() {
-            public String serialize(CaDSRWebDTO object) {
-                return object.getVmName();
-            }
-        });
-        // add the highlight to the search text
-        if (StringUtils.equals("true", getHighlightRequired())) {
-           for (CaDSRWebDTO dto : output) {
-                dto.setId(dto.getId());
-                dto.setVmName(replaceWithHighlightText(
-                    replaceHTMLCharacters(dto.getVmName()), getName()));
-                dto.setVmMeaning(replaceWithHighlightText(
-                    replaceHTMLCharacters(dto.getVmMeaning()), getMeaning()));
-                dto.setVmDescription(replaceWithHighlightText(
-                    replaceHTMLCharacters(dto.getVmDescription()), getDescription()));
-                dto.setPublicId(dto.getPublicId());
-                resultsMain.add(dto);
-            }
+        List<CaDSRWebDTO> output = new ArrayList<CaDSRWebDTO>();
+        if (getName() != null && !getName().isEmpty()) {
+            // Sort the results as per PO-6898
+            output = RankBasedSorterUtils.sortCaDSRResults(
+               results, getName(), new Serializer<CaDSRWebDTO>() {
+                public String serialize(CaDSRWebDTO object) {
+                  return object.getVmName();
+               }
+           });
         } else {
-            return output;
+            output = results;
+        }
+           // add the highlight to the search text
+        if (StringUtils.equals("true", getHighlightRequired())) {
+              for (CaDSRWebDTO dto : output) {
+                   dto.setId(dto.getId());
+                   dto.setVmName(replaceWithHighlightText(
+                    replaceHTMLCharacters(dto.getVmName()), getName()));
+                   dto.setVmMeaning(replaceWithHighlightText(
+                    replaceHTMLCharacters(dto.getVmMeaning()), getMeaning()));
+                   dto.setVmDescription(replaceWithHighlightText(
+                    replaceHTMLCharacters(dto.getVmDescription()), getDescription()));
+                   dto.setPublicId(dto.getPublicId());
+                   resultsMain.add(dto);
+               }
+        } else {
+             return output;
         }
         return resultsMain;
     }
@@ -396,12 +401,16 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     private boolean validateInput() {
         String allParams = StringUtils.join(new String[] {getMeaning(), getName(), getDescription(), getPublicId()});
+        if (!StringUtils.isEmpty(getSelectedRowIdentifier()) && StringUtils.isEmpty(getPublicId())) {
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
+                    getText("plannedMarker.lookup.publicId.criteria.error"));
+            return true;
+        }
         if (StringUtils.isEmpty(allParams)) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("plannedMarker.lookup.criteria.error"));
             return true;
         }
-
         if (StringUtils.isNotEmpty(getPublicId()) && !NumberUtils.isNumber(getPublicId())) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("plannedMarker.lookup.criteria.publicId.error"));
