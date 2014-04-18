@@ -78,12 +78,19 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
+
 /**
  * Generic DTO class for displaying caDSR information.
  *
  * @author Anupama Sharma
  */
-public class CaDSRWebDTO {
+public class CaDSRWebDTO implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String id;
     private String preferredQuestion;
     private Long publicId;

@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.util.ranking;
 
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +19,6 @@ public class Ranker {
      private static final int WHOLE_WORD_MATCH = 10000;
      private static final int BEGINING_OF_WORD = 1000;
      private static final int PART_OF_SENTENCE = 500;
-
 
     private final Pattern p;
     private final String searchStr;
@@ -110,6 +110,49 @@ public class Ranker {
             rankedObject.addToRank(PART_OF_SENTENCE);
             rankedObject.substractFromRank(start);
         }
+        return rankedObject;
+    }
+    
+    /**
+     * @param serializer serializer
+     * @param obj obj
+     * @param <T> gene
+     * @return return retrun
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public <T extends Object> RankedObject rankCaDSR(T obj,
+              Serializer<T> serializer) {
+        RankedObject<T> rankedObject = new RankedObject(obj);
+        String str = serializer.serialize(obj);
+        String[] bracketTrimmedString = 
+             str.split("(\\)(\\(.*?\\)|[^\\(])*?)|(\\((\\(.*?\\)|[^\\(])*?)(\\)|$|\\(\\w*.+|\\)*.+)");
+        for (String innerString : bracketTrimmedString) {
+            String[] synonymTrimmedString = str.split(innerString.trim());
+             // test for exact primary value
+            if (StringUtils.equalsIgnoreCase(innerString.trim(), searchStr)) {
+                rankedObject.addToRank(WHOLE_SENTENCE_MATCH);
+            } else if (synonymTrimmedString.length > 0) {
+             // test for exact Synonym value
+                String synonymString = synonymTrimmedString[1].replaceAll("\\(", "");
+                synonymString = synonymTrimmedString[1].replaceAll("\\)", "");
+                String[] synonymsTrimmedString = synonymString.split("\\,|\\;");
+                for (String innersyno : synonymsTrimmedString) {
+                    if (StringUtils.equalsIgnoreCase(innersyno.trim(), searchStr)) {
+                         rankedObject.addToRank(BEGINING_OF_SENTENCE);
+                    }
+                }
+            } else {
+                // Whole word match
+                String[] wordTrimmedString = str.split(" ");
+                for (String innerword : wordTrimmedString) {
+                    if (StringUtils.equalsIgnoreCase(innerword, searchStr)) {
+                        rankedObject.addToRank(WHOLE_WORD_MATCH);
+                    } 
+                }
+            }
+        }
+     // has no exact match but it is a part of word
+        rankedObject.addToRank(PART_OF_SENTENCE); 
         return rankedObject;
     }
 }

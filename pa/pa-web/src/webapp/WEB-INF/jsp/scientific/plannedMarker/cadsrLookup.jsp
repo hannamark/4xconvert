@@ -35,12 +35,16 @@
                 top.window.loadDiv(value,eval,assayType,bioUse,bioPurpose,specimenType,evalOther,assayOther,specimenOther);
              }
              function loadResults() {     
+            	 var caseValue = document.forms[0].caseTypetrue.checked;
+                 var highlightValue = document.forms[0].highlightRequiredtrue.checked;
                  var url= '/pa/protected/popupPlannedMarkerlookup.action';
                  var params = {
                          description: $('searchDescription').value,
                          meaning: $('searchMeaning').value,
                          name: $('searchName').value,
-                         publicId: $('searchPublicId').value   
+                         publicId: $('searchPublicId').value, 
+                         caseType :caseValue,
+                         highlightRequired :highlightValue
                  };
                  var div = $('getCaDSR');
                  div.innerHTML = '<div><img alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
@@ -59,6 +63,12 @@
                  var aj = callAjaxPost(div, url, {});
              }
         </script>
+        <style>
+.highlight
+{
+background-color:yellow;
+}
+</style>
     </head>
     <body>
         <s:form id="cadsrLookup" name="cadsrLookup">
@@ -73,6 +83,20 @@
             <div class="box" id="searchcaDSR">
                 <h2><fmt:message key="plannedMarker.lookup.title"/></h2>
                 <table class="form">
+                    <tr>
+                        <td scope="row" class="label">
+                            <label for="caseType"><fmt:message key="plannedMarker.lookup.CaseSearch"/>:</label>
+                        </td>
+                        <td nowrap="nowrap"> 
+                          <s:radio name="caseType" id="caseType" value='caseType' list="#{'true':'Yes', 'false':'No'}"></s:radio>
+                        </td>
+                        <td scope="row" class="label">
+                            <label for="highlightRequired"><fmt:message key="plannedMarker.lookup.highlight"/>:</label>
+                        </td>
+                        <td nowrap="nowrap"> 
+                          <s:radio name="highlightRequired" id="highlightRequired" value='highlightRequired' list="#{'true':'Yes', 'false':'No'}"></s:radio>
+                        </td>
+                    </tr>
                     <tr>
                         <td scope="row" class="label">
                             <label for="searchName"><fmt:message key="plannedMarker.lookup.permissibleValue"/>:</label>

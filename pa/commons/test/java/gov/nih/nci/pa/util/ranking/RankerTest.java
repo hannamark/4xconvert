@@ -53,4 +53,66 @@ public class RankerTest extends TestCase {
         assertEquals(49999, ranker.rank("(MD53) hello biju",  serializer).getRank());
 
     }
+    
+
+  public void testRankCaDSR() throws Exception {
+      Ranker ranker = new Ranker("delta");
+       Serializer<String> serializer = new Serializer<String>(){
+           public String serialize(String object) {
+               return object;
+           }
+       };
+       String str ="delta catenin";
+       assertEquals(10000, ranker.rankCaDSR(str, serializer).getRank());
+       str = "DEGS2 (delta(4)-desaturase, sphingolipid 2; C14orf66, DES2, FADS8)";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("delta catenin");
+       str ="delta catenin";
+       assertEquals(100000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PGR");
+       str ="PGR (progesterone receptor, NR3C3, PR)";
+       assertEquals(100000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PGR A");
+       str ="PGR A (progesterone receptor, NR3C3, PR)";
+       assertEquals(100000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PR");
+       str ="PGR (progesterone receptor, NR3C3, PR)";
+       assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PR");
+       str ="PGR (progesterone receptor; NR3C3; PR)";
+       assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("NR3C3");
+       str ="PGR (progesterone receptor, NR3C3, PR)";
+       assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("receptor");
+       str ="PGR (progesterone receptor, NR3C3, PR)";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("noMatch");
+       str ="PGR (progesterone receptor, NR3C3, PR)";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PR");
+       str ="PPP2R1A (protein phosphatase 2, regulatory subunit A, alpha; PR65A, PP2A-Aalpha,";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PR");
+       str ="SPRY4 (sprouty homolog 4 (Drosophila))";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PR");
+       str ="PELO (Protein Pelota Homolog; Pelota Homolog (Drosophila); CGI-17; PRO1770)";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PR");
+       str ="BMPR2 (BMR2; PPH1; BMPR3; BRK-3; T-ALK; BMPR-II; BMP Type II Receptor; BMP Type-2 Receptor; BMPR-2; Bone Morphogenetic Protein Receptor Type II; Bone Morphogenetic Protein Receptor Type-2; Bone Morphogenetic Protein Receptor, Type II (Serine/Threonine Kin";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PR");
+       str ="PMAIP1 (phorbol-12-myristate-13-acetate-induced protein 1, NOXA, APR; Adult T Cell Leukemia-Derived PMA-Responsive Protein, ATL-Derived PMA-Responsive Protein, Immediate-Early-Response Protein APR, PMA-Induced Protein 1, Protein Noxa))";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("PR");
+       str ="MECOM (MDS1 and EVI1 Complex Locus, EVI1, Ecotropic Viral Integration Site 1, MDS1-EVI1, MDS1, MGC163392, MGC97004, Myelodysplasia Syndrome 1, PRDM3, EVI 1 Protein, EVI-1,: Ecotropic Virus Integration 1 Site Protein, Ecotropic Virus Integration Site 1 Pr";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("t");
+       str ="t(12;21)";
+       assertEquals(100000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("t");
+       str ="EBNA-2 Epstein-Barr Nuclear Antigen 2; EBV Nuclear Antigen 2; BYRF1; Epstein-Barr Virus Nuclear Antigen 2; EBNA2)";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+  }
 }

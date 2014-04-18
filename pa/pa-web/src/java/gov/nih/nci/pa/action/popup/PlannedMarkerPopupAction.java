@@ -98,6 +98,8 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ranking.RankBasedSorterUtils;
+import gov.nih.nci.pa.util.ranking.Serializer;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
@@ -106,6 +108,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -122,7 +125,7 @@ import com.opensymphony.xwork2.Preparable;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class PlannedMarkerPopupAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
     /**
@@ -132,6 +135,9 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private static final String CADSR_RESULTS = "results";
     private static final String MARKER_ACCEPT = "accept";
     private static final String EMAIL = "email";
+    private static final String PV_VALUE = "pv.value";
+    private static final String LONG_NAME = "vm.longName";
+    private static final String DESCRIPTION = "vm.description";
     private String name;
     private String meaning;
     private String description;
@@ -145,6 +151,8 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private PlannedMarkerServiceLocal plannedMarkerService;
     private String selectedRowIdentifier;
     private String caDsrId;
+    private String caseType;
+    private String highlightRequired;
     private static final Logger LOG = Logger.getLogger(PlannedMarkerPopupAction.class);
     /**
      * {@inheritDoc}
@@ -275,53 +283,113 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      * @param vdId the id of the value domain to search
      * @return the constructed criteria
      */
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" })
     private DetachedCriteria constructSearchCriteria(String vdId) {
         DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class, "vdpv");
         criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
         criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
-
         //If public id is specified we only want to search using that.
         if (StringUtils.isNotEmpty(getPublicId())) {
             criteria.add(Expression.eq("vm.publicID", Long.valueOf(getPublicId())));
             return criteria;
         }
-        if (StringUtils.isNotEmpty(getName())) {
-            String newName = getName();
-            if (newName.contains("-")) {
-                 newName = getName().replaceAll("-", "");
+        if (StringUtils.equals("true", getCaseType())) {
+           if (StringUtils.isNotEmpty(getName())) {
+                String newName = getName();
+                if (newName.contains("-")) {
+                     newName = getName().replaceAll("-", "");
+                }
+               criteria.add(Expression.or(Expression.or(
+                      Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
+                      Expression.like(PV_VALUE, getName(), MatchMode.ANYWHERE)), 
+                      Expression.like(PV_VALUE, newName, MatchMode.ANYWHERE)));
             }
-           criteria.add(Expression.or(Expression.or(
-                  Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
-                  Expression.ilike("pv.value", getName(), MatchMode.ANYWHERE)), 
-                  Expression.ilike("pv.value", newName, MatchMode.ANYWHERE)));
-           
-            
+            if (StringUtils.isNotEmpty(getMeaning())) {
+                criteria.add(Expression.like(LONG_NAME, getMeaning(), MatchMode.ANYWHERE));
+            }
+            if (StringUtils.isNotEmpty(getDescription())) {
+                criteria.add(Expression.like(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
+            }
+        } else {
+           if (StringUtils.isNotEmpty(getName())) {
+                String newName = getName();
+                if (newName.contains("-")) {
+                     newName = getName().replaceAll("-", "");
+                }
+               criteria.add(Expression.or(Expression.or(
+                      Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
+                      Expression.ilike(PV_VALUE, getName(), MatchMode.ANYWHERE)), 
+                      Expression.ilike(PV_VALUE, newName, MatchMode.ANYWHERE)));
+            }
+            if (StringUtils.isNotEmpty(getMeaning())) {
+                criteria.add(Expression.ilike(LONG_NAME, getMeaning(), MatchMode.ANYWHERE));
+            }
+            if (StringUtils.isNotEmpty(getDescription())) {
+                criteria.add(Expression.ilike(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
+            }
         }
-        if (StringUtils.isNotEmpty(getMeaning())) {
-            criteria.add(Expression.ilike("vm.longName", getMeaning(), MatchMode.ANYWHERE));
-        }
-        if (StringUtils.isNotEmpty(getDescription())) {
-            criteria.add(Expression.ilike("vm.description", getDescription(), MatchMode.ANYWHERE));
-        }
+        
         return criteria;
     }
 
     private List<CaDSRWebDTO> getSearchResults(List<Object> permissibleValues) {
         List<CaDSRWebDTO> results = new ArrayList<CaDSRWebDTO>();
+        List<CaDSRWebDTO> resultsMain = new ArrayList<CaDSRWebDTO>();
         for (Object obj : permissibleValues) {
-            ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) obj;
-            CaDSRWebDTO dto = new CaDSRWebDTO();
-            ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
-            dto.setId(vdpv.getId());
-            dto.setVmName(vdpv.getPermissibleValue().getValue());
-            dto.setVmMeaning(vm.getLongName());
-            dto.setVmDescription(vm.getDescription());
-            dto.setPublicId(vm.getPublicID());
-            results.add(dto);
+          ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) obj;
+          CaDSRWebDTO dto = new CaDSRWebDTO();
+          ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
+          dto.setId(vdpv.getId());
+          dto.setVmName(vdpv.getPermissibleValue().getValue());
+          dto.setVmMeaning(vm.getLongName());
+          dto.setVmDescription(vm.getDescription());
+          dto.setPublicId(vm.getPublicID());
+          results.add(dto);
+       }
+        // Sort the results as per PO-6898
+        List<CaDSRWebDTO> output = RankBasedSorterUtils.sortCaDSRResults(
+             results, getName(), new Serializer<CaDSRWebDTO>() {
+            public String serialize(CaDSRWebDTO object) {
+                return object.getVmName();
+            }
+        });
+        // add the highlight to the search text
+        if (StringUtils.equals("true", getHighlightRequired())) {
+           for (CaDSRWebDTO dto : output) {
+                dto.setId(dto.getId());
+                dto.setVmName(replaceWithHighlightText(
+                    replaceHTMLCharacters(dto.getVmName()), getName()));
+                dto.setVmMeaning(replaceWithHighlightText(
+                    replaceHTMLCharacters(dto.getVmMeaning()), getMeaning()));
+                dto.setVmDescription(replaceWithHighlightText(
+                    replaceHTMLCharacters(dto.getVmDescription()), getDescription()));
+                dto.setPublicId(dto.getPublicId());
+                resultsMain.add(dto);
+            }
+        } else {
+            return output;
         }
-        return results;
+        return resultsMain;
     }
-
+    
+    private String replaceHTMLCharacters(String inputData) {
+        String outputData = StringEscapeUtils.escapeHtml(inputData);
+        return outputData;
+    }
+    
+    private String replaceWithHighlightText(String inputData, String searchText) {
+        String outputData = inputData;
+        if (searchText != null && !searchText.isEmpty()) {
+            String highlight = "<span class=\"highlight\">" + searchText + "</span>";
+            
+            if (StringUtils.equals("true", getCaseType())) {
+               outputData = StringUtils.replace(inputData, searchText, highlight);
+            } else {
+               outputData = inputData.replaceAll("(?i)" + searchText, highlight);
+            }
+        }
+        return outputData;
+    }
     /**
      * Validates search form input.
      * @return true iff a validation error has occurred
@@ -529,4 +597,33 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     public void setCaDsrId(String caDsrId) {
         this.caDsrId = caDsrId;
     }
+    /**
+     * 
+     * @return caseType caseType
+     */
+    public String getCaseType() {
+        return caseType;
+    }
+    /**
+     * 
+     * @param caseType caseType
+     */
+    public void setCaseType(String caseType) {
+        this.caseType = caseType;
+    }
+    /**
+     * 
+     * @return highlightRequired highlightRequired
+     */
+    public String getHighlightRequired() {
+        return highlightRequired;
+    }
+    /**
+     * 
+     * @param highlightRequired highlightRequired
+     */
+    public void setHighlightRequired(String highlightRequired) {
+        this.highlightRequired = highlightRequired;
+    }
+
 }
