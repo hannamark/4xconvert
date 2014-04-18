@@ -60,7 +60,7 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
     
     @BeforeClass
     public static void beforeClass() {
-        MockOrganizationEntityService.reset(100);
+        MockOrganizationEntityService.reset(100, false);
     }
 
     @SuppressWarnings("unchecked")
@@ -135,7 +135,7 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
     
     @AfterClass
     public static void teardown() throws Exception {        
-        MockOrganizationEntityService.reset(1);
+        MockOrganizationEntityService.reset(1, true);
     }
 
     @SuppressWarnings({ "unused", "deprecation" })
@@ -215,7 +215,7 @@ public class StudyIdentifiersBeanTest extends AbstractTrialRegistrationTestBase 
                     PAConstants.CCR_ORG_NAME, "CCR");
             verifyPoOrgExists(PAConstants.CCR_ORG_NAME);
         } finally {
-            MockOrganizationEntityService.reset(100);
+            MockOrganizationEntityService.reset(100, false);
         }
         
     }

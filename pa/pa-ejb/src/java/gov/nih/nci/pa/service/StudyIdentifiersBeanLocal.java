@@ -88,6 +88,7 @@ public class StudyIdentifiersBeanLocal extends
                 queryDTO.getNctIdentifier());
         addIdentifierToList(list, StudyIdentifierType.CTEP,
                 queryDTO.getCtepId());
+        addIdentifierToList(list, StudyIdentifierType.DCP, queryDTO.getDcpId());
         addIdentifierToList(list, StudyIdentifierType.CCR, queryDTO.getCcrId());
 
         for (Ii otherID : PAUtil.getOtherIdentifiers(spDTO)) {

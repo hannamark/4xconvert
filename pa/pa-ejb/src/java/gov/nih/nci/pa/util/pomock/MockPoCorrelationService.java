@@ -21,6 +21,18 @@ import java.util.Map;
 public class MockPoCorrelationService {
 
     public static final Map<String, AbstractRoleDTO> STORE = new HashMap<String, AbstractRoleDTO>();
+    
+    public static int PO_ID_SEQ = 1; // NOPMD
+    
+    
+    /**
+     * @param startingCounter 
+     * 
+     */
+    public static void reset(int startingCounter) {
+        PO_ID_SEQ = startingCounter;
+        STORE.clear();
+    }
 
     public MockPoCorrelationService() {
         super();
@@ -31,7 +43,7 @@ public class MockPoCorrelationService {
      * @return
      */
     protected Ii createRole(AbstractRoleDTO dto, final String root) {
-        final String id = (MockOrganizationEntityService.PO_ID_SEQ++) + "";
+        final String id = (PO_ID_SEQ++) + "";
         dto.setStatus(CdConverter.convertToCd(EntityStatusCode.PENDING));
         final Ii ii = IiConverter.convertToIi(id);
         ii.setRoot(root);

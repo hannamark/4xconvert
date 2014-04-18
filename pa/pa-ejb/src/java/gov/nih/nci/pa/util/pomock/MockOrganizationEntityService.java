@@ -23,6 +23,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -56,49 +57,63 @@ public class MockOrganizationEntityService implements
     public static long CT_GOV_ID; // NOPMD
 
     static {
-        reset(1);
+        reset(1, true);
     }
     
     
     /**
      * @param startingCounter
      */
-    public static final void reset(int startingCounter) {        
+    public static final void reset(int startingCounter, boolean createROs) {     
+        MockResearchOrganizationCorrelationService.reset(startingCounter);
         PO_ID_SEQ = startingCounter;
         STORE.clear();
         PO_ID_TO_CTEP_ID.clear();
-        createInitialOrgs();
+        createInitialOrgs(createROs);
     }
 
     /**
      * 
      */
-    private static void createInitialOrgs() {
+    private static void createInitialOrgs(boolean createROs) {
         try {
             OrganizationDTO org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CTGOV_ORG_NAME));
             createOrg(org);
+            if (createROs) createRO(org);
             CT_GOV_ID = IiConverter.convertToLong(org.getIdentifier());
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CTEP_ORG_NAME));
             createOrg(org);
+            if (createROs) createRO(org);
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.DCP_ORG_NAME));
             createOrg(org);
+            if (createROs) createRO(org);
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.NCI_ORG_NAME));
             createOrg(org);
+            if (createROs) createRO(org);
             
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CCR_ORG_NAME));
             createOrg(org);
+            if (createROs) createRO(org);
 
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD
         }
+    }
+
+    private static void createRO(OrganizationDTO org)
+            throws EntityValidationException, CurationException {
+        ResearchOrganizationDTO dto = new ResearchOrganizationDTO();
+        dto.setName(org.getName());
+        dto.setPlayerIdentifier(org.getIdentifier());
+        new MockResearchOrganizationCorrelationService().createCorrelation(dto);
     }
 
     /*

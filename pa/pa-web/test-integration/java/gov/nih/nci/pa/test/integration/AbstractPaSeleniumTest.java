@@ -91,6 +91,7 @@ import gov.nih.nci.pa.test.integration.util.TestProperties;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -133,7 +134,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         
         openDbConnection();
     }
-    
+
     private void openDbConnection() {
         try {
             DbUtils.loadDriver(TestProperties.getProperty(TEST_DB_DRIVER));
@@ -563,10 +564,16 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "user_last_updated_id,system_created) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),null,'"
                 + code
                 + "',"
-                + "{ts '2014-04-16 16:02:09.158'} ,"
+                + today()
+                + " ,"
                 + info.id
-                + "," + "null,null,null,null,false)";
+                + ","
+                + "null,null,null,null,false)";
         runner.update(connection, sql);
+    }
+
+    private String today() {
+        return String.format("{ts '%s'}", new Timestamp(System.currentTimeMillis()).toString());       
     }
 
     private void addMilestone(TrialInfo info, String code) throws SQLException {
@@ -576,11 +583,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "rejection_reason_code) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),null,'"
                 + code
                 + "',"
-                + "{ts '2014-04-16 15:55:36.224'},"
+                + ""
+                + today()
+                + ","
                 + info.id
                 + ","
-                + "{ts '2014-04-16 15:55:36.224'},{ts '2014-04-16 15:55:36.224'},"
-                + info.csmUserID + "," + info.csmUserID + ",null)";
+                + ""
+                + today()
+                + ","
+                + today()
+                + ","
+                + info.csmUserID
+                + ","
+                + info.csmUserID + ",null)";
         runner.update(connection, sql);
     }
 
@@ -602,7 +617,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + crsID
                 + ","
                 + info.id
-                + ",'PENDING',{ts '2014-04-16 15:41:57.966'},null,null,null,null,"
+                + ",'PENDING',"
+                + today()
+                + ",null,null,null,null,"
                 + info.csmUserID + "," + info.csmUserID + ",null)";
         runner.update(connection, sql);
         
