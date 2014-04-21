@@ -125,7 +125,8 @@ import com.opensymphony.xwork2.Preparable;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity", 
+       "PMD.TooManyFields", "PMD.TooManyMethods" })
 public class PlannedMarkerPopupAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
     /**
@@ -153,6 +154,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private String caDsrId;
     private String caseType;
     private String highlightRequired;
+    private String showActionColumn;
     private static final Logger LOG = Logger.getLogger(PlannedMarkerPopupAction.class);
     /**
      * {@inheritDoc}
@@ -633,6 +635,20 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public void setHighlightRequired(String highlightRequired) {
         this.highlightRequired = highlightRequired;
+    }
+    /**
+     * 
+     * @return showActionColumn showActionColumn
+     */
+    public String getShowActionColumn() {
+        return showActionColumn;
+    }
+    /**
+     * 
+     * @param showActionColumn showActionColumn
+     */
+    public void setShowActionColumn(String showActionColumn) {
+        this.showActionColumn = showActionColumn;
     }
 
 }

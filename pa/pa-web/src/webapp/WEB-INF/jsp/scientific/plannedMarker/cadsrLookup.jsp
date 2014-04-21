@@ -44,7 +44,8 @@
                          name: $('searchName').value,
                          publicId: $('searchPublicId').value, 
                          caseType :caseValue,
-                         highlightRequired :highlightValue
+                         highlightRequired :highlightValue,
+                         showActionColumn:$('showActionColumn').value
                  };
                  var div = $('getCaDSR');
                  div.innerHTML = '<div><img alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
@@ -80,6 +81,7 @@ background-color:yellow;
         <s:hidden id="plannedMarker.evaluationTypeOtherText" name="plannedMarker.evaluationTypeOtherText"/>
         <s:hidden id="plannedMarker.assayTypeOtherText" name="plannedMarker.assayTypeOtherText"/>
         <s:hidden id="plannedMarker.specimenTypeOtherText" name="plannedMarker.specimenTypeOtherText"/>
+        <s:hidden id="showActionColumn" name="showActionColumn"/>
             <div class="box" id="searchcaDSR">
                 <h2><fmt:message key="plannedMarker.lookup.title"/></h2>
                 <table class="form">
@@ -140,9 +142,11 @@ background-color:yellow;
                             <s:a href="javascript:void(0)" cssClass="btn" onclick="reset();">
                                 <span class="btn_img"><span class="cancel"><fmt:message key="plannedMarker.lookup.reset"/></span></span>
                             </s:a>
+                            <s:if test="showActionColumn == null">
                             <s:a href="javascript:void(0)" cssClass="btn" onclick="loadRequestEmail();">
                                 <span class="btn_img"><span class="search"><fmt:message key="plannedMarker.lookup.createRequest"/></span></span>
                             </s:a>
+                            </s:if>
                             <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();">
                                 <span class="btn_img"><span class="cancel"><fmt:message key="plannedMarker.lookup.cancel"/></span></span>
                             </s:a>

@@ -44,6 +44,10 @@
                 document.forms[0].action ='/pa/protected/bioMarkersaccept.action?selectedRowIdentifier='+markerId+'&caDsrId='+caDsrId;
                 document.forms[0].submit();
             }
+            function cadsrLookup(){
+                var updatedUrl = 'pa/protected/popupPlannedMarker.action?showActionColumn=false';
+                showPopWin(updatedUrl, 1000, 600, '', 'Marker Search in caDSR');
+            }
    </script>
 </head>
 <body>
@@ -83,6 +87,7 @@
                             <li>
                             <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction();return false"><span class="btn_img"><span class="search">Search</span></span></s:a>
                             <s:a href="javascript:void(0)" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                            <s:a href="javascript:void(0)" cssClass="btn" onclick="cadsrLookup();"><span class="btn_img"><span class="search">caDSR Search</span></span></s:a>
                             </li>
                         </ul>
                     </del>

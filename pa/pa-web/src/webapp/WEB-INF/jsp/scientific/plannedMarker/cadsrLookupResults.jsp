@@ -7,10 +7,12 @@
         <display:column escapeXml="false" titleKey="plannedMarker.lookup.meaning" property="vmMeaning" headerClass="sortable" />
         <display:column escapeXml="false" titleKey="plannedMarker.lookup.description" property="vmDescription" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="plannedMarker.lookup.publicId" property="publicId" headerClass="sortable" />
+        <s:if test="showActionColumn == null">
         <display:column title="Select" headerClass="centered" class="action" sortable="false">
             <a href="javascript:void(0)" class="btn" onclick="loadTopDiv('${row.id}')">
                 <span class="btn_img"><span class="add">Select</span></span>
             </a>
         </display:column>
+        </s:if>
     </display:table>
 </s:if>
