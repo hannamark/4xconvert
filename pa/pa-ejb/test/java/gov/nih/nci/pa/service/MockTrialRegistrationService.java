@@ -224,7 +224,8 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
 
   
    public Ii updateAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO,
-           StudySiteDTO nctID, OrganizationDTO sponsorDTO,
+           StudySiteDTO nctID, OrganizationDTO leadOrgDTO,
+           StudySiteDTO leadOrgID,OrganizationDTO sponsorDTO,
            PersonDTO investigatorDTO, ResponsiblePartyDTO responsiblePartyDTO, PersonDTO centralContactDTO,
            StudyOverallStatusDTO overallStatusDTO,
            StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,

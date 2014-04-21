@@ -756,7 +756,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                     .get(InterventionalStudyProtocol.class, id);
             
             // The update should have altered all fields except the Lead Org (by design).
-            checkNCT01861054PersonOrgData(sp, "Threshold Pharmaceuticals", "Sponsor Inc.");
+            checkNCT01861054PersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
             checkNCT01861054OtherData(session, sp);    
             checkSuccessfulImportLogEntry(nctID, nciID, session);
             checkAdminScientificMarkedInLogEntry(nctID, nciID, session);
@@ -768,6 +768,66 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         }
     }
     
+    @Test
+    public final void testPO6835_LeadOrgIdChange() throws PAException, ParseException {
+        // Create protocol by performing a new trial import.
+        String nctID = "NCT01440088";
+        String nciID = serviceBean.importTrial(nctID);
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+
+        final long id = getProtocolIdByNciId(nciID, session);
+        
+        // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML that
+        // actually belongs to a different trial.
+        changeNCTNumber("NCT01440088", "NCT01861055");
+        
+        nctID = "NCT01861055";
+        
+        // Apply update on top of the existing record.
+        String newNciID = serviceBean.importTrial(nctID);
+        final long newId = getProtocolIdByNciId(newNciID, session);
+        
+        session.flush();
+        session.clear();
+        
+        // Make sure we didn't create two protocols.
+        assertEquals(nciID, newNciID);
+        assertEquals(id, newId);
+        
+        try {
+            InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
+                    .get(InterventionalStudyProtocol.class, id);
+            
+            // New Lead Org ID should be in place.           
+            assertEquals("REP0211",
+                    getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
+                            .getLocalStudyProtocolIdentifier());
+            
+            // Old Lead Org ID should have been recorded as Other Identifier.
+            ensureOtherIdentifierExists(sp, "REP0210");
+            
+        } finally {
+            // Delete the trial.
+            deactivateTrial(session, id);
+        }
+    }
+
+    
+    private void ensureOtherIdentifierExists(InterventionalStudyProtocol sp,
+            String otherID) {
+        for (Ii ii : sp.getOtherIdentifiers()) {
+            if (StringUtils.equals(ii.getExtension(), otherID)
+                    && StringUtils.equals(ii.getIdentifierName(),
+                            IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME)) {
+                return;
+            }
+        }
+        Assert.fail();
+    }
+
     private void checkAdminScientificMarkedInLogEntry(String nctID,
             String nciID, Session session) {
         CTGovImportLog log = findLogEntry(nciID, session);
@@ -839,7 +899,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                     .get(InterventionalStudyProtocol.class, id);
             
             // The update should have altered all fields except the Lead Org (by design).
-            checkNCT01861054OrgData(sp, "Threshold Pharmaceuticals", "Threshold Pharmaceuticals");
+            checkNCT01861054OrgData(sp, "Sponsor Inc.", "Threshold Pharmaceuticals");
            
             // respossible party should have remained the same: Sponsor
             StudySite rp = getStudySite(sp, StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR);

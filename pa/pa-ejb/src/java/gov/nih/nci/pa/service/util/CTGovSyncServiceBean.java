@@ -817,7 +817,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 .getOverallContact()) : null;
 
         PersonDTO investigatorDTO = importPersons ? extractInvestigator(study) : null;
-        OrganizationDTO leadOrgDTO = importOrgs && !isSubmittedByNotCtGov ? extractSponsor(study)
+        OrganizationDTO leadOrgDTO = importOrgs ? extractSponsor(study)
                 : getGenericOrganization();
         StudyOverallStatusDTO overallStatusDTO = extractOverallStatusDTO(study);
         StudyRegulatoryAuthorityDTO regAuthDTO = extractRegulatoryAuthorityDTO(study);
@@ -845,7 +845,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
         if (isUpdate) {
             return trialRegistrationService.updateAbbreviatedStudyProtocol(
-                    studyProtocolDTO, nctID, sponsorDTO,
+                    studyProtocolDTO, nctID, leadOrgDTO, leadOrgID, sponsorDTO,
                     investigatorDTO, partyDTO, centralContactDTO, overallStatusDTO,
                     regAuthDTO, arms, eligibility, outcomes, collaborators,
                     Arrays.asList(document)).getExtension();

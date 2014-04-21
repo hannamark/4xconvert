@@ -1327,7 +1327,8 @@ public class TrialRegistrationValidator {
      * @throws PAException
      */
     public void validateProprietaryUpdate(StudyProtocolDTO studyProtocolDTO,
-            StudySiteDTO nctID, OrganizationDTO sponsorDTO,
+            StudySiteDTO nctID, OrganizationDTO leadOrgDTO,
+            StudySiteDTO leadOrgID, OrganizationDTO sponsorDTO,
             PersonDTO investigatorDTO, PersonDTO centralContactDTO,
             StudyOverallStatusDTO overallStatusDTO,
             StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
@@ -1339,6 +1340,7 @@ public class TrialRegistrationValidator {
         validatePhasePurposeAndTemplateDocument(studyProtocolDTO,
                 new ArrayList<DocumentDTO>(), nctID, errorMsg);
         validateRegAuthorityExistence(regAuthDTO, errorMsg);
+        validateLeadOrgForProprietary(leadOrgID, errorMsg);
         if (errorMsg.length() > 0) {
             throw new PAException(errorMsg.toString());
         }

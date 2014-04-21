@@ -423,13 +423,16 @@ public interface TrialRegistrationServiceLocal {
      * @throws PAException
      */
     Ii updateAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO,
-            StudySiteDTO nctID, OrganizationDTO sponsorDTO,
-            PersonDTO investigatorDTO, ResponsiblePartyDTO responsiblePartyDTO, PersonDTO centralContactDTO,
+            StudySiteDTO nctID, OrganizationDTO leadOrgDTO,
+            StudySiteDTO leadOrgID, OrganizationDTO sponsorDTO,
+            PersonDTO investigatorDTO, ResponsiblePartyDTO responsiblePartyDTO,
+            PersonDTO centralContactDTO,
             StudyOverallStatusDTO overallStatusDTO,
             StudyRegulatoryAuthorityDTO regAuthDTO, List<ArmDTO> arms,
             List<PlannedEligibilityCriterionDTO> eligibility,
             List<StudyOutcomeMeasureDTO> outcomes,
-            List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs) throws PAException;
+            List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs)
+            throws PAException;
     // CHECKSTYLE:ON
     
     

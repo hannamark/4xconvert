@@ -1737,7 +1737,8 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         
         List<DocumentDTO> documents = new ArrayList<DocumentDTO>();
         
-        Ii ii = bean.updateAbbreviatedStudyProtocol(studyProtocolDTO, nctID,                
+        Ii ii = bean.updateAbbreviatedStudyProtocol(studyProtocolDTO, nctID,
+                leadOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 sponsorOrganizationDTO, principalInvestigatorDTO, null,
                 centralContactDTO, overallStatusDTO, regAuthority, arms,
                 eligibility, outcomes, collaborators, documents);

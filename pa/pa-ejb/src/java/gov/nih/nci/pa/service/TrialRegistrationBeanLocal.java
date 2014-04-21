@@ -76,6 +76,8 @@
  */
 package gov.nih.nci.pa.service;
 
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.trim;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
@@ -87,7 +89,6 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -159,7 +160,6 @@ import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
-import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -186,7 +186,6 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -445,7 +444,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     sponsorOrganizationDTO, partyDTO, studyRegAuthDTO);
             // update summary4
             paServiceUtils.manageSummaryFour(spIi, summary4OrganizationDTO, summary4StudyResourcingDTO);
-            updateStudySiteIdentifier(spIi, leadOrganizationDTO, leadOrganizationSiteIdentifierDTO);
+            updateLeadOrganizationID(spIi, leadOrganizationDTO, leadOrganizationSiteIdentifierDTO);
 
             paServiceUtils.managePrincipalInvestigator(spIi, leadOrganizationDTO, principalInvestigatorDTO);
             overallStatusDTO.setStudyProtocolIdentifier(spIi);
@@ -569,7 +568,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      * @param loSiteDTO The lead organization site
      * @throws PAException if an error occurs
      */
-    void updateStudySiteIdentifier(Ii spIi, OrganizationDTO loDTO, StudySiteDTO loSiteDTO) throws PAException {
+    void updateLeadOrganizationID(Ii spIi, OrganizationDTO loDTO, StudySiteDTO loSiteDTO) throws PAException {
         if (loSiteDTO != null) {
             loSiteDTO.setStudyProtocolIdentifier(spIi);
             ocsr.createResearchOrganizationCorrelations(loDTO.getIdentifier().getExtension());
@@ -793,7 +792,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
 
             paServiceUtils.manageSummaryFour(spIi, newSummary4OrganizationList, summary4StudyResourcingDTO);
 
-            updateStudySiteIdentifier(spIi, leadOrganizationDTO, leadOrganizationSiteIdentifierDTO);            
+            updateLeadOrganizationID(spIi, leadOrganizationDTO, leadOrganizationSiteIdentifierDTO);            
             paServiceUtils.managePrincipalInvestigator(spIi, leadOrganizationDTO, principalInvestigatorDTO);
             if (ctgovXmlRequired) {
                 createSponsor(spIi, sponsorOrganizationDTO);
@@ -875,7 +874,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @Override    
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Ii updateAbbreviatedStudyProtocol(StudyProtocolDTO studyProtocolDTO, // NOPMD
-            StudySiteDTO nctID, OrganizationDTO sponsorDTO,
+            StudySiteDTO nctID, OrganizationDTO leadOrgDTO,
+            StudySiteDTO leadOrgID, OrganizationDTO sponsorDTO,
             PersonDTO investigatorDTO, ResponsiblePartyDTO responsiblePartyDTO, PersonDTO centralContactDTO,
             StudyOverallStatusDTO overallStatusDTO,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<ArmDTO> arms,
@@ -889,23 +889,30 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         
         TrialRegistrationValidator validator = createValidator();
         validator.validateProprietaryUpdate(studyProtocolDTO, nctID,
-                sponsorDTO, investigatorDTO, centralContactDTO,
-                overallStatusDTO, studyRegAuthDTO, arms, eligibility, outcomes,
-                collaborators);
+                leadOrgDTO, leadOrgID, sponsorDTO, investigatorDTO,
+                centralContactDTO, overallStatusDTO, studyRegAuthDTO, arms,
+                eligibility, outcomes, collaborators);
         
-        createPoObjects(null, sponsorDTO, investigatorDTO, responsiblePartyDTO,
+        createPoObjects(leadOrgDTO, sponsorDTO, investigatorDTO, responsiblePartyDTO,
                 centralContactDTO, collaborators);
        
         try {
             updateStudyProtocol(studyProtocolDTO);                        
             updateUserLastCreated(studyProtocolDTO);
             
+            String originalLeadOrgID = getPAServiceUtils().getStudyIdentifier(
+                    spIi, PAConstants.LEAD_IDENTIFER_TYPE);
+            String newLeadOrgID = StConverter.convertToString(leadOrgID
+                    .getLocalStudyProtocolIdentifier());
+            updateLeadOrganizationID(spIi, leadOrgDTO, leadOrgID);
+            if (!equalsIgnoreCase(trim(originalLeadOrgID), trim(newLeadOrgID))) {
+                addTrialOtherIdentifier(spIi, originalLeadOrgID);
+            }
+            
             if (sponsorDTO != null) {
                 getPAServiceUtils().manageSponsor(spIi, sponsorDTO);
                 createSummary4Sponsor(spIi, sponsorDTO);
             }
-            
-            OrganizationDTO leadOrgDTO = getLeadOrganization(spIi);
             
             createPrincipalInvestigator(leadOrgDTO, investigatorDTO, spIi);        
             createResponsibleParty(responsiblePartyDTO, sponsorDTO, spIi);
@@ -930,6 +937,20 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         }
     }
 
+    private void addTrialOtherIdentifier(Ii spIi, String value)
+            throws PAException {
+        PaHibernateUtil.getCurrentSession().flush();
+        StudyProtocolDTO dto = studyProtocolService.getStudyProtocol(spIi);
+        for (Ii otherID : PAUtil.getOtherIdentifiers(dto)) {
+            if (equalsIgnoreCase(otherID.getExtension(), value)) {
+                return;
+            }
+        }
+        Ii ii = IiConverter.convertToOtherIdentifierIi(value);
+        dto.getSecondaryIdentifiers().getItem().add(ii);
+        updateStudyProtocol(dto);
+    }
+
     private void createSummary4Sponsor(Ii spIi, OrganizationDTO sponsorDTO)
             throws PAException {
         StudyResourcingDTO summary4studyResourcingDTO = new StudyResourcingDTO();
@@ -938,31 +959,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         getPAServiceUtils().manageSummaryFour(spIi, Arrays.asList(sponsorDTO),
                 summary4studyResourcingDTO);
 
-    }
-
-    private OrganizationDTO getLeadOrganization(Ii spIi) throws PAException {
-        Session session = PaHibernateUtil.getCurrentSession();
-        Query query = session
-                .createQuery("select ss.researchOrganization.organization from StudySite ss "
-                        + "where ss.studyProtocol.id=:spId and ss.functionalCode=:fc");
-        query.setMaxResults(1);
-        query.setParameter("spId", IiConverter.convertToLong(spIi));
-        query.setParameter("fc", StudySiteFunctionalCode.LEAD_ORGANIZATION);        
-        Organization org = (Organization) query.uniqueResult();
-        if (org == null) {
-            throw new PAException(
-                    "The trial has no lead organization specified in the CTRP database; unable to perform an update");
-        }
-       
-        try {
-            return PoRegistry.getOrganizationEntityService().getOrganization(
-                    IiConverter.convertToPoOrganizationIi(org.getIdentifier()));
-        } catch (NullifiedEntityException e) {
-            throw new PAException(
-                    "Trial's lead organization has been nullified; unable to perform an update",
-                    e);
-        }
-      
     }
 
     /**
@@ -1166,7 +1162,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             Ii spIi = createStudyProtocol(studyProtocolDTO);
             getPAServiceUtils().createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
             
-            updateStudySiteIdentifier(spIi, leadOrgDTO, leadOrgID);
+            updateLeadOrganizationID(spIi, leadOrgDTO, leadOrgID);
 
             nctID.setStudyProtocolIdentifier(spIi);
             nctID.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
@@ -1313,7 +1309,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             getPAServiceUtils().createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
 
             getPAServiceUtils().manageSummaryFour(spIi, summary4OrganizationDTO, summary4StudyResourcingDTO);
-            updateStudySiteIdentifier(spIi, leadOrganizationDTO, leadOrganizationStudySiteDTO);
+            updateLeadOrganizationID(spIi, leadOrganizationDTO, leadOrganizationStudySiteDTO);
 
             nctIdentifierDTO.setStudyProtocolIdentifier(spIi);
             nctIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
