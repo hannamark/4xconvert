@@ -10,7 +10,10 @@
 			width = 920;
 	        height = 620;            		
 		}
-		showPopWin('registerUsershowMyAccount.action', width, height, '', 'My Account');
+		showPopWin('registerUsershowMyAccount.action', width, height, donothing, 'My Account');
+	}
+	function donothing() {
+		//does nothing
 	}
 </script>
 <header class="masthead">

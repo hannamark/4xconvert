@@ -19,7 +19,7 @@
     }   
     
     function closePopup() {
-        window.parent.hidePopWin(true);
+        window.parent.hidePopWin(false);
     }
 
     function setFocusToFirstControl() {
