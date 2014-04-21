@@ -58,7 +58,7 @@ public class CTGovSyncNightlyServiceBeanLocal implements
     @Override
     public void updateIndustrialAndConsortiaTrials() throws PAException {     
         if (isSyncEnabled()) {
-            UsernameHolder.setUser(CTGovSyncServiceBean.CTGOVIMPORT_USERNAME);
+            UsernameHolder.setUserCaseSensitive(CTGovSyncServiceBean.CTGOVIMPORT_USERNAME);
             try {
                 findAndUpdateTrials();
             } finally {
