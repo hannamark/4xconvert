@@ -100,7 +100,7 @@ import com.thoughtworks.selenium.Selenium;
  */
 public abstract class AbstractSelenese2TestCase extends TestCase {
     private static final int PAGE_TIMEOUT_SECONDS = 60;
-    private static final int SECONDS_PER_MINUTE = 1000;
+    private static final int MILLISECONDS_PER_SECOND = 1000;
     private int serverPort = 39480;
     private String serverHostname = "localhost";
     private String driverClass = "org.openqa.selenium.firefox.FirefoxDriver";
@@ -132,7 +132,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
      * @return the number of milliseconds in the give seconds
      */
     protected static String toMillisecondsString(long seconds) {
-        return String.valueOf(seconds * SECONDS_PER_MINUTE);
+        return String.valueOf(seconds * MILLISECONDS_PER_SECOND);
     }
 
     /**
@@ -183,13 +183,13 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         // This pause is to allow for any js associated with an anchor to
         // complete execution
         // before moving on.
-        pause(SECONDS_PER_MINUTE / 2);
+        pause(MILLISECONDS_PER_SECOND / 2);
     }
 
     protected void clickLinkAndWait(String linkText) {
         WebElement el = driver.findElement(By.linkText(linkText));
         el.click();
-        pause(SECONDS_PER_MINUTE / 2);
+        pause(MILLISECONDS_PER_SECOND / 2);
     }
 
     public void pause(int millisecs) {

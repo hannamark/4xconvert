@@ -88,13 +88,15 @@ import java.util.UUID;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 
 public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
 
-    public static final int WAIT_FOR_ELEMENT_TIMEOUT = 30;
+    public static final int WAIT_FOR_ELEMENT_TIMEOUT = SystemUtils.IS_OS_LINUX ? 60
+            : 5;
 
     /**
      * Tests logging in as abstractor.
