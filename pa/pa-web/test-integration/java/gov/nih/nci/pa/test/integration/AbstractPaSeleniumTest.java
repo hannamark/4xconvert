@@ -88,6 +88,7 @@ import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_URL;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_USER;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -103,10 +104,15 @@ import java.util.logging.Logger;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.junit.After;
 import org.junit.Ignore;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 
 /**
  * Abstract base class for selenium tests.
@@ -148,11 +154,34 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
+        takeScreenShot();
         logoutUser();
         closeBrowser();
         super.tearDown();
     }
+    
+    private void takeScreenShot() {
+        try {           
+            final String screenShotFileName = getClass().getSimpleName()
+                    + "_ScreenShot_"
+                    + new Timestamp(System.currentTimeMillis()).toString()
+                            .replaceAll("\\D+", "_") + ".png";
+            File destFile = new File(SystemUtils.JAVA_IO_TMPDIR,
+                    screenShotFileName);
+
+            File scrFile = ((TakesScreenshot) driver)
+                    .getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(scrFile, destFile);
+            System.out.println("Saved screen shot: "
+                    + destFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     
     private void closeBrowser() {
         driver.quit();

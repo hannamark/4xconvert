@@ -124,7 +124,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         verifyOtherIdentifier(trial, "Other Identifier", UUID.randomUUID()
                 .toString());
 
-        logoutUser();
+        
     }
 
     @Test
@@ -149,7 +149,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         verifyEditOtherIdentifier(trial, "Other Identifier", UUID.randomUUID()
                 .toString());
 
-        logoutUser();
+       
     }
 
     @Test
@@ -189,7 +189,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
                 uuid,
                 "Obsolete ClinicalTrials.gov Identifier cannot match the current ClinicalTrials.gov Identifier of this trial");
 
-        logoutUser();
+       
     }
 
     private void verifyEditIdentifierFailure(TrialInfo trial, String type,
@@ -228,7 +228,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         verifyDeleteOtherIdentifier(trial, "Other Identifier", UUID
                 .randomUUID().toString());
 
-        logoutUser();
+       
     }
 
     /**
@@ -502,4 +502,5 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
                 .isElementPresent("xpath=//table[@id='row']//tr[1]//td[3]/div/input[@type='button']"));
 
     }
+
 }
