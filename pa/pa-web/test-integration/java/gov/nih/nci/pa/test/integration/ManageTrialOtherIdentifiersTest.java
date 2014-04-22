@@ -490,6 +490,7 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
         waitForElementById("otherIdentifierType", WAIT_FOR_ELEMENT_TIMEOUT);
         waitForElementById("otherIdentifierOrg", WAIT_FOR_ELEMENT_TIMEOUT);
         waitForElementById("otherIdbtnid", WAIT_FOR_ELEMENT_TIMEOUT);
+        pause(1000);
         assertTrue(selenium.isTextPresent("Other Trial Identifiers"));
         assertTrue(selenium.isTextPresent("Other Identifier"));
         assertTrue(selenium.getText(
