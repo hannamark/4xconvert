@@ -347,7 +347,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         queryCriteria.setNciIdentifier("NCI-2009-00001");
         queryCriteria.setCtgovXmlRequiredIndicator("true");
         ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
-        assertEquals("success", action.viewXML());
+        assertEquals("error", action.viewXML());
         
         action.setStudyProtocolId(1L);
         Ii spIi = IiConverter.convertToStudyProtocolIi(action.getStudyProtocolId());
@@ -355,7 +355,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         when(ctGovXmlGeneratorService.generateCTGovXml(spIi,
                 CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)).thenReturn("xmlData");
         String result = action.viewXML();
-        assertEquals("success", result);
+        assertEquals(null, result);
         HttpServletResponse response = ServletActionContext.getResponse();
         assertEquals("Wrong content type", "application/xml", response.getContentType());
         assertEquals("", "UTF-8", response.getCharacterEncoding());
@@ -371,7 +371,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         when(ctGovXmlGeneratorService.generateCTGovXml(spIi,
                 CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS)).thenThrow(new NullPointerException());
         String result = action.viewXML();
-        assertEquals("success", result);
+        assertEquals("error", result);
         verify(ctGovXmlGeneratorService).generateCTGovXml(spIi,
                 CTGovXmlGeneratorOptions.USE_SUBMITTERS_PRS);
     }
@@ -382,14 +382,14 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         queryCriteria.setNciIdentifier("NCI-2009-00001");
         ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
         queryCriteria.setStudyProtocolId(1L);
-        assertEquals("success", action.viewTSR());
+        assertEquals("error", action.viewTSR());
         action.setStudyProtocolId(1L);
         Ii spIi = IiConverter.convertToIi(action.getStudyProtocolId());
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         output.write("rtfData".getBytes());
         when(tsrReportGeneratorService.generateRtfTsrReport(any(Ii.class))).thenReturn(output);
         String result = action.viewTSR();
-        assertEquals("success", result);
+        assertEquals(null, result);
         MockHttpServletResponse response = (MockHttpServletResponse) ServletActionContext.getResponse();
         assertEquals("Wrong content type", "application/rtf;", response.getContentType());
         verify(tsrReportGeneratorService).generateRtfTsrReport(spIi);
@@ -400,7 +400,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
         queryCriteria.setNciIdentifier("NCI-2009-00001");
         ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
-        assertEquals("success", action.viewTSR());
+        assertEquals("error", action.viewTSR());
     }
     
     @Test

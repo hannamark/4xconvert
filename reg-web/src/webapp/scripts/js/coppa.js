@@ -115,7 +115,9 @@ function extractPhoneNumberExt(phone) {
 	return '';
 }
 
-
+function hideWaitPanel() {
+	$('progress_indicator_panel').hide();
+}
 
 function displayWaitPanel() {	
 	// retrieve required dimensions	

@@ -23,7 +23,9 @@
 </style>
 <div id="progress_indicator_panel" style="display: none;">
 	<div style="cursor: auto;">Loading, please wait...</div>
-	<div>
-		<img alt="Loading..." src="<%=request.getContextPath()%>/images/loading.gif">
-	</div>
+	<div class="progress progress-striped active">
+        <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+         <span class="sr-only"></span>
+        </div>
+    </div>
 </div>

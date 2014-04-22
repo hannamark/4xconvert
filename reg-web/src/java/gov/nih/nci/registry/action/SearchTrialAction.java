@@ -137,6 +137,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -830,35 +831,61 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
      * View TSR
      * @return query
      */
+    @SuppressWarnings("deprecation")
     public String viewTSR() {
         Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
         try {
-            List<AbstractionCompletionDTO> errorList =
-                    abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
-            if (CollectionUtils.isEmpty(errorList) || !hasAnyAbstractionErrors(errorList)) {
-               try {
-                    HttpServletResponse servletResponse = ServletActionContext.getResponse();
-                    ByteArrayOutputStream reportData =
-                            tsrReportGeneratorService.generateRtfTsrReport(studyProtocolIi);
-                    servletResponse.setHeader("Content-disposition", "inline; filename=TsrReport.rtf");
-                    servletResponse.setContentType("application/rtf;");
-                    servletResponse.setContentLength(reportData.size());
-                    ServletOutputStream servletout = servletResponse.getOutputStream();
-                    reportData.writeTo(servletout);
-                    servletout.flush();
-                } catch (Exception e) {
-                    LOG.error("Error while generating TSR Summary report ", e);
-                }
-            } else {
-                ServletActionContext.getRequest()
-                    .setAttribute(FAILURE_MESSAGE, "As Abstraction is not valid, viewing TSR is disabled .");
-            }
-        } catch (PAException e) {
+            HttpServletResponse servletResponse = ServletActionContext
+                    .getResponse();
+            ByteArrayOutputStream reportData = tsrReportGeneratorService
+                    .generateRtfTsrReport(studyProtocolIi);
+            servletResponse.setHeader("Content-disposition",
+                    "inline; filename=TsrReport.rtf");
+            servletResponse.setContentType("application/rtf;");
+            servletResponse.setContentLength(reportData.size());
+            ServletOutputStream servletout = servletResponse.getOutputStream();
+            reportData.writeTo(servletout);
+            servletout.flush();
+            return null;
+        } catch (Exception e) {
+            LOG.error(e, e);
             addActionError("Exception while viewing TSR:" + e.getMessage());
+            return ERROR;
         }
-        return query();
+
     }
     
+    /**
+     * View TSR
+     * @return query
+     * @throws IOException IOException
+     */
+    @SuppressWarnings("deprecation")
+    public String getAbstractionErrors() throws IOException {
+        Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            List<AbstractionCompletionDTO> errorList = abstractionCompletionService
+                    .validateAbstractionCompletion(studyProtocolIi);
+            for (AbstractionCompletionDTO absDto : errorList) {
+                if (absDto.getErrorType().equalsIgnoreCase("error")) {
+                    sb.append(absDto.getErrorDescription());
+                    sb.append(". ");
+                }
+            }
+        } catch (PAException e) {
+            LOG.error(e, e);
+        }
+
+        HttpServletResponse servletResponse = ServletActionContext
+                .getResponse();
+        servletResponse.setContentType("text/plain");
+        Writer writer = servletResponse.getWriter();
+        writer.write(sb.toString().replaceAll("\\.\\.", "."));
+        writer.flush();
+        return null;
+    }
 
     /**
      * view XML
@@ -882,6 +909,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
                     writer.write(xmlData);
                     writer.flush();
                     writer.close();
+                    return null;
                 } catch (Exception e) {
                     LOG.error("Error while generating XML report ", e);
                 }
@@ -892,7 +920,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         } catch (PAException e) {
             addActionError("Exception while viewing XML:" + e.getMessage());
         }
-        return query();
+        return ERROR;
     }
     
     private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {

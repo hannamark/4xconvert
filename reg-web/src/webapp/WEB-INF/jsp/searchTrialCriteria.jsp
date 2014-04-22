@@ -41,8 +41,41 @@
     }
     
     function viewTsr(pId){
-        document.forms[0].action="searchTrialviewTSR.action?studyProtocolId="+pId;
-        document.forms[0].submit();
+    	displayWaitPanel();
+    	
+    	 var ajaxReq = new Ajax.Request('searchTrialgetAbstractionErrors.action', {
+    	        method: 'post',
+    	        parameters: 'studyProtocolId='+pId,
+    	        onSuccess: function(transport) {
+    	        	hideWaitPanel();   
+    	        	var absErrs = transport.responseText;
+    	        	if (absErrs.empty()) {
+    	        		 document.forms[0].action="searchTrialviewTSR.action?studyProtocolId="+pId;
+    	                 document.forms[0].submit();    	        		
+    	        	} else {
+    	        		$('tsrAbsErrorList').innerHTML = absErrs;
+    	        		jQuery("#tsrDownloadWarningModal").modal('show'); 
+    	        		jQuery('#viewTsrAnywayBtn').click(function () {  
+    	        			jQuery("#tsrDownloadWarningModal").modal('hide'); 
+    	        			document.forms[0].action="searchTrialviewTSR.action?studyProtocolId="+pId;
+                            document.forms[0].submit();       	        			
+    	        		});    	        		
+    	        	}
+    	        },
+    	        onFailure: function(transport) {
+    	        	hideWaitPanel();  
+    	            alert('Error when communicating with the server.');
+    	            document.forms[0].action="searchTrialviewTSR.action?studyProtocolId="+pId;
+    	            document.forms[0].submit();
+    	        },
+    	        onException: function(requesterObj, exceptionObj) {
+    	            ajaxReq.options.onFailure(null);
+    	        },
+    	        on0: function(transport) {
+    	            ajaxReq.options.onFailure(transport);
+    	        }
+    	    });
+    	      
    }
     
     function addMySite(pId) {
@@ -290,5 +323,26 @@
 	</s:if>
 	</div>
 </div>
+
+<!-- TSR Abstraction Validation Warnings Modal -->
+<div class="modal fade" id="tsrDownloadWarningModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Warning</h4>
+      </div>
+      <div class="modal-body">
+        <p>The abstraction of this trial is not valid; therefore the TSR may be inaccurate. Abstraction errors are below:</p>
+        <p id="tsrAbsErrorList"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="viewTsrAnywayBtn">View TSR Anyway</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
