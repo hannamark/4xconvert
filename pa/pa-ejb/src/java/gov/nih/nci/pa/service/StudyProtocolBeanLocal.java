@@ -884,11 +884,12 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
     
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void checkResults(List<?> results, Ii ii) throws PAException {
         if (results.isEmpty()) {
             throw new PAException("Could not find any trials with this identifier " + ii.getExtension()
                     + " and this root " + ii.getRoot());
-        } else if (results.size() != 1) {
+        } else if (new HashSet(results).size() != 1) {
             throw new PAException("Found multiple trials with this identifier " + ii.getExtension()
                     + " and this root " + ii.getRoot());
         }

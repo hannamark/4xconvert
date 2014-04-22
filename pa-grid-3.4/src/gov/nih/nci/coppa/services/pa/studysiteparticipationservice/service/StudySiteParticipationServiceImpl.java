@@ -19,6 +19,7 @@ import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.managem
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySiteContact;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
@@ -27,6 +28,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.services.correlation.AbstractRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -62,7 +64,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
         super();
     }
 
-  public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite createParticipatingSite(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite studySite) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.services.pa.faults.DuplicateParticipatingSiteFault {
+  public gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view.StudySite createParticipatingSite(gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite studySite) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.services.pa.faults.DuplicateParticipatingSiteFault {        
         try {
             StudySiteDTO studySiteDTO = StudySiteManagementTransformer.INSTANCE.toDto(studySite);
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO = StudySiteAccrualStatusManagementTransformer.INSTANCE
@@ -85,6 +87,20 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
                         hcfOrganizationDTO, hcfDTO, participatingSiteContactDTOList);
             }
             return StudySiteViewTransformer.INSTANCE.toXml(participatingSite);
+        } catch (DuplicateParticipatingSiteException e) {
+            logger.error("An attempt to create a duplicate participating site on a trial has "
+                    + "been detected (details below). As per PO-7232, instead of failing with an error, "
+                    + "we update the participating site instead. The exception below is solely for "
+                    + "information purposes and does not indicate an immediate error. This call is being "
+                    + "forwarded to Update Site operation now...");
+            logger.error(e.getMessage(), e);
+
+            Id id = new Id();
+            id.setExtension(e.getDuplicateSiteID().getExtension());
+            id.setRoot(e.getDuplicateSiteID().getRoot());
+            id.setIdentifierName(e.getDuplicateSiteID().getIdentifierName());
+
+            return this.updateParticipatingSite(id, studySite);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw FaultUtil.reThrowRemote(e);

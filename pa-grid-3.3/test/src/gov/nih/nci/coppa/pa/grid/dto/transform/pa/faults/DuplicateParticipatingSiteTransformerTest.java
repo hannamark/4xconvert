@@ -102,7 +102,7 @@ public class DuplicateParticipatingSiteTransformerTest {
     public void testToDto() throws DtoTransformException {
         DuplicateParticipatingSiteFault ptf = 
             CoppaFaultHelper.toFault(new DuplicateParticipatingSiteFault(), 
-                    new DuplicateParticipatingSiteException(new IITransformerTest().makeDtoSimple(), new IITransformerTest().makeDtoSimple()));
+                    new DuplicateParticipatingSiteException(new IITransformerTest().makeDtoSimple(), new IITransformerTest().makeDtoSimple(), new IITransformerTest().makeDtoSimple()));
         
         DuplicateParticipatingSiteException pfe = DuplicateParticipatingSiteTransformer.INSTANCE.toDto(ptf);
         new IITransformerTest().verifyDtoSimple(pfe.getTrialIi());
@@ -113,7 +113,7 @@ public class DuplicateParticipatingSiteTransformerTest {
     public void testToXml() throws DtoTransformException {
         assertNull(DuplicateParticipatingSiteTransformer.INSTANCE.toXml(null));
         DuplicateParticipatingSiteFault fault = 
-            DuplicateParticipatingSiteTransformer.INSTANCE.toXml(new DuplicateParticipatingSiteException(new IITransformerTest().makeDtoSimple(), new IITransformerTest().makeDtoSimple()));
+            DuplicateParticipatingSiteTransformer.INSTANCE.toXml(new DuplicateParticipatingSiteException(new IITransformerTest().makeDtoSimple(), new IITransformerTest().makeDtoSimple(), new IITransformerTest().makeDtoSimple()));
         assertEquals("A Participating Site with trial id 123 and HCF id 123 already exists.", fault.getDescription()[0].get_value());
     }
 }

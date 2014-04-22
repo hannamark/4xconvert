@@ -105,7 +105,7 @@ public class FaultUtilTest {
     public void testReThrowRemoteDuplicateParticipatingSiteException() {
         DuplicateParticipatingSiteException cause =
             new DuplicateParticipatingSiteException(new IITransformerTest().makeDtoSimple(),
-                    new IITransformerTest().makeDtoSimple());
+                    new IITransformerTest().makeDtoSimple(), new IITransformerTest().makeDtoSimple());
         DuplicateParticipatingSiteFault result = (DuplicateParticipatingSiteFault) FaultUtil.reThrowRemote(cause);
         assertNull(result.getCause());
         assertEquals("A Participating Site with trial id 123 and HCF id 123 already exists.",

@@ -123,6 +123,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -271,8 +272,11 @@ implements ParticipatingSiteServiceLocal {
         } catch (EJBTransactionRolledbackException e) {
             LOG.error(e, e);
             if (e.getCause() instanceof ConstraintViolationException) {
-                throw new DuplicateParticipatingSiteException(//NOPMD
-                        studySiteDTO.getStudyProtocolIdentifier(), poHcfIi);
+                throw new DuplicateParticipatingSiteException(// NOPMD                        
+                        studySiteDTO.getStudyProtocolIdentifier(), poHcfIi,
+                        findDuplicateSiteId(
+                                studySiteDTO.getStudyProtocolIdentifier(),
+                                poHcfIi));
             } else {
                 throw new PAException(e);
             }
@@ -306,8 +310,12 @@ implements ParticipatingSiteServiceLocal {
         } catch (EJBTransactionRolledbackException e) {
             LOG.error(e, e);
             if (e.getCause() instanceof ConstraintViolationException) {
-                throw new DuplicateParticipatingSiteException(//NOPMD
-                        studySiteDTO.getStudyProtocolIdentifier(), poHcfIi);
+                throw new DuplicateParticipatingSiteException(
+                        // NOPMD
+                        studySiteDTO.getStudyProtocolIdentifier(), poHcfIi,
+                        findDuplicateSiteId(
+                                studySiteDTO.getStudyProtocolIdentifier(),
+                                poHcfIi));
             } else {
                 throw new PAException(e);
             }
@@ -362,6 +370,7 @@ implements ParticipatingSiteServiceLocal {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private StudySite saveOrUpdateStudySiteHelper(boolean isCreate, StudySiteDTO siteDTO, Ii poHcfIi,
             StudySiteAccrualStatusDTO currentStatus) throws PAException, EntityValidationException, CurationException {
         if (isCreate && poHcfIi != null) {
@@ -369,7 +378,11 @@ implements ParticipatingSiteServiceLocal {
             // check that we are not creating another part site w/ same trial and hcf ids.
             Ii paHcfIi = IiConverter.convertToIi(paHealthCareFacilityId);
             if (isDuplicate(siteDTO.getStudyProtocolIdentifier(), paHcfIi)) {
-                throw new DuplicateParticipatingSiteException(siteDTO.getStudyProtocolIdentifier(), poHcfIi);
+                throw new DuplicateParticipatingSiteException(
+                        siteDTO.getStudyProtocolIdentifier(), poHcfIi,
+                        findDuplicateSiteId(
+                                siteDTO.getStudyProtocolIdentifier(),
+                                poHcfIi));
             }
             siteDTO.setHealthcareFacilityIi(paHcfIi);
         }
@@ -388,24 +401,45 @@ implements ParticipatingSiteServiceLocal {
             studySiteDTO = getStudySiteService().update(siteDTO);
         }
         createStudySiteAccrualStatus(studySiteDTO.getIdentifier(), currentStatus);
-        final StudySite studySite = getStudySite(studySiteDTO.getIdentifier());
-        return studySite;
+        return getStudySite(studySiteDTO.getIdentifier());        
+    }
+
+    @SuppressWarnings("deprecation")
+    private Ii findDuplicateSiteId(Ii studyProtocolIdentifier, Ii poHcfIi)
+            throws PAException {
+        Long paHealthCareFacilityId = getOrganizationCorrelationService()
+                .createHcfWithExistingPoHcf(poHcfIi);
+        Ii paHcfIi = IiConverter.convertToIi(paHealthCareFacilityId);
+        List<StudySiteDTO> list = getStudySiteByTrialAndPaHcf(
+                studyProtocolIdentifier, paHcfIi);
+        return list.isEmpty() ? IiConverter.convertToIi((Long) null) : list
+                .get(0).getIdentifier();
     }
 
     private boolean isDuplicate(Ii trialIi, Ii paHcfIi) throws PAException {
+        return CollectionUtils.isNotEmpty(getStudySiteByTrialAndPaHcf(trialIi,
+                paHcfIi));
+    }
+
+    private List<StudySiteDTO> getStudySiteByTrialAndPaHcf(Ii trialIi,
+            Ii paHcfIi) throws PAException {
         StudySiteDTO ssDto = new StudySiteDTO();
         ssDto.setStudyProtocolIdentifier(trialIi);
         ssDto.setHealthcareFacilityIi(paHcfIi);
-        ssDto.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
+        ssDto.setFunctionalCode(CdConverter
+                .convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
+                        .getCode()));
 
-        List<StudySiteDTO> ssDtoList;
+        List<StudySiteDTO> ssDtoList = new ArrayList<StudySiteDTO>();
         try {
-            ssDtoList = this.getStudySiteService().search(ssDto, new LimitOffset(1, 0));
-        } catch (TooManyResultsException e) {
-            return true;
+            ssDtoList = this.getStudySiteService().search(ssDto,
+                    new LimitOffset(1, 0));
+        } catch (TooManyResultsException e) { // NOPMD
+            LOG.error(e, e);
         }
-        return CollectionUtils.isNotEmpty(ssDtoList);
+        return ssDtoList;
     }
+   
 
     /**
      * Gets the study site dto with the given studySiteIi.
