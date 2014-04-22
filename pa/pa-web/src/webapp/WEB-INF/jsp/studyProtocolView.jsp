@@ -99,10 +99,10 @@
                     <c:forEach var="identifier" items="${studyIdentifiers}">
                         <c:if test="${not empty identifier.value}">
 		                    <tr>
-		                        <td nowrap="nowrap" scope="row" class="labelDupe">		                           
+		                        <td nowrap="nowrap" scope="row" class="labelDupe" id="td_${identifier.type.name}_name">		                           
 		                                <c:out value="${identifier.type.code}"/>
 		                        </td>
-		                        <td nowrap="nowrap" >
+		                        <td nowrap="nowrap" id="td_${identifier.type.name}_value">
 		                            <c:out value="${identifier.value}"/>
 		                        </td>
 		                    </tr>                        

@@ -812,6 +812,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "','NCI study protocol entity identifier',null,'2.16.840.1.113883.3.26.4.3',null)";
         runner.update(connection, sql);
     }
+    
+    protected void deactivateTrialByNctId(String nctID) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "update study_protocol set status_code='INACTIVE' where exists"
+                + " (select * from study_site ss where ss.study_protocol_identifier=study_protocol.identifier and ss.local_sp_indentifier='"
+                + nctID + "')";
+        runner.update(connection, sql);
+    }
 
     public static final class TrialInfo {
 

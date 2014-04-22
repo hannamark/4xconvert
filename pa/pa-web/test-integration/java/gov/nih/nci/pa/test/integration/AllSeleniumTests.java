@@ -95,7 +95,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(value = { LoginTest.class, ManageTrialOtherIdentifiersTest.class,
         TrialStatusTest.class, AnatomicSiteTest.class, ArmTest.class,
-        StudyOwnershipTest.class, TrialRelatedDocumentTest.class
+        StudyOwnershipTest.class, TrialRelatedDocumentTest.class,
+        CtGovImportTest.class
 /*
  * , , PlannedMarkerTest.class, , DuplicateTrialEditTest.class,
  * LookupWithApostropheTest.class, , DiseaseTest.class, .class, ,

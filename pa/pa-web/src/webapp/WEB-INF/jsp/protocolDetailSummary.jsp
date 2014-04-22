@@ -53,7 +53,7 @@
 		</c:if>
 		<div class="row">
 			<span class="label"><fmt:message key="last.submitter"/>:</span>
-			<span class="value"><a href="javascript:displaySubmitter();"><c:out value="${sessionScope.trialSummary.lastCreated.userLastCreatedUsername }"/></a></span>
+			<span class="value"><a href="javascript:displaySubmitter();" id="displaySubmitterLink"><c:out value="${sessionScope.trialSummary.lastCreated.userLastCreatedUsername }"/></a></span>
 		</div>
 		<div class="row">
             <span class="label"><fmt:message key="last.submitter.organization"/>:</span>
