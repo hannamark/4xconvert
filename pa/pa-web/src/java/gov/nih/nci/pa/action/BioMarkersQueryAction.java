@@ -508,6 +508,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         webDTO.setCsmUserEmailId(emailId);
         webDTO.setProtocolDocument(fileName);
         webDTO.setPermissibleValue(markerDTO.getPermissibleValue());
+        webDTO.setDateEmailSent(TsConverter.convertToTimestamp(markerDTO.getDateEmailSent()));
         return webDTO;
     }
     /**

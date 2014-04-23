@@ -90,12 +90,17 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.CsmHelper;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ranking.RankBasedSorterUtils;
@@ -106,6 +111,7 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -136,9 +142,11 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private static final String CADSR_RESULTS = "results";
     private static final String MARKER_ACCEPT = "accept";
     private static final String EMAIL = "email";
+    private static final String EMAIL_PENDING_PAGE = "markeremail";
     private static final String PV_VALUE = "pv.value";
     private static final String LONG_NAME = "vm.longName";
     private static final String DESCRIPTION = "vm.description";
+    private static final String TRUE = "true";
     private String name;
     private String meaning;
     private String description;
@@ -154,7 +162,9 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private String caDsrId;
     private String caseType;
     private String highlightRequired;
-    private String showActionColumn;
+    private String showActionColumn; 
+    private String fromNewRequestPage;
+    private String nciIdentifier;
     private static final Logger LOG = Logger.getLogger(PlannedMarkerPopupAction.class);
     /**
      * {@inheritDoc}
@@ -213,10 +223,27 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     public String setupEmailRequest() throws PAException {
         setToEmail(PaRegistry.getLookUpTableService().getPropertyValue("CDE_REQUEST_TO_EMAIL"));
         User csmUser = null;
+        String returnValue = "";
         try {
-            csmUser = CSMUserService.getInstance().getCSMUser(
-                   ServletActionContext.getRequest().getSession().getAttribute(Constants.LOGGED_USER_NAME).toString());
-            
+            if (StringUtils.equals(TRUE, getFromNewRequestPage())) {
+               CsmHelper userHelper = (CsmHelper) ServletActionContext
+                        .getRequest().getSession().getAttribute("CsmHelper");
+               csmUser = CSMUserService.getInstance().getCSMUser(userHelper.getUsername());
+               getPlannedMarker().setName(getName());
+               PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
+                   .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+               if (!ISOUtil.isCdNull(marker.getHugoBiomarkerCode())) {
+                     getPlannedMarker().setHugoCode(CdConverter
+                                .convertCdToString(marker.getHugoBiomarkerCode()));
+                     getPlannedMarker().setFoundInHugo(true);
+               }
+               returnValue = EMAIL_PENDING_PAGE;
+             } else {
+               csmUser = CSMUserService.getInstance().getCSMUser(
+               ServletActionContext.getRequest().getSession()
+               .getAttribute(Constants.LOGGED_USER_NAME).toString());
+               returnValue = EMAIL;
+             }
         } catch (PAException e) {
             LOG.info("Unable to set User", e);
         }
@@ -226,7 +253,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         getPlannedMarker().setFromEmail(
                 PaRegistry.getLookUpTableService().getPropertyValue("CDE_MARKER_REQUEST_FROM_EMAIL"));
         }
-        return EMAIL;
+        return returnValue;
     }
 
     /**
@@ -244,7 +271,6 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setName(StConverter.convertToSt(getPlannedMarker().getName()));
-        
         User csmUser = null;
         try {
             csmUser = CSMUserService.getInstance().getCSMUser(
@@ -259,12 +285,55 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         try {
             PaRegistry.getMailManagerService().sendMarkerCDERequestMail(studyProtocolIi,
                     getPlannedMarker().getFromEmail(), dto, getPlannedMarker().getMessage());
-            passedValidation = true;
+            passedValidation = true; 
+            getPlannedMarker().setDateEmailSent(new Date());
+            dto.setDateEmailSent(TsConverter.convertToTs(new Date()));
         } catch (Exception e) {
             passedValidation = false;
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("error.plannedMarker.request.sendEmail"));
         }
+        return EMAIL;
+    }
+    /**
+     * sends email request and updates the marker with the email date sent
+     * @throws  PAException PAException
+     * @return email
+     */
+    public String sendEmailRequestWithMarkerUpdate() throws PAException { 
+        PlannedMarkerDTO markerDto = PaRegistry.getPlannedMarkerService()
+                .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        validateEmailRequest();
+        Ii studyProtocolIi = IiConverter.convertToIi(getNciIdentifier()); 
+        studyProtocolIi.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        StudyProtocolDTO spdto = PaRegistry.getStudyProtocolService()
+                .getStudyProtocol(studyProtocolIi);
+        markerDto.setName(StConverter.convertToSt(getPlannedMarker().getName()));
+        User csmUser = null;
+        try {
+           CsmHelper userHelper = (CsmHelper) ServletActionContext
+                    .getRequest().getSession().getAttribute("CsmHelper");
+           csmUser = CSMUserService.getInstance().getCSMUser(userHelper.getUsername());
+        } catch (PAException e) {
+            LOG.info("Unable to set User", e);
+        }
+        markerDto.setUserLastCreated(StConverter.convertToSt(csmUser.getLoginName()));
+        if (getPlannedMarker().isFoundInHugo()) {
+            markerDto.setHugoBiomarkerCode(CdConverter
+                .convertStringToCd(getPlannedMarker().getHugoCode()));
+        }
+        try {
+            PaRegistry.getMailManagerService().sendMarkerCDERequestMail(spdto.getIdentifier(),
+                 getPlannedMarker().getFromEmail(), markerDto, getPlannedMarker().getMessage());
+            passedValidation = true; 
+            getPlannedMarker().setDateEmailSent(new Date());
+            markerDto.setDateEmailSent(TsConverter.convertToTs(new Date()));
+            plannedMarkerService.update(markerDto);
+        } catch (Exception e) {
+            passedValidation = false;
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
+                    getText("error.plannedMarker.request.sendEmail"));
+        } 
         return EMAIL;
     }
 
@@ -295,7 +364,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             criteria.add(Expression.eq("vm.publicID", Long.valueOf(getPublicId())));
             return criteria;
         }
-        if (StringUtils.equals("true", getCaseType())) {
+        if (StringUtils.equals(TRUE, getCaseType())) {
            if (StringUtils.isNotEmpty(getName())) {
                 String newName = getName();
                 if (newName.contains("-")) {
@@ -361,7 +430,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             output = results;
         }
            // add the highlight to the search text
-        if (StringUtils.equals("true", getHighlightRequired())) {
+        if (StringUtils.equals(TRUE, getHighlightRequired())) {
               for (CaDSRWebDTO dto : output) {
                    dto.setId(dto.getId());
                    dto.setVmName(replaceWithHighlightText(
@@ -389,7 +458,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         if (searchText != null && !searchText.isEmpty()) {
             String highlight = "<span class=\"highlight\">" + searchText + "</span>";
             
-            if (StringUtils.equals("true", getCaseType())) {
+            if (StringUtils.equals(TRUE, getCaseType())) {
                outputData = StringUtils.replace(inputData, searchText, highlight);
             } else {
                outputData = inputData.replaceAll("(?i)" + searchText, highlight);
@@ -650,5 +719,32 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     public void setShowActionColumn(String showActionColumn) {
         this.showActionColumn = showActionColumn;
     }
-
+    /**
+     * 
+     * @return fromNewRequestPage fromNewRequestPage
+     */
+    public String getFromNewRequestPage() {
+        return fromNewRequestPage;
+    }
+    /**
+     * 
+     * @param fromNewRequestPage fromNewRequestPage
+     */
+    public void setFromNewRequestPage(String fromNewRequestPage) {
+        this.fromNewRequestPage = fromNewRequestPage;
+    }
+    /**
+     * 
+     * @return nciIdentifier nciIdentifier
+     */
+    public String getNciIdentifier() {
+        return nciIdentifier;
+    }
+    /**
+     * 
+     * @param nciIdentifier nciIdentifier
+     */
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
+    }
 }

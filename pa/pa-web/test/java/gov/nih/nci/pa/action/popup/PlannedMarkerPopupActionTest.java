@@ -96,14 +96,19 @@ import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
 import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.CsmHelper;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 
 import java.util.ArrayList;
@@ -127,10 +132,11 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         plannedMarkerAction = new PlannedMarkerPopupAction();
         plannedMarkerAction.prepare();
 
-        
+        CsmHelper userHelper = new CsmHelper("login1");
         CSMUserService.setInstance(new MockCSMUserService());
         
         getSession().setAttribute(Constants.LOGGED_USER_NAME, "login1");
+        getSession().setAttribute("CsmHelper", userHelper);
         EnumeratedValueDomain vd = new EnumeratedValueDomain();
         vd.setId("1");
         
@@ -261,6 +267,40 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         assertTrue(plannedMarkerAction.isPassedValidation());
     }
     
+
+    /**
+     * Tests sending of cde marker request.
+     */
+    @Test
+    public void testsendEmailRequestWithMarkerUpdate() throws PAException {
+        assertEquals(plannedMarkerAction.sendEmailRequest(), "email");
+        assertTrue(plannedMarkerAction.hasFieldErrors());
+        assertFalse(plannedMarkerAction.isPassedValidation());
+        plannedMarkerAction.clearErrorsAndMessages();
+
+        PlannedMarkerWebDTO dto = new PlannedMarkerWebDTO();
+        dto.setFromEmail("from@example.com");
+        dto.setName("Name");
+        dto.setFoundInHugo(true);
+
+        plannedMarkerAction.setToEmail("to@example.com");
+        plannedMarkerAction.setSubject("subject");
+        plannedMarkerAction.setPlannedMarker(dto);
+        assertEquals(plannedMarkerAction.sendEmailRequest(), "email");
+        assertTrue(plannedMarkerAction.hasFieldErrors());
+        assertFalse(plannedMarkerAction.isPassedValidation());
+        assertNotNull(plannedMarkerAction.getSubject());
+        plannedMarkerAction.clearErrorsAndMessages();
+        StudyProtocolDTO spdto = new StudyProtocolDTO();
+        spdto.setIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        dto.setHugoCode("HUGO");
+        plannedMarkerAction.setNciIdentifier("1");
+        assertEquals(plannedMarkerAction.sendEmailRequestWithMarkerUpdate(), "email");
+        assertFalse(plannedMarkerAction.hasFieldErrors());
+        assertTrue(plannedMarkerAction.isPassedValidation());
+        plannedMarkerAction.setPassedValidation(true);
+        assertTrue(plannedMarkerAction.isPassedValidation());
+    }
     @Test
     public void testAccept() throws PAException {
         String result = plannedMarkerAction.accept();

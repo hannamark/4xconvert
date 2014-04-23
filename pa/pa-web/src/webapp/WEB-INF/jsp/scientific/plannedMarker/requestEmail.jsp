@@ -21,7 +21,8 @@
                              if ($('passedValidation').value == 'true') {
                                  top.window.loadMarkerWithRequestedCDE($('name').value, 
                                 		 $('foundInHugo').checked, 
-                                		 $('foundInHugo').checked?$('hugoCode').value:'');
+                                		 $('foundInHugo').checked?$('hugoCode').value:'',
+                                	      $('dateEmailSent').value);
                              } else {
                                 toggleHugoCode();
                              }
@@ -41,6 +42,7 @@
 </script>
 <div id="cdeRequest">
     <s:hidden id="passedValidation" name="passedValidation"/>
+     <s:hidden name="plannedMarker.dateEmailSent" id="dateEmailSent"/>
     <div>
         <pa:failureMessage/>
         <pa:sucessMessage/>

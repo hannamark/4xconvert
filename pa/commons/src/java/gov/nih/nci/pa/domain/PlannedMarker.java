@@ -83,7 +83,10 @@
 package gov.nih.nci.pa.domain;
 
 
+import java.util.Date;
+
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -91,6 +94,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.validator.NotNull;
 
@@ -121,6 +126,7 @@ public class PlannedMarker extends PlannedObservation {
     private String evaluationTypeCode;
     private String evaluationTypeOtherText;
     private PlannedMarkerSyncWithCaDSR permissibleValue; 
+    private Date dateEmailSent;
 
 
     /**
@@ -335,6 +341,21 @@ public class PlannedMarker extends PlannedObservation {
     public void setPermissibleValue(PlannedMarkerSyncWithCaDSR permissibleValue) {
         this.permissibleValue = permissibleValue;
     }
-    
-    
+    /**
+     * 
+     * @return dateEmailSent dateEmailSent
+     */
+    @Column(name = "DATE_EMAIL_SENT_CADSR")
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getDateEmailSent() {
+        return dateEmailSent;
+    }
+    /**
+     * 
+     * @param dateEmailSent dateEmailSent
+     */
+    public void setDateEmailSent(Date dateEmailSent) {
+        this.dateEmailSent = dateEmailSent;
+    }
+
 }

@@ -1552,5 +1552,9 @@
      <changeSet id="PO-6383" author="krylovd">
         <comment>Added support for ccr_id</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6383.sql"/>
+     </changeSet>
+     <changeSet id="PO-6902" author="Reshma">
+        <comment>Adding Column to Planned_marker</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6902.sql"/>
      </changeSet>     
 </databaseChangeLog>

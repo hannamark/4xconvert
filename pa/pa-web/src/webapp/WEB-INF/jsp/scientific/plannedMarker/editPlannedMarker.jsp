@@ -183,13 +183,14 @@
                 var aj = callAjaxPost(div, url, params,options);
             }
             
-            function loadMarkerWithRequestedCDE(markerName, foundInHugo, hugoCode) {
+            function loadMarkerWithRequestedCDE(markerName, foundInHugo, hugoCode, sentDate) {
                 window.top.hidePopWin(true);
                 var url = '/pa/protected/ajaxptpPlannedMarkerdisplayRequestedCDE.action';
                 var params = {
                     'plannedMarker.foundInHugo': foundInHugo,
                     'plannedMarker.hugoCode': hugoCode,
-                    'plannedMarker.name': markerName
+                    'plannedMarker.name': markerName,
+                    'plannedMarker.dateEmailSent': sentDate
                 };
                 var div = $('plannedMarkerDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
@@ -214,6 +215,7 @@
         <c:set var="topic" scope="request" value="abstractmarkers"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <s:url id="cancelUrl" namespace="/protected" action="plannedMarker"/>
+
         <div class="box">
             <pa:sucessMessage />
             <s:if test="hasActionErrors()">
@@ -230,6 +232,7 @@
                 </s:elseif>
             </h2>
             <table class="form">
+
                 <tr>
                     <td colspan="2">
                         <s:form id="plannedMarkerForm" action="%{#submitUrl}">

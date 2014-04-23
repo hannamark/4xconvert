@@ -118,6 +118,7 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     private Ii permissibleValue;
     private Ii cadsrId;
     private Ts dateLastCreated;
+    private Ts dateEmailSent;
     /**
      * @return the name
      */
@@ -404,4 +405,19 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     public void setDateLastCreated(Ts dateLastCreated) {
         this.dateLastCreated = dateLastCreated;
     }
+    /**
+     * 
+     * @return dateEmailSent dateEmailSent
+     */
+    public Ts getDateEmailSent() {
+        return dateEmailSent;
+    }
+   /**
+    *  
+    * @param dateEmailSent dateEmailSent
+    */
+    public void setDateEmailSent(Ts dateEmailSent) {
+        this.dateEmailSent = dateEmailSent;
+    }
+    
 }

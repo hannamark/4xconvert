@@ -8,6 +8,7 @@
     <s:hidden id="saveResetMarker" name="saveResetMarker"/>
     <s:hidden name="plannedMarker.meaning" id="meaning"/>
     <s:hidden name="plannedMarker.description" id="description"/>
+    <s:hidden name="plannedMarker.dateEmailSent" id="dateEmailSent"/>
     <tr>
         <td class="label">
             <label for="name"><fmt:message key="plannedMarker.name" />:</label><span class="required">*</span>

@@ -158,6 +158,9 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
         if (marker.getDateLastCreated() != null) {
             dto.setDateLastCreated(TsConverter.convertToTs(marker.getDateLastCreated()));
         }
+        if (marker.getDateEmailSent() != null) {
+            dto.setDateEmailSent(TsConverter.convertToTs(marker.getDateEmailSent()));
+        }
         return dto;
     }
     
@@ -236,6 +239,9 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
         marker.setEvaluationTypeCode(finalEvalTypeCode);
         marker.setEvaluationTypeOtherText(StConverter.convertToString(dto.getEvaluationTypeOtherText()));
         marker.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
+        if (!ISOUtil.isTsNull(dto.getDateEmailSent())) {
+           marker.setDateEmailSent(TsConverter.convertToTimestamp(dto.getDateEmailSent()));
+        }
     }
 
 }

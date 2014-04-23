@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -109,6 +110,7 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +144,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     private boolean pendingStatus;
     private String nciIdentifier;
     private PlannedMarkerDTO newlyCreatedMarker;
+
     /**
      * to compare the Attribute values with Other
      */
@@ -154,6 +157,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      * to compare the if attribute Text not present
      */
     protected static final String NOTPRESENT = "notPresent";
+    
 
     /**
      * {@inheritDoc}
@@ -191,7 +195,6 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 if (!listofValues.isEmpty()) {
                     marker.setPermissibleValue(IiConverter.convertToIi(listofValues.get(0).longValue()));
                 }
-               
                 pendingStatus = false;
             } else {
                 marker.setStatusCode(CdConverter
@@ -201,6 +204,10 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                         .getPendingIdentifierByCadsrName(name);
                 if (!identifier.isEmpty()) {
                 marker.setPermissibleValue(IiConverter.convertToIi(identifier.get(0).longValue()));
+                // email date sent is saved. 
+                if (getPlannedMarker().getDateEmailSent() != null) {
+                     marker.setDateEmailSent(TsConverter.convertToTs(new Date()));
+                }
                 }
                 pendingStatus = true;
             }
@@ -230,7 +237,6 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             return super.add();
         }
     }
-
     /**
      * {@inheritDoc}
      */
@@ -958,5 +964,6 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     public void setNciIdentifier(String nciIdentifier) {
         this.nciIdentifier = nciIdentifier;
     }
+
     
 }

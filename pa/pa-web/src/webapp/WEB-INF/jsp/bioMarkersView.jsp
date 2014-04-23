@@ -29,6 +29,10 @@
                 var updatedUrl ='/pa/protected/popupPlannedMarkeraccept.action?selectedRowIdentifier='+selectedId+'&caDsrId='+caDsrIdValue;
                 showPopWin(updatedUrl, 950, 200, '', 'Marker Search in caDSR');
             }
+            function termRequestForm(pId, markerName,markerId) {
+                var url = '/pa/protected/popupPlannedMarkersetupEmailRequest.action?fromNewRequestPage=true&nciIdentifier='+pId+'&name='+markerName+'&selectedRowIdentifier='+markerId;
+                showPopWin(url, 950, 600, '', 'Create Permissible Value Request');
+            }
             function resetValues() {
                 $("trialId").value="";
                 $("markerName").value="";
@@ -44,6 +48,14 @@
                 document.forms[0].action ='/pa/protected/bioMarkersaccept.action?selectedRowIdentifier='+markerId+'&caDsrId='+caDsrId;
                 document.forms[0].submit();
             }
+            function loadTopDiv() {
+                window.top.hidePopWin(true);
+                 document.forms[0].action="bioMarkersexecute.action";
+                 document.forms[0].submit();
+                 var div = $('pending');
+                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
+
+            }
             function cadsrLookup(){
                 var updatedUrl = 'pa/protected/popupPlannedMarker.action?showActionColumn=false';
                 showPopWin(updatedUrl, 1000, 600, '', 'Marker Search in caDSR');
@@ -55,7 +67,7 @@
 		<fmt:message key="plannedMarker.pending.markers.report" />
 	</h1>
     <c:set var="topic" scope="request" value="biomarkers"/>
-	<div class="box">
+	<div id="pending" class="box">
 		<s:if test="hasActionErrors()">
 			<div class="error_msg">
 				<s:actionerror />
@@ -116,7 +128,25 @@
 				</display:column>
 							<display:column escapeXml="true" property="name" sortable="true" 
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
-               <display:column titleKey="plannedMarker.caDSR.id" headerClass="centered" >
+								<s:if test="%{#attr.row.dateEmailSent != null }">
+                <display:column property="dateEmailSent" sortable="true" 
+                                titleKey="plannedMarker.termRequest" headerClass="sortable" />
+                                </s:if>
+                             <s:if test="%{#attr.row.dateEmailSent == null }">
+                <display:column titleKey="plannedMarker.termRequest"
+                                headerClass="sortable" class="action">
+                                <del class="btnwrapper">
+                                    <ul class="btnrow">
+                                        <li>
+                                        <s:a cssClass="btn" href="javascript:void(0)" id="request" onclick="termRequestForm('%{#attr.row.nciIdentifier}','%{#attr.row.name}','%{#attr.row.id}');">
+                                          <span class="btn_img">Term Request Form</span>
+                                         </s:a>
+                                        </li>
+                                    </ul>
+                                </del>
+                            </display:column>
+                                </s:if>
+               <display:column titleKey="plannedMarker.caDSR.id" headerClass="sortable" >
                     <s:textfield id="caDsrId_%{#attr.row.id}" name="caDsrId_%{#attr.row.id}" maxlength="200" size="100" cssStyle="width:200px" />
                </display:column>
 							<display:column titleKey="plannedMarker.action"

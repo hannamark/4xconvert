@@ -90,7 +90,7 @@ import java.util.List;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@SuppressWarnings("PMD.TooManyFields")
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class PlannedMarkerWebDTO {
 
     private Long id;
@@ -125,6 +125,7 @@ public class PlannedMarkerWebDTO {
     private Ii permissibleValue;
     private Long cadsrId;
     private Date creationDate;
+    private Date dateEmailSent;
     /**
      * @return the id
      */
@@ -577,4 +578,19 @@ public class PlannedMarkerWebDTO {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
+    /**
+     * 
+     * @return dateEmailSent dateEmailSent
+     */
+    public Date getDateEmailSent() {
+        return dateEmailSent;
+    }
+    /**
+     * 
+     * @param dateEmailSent dateEmailSent
+     */
+    public void setDateEmailSent(Date dateEmailSent) {
+        this.dateEmailSent = dateEmailSent;
+    }
+    
 }
