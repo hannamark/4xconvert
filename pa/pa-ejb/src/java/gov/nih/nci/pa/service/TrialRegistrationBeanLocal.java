@@ -172,6 +172,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -1564,7 +1565,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             createStudyProtocolDTO.setSubmissionNumber(studyProtocolDTO.getSubmissionNumber());
             createStudyProtocolDTO.setIdentifier(null);
             createStudyProtocolDTO.setProcessingPriority(IntConverter.convertToInt(2));
+            createStudyProtocolDTO.setSecondaryIdentifiers(studyProtocolDTO
+                    .getSecondaryIdentifiers());
         }
+        
         createStudyProtocolDTO.setOfficialTitle(studyProtocolDTO.getOfficialTitle());
         createStudyProtocolDTO.setNciGrant(studyProtocolDTO.getNciGrant());
         createStudyProtocolDTO.setPhaseCode(studyProtocolDTO.getPhaseCode());
@@ -1599,11 +1603,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 createStudyProtocolDTO.setCtgovXmlRequiredIndicator(studyProtocolDTO.getCtgovXmlRequiredIndicator());
             }
         }
-        if (ISOUtil.isDSetNotEmpty(studyProtocolDTO.getSecondaryIdentifiers())) {
-             final DSet<Ii> createStudyOtherIdentifiersLocal = getUpdatedStudyOtherIdentifiers(
-                    createStudyProtocolDTO, studyProtocolDTO.getSecondaryIdentifiers());
-             createStudyProtocolDTO.setSecondaryIdentifiers(createStudyOtherIdentifiersLocal);
-        }
+        
         if (!ISOUtil.isStNull(studyProtocolDTO.getAcronym())) {
             createStudyProtocolDTO.setAcronym(studyProtocolDTO.getAcronym());
         }
@@ -2009,10 +2009,17 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         return dto;
     }
 
-    private DSet<Ii> getUpdatedStudyOtherIdentifiers(StudyProtocolDTO spDTO,
-            DSet<Ii> additionalOtherIdentifiers) {
-        DSet<Ii> updatedOtherIdentifiers = spDTO.getSecondaryIdentifiers();
-        if (ISOUtil.isDSetNotEmpty(additionalOtherIdentifiers)) {
+    private DSet<Ii> getUpdatedStudyOtherIdentifiers(StudyProtocolDTO existingProtocol,
+            DSet<Ii> newOtherIdentifiers) {
+        DSet<Ii> updatedOtherIdentifiers = existingProtocol
+                .getSecondaryIdentifiers();
+
+        if (updatedOtherIdentifiers == null) {
+            updatedOtherIdentifiers = new DSet<Ii>();
+            updatedOtherIdentifiers.setItem(new LinkedHashSet<Ii>());
+        }
+        
+        if (ISOUtil.isDSetNotEmpty(newOtherIdentifiers)) {
             // See https://tracker.nci.nih.gov/browse/PO-4736.
             // The reason for replacing this single line:
             // "updatedOtherIdentifiers.getItem().addAll(additionalOtherIdentifiers.getItem());"
@@ -2021,17 +2028,13 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             // as null, which messed up things.
             // "updatedOtherIdentifiers.getItem()" set is Hibernate's PersistentSet, which made working with it
             // a bit tricky. 
-            for (Ii ii : additionalOtherIdentifiers.getItem()) {
-                if (ISOUtil.isDSetNotEmpty(updatedOtherIdentifiers)) {
-                      if (!containsIi(updatedOtherIdentifiers.getItem(),
-                           ii.getExtension(), ii.getRoot())) { 
-                           updatedOtherIdentifiers.getItem().add(ii); 
-                      }
+            for (Ii ii : newOtherIdentifiers.getItem()) {
+                if (!containsIi(updatedOtherIdentifiers.getItem(),
+                        ii.getExtension(), ii.getRoot())) {
+                    updatedOtherIdentifiers.getItem().add(ii);
                 }
             }
-        } else {
-            updatedOtherIdentifiers = additionalOtherIdentifiers;
-        }
+        } 
         return updatedOtherIdentifiers;
     }
 

@@ -650,30 +650,12 @@ public class TrialRegistrationValidator {
      */
     void validateOtherIdentifiers(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) throws PAException {
         StudyProtocolDTO saved = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());
-        Set<Ii> savedIdentifiers = normalizeOtherIdentifierName(saved.getSecondaryIdentifiers().getItem());
+        Set<Ii> savedIdentifiers = saved.getSecondaryIdentifiers().getItem();
         Set<Ii> newIdentifiers = (studyProtocolDTO.getSecondaryIdentifiers() == null) ? new HashSet<Ii>()
                 : studyProtocolDTO.getSecondaryIdentifiers().getItem();
         if (!CollectionUtils.isSubCollection(savedIdentifiers, newIdentifiers)) {
             errorMsg.append("Other identifiers cannot be modified or deleted as part of an amendment.");
         }
-    }
-
-    private Set<Ii> normalizeOtherIdentifierName(Set<Ii> set) {
-        Set<Ii> normalizedSet = new HashSet<Ii>();
-        if (set != null) {
-            for (Ii id : set) {
-                Ii normalizedId = id.clone();
-                if (IiConverter.OBSOLETE_NCT_STUDY_PROTOCOL_IDENTIFIER_NAME
-                        .equals(normalizedId.getIdentifierName())
-                        || IiConverter.DUPLICATE_NCI_STUDY_PROTOCOL_IDENTIFIER_NAME
-                                .equals(normalizedId.getIdentifierName())) {
-                    normalizedId
-                            .setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
-                }
-                normalizedSet.add(normalizedId);
-            }
-        }
-        return normalizedSet;
     }
 
     /**
