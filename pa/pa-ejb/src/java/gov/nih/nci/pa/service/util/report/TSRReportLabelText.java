@@ -163,7 +163,7 @@ public class TSRReportLabelText { //NOPMD
     /**
      * Lead organization trial identifier.
      */
-    public static final String TI_LEAD_ORG_IDENTIFIER = "Lead Organization";
+    public static final String TI_LEAD_ORG_IDENTIFIER = "Lead Organization Identifier";
     /**
      * Trial Other identifiers.
      */
@@ -171,21 +171,21 @@ public class TSRReportLabelText { //NOPMD
     /**
      * NCT number.
      */
-    public static final String TI_NCT_NUMBER = "ClinicalTrials.gov";
+    public static final String TI_NCT_NUMBER = "ClinicalTrials.gov Identifier";
     /**
      * DCP Trial Identifier.
      */
-    public static final String TI_DCP_IDENTIFIER = "DCP";
+    public static final String TI_DCP_IDENTIFIER = "DCP Identifier";
     
     /**
      * 
      */
-    public static final String TI_CCR_IDENTIFIER = "CCR";
+    public static final String TI_CCR_IDENTIFIER = "CCR Identifier";
     
     /**
      * CTEP Trial Identifier.
      */
-    public static final String TI_CTEP_IDENTIFIER = "CTEP";
+    public static final String TI_CTEP_IDENTIFIER = "CTEP Identifier";
     /**
      * Lead Organization.
      */

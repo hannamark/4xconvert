@@ -191,13 +191,13 @@ public class TSRReportGeneratorTest {
         String result = matcher.group(4).trim();
         assertTrue(result.equals("Other Trial Identifiers"));
         
-        regexp = Pattern.compile("(DCP)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(DCP Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
         assertTrue(result.equals("5678"));
         
-        regexp = Pattern.compile("(CTEP)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        regexp = Pattern.compile("(CTEP Identifier)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
         result = matcher.group(2).trim();
