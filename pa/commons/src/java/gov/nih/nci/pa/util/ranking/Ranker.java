@@ -134,7 +134,7 @@ public class Ranker {
             } else if (synonymTrimmedString.length > 0) {
              // test for exact Synonym value
                 String synonymString = synonymTrimmedString[1].replaceAll("\\(", "");
-                synonymString = synonymTrimmedString[1].replaceAll("\\)", "");
+                synonymString = synonymString.replaceAll("\\)", "");
                 String[] synonymsTrimmedString = synonymString.split("\\,|\\;");
                 for (String innersyno : synonymsTrimmedString) {
                     if (StringUtils.equalsIgnoreCase(innersyno.trim(), searchStr)) {

@@ -114,5 +114,8 @@ public class RankerTest extends TestCase {
        ranker = new Ranker("t");
        str ="EBNA-2 Epstein-Barr Nuclear Antigen 2; EBV Nuclear Antigen 2; BYRF1; Epstein-Barr Virus Nuclear Antigen 2; EBNA2)";
        assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("peci");
+       str ="ECI2 (PECI; DRS1; ACBD2; DRS-1; HCA88; Enoyl-CoA Delta Isomerase 2; Enoyl-CoA Delta Isomerase 2, Mitochondrial; DBI-Related Protein 1; D3,D2-Enoyl-CoA Isomerase; Renal Carcinoma Antigen NY-REN-1; Peroxisomal 3,2-Trans-Enoyl-CoA Isomerase; Hepatocellular C";
+       assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
   }
 }

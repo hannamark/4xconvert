@@ -203,11 +203,11 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 List<Number> identifier = permissibleService
                         .getPendingIdentifierByCadsrName(name);
                 if (!identifier.isEmpty()) {
-                marker.setPermissibleValue(IiConverter.convertToIi(identifier.get(0).longValue()));
+                    marker.setPermissibleValue(IiConverter.convertToIi(identifier.get(0).longValue()));
+                }
                 // email date sent is saved. 
                 if (getPlannedMarker().getDateEmailSent() != null) {
                      marker.setDateEmailSent(TsConverter.convertToTs(new Date()));
-                }
                 }
                 pendingStatus = true;
             }

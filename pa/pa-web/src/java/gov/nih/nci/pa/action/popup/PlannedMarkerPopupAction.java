@@ -449,8 +449,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     }
     
     private String replaceHTMLCharacters(String inputData) {
-        String outputData = StringEscapeUtils.escapeHtml(inputData);
-        return outputData;
+        return StringEscapeUtils.escapeHtml(inputData);
     }
     
     private String replaceWithHighlightText(String inputData, String searchText) {
