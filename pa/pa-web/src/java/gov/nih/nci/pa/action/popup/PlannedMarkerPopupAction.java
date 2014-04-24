@@ -456,18 +456,18 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         String outputData = inputData;
         if (searchText != null && !searchText.isEmpty()) {
             String highlight = "<span class=\"highlight\">" + searchText + "</span>";
-            
             if (StringUtils.equals(TRUE, getCaseType())) {
                outputData = StringUtils.replace(inputData, searchText, highlight);
             } else {
-               outputData = inputData.replaceAll("(?i)" + searchText, highlight);
+               outputData = inputData.replaceAll("(?i)" + searchText, "<span class=\"highlight\">$0</span>");
+               
             }
         }
         return outputData;
     }
     /**
      * Validates search form input.
-     * @return true iff a validation error has occurred
+     * @return true if a validation error has occurred
      */
     private boolean validateInput() {
         String allParams = StringUtils.join(new String[] {getMeaning(), getName(), getDescription(), getPublicId()});
