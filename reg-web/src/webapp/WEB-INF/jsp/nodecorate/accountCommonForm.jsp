@@ -158,11 +158,6 @@
  <div class="form-group">
    <label for="registryUserWebDTO.enableEmails" class="col-xs-4 control-label"><fmt:message key="register.user.enableEmails"/></label>
    <div class="col-xs-7">
-     <label class="radio-inline">
-       <input type="radio" id="registryUserWebDTO.enableEmails" value="true" id="inlineRadio1" selected="%{registryUserWebDTO.enableEmails or registryUserWebDTO.id ==null}"/>
-       Yes </label>
-     <label class="radio-inline">
-       <input type="radio" id="registryUserWebDTO.enableEmails" value="false" id="inlineRadio2" selected="%{registryUserWebDTO.enableEmails or registryUserWebDTO.id ==null}"/>
-       No </label>
-   </div>
+   <s:radio cssClass="radio-inline" id="registryUserWebDTO.enableEmails" name="registryUserWebDTO.enableEmails" list="#{false:'No', true:'Yes'}"  value="registryUserWebDTO.enableEmails"/>
+    </div>
  </div>

@@ -48,6 +48,10 @@
                     <s:a href="%{deleteUrl}" onclick="return deletePartialProtocol();">Delete</s:a>
                 </display:column>
             </display:table>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
             </div>
             </div>
         </c:when>
@@ -163,6 +167,11 @@
 					</s:if>              		                    	                    
                  </display:column>     
             </display:table>
+            <!-- Adding these <p> tags to add some free space at the bottom to display drop down for action items correctly -->
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
             </div>
             </div>
         </c:otherwise>

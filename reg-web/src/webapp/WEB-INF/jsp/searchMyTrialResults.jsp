@@ -48,6 +48,10 @@
                     <s:a href="%{deleteUrl}" onclick="return deletePartialProtocol();">Delete</s:a>
                 </display:column>
             </display:table>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
             </div>
             </div>
         </c:when>
@@ -180,6 +184,11 @@
                 <display:column title="Last Amender Name" property="lastUpdatedUserDisplayName" sortable="true" headerClass="sortable"/>     
                 <display:column title="On-Hold Reason" property="onHoldReasons" sortable="true" headerClass="sortable" escapeXml="true"/>
             </display:table>
+            <!-- Adding these <p> tags to add some free space at the bottom to display drop down for action items correctly -->
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
             </div>
             </div>
         </c:otherwise>

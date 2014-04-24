@@ -4,6 +4,18 @@
 	<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
 	
+	<script type="text/javascript" language="javascript">
+	
+		document.onkeypress = runEnterScript;
+		function runEnterScript(e) {
+			var KeyID = (window.event) ? event.keyCode : e.keyCode;
+			if (KeyID == 13) {
+				document.loginForm.submit();
+				return false;
+			}
+		}
+	</script>
+
 <!-- Begin page content -->
     <div class="row">
       <div class="col-xs-6 intro"> <img src="/registry/images/nci-logo.png" class="pull-left"/>
@@ -16,7 +28,6 @@
 		</ul>
 		<p>Want to learn more about the Reporting Program? Visit the <a href="#">NCI Clinical Trials Reporting Program</a> website. You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance.</p>
       </div>
-      
       <div class="col-xs-6">
         <ul class="nav nav-tabs">
           <li class="active"><a href="<s:url action='protected/disClaimerAction.action?actionName=searchTrial.action' />" ><i class="fa-sign-in"></i>Sign In</a></li>

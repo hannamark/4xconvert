@@ -4,9 +4,9 @@
 	  <div class="form-group">
 	      <label for="deleteOtherDoc_${varStatus.index}" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherDocument"/></label>
 	    <div class="col-xs-4">
-	      <c:out value="${doc.fileName}"/>
 	      <button type="button" class="btn btn-icon btn-default"  id="deleteOtherDoc_${varStatus.index}"  onclick="deleteDocument('<c:out value="${doc.fileName}"/>')"><i class="fa-minus"></i>Remove</button>
-	    </div>
+	    	<c:out value="${doc.fileName}"/>
+	      </div>
 	  </div> 
   </c:forEach>
   
@@ -34,7 +34,7 @@
 	    <div class="col-xs-4">
 	           <button type="button" class="btn btn-icon btn-default" 
        				onclick="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
-	           		onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();"
+	           		onkeypress="$('addMoreRow_${varStatus.index}').hide();$('otherUploadRow_${varStatus.index}').show();$('addMoreRow_${varStatus.index+1}').show();">
         			<i class="fa-plus"></i>Add more...</button>
 	    </div>
 	  </div>  

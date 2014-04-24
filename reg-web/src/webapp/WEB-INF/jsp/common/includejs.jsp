@@ -36,7 +36,7 @@ var registryApp = {
     Help.url = '<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getRegistryHelpUrl()" />';
     var contextPath = '${pageContext.request.contextPath}';
 </script>
-<script type="text/javascript" src="${scriptPath}/js/overlib.js"></script>
+<%-- <script type="text/javascript" src="${scriptPath}/js/overlib.js"></script> --%>
 <%-- <script type="text/javascript" src="${scriptPath}/js/cal2.js"></script> --%>
 <script type="text/javascript" src="${scriptPath}/js/ajaxHelper.js"></script>
 <!-- Javascript -->

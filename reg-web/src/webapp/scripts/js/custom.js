@@ -98,11 +98,9 @@ jQuery(function() {
 });
 
     function toggleTab(id){
-
         jQuery(id).find('.collapse').each(function() {
             jQuery(this).collapse('toggle');
           });
-
     }
 // Tooltip
 	jQuery(function (jQuery) {
