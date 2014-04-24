@@ -46,7 +46,7 @@
                   <div class="align-left button-row">
                   	<c:if test="${showVerifyButton}">
                    		<s:url id="viewUrl" namespace="/protected" action="trialDataVerificationAction" method="view"/>
-			      		<s:a onclick="javascript:addAction('%{viewUrl}');"  href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-floppy-o"></i>Verify Trial Data</button></s:a>
+			      		<s:a onclick="javascript:viewAction('%{viewUrl}');"  href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-floppy-o"></i>Verify Trial Data</button></s:a>
 			      	</c:if>
 			      	<c:if test="${showAddMySite}"> 
 			     		<s:url id="addMySiteUrl" action="addSitepopupview">
