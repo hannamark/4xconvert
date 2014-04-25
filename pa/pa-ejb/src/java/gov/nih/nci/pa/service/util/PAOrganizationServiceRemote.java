@@ -79,14 +79,13 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.Organization;
+
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
 
 import javax.ejb.Remote;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 /** 
 * PAOrganizationServiceRemote a remote interface for providing access to the client.
@@ -110,14 +109,20 @@ public interface PAOrganizationServiceRemote  {
     throws PAException;
     
     /**
-     * returns distinct organization that have been associated with a protocol and have name starting with term
+     * returns distinct organization that have been associated with a protocol
+     * and have name starting with term
+     * 
      * @return OrganizationDTO
-     * @param organizationType Organization Type
-     * @param organizationTerm Organization Name starting term
-     * @throws PAException pa exception
+     * @param organizationType
+     *            Organization Type
+     * @param organizationTerm
+     *            Organization Name starting term
+     * @throws PAException
+     *             pa exception
      */
-    public List<PaOrganizationDTO> getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(String organizationType, String organizationTerm)
-    throws PAException;
+    List<PaOrganizationDTO> getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(
+            String organizationType, String organizationTerm)
+            throws PAException;
 
     /**
      * This expects only id and identifier.

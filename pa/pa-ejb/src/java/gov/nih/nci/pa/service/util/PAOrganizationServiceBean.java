@@ -139,9 +139,11 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
      * @throws PAException pa exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PaOrganizationDTO> getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(String organizationType, String organizationTerm)
-    throws PAException {
-        return createOrganizationDTO(generateDistinctOrganizationQueryByTypeAndName(organizationType, organizationTerm));
+    public List<PaOrganizationDTO> getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(
+            String organizationType, String organizationTerm)
+            throws PAException {
+        return createOrganizationDTO(generateDistinctOrganizationQueryByTypeAndName(
+                organizationType, organizationTerm));
     }
 
     /**
@@ -216,12 +218,16 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
         return hql;
     }
     
-    private List<Organization> generateDistinctOrganizationQueryByTypeAndName(String organizationType, String organizationName) throws PAException {
-        StringBuffer hql = prepareDistinctOrganizationQueryByTypeAndName(organizationType, organizationName);
+    private List<Organization> generateDistinctOrganizationQueryByTypeAndName(
+            String organizationType, String organizationName)
+            throws PAException {
+        StringBuffer hql = prepareDistinctOrganizationQueryByTypeAndName(
+                organizationType, organizationName);
         return executeDistinctOrganizationQuery(hql);
     }
     
-    private StringBuffer prepareDistinctOrganizationQueryByTypeAndName(String organizationType, String organizationName) {
+    private StringBuffer prepareDistinctOrganizationQueryByTypeAndName(
+            String organizationType, String organizationName) {
         StringBuffer hql = new StringBuffer();
         if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
             hql.append("select o from Organization o join o.researchOrganizations as ros join ros.studySites as sps"
