@@ -4,9 +4,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -21,8 +24,25 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 @Entity
 @Table(name = "CTGOVIMPORT_LOG")
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class CTGovImportLog implements PersistentObject {
 
+    /**
+     * NO PENDING/PERFORMED ACKNOWLEDGEMENT
+     */
+    public static final String NO_ACKNOWLEDGEMENT = "No";
+    /**
+     * PENDING/PERFORMED ADMIN ACKNOWLEDGEMENT
+     */
+    public static final String ADMIN_ACKNOWLEDGMENT = "Admin";
+    /**
+     * PENDING/PERFORMED SCIENTIFIC ACKNOWLEDGEMENT
+     */
+    public static final String SCIENTIFIC_ACKNOWLEDGEMENT = "Scientific";
+    /**
+     * PENDING/PERFORMED ADMIN AND SCIENTIFIC ACKNOWLEDGEMENT
+     */
+    public static final String ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT = "Admin & Scientific";
     private static final long serialVersionUID = 2827128893597594641L;
     private Long id;
     private String nciID;
@@ -35,6 +55,7 @@ public class CTGovImportLog implements PersistentObject {
     private Boolean reviewRequired;
     private Boolean admin;
     private Boolean scientific;
+    private StudyInbox studyInbox;
     
     /**
      * 
@@ -247,4 +268,76 @@ public class CTGovImportLog implements PersistentObject {
     public void setScientific(Boolean scientific) {
         this.scientific = scientific;
     }
+    
+    /**
+     * @return the studyInbox
+     */
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "study_inbox_id")
+    public StudyInbox getStudyInbox() {
+        return studyInbox;
+    }
+    
+    /**
+     * @param studyInbox the studyInbox to set
+     */
+    public void setStudyInbox(StudyInbox studyInbox) {
+        this.studyInbox = studyInbox;
+    }
+    /**
+     * @return the pending acknowledgment.
+     */
+    @Transient
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public String getAckPending() {
+        String ackPending = "";
+        if (studyInbox != null) {
+            if (studyInbox.getCloseDate() == null) {
+                if (Boolean.TRUE.equals(studyInbox.getAdmin()) 
+                        && studyInbox.getAdminCloseDate() == null 
+                        && (studyInbox.getScientific() == null || !studyInbox.getScientific())) {
+                    ackPending = ADMIN_ACKNOWLEDGMENT;
+                } else if (Boolean.TRUE.equals(studyInbox.getScientific()) 
+                        && studyInbox.getScientificCloseDate() == null 
+                        && (studyInbox.getAdmin() == null || !studyInbox.getAdmin())) {
+                    ackPending = SCIENTIFIC_ACKNOWLEDGEMENT;                    
+                } else if (Boolean.TRUE.equals(studyInbox.getAdmin()) 
+                        && Boolean.TRUE.equals(studyInbox.getScientific()) 
+                        && studyInbox.getAdminCloseDate() == null && studyInbox.getScientificCloseDate() == null) {
+                    ackPending = ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT;
+                }
+            } else {
+                ackPending = NO_ACKNOWLEDGEMENT;
+            }
+        }
+        return ackPending;
+    }
+
+    /**
+     * @return the performed acknowledgment
+     */
+    @Transient
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public String getAckPerformed() {
+        String ackPerformed = "";
+        if (studyInbox != null) {
+            if (studyInbox.getAdminCloseDate() != null 
+                    && studyInbox.getScientificCloseDate() == null) {
+                ackPerformed = ADMIN_ACKNOWLEDGMENT;
+            } else if (studyInbox.getScientificCloseDate() != null 
+                    && studyInbox.getAdminCloseDate() == null) {
+                ackPerformed = SCIENTIFIC_ACKNOWLEDGEMENT;                
+            } else if (studyInbox.getAdminCloseDate() != null 
+                    && studyInbox.getScientificCloseDate() != null) {
+                ackPerformed = ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT;
+            } else if (studyInbox.getAdminCloseDate() == null 
+                    && studyInbox.getScientificCloseDate() == null 
+                    && (Boolean.TRUE.equals(studyInbox.getAdmin()) 
+                            || Boolean.TRUE.equals(studyInbox.getScientific()))) {
+                ackPerformed = NO_ACKNOWLEDGEMENT;
+            }
+        }
+        return ackPerformed;
+    }
 }
+

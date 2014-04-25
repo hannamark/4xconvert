@@ -16,19 +16,23 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.SamplingMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
+import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
+import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 public class DomainClasssesTest {
 	
 	@Test
-	public void testDomianClass() {
+	public void testDomianClass() throws ParseException {
 		
 		BatchFile bf =  new BatchFile();
 		bf.setFileLocation("fileLocation");
@@ -187,5 +191,110 @@ public class DomainClasssesTest {
         assertTrue(alTitle.hashCode() == otherTitle.hashCode());
         alTitle.setCategory(null);
         assertFalse(alTitle.equals(otherTitle));
+        
+        nisp = new NonInterventionalStudyProtocol();
+        
+        //ctgovimport log entry with no study inbox.
+        CTGovImportLog log1 = new CTGovImportLog();
+        log1.setNciID("NCI1");
+        log1.setNctID("NCT1");
+        log1.setTitle("Title : Trial 1");
+        log1.setAction("New Trial");
+        log1.setImportStatus("Success");
+        log1.setUserCreated("User1");
+        log1.setDateCreated(DateUtils.parseDate("08/01/2013", new String[] {"MM/dd/yyyy"}));
+        assertEquals(log1.getNciID(), "NCI1");
+        assertEquals(log1.getNctID(), "NCT1");
+        assertEquals(log1.getTitle(), "Title : Trial 1");
+        assertEquals(log1.getAction(), "New Trial");
+        assertEquals(log1.getImportStatus(), "Success"); 
+        assertEquals(log1.getUserCreated(), "User1");
+        assertEquals(log1.getDateCreated(), 
+                DateUtils.parseDate("08/01/2013", new String[] {"MM/dd/yyyy"}));
+        assertEquals(log1.getAckPending(), "");
+        assertEquals(log1.getAckPerformed(), "");  
+        
+        //associated study inbox with pending generic acknowledgment.
+        StudyInbox inbox1 = new StudyInbox();        
+        inbox1.setStudyProtocol(nisp);
+        inbox1.setTypeCode(StudyInboxTypeCode.UPDATE);
+        log1.setStudyInbox(inbox1);
+        assertEquals(log1.getAckPending(), "");
+        assertEquals(log1.getAckPerformed(), "");       
+        
+        //associated study inbox with performed generic acknowledgment.
+        CTGovImportLog log2 = new CTGovImportLog();
+        StudyInbox inbox2 = new StudyInbox();
+        inbox2.setStudyProtocol(nisp);
+        inbox2.setCloseDate(new Timestamp(new Date().getTime()));
+        inbox2.setTypeCode(StudyInboxTypeCode.UPDATE);
+        log2.setStudyInbox(inbox2);
+        assertEquals(log2.getAckPending(), CTGovImportLog.NO_ACKNOWLEDGEMENT);
+        assertEquals(log2.getAckPerformed(), "");
+                
+        //associated study inbox with pending admin acknowledgment
+        CTGovImportLog log3 = new CTGovImportLog();
+        StudyInbox inbox3 = new StudyInbox();
+        inbox3.setAdmin(true);
+        inbox3.setStudyProtocol(nisp);
+        inbox3.setTypeCode(StudyInboxTypeCode.UPDATE);
+        log3.setStudyInbox(inbox3);
+        assertEquals(log3.getAckPending(), CTGovImportLog.ADMIN_ACKNOWLEDGMENT);
+        assertEquals(log3.getAckPerformed(), CTGovImportLog.NO_ACKNOWLEDGEMENT);
+      
+        //associated study inbox with pending scientific acknowledgment
+        CTGovImportLog log4 = new CTGovImportLog();
+        StudyInbox inbox4 = new StudyInbox();
+        inbox4.setScientific(true);        
+        inbox4.setStudyProtocol(nisp);
+        inbox4.setTypeCode(StudyInboxTypeCode.UPDATE);
+        log4.setStudyInbox(inbox4);
+        assertEquals(log4.getAckPending(), CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT);
+        assertEquals(log4.getAckPerformed(), CTGovImportLog.NO_ACKNOWLEDGEMENT);
+        
+        //associated study inbox with pending admin and scientific acknowledgment
+        CTGovImportLog log5 = new CTGovImportLog();
+        StudyInbox inbox5 = new StudyInbox();
+        inbox5.setAdmin(true);
+        inbox5.setScientific(true);
+        inbox5.setTypeCode(StudyInboxTypeCode.UPDATE);
+        log5.setStudyInbox(inbox5);
+        assertEquals(log5.getAckPending(), CTGovImportLog.ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT);
+        assertEquals(log5.getAckPerformed(), CTGovImportLog.NO_ACKNOWLEDGEMENT);
+        
+        //associated study inbox with performed admin acknowledgment
+        CTGovImportLog log6 = new CTGovImportLog();
+        StudyInbox inbox6 = new StudyInbox();
+        inbox6.setAdmin(true);
+        inbox6.setAdminCloseDate(new Timestamp(new Date().getTime()));
+        inbox6.setCloseDate(new Timestamp(new Date().getTime()));
+        inbox6.setStudyProtocol(nisp);
+        log6.setStudyInbox(inbox6);
+        assertEquals(log6.getAckPending(), CTGovImportLog.NO_ACKNOWLEDGEMENT);
+        assertEquals(log6.getAckPerformed(), CTGovImportLog.ADMIN_ACKNOWLEDGMENT);
+        
+        //associated study inbox with performed scientific acknowledgment
+        CTGovImportLog log7 = new CTGovImportLog();
+        StudyInbox inbox7 = new StudyInbox();
+        inbox7.setScientific(true);
+        inbox7.setScientificCloseDate(new Timestamp(new Date().getTime()));
+        inbox7.setCloseDate(new Timestamp(new Date().getTime()));
+        inbox7.setStudyProtocol(nisp);
+        log7.setStudyInbox(inbox7);
+        assertEquals(log7.getAckPending(), CTGovImportLog.NO_ACKNOWLEDGEMENT);
+        assertEquals(log7.getAckPerformed(), CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT);
+        
+        //associated study inbox with performed admin and scientific acknowledgment
+        CTGovImportLog log8 = new CTGovImportLog();
+        StudyInbox inbox8 = new StudyInbox();
+        inbox8.setAdmin(true);
+        inbox8.setScientific(true);
+        inbox8.setAdminCloseDate(new Timestamp(new Date().getTime()));
+        inbox8.setScientificCloseDate(new Timestamp(new Date().getTime()));
+        inbox8.setCloseDate(new Timestamp(new Date().getTime()));
+        inbox8.setStudyProtocol(nisp);
+        log8.setStudyInbox(inbox8);     
+        assertEquals(log8.getAckPending(), CTGovImportLog.NO_ACKNOWLEDGEMENT);
+        assertEquals(log8.getAckPerformed(), CTGovImportLog.ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT);
 	}
 }

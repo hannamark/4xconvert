@@ -27,6 +27,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -472,8 +473,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             xml = getCtGovXmlByNctId(nctID);
         } catch (Exception e) {
             LOG.error(e, e);
-            createImportLogEntry(EMPTY, nctID, EMPTY, EMPTY,
-                    "Failure: unable to retrieve from ClinicalTrials.gov", currentUser, false, false, false);
+            createImportLogEntry(EMPTY, nctID, EMPTY, EMPTY, "Failure: unable to retrieve from ClinicalTrials.gov", 
+                    currentUser, false, false, false, null);
             throw new PAException(e.getMessage()); // NOPMD
         }
         if (xml == null) {
@@ -538,11 +539,11 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             String trialNciId = paServiceUtils.getTrialNciId(Long
                     .valueOf(protocolID));
             createImportLogEntry(trialNciId, nctIdStr, title, NEW_TRIAL_ACTION,
-                    SUCCESS, currentUser, false, false, false);
+                    SUCCESS, currentUser, false, false, false, null);
             return trialNciId;
         } catch (Exception e) {
             createImportLogEntry(EMPTY, nctIdStr, title, NEW_TRIAL_ACTION,
-                    FAILURE + e.getMessage(), currentUser, false, false, false);
+                    FAILURE + e.getMessage(), currentUser, false, false, false, null);
             throw new PAException(e);
         }
 
@@ -574,14 +575,21 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             
             final boolean needsReview = needsReview(before, after);
             final boolean adminChanged = adminChanged(before, after);
-            final boolean scientificChanged = scientificChanged(before, after);
-            createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
-                    SUCCESS, currentUser, needsReview, adminChanged, scientificChanged);
+            final boolean scientificChanged = scientificChanged(before, after);            
+            
+            StudyInboxDTO recent = null;
+            //Associate ctgov import log entry and study inbox entry
+            List<StudyInboxDTO> inboxEntries = studyInboxService.getOpenInboxEntries(
+                    studyProtocolDTO.getIdentifier());
+            if (!inboxEntries.isEmpty()) {
+                recent = inboxEntries.get(0);
+            }
+            createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION, SUCCESS, currentUser, 
+                    needsReview, adminChanged, scientificChanged, recent);
             
             if (needsReview) {
-                attachListOfChangedFieldsToInboxEntry(
-                        studyProtocolDTO.getIdentifier(), before, after,
-                        adminChanged, scientificChanged);
+                attachListOfChangedFieldsToInboxEntry(studyProtocolDTO.getIdentifier(), 
+                        before, after, adminChanged, scientificChanged);
             }
             
             closeStudyInboxAndAcceptTrialIfNeeded(
@@ -591,8 +599,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             return trialNciId;
         } catch (Exception e) {
             LOG.error(e, e);
-            createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION,
-                    FAILURE + e.getMessage(), currentUser, false, false, false);
+            createImportLogEntry(trialNciId, nctIdStr, title, UPDATE_ACTION, 
+                    FAILURE + e.getMessage(), currentUser, false, false, false, null);
             throw new PAException(e.getMessage()); // NOPMD
         }
 
@@ -667,12 +675,13 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private void attachListOfChangedFieldsToInboxEntry(Ii studyProtocolIi,
             ProtocolSnapshot before, ProtocolSnapshot after,
             boolean adminChanged, boolean scientificChanged) throws PAException {
+        StudyInboxDTO recent = null;
         final Collection<Difference> differences = findDifferences(before,
                 after);
         List<StudyInboxDTO> inboxEntries = studyInboxService
                 .getOpenInboxEntries(studyProtocolIi);
         if (!inboxEntries.isEmpty()) {
-            StudyInboxDTO recent = inboxEntries.get(0);
+            recent = inboxEntries.get(0);
             recent.setAdmin(BlConverter.convertToBl(adminChanged));
             recent.setScientific(BlConverter.convertToBl(scientificChanged));
             for (Difference diff : differences) {
@@ -945,7 +954,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private void createImportLogEntry(String trialNciId, // NOPMD
             String nctIdStr, // NOPMD
             String title, String action, String status, String user,
-            boolean needsReview, boolean adminChanged, boolean scientificChanged)
+            boolean needsReview, boolean adminChanged, boolean scientificChanged, StudyInboxDTO recent)
             throws PAException {
         CTGovImportLog log = new CTGovImportLog();
         log.setNciID(trialNciId);
@@ -958,6 +967,11 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         log.setReviewRequired(needsReview);
         log.setAdmin(adminChanged);
         log.setScientific(scientificChanged);
+        if (recent != null && !ISOUtil.isIiNull(recent.getIdentifier())) {
+            StudyInbox studyInbox = new StudyInbox();
+            studyInbox.setId(IiConverter.convertToLong(recent.getIdentifier()));
+            log.setStudyInbox(studyInbox);
+        }        
         createCtGovImportLogEntry(log);
     }
     // CHECKSTYLE:ON

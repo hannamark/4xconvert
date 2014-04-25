@@ -692,7 +692,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             
             checkNCT01861054PersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
             checkNCT01861054OtherData(session, sp);    
-            checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkSuccessfulImportLogEntry(nctID, nciID, session, false);
             
         } finally {
             deactivateTrial(session, id);
@@ -758,7 +758,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             // The update should have altered all fields except the Lead Org (by design).
             checkNCT01861054PersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
             checkNCT01861054OtherData(session, sp);    
-            checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkSuccessfulImportLogEntry(nctID, nciID, session, true);
             checkAdminScientificMarkedInLogEntry(nctID, nciID, session);
             checkInboxEntry(sp);
             
@@ -907,7 +907,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             
             // Other data come from update.
             checkNCT01861054OtherData(session, sp);    
-            checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkSuccessfulImportLogEntry(nctID, nciID, session, true);
             checkInboxEntry(sp);
             
         } finally {
@@ -956,7 +956,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             
             checkNCT01861054EmptyPersonOrgData(sp);
             checkNCT01861054OtherData(session, sp);    
-            checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkSuccessfulImportLogEntry(nctID, nciID, session, false);
             
         } finally {
             MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
@@ -985,7 +985,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             checkNCT01861054OrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
             checkNCT01861054EmptyPersonData(sp);
             checkNCT01861054OtherData(session, sp);    
-            checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkSuccessfulImportLogEntry(nctID, nciID, session, false);
             
         } finally {
             MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
@@ -1014,7 +1014,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             checkNCT01861054PersonData(sp);
             checkNCT01861054EmptyOrgData(sp);
             checkNCT01861054OtherData(session, sp);    
-            checkSuccessfulImportLogEntry(nctID, nciID, session);
+            checkSuccessfulImportLogEntry(nctID, nciID, session, false);
             
         } finally {
             MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
@@ -1043,10 +1043,13 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      * @throws HibernateException
      */
     private void checkSuccessfulImportLogEntry(final String nctID,
-            String nciID, final Session session) throws HibernateException {
+            String nciID, final Session session, boolean hasStudyInbox) throws HibernateException {
         CTGovImportLog log = findLogEntry(nciID, session);
         assertEquals(nctID, log.getNctID());
         assertEquals("Success", log.getImportStatus());
+        if (hasStudyInbox) {
+            assertNotNull(log.getStudyInbox());
+        }
     }
 
     /**
