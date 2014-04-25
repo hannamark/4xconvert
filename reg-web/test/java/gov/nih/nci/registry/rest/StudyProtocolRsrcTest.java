@@ -11,6 +11,7 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.registry.rest.exception.BadRequestException;
+import gov.nih.nci.registry.rest.exception.BadRequestExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,18 @@ public class StudyProtocolRsrcTest {
     public void getStudiesXMLAlphaTest() {
         StudyProtocolsRsrc rsrc = new StudyProtocolsRsrc();
         rsrc.getStudiesXML("a");
+    }
+    
+    @Test
+    public void getStudiesXMLExceptionTest() {
+        try {
+            StudyProtocolsRsrc rsrc = new StudyProtocolsRsrc();
+            rsrc.getStudiesXML("a");
+        } catch (BadRequestException bre) {
+            BadRequestExceptionHandler breh = new BadRequestExceptionHandler();
+            Response test = breh.toResponse(bre);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), test.getStatus());
+        }
     }
 
     @Test
