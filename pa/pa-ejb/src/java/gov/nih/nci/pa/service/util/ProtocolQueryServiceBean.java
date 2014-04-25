@@ -475,7 +475,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setSubmitterAffiliateOrgId(criteria.getSubmitterAffiliateOrgId());       
         options.setMilestoneFilters(criteria.getMilestoneFilters());  
         options.setProcessingPriority(toIntegerList(criteria.getProcessingPriority()));
-        options.setStudySource(criteria.getStudySource());
+        options.setStudySource(criteria.getStudySourceByCode());
         if (criteria.getCtgovXmlRequiredIndicator() != null && !criteria.getCtgovXmlRequiredIndicator().equals("")) {
             options.setCtgovXmlRequiredIndicator(Boolean.valueOf((criteria.getCtgovXmlRequiredIndicator())));
         } else {

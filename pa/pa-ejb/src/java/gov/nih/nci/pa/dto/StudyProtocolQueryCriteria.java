@@ -1334,28 +1334,31 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * 
      * @return the study source to filter on.
      */
-    public StudySourceCode getStudySource() {
+    public StudySourceCode getStudySourceByCode() {
         return studySource;
     }
 
     /**
      * 
-     * @param studySource the study source to fileter on, null for all.
+     * @return th study source as a string.
      */
-    public void setStudySource(StudySourceCode studySource) {
-        this.studySource = studySource;
+    public String getStudySource() {
+        if (studySource == null) {
+            return null;
+        }
+        return studySource.getCode();
     }
     
     /**
      * 
-     * @param studySource the study source to filter on
+     * @param studySourceStr the study source to filter on
      */
-    public void setStudySource(String studySource) {
-        if (studySource == null || studySource.isEmpty() || studySource.equalsIgnoreCase("All")) {
+    public void setStudySource(String studySourceStr) {
+        if (studySourceStr == null || studySourceStr.isEmpty() || studySourceStr.equalsIgnoreCase("All")) {
             this.studySource = null;
         }
         
-        this.studySource = StudySourceCode.getByCode(studySource);
+        this.studySource = StudySourceCode.getByCode(studySourceStr);
     }
 
     /**

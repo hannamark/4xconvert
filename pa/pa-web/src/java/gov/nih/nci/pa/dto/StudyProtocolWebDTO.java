@@ -97,6 +97,7 @@ public class StudyProtocolWebDTO {
     private String completionDateType;
     private String studyProtocolType;
     private String primaryPurposeCode;
+    private String studySource;
     private String actionName;
 
     /**
@@ -110,6 +111,7 @@ public class StudyProtocolWebDTO {
         this.trialPhase = iso.getPhaseCode().getCode();
         this.trialTitle = iso.getOfficialTitle().getValue();
         this.nciAccessionNumber =  PAUtil.getAssignedIdentifierExtension(iso);
+        this.studySource = iso.getStudySource().getCode();
         if (iso.getStartDate() != null) {
             this.startDate = PAUtil.normalizeDateString(
                            TsConverter.convertToTimestamp(iso.getStartDate()).toString());
@@ -258,6 +260,19 @@ public class StudyProtocolWebDTO {
      */
     public void setActionName(String actionName) {
         this.actionName = actionName;
+    }
+    
+    /**
+     * @return the studySource
+     */
+    public String getStudySource() {
+        return studySource;
+    }
+    /**
+     * @param studySource the studySource to set
+     */
+    public void setStudySource(String studySource) {
+        this.studySource = studySource;
     }
 
 

@@ -135,6 +135,14 @@
                              <c:out value="${sessionScope.trialSummary.officialTitle }"/>
                         </td>
                     </tr>
+                    <tr>
+                        <td nowrap="nowrap" scope="row" class="labelDupe">                          
+                                <fmt:message key="studyProtocol.studySource"/>   
+                        </td>
+                        <td>
+                             <c:out value="${sessionScope.trialSummary.studySource }"/>
+                        </td>
+                    </tr>
                 </table>
                 <s:if test="%{!checkoutCommands.isEmpty()}">
                     <div class="actionsrow">

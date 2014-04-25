@@ -272,7 +272,7 @@
                            <s:set name="studySourceCodeValues" value="@gov.nih.nci.pa.enums.StudySourceCode@getDisplayNames()" />                          
                            <s:select headerKey="" headerValue="All" id="studySourceType" 
                            name="criteria.studySource" list="#studySourceCodeValues"  
-                           cssStyle="width:206px" />                         
+                           cssStyle="width:206px" value="criteria.studySource"/>                         
                         </td>   
                         <td scope="row" class="label">
                         </td>
