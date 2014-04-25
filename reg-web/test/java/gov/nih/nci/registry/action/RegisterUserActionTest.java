@@ -87,13 +87,17 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
         action.setRegistryUserWebDTO(regDto);
 
         userDto.setUsername("myuser");
+        userDto.setPassword("test");
         action.setUserWebDTO(userDto);
     }
 
     @Test
     public void testUserWebDTO() {
         assertEquals(userDto, action.getUserWebDTO());
+        assertEquals("myuser", userDto.getDisplayUsername());
+        assertEquals("test", userDto.getPassword());
     }
+
 
     @Test
     public void testRegistryUserWebDTO() {

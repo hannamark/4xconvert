@@ -4,6 +4,7 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -251,6 +252,22 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         assertEquals("error", action.create());
+    }
+    
+    @Test
+    public void testSumary4Sponsor() {
+        SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
+        summarySp.setRowId(UUID.randomUUID().toString());
+        summarySp.setOrgId("2");
+        summarySp.setOrgName("summaryFourOrgName");
+        
+        SummaryFourSponsorsWebDTO sum4 = new SummaryFourSponsorsWebDTO();
+        assertFalse(sum4.hashCode() == summarySp.hashCode());
+        sum4.setOrgId("2");
+        assertEquals(sum4.hashCode(), summarySp.hashCode());
+        assertTrue(summarySp.equals(sum4));
+        assertEquals("summaryFourOrgName", summarySp.getOrgName());
+        assertFalse(summarySp.getOrgName().equals(sum4.getOrgName()));
     }
     
     @Test

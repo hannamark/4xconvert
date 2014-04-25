@@ -14,21 +14,67 @@
   
   <script type="text/javascript" src="${scriptPath}/js/submitTrial.js"></script>
   <script type="text/javascript">
-	  function lookup4loadleadorg() {
-	      showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
+
+  function lookup4loadleadpers() {
+      showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
+  }
+  
+  function lookup4loadleadorg(selection, name) {
+		if(selection === undefined || selection == "") {
+			$('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
+	  		$("trialDTO.leadOrganizationIdentifier").value = '';
+	  		$('trialDTO.leadOrganizationName').value = '';
+		} else if(selection == -1) {
+	      	showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
+	  	} else if(selection > 0) {
+	  		$('trialDTO.leadOrganizationNameField').innerHTML = name;
+	  		$('trialDTO.leadOrganizationName').value = name;
+	  		$("trialDTO.leadOrganizationIdentifier").value = selection;
+	  	} else {
+	  		//if there is no valid selection we undo the selection enteirly.
+	  		$('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
+	  		$("trialDTO.leadOrganizationIdentifier").value = '';
+	  		$('trialDTO.leadOrganizationName').value = '';
+	  	}
 	  }
 	  
-	  function lookup4loadleadpers() {
-	      showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
+	  function lookup4sponsor(selection, name) {
+		  if(selection === undefined || selection == "") {
+				$('trialDTO.sponsorNameField').innerHTML = 'Please Select Sponsor Organization';
+				$('trialDTO.sponsorName').value = '';
+		  		$("trialDTO.sponsorIdentifier").value = '';
+			} else if(selection == -1) {
+				showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
+		  	} else if(selection > 0) {
+		  		$('trialDTO.sponsorNameField').innerHTML = name;
+		  		$('trialDTO.sponsorName').value = name;
+		  		$("trialDTO.sponsorIdentifier").value = selection;
+		  	} else {
+		  		//if there is no valid selection we undo the selection enteirly.
+		  		$('trialDTO.sponsorNameField').innerHTML = 'Please Select Sponsor Organization';
+		  		$("trialDTO.sponsorIdentifier").value = '';
+		  		$('trialDTO.sponsorName').value = '';
+		  	}
+	      
 	  }
 	  
-	  function lookup4sponsor() {
-	      showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
+	  function lookup4loadSummary4Sponsor(selection, name) {
+		if(selection === undefined || selection == "") {
+			//do nothing
+		} else if(selection == -1) {
+			showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+	  	} else if(selection > 0) {
+          var url = '/registry/protected/popupaddSummaryFourOrg.action';
+          var params = { orgId: selection, chosenName : name };
+          var div = document.getElementById('loadSummary4FundingSponsorField');   
+          div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+          var aj = callAjaxPost(div, url, params);
+	  	} 
+		//since there can be many we reset the form each time.
+		$('trialDTO.summaryFourOrgName').innerHTML = 'Please Select the Summary 4 Sponsor Organization.';
+	      
 	  }
 	  
-	  function lookup4loadSummary4Sponsor() {
-	      showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
-	  }
 	  document.observe("dom:loaded", function() {
 	                                     displayTrialStatusDefinition('trialDTO_statusCode');
 	                                 });
@@ -52,7 +98,6 @@
                   <s:actionerror/>
               </div>
           </s:if>
-          <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
           <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/>
           <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>
           <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
@@ -119,7 +164,7 @@
                   <div id="section4" class="accordion-body in">
                       <div class="container">
                       <div class="form-group">                                
-                          <label for="trialDTO.leadOrganizationName" class="col-xs-4 control-label"><fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span></label>
+                          <label for="trialDTO.leadOrganizationNameField" class="col-xs-4 control-label"><fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span></label>
                           <div id="loadOrgField">
                               <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
                           </div>

@@ -28,6 +28,7 @@
               }
           });
       });
+      
 
       function countLeft(field, count, max) {
           // if the length of the string in the input field is greater than the max value, trim it 
@@ -54,6 +55,7 @@
       
       function loadLeadOrgDiv() {
           $("trialDTO.leadOrganizationIdentifier").value = orgid;
+          $('trialDTO.leadOrganizationNameField').innerHTML = chosenname;
           $('trialDTO.leadOrganizationName').value = chosenname;
           deleteP30Grants();
           if( p30GrantSerialNumber){
@@ -84,7 +86,8 @@
       
       function loadSponsorDiv() {
           $("trialDTO.sponsorIdentifier").value = orgid;
-          $('trialDTO.sponsorName').value = chosenname;                             
+          $('trialDTO.sponsorNameField').innerHTML = chosenname; 
+          $('trialDTO.sponsorName').value = chosenname;
           respartOrgid = orgid;
           
           var partyType = $F('trialDTO.responsiblePartyType');
