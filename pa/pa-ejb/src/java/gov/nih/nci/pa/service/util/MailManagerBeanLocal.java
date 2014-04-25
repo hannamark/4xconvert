@@ -130,6 +130,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -983,8 +984,19 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                         + csmUser.getLastName());
             } 
             String toAddress = lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL);
+            List<String> toList = new ArrayList<String>();
+            StringTokenizer st = new StringTokenizer(toAddress, ",");
+            while (st.hasMoreElements()) {
+                toList.add((String) st.nextElement());
+            }
+            toAddress = toList.get(0);
             String subject = lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_SUBJECT");
             List<String> copyList = new ArrayList<String>();
+            for (String to : toList) {
+                if (!StringUtils.equals(to, toAddress)) {
+                     copyList.add(to);
+                }
+            }
             copyList.add(lookUpTableService.getPropertyValue("CDE_MARKER_REQUEST_FROM_EMAIL"));
             if (StringUtils.isBlank(csmUser.getEmailId())) {
                 if (registryUser != null && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
@@ -1061,8 +1073,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                         from = registryUser.getEmailAddress();  
                  }
             }
-                
-            
             sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
