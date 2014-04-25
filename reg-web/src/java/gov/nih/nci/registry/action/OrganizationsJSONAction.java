@@ -20,58 +20,70 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public class OrganizationsJSONAction extends ActionSupport {
 
-	private static final long serialVersionUID = -8316184779353387405L;
-	private Map<String, String> organizationDtos;
+    private static final long serialVersionUID = -8316184779353387405L;
+    private Map<String, String> organizationDtos;
 
     /**
      * @return result
      */
     public String getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol() {
-        String organizationType = (String) (ServletActionContext.getRequest().getParameter("organizationType"));
-        String organizationTerm = (String) (ServletActionContext.getRequest().getParameter("organizationTerm"));
+        String organizationType = (String) (ServletActionContext.getRequest()
+                .getParameter("organizationType"));
+        String organizationTerm = (String) (ServletActionContext.getRequest()
+                .getParameter("organizationTerm"));
         setOrganizationDtos(new TreeMap<String, String>());
-        if(StringUtils.isEmpty(organizationType) || StringUtils.isEmpty(organizationTerm)) {
-        	return SUCCESS;
+        if (StringUtils.isEmpty(organizationType)
+                || StringUtils.isEmpty(organizationTerm)) {
+            return SUCCESS;
         }
         List<PaOrganizationDTO> orgDtos;
         try {
-        	if("Both".equalsIgnoreCase(organizationType)) {
-        		
-        		orgDtos = new ArrayList<PaOrganizationDTO>();
-        		orgDtos.addAll(PaRegistry.getCachingPAOrganizationService().getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol("Lead Organization", organizationTerm));
-        		orgDtos.addAll(PaRegistry.getCachingPAOrganizationService().getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol("Participating Site", organizationTerm));
-        		
-        	} else {
-        		
-        		orgDtos = PaRegistry.getCachingPAOrganizationService().getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(organizationType, organizationTerm);
-        	
-        	}
+            if ("Both".equalsIgnoreCase(organizationType)) {
+
+                orgDtos = new ArrayList<PaOrganizationDTO>();
+                orgDtos.addAll(PaRegistry
+                        .getCachingPAOrganizationService()
+                        .getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(
+                                "Lead Organization", organizationTerm));
+                orgDtos.addAll(PaRegistry
+                        .getCachingPAOrganizationService()
+                        .getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(
+                                "Participating Site", organizationTerm));
+
+            } else {
+
+                orgDtos = PaRegistry
+                        .getCachingPAOrganizationService()
+                        .getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(
+                                organizationType, organizationTerm);
+
+            }
         } catch (PAException e) {
             LOG.error("Error calling organization service", e);
             orgDtos = new ArrayList<PaOrganizationDTO>();
         }
-        
+
         for (PaOrganizationDTO orgDto : orgDtos) {
-        	getOrganizationDtos().put(orgDto.getId(), orgDto.getName());
+            getOrganizationDtos().put(orgDto.getId(), orgDto.getName());
         }
         return SUCCESS;
     }
-    
+
     /**
      * 
-     * @return organizationDtos 
+     * @return organizationDtos
      */
-	public Map<String, String> getOrganizationDtos() {
-		return organizationDtos;
-	}
-	
-	/**
-	 * set organizationDtos
-	 * @param organizationDtos
-	 */
-	public void setOrganizationDtos(Map<String, String> organizationDtos) {
-		this.organizationDtos = organizationDtos;
-	}
+    public Map<String, String> getOrganizationDtos() {
+        return organizationDtos;
+    }
 
-    
+    /**
+     * set organizationDtos
+     * 
+     * @param organizationDtos organizationDtos
+     */
+    public void setOrganizationDtos(Map<String, String> organizationDtos) {
+        this.organizationDtos = organizationDtos;
+    }
+
 }
