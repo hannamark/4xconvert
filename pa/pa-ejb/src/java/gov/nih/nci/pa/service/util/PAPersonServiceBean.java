@@ -119,6 +119,18 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
        List<Person> persons = generateDistinctPersonResults();
        return createPersonDTO(persons);
     }
+    
+    /**
+     * returns a list of PI name who have been associated with study protocol and has name starting with personTerm 
+     * @param personTerm part of the person full name
+     * @return list PersonDTO   
+     * @throws PAException on error 
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+   public List<PaPersonDTO> getAllPrincipalInvestigatorsByName(String personTerm) throws PAException {
+       List<Person> persons = generateDistinctPersonResultsByName(personTerm);
+       return createPersonDTO(persons);
+    }
 
     @SuppressWarnings("unchecked")
     private List<Person> generateDistinctPersonResults() throws PAException {
@@ -131,6 +143,30 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
                 + " join crs.studyContacts as sc join sc.studyProtocol as sp where sc.roleCode = '");
         hql.append(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         hql.append("' order by p.lastName , p.firstName");
+
+        session = PaHibernateUtil.getCurrentSession();
+        List<Person> persons = session.createQuery(hql.toString()).list();
+        for (Person p : persons) {
+            if (perSet.add(p.getId())) {
+                sortedPersons.add(p);
+            }
+        }
+        return sortedPersons;
+    }
+    
+    @SuppressWarnings("unchecked")
+    private List<Person> generateDistinctPersonResultsByName(String term) throws PAException {
+        List<Person> sortedPersons = new ArrayList<Person>();
+        Set<Long> perSet = new HashSet<Long>();
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        StringBuffer hql = new StringBuffer();
+        hql.append("select p from Person  p join p.healthCareProviders as crs "
+                + " join crs.studyContacts as sc join sc.studyProtocol as sp where sc.roleCode = '");
+        hql.append(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
+        hql.append("' and ( p.firstName like '").append(term).append("%'");
+        hql.append(" or p.lastName like '").append(term).append("%' )");
+        hql.append(" order by p.lastName , p.firstName");
 
         session = PaHibernateUtil.getCurrentSession();
         List<Person> persons = session.createQuery(hql.toString()).list();

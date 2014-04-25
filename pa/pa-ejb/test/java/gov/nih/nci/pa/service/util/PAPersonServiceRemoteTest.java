@@ -143,6 +143,14 @@ public class PAPersonServiceRemoteTest extends AbstractHibernateTestCase {
         assertEquals(" Middle name does not match   " , data.get(0).getMiddleName(), "S");
 
     }
-
-
+    
+    @Test
+    public void getAllPrincipalInvestigatorsByNameTest() throws Exception {
+        List<PaPersonDTO> data = remoteEjb.getAllPrincipalInvestigatorsByName("Nav");
+        assertNotNull(data);
+        assertEquals("Size does not match  " , data.size(), 1);
+        assertEquals(" First name does not match   " , data.get(0).getFirstName(), "Naveen");
+        assertEquals(" Last name does not match   " , data.get(0).getLastName(), "Amiruddin");
+        assertEquals(" Middle name does not match   " , data.get(0).getMiddleName(), "S");
+    }
 }

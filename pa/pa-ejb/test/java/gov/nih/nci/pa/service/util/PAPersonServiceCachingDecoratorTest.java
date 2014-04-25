@@ -58,5 +58,18 @@ public class PAPersonServiceCachingDecoratorTest {
         decorator.getAllPrincipalInvestigators();
         verify(remote).getAllPrincipalInvestigators();
     }
+    
+    /**
+     * Test method for
+     * {@link gov.nih.nci.pa.service.util.PAPersonServiceCachingDecorator#getAllPrincipalInvestigatorsByName(String personTerm)}
+     * .
+     * 
+     * @throws Exception
+     */
+    @Test
+    public final void testGetAllPrincipalInvestigatorsByName() throws Exception {
+        decorator.getAllPrincipalInvestigatorsByName("Mayo");
+        verify(remote).getAllPrincipalInvestigatorsByName("Mayo");
+    }
 
 }

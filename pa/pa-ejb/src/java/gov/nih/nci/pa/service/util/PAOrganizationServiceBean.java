@@ -130,6 +130,19 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
     throws PAException {
         return createOrganizationDTO(generateDistinctOrganizationQuery(organizationType));
     }
+    
+    /**
+     * returns distinct organization that have been associated with a protocol and have name starting with term
+     * @return OrganizationDTO
+     * @param organizationType Organization Type
+     * @param organizationTerm Organization Name starting term
+     * @throws PAException pa exception
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<PaOrganizationDTO> getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(String organizationType, String organizationTerm)
+    throws PAException {
+        return createOrganizationDTO(generateDistinctOrganizationQueryByTypeAndName(organizationType, organizationTerm));
+    }
 
     /**
      * This expects only id and identifier.
@@ -200,6 +213,36 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
                     + "cast(o.id as string) = sr.organizationIdentifier and "
                     + "sr.summary4ReportedResourceIndicator = true order by o.name");
         }
+        return hql;
+    }
+    
+    private List<Organization> generateDistinctOrganizationQueryByTypeAndName(String organizationType, String organizationName) throws PAException {
+        StringBuffer hql = prepareDistinctOrganizationQueryByTypeAndName(organizationType, organizationName);
+        return executeDistinctOrganizationQuery(hql);
+    }
+    
+    private StringBuffer prepareDistinctOrganizationQueryByTypeAndName(String organizationType, String organizationName) {
+        StringBuffer hql = new StringBuffer();
+        if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
+            hql.append("select o from Organization o join o.researchOrganizations as ros join ros.studySites as sps"
+                    + " join sps.studyProtocol as sp where sps.functionalCode = '");
+            hql.append(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            hql.append("'");
+        } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
+            hql.append("select o from Organization o join o.healthCareFacilities as hcf join hcf.studySites as sps "
+                    + " join sps.studyProtocol as sp where sps.functionalCode = '");
+            hql.append(StudySiteFunctionalCode.TREATING_SITE);
+            hql.append("'");
+        } else if (organizationType.equalsIgnoreCase(PAConstants.SUMM4_SPONSOR)) {
+            hql.append("select o from Organization o, StudyResourcing as sr where "
+                    + "cast(o.id as string) = sr.organizationIdentifier and "
+                    + "sr.summary4ReportedResourceIndicator = true");
+        }
+        
+        hql.append(" and o.name like '%");
+        hql.append(organizationName);
+        hql.append("%' order by o.name");
+        
         return hql;
     }
 

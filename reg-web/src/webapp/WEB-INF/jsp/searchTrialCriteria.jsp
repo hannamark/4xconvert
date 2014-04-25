@@ -10,6 +10,10 @@
     <s:head/>
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 </head>
+<style type="text/css">
+ /*This style is to restrict the size of the popup and add scroll for more items*/
+ .ui-autocomplete { height: 150px; overflow-y: scroll; overflow-x: hidden;}
+</style>
 <SCRIPT LANGUAGE="JavaScript">
     window.onload=displayOrg;
     function resetValues(){
@@ -126,6 +130,45 @@
    function deletePartialProtocol() {
        return confirm("Do you want to delete?");
    }     
+   
+   jQuery(function() {
+     	
+         jQuery(".orgautocomplete").autocomplete({delay: 250,
+               source: function(req, responseFn) {
+                 var orgType = jQuery("#organizationType").val();
+                 if('' == orgType) {
+                	 return [];
+                 }
+                 
+                 var url = registryApp.contextPath + '/ctro/json/ajaxOrganizationsgetOrganizationsWithTypeAndNameAssociatedWithStudyProtocol.action?organizationType='+orgType+'&organizationTerm=' + req.term;
+                 jQuery.getJSON(url,null,function(data){
+                        responseFn(jQuery.map(data.organizationDtos, function (value, key) { 
+                             return {
+                                 label: value,
+                                 value: key
+                             };
+                        }));
+                 });
+             }
+         });
+         
+         jQuery(".personautocomplete").autocomplete({delay: 250,
+             source: function(req, responseFn) {
+               
+               var url = registryApp.contextPath + '/ctro/json/ajaxPersonsgetPrincipalInvestigatorsByNameAssociatedWithStudyProtocol.action?personTerm=' + req.term;
+               jQuery.getJSON(url,null,function(data){
+                      responseFn(jQuery.map(data.paPersonDTOs, function (value, key) { 
+                           return {
+                               label: value,
+                               value: key
+                           };
+                      }));
+               });
+           }
+       });
+         
+     });
+   
 </SCRIPT>
 <body>
 <div class="container">
@@ -220,9 +263,8 @@
         </div>
         <div id="Lead">
         <label for="organizationId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
-		<s:set name="protocolOrgs" value="getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />
 		<div class="col-xs-4">                    
-			<s:select id="organizationId" name="criteria.organizationId" list="#protocolOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--" value="criteria.organizationId" cssClass="form-control"/>
+			<s:textfield id="organizationId" name="criteria.organizationId" cssClass="form-control orgautocomplete"/>
              <span class="alert-danger">
                  <s:fielderror>
                  <s:param>criteria.organizationId</s:param>
@@ -232,9 +274,8 @@
      </div>
      <div id="Site">
 		<label for="participatingSiteId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
-		    <s:set name="participatingSites" value="getOrganizationsAssociatedWithStudyProtocol('Participating Site')" />
 		<div class="col-xs-4">
-			<s:select id="participatingSiteId" name="criteria.participatingSiteId" list="#participatingSites"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.participatingSiteId" cssClass="form-control"/>
+			<s:textfield id="participatingSiteId" name="criteria.participatingSiteId" cssClass="form-control orgautocomplete"/>
             <span class="alert-danger">
                 <s:fielderror>
                 <s:param>criteria.organizationId</s:param>
@@ -244,9 +285,8 @@
     </div>
     <div id="LeadOrSite">
         <label for="leadAndParticipatingOrgId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
-        <s:set name="leadAndParticipatingOrgs" value="getLeadAndParticipatingOrganizations()" />
         <div class="col-xs-4">                
-			<s:select id="leadAndParticipatingOrgId" name="criteria.leadAndParticipatingOrgId" list="#leadAndParticipatingOrgs"  listKey="id" listValue="name" headerKey="" headerValue="--Select--"  value="criteria.leadAndParticipatingOrgId" cssClass="form-control"/>
+			<s:textfield id="leadAndParticipatingOrgId" name="criteria.leadAndParticipatingOrgId" cssClass="form-control orgautocomplete"/>
             <span class="alert-danger">
                 <s:fielderror>
                 <s:param>criteria.organizationId</s:param>
@@ -257,10 +297,10 @@
     </div>
    
 	<div class="form-group">
-		<s:set name="principalInvs" value="getAllPrincipalInvestigators()" />
+		<%-- <s:set name="principalInvs" value="getAllPrincipalInvestigators()" /> --%>
         <label for="principalInvestigatorId" class="col-xs-2 control-label"> <fmt:message key="search.trial.principalInvestigator"/></label>
         <div class="col-xs-4">
-            <s:select
+            <%-- <s:select
                 name="criteria.principalInvestigatorId"
                 id="principalInvestigatorId"
                 list="#principalInvs"
@@ -269,7 +309,8 @@
                 headerKey=""
                 headerValue="--Select--"
                 value="criteria.principalInvestigatorId"
-                cssClass="form-control" />
+                cssClass="form-control" /> --%>
+            <s:textfield id="principalInvestigatorId" name="criteria.principalInvestigatorId" cssClass="form-control personautocomplete"/>
        </div>
        <label for="trialCategory" class="col-xs-2 control-label"> <fmt:message key="search.trial.trialCategorySearch"/></label>
        <div class="col-xs-4">        

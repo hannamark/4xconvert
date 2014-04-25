@@ -103,7 +103,13 @@ public interface PAPersonServiceRemote  {
      * @throws PAException on error 
      */
    List<PaPersonDTO> getAllPrincipalInvestigators() throws PAException;
-    
-
+   
+   /**
+    * returns a list of PI name who have been associated with study protocol and has name starting with personTerm 
+    * @param personTerm part of the person full name
+    * @return list PersonDTO   
+    * @throws PAException on error 
+    */
+  List<PaPersonDTO> getAllPrincipalInvestigatorsByName(String personTerm) throws PAException;
 
 }

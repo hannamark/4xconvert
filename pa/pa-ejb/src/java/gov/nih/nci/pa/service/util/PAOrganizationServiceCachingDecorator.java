@@ -34,6 +34,22 @@ public final class PAOrganizationServiceCachingDecorator implements
     /**
      * @param organizationType
      *            organizationType
+     * @param organizationTerm
+     *            organizationTerm
+     * @return List<PaOrganizationDTO>
+     * @throws PAException
+     *             PAException
+     * @see gov.nih.nci.pa.service.util.PAOrganizationServiceRemote#getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol
+     *      (java.lang.String, java.lang.String)
+     */
+    public List<PaOrganizationDTO> getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(
+            final String organizationType, final String organizationTerm) throws PAException {
+        return serviceRemote.getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(organizationType, organizationTerm);
+    }
+    
+    /**
+     * @param organizationType
+     *            organizationType
      * @return List<PaOrganizationDTO>
      * @throws PAException
      *             PAException

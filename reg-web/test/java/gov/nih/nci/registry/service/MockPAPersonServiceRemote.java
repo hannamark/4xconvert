@@ -34,5 +34,14 @@ public class MockPAPersonServiceRemote implements PAPersonServiceRemote {
        
         return investigators;
     }
+    
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.PAPersonServiceRemote#getAllPrincipalInvestigatorsByName(String personTerm)
+     */
+    @Override
+    public List<PaPersonDTO> getAllPrincipalInvestigatorsByName(String personTerm) throws PAException {
+       
+        return investigators;
+    }
 
 }

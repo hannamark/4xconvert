@@ -35,6 +35,7 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
     
     public static List<PaOrganizationDTO> leadPaOrganizationDTOs = new ArrayList<PaOrganizationDTO>();
     public static List<PaOrganizationDTO> sitePaOrganizationDTOs = new ArrayList<PaOrganizationDTO>();
+    public static List<PaOrganizationDTO> organizationDTOs = new ArrayList<PaOrganizationDTO>();
     
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.PAOrganizationServiceRemote#getOrganizationByIndetifers(gov.nih.nci.pa.domain.Organization)
@@ -60,6 +61,15 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
             return leadPaOrganizationDTOs;
         }
         return sitePaOrganizationDTOs;
+    }
+    
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.PAOrganizationServiceRemote#getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(gov.nih.nci.pa.domain.Organization)
+     */
+    @Override
+    public List<PaOrganizationDTO> getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol( String organizationType, String organizationTerm)
+            throws PAException {
+        return organizationDTOs;
     }
 
     /**

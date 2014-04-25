@@ -76,6 +76,14 @@ public class PAOrganizationServiceTest extends AbstractHibernateTestCase {
         assertEquals("Size does not match", data.size(), 1);
         assertEquals(" name does not match", data.get(0).getName(), "Mayo University");
     }
+    
+    @Test
+    public void getOrganizationsWithTypeAndNameAssociatedWithStudyProtocolTest() throws Exception {
+        List<PaOrganizationDTO> data = remoteEjb.getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION, "Mayo");
+        assertNotNull(data);
+        assertEquals("Size does not match", data.size(), 1);
+        assertEquals(" name does not match", data.get(0).getName(), "Mayo University");
+    }
 
     @Test(expected=PAException.class)
     public void nullParameter() throws Exception {

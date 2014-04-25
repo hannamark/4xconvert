@@ -74,6 +74,24 @@ public class PAOrganizationServiceCachingDecoratorTest {
                 orgType);
 
     }
+    
+    /**
+     * Test method for
+     * {@link gov.nih.nci.pa.service.util.PAOrganizationServiceCachingDecorator#getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(java.lang.String, java.lang.String)}
+     * .
+     * 
+     * @throws Exception
+     */
+    @Test
+    public final void testGetOrganizationsWithTypeAndNameAssociatedWithStudyProtocol()
+            throws Exception {
+        String orgType = "LEAD_ORGANIZATION";
+        String orgTerm = "National";
+        decorator.getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(orgType, orgTerm);
+        verify(remote).getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(orgType, orgTerm);
+
+
+    }
 
     /**
      * Test method for

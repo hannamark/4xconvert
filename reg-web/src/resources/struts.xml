@@ -426,5 +426,12 @@
         <action name="ajaxI2EGrants*" class="gov.nih.nci.registry.action.I2EGrantsJSONAction" method="{1}">
             <result type="json"/>
         </action>
+        <action name="ajaxOrganizations*" class="gov.nih.nci.registry.action.OrganizationsJSONAction" method="{1}">
+            <result type="json"/>
+        </action>
+        <action name="ajaxPersons*" class="gov.nih.nci.registry.action.PersonsJSONAction" method="{1}">
+            <result type="json"/>
+        </action>
+        
     </package>
 </struts>

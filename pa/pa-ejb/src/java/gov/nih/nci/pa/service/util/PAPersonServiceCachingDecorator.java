@@ -48,5 +48,15 @@ public class PAPersonServiceCachingDecorator implements
                     }
                 });
     }
+    
+    /**
+     * @return List<PaPersonDTO>
+     * @throws PAException
+     *             PAException
+     * @see gov.nih.nci.pa.service.util.PAPersonServiceRemote#getAllPrincipalInvestigatorsByName()
+     */
+    public List<PaPersonDTO> getAllPrincipalInvestigatorsByName(String personTerm) throws PAException {
+        return serviceRemote.getAllPrincipalInvestigatorsByName(personTerm);
+    }
 
 }

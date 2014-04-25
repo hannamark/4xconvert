@@ -8,7 +8,8 @@
     <head>
         <title><fmt:message key="amend.trial.page.title"/></title>
         <s:head/>
-    
+    	<link href="${pageContext.request.contextPath}/styles/style.css" rel="stylesheet" type="text/css" media="all" />
+    	
         <!-- po integration -->
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
