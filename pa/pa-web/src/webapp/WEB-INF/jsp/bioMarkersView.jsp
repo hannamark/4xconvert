@@ -147,7 +147,7 @@
                             </display:column>
                                 </s:if>
                <display:column titleKey="plannedMarker.caDSR.id" headerClass="sortable" >
-                    <s:textfield id="caDsrId_%{#attr.row.id}" name="caDsrId_%{#attr.row.id}" maxlength="200" size="100" cssStyle="width:200px" />
+                  <label><s:textfield id="caDsrId_%{#attr.row.id}"   name="caDsrId_%{#attr.row.id}" maxlength="200" size="100" cssStyle="width:200px" /></label>
                </display:column>
 							<display:column titleKey="plannedMarker.action"
 								headerClass="centered" class="action">

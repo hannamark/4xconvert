@@ -55,6 +55,7 @@ public class TrialDataVerificationActionTest extends AbstractRegWebTest {
     @Before
     public void setup() throws Exception {
         action = new TrialDataVerificationAction();
+        action.prepare();
         studyProtocolService = PaRegistry.getStudyProtocolService(); 
         action.setStudyProtocolService(studyProtocolService);
         protocolQueryService = mock(ProtocolQueryServiceLocal.class);
@@ -97,7 +98,11 @@ public class TrialDataVerificationActionTest extends AbstractRegWebTest {
         StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
         studyProtocolQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         studyProtocolQueryDTO.setDocumentWorkflowStatusDate(new Date());
+        studyProtocolQueryDTO.setStudyProtocolId(1L);
         when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(studyProtocolQueryDTO);
+        List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
+        list.add(studyProtocolQueryDTO);
+        when(protocolQueryService.getActiveInactiveStudyProtocolsById(1L)).thenReturn(list);
         Set<RegistryUser> trialOwners = new HashSet<RegistryUser>();
         RegistryUser user = new RegistryUser();
         user.setEmailAddress("reshma.koganti@semanticbits.com");

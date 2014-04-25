@@ -147,7 +147,9 @@ public class TrialDataVerificationAction extends ActionSupport implements
         List<StudyInboxDTO> updateList = studyInboxService.getAllTrialUpdates(studyProtocolIi);
         for (StudyInboxDTO studyInboxDTO : updateList) {
             for (RegistryUser user : trialOwners) {
-                if (user.getCsmUser().getLoginName().equals(studyInboxDTO.getUserLastCreated().getValue())) {
+                if (studyInboxDTO.getUserLastCreated() != null 
+                  && user.getCsmUser().getLoginName()
+                  .equals(studyInboxDTO.getUserLastCreated().getValue())) {
                     TrialVerificationDataWebDTO trialWebDTO = new TrialVerificationDataWebDTO();
                     trialWebDTO.setStudyProtocolId(IiConverter.convertToString(studyProtocolIi));
                     trialWebDTO.setVerificationMethod("Update Submitted");
