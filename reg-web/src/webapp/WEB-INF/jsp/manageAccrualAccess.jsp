@@ -175,6 +175,37 @@
         el.form.submit();
     }
 
+    function assingAllSiteOrg(el){
+    	if($('assignmentTypeallTrialsSite').checked ){
+    		assignUnassignSASubmitter(el)
+    	}else if ($('assignmentTypeallTrialsOrg').checked ){
+    		assignUnassignOFSubmitter(el)
+    	}
+    }
+    
+    function onAssignmentTypeChange(){
+    	if($('assignmentTypespecificTrial').checked ){
+    		$('userId').show()
+    		$('assignSpecificTrial').show()
+    		$('assignAll').hide()
+        	$('ofUserId').hide()
+    	}else if ($('assignmentTypeallTrialsSite').checked ){
+    		$('userId').show()
+    		$('assignSpecificTrial').hide()
+    		$('assignAll').show()
+        	$('ofUserId').hide()
+    	}else if ($('assignmentTypeallTrialsOrg').checked ){	
+    		$('userId').hide()
+    		$('assignSpecificTrial').hide()
+    		$('assignAll').show()
+        	$('ofUserId').show()
+    	}else{
+    		$('userId').show()
+    		$('assignSpecificTrial').hide()
+    		$('assignAll').hide()
+        	$('ofUserId').hide()
+    	}
+    }
 </script>
 </head>
 <body>
@@ -182,21 +213,60 @@
 	<c:set var="topic" scope="request" value="accrualaccess" />
 	<h1 class="heading"><span><fmt:message key="manage.accrual.access.page.header" /></span></h1>
 
-	<div class="box" id="filters">
+	<div class="container" id="filters">
 
 		<reg-web:failureMessage />
 		<reg-web:sucessMessage />
-
+  		<p>Affiliated Site: <strong><c:out value="${organization.name}"/></strong></p>
+		<p>Member of Family(s): <strong><c:out value="${families}"/></strong></p>
+		<hr/>
+		<p>Assign/Unassign Accrual submission privilege to users affiliated with this site:</p>
 		<s:form name="manageAccrualAccess" action="manageAccrualAccess.action" cssClass="form-horizontal" role="form">
 		    <s:token/>
 		    <s:hidden name="trialsToAssign" value=""/>
 		    <s:hidden name="trialsToUnassign" value=""/>
             <s:hidden name="families"/>
             <s:hidden name="organization.name"/>
-			
-		    <p>Affiliated Site: <strong><c:out value="${organization.name}"/></strong></p>
-			<p>Member of Family(s): <strong><c:out value="${families}"/></strong></p>
-			 <div class="form-group">   
+			<div class="form-group">
+		        <label for="assignmentType" class="col-xs-3 control-label"><fmt:message
+	                           key="manage.accrual.access.selectAssignmentType" /></label>
+		        <div class="col-xs-9">
+			        <s:radio label="Assignment Type" id="assignmentType" name="assignmentType" onclick="onAssignmentTypeChange()" list="#{'specificTrial':'Specific trial(s)','allTrialsSite':'All trials (this site)', 'allTrialsOrg':'All trials (in organization family)'}" value="model.assignmentType" />
+		            <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                            key="manage.accrual.access.selectAssignmentType.help"><fmt:param><c:out value="${organization.name}"/></fmt:param><fmt:param><c:out value="${families}"/></fmt:param></fmt:message>' data-placement="top" data-trigger="hover"></i>
+	       	 	</div>
+	       	</div>
+			<div class="form-group">
+          		<label for="userId" class="col-xs-3 control-label"> <fmt:message
+                            key="manage.accrual.access.selectUser" /></label>
+                <div class="col-xs-4">
+                   <s:select name="userId" id="userId" cssClass="form-control"
+                            onchange="change(this);"
+                            list="model.users" 
+                            listKey="id"  
+                            listValue="%{siteAccrualSubmitter == true ? lastName + ', ' +  firstName + '(site submitter)' : lastName + ', ' +  firstName}"                                      
+                            headerKey="" headerValue=" " value="model.user.id" />
+                            
+                   <s:select name="ofUserId" id="ofUserId" cssClass="form-control"
+                             onchange="change(this);"
+                             list="model.ofUsers" 
+                             listKey="id"  
+                             listValue="%{familyAccrualSubmitter == true ? lastName + ', ' +  firstName + '(org family submitter)' : lastName + ', ' +  firstName}"                                      
+                             headerKey="" headerValue=" " value="ofUserId" />
+				</div>
+				<i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                            key="manage.accrual.access.selectUser.help"/>' data-placement="top" data-trigger="hover"></i>
+             </div>
+            
+            <div class="form-group"  id="assignAll" ${model.assignmentType!='specificTrial'?'style="display:none"':''}>
+		        <label for="" class="col-xs-3 control-label"></label>
+		        <div class="col-xs-3">
+		          <button type="button" class="btn btn-primary" value="Assign" onclick="assingAllSiteOrg(this)"><fmt:message
+	                           key="manage.accrual.access.assignUnAssign" /></button>
+		        </div>
+      		</div>
+			<div id="assignSpecificTrial" ${model.assignmentType=='specificTrial'?'':'style="display:none"'} >                
+                <div class="form-group" id="trialCategoryDiv" >   
 			    <label for="trialCategory" class="col-xs-3 control-label"><fmt:message
 								key="manage.accrual.access.selectTrialCat" /></label>
 				<div class="col-xs-4">
@@ -208,35 +278,7 @@
 				</div>
 				<i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
                             key="manage.accrual.access.selectTrial.help"/>' data-placement="top" data-trigger="hover"></i></div>
-			<div class="form-group">
-          		<label for="userId" class="col-xs-3 control-label"> <fmt:message
-                            key="manage.accrual.access.selectUser" /></label>
-                <div class="col-xs-4">
-                   <s:select name="userId" id="userId" cssClass="form-control"
-                            onchange="change(this);"
-                            list="model.users" 
-                            listKey="id"  
-                            listValue="%{siteAccrualSubmitter == true ? lastName + ', ' +  firstName + '(site submitter)' : lastName + ', ' +  firstName}"                                      
-                            headerKey="" headerValue=" " value="model.user.id" />
-				</div>
-				<i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
-                            key="manage.accrual.access.selectUser.help"/>' data-placement="top" data-trigger="hover"></i>
-                <button type="button" class="btn btn-icon btn-primary" value="Assign/Unassign Site Accrual Submitter" onclick="assignUnassignSASubmitter(this);" ><i class="fa-save"></i>Assign/Unassign Site Accrual Submitter</button>
-             </div>
-             <div class="form-group">
-                 <label for="ofUserId" class="col-xs-3 control-label"><fmt:message key="manage.accrual.access.family.selectUser" /></label>
-                 <div class="col-xs-4">                       
-                    <s:select name="ofUserId" id="ofUserId" cssClass="form-control"
-                             onchange="change(this);"
-                             list="model.ofUsers" 
-                             listKey="id"  
-                             listValue="%{familyAccrualSubmitter == true ? lastName + ', ' +  firstName + '(org family submitter)' : lastName + ', ' +  firstName}"                                      
-                             headerKey="" headerValue=" " value="ofUserId" />
-                 </div>
-                 <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message key="manage.accrual.access.selectUser.help"/>' data-placement="top" data-trigger="hover"></i>
-                    <button type="button" class="btn btn-icon btn-primary" value="Assign/Unassign Org Family Accrual Submitter" onclick="assignUnassignOFSubmitter(this);"><i class="fa-save"></i>Assign/Unassign Org Family Accrual Submitter</button> 
-            </div>
-                
+                            
                 <c:if test="${model.user != null}">	
                 <c:if test="${!(not empty model.assignedTrials || not empty model.unassignedTrials)}"> 
                     <tr>
@@ -356,9 +398,10 @@
                         </table>
                     </td>
                 </tr>			
-                </c:if>
-                </c:if>
-			</table>
+           	</table>
+			</c:if>
+            </c:if>
+            </div>
 	        <div id="comments-dialog" style="display: none">
 	        	<div class="modal-dialog">
 	    			<div class="modal-content">
@@ -373,9 +416,9 @@
 				           </div>
 				           <br/>
 				           <div align="center">
-				               <button type="button" class="btn btn-icon btn-default" data-dismiss="modal"value="Save" 
+				               <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal"value="Save" 
 				                   onclick="$('comments-dialog').hide();displayWaitPanel();this.form.submit();"><i class="fa-save"></i>Save</button>
-				                  <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" value="Cancel"
+				                  <button type="button" class="btn btn-icon btn-default" data-dismiss="modal" value="Cancel"
 				                   onclick="$('comments-dialog').hide();"><i class="fa-times-circle"></i>Cancel</button>
 				           </div>
 			           </div>
@@ -384,5 +427,10 @@
 	        </div>
 		</s:form>
 	</div>
+	
+	<script>
+		//call after page loaded
+		window.onload=onAssignmentTypeChange ; 
+	</script>
 </body>
 </html>

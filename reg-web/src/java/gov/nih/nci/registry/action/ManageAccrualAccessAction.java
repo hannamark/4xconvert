@@ -95,8 +95,11 @@ public class ManageAccrualAccessAction extends ActionSupport implements
     private String families;
 
     private Organization organization;
+    
+    private String assignmentType; 
 
-    /**
+   
+	/**
      * 
      */
     private static final long serialVersionUID = 1L;
@@ -163,6 +166,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
     public String change() throws PAException {
         model.setUser(registryUserService.getUserById(userId));
         model.setTrialCategory(TrialCategory.valueOf(trialCategory));
+        model.setAssignmentType(assignmentType);
         loadTrials();
         return SUCCESS;
     }
@@ -588,6 +592,8 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         
         private Map<SummaryFourFundingCategoryCode, List<AccrualAccessAssignmentByTrialDTO>> byTrial = 
                 new TreeMap<SummaryFourFundingCategoryCode, List<AccrualAccessAssignmentByTrialDTO>>();
+        
+        private String assignmentType;
 
         /**
          * 
@@ -715,7 +721,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
             this.byTrial = byTrial;
         }
 
-        /**
+      /**
          * @return the ofUsers
          */
         public List<RegistryUser> getOfUsers() {
@@ -728,6 +734,22 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         public void setOfUsers(List<RegistryUser> ofUsers) {
             this.ofUsers = ofUsers;
         }
+        
+        /**
+         * @return assignmenttype
+         */
+        public String getAssignmentType() {
+            return assignmentType;
+        }
+
+        /**
+         * @param ofUsers the assignmentType to set
+         */
+        public void setAssignmentType(String assignmentType) {
+            this.assignmentType = assignmentType;
+        }
+        
+        
     }
     
     /**
@@ -1060,5 +1082,19 @@ public class ManageAccrualAccessAction extends ActionSupport implements
      */
     public void setOfUserId(Long ofUserId) {
         this.ofUserId = ofUserId;
+    }
+    
+    /**
+     * @return the assignmentType
+     */
+    public String getAssignmentType() {
+        return assignmentType;
+    }
+
+    /**
+     * @param assignmentType the assignmentType to set
+     */
+    public void setAssignmentType(String assignmentType) {
+        this.assignmentType = assignmentType;
     }
 }
