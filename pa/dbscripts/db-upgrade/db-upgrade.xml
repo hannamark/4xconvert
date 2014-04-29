@@ -1561,4 +1561,8 @@
         <comment>PA: Enhance search for Updates of, and Acknowledged Updates for, trials from ClinicalTrials.gov</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6887.sql"/>
      </changeSet>     
+     <changeSet id="PO-7122" author="Hugh">
+        <comment>Add AccrualBlankSite properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7122.sql"/>
+     </changeSet>
 </databaseChangeLog>
