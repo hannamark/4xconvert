@@ -186,6 +186,8 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     protected MailManagerServiceRemote mailService;
     protected BatchFileService batchFileSvc = new BatchFileServiceBeanLocal();
     protected AccrualDiseaseServiceLocal diseaseSvc;
+    protected static final String REJECT_BLANKS_NAME = "AccrualBlankSiteName";
+    protected static final String REJECT_BLANKS_DATE = "AccrualBlankSiteRejectDate";
     private static final String ERROR_SUBJECT_KEY = "accrual.error.subject";
     private static final String ERROR_SUBJECT_VALUE = "accrual.error.subject- ${nciTrialIdentifier}";
     private static final String ERROR_BODY_KEY = "accrual.error.body";
@@ -440,6 +442,8 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(paSvcLocator.getRegistryUserService()).thenReturn(registryUserService);
         LookUpTableServiceRemote lookuptableSvc = mock(LookUpTableServiceRemote.class);
         when(paSvcLocator.getLookUpTableService()).thenReturn(lookuptableSvc);
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(REJECT_BLANKS_DATE)).thenReturn("01-MAR-2014");
+        when(paSvcLocator.getLookUpTableService().getPropertyValue(REJECT_BLANKS_NAME)).thenReturn("Unidentified Site");
         when(paSvcLocator.getLookUpTableService().getPropertyValue(ERROR_SUBJECT_KEY)).thenReturn(ERROR_SUBJECT_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(ERROR_BODY_KEY)).thenReturn(ERROR_BODY_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(CONFIRMATION_SUBJECT_KEY)).thenReturn(CONFIRMATION_SUBJECT_VALUE);

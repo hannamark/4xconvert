@@ -86,7 +86,9 @@ import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
@@ -97,6 +99,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -104,11 +107,15 @@ import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -129,6 +136,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.validator.routines.DateValidator;
 import org.apache.log4j.Logger;
 
 /**
@@ -140,7 +148,7 @@ import org.apache.log4j.Logger;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods", 
                     "PMD.AvoidDeeplyNestedIfStmts", "PMD.AppendCharacterWithChar", "PMD.NPathComplexity",
-                    "PMD.ExcessiveClassLength" })
+                    "PMD.ExcessiveClassLength", "PMD.TooManyFields" })
 public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader implements
         CdusBatchUploadDataValidatorLocal {
     
@@ -151,6 +159,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private Map<String, Long> listOfPoIds;
     private Map<String, String> listOfCtepIds;
     private Map<String, Ii> listOfOrgIds;
+    private Map<String, Ii> listOfBlankIds;
+    private Date blankOrgDate;
+    private String blankOrgName;
     private static final int TIME_SECONDS = 1000;
     private String codeSystemFile;
     private boolean checkDisease;
@@ -175,9 +186,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     public BatchValidationResults validateSingleBatchData(File file, RegistryUser user)  {
         long startTime = System.currentTimeMillis();        
         ru = user;
-        listOfPoIds = new HashMap<String, Long>();
-        listOfCtepIds = new HashMap<String, String>();
-        listOfOrgIds = new HashMap<String, Ii>();
+        initializeOrganizationLists();
         codeSystemFile = null;
         checkDisease = false;
         patientCheck = false;
@@ -186,7 +195,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         boolean notCtepDcpTrial = false;
         bfErrors = new BatchFileErrors();
         BatchValidationResults results = new BatchValidationResults();
-        superAbstractor = isSuAbstractor(ru);
         results.setFileName(file.getName());
         try {
             List<String[]> lines = new ArrayList<String[]>();
@@ -232,9 +240,17 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                                 List<Long> ids = new ArrayList<Long>();
                                 List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteService()
                                         .getTreatingSites(spId);
+                                boolean trialHasBlankTreatingSite = false;
                                 for (SearchStudySiteResultDto iso : isoStudySiteList) {
                                     listOfPoIds.put(IiConverter.convertToString(iso.getOrganizationIi()),
                                             IiConverter.convertToLong(iso.getStudySiteIi()));
+                                    if (StringUtils.equals(blankOrgName, 
+                                            StConverter.convertToString(iso.getOrganizationName()))) {
+                                        trialHasBlankTreatingSite = true;
+                                    }
+                                }
+                                if (!trialHasBlankTreatingSite) {
+                                    listOfBlankIds.clear();
                                 }
                                 for (Map.Entry<String, Long> entry : listOfPoIds.entrySet()) {
                                     ids.add(IiConverter.convertToLong(IiConverter.convertToPoOrganizationIi(
@@ -316,6 +332,39 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         return results;
     }
 
+    void initializeOrganizationLists() {
+        superAbstractor = isSuAbstractor(ru);
+        listOfPoIds = new HashMap<String, Long>();
+        listOfCtepIds = new HashMap<String, String>();
+        listOfOrgIds = new HashMap<String, Ii>();
+        listOfBlankIds = new HashMap<String, Ii>();
+        blankOrgName = "";
+        blankOrgDate = new Date(0L);
+        if (superAbstractor) {
+            try {
+                blankOrgName = PaServiceLocator.getInstance().getLookUpTableService().
+                        getPropertyValue("AccrualBlankSiteName");
+                OrganizationSearchCriteriaDTO crit = new OrganizationSearchCriteriaDTO();
+                crit.setName(blankOrgName);
+                List<OrganizationDTO> orgList = PoRegistry.getOrganizationEntityService().
+                        search(crit, new LimitOffset(1, 0));
+                Ii blankOrgId = orgList.get(0).getIdentifier();
+                listOfBlankIds.put(null, blankOrgId);
+                listOfBlankIds.put("", blankOrgId);
+                listOfBlankIds.put("CTSU", blankOrgId);
+                listOfBlankIds.put("00000", blankOrgId);
+                String rejectDateStr = PaServiceLocator.getInstance().getLookUpTableService().
+                        getPropertyValue("AccrualBlankSiteRejectDate");
+                if (rejectDateStr != null) {
+                    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
+                    blankOrgDate = df.parse(rejectDateStr);
+                }
+            } catch (Exception e) {
+                LOG.error("Exception retrieving and parsing the AccrualBlankSite properties.", e);
+            }   
+        }
+    }
+
     private void setAccrualSubmissionLevel(Long spId) throws PAException {
         if (sp.getStudyProtocolType().getValue().equals(
                 NonInterventionalStudyProtocol.class.getSimpleName())) {
@@ -395,14 +444,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         validateProtocolNumber(key, values, lineNumber, expectedProtocolId);
         validatePatientID(key, values, lineNumber);
         String studySiteID = null;
+        Date registrationDate = null;
+        boolean correctOrganizationId = false;
         if (StringUtils.equalsIgnoreCase(PATIENTS, key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
+            String dateOfEntry = AccrualUtil.safeGet(values, PATIENT_DATE_OF_ENTRY_INDEX);
+            if (new DateValidator().isValid(dateOfEntry, "yyyyMMdd", Locale.getDefault())) {
+                registrationDate = BatchUploadUtils.getDate(dateOfEntry);
+            }
+            correctOrganizationId = isCorrectOrganizationId(studySiteID, registrationDate, true);
         } else if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
             studySiteID = AccrualUtil.safeGet(values, BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1);
-        }
-        boolean correctOrganizationId = false;
-        if (!StringUtils.isEmpty(studySiteID)) {
-            correctOrganizationId = isCorrectOrganizationId(studySiteID);
+            correctOrganizationId = isCorrectOrganizationId(studySiteID, registrationDate, false);
         }
         validateStudySiteAccrualAccessCode(key, values, lineNumber, correctOrganizationId);
         if (StringUtils.equalsIgnoreCase(PATIENTS, key) && !patientCheck && codeSystemFile == null) {
@@ -439,7 +492,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         if (StringUtils.equalsIgnoreCase(PATIENTS, key)) {
             String registeringInstitutionID = AccrualUtil.safeGet(values, 
                     BatchFileIndex.PATIENT_REG_INST_ID_INDEX - 1);
-            if (StringUtils.isEmpty(registeringInstitutionID)) {
+            if (StringUtils.isEmpty(registeringInstitutionID) && !superAbstractor) {
                 bfErrors.append(new StringBuffer()
                     .append("Patient Registering Institution Code is missing for patient ID ")
                     .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
@@ -471,9 +524,17 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     /*
      * Test that Registering Institution Code is NCI PO ID or CTEP ID
      */
-    private boolean isCorrectOrganizationId(String registeringInstitutionID) {
+    private boolean isCorrectOrganizationId(String registeringInstitutionID, Date registrationDate,
+            boolean isDetailed) {
         String msg = "The Registering Institution Code must be a valid PO or CTEP ID. Code: " 
                 + registeringInstitutionID + "\n";
+        if (isDetailed && registrationDate != null && registrationDate.before(blankOrgDate)
+                && listOfBlankIds.containsKey(registeringInstitutionID)) {
+            if (listOfOrgIds.get(registeringInstitutionID) == null) {
+                listOfOrgIds.put(registeringInstitutionID, listOfBlankIds.get(registeringInstitutionID));
+            }
+            return true;
+        }
         if (listOfPoIds.containsKey(registeringInstitutionID)) {
             if (listOfOrgIds.get(registeringInstitutionID) == null) {
                 listOfOrgIds.put(registeringInstitutionID, 
@@ -502,9 +563,11 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             LOG.debug(e.getMessage());
         }
         try {
-            Ii identifier = getPoHcfByCtepId(IiConverter.convertToIdentifiedOrgEntityIi(registeringInstitutionID));
-            if (identifier != null && identifier.getExtension() != null) {
-                return true;
+            if (StringUtils.isNotBlank(registeringInstitutionID)) {
+                Ii identifier = getPoHcfByCtepId(IiConverter.convertToIdentifiedOrgEntityIi(registeringInstitutionID));
+                if (identifier != null && identifier.getExtension() != null) {
+                    return true;
+                }
             }
         } catch (PAException e) {
             LOG.debug(e.getMessage());
@@ -541,7 +604,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * on the COLLECTION line.
      */
     private void validatePatientTreatingSite(String regInstID, List<String> values, long lineNumber) {
-        if (listOfPoIds.containsKey(regInstID) || listOfCtepIds.containsKey(regInstID)) {
+        if (listOfPoIds.containsKey(regInstID) || listOfCtepIds.containsKey(regInstID) 
+                || listOfBlankIds.containsKey(regInstID)) {
             return;           
         }
         addUpPatientRegisteringInstitutionCode(values, lineNumber);
@@ -554,9 +618,13 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * on the COLLECTION line.
      * @throws PAException 
      */
-    private void validateTreatingSiteAndAccrualAccess(String regInstID, long lineNumber, List<String> values) {
+    private void validateTreatingSiteAndAccrualAccess(String regInstID, long lineNumber, 
+            List<String> values) {
         if (listOfPoIds.containsKey(regInstID)  || listOfCtepIds.containsKey(regInstID)) {
             assertUserAllowedSiteAccess(sp.getIdentifier(), regInstID, lineNumber, values);
+            return;
+        }
+        if (listOfBlankIds.containsKey(regInstID)) {
             return;
         }
         addAccrualSiteValidationError(regInstID, lineNumber);
@@ -678,11 +746,35 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     public void setSubjectAccrualService(SubjectAccrualServiceLocal subjectAccrualService) {
         this.subjectAccrualService = subjectAccrualService;
     }
-
+    
     /**
      * @return the subjectAccrualService
      */
     public SubjectAccrualServiceLocal getSubjectAccrualService() {
         return subjectAccrualService;
+    }
+
+    Map<String, Long> getListOfPoIds() {
+        return listOfPoIds;
+    }
+
+    Map<String, String> getListOfCtepIds() {
+        return listOfCtepIds;
+    }
+
+    Map<String, Ii> getListOfOrgIds() {
+        return listOfOrgIds;
+    }
+
+    Map<String, Ii> getListOfBlankIds() {
+        return listOfBlankIds;
+    }
+
+    Date getBlanksOrgDate() {
+        return blankOrgDate;
+    }
+
+    void setRu(RegistryUser ru) {
+        this.ru = ru;
     }
 }
