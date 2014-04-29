@@ -98,10 +98,6 @@ public class ManageAccrualAccessAction extends ActionSupport implements
     
     private String assignmentType; 
 
-   
-	/**
-     * 
-     */
     private static final long serialVersionUID = 1L;
 
     private static final String BY_TRIAL = "byTrial";
@@ -736,20 +732,18 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         }
         
         /**
-         * @return assignmenttype
+         * @return assignmentType
          */
         public String getAssignmentType() {
             return assignmentType;
         }
 
         /**
-         * @param ofUsers the assignmentType to set
+         * @param assignmentType the assignmentType to set
          */
         public void setAssignmentType(String assignmentType) {
             this.assignmentType = assignmentType;
         }
-        
-        
     }
     
     /**
