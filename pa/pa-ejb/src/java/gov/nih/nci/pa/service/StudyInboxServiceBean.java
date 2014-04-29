@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -105,6 +106,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TrialUpdatesRecorder;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -122,6 +124,8 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author Anupama Sharma
@@ -619,10 +623,17 @@ public class StudyInboxServiceBean // NOPMD
             throws PAException {
         StudyInboxDTO inbox = get(inboxId);
         Timestamp now = new Timestamp(new Date().getTime());
+        User user = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser());
         if (code == StudyInboxSectionCode.ADMIN) {
             inbox.setAdminCloseDate(TsConverter.convertToTs(now));
+            if (user != null) {
+                inbox.setAdminAcknowledgedUser(StConverter.convertToSt(user.getLoginName()));
+            }
         } else if (code == StudyInboxSectionCode.SCIENTIFIC) {
             inbox.setScientificCloseDate(TsConverter.convertToTs(now));
+            if (user != null) {
+                inbox.setScientificAcknowledgedUser(StConverter.convertToSt(user.getLoginName()));
+            }
         }
         if (code == null
                 || code == StudyInboxSectionCode.BOTH

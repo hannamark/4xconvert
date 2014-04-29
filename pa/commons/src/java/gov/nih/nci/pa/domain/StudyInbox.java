@@ -80,6 +80,7 @@ package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.StudyInboxTypeCode;
 import gov.nih.nci.pa.util.CommonsConstant;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 
@@ -87,6 +88,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Index;
@@ -116,6 +119,9 @@ public class StudyInbox extends AbstractStudyEntity implements Auditable {
   private Boolean admin;
   private Boolean scientific;
   private StudyInboxTypeCode typeCode;
+  private User adminAcknowledgedUser;
+  private User scientificAcknowledgedUser;
+  
 
   /**
    * @return comments
@@ -229,4 +235,34 @@ public class StudyInbox extends AbstractStudyEntity implements Auditable {
     public void setScientific(Boolean scientific) {
         this.scientific = scientific;
     }
+    /**
+     * @return adminAcknowledgedUser
+     */
+    @ManyToOne
+    @JoinColumn(name = "ADMIN_ACK_USER_ID")
+    public User getAdminAcknowledgedUser() {
+        return adminAcknowledgedUser;
+    }
+    /**
+     * @param adminAcknowledgedUser adminAcknowledgedUser
+     */
+    public void setAdminAcknowledgedUser(User adminAcknowledgedUser) {
+        this.adminAcknowledgedUser = adminAcknowledgedUser;
+    }
+    /**
+     * @return scientificAcknowledgedUser
+     */
+    @ManyToOne
+    @JoinColumn(name = "SCIENTIFIC_ACK_USER_ID")
+    public User getScientificAcknowledgedUser() {
+        return scientificAcknowledgedUser;
+    }
+    /**
+     * @param scientificAcknowledgedUser scientificAcknowledgedUser
+     */
+    public void setScientificAcknowledgedUser(User scientificAcknowledgedUser) {
+        this.scientificAcknowledgedUser = scientificAcknowledgedUser;
+    }
+    
+    
 }

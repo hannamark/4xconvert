@@ -88,6 +88,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 /**
  * @author Anupama Sharma
@@ -114,14 +116,23 @@ public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyI
         dto.setScientific(BlConverter.convertToBl(bo.getScientific()));
         dto.setAdminCloseDate(TsConverter.convertToTs(bo.getAdminCloseDate()));
         dto.setScientificCloseDate(TsConverter.convertToTs(bo.getScientificCloseDate()));
+        if (bo.getAdminAcknowledgedUser() != null) {
+            dto.setAdminAcknowledgedUser(
+                    StConverter.convertToSt(bo.getAdminAcknowledgedUser().getLoginName()));
+        }
+        if (bo.getScientificAcknowledgedUser() != null) {
+            dto.setScientificAcknowledgedUser(
+                    StConverter.convertToSt(bo.getScientificAcknowledgedUser().getLoginName()));
+        }
         return dto;
     }
 
     /**
      * {@inheritDoc}
+     * @throws PAException  in case of error
      */
     @Override
-    public StudyInbox convertFromDtoToDomain(StudyInboxDTO dto) {
+    public StudyInbox convertFromDtoToDomain(StudyInboxDTO dto) throws PAException {
         StudyInbox bo = new StudyInbox();
         convertFromDtoToDomain(dto, bo);
         return bo;
@@ -129,9 +140,10 @@ public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyI
 
     /**
      * {@inheritDoc}
+     * @throws PAException in case of error
      */
     @Override
-    public void convertFromDtoToDomain(StudyInboxDTO dto, StudyInbox bo) {
+    public void convertFromDtoToDomain(StudyInboxDTO dto, StudyInbox bo) throws PAException {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
@@ -145,5 +157,15 @@ public class StudyInboxConverter extends AbstractConverter<StudyInboxDTO, StudyI
         bo.setAdminCloseDate(TsConverter.convertToTimestamp(dto.getAdminCloseDate()));
         bo.setScientificCloseDate(TsConverter.convertToTimestamp(dto.getScientificCloseDate()));
         bo.setStudyProtocol(spBo);
+        if (dto.getAdminAcknowledgedUser() != null) {
+            String adminAckUserName = StConverter.convertToString(dto.getAdminAcknowledgedUser()); 
+            User adminAckUser = AbstractStudyProtocolConverter.getCsmUserUtil().getCSMUser(adminAckUserName);
+            bo.setAdminAcknowledgedUser(adminAckUser);
+        }
+        if (dto.getScientificAcknowledgedUser() != null) {
+            String sciAckUserName = StConverter.convertToString(dto.getScientificAcknowledgedUser());
+            User sciAckUser = AbstractStudyProtocolConverter.getCsmUserUtil().getCSMUser(sciAckUserName);
+            bo.setScientificAcknowledgedUser(sciAckUser);
+        }
     }
 }

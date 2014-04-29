@@ -80,7 +80,7 @@ public class StudyInboxServiceBeanTest extends AbstractHibernateTestCase {
                 inbox.getId());
         assertNull(ackInbox.getCloseDate());
         assertNotNull(ackInbox.getAdminCloseDate());
-
+        assertEquals(ackInbox.getAdminAcknowledgedUser().getUserId().longValue(), 1L);
     }
     
     @Test
@@ -99,7 +99,7 @@ public class StudyInboxServiceBeanTest extends AbstractHibernateTestCase {
                 inbox.getId());
         assertNull(ackInbox.getCloseDate());
         assertNotNull(ackInbox.getScientificCloseDate());
-
+        assertEquals(ackInbox.getScientificAcknowledgedUser().getUserId().longValue(), 1L); 
     }
     
     @Test
@@ -122,7 +122,8 @@ public class StudyInboxServiceBeanTest extends AbstractHibernateTestCase {
         assertNotNull(ackInbox.getCloseDate());
         assertNotNull(ackInbox.getAdminCloseDate());
         assertNotNull(ackInbox.getScientificCloseDate());
-
+        assertEquals(ackInbox.getAdminAcknowledgedUser().getUserId().longValue(), 1L);
+        assertEquals(ackInbox.getScientificAcknowledgedUser().getUserId().longValue(), 1L);
     }
 
     private StudyInbox createStudyInbox() {

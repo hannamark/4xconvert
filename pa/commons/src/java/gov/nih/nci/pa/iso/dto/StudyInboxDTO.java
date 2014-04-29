@@ -98,6 +98,8 @@ public class StudyInboxDTO  extends StudyDTO {
   private Ts scientificCloseDate;
   private Bl admin;
   private Bl scientific;
+  private St adminAcknowledgedUser;
+  private St scientificAcknowledgedUser;
   
   /**
    * @return the comments
@@ -198,7 +200,28 @@ public class StudyInboxDTO  extends StudyDTO {
     public void setScientific(Bl scientific) {
         this.scientific = scientific;
     }
-  
-  
-  
+    /**
+     * @return admin acknowledged user
+     */
+    public St getAdminAcknowledgedUser() {
+        return adminAcknowledgedUser;
+    }
+    /**
+     * @param adminAcknowledgedUser admin acknowledged user to set
+     */
+    public void setAdminAcknowledgedUser(St adminAcknowledgedUser) {
+        this.adminAcknowledgedUser = adminAcknowledgedUser;
+    }
+    /**
+     * @return scientific acknowledged user
+     */
+    public St getScientificAcknowledgedUser() {
+        return scientificAcknowledgedUser;
+    }
+    /**
+     * @param scientificAcknowledgedUser scientific acknowledged user to set
+     */
+    public void setScientificAcknowledgedUser(St scientificAcknowledgedUser) {
+        this.scientificAcknowledgedUser = scientificAcknowledgedUser;
+    }
 }
