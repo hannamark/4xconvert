@@ -161,6 +161,7 @@ public class AbstractStudyProtocolConverter {
         dto.setDateLastCreated(TsConverter.convertToTs(bo.getDateLastCreated()));
         dto.setConsortiaTrialCategoryCode(CdConverter.convertToCd(bo
                 .getConsortiaTrialCategoryCode()));
+        dto.setAccrualDiseaseCodeSystem(StConverter.convertToSt(bo.getAccrualDiseaseCodeSystem()));
     }
     
     private static void convertDatesToDto(StudyProtocolDates dates, AbstractStudyProtocolDTO dto) {
@@ -227,6 +228,7 @@ public class AbstractStudyProtocolConverter {
             bo.setConsortiaTrialCategoryCode(ConsortiaTrialCategoryCode
                     .getByCode(dto.getConsortiaTrialCategoryCode().getCode()));
         }
+        bo.setAccrualDiseaseCodeSystem(StConverter.convertToString(dto.getAccrualDiseaseCodeSystem()));
     }
 
     /**

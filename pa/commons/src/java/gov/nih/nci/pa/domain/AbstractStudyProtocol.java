@@ -131,6 +131,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     private String programCodeText;
     private Set<Ii> otherIdentifiers = new HashSet<Ii>();
     private ConsortiaTrialCategoryCode consortiaTrialCategoryCode;
+    private String accrualDiseaseCodeSystem = "SDC";
 
     
     /**
@@ -386,6 +387,19 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
             ConsortiaTrialCategoryCode consortiaTrialCategoryCode) {
         this.consortiaTrialCategoryCode = consortiaTrialCategoryCode;
     }
-  
-    
+
+    /**
+     * @return the accrual disease code system (e.g. SDC)
+     */
+    @Column(name = "ACCRUAL_DISEASE_CODE_SYSTEM", nullable = false)
+    public String getAccrualDiseaseCodeSystem() {
+        return accrualDiseaseCodeSystem;
+    }
+
+    /**
+     * @param accrualDiseaseCodeSystem the system used for accrual disease
+     */
+    public void setAccrualDiseaseCodeSystem(String accrualDiseaseCodeSystem) {
+        this.accrualDiseaseCodeSystem = accrualDiseaseCodeSystem;
+    }
 }

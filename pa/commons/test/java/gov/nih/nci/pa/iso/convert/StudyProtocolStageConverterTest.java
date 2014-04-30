@@ -155,6 +155,7 @@ public class StudyProtocolStageConverterTest extends
         dates.setCompletionDate(now);
         dates.setCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         bo.setNciGrant(Boolean.TRUE);
+        bo.setAccrualDiseaseCodeSystem("SDC");
         return bo;
     }
 
@@ -193,6 +194,7 @@ public class StudyProtocolStageConverterTest extends
         dto.setCompletionDate(nowTs);
         dto.setCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
         dto.setNciGrant(BlConverter.convertToBl(true));
+        dto.setAccrualDiseaseCodeSystem(StConverter.convertToSt("SDC"));
         return dto;
     }
 
@@ -224,6 +226,7 @@ public class StudyProtocolStageConverterTest extends
         assertEquals(now, dates.getPrimaryCompletionDate());
         assertEquals(ActualAnticipatedTypeCode.ACTUAL, dates.getPrimaryCompletionDateTypeCode());
         assertTrue(bo.getNciGrant());
+        assertEquals("SDC", bo.getAccrualDiseaseCodeSystem());
     }
 
     /**
@@ -253,6 +256,7 @@ public class StudyProtocolStageConverterTest extends
         assertTrue(dto.getCtgovXmlRequiredIndicator().getValue());
         assertEquals("program code", dto.getProgramCodeText().getValue());
         assertTrue(dto.getNciGrant().getValue());
+        assertEquals("SDC", dto.getAccrualDiseaseCodeSystem().getValue());
     }
 
 }

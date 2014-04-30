@@ -1569,4 +1569,8 @@
         <comment>PA: Enhance search for Updates of, and Acknowledged Updates for, trials from ClinicalTrials.gov</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6887-1.sql"/>
      </changeSet>
+     <changeSet id="PO-5717" author="Hugh">
+        <comment>Support for Acccrual ICD 10</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-5157.sql"/>
+     </changeSet>
 </databaseChangeLog>

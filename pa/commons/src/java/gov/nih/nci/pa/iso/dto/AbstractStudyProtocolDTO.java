@@ -120,6 +120,7 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private Cd primaryCompletionDateTypeCode;
     private Cd completionDateTypeCode;
     private Cd consortiaTrialCategoryCode;
+    private St accrualDiseaseCodeSystem;
 
     /**
      * @return the officialTitle
@@ -443,6 +444,17 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
         this.consortiaTrialCategoryCode = consortiaTrialCategoryCode;
     }
 
-    
-    
+    /**
+     * @return the accrual disease code system (e.g. SDC)
+     */
+    public St getAccrualDiseaseCodeSystem() {
+        return accrualDiseaseCodeSystem;
+    }
+
+    /**
+     * @param accrualDiseaseCodeSystem the system used for accrual disease
+     */
+    public void setAccrualDiseaseCodeSystem(St accrualDiseaseCodeSystem) {
+        this.accrualDiseaseCodeSystem = accrualDiseaseCodeSystem;
+    }
 }
