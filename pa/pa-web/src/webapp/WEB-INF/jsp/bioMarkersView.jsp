@@ -128,14 +128,10 @@
 				</display:column>
 							<display:column escapeXml="true" property="name" sortable="true" 
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
-								<s:if test="%{#attr.row.dateEmailSent != null }">
-                <display:column property="dateEmailSent" sortable="true" 
-                                titleKey="plannedMarker.termRequest" headerClass="sortable" />
-                                </s:if>
-                             <s:if test="%{#attr.row.dateEmailSent == null }">
-                <display:column titleKey="plannedMarker.termRequest"
-                                headerClass="sortable" class="action">
-                                <del class="btnwrapper">
+		<s:if test="%{#attr.row.dateEmailSent == null}">
+                <display:column titleKey="plannedMarker.termRequest" headerClass="centered"
+                                class="action">
+                                <del class="btnwrapper"">
                                     <ul class="btnrow">
                                         <li>
                                         <s:a cssClass="btn" href="javascript:void(0)" id="request" onclick="termRequestForm('%{#attr.row.nciIdentifier}','%{#attr.row.name}','%{#attr.row.id}');">
@@ -144,8 +140,13 @@
                                         </li>
                                     </ul>
                                 </del>
-                            </display:column>
-                                </s:if>
+                 </display:column>
+        </s:if>
+       <s:if test="%{#attr.row.dateEmailSent != null}">
+                <display:column sortable="true" titleKey="plannedMarker.termRequest" headerClass="centered" style="text-align:center">
+                <s:date name="%{#attr.row.dateEmailSent}"  format="yyyy-MM-dd HH:mm:ss" />
+                </display:column>
+         </s:if>
                <display:column titleKey="plannedMarker.caDSR.id" headerClass="sortable" >
                   <label><s:textfield id="caDsrId_%{#attr.row.id}"   name="caDsrId_%{#attr.row.id}" maxlength="200" size="100" cssStyle="width:200px" /></label>
                </display:column>
