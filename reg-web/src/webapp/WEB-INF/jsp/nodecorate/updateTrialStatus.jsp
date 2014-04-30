@@ -6,14 +6,7 @@
     <head>
         <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
         <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
-        <%@ include file="/WEB-INF/jsp/common/includeextrajs.jsp" %>
         <script type="text/javascript" language="javascript">
-            addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "updateTrialStatusForm");
-            addCalendar("Cal2", "Select Date", "trialDTO.startDate", "updateTrialStatusForm");
-            addCalendar("Cal3", "Select Date", "trialDTO.primaryCompletionDate", "updateTrialStatusForm");
-            addCalendar("Cal4", "Select Date", "trialDTO.completionDate", "updateTrialStatusForm");
-            setWidth(90, 1, 15, 1);
-            setFormat("mm/dd/yyyy");
             
             function updateTrialStatus() {
                 $('updateTrialStatusForm').submit();

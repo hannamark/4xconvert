@@ -28,17 +28,18 @@
                <label for="trialDTO_reason" class="col-xs-4 control-label"><fmt:message key="update.trial.trialStatusReason"/><span class="required">*</span><em>Required for Administratively Complete, Withdrawn<br>and Temporarily Closed statuses only</em></label>
                <div class="col-xs-4">
                   <s:textarea id="trialDTO_reason" name="trialDTO.reason" cols="50" rows="3" maxlength="160" 
-                      cssClass="form-control charcounter"/>
+                      cssClass="form-control charcounter" cssStyle="width: 156px; height: 55px;"/>
                   <span class="alert-danger">
                       <s:fielderror>
                           <s:param>trialDTO.reason</s:param>
                       </s:fielderror> 
                   </span>
-               </div>
-               <div class="col-xs-4">
-                   <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="If the trial is Administratively Complete, Withdrawn, or Temporarily Closed, enter the reason that the study stopped."  data-placement="top" data-trigger="hover"></i>
+                  <span>
+                  <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="If the trial is Administratively Complete, Withdrawn, or Temporarily Closed, enter the reason that the study stopped."  data-placement="top" data-trigger="hover"></i>
+                  </span>
                </div>
             </div>
+            
             <div class="form-group">
                 <label for="trialDTO_statusDate" class="col-xs-4 control-label"><fmt:message key="update.trial.currentTrialStatusDate"/><span class="required">*</span></label>
                 <div class="col-xs-2">

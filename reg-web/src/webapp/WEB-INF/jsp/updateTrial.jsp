@@ -8,20 +8,8 @@
     <head>
         <title><fmt:message key="update.trial.page.title"/></title>
         <s:head/>
-        <!-- po integration -->
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-        <!-- /po integration -->
-        <script type="text/javascript">
-            addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "updateTrial");
-            addCalendar("Cal2", "Select Date", "trialDTO.startDate", "updateTrial");
-            addCalendar("Cal3", "Select Date", "trialDTO.primaryCompletionDate", "updateTrial");
-            addCalendar("Cal4", "Select Date", "trialDTO.completionDate", "updateTrial");
-            setWidth(90, 1, 15, 1);
-            setFormat("mm/dd/yyyy");
-        </script>
+
+
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
         <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
