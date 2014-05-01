@@ -4,9 +4,12 @@ import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
 
+import javax.ejb.Remote;
+
 /**
  * @author Hugh Reinhart
  */
+@Remote
 public interface AccrualDiseaseTerminologyServiceRemote {
 
     /**
