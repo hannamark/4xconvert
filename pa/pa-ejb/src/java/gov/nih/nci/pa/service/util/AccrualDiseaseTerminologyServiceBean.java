@@ -98,7 +98,7 @@ public class AccrualDiseaseTerminologyServiceBean implements
     @Override
     public Boolean canChangeCodeSystem(Long studyProtocolId) {
         if (studyProtocolId == null) {
-            return false;
+            return true;
         }
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySubject.class, "ss");
         criteria.createAlias("studyProtocol", "sp");
@@ -106,6 +106,7 @@ public class AccrualDiseaseTerminologyServiceBean implements
         criteria.add(Restrictions.eq("statusCode", FunctionalRoleStatusCode.ACTIVE));
         criteria.add(Restrictions.isNotNull("disease"));
         criteria.setProjection(Projections.rowCount());
-        return (0 == (Integer) criteria.uniqueResult());
+        Integer count = (Integer) criteria.uniqueResult();
+        return (0 == count);
     }
 }

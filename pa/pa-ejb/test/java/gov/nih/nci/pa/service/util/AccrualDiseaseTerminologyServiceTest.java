@@ -22,7 +22,6 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceBeanTest;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -107,11 +106,6 @@ public class AccrualDiseaseTerminologyServiceTest extends AbstractHibernateTestC
 
     @Test
     public void updateCodeSystemTest() throws Exception {
-    	expectedEx.expect(PAException.class);
-        expectedEx.expectMessage("The disease code system for this trial cannot be changed.");
-        bean.updateCodeSystem(null, "ICD10");
-        bean.updateCodeSystem(-1L, "ICD10");
-
         InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         ispDTO.setAccrualDiseaseCodeSystem(StConverter.convertToSt("SDC"));
         Ii ii = spBean.createInterventionalStudyProtocol(ispDTO);
@@ -129,7 +123,7 @@ public class AccrualDiseaseTerminologyServiceTest extends AbstractHibernateTestC
     @Test
     public void testCanChangeCodeSystem() throws Exception {
     	// null test
-        assertFalse(remoteEjb.canChangeCodeSystem(null));
+        assertTrue(remoteEjb.canChangeCodeSystem(null));
 
         // no subjects test
         InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
