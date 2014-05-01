@@ -85,10 +85,13 @@ package gov.nih.nci.registry.test.integration;
 import junit.framework.TestCase;
 
 import org.junit.Before;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -96,14 +99,15 @@ import com.thoughtworks.selenium.Selenium;
  * @author Denis G. Krylov
  */
 public abstract class AbstractSelenese2TestCase extends TestCase {
-    private static final int PAGE_TIMEOUT_SECONDS = 180;
-    private static final int SECONDS_PER_MINUTE = 1000;
+    private static final int PAGE_TIMEOUT_SECONDS = 60;
+    private static final int MILLISECONDS_PER_SECOND = 1000;
     private int serverPort = 39480;
     private String serverHostname = "localhost";
     private String driverClass = "org.openqa.selenium.firefox.FirefoxDriver";
 
     protected Selenium selenium;
     protected WebDriver driver;
+    protected String url;
 
     @Override
     @Before
@@ -111,7 +115,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         String hostname = getServerHostname();
         int port = getServerPort();
         String driverClass = getDriverClass();
-        String url = port == 0 ? "http://" + hostname : "http://" + hostname
+        url = port == 0 ? "http://" + hostname : "http://" + hostname
                 + ":" + port;
 
         driver = (WebDriver) Class.forName(driverClass).newInstance();
@@ -128,7 +132,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
      * @return the number of milliseconds in the give seconds
      */
     protected static String toMillisecondsString(long seconds) {
-        return String.valueOf(seconds * SECONDS_PER_MINUTE);
+        return String.valueOf(seconds * MILLISECONDS_PER_SECOND);
     }
 
     /**
@@ -150,6 +154,11 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         selenium.waitForCondition(
                 "selenium.browserbot.getCurrentWindow().document.getElementById('"
                         + id + "');", toMillisecondsString(timeoutSeconds));
+    }
+
+    protected void waitForTextToAppear(By by, String text, int timeoutSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
+        wait.until(ExpectedConditions.textToBePresentInElement(by, text));
     }
 
     /**
@@ -174,16 +183,16 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         // This pause is to allow for any js associated with an anchor to
         // complete execution
         // before moving on.
-        pause(SECONDS_PER_MINUTE / 2);
+        pause(MILLISECONDS_PER_SECOND / 2);
     }
 
     protected void clickLinkAndWait(String linkText) {
         WebElement el = driver.findElement(By.linkText(linkText));
         el.click();
-        pause(SECONDS_PER_MINUTE / 2);
+        pause(MILLISECONDS_PER_SECOND / 2);
     }
 
-    protected void pause(int millisecs) {
+    public void pause(int millisecs) {
         try {
             Thread.sleep(millisecs);
         } catch (InterruptedException e) {
@@ -195,6 +204,15 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
      */
     protected void clickAndWaitSaveButton() {
         clickAndWait("save_button");
+    }
+    
+    protected void verifyAlertTextAndAccept(String msg) {
+        Alert javascriptAlert = driver.switchTo().alert();
+        String text = javascriptAlert.getText(); // Get text on alert box
+        assertTrue(text.contains(msg));
+        javascriptAlert.accept();
+        driver.switchTo().defaultContent();
+
     }
 
     /**

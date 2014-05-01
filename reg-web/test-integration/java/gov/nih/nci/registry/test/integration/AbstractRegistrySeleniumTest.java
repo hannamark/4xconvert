@@ -93,16 +93,21 @@ import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 
 /**
  * Abstract base class for selenium tests.
@@ -125,6 +130,8 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setDriverClass(TestProperties.getDriverClass());
+        //super.setDriverClass(PHANTOM_JS_DRIVER);
+        System.setProperty("phantomjs.binary.path", TestProperties.getPhantomJsPath());
         super.setUp();
         selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
         
@@ -145,12 +152,34 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
 
     @Override
     public void tearDown() throws Exception {
+        takeScreenShot();
         logoutUser();
         closeBrowser();
         closeDbConnection();
         super.tearDown();
     }
 
+    private void takeScreenShot() {
+        try {           
+            final String screenShotFileName = getClass().getSimpleName()
+                    + "_ScreenShot_"
+                    + new Timestamp(System.currentTimeMillis()).toString()
+                            .replaceAll("\\D+", "_") + ".png";
+            File destFile = new File(SystemUtils.JAVA_IO_TMPDIR,
+                    screenShotFileName);
+
+            File scrFile = ((TakesScreenshot) driver)
+                    .getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(scrFile, destFile);
+            System.out.println("Saved screen shot: "
+                    + destFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    
     private void closeBrowser() {
         driver.quit();
     }

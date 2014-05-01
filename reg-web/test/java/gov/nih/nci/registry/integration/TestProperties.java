@@ -103,6 +103,10 @@ public final class TestProperties {
     public static final String SELENIUM_DELAY_KEY = "selenium.delay";
     public static final String SELENIUM_DELAY_DEFAULT = "10";
     
+    public static final String WEBDRIVER_PHANTOMJS_PATH = "phantomjs.binary.path";
+    private static final String WEBDRIVER_PHANTOMJS_PATH_DEFAULT = 
+            "/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs";
+    
     public static final String TEST_DB_URL = "test.db.connection.url";
     public static final String TEST_DB_DRIVER = "test.db.driver";
     public static final String TEST_DB_USER = "test.db.user";
@@ -126,12 +130,16 @@ public final class TestProperties {
         return Integer.parseInt(properties.getProperty(SERVER_PORT_KEY, SERVER_PORT_DEFAULT));
     }
 
+    public static String getSeleniumCommandDelay() {
+        return properties.getProperty(SELENIUM_DELAY_KEY, SELENIUM_DELAY_DEFAULT);
+    }
+    
     public static String getDriverClass() {
         return properties.getProperty(WEBDRIVER_CLASS_KEY, WEBDRIVER_CLASS_DEFAULT);
     }
 
-    public static String getSeleniumCommandDelay() {
-        return properties.getProperty(SELENIUM_DELAY_KEY, SELENIUM_DELAY_DEFAULT);
+    public static String getPhantomJsPath() {
+        return properties.getProperty(WEBDRIVER_PHANTOMJS_PATH, WEBDRIVER_PHANTOMJS_PATH_DEFAULT);
     }
     
     public static String getProperty(String name) {

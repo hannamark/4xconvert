@@ -50,7 +50,9 @@
     <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
 
     <property name="selenium.delay" value="10"/>
-	<property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
+    <property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
+    <property name="phantomjs.binary.path" value="/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs"/>
+
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
@@ -216,6 +218,7 @@
                 <filter token="selenium.server.port" value="${selenium.server.port}"/>
                 <filter token="selenium.delay" value="${selenium.delay}"/>            	
             	<filter token="webdriver.class" value="${webdriver.class}"/>
+            	<filter token="phantomjs.binary.path" value="${phantomjs.binary.path}" />
             	<filter token="jdbc.driver" value="${jdbc.driver}"/>
                 <filter token="jdbc.url" value="${jdbc.url}"/>
                 <filter token="db.username" value="${db.username}"/>
