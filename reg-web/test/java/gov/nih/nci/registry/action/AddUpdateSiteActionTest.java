@@ -324,7 +324,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                 fieldErrs.get("statusCode"),
                 Arrays.asList("error.participatingOrganizations.recruitmentStatus"));
         assertEquals(fieldErrs.get("statusDate"),
-                Arrays.asList("error.submit.invalidDate"));
+                Arrays.asList("A valid Recruitment Status Date is required"));
 
     }
 

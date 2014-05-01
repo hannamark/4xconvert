@@ -22,7 +22,7 @@ var registryApp = {
 <c:if test="${sessionScope.disclaimerAccepted}">
 	<script type="text/javascript" language="javascript" src="${scriptPath}/js/subModalcommon.js"></script>
 	<script type="text/javascript" language="javascript" src="${scriptPath}/js/subModal.js"></script>
-	<script type="text/javascript" language="javascript" src="${scriptPath}/js/coppa.js"></script>
+	<script type="text/javascript" language="javascript" src="${scriptPath}/js/coppa.js?98217008"></script>
 </c:if>
 
 <script type="text/javascript" src="${scriptPath}/js/calendarpopup.js"></script>

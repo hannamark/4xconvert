@@ -44,6 +44,8 @@ import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -52,6 +54,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 
@@ -65,6 +68,8 @@ import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.TextProviderSupport;
 import com.opensymphony.xwork2.config.Configuration;
 import com.opensymphony.xwork2.config.ConfigurationManager;
 import com.opensymphony.xwork2.config.providers.XWorkConfigurationProvider;
@@ -100,6 +105,25 @@ public abstract class AbstractRegWebTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         ServletActionContext.setResponse(response);
+    }
+    
+    protected void setTextProvider(ActionSupport action) {
+        try {
+            Field field = ActionSupport.class.getDeclaredField("textProvider");
+            field.setAccessible(true);
+
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField
+                    .setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.set(
+                    action,
+                    new TextProviderSupport(ResourceBundle
+                            .getBundle("ApplicationResources"), action));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

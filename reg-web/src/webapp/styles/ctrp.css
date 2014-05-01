@@ -1464,12 +1464,21 @@ input[type="radio"][disabled], input[type="checkbox"][disabled], .radio[disabled
 	margin-top:-7px;
 	right:8px;
 }
-.sortable th a i.fa-sort-asc {
+.sortable th a i.fa-sort-asc, th.sorting_asc a i.fa-sort {
 	margin-top:-11px;
 }
-.sortable th a i.fa-sort-desc {
+.sortable th a i.fa-sort-desc, th.sorting_desc a i.fa-sort {
 	margin-top:-5px;
 }
+
+th.sorting_asc a i.fa-sort:before {
+	content:"\f0dd" !important;
+}
+
+th.sorting_desc a i.fa-sort:before {
+    content:"\f0de" !important;
+}
+
 .table-header-wrap .table > thead > tr > th {
 	white-space: normal;
 	padding:4px 20px 4px 8px;
@@ -1816,5 +1825,9 @@ table td {
 .nowrap {white-space: nowrap;}
 .dropdown.dark > a {
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.2);
+}
+
+.glyphicon-large {
+	font-size: 32px;
 }
 

@@ -23,6 +23,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="gov.nih.nci.coppa"    name="nci-commons-ctrp-struts2"  rev="1.4.10-SNAPSHOT"  conf="runtime->default">
        <exclude module="nci-commons-ctrp-core"/>
     </dependency>
+    <dependency org="org.json"               name="json"                    rev="20140107"        conf="runtime->master"/>
     <dependency org="displaytag"             name="displaytag"              rev="1.1"             conf="runtime->master"/>
     <dependency org="javax.servlet"          name="jstl"                    rev="1.1.2"           conf="runtime->master"/>
     <dependency org="jgroups"                name="jgroups"                 rev="2.9.0.GA"        conf="runtime->master"/>
@@ -91,6 +92,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0.ga"        conf="compile->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
     <dependency org="ant-contrib"            name="ant-contrib"             rev="1.0b3"           conf="compile->master"/>
+    <dependency org="org.json"               name="json"                    rev="20140107"        conf="compile->master"/>
 
     <!-- Grid Compile Dependencies-->
     <dependency org="globus"                 name="axis"                    rev="1.2RC2"          conf="compile->master"/>

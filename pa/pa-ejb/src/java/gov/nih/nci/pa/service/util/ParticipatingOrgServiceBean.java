@@ -6,12 +6,15 @@ import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +25,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.hibernate.Query;
 
 /**
@@ -47,6 +52,16 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
                     + "where sp.id = :spId "
                     + "and ss.functionalCode = :functionalCode "
                     + "order by upper(org.name)";
+    
+    private static final String BY_PROTOCOL_AND_ORG_IDS_HQL =
+            "select org.identifier "
+                    + "from StudySite ss "
+                    + "join ss.studyProtocol sp "
+                    + "join ss.healthCareFacility hf "
+                    + "join hf.organization org "
+                    + "where sp.id = :spId "
+                    + "and ss.functionalCode = :functionalCode and org.identifier in (:poOrgIDs)";
+                        
 
     private static final String BY_STUDY_SITE_HQL =
             "select ss, org.name, org.identifier, sp.id "
@@ -181,5 +196,36 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
 
     private List<PaPersonDTO> getPeople(List<PaPersonDTO> people) {
         return people == null ? new ArrayList<PaPersonDTO>() : people;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Collection<OrganizationDTO> getOrganizationsThatAreNotSiteYet(
+            Long studyProtocolId, Collection<OrganizationDTO> orgsToCheck)
+            throws PAException {        
+        Collection<String> orgIdList = CollectionUtils.collect(orgsToCheck,
+                new Transformer() {
+                    @Override
+                    public Object transform(Object o) {
+                        OrganizationDTO dto = (OrganizationDTO) o;
+                        return IiConverter.convertToString(dto.getIdentifier());
+                    }
+                });
+
+        Query qry = PaHibernateUtil.getCurrentSession().createQuery(
+                BY_PROTOCOL_AND_ORG_IDS_HQL);
+        qry.setParameter("spId", studyProtocolId);
+        qry.setParameter("functionalCode",
+                StudySiteFunctionalCode.TREATING_SITE);
+        qry.setParameterList("poOrgIDs", orgIdList);
+        final List<String> poOrgIdsThatAreSites = qry.list();
+        return CollectionUtils.select(orgsToCheck, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                OrganizationDTO dto = (OrganizationDTO) o;
+                return !poOrgIdsThatAreSites.contains(IiConverter
+                        .convertToString(dto.getIdentifier()));
+            }
+        });
     }
 }

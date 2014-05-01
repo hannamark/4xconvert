@@ -114,12 +114,9 @@ import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
-import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
-import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -141,8 +138,6 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -159,10 +154,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-import org.apache.struts2.interceptor.ServletRequestAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
@@ -171,7 +164,7 @@ import com.opensymphony.xwork2.Preparable;
  *
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
-public class SearchTrialAction extends ActionSupport implements Preparable, ServletRequestAware {
+public class SearchTrialAction extends BaseSearchTrialAction implements Preparable {
    
     private static final String FAILURE_MESSAGE = "failureMessage";
 
@@ -199,9 +192,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     }
 
     private AbstractionCompletionServiceRemote abstractionCompletionService;
-    private DocumentServiceLocal documentService;
-    private MailManagerServiceLocal mailManagerService;    
-    private ProtocolQueryServiceLocal protocolQueryService;
+    private DocumentServiceLocal documentService;    
     private RegistryUserServiceLocal registryUserService;
     private RegulatoryInformationServiceRemote regulatoryInformationService;
     private StudyProtocolServiceLocal studyProtocolService;
@@ -210,13 +201,12 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService; 
-    private List<StudyProtocolQueryDTO> records;
+   
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId;
     private String trialAction;
     private Long identifier;
-    private TrialUtil trialUtils = new TrialUtil();
-    private HttpServletRequest httpServletRequest;
+    private TrialUtil trialUtils = new TrialUtil();   
     private CTGovStudyAdapter study;
     private String nctIdToImport;
     private boolean searchPerformed;
@@ -230,11 +220,10 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
      */
     @Override
     public void prepare() {
+        super.prepare();
         currentUser = UsernameHolder.getUser();
         abstractionCompletionService = PaRegistry.getAbstractionCompletionService();
         documentService = PaRegistry.getDocumentService();
-        mailManagerService = PaRegistry.getMailManagerService();        
-        protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         registryUserService = PaRegistry.getRegistryUserService();
         regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
@@ -284,7 +273,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             // If user is trying to search by NCT ID and getting no matches in
             // CTRP, we need to try and find
             // the trial in Ct.Gov.
-            if (CollectionUtils.isEmpty(records)
+            if (CollectionUtils.isEmpty(getRecords())
                     && criteria.isNctIdentifierProvided()) {
                 try {
                     study = ctGovSyncService
@@ -366,7 +355,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             queryCriteria.setOfficialTitle(ctgovStudy.getTitle());
             queryCriteria.setTrialCategory("p");
             queryCriteria.setExcludeRejectProtocol(true);
-            for (StudyProtocolQueryDTO dto : protocolQueryService
+            for (StudyProtocolQueryDTO dto : getProtocolQueryService()
                     .getStudyProtocolByCriteria(queryCriteria)) {
                 if (ctgovStudy.getTitle().equalsIgnoreCase(
                         dto.getOfficialTitle())) {
@@ -384,36 +373,15 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     private void prepareSearchResults(
             final StudyProtocolQueryCriteria spQueryCriteria)
             throws PAException {
-        // The way Search Trials screen works today is that POST means a user is executing a new search,
-        // while GET means the user is paginating through results. So for POST we always hit the back-end,
-        // while for GET we also look in cache for previously retrieved query results.
-        // Based on Search Trials usage pattern, if more than 10 results are retrieved by initial search,
-        // the user is likely to go through pages. It makes sense to cache the search results just for a little
-        // while and avoid hitting the database on each page change.
-        // We are not using HttpSession as cache, because it is long-lived, is specific to each user, and does not
-        // handle multiple browser tabs very well. Using HttpSession would increase risk of significant memory 
-        // consumption, a memory that we don't really have.
-        // We are using an EhCache instance instead, which is strictly limited by a max. number of elements in memory
-        // and TTL. Enough to improve pagination performance.
-        if (!"GET".equalsIgnoreCase(httpServletRequest.getMethod())) {
-            CacheUtils.removeItemFromCache(CacheUtils.getSearchResultsCache(), spQueryCriteria.getUniqueCriteriaKey());
-        }        
-        records = protocolQueryService
-                .getStudyProtocolByCriteria(spQueryCriteria);
-        if (CollectionUtils.isNotEmpty(records)) {
-            Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
-                public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
-                    return StringUtils.defaultString(o2.getNciIdentifier()).compareTo(
-                            StringUtils.defaultString(o1.getNciIdentifier()));
-                }
-            });              
-        }
+        searchAndSort(spQueryCriteria);
         checkToShow();
         checkVerifyData();
     }
+
+    
     
     private void checkToShow() throws PAException {
-        for (StudyProtocolQueryDTO queryDto : records) {
+        for (StudyProtocolQueryDTO queryDto : getRecords()) {
             DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
             DocumentWorkflowStatusDTO lastDwfs = documentWorkflowStatusService.getPreviousStatus(IiConverter
                        .convertToIi(queryDto.getStudyProtocolId()));
@@ -610,8 +578,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
     }
     
     private void checkVerifyData() throws PAException {
-        if (records != null) {
-            for (StudyProtocolQueryDTO queryDto : records) {
+        if (getRecords() != null) {
+            for (StudyProtocolQueryDTO queryDto : getRecords()) {
                 DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
                 if ((ABSTRACTED_CODES.contains(dwfs)) && (queryDto.isSearcherTrialOwner() 
                         || queryDto.getLastCreated().getUserLastCreated() != null 
@@ -621,7 +589,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
             }
         } else {
             StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
-            studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
+            studyProtocolQueryDTO = getProtocolQueryService().getTrialSummaryByStudyProtocolId(studyProtocolId);
             DocumentWorkflowStatusCode dwfs = studyProtocolQueryDTO.getDocumentWorkflowStatusCode();
             Set<RegistryUser> trialOwners = registryUserService.getAllTrialOwners(studyProtocolId);
             boolean trialOwner = false;
@@ -734,7 +702,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         try {
             List<StudyProtocolStageDTO> spStageDTOs = studyProtocolStageService.search(criteriaSpDTO, limit);
-            records = convertToSpQueryDTO(spStageDTOs);
+            setRecords(convertToSpQueryDTO(spStageDTOs));
         } catch (PAException e) {
             LOG.equals(e.getMessage());
             addActionError("Exception :" + e.getMessage());
@@ -997,13 +965,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
                 .getAllPrincipalInvestigators();
     }
     
-    /**
-     * 
-     * @return records
-     */
-    public List<StudyProtocolQueryDTO> getRecords() {
-        return records;
-    }
+   
 
     /**
      * 
@@ -1121,17 +1083,7 @@ public class SearchTrialAction extends ActionSupport implements Preparable, Serv
         this.studyProtocolStageService = studyProtocolStageService;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.struts2.interceptor.ServletRequestAware#setServletRequest(
-     * javax.servlet.http.HttpServletRequest)
-     */
-    @Override
-    public void setServletRequest(HttpServletRequest request) {
-        this.httpServletRequest = request;
-    }
+    
     /**
      * 
      * @return showVerifyButton showVerifyButton

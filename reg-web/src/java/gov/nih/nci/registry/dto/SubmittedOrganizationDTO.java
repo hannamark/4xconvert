@@ -92,6 +92,8 @@ import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * The Class SubmittedOrganizationDTO.
  *
@@ -112,9 +114,12 @@ public class SubmittedOrganizationDTO implements Serializable {
     private Long investigatorId;
     private String programCode;
     private String siteLocalTrialIdentifier;
+    private String sitePoId;
     private String dateOpenedforAccrual;
     private String dateClosedforAccrual;
     private String nameInvestigator;
+    
+    private int index;
 
     /**
      * Instantiates a new submitted organization dto.
@@ -341,5 +346,46 @@ public class SubmittedOrganizationDTO implements Serializable {
      */
     public void setInvestigatorId(Long investigatorId) {
         this.investigatorId = investigatorId;
+    }
+
+    /**
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    /**
+     * @param index the index to set
+     */
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    /**
+     * @return the sitePoId
+     */
+    public String getSitePoId() {
+        return sitePoId;
+    }
+
+    /**
+     * @param sitePoId the sitePoId to set
+     */
+    public void setSitePoId(String sitePoId) {
+        this.sitePoId = sitePoId;
+    }
+
+    /**
+     * @return boolean
+     */
+    public boolean isBlank() {
+        return investigatorId == null
+                && StringUtils.isBlank(siteLocalTrialIdentifier)
+                && StringUtils.isBlank(programCode)
+                && StringUtils.isBlank(recruitmentStatus)
+                && StringUtils.isBlank(recruitmentStatusDate)
+                && StringUtils.isBlank(dateOpenedforAccrual)
+                && StringUtils.isBlank(dateClosedforAccrual);
     }
 }

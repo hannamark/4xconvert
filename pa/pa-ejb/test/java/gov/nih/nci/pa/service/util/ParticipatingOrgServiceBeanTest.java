@@ -98,13 +98,17 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -266,6 +270,40 @@ public class ParticipatingOrgServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(0, orgDTO.getPrimaryContacts().size());
         assertEquals(1, orgDTO.getPrincipalInvestigators().size());
         assertEquals(0, orgDTO.getSubInvestigators().size());
+    }
+    
+    @Test
+    public void getOrganizationsThatAreNotSiteYet() throws Exception {
+        StudyProtocol sp =
+                (StudyProtocol) getCurrentSession().get(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+        StudySite ss = new StudySite();
+        ss.setStudyProtocol(sp);
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        HealthCareFacility hf = new HealthCareFacility();
+        hf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        hf.setIdentifier("hf_po_id");
+        ss.setHealthCareFacility(hf);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        Organization org = new Organization();
+        org.setIdentifier("1234567890");        
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        hf.setOrganization(org);
+        org.setName("aaa");
+        TestSchema.addUpdObject(org);
+        TestSchema.addUpdObject(hf);
+        TestSchema.addUpdObject(ss);
+        
+        OrganizationDTO orgDTO1 = new OrganizationDTO();
+        orgDTO1.setIdentifier(IiConverter.convertToIi("1234567890"));
+        OrganizationDTO orgDTO2 = new OrganizationDTO();
+        orgDTO2.setIdentifier(IiConverter.convertToIi("48239084"));
+
+        Collection<OrganizationDTO> rList = bean
+                .getOrganizationsThatAreNotSiteYet(sp.getId(),
+                        Arrays.asList(orgDTO1, orgDTO2));
+        assertEquals(1, rList.size());
+        assertEquals("48239084", rList.iterator().next().getIdentifier()
+                .getExtension());
     }
 
 }

@@ -198,6 +198,13 @@
     <package name="protected" namespace="/protected" extends="global">
 
         <default-interceptor-ref name="methodValidationStack"/>
+        
+        <action name="addSites*" class="gov.nih.nci.registry.action.AddSitesAction" method="{1}">
+            <result>/WEB-INF/jsp/addSites.jsp</result>
+            <result name="success">/WEB-INF/jsp/addSites.jsp</result>
+            <result name="error">/WEB-INF/jsp/addSites.jsp</result>  
+            <result name="confirmation">/WEB-INF/jsp/addSitesConfirmation.jsp</result>         
+        </action>
 
         <action name="searchTrial*" class="gov.nih.nci.registry.action.SearchTrialAction" method="{1}">
             <result>/WEB-INF/jsp/searchTrialCriteria.jsp</result>

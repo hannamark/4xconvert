@@ -86,38 +86,21 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
-import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
-import gov.nih.nci.services.correlation.HealthCareProviderDTO;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -236,14 +219,21 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
                 .getSession();
         try {
             clearErrorsAndMessages();
-            enforceBusinessRulesForProprietary();
+            new ParticipatingSiteValidator(siteDTO, this, this, paServiceUtil)
+                    .validate();
             if (!(hasActionErrors() || hasFieldErrors())) {
+                final AddUpdateSiteHelper helper = new AddUpdateSiteHelper(
+                        paServiceUtil, siteDTO, participatingSiteService,
+                        studyProtocolService, getRegistryUser(),
+                        registryUserService, studySiteContactService, this,
+                        getStudyProtocolId(), getRegistryUser()
+                                .getAffiliatedOrganizationId().toString());
                 if (StringUtils.isNotBlank(siteDTO.getId())) {
-                    updateSite();
+                    helper.updateSite();
                     session.setAttribute(SUCCESS_MESSAGE_KEY,
                             getText("add.site.updateSuccess"));
                 } else {
-                    addSite();
+                    helper.addSite();
                     session.setAttribute(SUCCESS_MESSAGE_KEY,
                             getText("add.site.success"));
                 }
@@ -259,126 +249,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
         }
         return fwd;
     }
-
-    private void updateSite() throws PAException {
-        StudySiteDTO studySiteDTO = getStudySite();
-        StudySiteAccrualStatusDTO accrualStatusDTO = getStudySiteAccrualStatus();
-
-        Ii studySiteID = participatingSiteService.updateStudySiteParticipant(
-                studySiteDTO, accrualStatusDTO).getIdentifier();
-        clearInvestigatorsForPropTrialSite(studySiteID);
-        addInvestigator(studySiteID);
-    }
-
-    private void clearInvestigatorsForPropTrialSite(Ii ssIi) throws PAException {
-        List<StudySiteContactDTO> ssContDtoList = studySiteContactService
-                .getByStudySite(ssIi);
-        for (StudySiteContactDTO item : ssContDtoList) {
-            studySiteContactService.delete(item.getIdentifier());
-        }
-    }
-
-    private void addSite() throws PAException {
-        Ii poHealthFacilID = getHealthcareFacilityID();
-        StudySiteDTO studySiteDTO = getStudySite();
-        StudySiteAccrualStatusDTO accrualStatusDTO = getStudySiteAccrualStatus();
-        Ii studySiteID = null; // IiConverter.convertToStudySiteIi(studySiteIdentifier);
-
-        try {
-            studySiteID = participatingSiteService.createStudySiteParticipant(
-                    studySiteDTO, accrualStatusDTO, poHealthFacilID)
-                    .getIdentifier();
-        } catch (DuplicateParticipatingSiteException e) {
-            addFieldError("organizationName", e.getMessage());
-            throw new PAException(e);
-        }
-
-        addInvestigator(studySiteID);
-        createSiteRecordOwnership(studySiteID, getRegistryUser());
-    }
-
-    /**
-     * @param studySiteID
-     * @throws PAException
-     */
-    private void addInvestigator(Ii studySiteID) throws PAException {
-        Ii investigatorIi = IiConverter.convertToPoPersonIi(siteDTO
-                .getInvestigatorId().toString());
-        addInvestigator(studySiteID, investigatorIi,
-                StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode(),
-                getRegistryUser().getAffiliatedOrganizationId().toString());
-    }
-
-    /**
-     * @return
-     * @throws PAException
-     */
-    private Ii getHealthcareFacilityID() throws PAException {
-        Ii poHealthFacilID = paServiceUtil.getPoHcfIi(getRegistryUser()
-                .getAffiliatedOrganizationId().toString());
-        return poHealthFacilID;
-    }
-
-    private void createSiteRecordOwnership(Ii ssIi, RegistryUser registryUser)
-            throws PAException {
-        registryUserService.assignSiteOwnership(registryUser.getId(),
-                IiConverter.convertToLong(ssIi));
-    }
-
-    private void addInvestigator(Ii ssIi, Ii investigatorIi, String role,
-            String poOrgId) throws PAException {
-        ClinicalResearchStaffDTO crsDTO = paServiceUtil.getCrsDTO(
-                investigatorIi, poOrgId);
-        StudyProtocolDTO spDTO = studyProtocolService
-                .getStudyProtocol(IiConverter.convertToStudyProtocolIi(Long
-                        .parseLong(getStudyProtocolId())));
-        HealthCareProviderDTO hcpDTO = paServiceUtil.getHcpDTO(spDTO
-                .getStudyProtocolType().getValue(), investigatorIi, poOrgId);
-        participatingSiteService.addStudySiteInvestigator(ssIi, crsDTO, hcpDTO,
-                null, role);
-    }
-
-    private StudySiteDTO getStudySite() {
-        StudySiteDTO studySiteDTO = new StudySiteDTO();
-        studySiteDTO
-                .setIdentifier(StringUtils.isNotBlank(siteDTO.getId()) ? IiConverter
-                        .convertToStudySiteIi(Long.parseLong(siteDTO.getId()))
-                        : IiConverter.convertToIi((Long) null));
-        studySiteDTO.setStatusCode(CdConverter
-                .convertToCd(FunctionalRoleStatusCode.PENDING));
-        studySiteDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
-                new Timestamp(new Date().getTime()), null));
-        studySiteDTO
-                .setStudyProtocolIdentifier(IiConverter
-                        .convertToStudyProtocolIi(Long
-                                .parseLong(getStudyProtocolId())));
-        studySiteDTO.setLocalStudyProtocolIdentifier(StConverter
-                .convertToSt(siteDTO.getSiteLocalTrialIdentifier()));
-        studySiteDTO.setProgramCodeText(StConverter.convertToSt(siteDTO
-                .getProgramCode()));
-        if (StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())
-                && StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())) {
-            studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
-                    .convertToIvl(siteDTO.getDateOpenedforAccrual(),
-                            siteDTO.getDateClosedforAccrual()));
-        }
-        if (StringUtils.isNotEmpty(siteDTO.getDateOpenedforAccrual())
-                && StringUtils.isEmpty(siteDTO.getDateClosedforAccrual())) {
-            studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
-                    .convertToIvl(siteDTO.getDateOpenedforAccrual(), null));
-        }
-        return studySiteDTO;
-    }
-
-    private StudySiteAccrualStatusDTO getStudySiteAccrualStatus() {
-        StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
-        ssas.setIdentifier(IiConverter.convertToIi((Long) null));
-        ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode
-                .getByCode(siteDTO.getRecruitmentStatus())));
-        ssas.setStatusDate(TsConverter.convertToTs(PAUtil
-                .dateStringToTimestamp(siteDTO.getRecruitmentStatusDate())));
-        return ssas;
-    }
+   
 
     /**
      * Keeps the user looking at the spinning wheel until a SUCCESS/EXCEPTION
@@ -407,141 +278,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     public void setSiteDTO(SubmittedOrganizationDTO siteDTO) {
         this.siteDTO = siteDTO;
     }
-
-    // The following validation methods have been copied as-is from
-    // gov.nih.nci.pa.action.ParticipatingOrganizationsAction and adjusted for
-    // use here.
-    // The original validation methods in ParticipatingOrganizationsAction are
-    // hard-wired
-    // into the action class and are not easily reusable; hence the copy &
-    // paste.
-    // This needs to be re-visited at a later point to see how we could extract
-    // the validation
-    // into common functionality and stay DRY. TO DO. Sorry.
-    private void enforceBusinessRulesForProprietary() {
-        String err = "error.submit.invalidDate"; // validate date and its format
-        checkInvestigatorStatus();
-        enforcePartialRulesForProp1(err);
-        String strDateOpenedForAccrual = "accrualOpenedDate";
-        String strDateClosedForAccrual = "accrualClosedDate";
-        enforcePartialRulesForProp2(err, strDateOpenedForAccrual,
-                strDateClosedForAccrual);
-        enforcePartialRulesForProp3(strDateOpenedForAccrual,
-                strDateClosedForAccrual);
-        enforcePartialRulesForProp4(strDateOpenedForAccrual,
-                strDateClosedForAccrual);
-    }
-
-    private void checkInvestigatorStatus() {
-        if (siteDTO.getInvestigatorId() != null) {
-            Ii investigatorIi = IiConverter.convertToPoPersonIi(siteDTO
-                    .getInvestigatorId().toString());
-            if (paServiceUtil.getPoPersonEntity(investigatorIi) == null) {
-                addFieldError("investigator",
-                        getText("error.nullifiedInvestigator"));
-            }
-        }
-
-    }
-
-    private void enforcePartialRulesForProp1(String err) {
-        checkFieldError(
-                StringUtils.isEmpty(siteDTO.getSiteLocalTrialIdentifier()),
-                "localIdentifier", "error.siteLocalTrialIdentifier.required");
-        checkFieldError(siteDTO.getInvestigatorId() == null, "investigator",
-                "error.selectedPersId.required");
-        checkFieldError(StringUtils.isEmpty(siteDTO.getRecruitmentStatus()),
-                "statusCode",
-                "error.participatingOrganizations.recruitmentStatus");
-        if (!PAUtil.isValidDate(siteDTO.getRecruitmentStatusDate())) {
-            addFieldError("statusDate", getText(err));
-        } else if (PAUtil.isDateCurrentOrPast(siteDTO
-                .getRecruitmentStatusDate())) {
-            addFieldError("statusDate",
-                    getText("error.submit.invalidStatusDate"));
-        }
-    }
-
-    private void enforcePartialRulesForProp2(String err,
-            String strDateOpenedForAccrual, String strDateClosedForAccrual) {
-        if (StringUtils.isNotEmpty(siteDTO.getDateOpenedforAccrual())) {
-            if (!PAUtil.isValidDate(siteDTO.getDateOpenedforAccrual())) {
-                addFieldError(strDateOpenedForAccrual, getText(err));
-            } else {
-                checkFieldError(PAUtil.isDateCurrentOrPast(siteDTO
-                        .getDateOpenedforAccrual()), strDateOpenedForAccrual,
-                        "error.submit.invalidStatusDate");
-            }
-        }
-        if (StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())) {
-            if (!PAUtil.isValidDate(siteDTO.getDateClosedforAccrual())) {
-                addFieldError(strDateClosedForAccrual, getText(err));
-            } else {
-                checkFieldError(PAUtil.isDateCurrentOrPast(siteDTO
-                        .getDateClosedforAccrual()), strDateClosedForAccrual,
-                        "error.submit.invalidStatusDate");
-
-            }
-        }
-    }
-
-    private void enforcePartialRulesForProp3(String strDateOpenedForAccrual,
-            String strDateClosedForAccrual) {
-        checkFieldError(
-                StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())
-                        && StringUtils.isEmpty(siteDTO
-                                .getDateOpenedforAccrual()),
-                strDateOpenedForAccrual, "error.proprietary.dateOpenReq");
-        if (StringUtils.isNotEmpty(siteDTO.getDateOpenedforAccrual())
-                && StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())) {
-            Timestamp dateOpenedDateStamp = PAUtil
-                    .dateStringToTimestamp(siteDTO.getDateOpenedforAccrual());
-            Timestamp dateClosedDateStamp = PAUtil
-                    .dateStringToTimestamp(siteDTO.getDateClosedforAccrual());
-            checkFieldError(dateClosedDateStamp.before(dateOpenedDateStamp),
-                    strDateClosedForAccrual,
-                    "error.proprietary.dateClosedAccrualBigger");
-        }
-
-    }
-
-    // NOPMD
-    private void enforcePartialRulesForProp4(String strDateOpenedForAccrual,
-            String strDateClosedForAccrual) {
-        if (StringUtils.isNotEmpty(siteDTO.getRecruitmentStatus())) {
-            RecruitmentStatusCode recruitmentStatus = RecruitmentStatusCode
-                    .getByCode(siteDTO.getRecruitmentStatus());
-            if (recruitmentStatus.isNonRecruiting()) {
-                if (StringUtils.isNotEmpty(siteDTO.getDateOpenedforAccrual())) {
-                    addFieldError(strDateOpenedForAccrual,
-                            "Date Opened for Acrual must be empty for "
-                                    + siteDTO.getRecruitmentStatus()
-                                    + " recruitment status");
-                }
-            } else if (StringUtils.isEmpty(siteDTO.getDateOpenedforAccrual())) {
-                addFieldError(strDateOpenedForAccrual,
-                        "Date Opened for Acrual must not be empty for "
-                                + siteDTO.getRecruitmentStatus()
-                                + " recruitment status");
-            }
-            if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode()
-                    .equalsIgnoreCase(siteDTO.getRecruitmentStatus()) || RecruitmentStatusCode.COMPLETED
-                    .getCode().equalsIgnoreCase(siteDTO.getRecruitmentStatus()))
-                    && StringUtils.isEmpty(siteDTO.getDateClosedforAccrual())) {
-                addFieldError(strDateClosedForAccrual,
-                        "Date Closed for Acrual must not be empty for "
-                                + siteDTO.getRecruitmentStatus()
-                                + " recruitment status");
-            }
-        }
-    }
-
-    private void checkFieldError(boolean condition, String fieldName,
-            String textKey) {
-        if (condition) {
-            addFieldError(fieldName, getText(textKey));
-        }
-    }
+   
 
     /**
      * @return the redirectToSummary

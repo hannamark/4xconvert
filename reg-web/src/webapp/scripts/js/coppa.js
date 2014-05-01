@@ -125,7 +125,7 @@ function displayWaitPanel() {
 	var browserDims = $(document).viewport.getDimensions();
 	 
 	// calculate the center of the page using the browser and element dimensions
-	var y  = (browserDims.height - eltDims.height) / 2;
+	var y  = (browserDims.height - eltDims.height) / 2 + $(document).viewport.getScrollOffsets().top;
 	var x = (browserDims.width - eltDims.width) / 2;	
 	
 	$('progress_indicator_panel').absolutize();	

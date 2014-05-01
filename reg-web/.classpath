@@ -34,6 +34,7 @@
 	<classpathentry kind="var" path="PA_LIB/reg-web/test-junit/junit-4.8.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/poi-3.2-FINAL.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ear/runtime/ehcache-1.2.4.jar"/>
+	<classpathentry kind="var" path="PA_LIB/reg-web/compile/json-20140107.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/javax.servlet-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/activation-4.0.5.GA.jar"/>

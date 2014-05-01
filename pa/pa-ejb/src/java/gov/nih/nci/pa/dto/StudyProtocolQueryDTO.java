@@ -83,6 +83,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -136,6 +137,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private Date verificationDueDate;
     private Set<StudyAlternateTitleDTO> studyAlternateTitles;
     private String studySource;
+    private List<OrganizationDTO> orgsThatCanBeAddedAsSite;
    
 
     /**
@@ -772,6 +774,21 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     public void setStudySource(String studySource) {
         this.studySource = studySource;
+    }
+
+    /**
+     * @return the orgsThatCanBeAddedAsSite
+     */
+    public List<OrganizationDTO> getOrgsThatCanBeAddedAsSite() {
+        return orgsThatCanBeAddedAsSite;
+    }
+
+    /**
+     * @param orgsThatCanBeAddedAsSite the orgsThatCanBeAddedAsSite to set
+     */
+    public void setOrgsThatCanBeAddedAsSite(
+            List<OrganizationDTO> orgsThatCanBeAddedAsSite) {
+        this.orgsThatCanBeAddedAsSite = orgsThatCanBeAddedAsSite;
     }
     
     
