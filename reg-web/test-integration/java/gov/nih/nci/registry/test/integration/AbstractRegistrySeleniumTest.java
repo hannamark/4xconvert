@@ -166,7 +166,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
     protected void login(String username, String password) {
         openAndWait("/registry");
         verifyLoginPage();
-        clickAndWait("link=Log In");
+        clickAndWait("link=Sign In");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
         selenium.select("id=authenticationServiceURL", "label=Training");
@@ -207,21 +207,15 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
     }
 
     protected void verifySearchPage() {
-        assertTrue(selenium.isElementPresent("id=homeMenuOption"));
-        assertTrue(selenium.isElementPresent("id=myAccountMenuOption"));
-        assertTrue(selenium.isElementPresent("id=registerTrialMenuOption"));
-        assertTrue(selenium.isElementPresent("id=searchTrialsMenuOption"));
-        assertTrue(selenium.isElementPresent("id=logoutMenuOption"));
-        assertTrue(selenium.isElementPresent("id=helpMenuOption"));
+        assertTrue(selenium.isTextPresent("Search Clinical Trials"));
+        assertTrue(selenium.isElementPresent("id=resetSearchBtn"));        
+        assertTrue(selenium.isElementPresent("id=runSearchBtn"));       
     }
 
     protected void verifyLoginPage() {
-        assertTrue(selenium.isTextPresent("Log In"));
-        assertTrue(selenium.isTextPresent("CONTACT US"));
-        assertTrue(selenium.isTextPresent("PRIVACY NOTICE"));
-        assertTrue(selenium.isTextPresent("DISCLAIMER"));
-        assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
-        assertTrue(selenium.isTextPresent("SUPPORT"));
+        assertTrue(selenium.isTextPresent("Sign In"));
+        assertTrue(selenium.isTextPresent("Contact Us"));
+        assertTrue(selenium.isTextPresent("Policies"));      
     }
 
     protected void verifyDisclaimerPage() {
@@ -230,7 +224,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
     }
 
     protected boolean isLoggedIn() {
-        return selenium.isElementPresent("link=Log Out") && !selenium.isElementPresent("link=Login");
+        return !selenium.isElementPresent("link=Sign In");
     }
 
     protected void openAndWait(String url) {

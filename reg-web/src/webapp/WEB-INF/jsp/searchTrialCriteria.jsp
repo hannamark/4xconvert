@@ -336,7 +336,7 @@
         
         <div class="bottom">
             <div class="btn-group">
-              <button type="button" class="btn btn-icon btn-primary dropdown-toggle" data-toggle="dropdown"> <i class="fa-search"></i>Search <span class="caret"></span> </button>
+              <button id="runSearchBtn" type="button" class="btn btn-icon btn-primary dropdown-toggle" data-toggle="dropdown"> <i class="fa-search"></i>Search <span class="caret"></span> </button>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="javascript:void(0)" onclick="handleMyAction()" id="searchMyTrialsBtn">My Trials</a></li>
                 <li><a href="javascript:void(0)"  onclick="handleAction()" id="searchAllTrialsBtn">All Trials</a></li>

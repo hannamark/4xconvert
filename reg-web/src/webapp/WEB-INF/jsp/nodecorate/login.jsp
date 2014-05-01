@@ -84,7 +84,7 @@
 		          </c:choose>
 		      </c:if>
               <div class="bottom">
-                <button type="button" class="btn btn-icon-alt btn-primary" onClick="document.loginForm.submit();">Sign In<i class="fa-arrow-circle-right"></i></button>
+                <button id="loginButton" type="button" class="btn btn-icon-alt btn-primary" onClick="document.loginForm.submit();">Sign In<i class="fa-arrow-circle-right"></i></button>
               </div>
             </form>
           </div>

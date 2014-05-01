@@ -87,14 +87,15 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 /**
- *
+ * 
  * Class to control the order that selenium tests are run in.
- *
+ * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = {SearchUserTest.class, MyAccountTest.class, LoginTest.class, RegisterTrialTest.class,
-        TrialSearchTest.class, SetupPaTrialData.class, ViewTrialTest.class })
+@SuiteClasses(value = { LoginTest.class/*, SearchUserTest.class,
+        MyAccountTest.class, RegisterTrialTest.class, TrialSearchTest.class,
+        SetupPaTrialData.class, ViewTrialTest.class */})
 public class AllSeleniumTests {
 
 }
