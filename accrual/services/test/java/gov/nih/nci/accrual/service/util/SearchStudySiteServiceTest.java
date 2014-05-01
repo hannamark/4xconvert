@@ -227,6 +227,7 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
         
         Organization org = new Organization();
@@ -280,6 +281,7 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
         
         Organization org = new Organization();
@@ -334,6 +336,7 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
         
     	StudySite ss = new StudySite();

@@ -128,7 +128,6 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -137,7 +136,6 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceBean;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceBean;
-import gov.nih.nci.pa.service.StudySiteBeanLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -318,6 +316,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         propTrial.setOtherIdentifiers(otherIdentifiers);
         propTrial.setSubmissionNumber(Integer.valueOf(1));
+        propTrial.setAccrualDiseaseCodeSystem("SDC");
         // propTrial.setCtgovXmlRequiredIndicator(Boolean.FALSE);
         TestSchema.addUpdObject(propTrial);
         proprietaryTrialIi = IiConverter.convertToIi(propTrial.getId());

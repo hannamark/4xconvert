@@ -86,7 +86,6 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * DTO for transferring Abstract Study Protocol objects.
@@ -121,7 +120,7 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private Cd primaryCompletionDateTypeCode;
     private Cd completionDateTypeCode;
     private Cd consortiaTrialCategoryCode;
-    private St accrualDiseaseCodeSystem = StConverter.convertToSt("SDC");
+    private St accrualDiseaseCodeSystem;
 
     /**
      * @return the officialTitle

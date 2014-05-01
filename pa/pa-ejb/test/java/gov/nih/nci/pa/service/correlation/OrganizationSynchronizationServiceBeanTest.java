@@ -2,7 +2,6 @@ package gov.nih.nci.pa.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -143,6 +142,7 @@ public class OrganizationSynchronizationServiceBeanTest extends AbstractHibernat
         sps.getSummaryFourOrgIdentifiers().add(String.valueOf(paOrg.getIdentifier()));
         sps.setSponsorIdentifier(String.valueOf(paOrg.getIdentifier()));
         sps.setSubmitterOrganizationIdentifier(String.valueOf(paOrg.getIdentifier()));
+        sps.setAccrualDiseaseCodeSystem("SDC");
 
         Long spsId = (Long) session.save(sps);
         session.flush();
@@ -167,6 +167,7 @@ public class OrganizationSynchronizationServiceBeanTest extends AbstractHibernat
         sp.setSubmissionNumber(1);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         Long spId = (Long) session.save(sp);
         session.flush();
 

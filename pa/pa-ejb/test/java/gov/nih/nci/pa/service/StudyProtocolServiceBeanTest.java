@@ -104,7 +104,6 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.domain.StudyAlternateTitle;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolAssociation;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -115,8 +114,6 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
-import gov.nih.nci.pa.enums.BlindingRoleCode;
-import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.IdentifierType;
@@ -644,6 +641,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
 
         StudyProtocolDTO spDto = remoteEjb.getStudyProtocol(IiConverter.convertToIi(sp.getId()));
@@ -1096,6 +1094,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         cdSas.setCodeSystem("Summary 4 Anatomic Sites");
         dsetSa.getItem().add(cdSas);
         ispDTO.setSummary4AnatomicSites(dsetSa);
+        ispDTO.setAccrualDiseaseCodeSystem(StConverter.convertToSt("SDC"));
         return ispDTO;
     }
     
@@ -1125,6 +1124,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         cdSas.setCodeSystem("Summary 4 Anatomic Sites");
         dsetSa.getItem().add(cdSas);
         dto.setSummary4AnatomicSites(dsetSa);
+        dto.setAccrualDiseaseCodeSystem(StConverter.convertToSt("SDC"));
         return dto;
     }
     

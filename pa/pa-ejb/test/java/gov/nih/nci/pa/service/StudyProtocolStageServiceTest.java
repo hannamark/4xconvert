@@ -1,12 +1,10 @@
 package gov.nih.nci.pa.service;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -30,17 +28,21 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
 /**
  * 
  * @author Reshma Koganti
  *
  */
 public class StudyProtocolStageServiceTest extends AbstractHibernateTestCase {
-    private StudyProtocolStageBeanLocal bean = new StudyProtocolStageBeanLocal();
+    private final StudyProtocolStageBeanLocal bean = new StudyProtocolStageBeanLocal();
     private Ii spIi;
-    private Ii id = IiConverter.convertToIi(1L);
+    private final Ii id = IiConverter.convertToIi(1L);
     private final MailManagerServiceLocal mailManagerSerivceLocal = mock(MailManagerServiceLocal.class);
     private final LookUpTableServiceRemote lookUpTableService = mock(LookUpTableServiceRemote.class); 
     private final RegistryUserServiceLocal registryUserServiceLocal = mock(RegistryUserServiceLocal.class);
@@ -105,6 +107,7 @@ public class StudyProtocolStageServiceTest extends AbstractHibernateTestCase {
         dto.setLeadOrganizationIdentifier(id);
         dto.setLocalProtocolIdentifier(StConverter.convertToSt("123"));
         dto.setNctIdentifier(StConverter.convertToSt("NCT-123"));
+        dto.setAccrualDiseaseCodeSystem(StConverter.convertToSt("SDC"));
         StudyFundingStageDTO fundingDto = new StudyFundingStageDTO();
         fundingDto.setFundingMechanismCode(CdConverter.convertStringToCd("CODE"));
         List<StudyFundingStageDTO> fundDTOs = new ArrayList<StudyFundingStageDTO>();
@@ -134,6 +137,7 @@ public class StudyProtocolStageServiceTest extends AbstractHibernateTestCase {
         dto.setLeadOrganizationIdentifier(id);
         dto.setLocalProtocolIdentifier(StConverter.convertToSt("1"));
         dto.setNctIdentifier(StConverter.convertToSt("NCT-123"));
+        dto.setAccrualDiseaseCodeSystem(StConverter.convertToSt("SDC"));
         StudyFundingStageDTO fundingDto = new StudyFundingStageDTO();
         fundingDto.setIdentifier(id);
         fundingDto.setFundingMechanismCode(CdConverter.convertStringToCd("CODE"));

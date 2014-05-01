@@ -211,6 +211,7 @@ public class TestRegistryUserSchema {
         Set<RegistryUser> owners = new HashSet<RegistryUser>();
         owners.add(trialOwner);
         sp.setStudyOwners(owners);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
         sp.setId(sp.getId());
         studyProtocolId = sp.getId();

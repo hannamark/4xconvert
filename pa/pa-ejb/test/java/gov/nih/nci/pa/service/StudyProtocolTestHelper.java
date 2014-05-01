@@ -149,6 +149,7 @@ public class StudyProtocolTestHelper {
         sp.setProprietaryTrialIndicator(propTrial);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         session.saveOrUpdate(sp);
 
         DocumentWorkflowStatus dws = new DocumentWorkflowStatus();

@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -16,6 +17,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -51,6 +53,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -84,6 +87,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected final StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
     protected final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
     protected final PlannedActivityServiceLocal plannedActivityService = new PlannedActivityBeanLocal();
+    protected final AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = mock(AccrualDiseaseTerminologyServiceRemote.class);
     protected Ii spIi;
     protected final PAServiceUtils paServiceUtils = new MockPAServiceUtils();
     
@@ -149,6 +153,13 @@ public abstract class AbstractTrialRegistrationTestBase extends
         bean.setArmService(armService);
         bean.setPlannedActivityService(plannedActivityService);
         bean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
+        bean.setAccrualDiseaseTerminologyService(accrualDiseaseTerminologyService);
+
+        when(accrualDiseaseTerminologyService.canChangeCodeSystem(anyLong())).thenReturn(true);
+        when(accrualDiseaseTerminologyService.getCodeSystem(anyLong())).thenReturn("SDC");
+        when(accrualDiseaseTerminologyService.getValidCodeSystems()).thenReturn(
+                Arrays.asList(new String[]{"SDC","ICD9","ICD10","ICD-O-3"}));
+
         studySiteAccrualStatusService.setStudySiteAccrualAccessServiceLocal(mock(StudySiteAccrualAccessServiceLocal.class));
         studyProtocolService.setRegistryUserService(mock(RegistryUserServiceLocal.class));
         CSMUserService.setInstance(new MockCSMUserService());

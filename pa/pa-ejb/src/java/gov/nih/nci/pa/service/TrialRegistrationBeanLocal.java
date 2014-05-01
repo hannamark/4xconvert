@@ -141,6 +141,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceBean;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -227,6 +228,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @EJB private ArmServiceLocal armService;
     @EJB private PlannedActivityServiceLocal plannedActivityService;
     @EJB private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService;
+    @EJB private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
     
     private RegulatoryAuthorityServiceLocal regulatoryAuthorityService = new RegulatoryAuthorityBeanLocal();
 
@@ -1596,6 +1598,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         createStudyProtocolDTO.setConsortiaTrialCategoryCode(studyProtocolDTO.getConsortiaTrialCategoryCode());
         createStudyProtocolDTO.setCtroOverride(studyProtocolDTO.getCtroOverride());
         createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
+        createStudyProtocolDTO.setAccrualDiseaseCodeSystem(studyProtocolDTO.getAccrualDiseaseCodeSystem());
         if (!BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator())) {
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator() == null) {
                 createStudyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));
@@ -2225,6 +2228,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         validator.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusServiceLocal);
         validator.setStudyResourcingService(studyResourcingService);       
         validator.setRegulatoryAuthorityService(regulatoryAuthorityService);
+        validator.setAccrualDiseaseTerminologyService(accrualDiseaseTerminologyService);
         return validator;
     }
     
@@ -2405,6 +2409,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     public void setStudyOutcomeMeasureService(
             StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService) {
         this.studyOutcomeMeasureService = studyOutcomeMeasureService;
+    }
+
+    /**
+     * @param accrualDiseaseTerminologyService the accrualDiseaseTerminologyService to set
+     */
+    public void setAccrualDiseaseTerminologyService(
+            AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService) {
+        this.accrualDiseaseTerminologyService = accrualDiseaseTerminologyService;
     }
     
 }

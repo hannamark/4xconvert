@@ -319,6 +319,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(2));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
         
         StudySubject subj = new StudySubject();

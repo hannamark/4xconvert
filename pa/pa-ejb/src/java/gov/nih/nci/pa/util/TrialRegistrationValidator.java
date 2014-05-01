@@ -111,6 +111,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -122,6 +123,8 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceBean;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -219,6 +222,7 @@ public class TrialRegistrationValidator {
     private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
     private StudyResourcingServiceLocal studyResourcingService;
     private RegulatoryAuthorityServiceLocal regulatoryAuthorityService;
+    private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
 
     private final boolean isGridSubmission;
 
@@ -251,6 +255,7 @@ public class TrialRegistrationValidator {
         validateExistingStatus(spIi, errorMsg);
         validateDocuments(documentDTOs, errorMsg);
         validateParticipatingSites(studyProtocolDTO, studySiteAccrualStatusDTOs, errorMsg);
+        validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);
         }
@@ -601,6 +606,7 @@ public class TrialRegistrationValidator {
         validateResponsibleParty(studyProtocolDTO, partyDTO, errorMsg);
         validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
+        validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
         if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
             String nctValidationResultString = paServiceUtils.validateNCTIdentifier(
                    nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue(), studyProtocolDTO
@@ -894,6 +900,7 @@ public class TrialRegistrationValidator {
         validateResponsibleParty(studyProtocolDTO, partyDTO, errorMsg);
         validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
+        validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
         if (nctIdentifierDTO != null && !ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
             String nctValidationResultString = paServiceUtils.validateNCTIdentifier(
                    nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue(), null);
@@ -1045,6 +1052,7 @@ public class TrialRegistrationValidator {
         }
         errorMsg.append(validatePoObject(studySiteInvestigatorDTO, "Study Site Investigator", false));
         validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
+        validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);
         }
@@ -1116,6 +1124,35 @@ public class TrialRegistrationValidator {
     void validatePhaseAndPurpose(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
         validatePhase(studyProtocolDTO, errorMsg);
         check(ISOUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode()), "Purpose cannot be null , ", errorMsg);
+    }
+
+    /**
+     * Validates and defaults if necessary the Accrual Disease Coding.
+     * @param studyProtocolDTO The study protocol
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateAccrualDiseaseCodeSystem(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
+        Long spId = IiConverter.convertToLong(studyProtocolDTO.getIdentifier());
+        String currentCodeSystem = spId == null ? null : accrualDiseaseTerminologyService.getCodeSystem(spId);
+        String newCodeSystem = StConverter.convertToString(studyProtocolDTO.getAccrualDiseaseCodeSystem());
+        if (StringUtils.isNotBlank(newCodeSystem)) {
+            if (accrualDiseaseTerminologyService.getValidCodeSystems().contains(newCodeSystem)) {
+                if (currentCodeSystem != null && !currentCodeSystem.equals(newCodeSystem)
+                        && !accrualDiseaseTerminologyService.canChangeCodeSystem(spId)) {
+                    errorMsg.append("Accrual disease code system for this trial can't be changed.");
+                }
+            } else {
+                errorMsg.append("Accrual disease code system " + newCodeSystem + " is invalid.");
+            }
+        } else {
+            if (spId == null) {
+                studyProtocolDTO.setAccrualDiseaseCodeSystem(
+                        StConverter.convertToSt(AccrualDiseaseTerminologyServiceBean.DEFAULT_CODE_SYSTEM));
+            } else {
+                studyProtocolDTO.setAccrualDiseaseCodeSystem(
+                        StConverter.convertToSt(accrualDiseaseTerminologyService.getCodeSystem(spId)));
+            }
+        }
     }
 
     /**
@@ -1221,6 +1258,14 @@ public class TrialRegistrationValidator {
     public void setRegulatoryAuthorityService(
             RegulatoryAuthorityServiceLocal regulatoryAuthorityService) {
         this.regulatoryAuthorityService = regulatoryAuthorityService;
+    }
+
+    /**
+     * @param accrualDiseaseTerminologyService AccrualDiseaseTerminologyServiceRemote
+     */
+    public void setAccrualDiseaseTerminologyService(
+            AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService) {
+        this.accrualDiseaseTerminologyService = accrualDiseaseTerminologyService;
     }
 
     // CHECKSTYLE:OFF
@@ -1350,5 +1395,6 @@ public class TrialRegistrationValidator {
                 new ArrayList<DocumentDTO>(), nctID, errorMsg);
         validateLeadOrgForProprietary(leadOrgID, errorMsg);
         validateRegAuthorityExistence(regAuthDTO, errorMsg);
+        validateAccrualDiseaseCodeSystem(studyProtocolDTO, errorMsg);
     }
 }

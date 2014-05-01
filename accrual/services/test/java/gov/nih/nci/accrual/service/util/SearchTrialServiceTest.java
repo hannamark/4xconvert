@@ -258,6 +258,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
         
         ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
@@ -288,6 +289,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
             
         StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
@@ -339,6 +341,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
                      
         StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();

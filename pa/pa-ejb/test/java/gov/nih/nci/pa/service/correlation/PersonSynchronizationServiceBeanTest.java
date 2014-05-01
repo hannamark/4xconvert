@@ -66,6 +66,7 @@ public class PersonSynchronizationServiceBeanTest extends AbstractHibernateTestC
         sps.setPiIdentifier(String.valueOf(paPer.getIdentifier()));
         sps.setResponsibleIdentifier(String.valueOf(paPer.getIdentifier()));
         sps.setSitePiIdentifier(String.valueOf(paPer.getIdentifier()));
+        sps.setAccrualDiseaseCodeSystem("SDC");
         Long spsId = (Long)session.save(sps);
         session.flush();
         StudyProtocolStage dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);

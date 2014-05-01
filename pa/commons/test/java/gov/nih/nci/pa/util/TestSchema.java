@@ -206,12 +206,6 @@ import java.util.TreeSet;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 
-
-
-
-
-
-
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
@@ -357,6 +351,7 @@ public class TestSchema {
         sp.setProcessingPriority(3);
         sp.setComments("Comments");
         sp.setAssignedUser(ru.getUserLastCreated());
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
         sp.setId(sp.getId());
         studyProtocolIds.add(sp.getId());
@@ -622,6 +617,7 @@ public class TestSchema {
         stage.setUserLastUpdated(user);
         stage.setPhaseCode(PhaseCode.I);
         stage.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
+        stage.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(stage);
         
         StudyFundingStage fundingStage = new StudyFundingStage();
@@ -893,6 +889,7 @@ public class TestSchema {
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
         studyProtocolIds.add(sp.getId());
         studyProtocols.add(sp);
@@ -939,6 +936,7 @@ public class TestSchema {
         sp.setSubmissionNumber(Integer.valueOf(0));
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
         addUpdObject(scc);
         sp.setId(sp.getId());
@@ -1139,6 +1137,7 @@ public class TestSchema {
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         sp.setSubmissionNumber(2);
         sp.setAmendmentDate(TODAY);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
         sp.setId(sp.getId());
         return IiConverter.convertToStudyProtocolIi(sp.getId());
@@ -1167,6 +1166,7 @@ public class TestSchema {
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         sp.setSubmissionNumber(2);
         sp.setAmendmentDate(TODAY);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         TestSchema.addUpdObject(sp);
         sp.setId(sp.getId());
         return IiConverter.convertToStudyProtocolIi(sp.getId());
@@ -1656,6 +1656,7 @@ public class TestSchema {
         sp.setDateLastUpdated(TODAY);
         sp.setDateLastCreated(TODAY);
         sp.setStatusDate(TODAY);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
         addOwners(sp);
         addUpdObject(sp);
@@ -1719,6 +1720,7 @@ public class TestSchema {
         sp.setAmendmentDate(TODAY);
         sp.setAmendmentNumber("amendmentNumber");
         sp.setSubmissionNumber(2);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         StudyMilestone sm = createStudyMilestoneObj(MilestoneCode.SUBMISSION_RECEIVED, RejectionReasonCode.OUT_OF_SCOPE, sp);
         addUpdObject(sm);
         Document doc = new Document();
@@ -1740,6 +1742,7 @@ public class TestSchema {
         sp.setAmendmentDate(TODAY);
         sp.setAmendmentNumber("amendmentNumber");
         sp.setSubmissionNumber(2);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         Document doc = new Document();
         doc.setStudyProtocol(sp);
         doc.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
@@ -1815,6 +1818,7 @@ public class TestSchema {
         sp.setProcessingPriority(1);
         sp.setComments("Comments");
         sp.setAssignedUser(user);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         StudyProtocolDates dates = sp.getDates();
         dates.setStartDate(TODAY);
         dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
@@ -1885,6 +1889,7 @@ public class TestSchema {
         isp.setNumberOfInterventionGroups(Integer.valueOf(5));
         isp.setProprietaryTrialIndicator(Boolean.FALSE);
         isp.setSubmissionNumber(Integer.valueOf(1));
+        isp.setAccrualDiseaseCodeSystem("SDC");
         return isp;
     }
 

@@ -131,7 +131,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     private String programCodeText;
     private Set<Ii> otherIdentifiers = new HashSet<Ii>();
     private ConsortiaTrialCategoryCode consortiaTrialCategoryCode;
-    private String accrualDiseaseCodeSystem = "SDC";
+    private String accrualDiseaseCodeSystem;
 
     
     /**

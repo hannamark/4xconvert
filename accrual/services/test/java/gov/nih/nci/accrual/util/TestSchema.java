@@ -278,6 +278,7 @@ public class TestSchema {
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
         studyProtocols.add(sp);
         
@@ -304,6 +305,7 @@ public class TestSchema {
         sp.setStatusCode(ActStatusCode.INACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
         studyProtocols.add(sp);
         
@@ -330,6 +332,7 @@ public class TestSchema {
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(2));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
 
         sr = new StudyResourcing();
@@ -369,6 +372,7 @@ public class TestSchema {
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         sp.setProprietaryTrialIndicator(false);
+        sp.setAccrualDiseaseCodeSystem("SDC");
         addUpdObject(sp);
         studyProtocols.add(sp);
         
