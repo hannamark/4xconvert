@@ -368,7 +368,12 @@ public class AddSitesAction extends BaseSearchTrialAction {
                 allMembersList.add(sibling);
             }
         }
-        return allMembersList;
+        
+        List<OrganizationDTO> properlySortedList = new ArrayList<OrganizationDTO>();
+        properlySortedList.add(affiliation);
+        allMembersList.remove(affiliation);
+        properlySortedList.addAll(allMembersList);
+        return properlySortedList;
     }
 
     /**
