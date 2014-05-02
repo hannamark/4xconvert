@@ -133,6 +133,10 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
     private Connection connection;
     
     private static Logger LOG = Logger.getLogger(AbstractRegistrySeleniumTest.class.getName());
+    
+    protected String today = MONTH_DAY_YEAR_FMT.format(new Date());
+    protected String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
+    protected String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
 
     @Override
     public void setUp() throws Exception {        
@@ -282,9 +286,9 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
      */
     protected void registerTrialWithoutDeletingExistingOne(String trialName,
             String leadOrgTrialId) throws URISyntaxException {
-        String today = MONTH_DAY_YEAR_FMT.format(new Date());
-        String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
-        String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
+        today = MONTH_DAY_YEAR_FMT.format(new Date());
+        tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
+        oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
 
         //Select register trial and choose trial type
         clickAndWaitAjax("registerTrialMenuOption");
@@ -396,9 +400,9 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
 
     protected void registerDraftTrial(String trialName, String leadOrgTrialId) throws URISyntaxException, SQLException {
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        String today = MONTH_DAY_YEAR_FMT.format(new Date());
-        String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
-        String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
+        today = MONTH_DAY_YEAR_FMT.format(new Date());
+        tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
+        oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
 
         //Select register trial and choose trial type
         clickAndWaitAjax("registerTrialMenuOption");
@@ -510,12 +514,16 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
     
     protected void hoverLink(String linkText) {       
         By by = By.linkText(linkText);
+        hover(by);     
+    }
+    
+    protected void hover(By by) {
         Actions action = new Actions(driver);
         WebElement elem = driver.findElement(by);
         action.moveToElement(elem);
-        action.perform();
-        pause(1000);
+        action.perform();        
     }
+
     
     public final void deactivateTrialByLeadOrgId(String leadOrgID)
             throws SQLException {
@@ -843,6 +851,35 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
                 + " (select * from study_site ss where ss.study_protocol_identifier=study_protocol.identifier and ss.local_sp_indentifier='"
                 + nctID + "')";
         runner.update(connection, sql);
+    }
+    
+    protected void deactivateAllTrials() throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "update study_protocol set status_code='INACTIVE'";
+        runner.update(connection, sql);
+    }
+    
+    protected Number findParticipatingSite(TrialInfo trial, String orgName,
+            String localID) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "SELECT ss.identifier FROM "
+                + "("
+                + "   ("
+                + "      study_site ss"
+                + "      JOIN healthcare_facility ro ON"
+                + "      ("
+                + "         (ro.identifier = ss.healthcare_facility_identifier)"
+                + "      )"
+                + "   )"
+                + "   JOIN organization org ON ((org.identifier = ro.organization_identifier))"
+                + ")" + "WHERE ss.local_sp_indentifier='" + localID
+                + "' AND org.name='" + orgName
+                + "' AND ((ss.functional_code)::text = 'TREATING_SITE'::text)";
+
+        final Object[] results = runner.query(connection, sql,
+                new ArrayHandler());
+        Number siteID = results != null ? (Number) results[0] : null;
+        return siteID;
     }
 
     public static final class TrialInfo {

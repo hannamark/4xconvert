@@ -358,11 +358,11 @@
 				</div>
 				<div class="bottom no-border" id="saveCancelDiv"
 					style="display: none;">
-					<button type="button" class="btn btn-icon btn-primary"
+					<button type="button" class="btn btn-icon btn-primary" id="saveBtn"
 						onclick="save();">
 						<i class="fa-save"></i> Save
 					</button>
-					<button type="button" class="btn btn-icon btn-default"
+					<button type="button" class="btn btn-icon btn-default" id="cancelBtn"
 						onclick="cancel();">
 						<i class="fa-times-circle"></i> Cancel
 					</button>
@@ -442,6 +442,7 @@
 									<td nowrap="nowrap">
 										<button title="Select Principal Investigator for this site"
 											data-toggle="tooltip"
+											id="trial_${trial.studyProtocolId}_site_${stat.index}_pi_lookupBtn"
 											onclick="lookupPI(${trial.studyProtocolId}, ${stat.index});"
 											class="btn btn-default" type="button">
 											<i class="fa-user"></i>&nbsp;
