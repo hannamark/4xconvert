@@ -126,36 +126,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testAddSite() throws SQLException {
-        goToAddSitesScreen();
-
-        deactivateAllTrials();
-        TrialInfo trial = createAcceptedTrial(true);
-
-        selenium.type("id=identifier", trial.nciID);
-        clickAndWait("id=runSearchBtn");
-        waitForElementById("trialsTable", WAIT_FOR_ELEMENT_TIMEOUT);
-
-        // Make sure tooltip for "+" button is there.
-        hover(By.id("plussign_" + trial.id));
-        pause(1000);
-        assertTrue(selenium.isTextPresent("Click here to add sites to "
-                + trial.nciID));
-
-        // click on "+" to start adding sites
-        selenium.click("xpath=//table[@id='trialsTable']/tbody/tr[1]//td[1]//i");
-        waitForElementById("saveCancelDiv", WAIT_FOR_ELEMENT_TIMEOUT);
-        pause(1000);
-
-        assertNotNull(driver.findElement(By.className("popover-content")));
-        assertTrue(selenium
-                .isTextPresent("If you change your mind about entering a particular site, simply leave the row empty and it will be ignored"));
-        assertEquals("3",
-                selenium.getValue("id=trial_" + trial.id + "_site_0_org_poid"));
-
-        // Make sure tooltip for PI lookup button is there.
-        hover(By.id("trial_" + trial.id + "_site_0_pi_lookupBtn"));
-        pause(1000);
-        assertTrue(selenium.isTextPresent("Select Principal Investigator"));
+        TrialInfo trial = createTrialAndBeginAddingSites();
 
         // Select Investigator
         searchAndSelectPerson(
@@ -196,6 +167,72 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
         assertNotNull(findParticipatingSite(trial,
                 "National Cancer Institute Division of Cancer Prevention",
                 "XYZ0001"));
+
+    }
+
+    /**
+     * @return
+     * @throws SQLException
+     */
+    private TrialInfo createTrialAndBeginAddingSites() throws SQLException {
+        goToAddSitesScreen();
+
+        deactivateAllTrials();
+        TrialInfo trial = createAcceptedTrial(true);
+
+        selenium.type("id=identifier", trial.nciID);
+        clickAndWait("id=runSearchBtn");
+        waitForElementById("trialsTable", WAIT_FOR_ELEMENT_TIMEOUT);
+
+        // Make sure tooltip for "+" button is there.
+        hover(By.id("plussign_" + trial.id));
+        pause(1000);
+        assertTrue(selenium.isTextPresent("Click here to add sites to "
+                + trial.nciID));
+
+        // click on "+" to start adding sites
+        selenium.click("xpath=//table[@id='trialsTable']/tbody/tr[1]//td[1]//i");
+        waitForElementById("saveCancelDiv", WAIT_FOR_ELEMENT_TIMEOUT);
+        pause(1000);
+
+        assertNotNull(driver.findElement(By.className("popover-content")));
+        assertTrue(selenium
+                .isTextPresent("If you change your mind about entering a particular site, simply leave the row empty and it will be ignored"));
+        assertEquals("3",
+                selenium.getValue("id=trial_" + trial.id + "_site_0_org_poid"));
+
+        // Make sure tooltip for PI lookup button is there.
+        hover(By.id("trial_" + trial.id + "_site_0_pi_lookupBtn"));
+        pause(1000);
+        assertTrue(selenium.isTextPresent("Select Principal Investigator"));
+        return trial;
+    }
+
+    @Test
+    public void testAddSiteNothingEntered() throws SQLException {
+        TrialInfo trial = createTrialAndBeginAddingSites();
+        clickAndWait("id=saveBtn");
+        waitForPageToLoad();
+        assertTrue(selenium.isTextPresent("No participating sites created."));
+        driver.findElement(By.className("fa-thumbs-up")).click();
+    }
+
+    @Test
+    public void testAddSiteValidationMissingFields() throws SQLException {
+        TrialInfo trial = createTrialAndBeginAddingSites();
+        selenium.type("id=trial_" + trial.id + "_site_0_pgcode", "PG0001");
+        clickAndWait("id=saveBtn");
+        waitForTextToAppear(By.className("alert-danger"),
+                "Local Trial Identifier is required", WAIT_FOR_ELEMENT_TIMEOUT);
+        waitForTextToAppear(By.className("alert-danger"),
+                "Please choose a Site Principal Investigator using the lookup",
+                WAIT_FOR_ELEMENT_TIMEOUT);
+        waitForTextToAppear(By.className("alert-danger"),
+                "Please enter a value for Recruitment Status",
+                WAIT_FOR_ELEMENT_TIMEOUT);
+        waitForTextToAppear(By.className("alert-danger"),
+                "A valid Recruitment Status Date is required",
+                WAIT_FOR_ELEMENT_TIMEOUT);
 
     }
 
