@@ -297,12 +297,12 @@
 					</div>
 				</div>
 				<div class="bottom no-border">
-					<button type="button" class="btn btn-icon btn-primary"
+					<button type="button" class="btn btn-icon btn-primary" id="runSearchBtn"
 						onclick="search();">
 						<i class="fa-search"></i>
 						<fmt:message key="siteadministration.buttons.search" />
 					</button>
-					<button type="button" class="btn btn-icon btn-default"
+					<button type="button" class="btn btn-icon btn-default" id="resetBtn"
 						onclick="resetSearch();">
 						<i class="fa-repeat"></i>
 						<fmt:message key="siteadministration.buttons.reset" />

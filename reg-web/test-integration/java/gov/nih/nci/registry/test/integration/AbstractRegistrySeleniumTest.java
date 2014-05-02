@@ -95,19 +95,26 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
+import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * Abstract base class for selenium tests.
@@ -116,6 +123,8 @@ import org.openqa.selenium.TakesScreenshot;
  */
 @Ignore
 public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2TestCase {
+    
+    private static final String PHANTOM_JS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
     protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
     private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
     private static final String IRB_DOCUMENT = "IrbDoc.doc";
@@ -499,6 +508,15 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
         firstRun = false;
     }
     
+    protected void hoverLink(String linkText) {       
+        By by = By.linkText(linkText);
+        Actions action = new Actions(driver);
+        WebElement elem = driver.findElement(by);
+        action.moveToElement(elem);
+        action.perform();
+        pause(1000);
+    }
+    
     public final void deactivateTrialByLeadOrgId(String leadOrgID)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -510,5 +528,339 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
                         + StringEscapeUtils.escapeSql(leadOrgID) + "')");
         LOG.info("De-activated trial with Lead Org ID of "+leadOrgID);
     }
+    
+    protected TrialInfo createSubmittedTrial(boolean isAbbreviated) throws SQLException {
+        TrialInfo info = new TrialInfo();
+        info.uuid = UUID.randomUUID().toString();
+        info.title = "Title " + info.uuid;
+
+        QueryRunner runner = new QueryRunner();
+
+        final Object[] regUserResults = runner.query(connection,
+                "select identifier, csm_user_id from registry_user limit 1",
+                new ArrayHandler());
+        info.registryUserID = (Long) regUserResults[0];
+        info.csmUserID = (Long) regUserResults[1];
+
+        String protocolInsertSQL = "INSERT INTO study_protocol "
+                + "(identifier,accr_rept_meth_code,acronym,accept_healthy_volunteers_indicator,data_monty_comty_apptn_indicator,"
+                + "delayed_posting_indicator,expd_access_indidicator,fda_regulated_indicator,review_brd_approval_req_indicator,"
+                + "keyword_text,official_title,max_target_accrual_num,phase_code,phase_other_text,pri_compl_date,pri_compl_date_type_code,"
+                + "start_date,start_date_type_code,primary_purpose_code,primary_purpose_other_text,public_description,"
+                + "public_tittle,section801_indicator,record_verification_date,scientific_description,study_protocol_type,allocation_code,"
+                + "blinding_role_code_subject,blinding_role_code_caregiver,blinding_role_code_investigator,blinding_role_code_outcome,"
+                + "blinding_schema_code,design_configuration_code,number_of_intervention_groups,study_classification_code,bio_specimen_description,"
+                + "bio_specimen_retention_code,sampling_method_code,number_of_groups,study_model_code,study_model_other_text,time_perspective_code,"
+                + "time_perspective_other_text,study_population_description,date_last_created,date_last_updated,status_code,status_date,"
+                + "amendment_number,amendment_date,amendment_reason_code,submission_number,parent_protocol_identifier,program_code_text,"
+                + "min_target_accrual_num,proprietary_trial_indicator,ctgov_xml_required_indicator,user_last_created_id,user_last_updated_id,"
+                + "phase_additional_qualifier_code,primary_purpose_additional_qualifier_code,completion_date,completion_date_type_code,"
+                + "study_subtype_code,comments,processing_priority,assigned_user_id,ctro_override,secondary_purpose_other_text,nci_grant,"
+                + "consortia_trial_category,final_accrual_num,study_source) VALUES "
+                + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE'))"
+                + ",'ABBREVIATED','Accr',false,false,false,false,"
+                + "false,false,'stage I prostate cancer, stage IIB prostate cancer, stage IIA prostate cancer, stage III prostate cancer'"
+                + ",'"
+                + info.title
+                + "'"
+                + ",null,'II',null,{ts '2018-04-16 12:18:50.572'},'ANTICIPATED',{ts '2013-04-16 12:18:50.572'},'ACTUAL',"
+                + "'TREATMENT',null,'Public Description "
+                + info.uuid
+                + "','"
+                + info.title
+                + "',"
+                + "false,null,'Scientific Description','InterventionalStudyProtocol','RANDOMIZED_CONTROLLED_TRIAL',"
+                + "null,null,null,null,'OPEN','PARALLEL',1,'EFFICACY',null,null,null,1,null,null,null,null,null,"
+                + "{ts '2014-04-16 12:18:50.572'},null,'ACTIVE',{ts '2013-04-16 12:18:50.572'},null,"
+                + "null,null,1,null,'" + info.uuid + "',60,"+isAbbreviated+",false,"
+                + info.csmUserID + ",null,null,null,"
+                + "{ts '2018-04-16 12:18:50.572'},'ANTICIPATED',null,null,2,"
+                + info.csmUserID + ",false,null,false,null,null,'OTHER');";
+        runner.update(connection, protocolInsertSQL);
+        info.id = (Long) runner
+                .query(connection,
+                        "select identifier from study_protocol order by identifier desc limit 1",
+                        new ArrayHandler())[0];
+        assignNciId(info);
+        addDWS(info, "SUBMITTED");
+        addMilestone(info, "SUBMISSION_RECEIVED");       
+        addLeadOrg(info, "ClinicalTrials.gov");
+        addPI(info, "1");
+        addSOS(info, "APPROVED");
+
+        LOG.info("Registered a new trial: " + info);
+        return info;
+        
+    }
+    
+    protected TrialInfo createSubmittedTrial() throws SQLException {
+        return createSubmittedTrial(false);
+    }
+    
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated)
+            throws SQLException {
+        TrialInfo info = createSubmittedTrial(isAbbreviated);
+        addDWS(info, "ACCEPTED");
+        addMilestone(info, "SUBMISSION_ACCEPTED");
+        return info;
+    }
+
+    
+    protected TrialInfo createAcceptedTrial() throws SQLException {
+        return createAcceptedTrial(false);
+    }
+
+    private void addSOS(TrialInfo info, String code) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_overall_status (identifier,comment_text,status_code,status_date,"
+                + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,"
+                + "user_last_updated_id,system_created) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),null,'"
+                + code
+                + "',"
+                + today()
+                + " ,"
+                + info.id
+                + ","
+                + "null,null,null,null,false)";
+        runner.update(connection, sql);
+    }
+
+    private String today() {
+        return String.format("{ts '%s'}", new Timestamp(System.currentTimeMillis()).toString());       
+    }
+
+    private void addMilestone(TrialInfo info, String code) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_milestone (identifier,comment_text,milestone_code,milestone_date,"
+                + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,user_last_updated_id,"
+                + "rejection_reason_code) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),null,'"
+                + code
+                + "',"
+                + ""
+                + today()
+                + ","
+                + info.id
+                + ","
+                + ""
+                + today()
+                + ","
+                + today()
+                + ","
+                + info.csmUserID
+                + ","
+                + info.csmUserID + ",null)";
+        runner.update(connection, sql);
+    }
+
+    private void addPI(TrialInfo info, String poPersonID) throws SQLException {
+        Number paPersonID = findOrCreatePersonByPoId(poPersonID);
+        Number crsID = findOrCreateCrs(paPersonID, "ClinicalTrials.gov");
+        Number hcpID = findOrCreateHcp(paPersonID, "ClinicalTrials.gov");
+
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_contact"
+                + "(identifier,role_code,primary_indicator,address_line,delivery_address_line,city,state,postal_code,"
+                + "country_identifier,telephone,email,healthcare_provider_identifier,clinical_research_staff_identifier,"
+                + "study_protocol_identifier,status_code,status_date_range_low,date_last_created,date_last_updated,"
+                + "status_date_range_high,organizational_contact_identifier,user_last_created_id,user_last_updated_id,"
+                + "title) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'STUDY_PRINCIPAL_INVESTIGATOR',null,null,null,null,null,null,null,null"
+                + ",null,"
+                + hcpID
+                + ","
+                + crsID
+                + ","
+                + info.id
+                + ",'PENDING',"
+                + today()
+                + ",null,null,null,null,"
+                + info.csmUserID + "," + info.csmUserID + ",null)";
+        runner.update(connection, sql);
+        
+
+    }
+    
+    private Number findOrCreateHcp(Number paPersonID, String orgName)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "select crs.identifier from healthcare_provider crs "
+                + "inner join organization o on crs.organization_identifier=o.identifier"
+                + "  where person_identifier="
+                + paPersonID
+                + " and o.name='"
+                + orgName + "' limit 1";
+        final Object[] results = runner.query(connection, sql,
+                new ArrayHandler());
+        Number hcpID = results != null ? (Number) results[0] : null;
+        if (hcpID == null) {
+            createHcp(paPersonID, orgName);
+            hcpID = (Number) runner.query(connection, sql, new ArrayHandler())[0];
+        }
+        return hcpID;
+    }
+
+    private Number findOrCreateCrs(Number paPersonID, String orgName)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "select crs.identifier from clinical_research_staff crs "
+                + "inner join organization o on crs.organization_identifier=o.identifier"
+                + "  where person_identifier="
+                + paPersonID
+                + " and o.name='"
+                + orgName + "' limit 1";
+        final Object[] results = runner.query(connection, sql,
+                new ArrayHandler());
+        Number crsID = results != null ? (Number) results[0] : null;
+        if (crsID == null) {
+            createCrs(paPersonID, orgName);
+            crsID = (Number) runner.query(connection, sql, new ArrayHandler())[0];
+        }
+        return crsID;
+    }
+    
+    private void createHcp(Number paPersonID, String orgName)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO healthcare_provider (identifier,assigned_identifier,person_identifier,organization_identifier,"
+                + "status_code) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')) ,'1' ,"
+                + paPersonID + " ," + getOrgIdByName(orgName) + " ,'PENDING')";
+        runner.update(connection, sql);
+    }
+
+    private void createCrs(Number paPersonID, String orgName)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO clinical_research_staff (identifier,assigned_identifier,person_identifier,organization_identifier,"
+                + "status_code) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')) ,'1' ,"
+                + paPersonID + " ," + getOrgIdByName(orgName) + " ,'PENDING')";
+        runner.update(connection, sql);
+    }
+
+    private Number getOrgIdByName(String orgName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (Number) runner.query(connection,
+                "select o.identifier from organization o " + "where o.name='"
+                        + orgName + "' limit 1", new ArrayHandler())[0];
+    }
+
+    private Number findOrCreatePersonByPoId(String poPersonID)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "select identifier from person where assigned_identifier='"
+                + poPersonID + "'";
+        final Object[] results = runner.query(connection, sql,
+                new ArrayHandler());
+        Number paID = results != null ? (Number) results[0] : null;
+        if (paID == null) {
+            createPerson(poPersonID, "John", "G", "Doe", "Mr.", "III");
+            paID = (Number) runner.query(connection, sql,
+                    new ArrayHandler())[0];
+        }
+        return paID;
+    }
+
+    private void createPerson(String poPersonID, String firstName,
+            String middleName, String lastName, String prefix, String suffix)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO person (identifier,assigned_identifier,first_name,middle_name,last_name,"
+                + "status_code,date_last_created,date_last_updated,user_last_created_id,user_last_updated_id) "
+                + "VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'"
+                + poPersonID
+                + "','"
+                + firstName
+                + "','"
+                + middleName
+                + "','"
+                + lastName + "','PENDING',null," + "null,null,null)";
+        runner.update(connection, sql);
+
+    }
+
+    private void addLeadOrg(TrialInfo info, String orgName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        info.leadOrgID = info.uuid;
+        String sql = "INSERT INTO study_site (identifier,functional_code,local_sp_indentifier,"
+                + "review_board_approval_number,review_board_approval_date,review_board_approval_status_code,"
+                + "target_accrual_number,study_protocol_identifier,healthcare_facility_identifier,"
+                + "research_organization_identifier,oversight_committee_identifier,"
+                + "status_code,status_date_range_low,date_last_created,date_last_updated,status_date_range_high,"
+                + "review_board_organizational_affiliation,program_code_text,accrual_date_range_low,accrual_date_range_high,"
+                + "user_last_created_id,user_last_updated_id) VALUES "
+                + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'LEAD_ORGANIZATION','"
+                + info.leadOrgID
+                + "',null,null,null,null,"
+                + info.id
+                + " "
+                + ",null,"
+                + getResearchOrgId(orgName)
+                + ",null,'PENDING',{ts '2014-04-16 14:56:08.559'},{ts '2014-04-16 14:56:08.559'},"
+                + "{ts '2014-04-16 14:56:08.559'},null,null,null,"
+                + "null,null," + info.csmUserID + "," + info.csmUserID + ")";
+        runner.update(connection, sql);
+    }
+
+    private Number getResearchOrgId(String orgName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (Number) runner
+                .query(connection,
+                        "select ro.identifier from research_organization ro inner join organization o " +
+                        "on o.identifier=ro.organization_identifier and o.name='"
+                                + orgName + "' limit 1", new ArrayHandler())[0];
+        
+    }
+
+    private void addDWS(TrialInfo info, String status) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO document_workflow_status (identifier,status_code,comment_text,status_date_range_low,"
+                + "study_protocol_identifier,date_last_created,date_last_updated,status_date_range_high,"
+                + "user_last_created_id,user_last_updated_id) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'"
+                + status
+                + "',null,"
+                + "{ts '2014-04-16 14:20:22.361'},"
+                + info.id
+                + ",{ts '2014-04-16 14:20:22.361'},"
+                + "{ts '2014-04-16 14:20:22.361'},{ts '2014-04-16 14:20:22.361'},"
+                + info.csmUserID + "," + info.csmUserID + ")";
+        runner.update(connection, sql);
+    }
+
+    private void assignNciId(TrialInfo info) throws SQLException {
+        info.nciID = "NCI-2014-" + RandomStringUtils.randomNumeric(8);
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_otheridentifiers "
+                + "(study_protocol_id,null_flavor,displayable,extension,identifier_name,reliability,root,scope) "
+                + "VALUES ("
+                + info.id
+                + ",null,null,'"
+                + info.nciID
+                + "','NCI study protocol entity identifier',null,'2.16.840.1.113883.3.26.4.3',null)";
+        runner.update(connection, sql);
+    }
+    
+    protected void deactivateTrialByNctId(String nctID) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "update study_protocol set status_code='INACTIVE' where exists"
+                + " (select * from study_site ss where ss.study_protocol_identifier=study_protocol.identifier and ss.local_sp_indentifier='"
+                + nctID + "')";
+        runner.update(connection, sql);
+    }
+
+    public static final class TrialInfo {
+
+        public String uuid;
+        public String title;
+        public Long id;
+        public String leadOrgID;
+        public String nciID;
+        public Long registryUserID;
+        public Long csmUserID;
+        
+        @Override
+        public String toString() {         
+            return ToStringBuilder.reflectionToString(this);
+        }
+
+    }
+
 
 }

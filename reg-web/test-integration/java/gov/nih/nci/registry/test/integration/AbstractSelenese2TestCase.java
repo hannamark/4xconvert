@@ -87,6 +87,7 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverBackedSelenium;
 import org.openqa.selenium.WebElement;
@@ -119,6 +120,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
                 + ":" + port;
 
         driver = (WebDriver) Class.forName(driverClass).newInstance();
+        driver.manage().window().setSize(new Dimension(1366, 768));
         selenium = new WebDriverBackedSelenium(driver, url);
         selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
 
