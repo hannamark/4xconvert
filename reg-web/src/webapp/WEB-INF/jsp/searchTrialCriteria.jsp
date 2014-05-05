@@ -16,6 +16,7 @@
 </style>
 <SCRIPT LANGUAGE="JavaScript">
     window.onload=displayOrg;
+    
     function resetValues(){
         document.searchTrial.reset();
         document.getElementById("officialTitle").value="";
@@ -28,6 +29,9 @@
         document.getElementById("organizationId").value="";
         document.getElementById("participatingSiteId").value="";
         document.getElementById("leadAndParticipatingOrgId").value="";
+        document.getElementById("organizationName").value="";
+        document.getElementById("participatingSiteName").value="";
+        document.getElementById("leadAndParticipatingOrgName").value="";
         document.getElementById("phaseAdditionalQualifierCode").value="";
         document.getElementById("principalInvestigatorId").value="";
         document.getElementById("trialCategory").value=""; 
@@ -109,19 +113,43 @@
     function displayOrg(){
         var input="criteria.organizationType";
         var inputElement = document.forms[0].elements[input];
-	        if (inputElement.options[inputElement.selectedIndex].value == "Both") {
-	            document.getElementById("Lead").style.display = "none";
-	            document.getElementById("Site").style.display = "none";
-	            document.getElementById("LeadOrSite").style.display = "";
-	        } else if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {
-                document.getElementById("Lead").style.display = "none";
-                document.getElementById("LeadOrSite").style.display = "none";
-                document.getElementById("Site").style.display = "";
-            } else {
-                document.getElementById("Lead").style.display = "";
-                document.getElementById("Site").style.display = "none";
-                document.getElementById("LeadOrSite").style.display = "none";
-            }
+        if (inputElement.options[inputElement.selectedIndex].value == "Both") {
+        	hideLeadOrganization();
+        	hideParticipatingSite();
+        	showLeadOrParticipatingSite();
+        } else if (inputElement.options[inputElement.selectedIndex].value == "Participating Site") {
+        	hideLeadOrganization();
+        	showParticipatingSite();
+        	hideLeadOrParticipatingSite();
+        } else {
+        	showLeadOrganization();
+        	hideParticipatingSite();
+        	hideLeadOrParticipatingSite();
+        } 
+    }
+    function hideParticipatingSite() {
+    	document.getElementById("Site").style.display = "none";
+    	document.getElementById("participatingSiteId").value = "";
+    	document.getElementById("participatingSiteName").value = "";
+    }
+    function hideLeadOrParticipatingSite() {
+    	document.getElementById("LeadOrSite").style.display = "none";
+    	document.getElementById("leadAndParticipatingOrgId").value = "";
+    	document.getElementById("leadAndParticipatingOrgName").value = "";
+    }
+    function hideLeadOrganization() {
+    	document.getElementById("Lead").style.display = "none";
+    	document.getElementById("organizationId").value = "";
+    	document.getElementById("organizationName").value = "";
+    }
+    function showParticipatingSite() {
+    	document.getElementById("Site").style.display = "";
+    }
+    function showLeadOrParticipatingSite() {
+    	document.getElementById("LeadOrSite").style.display = "";
+    }
+    function showLeadOrganization() {
+    	document.getElementById("Lead").style.display = "";
     }
     function viewPartialProtocol(pId,user) {
         document.forms[0].action="searchTrialpartiallySubmittedView.action?studyProtocolId="+pId;
@@ -131,9 +159,11 @@
        return confirm("Do you want to delete?");
    }     
    
+   var nameIdMap = {"principalInvestigatorName":"principalInvestigatorId","organizationName":"organizationId", "participatingSiteName":"participatingSiteId", "leadAndParticipatingOrgName":"leadAndParticipatingOrgId"};
+   
    jQuery(function() {
      	
-         jQuery(".orgautocomplete").autocomplete({delay: 250,
+         jQuery(".orgautocomplete").autocomplete({delay: 250, minLength:3,
                source: function(req, responseFn) {
                  var orgType = jQuery("#organizationType").val();
                  if('' == orgType) {
@@ -149,10 +179,20 @@
                              };
                         }));
                  });
-             }
+             },
+             select: function(event, ui) {
+					// prevent autocomplete from updating the textbox
+					event.preventDefault();
+					// set the label as value in the textbox
+					// and set the value/key as value in the hidden field
+					event.target.value=ui.item.label;
+					var id = event.target.id;
+					id = nameIdMap[id];
+					document.getElementById(id).value=ui.item.value;
+				}
          });
          
-         jQuery(".personautocomplete").autocomplete({delay: 250,
+         jQuery(".personautocomplete").autocomplete({delay: 250, minLength:3,
              source: function(req, responseFn) {
                
                var url = registryApp.contextPath + '/ctro/json/ajaxPersonsgetPrincipalInvestigatorsByNameAssociatedWithStudyProtocol.action?personTerm=' + req.term;
@@ -164,7 +204,17 @@
                            };
                       }));
                });
-           }
+           },
+           select: function(event, ui) {
+				// prevent autocomplete from updating the textbox
+				event.preventDefault();
+				// set the label as value in the textbox
+				// and set the value/key as value in the hidden field
+				event.target.value=ui.item.label;
+				var id = event.target.id;
+				id = nameIdMap[id];
+				document.getElementById(id).value=ui.item.value;
+			}
        });
          
      });
@@ -262,9 +312,10 @@
         	<s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Both':'Both'}" value="criteria.organizationType" cssClass="form-control" onchange="displayOrg()"/>
         </div>
         <div id="Lead">
-        <label for="organizationId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+        <label for="organizationName" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+        <s:hidden name="criteria.organizationId" id="organizationId"/>
 		<div class="col-xs-4">                    
-			<s:textfield id="organizationId" name="criteria.organizationId" cssClass="form-control orgautocomplete"/>
+			<s:textfield id="organizationName" name="criteria.organizationName" cssClass="form-control orgautocomplete"/>
              <span class="alert-danger">
                  <s:fielderror>
                  <s:param>criteria.organizationId</s:param>
@@ -273,9 +324,10 @@
         </div>
      </div>
      <div id="Site">
-		<label for="participatingSiteId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+		<label for="participatingSiteName" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+		<s:hidden name="criteria.participatingSiteId" id="participatingSiteId"/>
 		<div class="col-xs-4">
-			<s:textfield id="participatingSiteId" name="criteria.participatingSiteId" cssClass="form-control orgautocomplete"/>
+			<s:textfield id="participatingSiteName" name="criteria.participatingSiteName" cssClass="form-control orgautocomplete"/>
             <span class="alert-danger">
                 <s:fielderror>
                 <s:param>criteria.organizationId</s:param>
@@ -284,9 +336,10 @@
     	</div>
     </div>
     <div id="LeadOrSite">
-        <label for="leadAndParticipatingOrgId" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+        <label for="leadAndParticipatingOrgName" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
+        <s:hidden name="criteria.leadAndParticipatingOrgId" id="leadAndParticipatingOrgId"/>
         <div class="col-xs-4">                
-			<s:textfield id="leadAndParticipatingOrgId" name="criteria.leadAndParticipatingOrgId" cssClass="form-control orgautocomplete"/>
+			<s:textfield id="leadAndParticipatingOrgName" name="criteria.leadAndParticipatingOrgName" cssClass="form-control orgautocomplete"/>
             <span class="alert-danger">
                 <s:fielderror>
                 <s:param>criteria.organizationId</s:param>
@@ -299,18 +352,9 @@
 	<div class="form-group">
 		<%-- <s:set name="principalInvs" value="getAllPrincipalInvestigators()" /> --%>
         <label for="principalInvestigatorId" class="col-xs-2 control-label"> <fmt:message key="search.trial.principalInvestigator"/></label>
+        <s:hidden name="criteria.principalInvestigatorId" id="principalInvestigatorId"/>
         <div class="col-xs-4">
-            <%-- <s:select
-                name="criteria.principalInvestigatorId"
-                id="principalInvestigatorId"
-                list="#principalInvs"
-                listKey="id"
-                listValue="fullName"
-                headerKey=""
-                headerValue="--Select--"
-                value="criteria.principalInvestigatorId"
-                cssClass="form-control" /> --%>
-            <s:textfield id="principalInvestigatorId" name="criteria.principalInvestigatorId" cssClass="form-control personautocomplete"/>
+            <s:textfield id="principalInvestigatorName" name="criteria.principalInvestigatorName" cssClass="form-control personautocomplete"/>
        </div>
        <label for="trialCategory" class="col-xs-2 control-label"> <fmt:message key="search.trial.trialCategorySearch"/></label>
        <div class="col-xs-4">        

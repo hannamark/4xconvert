@@ -18,11 +18,15 @@ public class SearchProtocolCriteria {
     private String organizationId;
     private String participatingSiteId;
     private String leadAndParticipatingOrgId;
+    private String organizationName;
+    private String participatingSiteName;
+    private String leadAndParticipatingOrgName;
     private String phaseCode;
     private String primaryPurposeCode;
     private String organizationType;
     private boolean myTrialsOnly;
     private String principalInvestigatorId;
+    private String principalInvestigatorName;
     private String phaseAdditionalQualifierCode;
     private String trialCategory;
     private String holdStatus;
@@ -211,6 +215,71 @@ public class SearchProtocolCriteria {
      */
     public boolean isNctIdentifierProvided() {        
         return StringUtils.startsWithIgnoreCase(getIdentifier(), "NCT");
-    }    
-
+    }
+    
+	/**
+	 * principalInvestigatorName
+	 * @return principalInvestigatorName
+	 */
+	public String getPrincipalInvestigatorName() {
+		return principalInvestigatorName;
+	}
+	/**
+	 * 
+	 * @param principalInvestigatorName principalInvestigatorName to set
+	 */
+	public void setPrincipalInvestigatorName(String principalInvestigatorName) {
+		this.principalInvestigatorName = principalInvestigatorName;
+	}
+	
+	/**
+	 * 
+	 * @return lead organizationName
+	 */
+	public String getOrganizationName() {
+		return organizationName;
+	}
+	
+	/**
+	 * set lead organizationName
+	 * @param organizationName
+	 */
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
+	}
+	
+	/**
+	 * 
+	 * @return participatingSiteName
+	 */
+	public String getParticipatingSiteName() {
+		return participatingSiteName;
+	}
+	
+	/**
+	 * set participatingSiteName
+	 * @param participatingSiteName
+	 */
+	public void setParticipatingSiteName(String participatingSiteName) {
+		this.participatingSiteName = participatingSiteName;
+	}
+	
+	/**
+	 * 
+	 * @return lead organization or participating site name
+	 */
+	public String getLeadAndParticipatingOrgName() {
+		return leadAndParticipatingOrgName;
+	}
+	
+	/**
+	 * set lead organization or participating site name
+	 * @param leadAndParticipatingOrgName
+	 */
+	public void setLeadAndParticipatingOrgName(String leadAndParticipatingOrgName) {
+		this.leadAndParticipatingOrgName = leadAndParticipatingOrgName;
+	} 
+	
+	
+    
 }

@@ -588,8 +588,8 @@
                             <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
                             <include name="WEB-INF/jsp/common/*.jsp"/>
                             <include name="WEB-INF/tags/*.tag"/>
-                            <include name="styles/jquery-ui/ui-lightness/*.css"/>
-                      		<include name="styles/*.css"/>
+                      		<include name="styles/**/*.css"/>
+                      		<include name="styles/**/images/*.*"/>
                             <include name="scripts/js/*.js"/>
                             <include name="scripts/ajax/*.js"/>
                       </fileset>

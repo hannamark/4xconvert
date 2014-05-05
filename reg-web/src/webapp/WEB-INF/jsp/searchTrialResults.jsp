@@ -1,6 +1,20 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <head>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
+<script type="text/javascript" language="javascript">
+jQuery(function() {
+	jQuery('#row').dataTable( {
+		"sDom": 'pCrfltip',
+		"pagingType": "full_numbers",
+        "oColVis": {
+            "buttonText": "Choose columns"
+        }
+	});
+});
+</script>
 </head>
 <s:set name="records" value="records" scope="request"/>
 <s:if test="records != null">
@@ -10,10 +24,11 @@
     <c:choose>
         <c:when test="${requestScope.partialSubmission != null}">
             <h2 id="search_results">Saved Draft Search Results</h2>
+            
 			<div class="table-wrapper">
             <div class="table-responsive">
-            <display:table class="table table-striped table-bordered sortable" summary="This table contains your trial search results. Please use column headers to sort results"
-                           decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
+            <display:table class="table table-striped table-bordered" summary="This table contains your trial search results. Please use column headers to sort results"
+                           decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" id="row"
                            name="records" requestURI="searchTrialgetMyPartiallySavedTrial.action" export="true">
                 <display:setProperty name="paging.banner.item_name" value="trial"/>
                 <display:setProperty name="paging.banner.items_name" value="trials"/>                           
@@ -22,15 +37,15 @@
                 <display:setProperty name="export.excel.include_header" value="true"/>
                 <display:setProperty name="export.csv.filename" value="resultsSavedDraftSearch.csv"/>
                 <display:setProperty name="export.csv.include_header" value="true"/>
-                <display:column class="title" title="Temp Trial Identifier" sortable="true" headerScope="col" scope="row" media="html">
+                <display:column class="title" title="Temp Trial Identifier" scope="row" media="html">
                     <a href="javascript:void(0)" onclick="viewPartialProtocol('${row.studyProtocolId}');"><c:out value="${row.studyProtocolId}"/></a>
                 </display:column>
-                <display:column class="title" title="Temp Trial Identifier" sortable="true" headerScope="col" scope="row" media="excel csv xml">
+                <display:column class="title" title="Temp Trial Identifier" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.studyProtocolId}"/>
                  </display:column>
-                <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength= "100" sortable="true" headerClass="sortable" headerScope="col"/>
-                <display:column escapeXml="true" titleKey="search.trial.leadOrganizationName" property="leadOrganizationName"    sortable="true" headerClass="sortable" headerScope="col"/>
-                <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier"    sortable="true" headerClass="sortable" headerScope="col"/>
+                <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength= "100" headerScope="col"/>
+                <display:column escapeXml="true" titleKey="search.trial.leadOrganizationName" property="leadOrganizationName" headerScope="col"/>
+                <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier" headerScope="col"/>
                 <display:column titleKey="search.trial.action" media="html">
                     <s:if test="%{#attr.row.proprietaryTrial}">
                         <s:url id="completeUrl" action="submitProprietaryTrialcomplete"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
@@ -59,9 +74,9 @@
             <h2 id="search_results">Submitted Clinical Trials Search Results</h2>
 			<div class="table-wrapper">
             <div class="table-responsive">
-            <display:table class="table table-striped table-bordered sortable" summary="This table contains your trial search results. Please use column headers to sort results"
-                           decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
-                           name="records" requestURI="searchTrialquery.action" export="true">
+            <display:table class="table table-striped table-bordered" summary="This table contains your trial search results. Please use column headers to sort results"
+                           decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" id="row"
+                           name="records" requestURI="searchTrialquery.action" export="true" >
                 <display:setProperty name="paging.banner.item_name" value="trial"/>
                 <display:setProperty name="paging.banner.items_name" value="trials"/>
                 <display:setProperty name="export.xml" value="false"/>
@@ -69,31 +84,31 @@
                 <display:setProperty name="export.excel.include_header" value="true"/>
                 <display:setProperty name="export.csv.filename" value="resultsTrialSearch.csv"/>
                 <display:setProperty name="export.csv.include_header" value="true"/>
-                <display:column escapeXml="true" class="title" title="NCI Trial Identifier" sortable="true"
+                <display:column escapeXml="true" class="title" title="NCI Trial Identifier" 
                     property="nciIdentifier" href="searchTrialview.action" paramId="studyProtocolId" paramProperty="studyProtocolId"
-                    headerClass="sortable" headerScope="col" scope="row" media="html"/>
+                    headerScope="col" scope="row" media="html"/>
                 <display:column class="title" title="NCI Trial Identifier" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.nciIdentifier}"/>
                 </display:column>
-                <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength="200" sortable="true" headerClass="sortable" headerScope="col" media="excel csv"/>
-                <display:column escapeXml="false" titleKey="search.trial.officialTitle" maxLength="100" sortable="true" headerClass="sortable" headerScope="col" media="html">
+                <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength="200"  headerScope="col" media="excel csv"/>
+                <display:column escapeXml="false" titleKey="search.trial.officialTitle" maxLength="100"  headerScope="col" media="html">
                     <!-- <c:out value="${row.officialTitle}"/> -->
                     <c:if test="${not empty row.studyAlternateTitles}">                    
                         <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${row.studyProtocolId}')">(*)</a>
                     </c:if>
                     <c:out value="${row.officialTitle}"/>
                 </display:column>
-                <display:column escapeXml="true" titleKey="search.trial.studyStatusCode" property="studyStatusCode.code" sortable="true" headerClass="sortable" headerScope="col"/>
-                <display:column escapeXml="true" titleKey="search.trial.leadOrganizationName" property="leadOrganizationName" sortable="true" headerClass="sortable" headerScope="col"/>
-                <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
-                <display:column escapeXml="true" titleKey="search.trial.piFullName" property="piFullName" sortable="true" headerClass="sortable" headerScope="col"/>
-                <display:column titleKey="search.trial.nctNumber" property="nctIdentifier" sortable="true" headerClass="sortable"/>
+                <display:column escapeXml="true" titleKey="search.trial.studyStatusCode" property="studyStatusCode.code" headerScope="col"/>
+                <display:column escapeXml="true" titleKey="search.trial.leadOrganizationName" property="leadOrganizationName"  headerScope="col"/>
+                <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier"  headerScope="col"/>
+                <display:column escapeXml="true" titleKey="search.trial.piFullName" property="piFullName"  headerScope="col"/>
+                <display:column titleKey="search.trial.nctNumber" property="nctIdentifier" />
                 <display:column title="Other Identifiers"  property="otherIdentifiersAsString" />
                 <display:column title="Participating Sites" media="html">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
                    	<a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
                </display:column>                                              
-          	 	<display:column title="Available Actions" sortable="false" headerClass="sortable" media="html">
+          	 	<display:column title="Available Actions"  media="html">
           	 		<s:if test="%{#attr.row.actionVisible}">
           	 		<div class="btn-group">
                         <button data-toggle="dropdown" class="btn btn-default dropdown-toggle btn-sm" type="button">Select Action <span class="caret"></span></button>
@@ -101,7 +116,7 @@
                         		<li>
                         			<s:if test="%{!(#attr.row.update == null || #attr.row.update.equals(''))}">									
 										<s:if test="%{#attr.row.proprietaryTrial}">
-				                        <s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+				                        	<s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
 					                        <s:a href="%{url}"><s:property value="%{#attr.row.update}" /></s:a>
 					                    </s:if>
 					                    <s:else>

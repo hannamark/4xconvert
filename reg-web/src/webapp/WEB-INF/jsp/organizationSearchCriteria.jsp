@@ -3,8 +3,22 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<script type="text/javascript" language="javascript">	
-	
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
+<script type="text/javascript" language="javascript">
+	jQuery(function() {
+		jQuery('#row').dataTable( {
+			"sDom": 'pCrfltip',
+			"pagingType": "full_numbers",
+			"bAutoWidth" :false,
+	        "oColVis": {
+	            "buttonText": "Choose columns"
+	        }
+		});
+	});
+		
 	function handleAction() {
 	    $('organizationSearchForm').submit();
 	}
@@ -135,7 +149,9 @@
      </div>
      
      <s:if test="results!=null">
-     	<div id="search-results" class="tab-pane fade active in">   
+     	<div id="search-results" class="tab-pane fade active in">  
+     	<div class="tab-inside">
+	    <div class="mb20 control-bar"> 
 	        <s:if test="results!=null && results.empty">
 	            <div class="alert alert-warning">
 	            No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria.
@@ -146,30 +162,32 @@
 			    <s:set name="orgs" value="results" scope="request" />
 				<div class="table-wrapper">
 	            <div class="table-responsive">
-			    <display:table class="table table-striped table-bordered sortable" sort="list" pagesize="10" uid="row" name="orgs" export="false"
+			    <display:table class="table table-striped table-bordered" uid="row" name="orgs" export="false"
 			        requestURI="organizationsSearchquery.action">
 			        <display:setProperty name="basic.msg.empty_list"
 			            value="No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
-			        <display:column escapeXml="false" title="PO-ID" headerClass="sortable" sortable="true">
+			        <display:column escapeXml="false" title="PO-ID" >
 			          <a href="javascript:void(0);" onclick="displayOrgDetails(<c:out value="${row.id}"/>)"><c:out value="${row.id}"/></a>
 			        </display:column>
-			        <display:column escapeXml="true" title="CTEP ID" property="ctepId" headerClass="sortable"  sortable="true"/>
-			        <display:column title="Name" headerClass="sortable" sortable="true">
+			        <display:column escapeXml="true" title="CTEP ID" property="ctepId" />
+			        <display:column title="Name" >
 			            <c:out value="${row.name}"/>
 			        </display:column>
-			        <display:column escapeXml="false" title="Family Name" sortable="false">
+			        <display:column escapeXml="false" title="Family Name" >
 			            <c:forEach items="${row.families}" var="family">
 			                <c:out value="${family.value}" />
 			                <br />
 			            </c:forEach>
 			        </display:column>
-			        <display:column escapeXml="true" title="City" property="city" headerClass="sortable"  sortable="true"/>
-			        <display:column escapeXml="true" title="State" property="state" headerClass="sortable"  sortable="true"/>
-			        <display:column escapeXml="true" title="Country" property="country" headerClass="sortable"  sortable="true"/>
-			        <display:column escapeXml="true" title="Zip" property="zip" headerClass="sortable"  sortable="true"/>
+			        <display:column escapeXml="true" title="City" property="city" />
+			        <display:column escapeXml="true" title="State" property="state"/>
+			        <display:column escapeXml="true" title="Country" property="country" />
+			        <display:column escapeXml="true" title="Zip" property="zip" />
 			    </display:table>	
 			 	</div>
 			 	</div>	
+			 	</div>
+			 	</div>
 			</s:if>        
         </div>        
      </s:if>

@@ -3,7 +3,21 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
 <script type="text/javascript" language="javascript">
+	jQuery(function() {
+		jQuery('#row').dataTable( {
+			"sDom": 'pCrfltip',
+			"pagingType": "full_numbers",
+			"bAutoWidth" :false,
+	        "oColVis": {
+	            "buttonText": "Choose columns"
+	        }
+		});
+	});
 	function handleAction() {
 	     $('personSearchForm').submit();
 	}
@@ -97,7 +111,9 @@
             </s:form>
         </div>
         <s:if test="results!=null">
-        <div id="search-results" class="tab-pane fade active in">        
+        <div id="search-results" class="tab-pane fade active in">     
+        <div class="tab-inside">
+	    <div class="mb20 control-bar">   
 	        <s:if test="results!=null && results.empty">
 	            <div class="alert alert-warning">
 	            No Persons found. Please verify search criteria and/or broaden your search by removing one or more search criteria.
@@ -108,32 +124,34 @@
 			    <s:set name="persons" value="results" scope="request" />
 			    <div class="table-wrapper">
             	<div class="table-responsive">
-			    <display:table class="table table-striped table-bordered sortable" sort="list" pagesize="10" uid="row" name="persons" export="false"
+			    <display:table class="table table-striped table-bordered" uid="row" name="persons" export="false"
 			        requestURI="personsSearchquery.action">
 			        <display:setProperty name="basic.msg.empty_list"
 			            value="No Persons found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
-			        <display:column escapeXml="false" title="PO-ID"  sortable="true">
+			        <display:column escapeXml="false" title="PO-ID" >
 			              <a href="javascript:void(0);" onclick="displayPersonDetails(<c:out value="${row.id}"/>)"><c:out value="${row.id}"/></a>
 			        </display:column>
-			        <display:column escapeXml="true" title="CTEP ID" property="ctepId"   sortable="true"/>
-				    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="First Name" property="firstName"   sortable="true"/>			    		    
-				    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="Last Name" property="lastName" sortable="true"  />			    
-				    <display:column escapeXml="true" title="Email" property="email" sortable="true"/>
-			        <display:column escapeXml="false" title="Organization Affiliation" sortable="false">
+			        <display:column escapeXml="true" title="CTEP ID" property="ctepId"/>
+				    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="First Name" property="firstName" />			    		    
+				    <display:column decorator="gov.nih.nci.registry.decorator.HtmlEscapeDecorator" escapeXml="false" title="Last Name" property="lastName"  />			    
+				    <display:column escapeXml="true" title="Email" property="email"/>
+			        <display:column escapeXml="false" title="Organization Affiliation" >
 			            <c:forEach items="${row.organizations}" var="org">
 			                <c:out value="${org.name.part[0].value}" />
 			                <br />
 			            </c:forEach>
 			        </display:column>
-	                <display:column escapeXml="false" title="Role" sortable="false">
+	                <display:column escapeXml="false" title="Role" >
 	                    <c:forEach items="${row.roles}" var="role">
 	                        <c:out value="${role}" />
 	                        <br />
 	                    </c:forEach>
 	                </display:column>		        
-			        <display:column escapeXml="true" title="City" property="city" sortable="true"/>
-			        <display:column escapeXml="true" title="State" property="state" sortable="true"/>
+			        <display:column escapeXml="true" title="City" property="city" />
+			        <display:column escapeXml="true" title="State" property="state" />
 			    </display:table>
+			    </div>
+			    </div>	
 			    </div>
 			    </div>		
 			</s:if>        
