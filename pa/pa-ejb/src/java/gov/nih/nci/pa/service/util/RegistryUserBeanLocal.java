@@ -419,7 +419,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
                 .append("and studyProtocol.id = sp.id) ")
                 .append("and dws.statusCode  <> '").append(DocumentWorkflowStatusCode.REJECTED).append("' ")
-                .append("and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) ")
+                .append("and (dws.id in (select max(id) from DocumentWorkflowStatus "
+                        + "as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) ")
                 .append("and sps.functionalCode = '").append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
                 .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT).append("' ")
                 .append("and sps.statusCode <> 'NULLIFIED'");

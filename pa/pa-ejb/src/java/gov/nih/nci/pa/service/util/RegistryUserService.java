@@ -263,7 +263,7 @@ public interface RegistryUserService {
      * @return list of trial ownership information objects.
      * @throws PAException on error.
      */
-    public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
+    List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
             Long participatingSiteId) throws PAException;
     
     /**
