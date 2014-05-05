@@ -85,10 +85,13 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 
 /**
  * Action class for managing user trial ownership.
@@ -124,6 +127,15 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
         return result;
     }
 
+    @Override
+    public void getAssignedTrials(Long affiliatedOrgId) throws PAException {
+        setTrialOwnershipInfo(PaRegistry.getRegistryUserService().
+               searchTrialOwnership(new DisplayTrialOwnershipInformation(), affiliatedOrgId));
+        ServletActionContext
+        .getRequest()
+        .getSession()
+        .setAttribute(TRIAL_OWENERSHIP_LIST, getTrialOwnershipInfo());
+    }
   
     @Override
     public void updateOwnership(Long userId, Long tId, boolean assign, boolean enableEmails)

@@ -4,5 +4,4 @@
 <c:set scope="request" var="topicValue">managesiteownership</c:set>
 <c:set scope="request" var="pageHeaderKey">managesiteownership.page.header</c:set>
 <c:set scope="request" var="memberHeaderKey">managesiteownership.users.header</c:set>
-<c:set scope="request" var="trialHeaderKey">managesiteownership.trials.header</c:set>
 <jsp:include page="/WEB-INF/jsp/manageOwnership.jsp"/>

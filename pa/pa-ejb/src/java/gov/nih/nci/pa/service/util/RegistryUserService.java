@@ -258,6 +258,15 @@ public interface RegistryUserService {
     void removeSiteOwnership(Long userId, Long studySiteId) throws PAException;
 
     /**
+     * Return the list of site trial ownerships for the given site
+     * @param participatingSiteId the participating site id
+     * @return list of trial ownership information objects.
+     * @throws PAException on error.
+     */
+    public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
+            Long participatingSiteId) throws PAException;
+    
+    /**
      * Retrieves user's ID by login name.
      * @param loginName loginName
      * @return id

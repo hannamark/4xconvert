@@ -396,6 +396,53 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return lst;
     }
     
+
+    /**
+     * @param participatingSiteId the participating site id 
+     * @return list of trial ownership information objects.
+     * @throws PAException on error.
+     */
+    @Override
+    @SuppressWarnings(UNCHECKED)
+    public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
+             Long participatingSiteId) throws PAException {
+        List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
+        StringBuffer hql = new StringBuffer();
+        hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, "
+                + "sp.id, otherid.extension, sowner.affiliatedOrganizationId, sps.localStudyProtocolIdentifier "
+                + "from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
+                + "join sp.studySites as sps "
+                + "join sps.healthCareFacility as hcf left join hcf.organization as org "
+                + "join sps.studySiteOwners as sowner left outer join sp.otherIdentifiers otherid where '")
+                .append(participatingSiteId.toString()).append("' ")
+                .append("in (select healthCareFacility.organization.identifier from StudySite where functionalCode ='")
+                .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
+                .append("and studyProtocol.id = sp.id) ")
+                .append("and dws.statusCode  <> '").append(DocumentWorkflowStatusCode.REJECTED).append("' ")
+                .append("and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) ")
+                .append("and sps.functionalCode = '").append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
+                .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT).append("' ")
+                .append("and sps.statusCode <> 'NULLIFIED'");
+                
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(hql.toString());
+        
+        for (Iterator<Object[]> iter = query.iterate(); iter.hasNext();) {
+            Object[] row = iter.next();
+            DisplayTrialOwnershipInformation trialInfo = new DisplayTrialOwnershipInformation();
+            trialInfo.setUserId(ObjectUtils.toString(row[INDEX_USER_ID]));
+            trialInfo.setFirstName(ObjectUtils.toString(row[INDEX_FIRST_NAME]));
+            trialInfo.setLastName(ObjectUtils.toString(row[INDEX_LAST_NAME]));
+            trialInfo.setEmailAddress(ObjectUtils.toString(row[INDEX_EMAIL]));
+            trialInfo.setTrialId(ObjectUtils.toString(row[INDEX_TRIAL_ID]));
+            trialInfo.setNciIdentifier(ObjectUtils.toString(row[INDEX_NCI_IDENTIFIER]));
+            trialInfo.setAffiliatedOrgId(ObjectUtils.toString(row[INDEX_ORG_ID]));
+            trialInfo.setLeadOrgId(ObjectUtils.toString(row[INDEX_LEAD_ID]));
+            lst.add(trialInfo);
+        }
+        return lst;
+    }
+    
     @SuppressWarnings(UNCHECKED)
     private Map<Long, List<Long>> getEmailEnabledTrialOwnershipMap()
             throws PAException {

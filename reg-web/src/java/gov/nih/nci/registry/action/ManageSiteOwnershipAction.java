@@ -96,6 +96,8 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.List;
 
+import org.apache.struts2.ServletActionContext;
+
 import com.opensymphony.xwork2.Preparable;
 
 /**
@@ -144,6 +146,15 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
     }
 
   
+    @Override
+    public void getAssignedTrials(Long affiliatedOrgId) throws PAException {
+        setTrialOwnershipInfo(PaRegistry.getRegistryUserService().searchSiteRecordOwnership(affiliatedOrgId));
+        ServletActionContext
+        .getRequest()
+        .getSession()
+        .setAttribute(TRIAL_OWENERSHIP_LIST, getTrialOwnershipInfo());
+    }
+    
     @Override
     public void updateOwnership(Long userId, Long trialID, boolean assign, boolean enableEmails)
             throws PAException {        

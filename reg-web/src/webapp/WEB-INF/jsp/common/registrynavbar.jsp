@@ -32,7 +32,6 @@
 	                <ul class="dropdown-menu">
 	                  <li><a id="showTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/displayTrialOwnershipsearch.action');">View</a></li>
 	                  <li><a id="manageTrialOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageTrialOwnershipsearch.action');">Manage</a></li>
-	                  <li><a id="manageSiteOwnershipMenuOption" href="javascript:void(0)" onclick="submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageSiteOwnershipsearch.action');">Manage Site</a></li>
 	                </ul>
 	              </li>
 	              <li class="dropdown-submenu"><a href="#">Accrual Access</a>

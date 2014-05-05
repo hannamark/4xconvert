@@ -7,186 +7,214 @@
     <head>
         <title><fmt:message key="${pageTitleKey}"/></title>
         <s:head/>
+        <style type="text/css">     
+		 #hideAll
+		 {
+		   position: fixed;
+		   left: 0px; 
+		   right: 0px; 
+		   top: 0px; 
+		   bottom: 0px; 
+		   background-color: white;
+		   z-index: 99; /* Higher than anything else in the document */
+		
+		 }
+		 </style>   
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
     
         <script type="text/javascript" language="javascript">
-            var trialIds = new Array();
-            var checked = ${checked};
-            <c:forEach var="item" items="${studyProtocols}">
-                  trialIds = trialIds + <c:out value="${item.studyProtocol.id}"/> + ",";
-            </c:forEach>
-            function updateOwnership(assignOwnership) {
+	        function selectAll(field, chkd){
+	            if(field){
+	                if(typeof field.length == 'undefined'){
+	                    field.checked = chkd ;
+	                } else {
+	                    for (i = 0; i < field.length; i++)
+	                           field[i].checked = chkd ;
+	                }
+	             }
+	       }
+            
+           function updateOwnership(assignOwnership) {
+            	if($('chkUser'))
+            		$('chkUser').checked = false
+                if($('chkTrial'))
+                    $('chkTrial').checked = false
+                if($('chkTrialOwner'))
+            	    $('chkTrialOwner').checked = false
+            	    
                 var form = document.forms[0];
                 form.action = (assignOwnership) ? "${actionName}assignOwnership.action" : "${actionName}unassignOwnership.action";
                 form.submit();
             }
             
-            function updateRegUser(regUserId) {
-                var  url = '/registry/siteadmin/${actionName}setRegUser.action';
-                var params = {
-                    owner: $("chk" + regUserId).checked ? "true" : "false",
-                    regUserId: regUserId
-                };
-                var aj = callAjaxPost(null, url, params);
-                return false;
-            }
-            
-            function updateTrial(trialId) {
-                var  url = '/registry/siteadmin/${actionName}setTrial.action';
-                var params = {
-                    selected: $("chk" + trialId).checked ? "true" : "false",
-                    trialId: trialId
-                };
-                var aj = callAjaxPost(null, url, params);
-                return false;
-            }
-            
-            function updateEmailPref(trialId) {
+            function setEmailPref(trialId, uid, selected) {
+            	if(selected){
+                    $("yes_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny active"
+                    $("no_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny"
+                }else{
+                    $("yes_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny "
+                    $("no_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny active"
+                }
                 var  url = '/registry/siteadmin/${actionName}updateEmailPref.action';
                 var params = {
-                    selected: $("chkEmail" + trialId).checked ? "true" : "false",
-                    trialId: trialId
+                    selected: selected,
+                    trialId: trialId,
+                    regUserId: uid
                 };
                 var aj = callAjaxPost(null, url, params);
-                return false;
+                return false
+            }
+            
+            function setEmailPrefAll(selected) {    
+                var  url = '/registry/siteadmin/${actionName}updateEmailPref.action';
+                var params = {
+                    selected: selected,
+                    siteName: '${siteName}'
+                };
+                var aj = callAjaxPost(null, url, params);
+                submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageTrialOwnershipsearch.action');
+                return true;
             }
             
             
-            function check(field)
-            {
-                if (!checked) {
-                
-                    if(typeof field.length == 'undefined'){
-                        field.checked = true ;
-                    } else {
-                        for (i = 0; i < field.length; i++)
-                               field[i].checked = true ;
-                    }
-                    checked = true;
-                    document.getElementById('checkButton').value = "Uncheck All";
-                    
-                    var  url = '/registry/siteadmin/${actionName}setTrial.action';
-                    var params = {
-                        selected: "true",
-                        trialIds: trialIds,
-                        checked: "true"
-                    };
-                    var aj = callAjaxPost(null, url, params);
-                    return false;
-                }
-                else {
-                    if(typeof field.length == 'undefined'){
-                            field.checked = false ;
-                    } else {
-                        for (i = 0; i < field.length; i++)
-                            field[i].checked = false ;
-                    }
-                    checked = false;
-                    document.getElementById('checkButton').value = "Check All";
-                    
-                    var  url = '/registry/siteadmin/${actionName}setTrial.action';
-                    var params = {
-                    selected: "false",
-                    trialIds: trialIds,
-                    checked: "false"
-                    };
-                    var aj = callAjaxPost(null, url, params);
-                    return false;
-               }
+            function siteOptsChange(){
+            	if($('optionsOrg').checked){
+            		submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageTrialOwnershipsearch.action');
+            	}else{
+            		submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageSiteOwnershipsearch.action');
+            	}
+            	
             }
-
         
         </script>
     </head>
     <body>
+        <!-- for hiding the page contents while loading -->
+        <div style="display: block" id="hideAll"><img src="${pageContext.request.contextPath}/images/loading.gif"/></div>
+        <script type="text/javascript">
+         document.getElementById("hideAll").style.display = "block";
+        </script> 
         <!-- main content begins-->
         <c:set var="topic" scope="request" value="${topicValue}"/>
         <h3 class="heading"><span><fmt:message key="${pageHeaderKey}"/></span></h3>
          <reg-web:failureMessage/>
          <reg-web:sucessMessage/>
-  
-         <s:form name="formManageTrialOwnership" action="%{#request.actionName}view.action" cssClass="form-horizontal" role="form">
+		 <s:form name="formManageTrialOwnership" action="%{#request.actionName}view.action" cssClass="form-horizontal" role="form">
+	      <p><strong>Manage trial record ownership for:</strong> (select one)</p>
+	      <div class="radio">
+	          <label><input type="radio" name="siteOpts" id="optionsOrg" value="org" onchange="siteOptsChange()" <s:if test="%{#attr.topicValue == 'manageownership'}">checked</s:if>>
+	          Trials where this site is the <strong>Lead Organization</strong></label>
+	      </div>
+	      <div class="radio">
+	          <label><input type="radio" name="siteOpts" id="optionsSite" value="site"  onchange="siteOptsChange()" <s:if test="%{#attr.topicValue== 'managesiteownership'}">checked</s:if>>
+	          Trials where this site is a <strong>Participating Site</strong> </label>
+	      </div>
+	      <br/>
          <s:hidden name="checked" id="checked"/>
          <s:token/>
-            <div class="row"> 
-           	<div class="col-xs-6">
-                 <h1 class="heading"><span><fmt:message key="${memberHeaderKey}"/></h1>
-                     <s:set name="orgMembers" value="registryUsers" scope="request"/>
-                     <display:table class="data table trialOwnership table-hover sortable" summary="This table contains your search results." 
-                                    decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="regUserRow"
-                                    name="orgMembers" requestURI="${actionName}view.action" export="false">
-                         <display:column escapeXml="true" titleKey="managetrialownership.users.firstname" property="registryUser.firstName" sortable="true" headerClass="sortable" headerScope="col"/>
-                         <display:column escapeXml="true" titleKey="managetrialownership.users.lastname" property="registryUser.lastName" sortable="true" headerClass="sortable" headerScope="col"/>
-                         <display:column escapeXml="true" titleKey="managetrialownership.users.email" property="registryUser.emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
-                         <display:column titleKey="managetrialownership.users.allow" sortable="true" headerClass="sortable">
-                             <c:set var="chkRegUserId" value="chk${regUserRow.registryUser.id}" />
-                             <c:choose>
-                                 <c:when test="${regUserRow.selected}">
-                                     <label for="${chkRegUserId}" style="display:none"><fmt:message key="managetrialownership.users.allow"/></label>
-                                     <input type="checkbox" name="${chkRegUserId}" value="true" id="${chkRegUserId}" checked="checked" onclick="updateRegUser('${regUserRow.registryUser.id}')"/>
-                                 </c:when>
-                                 <c:otherwise>
-                                     <label for="${chkRegUserId}" style="display:none"><fmt:message key="managetrialownership.users.allow"/></label>
-                                     <input type="checkbox" name="${chkRegUserId}" value="true" id="${chkRegUserId}" onclick="updateRegUser('${regUserRow.registryUser.id}')"/>
-                                 </c:otherwise>
-                             </c:choose>
-                         </display:column>
-                     </display:table>
+         <h3 class="heading"><span><fmt:message key="managetrialownership.users.header"><fmt:param><c:out value="${siteName}"/></fmt:param></fmt:message></h3>
+         <p><strong>Select one or more username:</strong><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Select one or more users affiliated with this site to assign/un-assign trial ownership." data-placement="top" data-trigger="hover"></i></p>
+         <div style="width: 45%">
+              <div class="trial-ownership-container">
+                <s:set name="orgMembers" value="registryUsers" scope="request"/>
+                <display:table class="data table trialOwnership table-hover sortable" summary="This table contains your search results." 
+                               decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="regUserRow"
+                               name="orgMembers" requestURI="${actionName}view.action" export="false">
+                    <display:column title="<input type='checkbox' name='chkUser' id='chkUser' onclick='selectAll(document.formManageTrialOwnership.chkUser, this.checked)' />">
+	                    <label for="${regUserRow.registryUser.id}" style="display:none"><fmt:message key="managetrialownership.users.allow"/></label>
+	                    <input type="checkbox" name="chkUser" value="${regUserRow.registryUser.id}" id="${regUserRow.registryUser.id}"/>
+                    </display:column>
+                    <display:column escapeXml="true" titleKey="managetrialownership.users.name" sortable="true" headerClass="sortable" headerScope="col">
+                        <c:out value="${regUserRow.registryUser.lastName}"/>,<c:out value="${regUserRow.registryUser.firstName}"/>
+                    </display:column>
+                    <display:column escapeXml="true" titleKey="managetrialownership.users.email" property="registryUser.emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
+                </display:table>
+              </div>
+            </div>
+            <br/>
+            <div class="clearfix"></div>
+            <h3 class="heading"><span>Trials where this site is the <strong><s:if test="%{#attr.topicValue == 'manageownership'}">Lead Organization</s:if><s:else>Participating Site</s:else></strong></span></h3>
+            <p class="mb20"><em>A record owner of a trial listed below can amend or update that trial in CTRP</em><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="The list(s) below includes only trials that are National, Externally Peer Reviewed or Institutional" data-placement="top" data-trigger="hover"></i></p>
+	            <table width="100%"  class="trialOwnershipAssignUnassign">
+	              <tbody>
+	                <tr>
+	                  <td width="45%" nowrap="nowrap" align="center"><h3 class="notAssigned">Trials<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="Click on any trial below to select or deselect. Click the checkbox below to select/deselect all." data-placement="top" data-trigger="hover"></i></h3></td>
+	                  <td></td>
+	                  <td width="45%" nowrap="nowrap" align="center"><h3 class="assigned">Trial Owner Assignments<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="Click on any trial below to select or deselect. Click the checkbox below to select/deselect all." data-placement="top" data-trigger="hover"></i></h3></td>
+	                </tr>
+	                <tr>
+	                  <td>
+	                      <div class="trial-ownership-container">
+	    	                 <s:set name="orgTrials" value="studyProtocols" scope="request"/>
+		                     <display:table class="data table trialOwnership table-hover sortable" summary="This table contains trials assigned to the site"
+		                                    decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="studyProtocolRow"
+		                                    name="orgTrials" requestURI="${actionName}view.action" export="false">
+		                         <display:column title="<input type='checkbox' name='chkTrial'  id='chkTrial' onclick='selectAll(document.formManageTrialOwnership.chkTrial, this.checked)' />">
+                                   <label for="${studyProtocolRow.studyProtocol.id}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
+                                   <input type="checkbox" name="chkTrial" value="${studyProtocolRow.studyProtocol.id}" id="${studyProtocolRow.studyProtocol.id}" />
+                                 </display:column>
+		                         <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
+		                         <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" sortable="true" headerClass="sortable" headerScope="col"/>
+		                     </display:table>
+                          </div>
+                     </td>
+                   <td valign="middle" nowrap="nowrap" align="center" class="accrual_btn_column"><div> <b>Assign</b> </div>
+	                   <div>
+	                      <button type="button" onkeypress="updateOwnership(true);" onclick="updateOwnership(true);"  class="btn btn-light" data-placement="left" rel="tooltip" data-original-title="Assign selected"><i class="fa-angle-right"></i></button>
+	                   </div>
+	                   <br>
+	                   <br><div> <b>Unassign</b> </div>
+	                   <div>
+	                     <button type="button" onkeypress="updateOwnership(false);" onclick="updateOwnership(false);"  class="btn btn-default" data-placement="right" rel="tooltip" data-original-title="Unassign selected"><i class="fa-angle-left"></i></button>
+	                   </div>
+                   </td>
+                   <td>
+                     <div class="trial-ownership-container">
+                       <s:set name="trialOwenership" value="trialOwnershipInfo" scope="request"/>
+                       <display:table class="table trialOwnership table-hover sortable" 
+                                     decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="trialOwenership"
+                                     name="trialOwenership" requestURI="${actionName}view.action" export="false">
+                            <display:column sortable="false" title="<input type='checkbox' value='0' name='chkTrialOwner' id='chkTrialOwner' onclick='selectAll(document.formManageTrialOwnership.chkTrialOwner, this.checked)' />">
+                             <c:set var="chkTrialOwnerId" value="${trialOwenership.trialId}_${trialOwenership.userId}" />
+                                <label for="${chkTrialOwnerId}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
+                                <input type="checkbox" name="chkTrialOwner" value="${chkTrialOwnerId}" id="${chkTrialOwnerId}"/>
+                           </display:column>
+                           <display:column escapeXml="true" titleKey="managetrialownership.users.name" maxLength="200" sortable="true" headerClass="sortable" headerScope="col">
+                                <c:out value="${trialOwenership.lastName}"/>,<c:out value="${trialOwenership.firstName}"/>
+                           </display:column>
+                           <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
+                           <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId"  sortable="true" headerClass="sortable" headerScope="col"/>
+                           <s:if test="%{#attr.topicValue == 'manageownership'}">
+                           <display:column title='<div><span class="wrap">Email <br/>
+                                  Notification?
+                                  <div class="btn-group" align="left">
+                                    <button data-toggle="dropdown" class="btn btn-default dropdown-toggle btn-tiny" type="button">All <span class="caret"></span></button>
+                                    <ul role="menu" class="dropdown-menu">
+                                      <li><a href="#" onclick="setEmailPrefAll(true)">Select <strong>Yes</strong> for all</a></li>
+                                      <li><a href="#" onclick="setEmailPrefAll(false)">Select <strong>No</strong> for all</a></li>
+                                    </ul>
+                                  </div>
+                                  </span></div>' headerScope="col">
+                               <div class="btn-group" data-toggle="buttons">
+                                 <label id="yes_${trialOwenership.trialId}_${trialOwenership.userId}" name="emailYes" onclick="setEmailPref('${trialOwenership.trialId}','${trialOwenership.userId}', true)" class="btn btn-default btn-tiny <s:if test='%{#attr.trialOwenership.emailsEnabled}'>active</s:if> ">
+                                   <input type="radio" name="options">
+                                   Yes </label>
+                                 <label id="no_${trialOwenership.trialId}_${trialOwenership.userId}" name="emailNo" onclick="setEmailPref('${trialOwenership.trialId}', '${trialOwenership.userId}', false)" class="btn btn-default btn-tiny <s:if test='%{!#attr.trialOwenership.emailsEnabled}'>active</s:if>" >
+                                   <input type="radio" name="options">
+                                   No </label>
+                               </div>
+			           </display:column>  
+			           </s:if>
+                       </display:table>
                      </div>
-                     <div class="col-xs-6">
-                      <h1 class="heading"><span><fmt:message key="${trialHeaderKey}"/></h1>
-                      
-                     <c:choose>
-                         <c:when test="${checked}">
-                             <input type="button" id="checkButton" value="Uncheck All" onClick="check(document.formManageTrialOwnership.chkboxes)">
-                         </c:when>
-                         <c:otherwise>
-                            <input type="button" id="checkButton" value="Check All" onClick="check(document.formManageTrialOwnership.chkboxes)">
-                         </c:otherwise>
-                     </c:choose>
-                 
-                     <s:set name="orgTrials" value="studyProtocols" scope="request"/><br/>
-                     <display:table class="data table trialOwnership table-hover sortable" summary="This table contains your search results."
-                                    decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="studyProtocolRow"
-                                    name="orgTrials" requestURI="${actionName}view.action" export="false">
-                         <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
-                         <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" sortable="true" headerClass="sortable" headerScope="col"/>
-                         <display:column titleKey="managetrialownership.trials.allow" sortable="true" headerClass="sortable">
-                             <c:set var="chkTrialId" value="chk${studyProtocolRow.studyProtocol.id}" />
-                             <c:choose>
-                                 <c:when test="${studyProtocolRow.selected}">
-                                     <label for="${chkTrialId}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
-                                     <input type="checkbox" name="chkboxes" value="true" id="${chkTrialId}" checked="checked" onclick="updateTrial('${studyProtocolRow.studyProtocol.id}')"/>
-                                 </c:when>
-                                 <c:otherwise>
-                                     <label for="${chkTrialId}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
-                                     <input type="checkbox" name="chkboxes" value="true" id="${chkTrialId}" onclick="updateTrial('${studyProtocolRow.studyProtocol.id}')"/>
-                                 </c:otherwise>
-                             </c:choose>
-                         </display:column>
-                         <c:if test="${enableEmailPrefs=='true'}">
-                             <display:column titleKey="managetrialownership.trials.emails" headerClass="sortable">
-                              <c:set var="chkEmailTrialId" value="chkEmail${studyProtocolRow.studyProtocol.id}" />
-                              <c:choose>
-                                  <c:when test="${studyProtocolRow.emailSelected}">
-                                      <label for="${chkEmailTrialId}" style="display:none"><fmt:message key="managetrialownership.trials.emails"/></label>
-                                         <input type="checkbox" name="chkboxes" value="true" id="${chkEmailTrialId}" checked="checked" onclick="updateEmailPref('${studyProtocolRow.studyProtocol.id}')"/>
-                                  </c:when>
-                                  <c:otherwise>
-                                         <label for="${chkEmailTrialId}" style="display:none"><fmt:message key="managetrialownership.trials.emails"/></label>
-                                      <input type="checkbox" name="chkboxes" value="true" id="${chkEmailTrialId}" onclick="updateEmailPref('${studyProtocolRow.studyProtocol.id}')"/>
-                                  </c:otherwise>
-                              </c:choose>
-                             </display:column>                            
-                         </c:if>
-                     </display:table>
-                 </div>
-                 </div>
-         	<div class="bottom">
-            <button type="button" class="btn btn-icon btn-primary" onclick="updateOwnership(true);"><i class="fa-floppy-o"></i><fmt:message key="managetrialownership.buttons.assign"/></button>
-            <button type="button" class="btn btn-icon btn-primary" onclick="updateOwnership(false);"><i class="fa-times-circle"></i><fmt:message key="managetrialownership.buttons.unassign"/></button>
-         </div>
+                   </td>
+		        </tr>
+		      </tbody>
+		    </table>			 
          <div class="line"></div>
          </s:form>
+         <script type="text/javascript">
+         document.getElementById("hideAll").style.display = "none";
+         </script> 
     </body>
 </html>
