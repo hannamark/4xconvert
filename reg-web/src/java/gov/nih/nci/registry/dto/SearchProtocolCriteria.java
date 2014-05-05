@@ -217,69 +217,77 @@ public class SearchProtocolCriteria {
         return StringUtils.startsWithIgnoreCase(getIdentifier(), "NCT");
     }
     
-	/**
-	 * principalInvestigatorName
-	 * @return principalInvestigatorName
-	 */
-	public String getPrincipalInvestigatorName() {
-		return principalInvestigatorName;
-	}
-	/**
-	 * 
-	 * @param principalInvestigatorName principalInvestigatorName to set
-	 */
-	public void setPrincipalInvestigatorName(String principalInvestigatorName) {
-		this.principalInvestigatorName = principalInvestigatorName;
-	}
-	
-	/**
-	 * 
-	 * @return lead organizationName
-	 */
-	public String getOrganizationName() {
-		return organizationName;
-	}
-	
-	/**
-	 * set lead organizationName
-	 * @param organizationName
-	 */
-	public void setOrganizationName(String organizationName) {
-		this.organizationName = organizationName;
-	}
-	
-	/**
-	 * 
-	 * @return participatingSiteName
-	 */
-	public String getParticipatingSiteName() {
-		return participatingSiteName;
-	}
-	
-	/**
-	 * set participatingSiteName
-	 * @param participatingSiteName
-	 */
-	public void setParticipatingSiteName(String participatingSiteName) {
-		this.participatingSiteName = participatingSiteName;
-	}
-	
-	/**
-	 * 
-	 * @return lead organization or participating site name
-	 */
-	public String getLeadAndParticipatingOrgName() {
-		return leadAndParticipatingOrgName;
-	}
-	
-	/**
-	 * set lead organization or participating site name
-	 * @param leadAndParticipatingOrgName
-	 */
-	public void setLeadAndParticipatingOrgName(String leadAndParticipatingOrgName) {
-		this.leadAndParticipatingOrgName = leadAndParticipatingOrgName;
-	} 
-	
-	
+    /**
+     * principalInvestigatorName
+     * 
+     * @return principalInvestigatorName
+     */
+    public String getPrincipalInvestigatorName() {
+        return principalInvestigatorName;
+    }
+
+    /**
+     * 
+     * @param principalInvestigatorName
+     *            principalInvestigatorName to set
+     */
+    public void setPrincipalInvestigatorName(String principalInvestigatorName) {
+        this.principalInvestigatorName = principalInvestigatorName;
+    }
+
+    /**
+     * 
+     * @return lead organizationName
+     */
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    /**
+     * set lead organizationName
+     * 
+     * @param organizationName
+     *            organizationName
+     */
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    /**
+     * 
+     * @return participatingSiteName
+     */
+    public String getParticipatingSiteName() {
+        return participatingSiteName;
+    }
+
+    /**
+     * set participatingSiteName
+     * 
+     * @param participatingSiteName
+     *            participatingSiteName
+     */
+    public void setParticipatingSiteName(String participatingSiteName) {
+        this.participatingSiteName = participatingSiteName;
+    }
+
+    /**
+     * 
+     * @return lead organization or participating site name
+     */
+    public String getLeadAndParticipatingOrgName() {
+        return leadAndParticipatingOrgName;
+    }
+
+    /**
+     * set lead organization or participating site name
+     * 
+     * @param leadAndParticipatingOrgName
+     *            leadAndParticipatingOrgName
+     */
+    public void setLeadAndParticipatingOrgName(
+            String leadAndParticipatingOrgName) {
+        this.leadAndParticipatingOrgName = leadAndParticipatingOrgName;
+    }
     
 }
