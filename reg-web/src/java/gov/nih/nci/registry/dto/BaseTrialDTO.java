@@ -49,6 +49,7 @@ public class BaseTrialDTO { // NOPMD
     private List<String> secondaryPurposes = new ArrayList<String>();
     private String consortiaTrialCategoryCode;
     private Boolean nciGrant = true;
+    private String accrualDiseaseCodeSystem;
 
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
 
@@ -473,6 +474,19 @@ public class BaseTrialDTO { // NOPMD
      */
     public void setStudySource(StudySourceCode studySource) {
         this.studySource = studySource;
+    }
+    /**
+     * @return the accrual disease terminology
+     */
+    @NotEmpty(message = "error.submit.accrualDiseaseCodeSystem")
+    public String getAccrualDiseaseCodeSystem() {
+        return accrualDiseaseCodeSystem;
+    }
+    /**
+     * @param accrualDiseaseCodeSystem the accrual disease terminology
+     */
+    public void setAccrualDiseaseCodeSystem(String accrualDiseaseCodeSystem) {
+        this.accrualDiseaseCodeSystem = accrualDiseaseCodeSystem;
     }
 
 }

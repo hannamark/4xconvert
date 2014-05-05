@@ -267,6 +267,37 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         assertEquals("error", action.reviewUpdate());
     }
     @Test
+    public void testReviewUpdateNoAccrualDiseaseCodeSystem() throws URISyntaxException {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpSession session = new MockHttpSession();
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        request = new MockHttpServletRequest();
+        session = new MockHttpSession();
+        session.setAttribute(Constants.COUNTRY_LIST, new ArrayList<CountryRegAuthorityDTO>());
+        session.setAttribute(Constants.REG_AUTH_LIST, new ArrayList<RegulatoryAuthOrgDTO>());
+        session.setAttribute(Constants.GRANT_ADD_LIST, new ArrayList<TrialFundingWebDTO>());
+        session.setAttribute(Constants.INDIDE_ADD_LIST, new ArrayList<TrialIndIdeDTO>());
+        action.setTrialDTO(getMockTrialDTO());
+        action.getTrialDTO().setDataMonitoringCommitteeAppointedIndicator("dataMonitoringIndicator");
+        action.getTrialDTO().setDelayedPostingIndicator("delayedPostingIndicator");
+        action.getTrialDTO().setFdaRegulatoryInformationIndicator("fdaRegulatedInterventionIndicator");
+        action.getTrialDTO().setSection801Indicator("section801Indicator");
+        action.getTrialDTO().setSelectedRegAuth("2");
+        action.getTrialDTO().setLst("3");
+        action.setIrbApprovalFileName("ProtocolDoc.doc");
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource("ProtocolDoc.doc");
+        File f = new File(fileUrl.toURI());
+        action.setIrbApproval(f);
+        request.setSession(session);
+        ServletActionContext.setRequest(request);
+        assertEquals("review", action.reviewUpdate());
+
+        action.getTrialDTO().setAccrualDiseaseCodeSystem(null);
+        assertEquals("error", action.reviewUpdate());
+        assertTrue(action.getFieldErrors().containsKey("trialDTO.accrualDiseaseCodeSystem"));
+    }
+    @Test
     public void testReviewUpdateWithCollaborators() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();

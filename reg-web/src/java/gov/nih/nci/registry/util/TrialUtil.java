@@ -136,7 +136,7 @@ public class TrialUtil extends TrialConvertUtils {
             trialDTO.setSecondaryPurposes(DSetConverter.convertDSetStToList(spDTO.getSecondaryPurposes()));            
         }
         trialDTO.setSecondaryPurposeOtherText(spDTO.getSecondaryPurposeOtherText().getValue());
-        
+        trialDTO.setAccrualDiseaseCodeSystem(StConverter.convertToString(spDTO.getAccrualDiseaseCodeSystem()));
         copyNonInterventionalTrialFields(spDTO, trialDTO);
     }
 

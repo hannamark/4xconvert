@@ -52,6 +52,24 @@
         </span>
     </div>
 </div>
+<s:if test="accrualDiseaseTerminologyEditable">
+<div class="form-group">
+    <label class="col-xs-4 control-label" for="trialDTO.accrualDiseaseCodeSystem"><fmt:message key="submit.trial.accrual.disease.term"/><span class="required">*</span></label>
+    <div class="col-xs-4">
+        <s:select id ="trialDTO.accrualDiseaseCodeSystem" name="trialDTO.accrualDiseaseCodeSystem"
+            cssClass="form-control" headerKey="" headerValue="--Select--" list="accrualDiseaseTerminologyList"
+            value="trialDTO.accrualDiseaseCodeSystem"/>
+        <span class="alert-danger"> 
+            <s:fielderror>
+                <s:param>trialDTO.accrualDiseaseCodeSystem</s:param>
+            </s:fielderror>
+        </span>
+    </div>
+</div>
+</s:if>
+<s:else>
+    <s:hidden name="trialDTO.accrualDiseaseCodeSystem"/>
+</s:else>
 <div class="form-group non-interventional">
     <label class="col-xs-4 control-label" for="trialDTO.studyModelCode"><fmt:message key="submit.trial.studyModelCode"/><span class="required">*</span></label>
     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudyModelCode@getDisplayNames()" />

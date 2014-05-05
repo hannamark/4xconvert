@@ -196,6 +196,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setSelectedRegAuth("1");
         trialDTO.setXmlRequired(true);
         trialDTO.setNciGrant(Boolean.TRUE);
+        trialDTO.setAccrualDiseaseCodeSystem("SDC");
         return trialDTO;
     }
     protected List<TrialFundingWebDTO> getfundingDtos(){
@@ -351,6 +352,7 @@ public abstract class AbstractRegWebTest {
         paOrgList.add(paOrgDto);
         trialDTO.setParticipatingSitesList(paOrgList);        
         trialDTO.setNciGrant(false);
+        trialDTO.setAccrualDiseaseCodeSystem("SDC");
         return trialDTO;
     }
     /**

@@ -24,6 +24,14 @@ function handleEdit(rowId){
     document.listForm.action="manageAccrualAccessedit.action";
     document.listForm.submit();
 }
+function diseaseCodeSystem() {
+    var newValue = document.forms[0].accrualDiseaseTerminology.value;
+    var  url = '/pa/protected/"manageAccrualAccessupdateDiseaseTerminology.action';
+    var params = {newValue : newValue};
+    var aj = callAjaxPost(null, url, params);
+    var div = $('diseaseterminologydiv');
+    div.innerHTML = 'Value updated to <b>' + newValue + '</b>.';
+}
 </SCRIPT>
 </head>
 <body>
@@ -37,6 +45,23 @@ function handleEdit(rowId){
     <s:form name="listForm">
         <pa:studyUniqueToken/>
         <s:hidden name="selectedRowIdentifier"/>
+
+    <s:if test="accrualDiseaseTerminologyEditable">
+        <table class="form">
+            <tr>
+                <td class="label" align="right" style="width: 50%">
+                    <label for="accrualDiseaseTerminology"><fmt:message key="manageAccrualAccess.diseaseTerminology"/></label>
+                </td>
+                <td class="value" style="width: 50%">
+                    <s:select id ="accrualDiseaseTerminology" name="accrualDiseaseTerminology"
+                              cssClass="form-control" headerKey="" headerValue="--Select--" list="accrualDiseaseTerminologyList"
+                              value="accrualDiseaseTerminology" onchange="diseaseCodeSystem()"/>
+                </td>
+            </tr>
+            <tr><td/><td><div id="diseaseterminologydiv" class="info"/></td></tr>
+        </table>
+    </s:if>
+
     <h2>
         <fmt:message key="manageAccrualAccess.list.title"/>
     </h2>

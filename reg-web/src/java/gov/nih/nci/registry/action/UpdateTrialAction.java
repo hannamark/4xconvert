@@ -26,6 +26,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -144,6 +145,15 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         studySiteAccrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
         studySiteService = PaRegistry.getStudySiteService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        if (studyProtocolId != null) {
+            AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = 
+                    PaRegistry.getAccrualDiseaseTerminologyService();
+            setAccrualDiseaseTerminologyEditable(accrualDiseaseTerminologyService.canChangeCodeSystem(
+                    Long.valueOf(studyProtocolId)));
+            if (getAccrualDiseaseTerminologyEditable()) {
+                setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
+            }
+        }
         if (trialDTO != null) {
             trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
                     .lookupPrimaryPurposeAdditionalQualifierCode(trialDTO.getPrimaryPurposeCode()));

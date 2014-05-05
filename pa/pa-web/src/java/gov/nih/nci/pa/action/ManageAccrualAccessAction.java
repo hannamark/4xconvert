@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
@@ -127,6 +128,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     private StudySiteAccrualAccessServiceLocal accrualAccessService;
     private StudySiteAccrualStatusServiceLocal accrualStatusService;
     private ManageAccrualAccessHelper accrualAccessHelper;
+    private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
 
     private List<StudySiteAccrualAccessWebDTO> accessList;
     private StudySiteAccrualAccessWebDTO access = new StudySiteAccrualAccessWebDTO();
@@ -139,6 +141,9 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     private Long registryUserId;
     private final Map<Long, RegistryUser> registryUserMap = new HashMap<Long, RegistryUser>();
     private final Map<Ii, StudySiteAccrualStatusDTO> ssAccrualStatusMap = new HashMap<Ii, StudySiteAccrualStatusDTO>();
+    private String accrualDiseaseTerminology;
+    private List<String> accrualDiseaseTerminologyList;
+    private Boolean accrualDiseaseTerminologyEditable;
 
     /**
      * {@inheritDoc}
@@ -150,6 +155,14 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         accrualAccessService = PaRegistry.getStudySiteAccrualAccessService();
         accrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
         accrualAccessHelper = new ManageAccrualAccessHelper(accrualAccessService);
+        accrualDiseaseTerminologyService = 
+                PaRegistry.getAccrualDiseaseTerminologyService();
+        Long spId = getSpDTO().getStudyProtocolId();
+        setAccrualDiseaseTerminologyEditable(accrualDiseaseTerminologyService.canChangeCodeSystem(spId));
+        if (getAccrualDiseaseTerminologyEditable()) {
+            setAccrualDiseaseTerminology(accrualDiseaseTerminologyService.getCodeSystem(spId));
+            setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
+        }
     }
 
     /**
@@ -212,6 +225,20 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             return AR_EDIT;
         }
         return super.update();
+    }
+
+    /**
+     * Update the disease terminology code system for this trial.
+     * @return NONE
+     */
+    public String updateDiseaseTerminology() {
+        String newValue = ServletActionContext.getRequest().getParameter("newValue");
+        try {
+            accrualDiseaseTerminologyService.updateCodeSystem(getSpDTO().getStudyProtocolId(), newValue);
+        } catch (PAException e) {
+            LOG.error("Error in updateDiseaseTerminology()", e);
+        }
+        return NONE;
     }
 
     /**
@@ -518,6 +545,50 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public void deleteObject(Long objectId) throws PAException {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @return the disease code system
+     */
+    public String getAccrualDiseaseTerminology() {
+        return accrualDiseaseTerminology;
+    }
+
+    /**
+     * @param accrualDiseaseTerminology the disease code system
+     */
+    public void setAccrualDiseaseTerminology(String accrualDiseaseTerminology) {
+        this.accrualDiseaseTerminology = accrualDiseaseTerminology;
+    }
+
+    /**
+     * @return list of valid disease code systems
+     */
+    public List<String> getAccrualDiseaseTerminologyList() {
+        return accrualDiseaseTerminologyList;
+    }
+
+    /**
+     * @param accrualDiseaseTerminologyList the valid disease code systems
+     */
+    public void setAccrualDiseaseTerminologyList(
+            List<String> accrualDiseaseTerminologyList) {
+        this.accrualDiseaseTerminologyList = accrualDiseaseTerminologyList;
+    }
+
+    /**
+     * @return if disease code system can be changed
+     */
+    public Boolean getAccrualDiseaseTerminologyEditable() {
+        return accrualDiseaseTerminologyEditable;
+    }
+
+    /**
+     * @param accrualDiseaseTerminologyEditable can disease code system be changed
+     */
+    public void setAccrualDiseaseTerminologyEditable(
+            Boolean accrualDiseaseTerminologyEditable) {
+        this.accrualDiseaseTerminologyEditable = accrualDiseaseTerminologyEditable;
     }
     
 }

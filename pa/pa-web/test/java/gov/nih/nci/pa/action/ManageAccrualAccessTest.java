@@ -82,10 +82,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
@@ -95,18 +96,20 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
-import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.service.MockStudySiteService;
 import gov.nih.nci.service.util.MockStudySiteAccrualAccessService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,6 +119,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.mockrunner.mock.web.MockHttpServletRequest;
 
 /**
  * @author Hugh Reinhart
@@ -128,13 +133,14 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
     private final String origSourceCode = AccrualAccessSourceCode.REG_ADMIN_PROVIDED.getCode();
     private final String updSourceCode = AccrualAccessSourceCode.PA_SITE_REQUEST.getCode();
     private final String testRequestDetails = "test request details";
-    private RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class); 
+    private final RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class); 
     private StudySiteAccrualAccessServiceLocal ssAccSvc = null;
 
     private ManageAccrualAccessAction act;
 
     @Before
     public void prepare() throws Exception {
+        when(MockServiceLocator.accDiseaseTerminologyService.canChangeCodeSystem(anyLong())).thenReturn(false);
         CSMUserService.setInstance(new MockCSMUserService());
         MockStudySiteAccrualAccessService.list.clear();
         act = new ManageAccrualAccessAction();
@@ -288,6 +294,24 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
     @Test(expected=UnsupportedOperationException.class)
     public void testDeleteObject() throws PAException {
         act.deleteObject(1l);
+    }
+
+    @Test
+    public void updateDiseaseTerminologyTest() throws Exception {
+        assertFalse(act.getAccrualDiseaseTerminologyEditable());
+
+        AccrualDiseaseTerminologyServiceRemote mock = MockServiceLocator.accDiseaseTerminologyService;
+        when(mock.canChangeCodeSystem(anyLong())).thenReturn(true);
+        when(mock.getCodeSystem(anyLong())).thenReturn("SDC");
+        when(mock.getValidCodeSystems()).thenReturn(Arrays.asList(new String[]{"SDC","ICD9"}));
+        MockHttpServletRequest request = (MockHttpServletRequest) ServletActionContext.getRequest();
+        request.setupAddParameter("newValue", "ICD9");
+        act.prepare();
+        act.updateDiseaseTerminology();
+        assertTrue(act.getAccrualDiseaseTerminologyEditable());
+        assertEquals("SDC", act.getAccrualDiseaseTerminology());
+        assertEquals(2, act.getAccrualDiseaseTerminologyList().size());
+        verify(mock).updateCodeSystem(anyLong(), eq("ICD9"));
     }
 
 }

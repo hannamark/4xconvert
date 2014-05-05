@@ -232,6 +232,8 @@ import com.fiveamsolutions.nci.commons.audit.AuditType;
  */
 public class MockServiceLocator implements ServiceLocator {
 
+    public static AccrualDiseaseTerminologyServiceRemote accDiseaseTerminologyService = Mockito.mock(AccrualDiseaseTerminologyServiceRemote.class);
+
     private final StudyIdentifiersService studyIdentifiersService = Mockito.mock(StudyIdentifiersService.class);
     private final StudyProtocolServiceLocal studyProtocolService = new MockStudyProtocolService();
     private final StudyOverallStatusServiceLocal studyOverallStatusService = new MockStudyOverallStatusService();
@@ -1017,7 +1019,7 @@ public class MockServiceLocator implements ServiceLocator {
 
     @Override
     public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
-        return null;
+        return accDiseaseTerminologyService;
     }  
     
 }

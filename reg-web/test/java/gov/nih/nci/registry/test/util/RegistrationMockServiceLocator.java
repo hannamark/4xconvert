@@ -147,6 +147,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     public static StudySiteAccrualAccessServiceLocal studySiteAccrualAccessService = mock(StudySiteAccrualAccessServiceLocal.class);
     public static FamilyServiceLocal familyService = mock(FamilyServiceLocal.class);
+    public static AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = mock(AccrualDiseaseTerminologyServiceRemote.class);
 
     private static List<CountryRegAuthorityDTO> regAuthorityCountries;
     static {
@@ -875,6 +876,6 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     @Override
     public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
-        return null;
+        return accrualDiseaseTerminologyService;
     }
 }

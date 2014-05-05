@@ -131,7 +131,9 @@ public class ManageFileAction extends ActionSupport {
             "trialDTO.protocolHighlightDocumentFileName");
     private final DocumentDTO changeMemoDocument = new DocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT,
             Arrays.asList(AMEND_TRIAL_PAGE), true, "trialDTO.changeMemoDocFileName");
-    
+
+    private List<String> accrualDiseaseTerminologyList;
+    private Boolean accrualDiseaseTerminologyEditable;
 
     /**
      * List of "Other" document uploads.
@@ -633,6 +635,36 @@ public class ManageFileAction extends ActionSupport {
      */
     public void setDocIndex(String docIndex) {
         this.docIndex = docIndex;
+    }
+
+    /**
+     * @return accrualDiseaseTerminologyList
+     */
+    public List<String> getAccrualDiseaseTerminologyList() {
+        return accrualDiseaseTerminologyList;
+    }
+
+    /**
+     * @param accrualDiseaseTerminologyList the list of available terminologies
+     */
+    public void setAccrualDiseaseTerminologyList(
+            List<String> accrualDiseaseTerminologyList) {
+        this.accrualDiseaseTerminologyList = accrualDiseaseTerminologyList;
+    }
+
+    /**
+     * @return accrualDiseaseTerminologyEditable
+     */
+    public Boolean getAccrualDiseaseTerminologyEditable() {
+        return accrualDiseaseTerminologyEditable;
+    }
+
+    /**
+     * @param accrualDiseaseTerminologyEditable the if terminology is editable
+     */
+    public void setAccrualDiseaseTerminologyEditable(
+            Boolean accrualDiseaseTerminologyEditable) {
+        this.accrualDiseaseTerminologyEditable = accrualDiseaseTerminologyEditable;
     }
     
 }

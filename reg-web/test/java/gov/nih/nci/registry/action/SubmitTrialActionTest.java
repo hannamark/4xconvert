@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
@@ -19,6 +18,7 @@ import gov.nih.nci.registry.util.Constants;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
@@ -74,7 +74,24 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         action.setPageFrom("submitTrial");
         assertEquals("review", action.review());
     }
-    
+
+    @Test
+    public void testReviewMissingAccrualDiseaseCodeSystem() throws Exception{
+        action.setTrialDTO(getMockTrialDTO());
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+        action.setProtocolDoc(f);
+        action.setIrbApproval(f);
+        action.setProtocolDocFileName(FILE_NAME);
+        action.setIrbApprovalFileName(FILE_NAME);
+        action.setPageFrom("submitTrial");
+        assertEquals("review", action.review());
+
+        action.getTrialDTO().setAccrualDiseaseCodeSystem(null);
+        assertEquals("error", action.review());
+        assertTrue(action.getFieldErrors().containsKey("trialDTO.accrualDiseaseCodeSystem"));
+    }
+
     @Test
     public void testReviewWithAllDoc() throws Exception{
         action.setTrialDTO(getMockTrialDTO());

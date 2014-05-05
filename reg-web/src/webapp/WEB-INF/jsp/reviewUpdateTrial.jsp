@@ -94,6 +94,9 @@
                                 </reg-web:valueRowDiv>
                             </c:if>                      
                         </c:if>
+                        <reg-web:valueRowDiv labelKey="view.trial.accrual.disease.term" noLabelTag="true">
+                            <c:out value="${trialDTO.accrualDiseaseCodeSystem}"/>
+                        </reg-web:valueRowDiv>
                         <c:if test="${trialDTO.trialType == 'NonInterventionalStudyProtocol' || trialDTO.trialType == 'NonInterventional'}">
                             <reg-web:valueRowDiv labelKey="submit.trial.studySubtypeCode" noLabelTag="true">
                                 <c:out value="${trialDTO.studySubtypeCode}"/>

@@ -333,6 +333,7 @@ public class TrialConvertUtils {
            }
            isoDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(new HashSet<Ii>(iis)));
         }
+        isoDto.setAccrualDiseaseCodeSystem(StConverter.convertToSt(trialDTO.getAccrualDiseaseCodeSystem()));
     }
     /**
      * Convert to study overall status dto.
@@ -1014,6 +1015,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
                 : BlConverter.convertToBl(Boolean.FALSE));
         spStageDTO.setNciGrant(BlConverter.convertToBl(trialDto.getNciGrant()));
         spStageDTO.getSecondaryIdentifierList().addAll(trialDto.getSecondaryIdentifierList());
+        spStageDTO.setAccrualDiseaseCodeSystem(StConverter.convertToSt(trialDto.getAccrualDiseaseCodeSystem()));
     }
     
     
@@ -1241,6 +1243,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         }
         trialDto.setNciGrant(BlConverter.convertToBoolean(spStageDTO.getNciGrant()));
         trialDto.setSecondaryIdentifierList(spStageDTO.getSecondaryIdentifierList());
+        trialDto.setAccrualDiseaseCodeSystem(StConverter.convertToString(spStageDTO.getAccrualDiseaseCodeSystem()));
         return trialDto;
     }
 

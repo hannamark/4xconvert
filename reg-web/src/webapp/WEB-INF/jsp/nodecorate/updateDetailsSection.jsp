@@ -81,6 +81,21 @@
 	</div>
 </c:if>
 </s:if>
+
+<s:if test="accrualDiseaseTerminologyEditable">
+<div class="form-group">
+    <label class="col-xs-4 control-label" for="trialDTO.accrualDiseaseCodeSystem"><fmt:message key="submit.trial.accrual.disease.term"/><span class="required">*</span></label>
+    <div class="col-xs-4">
+        <s:select id ="trialDTO.accrualDiseaseCodeSystem" name="trialDTO.accrualDiseaseCodeSystem"
+            cssClass="form-control" headerKey="" headerValue="--Select--" list="accrualDiseaseTerminologyList"
+            value="trialDTO.accrualDiseaseCodeSystem"/>
+    </div>
+</div>
+</s:if>
+<s:else>
+    <s:hidden name="trialDTO.accrualDiseaseCodeSystem"/>
+</s:else>
+
 <s:if test="trialDTO.trialType != 'InterventionalStudyProtocol' && trialDTO.trialType != 'Interventional'">
 <div class="form-group">
    <label class="col-xs-4 control-label">

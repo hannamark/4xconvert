@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
@@ -153,6 +154,14 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
         studyInboxService = PaRegistry.getStudyInboxService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = 
+                PaRegistry.getAccrualDiseaseTerminologyService();
+        if (studyProtocolId != null) {
+            setAccrualDiseaseTerminologyEditable(accrualDiseaseTerminologyService.canChangeCodeSystem(studyProtocolId));
+            if (getAccrualDiseaseTerminologyEditable()) {
+                setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
+            }
+        }
         if (getTrialDTO() != null) {
             getTrialDTO().setPrimaryPurposeAdditionalQualifierCode(PAUtil
                 .lookupPrimaryPurposeAdditionalQualifierCode(getTrialDTO().getPrimaryPurposeCode()));

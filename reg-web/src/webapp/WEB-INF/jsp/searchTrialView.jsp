@@ -236,7 +236,10 @@
                                     <c:out value="${trialSummary.timePerspectiveOtherText.value}"/>
                                 </reg-web:valueRowDiv>                                
                             </c:if>
-                        </c:if>                        
+                        </c:if>
+                        <reg-web:valueRowDiv labelKey="view.trial.accrual.disease.term" noLabelTag="true">
+                            <c:out value="${requestScope.trialSummary.accrualDiseaseCodeSystem.value}"/>
+                        </reg-web:valueRowDiv>
                         </div>
                          <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                                      || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
@@ -258,12 +261,12 @@
                                 </c:if>
                             </reg-web:valueRowDiv>
                         
-	                        <c:if test="${(requestScope.trialSummary.proprietaryTrialIndicator == null
-	                                    || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false')}">
-	                            <reg-web:valueRowDiv labelKey="view.trial.principalInvestigator" noLabelTag="true">
-	                                <c:out value="${requestScope.trialDTO.piName}"/>
-	                            </reg-web:valueRowDiv>        
-	                        </c:if>
+                            <c:if test="${(requestScope.trialSummary.proprietaryTrialIndicator == null
+                                        || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false')}">
+                                <reg-web:valueRowDiv labelKey="view.trial.principalInvestigator" noLabelTag="true">
+                                    <c:out value="${requestScope.trialDTO.piName}"/>
+                                </reg-web:valueRowDiv>        
+                            </c:if>
                         </div>
                         <c:if test="${requestScope.trialDTO.xmlRequired == true && maskFields != true}">
                               <reg-web:titleRowDiv titleKey="view.trial.sponsorResParty"/>
@@ -316,14 +319,14 @@
                                     && fn:length(requestScope.trialDTO.summaryFourOrgIdentifiers) > 0}">
                             <reg-web:titleRowDiv titleKey="view.trial.Summary4Information"/>
                             <div class="row form-horizontal details">
-	                            <reg-web:valueRowDiv labelKey="view.trial.FundingCategory" noLabelTag="true">
-	                                <c:out value="${requestScope.trialDTO.summaryFourFundingCategoryCode}"/>
-	                            </reg-web:valueRowDiv>
-	                            <reg-web:valueRowDiv labelKey="view.trial.FundingSponsor" noLabelTag="true">
-	                            <c:forEach items="${requestScope.trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers">
-	                                <c:out value="${summaryFourOrgIdentifiers.orgName}"/><br/>
-	                            </c:forEach>
-                            	</reg-web:valueRowDiv>        
+                                <reg-web:valueRowDiv labelKey="view.trial.FundingCategory" noLabelTag="true">
+                                    <c:out value="${requestScope.trialDTO.summaryFourFundingCategoryCode}"/>
+                                </reg-web:valueRowDiv>
+                                <reg-web:valueRowDiv labelKey="view.trial.FundingSponsor" noLabelTag="true">
+                                <c:forEach items="${requestScope.trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers">
+                                    <c:out value="${summaryFourOrgIdentifiers.orgName}"/><br/>
+                                </c:forEach>
+                                </reg-web:valueRowDiv>        
                             </div>                    
                         </c:if>
                         <c:if test="${requestScope.trialSummary.programCodeText.value != null}">
@@ -349,7 +352,7 @@
                                   <display:column title="Date Opened <br/>for Accrual" property="dateOpenedforAccrual"  headerClass="sortable"/>
                                   <display:column title="Date Closed <br/>for Accrual" property="dateClosedforAccrual"  headerClass="sortable"/>
                               </display:table>
-                  	        </div>
+                            </div>
                         </c:if>
                         <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                                     || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
@@ -402,9 +405,9 @@
                     </c:if>
                     <c:if test="${pageContext.request.method=='GET' && fn:contains(header['Referer'],'/searchTrialquery.action')}">
                     <hr>
-				    <div class="mt20 align-center">
-				    <button type="button" class="btn btn-icon btn-primary" onclick="handleBackAction();this.blur();"><i class="fa-arrow-circle-left"></i>Back to Search Results</button>
-				    </div>
+                    <div class="mt20 align-center">
+                    <button type="button" class="btn btn-icon btn-primary" onclick="handleBackAction();this.blur();"><i class="fa-arrow-circle-left"></i>Back to Search Results</button>
+                    </div>
                     </c:if>
                 </s:form>
     </body>

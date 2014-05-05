@@ -9,7 +9,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -37,7 +36,7 @@ import com.mockrunner.mock.web.MockHttpServletRequest;
 public class AmendmentTrialActionTest extends AbstractRegWebTest {
     private static final String FILE_NAME = "ProtocolDoc.doc";
     
-    private AmendmentTrialAction trialAction = new AmendmentTrialAction();
+    private final AmendmentTrialAction trialAction = new AmendmentTrialAction();
     
     @Before
     public void init() {
@@ -83,6 +82,27 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setChangeMemoDocFileName(FILE_NAME);
         trialAction.setPageFrom("amendTrial");
         assertEquals("review", trialAction.review());
+    }
+    
+    @Test
+    public void testReviewMissingAccrualDiseaseCodeSystem() throws Exception{
+        trialAction.setTrialDTO(getMockTrialDTO());
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setChangeMemoDoc(f);
+
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setChangeMemoDocFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
+        assertEquals("review", trialAction.review());
+
+        trialAction.getTrialDTO().setAccrualDiseaseCodeSystem(null);
+        assertEquals("error", trialAction.review());
+        assertTrue(trialAction.getFieldErrors().containsKey("trialDTO.accrualDiseaseCodeSystem"));
     }
     
     @Test

@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -162,6 +163,10 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
         studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = 
+                PaRegistry.getAccrualDiseaseTerminologyService();
+        setAccrualDiseaseTerminologyEditable(true);
+        setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
         if (getTrialDTO() != null) {
             getTrialDTO().setPrimaryPurposeAdditionalQualifierCode(PAUtil
                     .lookupPrimaryPurposeAdditionalQualifierCode(getTrialDTO().getPrimaryPurposeCode()));
