@@ -35,12 +35,12 @@
 	       }
             
            function updateOwnership(assignOwnership) {
-            	if($('chkUser'))
-            		$('chkUser').checked = false
-                if($('chkTrial'))
-                    $('chkTrial').checked = false
-                if($('chkTrialOwner'))
-            	    $('chkTrialOwner').checked = false
+            	if($('regUserIds'))
+            		$('regUserIds').checked = false
+                if($('trialIds'))
+                    $('trialIds').checked = false
+                if($('trialOwners'))
+            	    $('trialOwners').checked = false
             	    
                 var form = document.forms[0];
                 form.action = (assignOwnership) ? "${actionName}assignOwnership.action" : "${actionName}unassignOwnership.action";
@@ -120,9 +120,9 @@
                 <display:table class="data table trialOwnership table-hover sortable" summary="This table contains your search results." 
                                decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="regUserRow"
                                name="orgMembers" requestURI="${actionName}view.action" export="false">
-                    <display:column title="<input type='checkbox' name='chkUser' id='chkUser' onclick='selectAll(document.formManageTrialOwnership.chkUser, this.checked)' />">
+                    <display:column title="<input type='checkbox' name='regUserIds' id='regUserIds' onclick='selectAll(document.formManageTrialOwnership.regUserIds, this.checked)' />">
 	                    <label for="${regUserRow.registryUser.id}" style="display:none"><fmt:message key="managetrialownership.users.allow"/></label>
-	                    <input type="checkbox" name="chkUser" value="${regUserRow.registryUser.id}" id="${regUserRow.registryUser.id}"/>
+	                    <input type="checkbox" name="regUserIds" value="${regUserRow.registryUser.id}" id="${regUserRow.registryUser.id}"/>
                     </display:column>
                     <display:column escapeXml="true" titleKey="managetrialownership.users.name" sortable="true" headerClass="sortable" headerScope="col">
                         <c:out value="${regUserRow.registryUser.lastName}"/>,<c:out value="${regUserRow.registryUser.firstName}"/>
@@ -149,9 +149,9 @@
 		                     <display:table class="data table trialOwnership table-hover sortable" summary="This table contains trials assigned to the site"
 		                                    decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="studyProtocolRow"
 		                                    name="orgTrials" requestURI="${actionName}view.action" export="false">
-		                         <display:column title="<input type='checkbox' name='chkTrial'  id='chkTrial' onclick='selectAll(document.formManageTrialOwnership.chkTrial, this.checked)' />">
+		                         <display:column title="<input type='checkbox' name='trialIds'  id='trialIds' onclick='selectAll(document.formManageTrialOwnership.trialIds, this.checked)' />">
                                    <label for="${studyProtocolRow.studyProtocol.id}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
-                                   <input type="checkbox" name="chkTrial" value="${studyProtocolRow.studyProtocol.id}" id="${studyProtocolRow.studyProtocol.id}" />
+                                   <input type="checkbox" name="trialIds" value="${studyProtocolRow.studyProtocol.id}" id="${studyProtocolRow.studyProtocol.id}" />
                                  </display:column>
 		                         <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
 		                         <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" sortable="true" headerClass="sortable" headerScope="col"/>
@@ -174,10 +174,10 @@
                        <display:table class="table trialOwnership table-hover sortable" 
                                      decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="trialOwenership"
                                      name="trialOwenership" requestURI="${actionName}view.action" export="false">
-                            <display:column sortable="false" title="<input type='checkbox' value='0' name='chkTrialOwner' id='chkTrialOwner' onclick='selectAll(document.formManageTrialOwnership.chkTrialOwner, this.checked)' />">
-                             <c:set var="chkTrialOwnerId" value="${trialOwenership.trialId}_${trialOwenership.userId}" />
-                                <label for="${chkTrialOwnerId}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
-                                <input type="checkbox" name="chkTrialOwner" value="${chkTrialOwnerId}" id="${chkTrialOwnerId}"/>
+                            <display:column sortable="false" title="<input type='checkbox' value='0' name='trialOwners' id='trialOwners' onclick='selectAll(document.formManageTrialOwnership.trialOwners, this.checked)' />">
+                             <c:set var="trialOwnersId" value="${trialOwenership.trialId}_${trialOwenership.userId}" />
+                                <label for="${trialOwnersId}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
+                                <input type="checkbox" name="trialOwners" value="${trialOwnersId}" id="${trialOwnersId}"/>
                            </display:column>
                            <display:column escapeXml="true" titleKey="managetrialownership.users.name" maxLength="200" sortable="true" headerClass="sortable" headerScope="col">
                                 <c:out value="${trialOwenership.lastName}"/>,<c:out value="${trialOwenership.firstName}"/>

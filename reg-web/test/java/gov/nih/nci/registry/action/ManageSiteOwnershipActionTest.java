@@ -8,17 +8,14 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.registry.util.SelectedRegistryUser;
 import gov.nih.nci.registry.util.SelectedStudyProtocol;
-import gov.nih.nci.registry.util.TrialUtil;
 
 import java.util.ArrayList;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
@@ -80,21 +77,6 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void testSetTrial() throws PAException {
-        action = new ManageSiteOwnershipAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setupAddParameter("trialId", "3");
-        request.setupAddParameter("isSelected", "true");
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser("RegUser");
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-        action.search();
-        request.getSession().setAttribute("studyProtocolsList", action.getStudyProtocols());
-        action.setTrial();
-    }
-
-    @Test
     public void testAssignOwnershipException() throws PAException {
         action = new ManageSiteOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -136,6 +118,8 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
+        request.getSession().setAttribute("regUsersList", new ArrayList<SelectedRegistryUser>());
+        request.getSession().setAttribute("studyProtocolsList", new ArrayList<SelectedStudyProtocol>());
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
         try {

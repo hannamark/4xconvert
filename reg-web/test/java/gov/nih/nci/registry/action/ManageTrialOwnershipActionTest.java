@@ -3,6 +3,7 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.registry.util.SelectedRegistryUser;
 import gov.nih.nci.registry.util.SelectedStudyProtocol;
 
@@ -61,20 +62,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         action.setRegUser();
     }
 
-    @Test
-    public void testSetTrial() throws PAException {
-        action = new ManageTrialOwnershipAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setupAddParameter("trialId", "3");
-        request.setupAddParameter("isSelected", "true");
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser("RegUser");
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-        action.search();
-        request.getSession().setAttribute("studyProtocolsList", action.getStudyProtocols());
-        action.setTrial();
-    }
+
 
     @Test
     public void testAssignOwnershipException() throws PAException {
@@ -82,6 +70,8 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
+        request.getSession().setAttribute("regUsersList", new ArrayList<SelectedRegistryUser>());
+        request.getSession().setAttribute("studyProtocolsList", new ArrayList<SelectedStudyProtocol>());
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
         try {
@@ -102,6 +92,8 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         action.search();
         request.getSession().setAttribute("regUsersList", new ArrayList<SelectedRegistryUser>());
         request.getSession().setAttribute("studyProtocolsList", new ArrayList<SelectedStudyProtocol>());
+        action.setRegUserIds(new String []{"1"});
+        action.setTrialIds(new String []{"1"});
         assertEquals("viewResults", action.assignOwnership());
         action.search();
         action.getRegistryUsers().get(0).setSelected(true);
@@ -117,6 +109,8 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
+        request.getSession().setAttribute("regUsersList", new ArrayList<SelectedRegistryUser>());
+        request.getSession().setAttribute("studyProtocolsList", new ArrayList<SelectedStudyProtocol>());
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
         try {
@@ -144,5 +138,39 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         request.getSession().setAttribute("regUsersList", action.getRegistryUsers());
         request.getSession().setAttribute("studyProtocolsList", action.getStudyProtocols());
         assertEquals("viewResults", action.unassignOwnership());
+    }
+    
+    @Test
+    public void testUpdateEmailPref() throws PAException {
+        action = new ManageTrialOwnershipAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(new MockHttpSession());
+        request.setRemoteUser("RegUser");
+        ServletActionContext.setServletContext(new MockServletContext());
+        ServletActionContext.setRequest(request);
+        action.setTrialId(1l);
+        action.setRegUserId(3L);
+        try {
+            action.updateEmailPref();
+        } catch(PAException e) {
+            //expected
+        }
+    }
+    
+    @Test
+    public void testUpdateEmailPrefAll() throws PAException {
+        action = new ManageTrialOwnershipAction();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(new MockHttpSession());
+        request.setRemoteUser("RegUser");
+        ServletActionContext.setServletContext(new MockServletContext());
+        ServletActionContext.setRequest(request);
+        action.setSiteName("testSite");
+        request.getSession().setAttribute("trialOwnershipInfo", new ArrayList<DisplayTrialOwnershipInformation>());
+        try {
+            action.updateEmailPref();
+        } catch(PAException e) {
+            //expected
+        }
     }
 }

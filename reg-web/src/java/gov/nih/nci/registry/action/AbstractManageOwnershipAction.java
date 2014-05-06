@@ -12,14 +12,12 @@ import gov.nih.nci.registry.util.SelectedStudyProtocol;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -51,18 +49,21 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
             new ArrayList<DisplayTrialOwnershipInformation>();
     private static final String SUCCESS_MSG = "successMessage";
     private static final String FAILURE_MSG = "failureMessage";
-    private Long regUserId = null;
+    private String[] regUserIds = null;
+    private String[] trialIds =  null;
+    private String[] trialOwners =  null;
     private boolean owner;
-    private Long trialId = null;
     private boolean selected;
-    private String trialIds =  null;
     private boolean checked = false;
     private String siteName;
+    private Long trialId;
+    private Long regUserId;
+    
 
     /**
      * @return the trialIds
      */
-    public String getTrialIds() {
+    public String [] getTrialIds() {
         return trialIds;
     }
 
@@ -70,7 +71,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
      * @param trialIds
      *            the trialIds to set
      */
-    public void setTrialIds(String trialIds) {
+    public void setTrialIds(String[] trialIds) {
         this.trialIds = trialIds;
     }
 
@@ -286,31 +287,6 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
     }
 
     /**
-     * set if trial is selected or not.
-     * 
-     * @throws PAException
-     *             the pa exception
-     */
-    public void setTrial() throws PAException {
-        if (trialId != null) {
-            updateSelectedField(trialId);
-        }
-        if (trialIds != null && !trialIds.isEmpty()) { 
-            List<String> idsList = new ArrayList<String>();
-            StringTokenizer st = new StringTokenizer(trialIds, ",");
-            while (st.hasMoreElements()) {
-                idsList.add((String) st.nextElement());
-            }
-            
-            for (String id : idsList) {
-                updateSelectedField(Long.valueOf(id));
-                //updateEmailPreference(Long.valueOf(id));
-                ServletActionContext.getRequest().getSession().setAttribute(CHECKED_VALUE, checked);                
-            }
-        }
-    }
-    
-    /**
      * Sets email preference.
      * 
      * @throws PAException
@@ -335,30 +311,11 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void updateEmailPreference(Long tId, Long userId) throws PAException {
         PaRegistry.getRegistryUserService().setEmailNotificationsPreference(userId, tId, selected);
     }
     
-    @SuppressWarnings("unchecked")
-    private void updateSelectedField(Long tId) {
-        SelectedStudyProtocol studyProtocol = null;
-        studyProtocols = (List<SelectedStudyProtocol>) ServletActionContext
-                .getRequest().getSession().getAttribute(
-                        AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
-        for (SelectedStudyProtocol selSP : studyProtocols) {
-            if (tId.equals(selSP.getStudyProtocol().getId())) {
-                studyProtocol = selSP;
-            }
-        }
-        if (studyProtocol != null) {
-            studyProtocol.setSelected(selected);
-            ServletActionContext.getRequest().getSession()
-            .setAttribute(AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST, studyProtocols);
-        }
-    }
-
-    /**
+     /**
      * view results from session..
      * 
      * @return String
@@ -394,18 +351,15 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
      */
     public String assignOwnership() throws PAException {
         try {
-            String[] users = (String []) ActionContext.getContext().getParameters().get("chkUser");
-            String[] trials = (String[]) ActionContext.getContext().getParameters().get("chkTrial");
-            
-            if (users != null && trials != null) {
+            if (regUserIds != null && trialIds != null) {
                 List<Long> selectedUserIds = new ArrayList<Long>();
                 List<Long> selectedTrialIds = new ArrayList<Long>();
                 
-                for (int i = 0; i < trials.length; i++) {
-                    selectedTrialIds.add(Long.parseLong(trials[i]));
+                for (int i = 0; i < trialIds.length; i++) {
+                    selectedTrialIds.add(Long.parseLong(trialIds[i]));
                 }
-                for (int i = 0; i < users.length; i++) {
-                    selectedUserIds.add(Long.parseLong(users[i]));
+                for (int i = 0; i < regUserIds.length; i++) {
+                    selectedUserIds.add(Long.parseLong(regUserIds[i]));
                 }
                 for (Long userId : selectedUserIds) {
                     for (Long tId : selectedTrialIds) {
@@ -464,14 +418,12 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
      */
     public String unassignOwnership() throws PAException {
         try {
-            String[] trialUserIds = (String []) ActionContext.getContext().getParameters().get("chkTrialOwner");
-            
-            if (trialUserIds != null) {
+            if (trialOwners != null) {
                 Long tId;
                 Long userId;
                 String [] ids;
-                for (int i = 0; i < trialUserIds.length; i++) {
-                    ids = trialUserIds[i].split("_");
+                for (int i = 0; i < trialOwners.length; i++) {
+                    ids = trialOwners[i].split("_");
                     tId = Long.parseLong(ids[0]);
                     userId = Long.parseLong(ids[1]);
                     updateOwnership(userId, tId, false, false);
@@ -510,36 +462,6 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
     public abstract void updateOwnership(Long registryUserID, Long trialID,
             boolean assign, boolean enableEmailNotifications)
             throws PAException;
-
-    @SuppressWarnings("unchecked")
-    private List<Long> getSelectedUserIds() {
-        List<Long> selectedUserIds = new ArrayList<Long>();
-        registryUsers = (List<SelectedRegistryUser>) ServletActionContext
-                .getRequest().getSession()
-                .getAttribute(AbstractManageOwnershipAction.REG_USERS_LIST);
-        for (SelectedRegistryUser user : registryUsers) {
-            if (user.isSelected()) {
-                selectedUserIds.add(user.getRegistryUser().getId());
-            }
-        }
-        return selectedUserIds;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Long> getSelectedTrialIds() {
-        List<Long> selectedTrialIds = new ArrayList<Long>();
-        studyProtocols = (List<SelectedStudyProtocol>) ServletActionContext
-                .getRequest()
-                .getSession()
-                .getAttribute(
-                        AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
-        for (SelectedStudyProtocol sp : studyProtocols) {
-            if (sp.isSelected()) {
-                selectedTrialIds.add(sp.getStudyProtocol().getId());
-            }
-        }
-        return selectedTrialIds;
-    }
 
     /**
      * @return the registryUsers.
@@ -599,6 +521,34 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
     public void setTrialOwnershipInfo(
             List<DisplayTrialOwnershipInformation> trialOwnershipInfo) {
         this.trialOwnershipInfo = trialOwnershipInfo;
+    }
+
+    /**
+     * @return the regUserIds
+     */
+    public String[] getRegUserIds() {
+        return regUserIds;
+    }
+
+    /**
+     * @param regUserIds the regUserIds to set
+     */
+    public void setRegUserIds(String[] regUserIds) {
+        this.regUserIds = regUserIds;
+    }
+
+    /**
+     * @return the trialOwnsers 
+     */
+    public String[] getTrialOwners() {
+        return trialOwners;
+    }
+
+    /**
+     * @param trialOwners the trialOwener to set
+     */
+    public void setTrialOwners(String[] trialOwners) {
+        this.trialOwners = trialOwners;
     }
 
     
