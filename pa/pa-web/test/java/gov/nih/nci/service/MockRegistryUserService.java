@@ -277,4 +277,11 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
             throws PAException {
         
     }
+
+   
+    public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
+            Long participatingSiteId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

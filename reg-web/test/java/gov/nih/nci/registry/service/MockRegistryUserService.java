@@ -324,4 +324,11 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
 
 	public void assignOwnership(Long userId, String nciID) throws PAException {
 	}
+
+   
+    public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
+            Long participatingSiteId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

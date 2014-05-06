@@ -283,4 +283,11 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
         
     }
 
+    
+    public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
+            Long participatingSiteId) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
