@@ -4,7 +4,7 @@
 	  <div class="form-group">
 	      <label for="deleteOtherDoc_${varStatus.index}" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherDocument"/></label>
 	    <div class="col-xs-4">
-	      <button type="button" class="btn btn-icon btn-default"  id="deleteOtherDoc_${varStatus.index}"  onclick="deleteDocument('<c:out value="${doc.fileName}"/>')"><i class="fa-minus"></i>Remove</button>
+	      <button type="button" class="btn btn-icon btn-primary"  id="deleteOtherDoc_${varStatus.index}"  onclick="deleteDocument('Other',${varStatus.index})"><i class="fa-minus"></i>Remove</button>
 	    	<c:out value="${doc.fileName}"/>
 	      </div>
 	  </div> 
@@ -19,7 +19,7 @@
 	  <div class="form-group" style="${hideUploadRow?'display:none':''}" id="otherUploadRow_${varStatus.index}">
 	    <label for="submitTrial_otherDocument_${varStatus.index}" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherDocument"/></label>
 	    <div class="col-xs-4">
-	      <s:file id="submitTrial_otherDocument" name="submitTrial_otherDocument" />
+	      <input id="submitTrial_otherDocument_${varStatus.index}" name="otherDocument" type="file" />
 	      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload any other trial-related document(s)."  data-placement="top" data-trigger="hover"></i>
 	        <span class="alert-danger">
 	          <s:fielderror>
