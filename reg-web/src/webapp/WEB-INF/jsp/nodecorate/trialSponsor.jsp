@@ -3,10 +3,10 @@
 <div class="col-xs-8">
 <s:set var="sponsorOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getSponsorOrganization()" />
 <s:hidden id="trialDTO.sponsorName" value="" name="trialDTO.sponsorName"/>
-<div class="collapse navbar-collapse">
+<div class="collapse navbar-collapse organization-dropdown">
         <div class="nav navbar-nav" style="width: 100%;">
-          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.sponsorNameField">Please Select the Sponsor Organization. <b class="caret"></b></a>  
-            <table class="dropdown-menu">
+          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.sponsorNameField">Please Select the Sponsor Organization <b class="caret"></b></a>  
+            <table class="dropdown-menu" id="dropdown-sponsorOrganization">
             	<tr><th>PO ID</th><th>CTEP ID</th><th>Name</th></tr>
             	<s:iterator var="orgItem" value="#sponsorOrgs">
             	<s:if test="%{#orgItem.getType() < 0}">

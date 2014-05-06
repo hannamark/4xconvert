@@ -447,6 +447,9 @@
 										property="milestones.lastMilestone.milestoneDate"
 										format="{0,date,MM/dd/yyyy}" sortable="true"
 										headerClass="sortable" />
+									<display:column title="Submission Source"
+										property="studySource" sortable="true"
+										headerClass="sortable" />
 									<display:column title="Processing Priority"
 										property="processingPriority" sortable="true"
 										headerClass="sortable" />
@@ -644,6 +647,11 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
                                             <s:select id="assignedTo" name="assignedTo"
                                                 list="#abstractorsList" headerKey="" headerValue="Unassigned"
                                                 value="#session.summaryDTO.assignedUserId" cssStyle="width:206px" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row" class="label">Submission Source</td>
+                                        <td><c:out value="${queryDTO.studySource}"></c:out>
                                         </td>
                                     </tr>
                                     <tr>

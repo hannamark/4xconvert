@@ -1110,6 +1110,8 @@
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5513.sql"/>
      </changeSet>
      <changeSet id="PO-5576" author="krylovd">
+
+
         <comment>Add a new table to store pending and active trial associations.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5576.sql"/>
      </changeSet>
@@ -1572,5 +1574,9 @@
      <changeSet id="PO-5717" author="Hugh">
         <comment>Support for Acccrual ICD 10</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-5157.sql"/>
+     </changeSet>
+     <changeSet id="PO-7311" author="walterd">
+        <comment>Update to Organization dropdowns</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7311.sql"/>
      </changeSet>
 </databaseChangeLog>

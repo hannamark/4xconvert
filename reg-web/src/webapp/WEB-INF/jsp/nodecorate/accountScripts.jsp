@@ -20,7 +20,7 @@
         form.submit();
     }
 
-    function lookupAffiliateOrg() {
+    function lookup4AffiliateOrg(orgid, name) {
         if (originalorgid == -1) {
           originalorgid = $('registryUserWebDTO.affiliatedOrganizationId').value;
         }
@@ -30,12 +30,19 @@
             return;
           }
         }
-        showPopWin('${lookupOrgUrl}', 850, 550, loadAffliatedOrgDiv, 'Select Affiliated Organization');
+        if(orgid == -1) {
+        	//The user has selected to seach.
+	        showPopWin('${lookupOrgUrl}', 850, 550, loadAffliatedOrgDiv, 'Select Affiliated Organization');
+        } else {
+        	setorgid(orgid, name);
+        	loadAffliatedOrgDiv();
+        }
     }
 
     function loadAffliatedOrgDiv() {
         $('registryUserWebDTO.affiliatedOrganizationId').value = orgid;
         $('registryUserWebDTO.affiliateOrg').value = chosenname;
+        $('registryUserWebDTO.affiliateOrgField').innerHTML = chosenname;
         var  url = '/registry/ajaxUsersloadAdminUsers.action';
         var params = {
             "registryUserWebDTO.affiliatedOrganizationId": orgid
@@ -54,4 +61,11 @@
     function loadnothing() {
         return false;
     }
+    
+    jQuery(function() {
+    	chosenname = $('registryUserWebDTO.affiliateOrg').value;
+    	if(chosenname) {
+    		$('registryUserWebDTO.affiliateOrgField').innerHTML = chosenname;
+    	}
+    });
 </script>

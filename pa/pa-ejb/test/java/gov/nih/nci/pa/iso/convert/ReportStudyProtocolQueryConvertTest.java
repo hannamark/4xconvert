@@ -135,7 +135,7 @@ public class ReportStudyProtocolQueryConvertTest extends AbstractHibernateTestCa
             + "sp.RECORD_VERIFICATION_DATE, null, sp.PHASE_ADDITIONAL_QUALIFIER_CODE, "
             + "sp.DATE_LAST_CREATED, sp.AMENDMENT_NUMBER, sp.AMENDMENT_DATE, sp.SUBMISSION_NUMBER, "
             + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier as leadOrgId, "
-            + "ss3.local_sp_indentifier as nctidentifier "
+            + "ss3.local_sp_indentifier as nctidentifier, sp.study_source "
             + "from study_protocol AS sp left join study_site AS ss ON sp.identifier = ss.study_protocol_identifier "
             + "left JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
             + "AND sOi.root = :NCI_II_ROOT "

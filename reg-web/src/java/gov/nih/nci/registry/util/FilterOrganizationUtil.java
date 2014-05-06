@@ -8,6 +8,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -145,6 +146,33 @@ public class FilterOrganizationUtil {
                 LOG.error("An error occured while fetching releated organizations.", e);
             }
         }
+        
+        return list;
+    }
+    
+    /**
+     * This is a placeholder
+     * @return the list of default orgs for an account.
+     */
+    public static List<OrgItem> getAccountOrganization() {
+        ArrayList<OrgItem> list = new ArrayList<OrgItem>();
+
+        try {
+            Session session = null;
+            session = PaHibernateUtil.getCurrentSession();
+            Query query = session.createQuery("select org from Organization org "
+                    + "where org.id in (select id from AccountCommonOrganization) order by org.name asc");
+    
+            Iterator<Organization> iter = query.iterate();
+
+            while (iter.hasNext()) {
+                list.add(new OrgItem(iter.next()));
+            }
+        } catch (Exception ex) {
+            LOG.error("An error occured while fetching the common account organizations.", ex);
+        }
+        
+        list.add(getSpacerItem());
         
         return list;
     }

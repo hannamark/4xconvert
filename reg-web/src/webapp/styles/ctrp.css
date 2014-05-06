@@ -1827,7 +1827,29 @@ table td {
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.2);
 }
 
+.organization-dropdown table {
+	border: 1px solid black;
+}
+
+.organization-dropdown td {
+	border: 1px solid black;
+		padding-left: 10px;
+}
+
+.organization-dropdown th {
+	border: 1px solid black;
+		padding-left: 10px;
+}
+
+.organization-dropdown > .navbar-nav {
+	border: 0px solid black;
+}
+
+.organization-dropdown hr {
+	margin: 0px;
+	height: 1px;
+}
+
 .glyphicon-large {
 	font-size: 32px;
 }
-

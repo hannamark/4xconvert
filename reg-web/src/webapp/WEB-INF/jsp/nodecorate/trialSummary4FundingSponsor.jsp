@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <div class="col-xs-12">
 <s:set var="sum4Orgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getSponsorOrganization()" />
-<div class="collapse navbar-collapse">
+<div class="collapse navbar-collapse organization-dropdown">
         <div class="nav navbar-nav" style="width: 100%;">
-          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.summaryFourOrgName">Please Select the Summary 4 Sponsor Organization. <b class="caret"></b></a>  
-            <table class="dropdown-menu">
+          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.summaryFourOrgName">Please Select the Summary 4 Sponsor Organization <b class="caret"></b></a>  
+            <table class="dropdown-menu" id="dropdown-sum4Organization">
             	<tr><th>PO ID</th><th>CTEP ID</th><th>Name</th></tr>
             	<s:iterator var="orgItem" value="#sum4Orgs">
             	<s:if test="%{#orgItem.getType() < 0}">

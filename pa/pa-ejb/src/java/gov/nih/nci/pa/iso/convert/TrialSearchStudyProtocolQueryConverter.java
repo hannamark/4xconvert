@@ -181,6 +181,7 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
         String nctNumber = getPaServiceUtils().getStudyIdentifier(IiConverter
                 .convertToStudyProtocolIi(studyProtocol.getId()), PAConstants.NCT_IDENTIFIER_TYPE);
         studyProtocolDto.setNctNumber(nctNumber);
+        studyProtocolDto.setStudySource(studyProtocol.getStudySource());
         return studyProtocolDto;
     }
 

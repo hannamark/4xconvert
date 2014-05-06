@@ -146,6 +146,7 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
     private static final int SUMM_FIELD_STUDY_NCI_ID = 27;
     private static final int SUMM_FIELD_LEAD_ORG_TRIAL_ID = 28;
     private static final int SUMM_FIELD_NCT_ID = 29;
+    private static final int SUMM_FIELD_STUDY_SOURCE = 30;
 
     private final String generateDiseaseNamesSql =
         "select d.PREFERRED_NAME from study_disease AS sd "
@@ -294,6 +295,7 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
         spDto.getLastCreated().setDateLastCreated((Timestamp) piData[SUMM_FIELD_DATE_LAST_CREATED]);
         spDto.setStudyProtocolType((String) piData[SUMM_FIELD_STUDY_PROTOCOL_TYPE]);
         spDto.setNciIdentifier((String) piData[SUMM_FIELD_STUDY_NCI_ID]);
+        spDto.setStudySource((String) piData[SUMM_FIELD_STUDY_SOURCE]);
     }
 
     private void loadPhaseCodeAndPurposeIntoStudyProtocolDto(Object[] piData, StudyProtocolQueryDTO spDto) {
@@ -348,7 +350,8 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
         + "sp.OFFICIAL_TITLE, sp.PHASE_CODE, sp.PRIMARY_PURPOSE_CODE, sp.PROPRIETARY_TRIAL_INDICATOR, "
         + "sp.RECORD_VERIFICATION_DATE, sp.CTGOV_XML_REQUIRED_INDICATOR, sp.PHASE_ADDITIONAL_QUALIFIER_CODE, "
         + "sp.DATE_LAST_CREATED, sp.AMENDMENT_NUMBER, sp.AMENDMENT_DATE, sp.SUBMISSION_NUMBER, "
-        + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier as leadOrgId, nct.nctidentifier "
+        + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier as leadOrgId, nct.nctidentifier, "
+        + "sp.study_source "
         + "from study_protocol AS sp "
         + "left JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id AND sOi.root = :NCI_II_ROOT "
         + "left join (select study_protocol_identifier as spid, local_sp_indentifier as local_id, "

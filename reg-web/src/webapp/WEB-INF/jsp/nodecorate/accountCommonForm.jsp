@@ -126,17 +126,35 @@
  </div>
  <div class="form-group">
    <label for="registryUserWebDTO.affiliateOrg" class="col-xs-4 control-label"><fmt:message key="register.user.affiliateOrg"/> <span class="required">*</span></label>
-   <div class="col-xs-5">
+   <div class="col-xs-7">
+   <s:set var="accountOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getAccountOrganization()" />
    	 <s:hidden name="registryUserWebDTO.affiliatedOrganizationId" id="registryUserWebDTO.affiliatedOrganizationId"/>
-     <s:textfield type="text" cssClass="form-control" name="registryUserWebDTO.affiliateOrg" id="registryUserWebDTO.affiliateOrg" readonly="true" />
+   	 <s:hidden name="registryUserWebDTO.affiliateOrg" id="registryUserWebDTO.affiliateOrg"/>
+<div class="collapse navbar-collapse organization-dropdown">
+        <div class="nav navbar-nav" style="width: 100%;">
+          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="registryUserWebDTO.affiliateOrgField">Please Select the Sponsor Organization. <b class="caret"></b></a>  
+            <table class="dropdown-menu">
+            	<tr><th>PO ID</th><th>CTEP ID</th><th>Name</th></tr>
+            	<s:iterator var="orgItem" value="#accountOrgs">
+            	<s:if test="%{#orgItem.getType() < 0}">
+            		<tr><td colspan="3"><hr/></td></tr>
+            	</s:if>
+            	<s:else>
+        			<tr><td><a href="javascript:void(0)" onclick="lookup4AffiliateOrg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getPoId()"/></a></td>
+        			<td><a href="javascript:void(0)" onclick="lookup4AffiliateOrg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getCtepId()"/></a></td>
+        			<td><a href="javascript:void(0)" onclick="lookup4AffiliateOrg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getName()"/></a></td></tr>
+        		</s:else>
+        		</s:iterator>
+        		<tr><td colspan="3"><a href="javascript:void(0)" onclick="lookup4AffiliateOrg(-1, '')">Search...</a></td></tr>
+            </table>
+          </div>
+      </div>
+</div>
      <span class="alert-danger">
             <s:fielderror>
                 <s:param>registryUserWebDTO.affiliateOrg</s:param>
             </s:fielderror>
         </span>
-   </div>
-   <div class="col-xs-3">
-     <button type="button" class="btn btn-icon btn-default" onclick="lookupAffiliateOrg();"><i class="fa-search"></i>Look Up</button>
    </div>
  </div>
  

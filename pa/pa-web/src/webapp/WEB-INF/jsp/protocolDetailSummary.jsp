@@ -39,6 +39,12 @@
                 <span class="label"><fmt:message key="studyProtocol.trialCategory"/></span>
                 <span class="value"><c:out value="${sessionScope.trialSummary.trialCategory }" /></span>
             </div>
+       <c:if test="${sessionScope.trialSummary.studySource != null}">
+            <div class="row">
+                <span class="label"><fmt:message key="studyProtocol.studySource"/>:</span>
+                <span class="value"><c:out value="${sessionScope.trialSummary.studySource }"/></span>
+            </div>
+        </c:if>
         
 	</div>
 	<div class="float33">

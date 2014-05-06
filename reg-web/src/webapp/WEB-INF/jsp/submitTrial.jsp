@@ -36,6 +36,7 @@
 	  		$("trialDTO.leadOrganizationIdentifier").value = '';
 	  		$('trialDTO.leadOrganizationName').value = '';
 	  	}
+		$('dropdown-leadOrganization').hide();
 	  }
 	  
 	  function lookup4sponsor(selection, name) {
@@ -55,6 +56,7 @@
 		  		$("trialDTO.sponsorIdentifier").value = '';
 		  		$('trialDTO.sponsorName').value = '';
 		  	}
+		  	$('dropdown-sponsorOrganization').hide();
 	      
 	  }
 	  
@@ -72,6 +74,7 @@
 	  	} 
 		//since there can be many we reset the form each time.
 		$('trialDTO.summaryFourOrgName').innerHTML = 'Please Select the Summary 4 Sponsor Organization.';
+		$('dropdown-sum4Organization').hide();
 	      
 	  }
 	  

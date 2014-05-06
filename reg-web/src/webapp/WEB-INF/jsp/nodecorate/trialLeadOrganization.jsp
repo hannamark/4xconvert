@@ -3,10 +3,10 @@
 <s:set name="leadOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getLeadOrganization()" />
 <s:hidden id="trialDTO.leadOrganizationIdentifier" value="" name="trialDTO.leadOrganizationIdentifier"/>
 <s:hidden id="trialDTO.leadOrganizationName" value="" name="trialDTO.leadOrganizationName"/>
-<div class="collapse navbar-collapse">
+<div class="collapse navbar-collapse organization-dropdown">
         <div class="nav navbar-nav" style="width: 100%;">
-          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.leadOrganizationNameField">Please Select the Lead Organization. <b class="caret"></b></a>  
-            <table class="dropdown-menu">
+          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.leadOrganizationNameField">Please Select the Lead Organization <b class="caret"></b></a>  
+            <table class="dropdown-menu" id="dropdown-leadOrganization">
             	<tr><th>PO ID</th><th>CTEP ID</th><th>Name</th></tr>
             	<s:iterator var="orgItem" value="#leadOrgs">
             	<s:if test="%{#orgItem.getType() < 0}">
