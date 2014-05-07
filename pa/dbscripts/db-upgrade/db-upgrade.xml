@@ -1579,4 +1579,8 @@
         <comment>Update to Organization dropdowns</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7311.sql"/>
      </changeSet>
+     <changeSet id="PO-7320" author="Reshma">
+        <comment>Update rv_search_results view to add accrual disease code column</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7320.sql"/>
+     </changeSet>
 </databaseChangeLog>

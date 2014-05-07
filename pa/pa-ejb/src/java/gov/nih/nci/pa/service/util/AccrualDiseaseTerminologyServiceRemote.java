@@ -3,6 +3,7 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
 
@@ -38,5 +39,13 @@ public interface AccrualDiseaseTerminologyServiceRemote {
      * @return if code system can be changed
      */
     Boolean canChangeCodeSystem(Long studyProtocolId);
+    
+    /**
+     * Returns maps with spId and boolean value which determines if it is okay to 
+     * change the disease code system for patients on a trial.
+     * @param studyProtocolIds studyProtocolIds
+     * @return Map 
+     */
+    Map<Long, Boolean> canChangeCodeSystemForSpIds(List<Long> studyProtocolIds);
 
 }

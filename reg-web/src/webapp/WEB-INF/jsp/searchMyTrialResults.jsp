@@ -73,6 +73,7 @@ jQuery(function() {
             <h2 id="search_results">Submitted Clinical Trials Search Results</h2>
             <div class="table-wrapper">
             <div class="table-responsive">
+            <s:set name="accrualDiseaseValues" value="@gov.nih.nci.pa.util.PaRegistry@getAccrualDiseaseTerminologyService().getValidCodeSystems()" />
             <display:table class="table table-striped table-bordered" summary="This table contains your trial search results. Please use column headers to sort results"
                            decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" id="row"
                            name="records" requestURI="searchTrialquery.action" export="true">
@@ -197,6 +198,15 @@ jQuery(function() {
                 <display:column title="Last Amendment Submitted" property="amendmentDate" format="{0,date,MM/dd/yyyy}" />                               
                 <display:column title="Last Amender Name" property="lastUpdatedUserDisplayName" />     
                 <display:column title="On-Hold Reason" property="onHoldReasons" escapeXml="true"/>
+                
+                <display:column title="Accruals Disease Terminology" sortable="false" headerClass="sortable">
+                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
+                <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
+                <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
+                list="#accrualDiseaseValues" onchange="saveDiseaseCode('%{#attr.row.studyProtocolId}',this.value)" value="accrualDiseaseCode" cssClass="form-control" />
+                </s:if>
+                </display:column>
+                
             </display:table>
             <!-- Adding these <p> tags to add some free space at the bottom to display drop down for action items correctly -->
             <p>&nbsp;</p>

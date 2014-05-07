@@ -110,6 +110,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
@@ -141,6 +142,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -201,7 +203,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
     private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService; 
-   
+    private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
     private Long studyProtocolId;
     private String trialAction;
@@ -214,6 +216,8 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
     private String currentUser;
     private boolean showVerifyButton = false;
     private boolean showAddMySite = false;
+
+    private String accrualDiseaseTerminology;
     
     /**
      * {@inheritDoc}
@@ -232,6 +236,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
         documentWorkflowStatusService = PaRegistry.getDocumentWorkflowStatusService();
         tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
         ctGovXmlGeneratorService = PaRegistry.getCTGovXmlGeneratorService(); 
+        accrualDiseaseTerminologyService = PaRegistry.getAccrualDiseaseTerminologyService();
     }
     
     /**
@@ -376,6 +381,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
         searchAndSort(spQueryCriteria);
         checkToShow();
         checkVerifyData();
+        checkToShowAccrualDiseaseOption();
     }
 
     
@@ -577,6 +583,24 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
         return POPUP_STUDY_ALTERNATE_TITLES;
     }
     
+    
+    private void checkToShowAccrualDiseaseOption() {
+        if (getRecords() != null) {
+             List<Long> spIds = new ArrayList<Long>();
+             for (StudyProtocolQueryDTO queryDto : getRecords()) {
+                 spIds.add(queryDto.getStudyProtocolId());
+             }
+             Map<Long, Boolean> canChangeCodeSystemList = accrualDiseaseTerminologyService
+                     .canChangeCodeSystemForSpIds(spIds);
+             for (StudyProtocolQueryDTO queryDto : getRecords()) {
+                 if (canChangeCodeSystemList.containsKey(queryDto.getStudyProtocolId()) 
+                      && canChangeCodeSystemList.get(queryDto.getStudyProtocolId())) {
+                     queryDto.setShowAccrualOption(true); 
+                 }
+             } 
+         }
+    }
+    
     private void checkVerifyData() throws PAException {
         if (getRecords() != null) {
             for (StudyProtocolQueryDTO queryDto : getRecords()) {
@@ -616,6 +640,19 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
             ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
         }
     }
+    /**
+     * 
+     * @return String 
+     * @throws PAException  PAException
+     */
+    public String saveAccrualDiseaseCode() throws PAException {
+        boolean canChangeCodeSystem = accrualDiseaseTerminologyService.canChangeCodeSystem(studyProtocolId);
+        if (canChangeCodeSystem) {
+            accrualDiseaseTerminologyService.updateCodeSystem(studyProtocolId, getAccrualDiseaseTerminology());
+        }
+        return query();
+    }
+    
 
     /**
      * @return result
@@ -1188,6 +1225,28 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
      */
     public void setShowAddMySite(boolean showAddMySite) {
         this.showAddMySite = showAddMySite;
+    }
+    /**
+     * @param accrualDiseaseTerminologyService the accrualDiseaseTerminologyService to set
+     */
+    public void setAccrualDiseaseTerminologyService(
+            AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService) {
+        this.accrualDiseaseTerminologyService = accrualDiseaseTerminologyService;
+    }
+
+    /**
+     * 
+     * @return accrualDiseaseTerminology accrualDiseaseTerminology
+     */
+    public String getAccrualDiseaseTerminology() {
+        return accrualDiseaseTerminology;
+    }
+    /**
+     * 
+     * @param accrualDiseaseTerminology accrualDiseaseTerminology
+     */
+    public void setAccrualDiseaseTerminology(String accrualDiseaseTerminology) {
+        this.accrualDiseaseTerminology = accrualDiseaseTerminology;
     }
 
 }

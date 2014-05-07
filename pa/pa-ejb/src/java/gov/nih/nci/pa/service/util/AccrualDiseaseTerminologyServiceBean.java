@@ -10,8 +10,11 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -20,6 +23,7 @@ import javax.interceptor.Interceptors;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -61,7 +65,8 @@ public class AccrualDiseaseTerminologyServiceBean implements
         }
         return result;
     }
-
+    
+    
     @SuppressWarnings("unchecked")
     @Override
     public String getCodeSystem(Long studyProtocolId) {
@@ -109,4 +114,37 @@ public class AccrualDiseaseTerminologyServiceBean implements
         Integer count = (Integer) criteria.uniqueResult();
         return (0 == count);
     }
+    
+    @Override
+    public Map<Long, Boolean> canChangeCodeSystemForSpIds(List<Long> studyProtocolIds) {
+        Map<Long, Boolean> result = new HashMap<Long, Boolean>();
+        Session session = PaHibernateUtil.getCurrentSession();
+        List<Object[]> queryList = null;
+        Map<Long, Long> resultSet = new HashMap<Long, Long>();
+        if (!studyProtocolIds.isEmpty()) {
+            SQLQuery query = session
+            .createSQLQuery("select study_protocol_identifier, count(study_protocol_identifier)"
+                 + " from study_subject where study_protocol_identifier in (:ids)"
+                 + " and disease_identifier IS not null and status_code = 'ACTIVE' GROUP BY "
+                 + " study_protocol_identifier HAVING count(study_protocol_identifier) >= 1");
+            query.setParameterList("ids", studyProtocolIds);
+            queryList = query.list();
+            for (Object[] oArr : queryList) {
+                BigInteger ret = null;
+                if (oArr[0] instanceof BigInteger) { 
+                    ret =  (BigInteger) oArr[0];
+                    resultSet.put(ret.longValue(), Long.parseLong(oArr[1].toString()));
+                }       
+            }
+            for (Long id : studyProtocolIds) {
+               if (resultSet.containsKey(id)) {
+                 result.put(id, false);
+               } else {
+                 result.put(id, true);
+               }
+            }
+        }
+        return result;
+    }
+    
 }

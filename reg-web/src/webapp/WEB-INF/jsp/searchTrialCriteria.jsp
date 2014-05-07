@@ -86,6 +86,13 @@
     	      
    }
     
+    function saveDiseaseCode(pId, diseaseCode) {
+        if (confirm("<fmt:message key='accrual.disease.code.save.Confirm' />")) {
+        document.forms[0].action="searchTrialsaveAccrualDiseaseCode.action?studyProtocolId="+pId+"&accrualDiseaseTerminology="+diseaseCode;
+        document.forms[0].submit();
+        }
+    }
+    
     function addMySite(pId) {
     	alert('Not yet implemented.');
     }

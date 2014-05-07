@@ -12,6 +12,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
@@ -20,6 +21,7 @@ import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
@@ -33,7 +35,9 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -132,7 +136,6 @@ public class AccrualDiseaseTerminologyServiceTest extends AbstractHibernateTestC
         assertNotNull(ii.getExtension());
         Long id = IiConverter.convertToLong(ii);
         assertTrue(remoteEjb.canChangeCodeSystem(id));
-
         // no disease code test
         StudyProtocol sp = (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, id);
         StudySite studySite = new StudySite();
@@ -178,5 +181,75 @@ public class AccrualDiseaseTerminologyServiceTest extends AbstractHibernateTestC
         ssub.setStatusCode(FunctionalRoleStatusCode.NULLIFIED);
         TestSchema.addUpdObject(ssub);
         assertTrue(remoteEjb.canChangeCodeSystem(id));
+    }
+    
+    @Test
+    public void testCanChangeCodeSystemForSpIds() throws Exception {
+
+        // no subjects test
+        NonInterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createNonInterventionalStudyProtocolDTOObj();
+        ispDTO.setAccrualDiseaseCodeSystem(StConverter.convertToSt("SDC"));
+        Ii ii = spBean.createNonInterventionalStudyProtocol(ispDTO);
+        assertNotNull(ii.getExtension());
+        Long id = IiConverter.convertToLong(ii);
+        List<Long> ids = new ArrayList<Long>();
+        ids.add(id);
+        Map<Long, Boolean> result = remoteEjb.canChangeCodeSystemForSpIds(ids);
+        assertTrue(result.get(id));
+
+        // no disease code test
+        StudyProtocol sp = (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, id);
+        StudySite studySite = new StudySite();
+        studySite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        studySite.setStudyProtocol(sp);
+        sp.getStudySites().add(studySite);
+        TestSchema.addUpdObject(studySite);
+        assertNotNull(studySite.getId());
+        Country country = new Country();
+        TestSchema.addUpdObject(country);
+        assertNotNull(country.getId());
+        Patient pat = new Patient();
+        pat.setCountry(country);
+        pat.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        TestSchema.addUpdObject(pat);
+        assertNotNull(pat.getId());
+        StudySubject ssub = new StudySubject();
+        ssub.setPatient(pat);
+        ssub.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
+        ssub.setStudyProtocol(sp);
+        ssub.setStudySite(studySite);
+        ssub.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        studySite.setStudySubjects(new ArrayList<StudySubject>());
+        studySite.getStudySubjects().add(ssub);
+        TestSchema.addUpdObject(ssub);
+        assertNotNull(ssub.getId());
+        ids.clear();
+        ids.add(id);
+        result = remoteEjb.canChangeCodeSystemForSpIds(ids);
+        assertTrue(result.get(id));
+
+        // active subject with disease test
+        AccrualDisease ad = new AccrualDisease();
+        ad.setCodeSystem("ICD10");
+        ad.setDiseaseCode("xyzzy");
+        ad.setDisplayName("xyzzy");
+        ad.setPreferredName("xyzzy");
+        ad.setStudySubjects(new ArrayList<StudySubject>());
+        ad.getStudySubjects().add(ssub);
+        ssub.setDisease(ad);
+        TestSchema.addUpdObject(ad);
+        assertNotNull(ad.getId());
+        ids.clear();
+        ids.add(id);
+        result = remoteEjb.canChangeCodeSystemForSpIds(ids);
+        assertFalse(result.get(id));
+
+        // inactive subject test
+        ssub.setStatusCode(FunctionalRoleStatusCode.NULLIFIED);
+        TestSchema.addUpdObject(ssub);
+        ids.clear();
+        ids.add(id);
+        result = remoteEjb.canChangeCodeSystemForSpIds(ids);
+        assertTrue(result.get(id));
     }
 }

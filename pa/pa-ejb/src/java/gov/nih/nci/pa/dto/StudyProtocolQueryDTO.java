@@ -134,10 +134,12 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private Date recentOnHoldDate;
     private Date recentOffHoldDate;
     private boolean verifyData = false;
+    private boolean showAccrualOption = false;
     private Date verificationDueDate;
     private Set<StudyAlternateTitleDTO> studyAlternateTitles;
     private String studySource;
     private List<OrganizationDTO> orgsThatCanBeAddedAsSite;
+    private String accrualDiseaseCode;
    
 
     /**
@@ -791,5 +793,33 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
         this.orgsThatCanBeAddedAsSite = orgsThatCanBeAddedAsSite;
     }
     
+    /**
+     * 
+     * @return showAccrualOption showAccrualOption
+     */
+    public boolean isShowAccrualOption() {
+        return showAccrualOption;
+    }
+    /**
+     * 
+     * @param showAccrualOption showAccrualOption
+     */
+    public void setShowAccrualOption(boolean showAccrualOption) {
+        this.showAccrualOption = showAccrualOption;
+    }
+    /**
+     * 
+     * @return accrualDiseaseCode accrualDiseaseCode
+     */ 
+    public String getAccrualDiseaseCode() {
+        return accrualDiseaseCode;
+    }
+    /**
+     * 
+     * @param accrualDiseaseCode accrualDiseaseCode
+     */
+    public void setAccrualDiseaseCode(String accrualDiseaseCode) {
+        this.accrualDiseaseCode = accrualDiseaseCode;
+    }
     
 }

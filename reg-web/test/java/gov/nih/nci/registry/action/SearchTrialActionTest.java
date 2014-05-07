@@ -33,6 +33,7 @@ import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
@@ -87,6 +88,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService = mock(CTGovXmlGeneratorServiceLocal.class);
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService = mock(TSRReportGeneratorServiceRemote.class);
     private StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
+    private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = mock(AccrualDiseaseTerminologyServiceRemote.class);
     /**
      * Initialization.
      * @throws Exception in case of error
@@ -136,6 +138,7 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         action.setRegistryUserService(registryUserService);
         action.setCtGovXmlGeneratorService(ctGovXmlGeneratorService);
         action.setTsrReportGeneratorService(tsrReportGeneratorService);
+        action.setAccrualDiseaseTerminologyService(accrualDiseaseTerminologyService);
     }
 
     @Test
@@ -748,5 +751,14 @@ public class SearchTrialActionTest extends AbstractHibernateTestCase {
         Cache cache = new Cache(name, MAX_CACHE_SIZE, false, false, ttl, tti);
         cacheManager.addCache(cache);
     }   
-    
+    @Test
+    public void testSaveAccrualDiseaseCode() throws PAException {
+        when(accrualDiseaseTerminologyService.canChangeCodeSystem(any(Long.class))).thenReturn(true);
+        action.setAccrualDiseaseTerminology("SDC");
+        List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setStudyProtocolId(1L);
+        action.setRecords(records);
+        assertEquals("success", action.saveAccrualDiseaseCode());
+    }
 }
