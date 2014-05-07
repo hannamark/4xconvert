@@ -95,6 +95,8 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
            return "2003746";
        else if (name.equals("CADSR_LABTEST_UoM_ID"))
            return "2787947";
+       else if (name.equals("accrual.outofscope.actions"))
+           return "Rejected;Out of Scope";
 	   else
 		  return value;
 	}

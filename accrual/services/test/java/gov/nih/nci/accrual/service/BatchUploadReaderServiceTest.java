@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -131,6 +132,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
+import gov.nih.nci.pa.noniso.dto.AccrualOutOfScopeTrialDTO;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -147,6 +149,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -520,6 +523,123 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      queryList = getPatientStage("NCI-2009-00003");
      assertEquals(3, queryList.size());
  }
+ 
+    @Test
+    public void testSuAbstractorOutOfScope() throws Exception {
+
+        CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
+        when(csmUtil.isUserInGroup(any(String.class), any(String.class)))
+                .thenReturn(true);
+        CSMUserService.setInstance(csmUtil);
+
+        SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
+        readerService.setSearchStudySiteService(sssSvc);
+        when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);
+
+        AccrualDisease disease1 = new AccrualDisease();
+        disease1.setCodeSystem("SDC");
+        disease1.setDiseaseCode("80000001");
+        when(diseaseSvc.getByCode("SDC","80000001")).thenReturn(disease1);
+
+        File file = new File(this.getClass()
+                .getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        
+        final AccrualOutOfScopeTrialDTO dto = new AccrualOutOfScopeTrialDTO();
+        dto.setAction("Rejected");
+        dto.setCtepID("NCI-2010-00003");
+        dto.setFailureReason("Not found");
+        dto.setId(2L);
+        dto.setSubmissionDate(new Date());
+        dto.setUserLoginName("ctrpsubstractor");       
+        OUT_OF_SCOPE_TRIALS_DATASTORE.put(dto.getId(), dto);
+        
+        List<BatchValidationResults> results = readerService
+                .validateBatchData(batchFile);
+        
+        assertEquals(1, results.size());        
+        assertTrue(results.get(0).isOutOfScope());     
+        verifyEmailsSent(0, 0, 0);
+
+    }
+    
+    @Test
+    public void testSuAbstractorRemoveOutOfScopeEntry() throws Exception {
+
+        CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
+        when(csmUtil.isUserInGroup(any(String.class), any(String.class)))
+                .thenReturn(true);
+        CSMUserService.setInstance(csmUtil);
+
+        SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
+        readerService.setSearchStudySiteService(sssSvc);
+        when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);
+
+        AccrualDisease disease1 = new AccrualDisease();
+        disease1.setCodeSystem("SDC");
+        disease1.setDiseaseCode("80000001");
+        when(diseaseSvc.getByCode("SDC","80000001")).thenReturn(disease1);
+
+        File file = new File(this.getClass()
+                .getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        
+        final AccrualOutOfScopeTrialDTO dto = new AccrualOutOfScopeTrialDTO();
+        dto.setAction("");
+        dto.setCtepID("NCI-2010-00003");
+        dto.setFailureReason("Not found");
+        dto.setId(2L);
+        dto.setSubmissionDate(new Date());
+        dto.setUserLoginName("ctrpsubstractor");       
+        OUT_OF_SCOPE_TRIALS_DATASTORE.put(dto.getId(), dto);
+        
+        List<BatchValidationResults> results = readerService
+                .validateBatchData(batchFile);
+        
+        assertEquals(1, results.size());        
+        assertFalse(results.get(0).isOutOfScope());
+        results.get(0).setOutOfScope(true);
+        assertNull(OUT_OF_SCOPE_TRIALS_DATASTORE.get(dto.getId()));
+        verifyEmailsSent(0, 1, 0);
+
+    }
+    
+    @Test
+    public void testSuAbstractorOutOfScopeEntryCreated() throws Exception {
+
+        CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
+        when(csmUtil.isUserInGroup(any(String.class), any(String.class)))
+                .thenReturn(true);
+        CSMUserService.setInstance(csmUtil);
+
+        SearchStudySiteService sssSvc = mock(SearchStudySiteBean.class);
+        readerService.setSearchStudySiteService(sssSvc);
+        when(sssSvc.isStudyHasCTEPId(any(Ii.class))).thenReturn(true);
+
+        AccrualDisease disease1 = new AccrualDisease();
+        disease1.setCodeSystem("SDC");
+        disease1.setDiseaseCode("80000001");
+        when(diseaseSvc.getByCode("SDC","80000001")).thenReturn(disease1);
+
+        File file = new File(this.getClass()
+                .getResource("/suAbs-accrual-patients-batch-file-nonexistent.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        
+        List<BatchValidationResults> results = readerService
+                .validateBatchData(batchFile);
+        
+        assertEquals(1, results.size());        
+        assertFalse(results.get(0).isOutOfScope());
+        verifyEmailsSent(1, 0, 0);
+        
+        AccrualOutOfScopeTrialDTO dto = PaServiceLocator
+                .getInstance().getAccrualUtilityService().getByCtepID("NCI-2015-10003");
+        assertNotNull(dto);
+        assertEquals("Missing Trial", dto.getFailureReason());
+
+    }
+
+
 
 private List<PatientStage> getPatientStage(String nciId) {
 	Session session = PaHibernateUtil.getCurrentSession();

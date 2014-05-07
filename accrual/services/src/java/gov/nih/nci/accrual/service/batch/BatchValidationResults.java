@@ -106,6 +106,7 @@ public class BatchValidationResults {
     private Map<String, Long> listOfPoStudySiteIds = new HashMap<String, Long>();
     private boolean hasNonSiteErrors;
     private String diseaseCodeSystem;
+    private boolean outOfScope;
 
     /**
      * @return the errors
@@ -243,5 +244,19 @@ public class BatchValidationResults {
      */
     public void setDiseaseCodeSystem(String diseaseCodeSystem) {
         this.diseaseCodeSystem = diseaseCodeSystem;
+    }
+
+    /**
+     * @return the outOfScope
+     */
+    public boolean isOutOfScope() {
+        return outOfScope;
+    }
+
+    /**
+     * @param outOfScope the outOfScope to set
+     */
+    public void setOutOfScope(boolean outOfScope) {
+        this.outOfScope = outOfScope;
     }
 }

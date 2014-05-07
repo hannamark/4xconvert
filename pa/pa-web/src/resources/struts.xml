@@ -722,6 +722,14 @@
             <interceptor-ref name="paDefaultInterceptor" />
             <result>/WEB-INF/jsp/pendingAccruals.jsp</result>
         </action>
+       <action name="outOfScopeAccruals*" class="gov.nih.nci.pa.action.OutOfScopeAccrualsAction" method="{1}">   
+            <interceptor-ref name="paDefaultInterceptor" />      
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">save</param>
+            </interceptor-ref>                 
+            <result name="error">/WEB-INF/jsp/outOfScopeAccruals.jsp</result>
+            <result name="success">/WEB-INF/jsp/outOfScopeAccruals.jsp</result>            
+        </action> 
     </package>
     
     <package name="bare" namespace="/bare" extends="protected"/> 

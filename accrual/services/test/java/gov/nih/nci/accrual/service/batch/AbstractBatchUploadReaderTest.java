@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.service.batch;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
@@ -135,10 +136,13 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.AccrualOutOfScopeTrialDTO;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualUtilityServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -162,12 +166,18 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Before;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -210,9 +220,10 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     private static final String EXCEPTION_SUBJECT_VALUE = "accrual.exception.subject- ${fileName}";
     private static final String EXCEPTION_BODY_KEY = "accrual.exception.body";
     private static final String EXCEPTION_BODY_VALUE = "accrual.exception.body - ${SubmitterName}, ${CurrentDate}, ${fileName}.";
-
-    private St trialDiseaseCodeSystem; 
-
+    private St trialDiseaseCodeSystem;
+    
+    protected final Map<Long, AccrualOutOfScopeTrialDTO> OUT_OF_SCOPE_TRIALS_DATASTORE = new TreeMap<Long, AccrualOutOfScopeTrialDTO>();
+    
     @Before
     public void setUpReader() throws Exception {
         trialDiseaseCodeSystem = StConverter.convertToSt("SDC");
@@ -444,7 +455,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.studySites.get(1));
             }
         });
-
+        
         accDisTerminologySvc = mock(AccrualDiseaseTerminologyServiceRemote.class);
         when(accDisTerminologySvc.getCodeSystem(anyLong())).thenReturn("SDC");
 
@@ -466,6 +477,8 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(paSvcLocator.getLookUpTableService().getPropertyValue(IT_BODY_KEY)).thenReturn(IT_BODY_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(EXCEPTION_SUBJECT_KEY)).thenReturn(EXCEPTION_SUBJECT_VALUE);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(EXCEPTION_BODY_KEY)).thenReturn(EXCEPTION_BODY_VALUE);
+        
+        setUpAccrualUtilityMock();
         
         PlannedActivityServiceRemote plannedActivitySvc = mock(PlannedActivityServiceRemote.class);
         when(paSvcLocator.getPlannedActivityService()).thenReturn(plannedActivitySvc);
@@ -489,6 +502,85 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(accSvcLocator.getAccrualDiseaseService()).thenReturn(diseaseSvc);
         
         CSMUserService.setInstance(new gov.nih.nci.pa.util.MockCSMUserService());
+    }
+    
+    /**
+     * @throws PAException
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void setUpAccrualUtilityMock() throws PAException {
+        final AccrualOutOfScopeTrialDTO dto = new AccrualOutOfScopeTrialDTO();
+        dto.setAction("Rejected");
+        dto.setCtepID("CTEP01");
+        dto.setFailureReason("Not found");
+        dto.setId(1L);
+        dto.setSubmissionDate(new Date());
+        dto.setUserLoginName("ctrpsubstractor");
+       
+        OUT_OF_SCOPE_TRIALS_DATASTORE.put(dto.getId(), dto);
+
+        AccrualUtilityServiceRemote accrualUtilityService = mock(AccrualUtilityServiceRemote.class);
+        when(accrualUtilityService.getAllOutOfScopeTrials()).thenReturn(
+                new ArrayList(OUT_OF_SCOPE_TRIALS_DATASTORE.values()));
+
+        doAnswer(new Answer<Void>() {
+
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                AccrualOutOfScopeTrialDTO dto = (AccrualOutOfScopeTrialDTO) invocation
+                        .getArguments()[0];
+                dto.setId(RandomUtils.nextLong());
+                OUT_OF_SCOPE_TRIALS_DATASTORE.put(dto.getId(), dto);
+                return null;
+            }
+        }).when(accrualUtilityService).create(
+                any(AccrualOutOfScopeTrialDTO.class));
+
+        doAnswer(new Answer<Void>() {
+
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                AccrualOutOfScopeTrialDTO dto = (AccrualOutOfScopeTrialDTO) invocation
+                        .getArguments()[0];
+                OUT_OF_SCOPE_TRIALS_DATASTORE.put(dto.getId(), dto);
+                return null;
+            }
+        }).when(accrualUtilityService).update(
+                any(AccrualOutOfScopeTrialDTO.class));
+
+        doAnswer(new Answer<Void>() {
+
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                AccrualOutOfScopeTrialDTO dto = (AccrualOutOfScopeTrialDTO) invocation
+                        .getArguments()[0];
+                OUT_OF_SCOPE_TRIALS_DATASTORE.remove(dto.getId());
+                return null;
+            }
+        }).when(accrualUtilityService).delete(
+                any(AccrualOutOfScopeTrialDTO.class));
+
+        when(accrualUtilityService.getByCtepID(any(String.class))).thenAnswer(
+                new Answer<AccrualOutOfScopeTrialDTO>() {
+
+                    @Override
+                    public AccrualOutOfScopeTrialDTO answer(
+                            InvocationOnMock invocation) throws Throwable {
+                        final String ctepID = invocation.getArguments()[0]
+                                .toString();
+                        return (AccrualOutOfScopeTrialDTO) CollectionUtils
+                                .find(OUT_OF_SCOPE_TRIALS_DATASTORE.values(), new Predicate() {
+                                    @Override
+                                    public boolean evaluate(Object o) {
+                                        AccrualOutOfScopeTrialDTO dto = (AccrualOutOfScopeTrialDTO) o;
+                                        return StringUtils.equalsIgnoreCase(
+                                                dto.getCtepID(), ctepID);
+                                    }
+                                });
+                    }
+                });
+
+        when(paSvcLocator.getAccrualUtilityService()).thenReturn(accrualUtilityService);
     }
 
     protected void setUpPoRegistry() throws NullifiedEntityException, NullifiedRoleException, EntityValidationException,
@@ -571,7 +663,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return result;
             }
         });
-
+        
         HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
             mock(HealthCareFacilityCorrelationServiceRemote.class);
         when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))

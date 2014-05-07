@@ -1110,8 +1110,6 @@
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5513.sql"/>
      </changeSet>
      <changeSet id="PO-5576" author="krylovd">
-
-
         <comment>Add a new table to store pending and active trial associations.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.9/PO-5576.sql"/>
      </changeSet>
@@ -1582,5 +1580,9 @@
      <changeSet id="PO-7320" author="Reshma">
         <comment>Update rv_search_results view to add accrual disease code column</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7320.sql"/>
+     </changeSet>
+     <changeSet id="PO-6889" author="krylovd">
+        <comment>ACCRUAL_OUT_OF_SCOPE_TRIAL table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6889.sql"/>
      </changeSet>
 </databaseChangeLog>

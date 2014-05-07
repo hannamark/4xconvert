@@ -76,6 +76,7 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualUtilityService;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
@@ -877,5 +878,10 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     @Override
     public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
         return accrualDiseaseTerminologyService;
+    }
+
+    
+    public AccrualUtilityService getAccrualUtilityService() {
+        return mock(AccrualUtilityService.class);
     }
 }

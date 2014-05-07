@@ -94,14 +94,19 @@ import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.AccrualOutOfScopeTrialDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.AccrualUtilityServiceRemote;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -133,9 +138,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.DateValidator;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 
 /**
  * @author Igor Merenko
@@ -150,6 +157,8 @@ import org.apache.log4j.Logger;
 public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader implements
         CdusBatchUploadDataValidatorLocal {
     
+    private static final String MISSING_TRIAL = "Missing Trial";
+    private static final String REJECTED = "Rejected";
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadDataValidator.class); 
     private static final String PATIENTS = "PATIENTS";
     private RegistryUser ru;
@@ -178,6 +187,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     /**
      * {@inheritDoc}
      */
+    //CHECKSTYLE:OFF
     @Override
     @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.NcssMethodCount" })
     public BatchValidationResults validateSingleBatchData(File file, RegistryUser user)  {
@@ -220,7 +230,22 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                             results.setChangeCode(cc);
                         }
                     }
+                    
+                    if (superAbstractor && isOutOfScopeTrial(protocolId)) {
+                        results.setOutOfScope(true);
+                        return results;
+                    }
+                    
                     sp = getStudyProtocol(protocolId, bfErrors);
+                    
+                    if (superAbstractor && sp == null) {
+                        // PO-6889 kicks in here.
+                        createOutOfScopeTrial(protocolId, ru);
+                    } else if (superAbstractor && sp != null) {
+                        // PO-6889 kicks in here.
+                        removeOutOfScopeTrial(protocolId);
+                    }
+                    
                     if (sp != null) {
                         try {
                             codeSystem = StConverter.convertToString(sp.getAccrualDiseaseCodeSystem());
@@ -321,6 +346,87 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         LOG.info("Time to validate a single Batch File data: " 
                 + (System.currentTimeMillis() - startTime) / TIME_SECONDS + " seconds");
         return results;
+    }
+
+    private void removeOutOfScopeTrial(String protocolId) {
+        if (StringUtils.isNotBlank(protocolId)) {
+            try {
+                AccrualUtilityServiceRemote util = PaServiceLocator
+                        .getInstance().getAccrualUtilityService();
+                AccrualOutOfScopeTrialDTO dto = util.getByCtepID(protocolId);
+                if (dto != null) {
+                    util.delete(dto);
+                }
+            } catch (PAException e) {
+                LOG.error(e, e);
+            }
+        }
+    }
+
+    private boolean isOutOfScopeTrial(String protocolId) {
+        if (StringUtils.isNotBlank(protocolId)) {
+            try {
+                AccrualUtilityServiceRemote util = PaServiceLocator
+                        .getInstance().getAccrualUtilityService();
+                AccrualOutOfScopeTrialDTO dto = util.getByCtepID(protocolId);
+                return dto != null && StringUtils.isNotBlank(dto.getAction());
+            } catch (PAException e) {
+                LOG.error(e, e);
+            }
+        }
+        return false;
+    }
+
+    private void createOutOfScopeTrial(String protocolId, RegistryUser ru) {
+        if (StringUtils.isNotBlank(protocolId)) {
+            try {
+                AccrualUtilityServiceRemote util = PaServiceLocator
+                        .getInstance().getAccrualUtilityService();
+                AccrualOutOfScopeTrialDTO dto = util.getByCtepID(protocolId);
+                if (dto == null) {
+                    final String reason = determineMissingTrialReason(protocolId);
+                    dto = new AccrualOutOfScopeTrialDTO();
+                    dto.setCtepID(protocolId);
+                    dto.setFailureReason(reason);
+                    dto.setSubmissionDate(new Date());
+                    dto.setUserLoginName(ru != null && ru.getCsmUser() != null ? ru
+                            .getCsmUser().getLoginName() : null);
+                    dto.setAction(REJECTED.equalsIgnoreCase(reason) ? REJECTED
+                            : StringUtils.EMPTY);
+                    util.create(dto);
+                }
+            } catch (PAException e) {
+                LOG.error(e, e);
+            }
+        }
+    }
+
+    private String determineMissingTrialReason(String nciOrCtepOrDcpID) {
+        try {
+            String escaped = StringEscapeUtils.escapeSql(nciOrCtepOrDcpID);
+            String sql = "select dws.status_code from rv_dwf_current dws left join rv_trial_id_nci nci on "
+                    + " dws.study_protocol_identifier=nci.study_protocol_id "
+                    + "left join rv_ctep_id ctep on dws.study_protocol_identifier=ctep.study_protocol_identifier "
+                    + "left join rv_dcp_id dcp on dws.study_protocol_identifier=dcp.study_protocol_identifier "
+                    + "inner join study_protocol sp on sp.identifier=dws.study_protocol_identifier "
+                    + "where (nci.extension='"
+                    + escaped
+                    + "' or ctep.local_sp_indentifier='"
+                    + escaped
+                    + "'"
+                    + " or dcp.local_sp_indentifier='"
+                    + escaped
+                    + "') "
+                    + "AND sp.status_code<>'"
+                    + ActiveInactiveCode.INACTIVE.name()
+                    + "' and dws.status_code='"
+                    + DocumentWorkflowStatusCode.REJECTED.name() + "' LIMIT 1";
+            return PaHibernateUtil.getCurrentSession().createSQLQuery(sql)
+                    .uniqueResult() != null ? REJECTED : MISSING_TRIAL;
+        } catch (HibernateException e) {
+            LOG.error(e, e);
+            return MISSING_TRIAL;
+        }
     }
 
     void initializeOrganizationLists() {

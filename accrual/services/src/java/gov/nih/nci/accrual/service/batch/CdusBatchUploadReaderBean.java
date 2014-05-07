@@ -288,7 +288,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 file, batchFile.getSubmitter());
         result.setFileName(fileName);
         results.add(result);
-        validateAndProcessData(batchFile, result);
+        if (!result.isOutOfScope()) {
+            validateAndProcessData(batchFile, result);
+        }
     }
 
     private void validateAndProcessData(BatchFile batchFile, BatchValidationResults validationResult)

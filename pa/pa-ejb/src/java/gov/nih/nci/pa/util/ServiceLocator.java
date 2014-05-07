@@ -121,6 +121,7 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualUtilityService;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
@@ -514,5 +515,10 @@ public interface ServiceLocator {
      * @return AccrualDiseaseTerminologyService
      */
     AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService();
+
+    /**
+     * @return AccrualUtilityService
+     */
+    AccrualUtilityService getAccrualUtilityService();
 }
 

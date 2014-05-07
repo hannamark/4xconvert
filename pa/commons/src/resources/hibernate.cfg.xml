@@ -103,6 +103,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.CTGovOrgMapping" />
         <mapping class="gov.nih.nci.pa.domain.StudyAlternateTitle" />
         <mapping class="gov.nih.nci.pa.domain.AccountCommonOrganization" />
+        <mapping class="gov.nih.nci.pa.domain.AccrualOutOfScopeTrial" />
 
         <!-- mapping classes for Accrual -->
         <mapping class="gov.nih.nci.pa.domain.Patient" />

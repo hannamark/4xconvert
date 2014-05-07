@@ -55,6 +55,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualUtilityService;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
@@ -701,5 +702,10 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
     @Override
     public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
         return null;
+    }
+
+    @Override
+    public AccrualUtilityService getAccrualUtilityService() {      
+        return mock(AccrualUtilityService.class);
     }
 }

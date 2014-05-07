@@ -452,6 +452,8 @@
                        **/service/correlation/*
                        **/service/util/*Bean.class
                        **/service/util/*BeanLocal.class
+        	           **/service/util/AccrualUtilityServiceBean.class
+        	           **/service/util/AccrualUtilityServiceBeanRemote.class
                        **/util/Hibernate*
                        **/util/TrialUtil*
                        **/util/PaEarPropertyReader*

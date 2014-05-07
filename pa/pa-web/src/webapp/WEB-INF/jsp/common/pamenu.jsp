@@ -22,7 +22,8 @@
             <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/importCtGovexecute.action" id="importCtGovMenuOption" labelKey="pamenu.importCtGov" selected="${requestScope.topic == 'importctgov'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/ctGovImportLogexecute.action" id="ctGovImportLogMenuOption" labelKey="pamenu.ctGovImportLogs" selected="${requestScope.topic == 'ctgovimportlogs'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/pendingAccrualsexecute.action" id="pendingAccrualsMenuOption" labelKey="pamenu.pendingAccruals" selected="${requestScope.topic == 'pendingaccruals'}"/>            
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/pendingAccrualsexecute.action" id="pendingAccrualsMenuOption" labelKey="pamenu.pendingAccruals" selected="${requestScope.topic == 'pendingaccruals'}"/>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/outOfScopeAccruals.action" id="outOfScopeAccrualsMenuOption" labelKey="pamenu.outOfScopeAccruals" selected="${requestScope.topic == 'outofscopeaccruals'}"/>            
             <pa:menuLink href="${pageContext.request.contextPath}/../registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial" id="submitProprietaryTrialMenuOption" labelKey="pamenu.submitProprietaryTrial" newWindow="${true}"/>
             <c:if test="${pageContext.request.remoteUser != null}">
                 <pa:menuLink href="${pageContext.request.contextPath}/logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>

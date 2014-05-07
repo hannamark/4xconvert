@@ -246,7 +246,7 @@ public class TestSchema {
     public static List<Long> studyDiseaseIds;
     public static List<Long> studyOnholdIds;
     public static List<Country> countries;
-    private static User user;
+    public static User user;
     public static Long inactiveProtocolId;
     public static List<Long> assayTypeIds;
 
