@@ -30,7 +30,7 @@
                 showPopWin(updatedUrl, 950, 200, '', 'Marker Search in caDSR');
             }
             function termRequestForm(pId, markerName,markerId) {
-                var url = '/pa/protected/popupPlannedMarkersetupEmailRequest.action?fromNewRequestPage=true&nciIdentifier='+pId+'&name='+markerName+'&selectedRowIdentifier='+markerId;
+                var url = encodeURI('/pa/protected/popupPlannedMarkersetupEmailRequest.action?fromNewRequestPage=true&nciIdentifier='+pId+'&name='+markerName+'&selectedRowIdentifier='+markerId);
                 showPopWin(url, 950, 600, '', 'Create Permissible Value Request');
             }
             function resetValues() {
