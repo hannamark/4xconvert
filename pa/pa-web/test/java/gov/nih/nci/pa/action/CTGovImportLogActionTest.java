@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 
 /**
@@ -51,9 +52,8 @@ public class CTGovImportLogActionTest extends AbstractPaActionTest {
         logEntry.setTitle("abc");
         List<CTGovImportLog> logEntries = new ArrayList<CTGovImportLog>();
         logEntries.add(logEntry);        
-        when(ctGovSyncServiceLocal.getLogEntries(any(String.class), any(String.class), any(String.class), 
-                any(String.class), any(String.class), any(String.class), any(Date.class), 
-                any(Date.class))).thenReturn(logEntries);
+        when(ctGovSyncServiceLocal.getLogEntries(any(CTGovImportLogSearchCriteria.class))
+                ).thenReturn(logEntries);
     }
     
     @Test
@@ -69,14 +69,20 @@ public class CTGovImportLogActionTest extends AbstractPaActionTest {
         Date startDate = calendar.getTime();
         calendar.add(Calendar.DATE, 3);
         Date endDate = calendar.getTime();
+        CTGovImportLogSearchCriteria searchCriteria = new CTGovImportLogSearchCriteria();
         ctGovImportLogAction.setLogsOnOrAfter(dateFormat.format(startDate));
         ctGovImportLogAction.setLogsOnOrBefore(dateFormat.format(endDate));
-        ctGovImportLogAction.setAction("Update");
-        ctGovImportLogAction.setImportStatus("Failure");
-        ctGovImportLogAction.setNciIdentifier("NCI");
-        ctGovImportLogAction.setNctIdentifier("NCT");
-        ctGovImportLogAction.setUserCreated("User");
-        ctGovImportLogAction.setOfficialTitle("Title");
+        searchCriteria.setAction("Update");
+        searchCriteria.setImportStatus("Failure");
+        searchCriteria.setNciIdentifier("NCI");
+        searchCriteria.setNctIdentifier("NCT");
+        searchCriteria.setUserCreated("User");
+        searchCriteria.setOfficialTitle("Title");
+        searchCriteria.setPendingAdminAcknowledgment(false);
+        searchCriteria.setPendingScientificAcknowledgment(false);
+        searchCriteria.setPerformedAdminAcknowledgment(false);
+        searchCriteria.setPerformedScientificAcknowledgment(false);
+        ctGovImportLogAction.setSearchCriteria(searchCriteria);
         assertEquals("success", ctGovImportLogAction.query());
         assertNotNull(ctGovImportLogAction.getAllCtGovImportLogs());   
         calendar.add(Calendar.DATE, -5);
@@ -86,9 +92,8 @@ public class CTGovImportLogActionTest extends AbstractPaActionTest {
         calendar.add(Calendar.DATE, 8);
         endDate = calendar.getTime();
         ctGovImportLogAction.setLogsOnOrBefore(dateFormat.format(endDate));
-        when(ctGovSyncServiceLocal.getLogEntries(any(String.class), any(String.class), any(String.class), 
-                any(String.class), any(String.class), any(String.class), any(Date.class), 
-                any(Date.class))).thenThrow(new PAException());
+        when(ctGovSyncServiceLocal.getLogEntries(any(CTGovImportLogSearchCriteria.class))
+                ).thenThrow(new PAException());
         assertEquals("error", ctGovImportLogAction.query());
     }    
     
@@ -97,9 +102,8 @@ public class CTGovImportLogActionTest extends AbstractPaActionTest {
         ctGovImportLogAction.setNctId("NCT");
         assertEquals("details", ctGovImportLogAction.showDetailspopup());
         assertNotNull(ctGovImportLogAction.getNctCtGovImportLogs());
-        when(ctGovSyncServiceLocal.getLogEntries(any(String.class), any(String.class), any(String.class), 
-                any(String.class), any(String.class), any(String.class), any(Date.class), 
-                any(Date.class))).thenThrow(new PAException());
+        when(ctGovSyncServiceLocal.getLogEntries(any(CTGovImportLogSearchCriteria.class))
+                ).thenThrow(new PAException());
         assertEquals("error", ctGovImportLogAction.showDetailspopup());        
     }
 }

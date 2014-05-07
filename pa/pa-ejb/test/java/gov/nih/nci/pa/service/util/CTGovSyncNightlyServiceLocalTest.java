@@ -21,6 +21,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ctgov.ClinicalStudy;
 import gov.nih.nci.pa.service.ctgov.DateStruct;
 import gov.nih.nci.pa.service.ctgov.IdInfoStruct;
+import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -165,9 +166,8 @@ public class CTGovSyncNightlyServiceLocalTest extends AbstractHibernateTestCase 
         when(ctGovSyncServiceLocal.importTrial("NCT-2012-0002")).thenReturn("NCI-2012-0002");
         when(ctGovSyncServiceLocal.importTrial("NCT-2012-0003")).thenReturn("NCI-2012-0003");      
         
-        when(ctGovSyncServiceLocal.getLogEntries(any(String.class), any(String.class), any(String.class), 
-                any(String.class), any(String.class), any(String.class), any(Date.class), 
-                any(Date.class))).thenReturn(new ArrayList<CTGovImportLog>());
+        when(ctGovSyncServiceLocal.getLogEntries(any(CTGovImportLogSearchCriteria.class))
+                ).thenReturn(new ArrayList<CTGovImportLog>());
     }
 
     /**

@@ -60,6 +60,7 @@ import gov.nih.nci.pa.service.AbstractTrialRegistrationTestBase;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -75,6 +76,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -1425,9 +1427,8 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     @Test
     public final void testGetLogEntries() throws ParseException, PAException {
-
         final Session session = PaHibernateUtil.getCurrentSession();
-
+        
         CTGovImportLog log1 = new CTGovImportLog();
         log1.setNciID("NCI1");
         log1.setNctID("NCT1");
@@ -1463,80 +1464,301 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         session.save(log3);
         session.flush();
 
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        TestSchema.addUpdObject(sp);
+        
+        StudyInbox inbox1 = createStudyInbox(sp);
+        inbox1.setAdmin(true);        
+        session.save(inbox1);
+        session.flush();
+        
+        StudyInbox inbox2 = createStudyInbox(sp);
+        inbox2.setScientific(true);
+        session.save(inbox2);
+        session.flush();
+        
+        StudyInbox inbox3 = createStudyInbox(sp);
+        inbox3.setAdmin(true);
+        inbox3.setScientific(true);
+        session.save(inbox3);
+        session.flush();
+        
+        StudyInbox inbox4 = createStudyInbox(sp);
+        inbox4.setAdmin(true);
+        inbox4.setAdminCloseDate(new Timestamp(new Date().getTime()));
+        session.save(inbox4);
+        session.flush();
+        
+        StudyInbox inbox5 = createStudyInbox(sp);
+        inbox5.setScientific(true);
+        inbox5.setScientificCloseDate(new Timestamp(new Date().getTime()));
+        session.save(inbox5);
+        session.flush();
+        
+        StudyInbox inbox6 = createStudyInbox(sp);
+        inbox6.setAdmin(true);
+        inbox6.setScientific(true);
+        inbox6.setAdminCloseDate(new Timestamp(new Date().getTime()));
+        inbox6.setScientificCloseDate(new Timestamp(new Date().getTime()));
+        session.save(inbox6);
+        session.flush();
+        
+        CTGovImportLog log4 = new CTGovImportLog();
+        log4.setNciID("NCI4");
+        log4.setNctID("NCT4");
+        log4.setTitle("Title : Trial 4");
+        log4.setAction("Update");
+        log4.setImportStatus("Success");
+        log4.setUserCreated("User1");
+        log4.setDateCreated(DateUtils.parseDate("06/01/2013",
+                new String[] { "MM/dd/yyyy" }));
+        log4.setStudyInbox(inbox1);
+        session.save(log4);
+        session.flush();
+        
+        CTGovImportLog log5 = new CTGovImportLog();
+        log5.setNciID("NCI5");
+        log5.setNctID("NCT5");
+        log5.setTitle("Title : Trial 5");
+        log5.setAction("Update");
+        log5.setImportStatus("Success");
+        log5.setUserCreated("User1");
+        log5.setDateCreated(DateUtils.parseDate("05/01/2013",
+                new String[] { "MM/dd/yyyy" }));
+        log5.setStudyInbox(inbox2);
+        session.save(log5);
+        session.flush();
+        
+        CTGovImportLog log6 = new CTGovImportLog();
+        log6.setNciID("NCI6");
+        log6.setNctID("NCT6");
+        log6.setTitle("Title : Trial 6");
+        log6.setAction("Update");
+        log6.setImportStatus("Success");
+        log6.setUserCreated("User1");
+        log6.setDateCreated(DateUtils.parseDate("04/01/2013",
+                new String[] { "MM/dd/yyyy" }));
+        log6.setStudyInbox(inbox3);
+        session.save(log6);
+        session.flush();
+        
+        CTGovImportLog log7 = new CTGovImportLog();
+        log7.setNciID("NCI7");
+        log7.setNctID("NCT7");
+        log7.setTitle("Title : Trial 7");
+        log7.setAction("Update");
+        log7.setImportStatus("Success");
+        log7.setUserCreated("User1");
+        log7.setDateCreated(DateUtils.parseDate("03/01/2013",
+                new String[] { "MM/dd/yyyy" }));
+        log7.setStudyInbox(inbox4);
+        session.save(log7);
+        session.flush();
+        
+        CTGovImportLog log8 = new CTGovImportLog();
+        log8.setNciID("NCI8");
+        log8.setNctID("NCT8");
+        log8.setTitle("Title : Trial 8");
+        log8.setAction("Update");
+        log8.setImportStatus("Success");
+        log8.setUserCreated("User1");
+        log8.setDateCreated(DateUtils.parseDate("02/01/2013",
+                new String[] { "MM/dd/yyyy" }));
+        log8.setStudyInbox(inbox5);
+        session.save(log8);
+        session.flush();
+        
+        CTGovImportLog log9 = new CTGovImportLog();
+        log9.setNciID("NCI9");
+        log9.setNctID("NCT9");
+        log9.setTitle("Title : Trial 9");
+        log9.setAction("Update");
+        log9.setImportStatus("Success");
+        log9.setUserCreated("User1");
+        log9.setDateCreated(DateUtils.parseDate("01/01/2013",
+                new String[] { "MM/dd/yyyy" }));
+        log9.setStudyInbox(inbox6);
+        session.save(log9);
+        session.flush();        
+        
         //exercise start and end dates are specified
-        List<CTGovImportLog> entries = serviceBean.getLogEntries(null, null, null, null, null, null, new Date(0), 
-                new Date(System.currentTimeMillis()));
-        assertEquals(3, entries.size());
+        CTGovImportLogSearchCriteria searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setOnOrAfter(new Date(0));
+        searchCriteria.setOnOrBefore(new Date(System.currentTimeMillis()));
+        List<CTGovImportLog> entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(9, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
         assertEquals("NCI2", entries.get(1).getNciID());
         assertEquals("NCI3", entries.get(2).getNciID());
+        assertEquals("NCI4", entries.get(3).getNciID());
+        assertEquals("NCI5", entries.get(4).getNciID());
+        assertEquals("NCI6", entries.get(5).getNciID());
+        assertEquals("NCI7", entries.get(6).getNciID());
+        assertEquals("NCI8", entries.get(7).getNciID());
+        assertEquals("NCI9", entries.get(8).getNciID());
         
         //exercise start and end dates are specified
-        entries = serviceBean.getLogEntries(null, null, null, null, null, null, DateUtils.parseDate("07/30/2013", 
-                        new String[] { "MM/dd/yyyy" }), DateUtils.parseDate(
-                                "08/01/2013", new String[] { "MM/dd/yyyy" }));
+        searchCriteria = new CTGovImportLogSearchCriteria(); 
+        searchCriteria.setOnOrAfter(DateUtils.parseDate("07/30/2013", new String[] {"MM/dd/yyyy"}));
+        searchCriteria.setOnOrBefore(DateUtils.parseDate("08/01/2013", new String[] {"MM/dd/yyyy"}));
+        entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
         
         //exercise start date is specified
-        entries = serviceBean.getLogEntries(null, null, null, null, null, null, DateUtils.parseDate("07/30/2013", 
-                new String[] { "MM/dd/yyyy" }), null);
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setOnOrAfter(DateUtils.parseDate("07/30/2013", new String[] {"MM/dd/yyyy"}));
+        entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
         
         //exercise end date is specified
-        entries = serviceBean.getLogEntries(null, null, null, null, null, null, null, DateUtils.parseDate("07/30/2013", 
-                new String[] { "MM/dd/yyyy" }));
-        assertEquals(2, entries.size());
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setOnOrBefore(DateUtils.parseDate("07/30/2013", new String[] {"MM/dd/yyyy"}));
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(8, entries.size());
         assertEquals("NCI2", entries.get(0).getNciID());
         assertEquals("NCI3", entries.get(1).getNciID());
+        assertEquals("NCI4", entries.get(2).getNciID());
+        assertEquals("NCI5", entries.get(3).getNciID());
+        assertEquals("NCI6", entries.get(4).getNciID());
+        assertEquals("NCI7", entries.get(5).getNciID());
+        assertEquals("NCI8", entries.get(6).getNciID());
+        assertEquals("NCI9", entries.get(7).getNciID());
 
         //exercise NCI identifier is specified
-        entries = serviceBean.getLogEntries("NCI3", null, null, null, null, null, null, null);
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setNciIdentifier("NCI3");
+        entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI3", entries.get(0).getNciID());
         
         //exercise NCT identifier is specified
-        entries = serviceBean.getLogEntries(null, "NCT2", null, null, null, null, null, null);
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setNctIdentifier("NCT2");
+        entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCT2", entries.get(0).getNctID());
         
         //exercise title is specified
-        entries = serviceBean.getLogEntries(null, null, "Title :", null, null, null, null, null);
-        assertEquals(3, entries.size());
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setOfficialTitle("Title :");
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(9, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
         assertEquals("NCI2", entries.get(1).getNciID());
         assertEquals("NCI3", entries.get(2).getNciID());
+        assertEquals("NCI4", entries.get(3).getNciID());
+        assertEquals("NCI5", entries.get(4).getNciID());
+        assertEquals("NCI6", entries.get(5).getNciID());
+        assertEquals("NCI7", entries.get(6).getNciID());
+        assertEquals("NCI8", entries.get(7).getNciID());
+        assertEquals("NCI9", entries.get(8).getNciID());
         
         //exercise action is specified
-        entries = serviceBean.getLogEntries(null, null, null, "New Trial", null, null, null, null);
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setAction("New Trial");
+        entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
-        
-        entries = serviceBean.getLogEntries(null, null, null, "Update", null, null, null, null);
-        assertEquals(2, entries.size());
+                
+        searchCriteria.setAction("Update");
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(8, entries.size());
         assertEquals("NCI2", entries.get(0).getNciID());
         assertEquals("NCI3", entries.get(1).getNciID());
+        assertEquals("NCI4", entries.get(2).getNciID());
+        assertEquals("NCI5", entries.get(3).getNciID());
+        assertEquals("NCI6", entries.get(4).getNciID());
+        assertEquals("NCI7", entries.get(5).getNciID());
+        assertEquals("NCI8", entries.get(6).getNciID());
+        assertEquals("NCI9", entries.get(7).getNciID());
         
         //exercise import status is specified
-        entries = serviceBean.getLogEntries(null, null, null, null, "Success", null, null, null);
-        assertEquals(2, entries.size());
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setImportStatus("Success");
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(8, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
         assertEquals("NCI3", entries.get(1).getNciID());
+        assertEquals("NCI4", entries.get(2).getNciID());
+        assertEquals("NCI5", entries.get(3).getNciID());
+        assertEquals("NCI6", entries.get(4).getNciID());
+        assertEquals("NCI7", entries.get(5).getNciID());
+        assertEquals("NCI8", entries.get(6).getNciID());
+        assertEquals("NCI9", entries.get(7).getNciID());
         
-        entries = serviceBean.getLogEntries(null, null, null, null, "Failure", null, null, null);
+        searchCriteria.setImportStatus("Failure");
+        entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI2", entries.get(0).getNciID());
         
         //exercise user is specified
-        entries = serviceBean.getLogEntries(null, null, null, null, null, "User1", null, null);
-        assertEquals(2, entries.size());
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setUserCreated("User1");
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(8, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
         assertEquals("NCI2", entries.get(1).getNciID());
+        assertEquals("NCI4", entries.get(2).getNciID());
+        assertEquals("NCI5", entries.get(3).getNciID());
+        assertEquals("NCI6", entries.get(4).getNciID());
+        assertEquals("NCI7", entries.get(5).getNciID());
+        assertEquals("NCI8", entries.get(6).getNciID());
+        assertEquals("NCI9", entries.get(7).getNciID());
         
-        entries = serviceBean.getLogEntries(null, null, null, null, null, "User2", null, null);
+        searchCriteria.setUserCreated("User2");
+        entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI3", entries.get(0).getNciID());
+        
+        //exercise pending admin ack
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setPendingAdminAcknowledgment(true);
+        searchCriteria.setPendingScientificAcknowledgment(false);
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(1, entries.size());
+        assertEquals("NCI4", entries.get(0).getNciID());        
+        
+        //exercise pending sci ack
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setPendingAdminAcknowledgment(false);
+        searchCriteria.setPendingScientificAcknowledgment(true);
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(1, entries.size());
+        assertEquals("NCI5", entries.get(0).getNciID());
+        
+        //exercise pending admin and sci ack
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setPendingAdminAcknowledgment(true);
+        searchCriteria.setPendingScientificAcknowledgment(true);
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(1, entries.size());
+        assertEquals("NCI6", entries.get(0).getNciID());
+        
+        //exercise performed admin ack
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setPerformedAdminAcknowledgment(true);
+        searchCriteria.setPerformedScientificAcknowledgment(false);
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(1, entries.size());
+        assertEquals("NCI7", entries.get(0).getNciID());
+        
+        //exercise performed sci ack
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setPerformedAdminAcknowledgment(false);
+        searchCriteria.setPerformedScientificAcknowledgment(true);        
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(1, entries.size());
+        assertEquals("NCI8", entries.get(0).getNciID());
+        
+        //exercise performed admin and sci ack
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setPerformedAdminAcknowledgment(true);
+        searchCriteria.setPerformedScientificAcknowledgment(true);
+        entries = serviceBean.getLogEntries(searchCriteria);
+        assertEquals(1, entries.size());
+        assertEquals("NCI9", entries.get(0).getNciID());
     }
     
     @Test
@@ -1579,4 +1801,15 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals(false, serviceBean.isNctIdValid("NCT"));
     }
 
+    private StudyInbox createStudyInbox(StudyProtocol sp) {
+        StudyInbox inbox = new StudyInbox();
+        inbox.setAdmin(false);
+        inbox.setComments("comments");
+        inbox.setDateLastCreated(new Date());
+        inbox.setOpenDate(new Timestamp(new Date().getTime()));
+        inbox.setScientific(false);
+        inbox.setStudyProtocol(sp);
+        inbox.setTypeCode(StudyInboxTypeCode.UPDATE);
+        return inbox;
+    }
 }

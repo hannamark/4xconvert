@@ -7,6 +7,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ctgov.ClinicalStudy;
+import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -141,8 +142,10 @@ public class CTGovSyncNightlyServiceBeanLocal implements
             //Record the finish time of nightly job
             Date endDate = new Date();
             //Get the log entries which got created between start date and end date
-            List<CTGovImportLog> logEntries = ctGovSyncServiceLocal.getLogEntries(null, null, null, null, null, null, 
-                    startDate, endDate);
+            CTGovImportLogSearchCriteria searchCriteria = new CTGovImportLogSearchCriteria();
+            searchCriteria.setOnOrAfter(startDate);
+            searchCriteria.setOnOrBefore(endDate);
+            List<CTGovImportLog> logEntries = ctGovSyncServiceLocal.getLogEntries(searchCriteria);
             if (logEntries != null && !logEntries.isEmpty()) {
                 //Send a status e-mail with a summary of trials in CTRP updated from CTGov to 
                 //authorized users

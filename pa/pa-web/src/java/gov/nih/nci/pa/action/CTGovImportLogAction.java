@@ -1,12 +1,16 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.domain.CTGovImportLog;
+import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,6 +31,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Monish
  *
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class CTGovImportLogAction extends ActionSupport implements
 Preparable {
 
@@ -39,17 +44,11 @@ Preparable {
     
     private List<CTGovImportLog> allCtGovImportLogs = new ArrayList<CTGovImportLog>();
     private List<CTGovImportLog> nctCtGovImportLogs = new ArrayList<CTGovImportLog>();
-    private String nciIdentifier;
-    private String nctIdentifier;
-    private String officialTitle;
-    private String action;
-    private String importStatus;
-    private String userCreated;
-    private String logsOnOrAfter;
-    private String logsOnOrBefore;
-    private String nctId;
-    
     private CTGovSyncServiceLocal ctGovSyncService;
+    private String nctId;
+    private String logsOnOrAfter;
+    private String logsOnOrBefore;    
+    private CTGovImportLogSearchCriteria searchCriteria = new CTGovImportLogSearchCriteria();
 
     @Override
     public void prepare() {
@@ -74,15 +73,17 @@ Preparable {
             return ERROR;
         }
         try {      
-            final Date onOrAfter = StringUtils.isNotBlank(getLogsOnOrAfter()) ? PAUtil
+            Date onOrAfter = StringUtils.isNotBlank(getLogsOnOrAfter()) ? PAUtil
                     .dateStringToDateTime(getLogsOnOrAfter()) : new Date(0);
-            final Date onOrBefore = StringUtils.isNotBlank(getLogsOnOrBefore()) ? PAUtil
+            Date onOrBefore = StringUtils.isNotBlank(getLogsOnOrBefore()) ? PAUtil
                     .endOfDay(PAUtil.dateStringToDateTime(getLogsOnOrBefore()))
                     : PAUtil.endOfDay(new Date());
+                    
             validateTimeLine(onOrAfter, onOrBefore);
             //get all the log entries sorted by date
-            List<CTGovImportLog> importLogs = ctGovSyncService.getLogEntries(getNciIdentifier(), getNctIdentifier(), 
-                    getOfficialTitle(), getAction(), getImportStatus(), getUserCreated(), onOrAfter, onOrBefore);
+            searchCriteria.setOnOrAfter(onOrAfter);
+            searchCriteria.setOnOrBefore(onOrBefore);
+            List<CTGovImportLog> importLogs = ctGovSyncService.getLogEntries(searchCriteria);
             //get the latest entry for each trial.
             Set<String> uniqueTrials = new HashSet<String>();
             for (CTGovImportLog importLog : importLogs) {
@@ -106,10 +107,68 @@ Preparable {
      * for a specified NCT identifier. 
      * @return list of CT.Gov import log entries for a specified NCT identifier. 
      */
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public String showDetailspopup() {
         try {
             //get the all the log entries for the specified NCT ID.
-            setNctCtGovImportLogs(ctGovSyncService.getLogEntries(null, getNctId(), null, null, null, null, null, null));
+            searchCriteria.setNctIdentifier(getNctId());
+            List<CTGovImportLog> logEntries = ctGovSyncService.getLogEntries(searchCriteria);
+            for (CTGovImportLog existingEntry : logEntries) {
+                StudyInbox si = existingEntry.getStudyInbox();
+                //if there is a performed admin/scientific acknowledgment 
+                //then the log information needs to be split to show  
+                //two entries : first entry to show close date and acknowledged user
+                //and second entry to show pending information.
+                if (existingEntry.getAckPerformed().equals(CTGovImportLog.ADMIN_ACKNOWLEDGMENT)) {
+                    CTGovImportLog newEntry = new CTGovImportLog();
+                    newEntry.setDateCreated(si.getAdminCloseDate());
+                    newEntry.setUserCreated(CsmUserUtil.getDisplayUsername(
+                            si.getAdminAcknowledgedUser()));
+                    newEntry.setAckPerformed(CTGovImportLog.ADMIN_ACKNOWLEDGMENT);
+                    existingEntry.setStudyInbox(null);
+                    existingEntry.setAckPending(CTGovImportLog.ADMIN_ACKNOWLEDGMENT);
+                    existingEntry.setAckPerformed("");
+                    nctCtGovImportLogs.add(newEntry);
+                } else if (existingEntry.getAckPerformed().equals(CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT)) {
+                    CTGovImportLog newEntry = new CTGovImportLog();
+                    newEntry.setDateCreated(si.getScientificCloseDate());
+                    newEntry.setUserCreated(CsmUserUtil.getDisplayUsername(
+                            si.getScientificAcknowledgedUser()));
+                    newEntry.setAckPerformed(CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT);
+                    existingEntry.setStudyInbox(null);
+                    existingEntry.setAckPending(CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT);
+                    existingEntry.setAckPerformed("");
+                    nctCtGovImportLogs.add(newEntry);
+                } else if (existingEntry.getAckPerformed().equals(
+                        CTGovImportLog.ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT)) {
+                    CTGovImportLog newEntry1 = new CTGovImportLog();
+                    newEntry1.setDateCreated(si.getAdminCloseDate());
+                    newEntry1.setUserCreated(CsmUserUtil.getDisplayUsername(
+                            si.getAdminAcknowledgedUser()));
+                    newEntry1.setAckPerformed(CTGovImportLog.ADMIN_ACKNOWLEDGMENT);
+                    CTGovImportLog newEntry2 = new CTGovImportLog();
+                    newEntry2.setDateCreated(si.getScientificCloseDate());
+                    newEntry2.setUserCreated(CsmUserUtil.getDisplayUsername(
+                            si.getScientificAcknowledgedUser()));
+                    newEntry2.setAckPerformed(CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT);
+                    //in case of admin and sci ack compare the close dates to
+                    //display the entries in date order.
+                    Timestamp adminCloseDate = si.getAdminCloseDate();
+                    Timestamp sciCloseDate = si.getScientificCloseDate();
+                    int moreRecent = adminCloseDate.compareTo(sciCloseDate);
+                    if (moreRecent >= 0) {
+                        nctCtGovImportLogs.add(newEntry1);
+                        nctCtGovImportLogs.add(newEntry2);
+                    } else {
+                        nctCtGovImportLogs.add(newEntry2);
+                        nctCtGovImportLogs.add(newEntry1);
+                    }
+                    existingEntry.setStudyInbox(null);
+                    existingEntry.setAckPending(CTGovImportLog.ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT);
+                    existingEntry.setAckPerformed("");
+                }
+                nctCtGovImportLogs.add(existingEntry);
+            }
             return DETAILS;
         } catch (PAException pae) {
             request.setAttribute(Constants.FAILURE_MESSAGE, pae.getLocalizedMessage());
@@ -132,35 +191,7 @@ Preparable {
                             + "Please correct");
         }
     }
-
-    /**
-     * @return the logsOnOrAfter
-     */
-    public String getLogsOnOrAfter() {
-        return logsOnOrAfter;
-    }
-
-    /**
-     * @param logsOnOrAfter the logsOnOrAfter to set
-     */
-    public void setLogsOnOrAfter(String logsOnOrAfter) {
-        this.logsOnOrAfter = logsOnOrAfter;
-    }
-
-    /**
-     * @return the logsOnOrBefore
-     */
-    public String getLogsOnOrBefore() {
-        return logsOnOrBefore;
-    }
-
-    /**
-     * @param logsOnOrBefore the logsOnOrBefore to set
-     */
-    public void setLogsOnOrBefore(String logsOnOrBefore) {
-        this.logsOnOrBefore = logsOnOrBefore;
-    }
-
+    
     /**
      * @param searchPerformed the searchPerformed to set
      */
@@ -197,87 +228,17 @@ Preparable {
     }
 
     /**
-     * @return NCI identifier
+     * @return nctCtGovImportLogs
      */
-    public String getNciIdentifier() {
-        return nciIdentifier;
+    public List<CTGovImportLog> getNctCtGovImportLogs() {
+        return nctCtGovImportLogs;
     }
 
     /**
-     * @param nciIdentifier NCI identifier to set
+     * @param nctCtGovImportLogs nctCtGovImportLogs to set
      */
-    public void setNciIdentifier(String nciIdentifier) {
-        this.nciIdentifier = nciIdentifier;
-    }
-
-    /**
-     * @return NCT identifier
-     */
-    public String getNctIdentifier() {
-        return nctIdentifier;
-    }
-
-    /**
-     * @param nctIdentifier NCT identifier to set
-     */
-    public void setNctIdentifier(String nctIdentifier) {
-        this.nctIdentifier = nctIdentifier;
-    }
-
-    /**
-     * @return trial official title
-     */
-    public String getOfficialTitle() {
-        return officialTitle;
-    }
-
-    /**
-     * @param officialTitle trial official title to set
-     */
-    public void setOfficialTitle(String officialTitle) {
-        this.officialTitle = officialTitle;
-    }
-
-    /**
-     * @return action performed
-     */
-    public String getAction() {
-        return action;
-    }
-
-    /**
-     * @param action action performed to set
-     */
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    /**
-     * @return import status
-     */
-    public String getImportStatus() {
-        return importStatus;
-    }
-
-    /**
-     * @param importStatus import status to set
-     */
-    public void setImportStatus(String importStatus) {
-        this.importStatus = importStatus;
-    }
-
-    /**
-     * @return user created
-     */
-    public String getUserCreated() {
-        return userCreated;
-    }
-
-    /**
-     * @param userCreated user created to set
-     */
-    public void setUserCreated(String userCreated) {
-        this.userCreated = userCreated;
+    public void setNctCtGovImportLogs(List<CTGovImportLog> nctCtGovImportLogs) {
+        this.nctCtGovImportLogs = nctCtGovImportLogs;
     }
 
     /**
@@ -295,16 +256,44 @@ Preparable {
     }
 
     /**
-     * @return nctCtGovImportLogs
+     * @return the logsOnOrAfter
      */
-    public List<CTGovImportLog> getNctCtGovImportLogs() {
-        return nctCtGovImportLogs;
+    public String getLogsOnOrAfter() {
+        return logsOnOrAfter;
     }
 
     /**
-     * @param nctCtGovImportLogs nctCtGovImportLogs to set
+     * @param logsOnOrAfter the logsOnOrAfter to set
      */
-    public void setNctCtGovImportLogs(List<CTGovImportLog> nctCtGovImportLogs) {
-        this.nctCtGovImportLogs = nctCtGovImportLogs;
-    }    
+    public void setLogsOnOrAfter(String logsOnOrAfter) {
+        this.logsOnOrAfter = logsOnOrAfter;
+    }
+
+    /**
+     * @return the logsOnOrBefore
+     */
+    public String getLogsOnOrBefore() {
+        return logsOnOrBefore;
+    }
+
+    /**
+     * @param logsOnOrBefore the logsOnOrBefore to set
+     */
+    public void setLogsOnOrBefore(String logsOnOrBefore) {
+        this.logsOnOrBefore = logsOnOrBefore;
+    }
+    
+    /**
+     * @return search criteria
+     */
+    public CTGovImportLogSearchCriteria getSearchCriteria() {
+        return searchCriteria;
+    }
+
+    /**
+     * @param searchCriteria search criteria to set
+     */
+    public void setSearchCriteria(CTGovImportLogSearchCriteria searchCriteria) {
+        this.searchCriteria = searchCriteria;
+    }
 }

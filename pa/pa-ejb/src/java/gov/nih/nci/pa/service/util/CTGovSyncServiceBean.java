@@ -96,6 +96,7 @@ import gov.nih.nci.pa.service.ctgov.ProtocolOutcomeStruct;
 import gov.nih.nci.pa.service.ctgov.ResponsiblePartyStruct;
 import gov.nih.nci.pa.service.ctgov.SponsorStruct;
 import gov.nih.nci.pa.service.ctgov.TextblockStruct;
+import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
 import gov.nih.nci.pa.service.util.AbstractPDQTrialServiceHelper.PersonWithFullNameDTO;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal.Difference;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal.ProtocolSnapshot;
@@ -152,6 +153,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.ConnectionReleaseMode;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -1896,43 +1898,138 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     @Override        
     @SuppressWarnings("PMD.ExcessiveParameterList")
     // CHECKSTYLE:OFF More than 7 Parameters
-    public List<CTGovImportLog> getLogEntries(String nciIdentifier, String nctIdentifier, String officialTitle, 
-            String action, String importStatus, String userCreated, Date onOrAfter, Date onOrBefore)
+    public List<CTGovImportLog> getLogEntries(CTGovImportLogSearchCriteria searchCriteria)
             throws PAException {
         // CHECKSTYLE:ON
         Session session = PaHibernateUtil.getCurrentSession();
-        Criteria criteria = session.createCriteria(CTGovImportLog.class);
+        Criteria criteria = session.createCriteria(CTGovImportLog.class);        
         criteria.setMaxResults(L_10000);
-        if (StringUtils.isNotEmpty(nciIdentifier)) {
-            criteria.add(Restrictions.like("nciID", "%" + nciIdentifier + "%"));
+        if (StringUtils.isNotEmpty(searchCriteria.getNciIdentifier())) {
+            criteria.add(Restrictions.like("nciID", "%" + searchCriteria.getNciIdentifier() + "%"));
         }
-        if (StringUtils.isNotEmpty(nctIdentifier)) {
-            criteria.add(Restrictions.like("nctID", "%" + nctIdentifier + "%"));
+        if (StringUtils.isNotEmpty(searchCriteria.getNctIdentifier())) {
+            criteria.add(Restrictions.like("nctID", "%" + searchCriteria.getNctIdentifier() + "%"));
         }
-        if (StringUtils.isNotEmpty(officialTitle)) {
-            criteria.add(Restrictions.like("title", "%" + officialTitle + "%"));
+        if (StringUtils.isNotEmpty(searchCriteria.getOfficialTitle())) {
+            criteria.add(Restrictions.like("title", "%" + searchCriteria.getOfficialTitle() + "%"));
         }
-        if (StringUtils.isNotEmpty(action)) {
-            criteria.add(Restrictions.eq("action", action));
+        if (StringUtils.isNotEmpty(searchCriteria.getAction())) {
+            criteria.add(Restrictions.eq("action", searchCriteria.getAction()));
         }
-        if (StringUtils.isNotEmpty(userCreated)) {
-            criteria.add(Restrictions.eq("userCreated", userCreated));
+        if (StringUtils.isNotEmpty(searchCriteria.getUserCreated())) {
+            criteria.add(Restrictions.eq("userCreated", searchCriteria.getUserCreated()));
         }
-        if (StringUtils.isNotEmpty(importStatus)) {
-            criteria.add(Restrictions.like("importStatus", importStatus + "%"));
+        if (StringUtils.isNotEmpty(searchCriteria.getImportStatus())) {
+            criteria.add(Restrictions.like("importStatus", searchCriteria.getImportStatus() + "%"));
         }
         //start date is specified but end date is not specified
-        if (onOrAfter != null && onOrBefore == null) {
-            criteria.add(Restrictions.ge("dateCreated", onOrAfter));
-        } else if (onOrBefore != null && onOrAfter == null) {                
+        if (searchCriteria.getOnOrAfter() != null && searchCriteria.getOnOrBefore() == null) {
+            criteria.add(Restrictions.ge("dateCreated", searchCriteria.getOnOrAfter()));
+        } else if (searchCriteria.getOnOrBefore() != null && searchCriteria.getOnOrAfter() == null) {                
             //end date is specified but start date is not specified
-            criteria.add(Restrictions.le("dateCreated", onOrBefore));
-        } else if (onOrBefore != null && onOrAfter != null) {
+            criteria.add(Restrictions.le("dateCreated", searchCriteria.getOnOrBefore()));
+        } else if (searchCriteria.getOnOrBefore() != null && searchCriteria.getOnOrAfter() != null) {
             //both start and end dates are specified
-            criteria.add(Restrictions.between("dateCreated", onOrAfter, onOrBefore));
+            criteria.add(Restrictions.between("dateCreated", searchCriteria.getOnOrAfter(), 
+                    searchCriteria.getOnOrBefore()));
+        }          
+        if (Boolean.TRUE.equals(searchCriteria.getPendingAdminAcknowledgment()) 
+                || Boolean.TRUE.equals(searchCriteria.getPendingScientificAcknowledgment()) 
+                || Boolean.TRUE.equals(searchCriteria.getPerformedAdminAcknowledgment()) 
+                || Boolean.TRUE.equals(searchCriteria.getPerformedScientificAcknowledgment())) {
+            criteria.createAlias("studyInbox", "si");
+        }
+        if (Boolean.TRUE.equals(searchCriteria.getPendingAdminAcknowledgment()) 
+                && Boolean.FALSE.equals(searchCriteria.getPendingScientificAcknowledgment())) {
+            addPendingAdminAckCondition(criteria);
+        }
+        if (Boolean.TRUE.equals(searchCriteria.getPendingScientificAcknowledgment()) 
+                && Boolean.FALSE.equals(searchCriteria.getPendingAdminAcknowledgment())) {
+            addPendingScientificAckCondition(criteria);
+        }
+        if (Boolean.TRUE.equals(searchCriteria.getPendingAdminAcknowledgment()) 
+                && Boolean.TRUE.equals(searchCriteria.getPendingScientificAcknowledgment())) {
+            addPendingAdminAndScientificAckCondition(criteria);
+        }
+        if (Boolean.TRUE.equals(searchCriteria.getPerformedAdminAcknowledgment()) 
+                && Boolean.FALSE.equals(searchCriteria.getPerformedScientificAcknowledgment())) {
+            addPerformedAdminAckCondition(criteria);
+        }
+        if (Boolean.TRUE.equals(searchCriteria.getPerformedScientificAcknowledgment()) 
+                && Boolean.FALSE.equals(searchCriteria.getPerformedAdminAcknowledgment())) {
+            addPerformedSciAckCondition(criteria);
+        }
+        if (Boolean.TRUE.equals(searchCriteria.getPerformedAdminAcknowledgment()) 
+                && Boolean.TRUE.equals(searchCriteria.getPerformedScientificAcknowledgment())) {
+            addPerformedAdminSciAckCondition(criteria);
         }
         criteria.addOrder(Order.desc("dateCreated"));
         return criteria.list();
+    }
+    
+    /**
+     * Adds sql condition for study inbox entries with pending admin acknowledgment.
+     * @param criteria Criteria object.
+     */
+    private void addPendingAdminAckCondition(Criteria criteria) {
+        Criterion sciCri = Restrictions.ne("si.scientific", Boolean.TRUE);                 
+        Criterion adminCri = Restrictions.and(
+                Restrictions.eq("si.admin", Boolean.TRUE), 
+                Restrictions.isNull("si.adminCloseDate"));
+        criteria.add(Restrictions.and(adminCri, sciCri));
+    }
+    
+    /**
+     * Adds sql condition for study inbox entries with pending scientific acknowledgment.
+     * @param criteria Criteria object.
+     */
+    private void addPendingScientificAckCondition(Criteria criteria) {
+        Criterion adminCri = Restrictions.ne("si.admin", Boolean.TRUE);
+        Criterion sciCri = Restrictions.and(
+                Restrictions.eq("si.scientific", Boolean.TRUE), 
+                Restrictions.isNull("si.scientificCloseDate"));
+        criteria.add(Restrictions.and(adminCri, sciCri));
+    }
+    
+    /**
+     * Adds sql condition for study inbox entries with pending admin/scientific 
+     * acknowledgment.
+     * @param criteria Criteria object.
+     */
+    private void addPendingAdminAndScientificAckCondition(Criteria criteria) {
+        Criterion adminCri = Restrictions.and(
+                Restrictions.eq("si.admin", Boolean.TRUE), 
+                Restrictions.isNull("si.adminCloseDate"));
+        Criterion sciCri = Restrictions.and(
+                Restrictions.eq("si.scientific", Boolean.TRUE), 
+                Restrictions.isNull("si.scientificCloseDate"));
+        criteria.add(Restrictions.and(adminCri, sciCri));
+    }
+    
+    /**
+     * Adds sql condition for study inbox entries with performed admin acknowledgment.
+     * @param criteria
+     */
+    private void addPerformedAdminAckCondition(Criteria criteria) {
+        criteria.add(Restrictions.and(
+                Restrictions.isNotNull("si.adminCloseDate"), 
+                Restrictions.isNull("si.scientificCloseDate")));
+    }
+    
+    /**
+     * Adds sql condition for study inbox entries with performed scientific acknowledgment.
+     * @param criteria
+     */
+    private void addPerformedSciAckCondition(Criteria criteria) {
+        criteria.add(Restrictions.and(
+                Restrictions.isNotNull("si.scientificCloseDate"), 
+                Restrictions.isNull("si.adminCloseDate")));
+    }
+    
+    private void addPerformedAdminSciAckCondition(Criteria criteria) {
+        criteria.add(Restrictions.and(
+                Restrictions.isNotNull("si.adminCloseDate"), 
+                Restrictions.isNotNull("si.scientificCloseDate")));
     }
     
     /**

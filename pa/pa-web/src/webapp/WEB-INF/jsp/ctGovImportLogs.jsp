@@ -42,6 +42,10 @@
 		$("action").value = "";
 		$("importStatus").value = "";
 		$("userCreated").value = "";
+		$("pendingAdminAcknowledgment").value = "";
+		$("pendingScientificAcknowledgment").value = "";
+		$("performedAdminAcknowledgment").value = "";
+		$("performedScientificAcknowledgment").value = "";
 		$("ctGovImportLogsDiv").hide();
 	}
 
@@ -87,14 +91,14 @@
 			            <label for="officialTitle"> <fmt:message key="logs.officialTitle"/></label>
 			        </td>
 			        <td>
-			            <s:textfield id="officialTitle" name="officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
+			            <s:textfield id="officialTitle" name="searchCriteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
 			        </td>
 			        <td scope="row" class="label">
 			            <label for="nciIdentifier"><fmt:message key="logs.nciIdentifier"/></label>
 			            <br><span class="info">(e.g: NCI-2008-00015)</span>
 			        </td>
 			        <td>
-			            <s:textfield id="nciIdentifier" name="nciIdentifier" maxlength="200" size="100"  cssStyle="width:200px" />
+			            <s:textfield id="nciIdentifier" name="searchCriteria.nciIdentifier" maxlength="200" size="100"  cssStyle="width:200px" />
 			            <span class="formErrorMsg">			                
 			            </span>
 			        </td>                    
@@ -105,7 +109,7 @@
 			            <br><span class="info">(e.g: NCT00810576)</span>
                     </td>
                     <td>
-                        <s:textfield id="nctIdentifier" name="nctIdentifier" maxlength="200" size="100" cssStyle="width:200px"  />
+                        <s:textfield id="nctIdentifier" name="searchCriteria.nctIdentifier" maxlength="200" size="100" cssStyle="width:200px"  />
                         <span class="formErrorMsg">                            
                         </span>
                     </td>
@@ -113,7 +117,7 @@
                         <label for="userCreated"><fmt:message key="logs.userCreated"/></label>
                     </td>
                     <td>
-                        <s:textfield id="userCreated" name="userCreated" maxlength="200" size="100"  cssStyle="width:200px" />
+                        <s:textfield id="userCreated" name="searchCriteria.userCreated" maxlength="200" size="100"  cssStyle="width:200px" />
                         <span class="formErrorMsg">                            
                         </span>
                     </td>                    
@@ -123,15 +127,15 @@
                         <label for="action"> <fmt:message key="logs.action"/></label>
                     </td>
                     <td>
-                        <s:select headerKey="" headerValue="All" id="action" name="action" 
-                        list="#{'New Trial':'New Trial','Update':'Update'}"  value="action" cssStyle="width:206px" />
+                        <s:select headerKey="" headerValue="All" id="action" name="searchCriteria.action" 
+                        list="#{'New Trial':'New Trial','Update':'Update'}"  value="searchCriteria.action" cssStyle="width:206px" />
                     </td>
                     <td scope="row" class="label">
                         <label for="importStatus"> <fmt:message key="logs.importStatus"/></label>
                     </td>
                     <td>
-                        <s:select headerKey="" headerValue="All" id="importStatus" name="importStatus" 
-                        list="#{'Success':'Success','Failure':'Failure'}"  value="importStatus" cssStyle="width:206px" />
+                        <s:select headerKey="" headerValue="All" id="importStatus" name="searchCriteria.importStatus" 
+                        list="#{'Success':'Success','Failure':'Failure'}"  value="searchCriteria.importStatus" cssStyle="width:206px" />
                     </td>
                 </tr>
 				<tr>
@@ -151,6 +155,33 @@
 							src="${pageContext.request.contextPath}/images/ico_calendar.gif"
 							alt="Select Date" class="calendaricon" />
 					</a></td>
+				</tr>
+				<tr>
+				    <td scope="row" class="label">
+				        <label for="acknowledgments"><fmt:message key="logs.acknowledgments" /></label>
+				    </td>
+				</tr>
+				<tr>
+				    <td class="noborder">&nbsp;</td>
+				    <td>
+				        <table class="milestone_matrix" border="0">
+				            <tr>
+				                <td class="noborder">&nbsp;</td>
+				                <td class="label"><fmt:message key="logs.adminAcknowledgment" /></td>
+				                <td class="label"><fmt:message key="logs.scientificAcknowledgement" /></td>
+				            </tr>
+				            <tr>
+				                <td class="label"><fmt:message key="logs.pendingAcknowledgment" /></td>
+				                <td><s:checkbox name="searchCriteria.pendingAdminAcknowledgment" id="pendingAdminAcknowledgment"/></td>
+				                <td><s:checkbox name="searchCriteria.pendingScientificAcknowledgment" id="pendingScientificAcknowledgment"/></td>
+				            </tr>
+				            <tr>
+                                <td class="label"><fmt:message key="logs.performedAcknowledgment" /></td>
+                                <td><s:checkbox name="searchCriteria.performedAdminAcknowledgment" id="performedAdminAcknowledgment"/></td>
+                                <td><s:checkbox name="searchCriteria.performedScientificAcknowledgment" id="performedScientificAcknowledgment"/></td>
+                            </tr>
+				        </table>
+				    </td>
 				</tr>
 				<tr>
 					<td colspan="5" class="info"><b>Note:</b> Leave all the fields
@@ -225,7 +256,8 @@
 								property="dateCreated" sortable="true" />
 							<display:column escapeXml="true" title="Import Status"
 								property="importStatus" sortable="true" />								
-							<display:column escapeXml="true" title="Needs Review?" property="displayableReviewIndicator" sortable="true"/>	
+							<display:column escapeXml="true" title="Ack. Pending?" property="ackPending" sortable="true"/>
+							<display:column escapeXml="true" title="Ack. Performed?" property="ackPerformed" sortable="true"/>	
 						</display:table>
 					</s:else>
 				</div>

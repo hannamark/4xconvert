@@ -16,7 +16,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-
 /**
  * 
  * @author Monish
@@ -56,7 +55,8 @@ public class CTGovImportLog implements PersistentObject {
     private Boolean admin;
     private Boolean scientific;
     private StudyInbox studyInbox;
-    
+    private String ackPending = "";
+    private String ackPerformed = "";
     /**
      * 
      * @return id
@@ -290,7 +290,6 @@ public class CTGovImportLog implements PersistentObject {
     @Transient
     @SuppressWarnings("PMD.CyclomaticComplexity")
     public String getAckPending() {
-        String ackPending = "";
         if (studyInbox != null) {
             if (studyInbox.getCloseDate() == null) {
                 if (Boolean.TRUE.equals(studyInbox.getAdmin()) 
@@ -319,7 +318,6 @@ public class CTGovImportLog implements PersistentObject {
     @Transient
     @SuppressWarnings("PMD.CyclomaticComplexity")
     public String getAckPerformed() {
-        String ackPerformed = "";
         if (studyInbox != null) {
             if (studyInbox.getAdminCloseDate() != null 
                     && studyInbox.getScientificCloseDate() == null) {
@@ -338,6 +336,20 @@ public class CTGovImportLog implements PersistentObject {
             }
         }
         return ackPerformed;
+    }
+
+    /**
+     * @param ackPending pending acknowledgment to set
+     */
+    public void setAckPending(String ackPending) {
+        this.ackPending = ackPending;
+    }
+
+    /**
+     * @param ackPerformed performed acknowledgment to set
+     */
+    public void setAckPerformed(String ackPerformed) {
+        this.ackPerformed = ackPerformed;
     }
 }
 

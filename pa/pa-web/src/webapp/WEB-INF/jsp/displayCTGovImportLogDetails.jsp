@@ -46,7 +46,8 @@
                             <display:column escapeXml="true" title="Auto/User" property="userCreated" sortable="true" />
                             <display:column title="Date/Time" format="{0,date,MM/dd/yyyy hh:mm aaa}" property="dateCreated" sortable="true" />
                             <display:column escapeXml="true" title="Import Status" property="importStatus" sortable="true" />
-                            <display:column escapeXml="true" title="Needs Review?" property="displayableReviewIndicator" sortable="true"/>                                               
+                            <display:column escapeXml="true" title="Ack. Pending?" property="ackPending" sortable="true"/>
+                            <display:column escapeXml="true" title="Ack. Performed?" property="ackPerformed" sortable="true"/>                                               
                         </display:table>
                     </td>
                 </tr>
