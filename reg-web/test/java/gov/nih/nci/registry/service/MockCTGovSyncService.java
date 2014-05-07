@@ -6,6 +6,7 @@ package gov.nih.nci.registry.service;
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ctgov.ClinicalStudy;
+import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
 import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 
@@ -83,12 +84,10 @@ public class MockCTGovSyncService implements CTGovSyncServiceLocal {
      * (non-Javadoc)
      * 
      * @see
-     * gov.nih.nci.pa.service.util.CTGovSyncServiceLocal#getLogEntries(java.lang.String, java.lang.String, 
-     * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Date, java.util.Date)
+     * gov.nih.nci.pa.service.util.CTGovSyncServiceLocal#getLogEntries(CTGovImportLogSearchCriteria searchCriteria)
      */
     @Override
-    public List<CTGovImportLog> getLogEntries(String nciIdentifier, String nctIdentifier, String officialTitle, String action, 
-            String importStatus, String userCreated, Date onOrAfter, Date onOrBefore)
+    public List<CTGovImportLog> getLogEntries(CTGovImportLogSearchCriteria searchCriteria)
             throws PAException {        
         return new ArrayList<CTGovImportLog>();
     }
