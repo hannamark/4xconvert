@@ -318,7 +318,7 @@ function showPopup(url, returnFunc, title) {
 
 function calculateMaxPopupWidth() {
     var fullWidth = getViewportWidth();
-    var width = ((fullWidth / 1.5) > 895) ? width = (fullWidth / 1.5): width = 895; 
+    var width = ((fullWidth / 1.1) > 920) ? width = (fullWidth / 1.1): width = 920; 
     return width;
 }
 
