@@ -77,7 +77,7 @@
 *
 */
 package gov.nih.nci.accrual.accweb.dto.util;
-
+import static gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderBean.ICD_O_3_CODESYSTEM;
 import gov.nih.nci.accrual.accweb.action.AbstractAccrualAction;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
@@ -172,10 +172,10 @@ public class PatientWebDto {
             action.addActionErrorIfEmpty(dto.getEthnicCode(), "Ethnicity is required.");
             action.addActionErrorIfEmpty(dto.getCountryIdentifier(), "Country is required.");
             if (checkDisease) {
-                List<String> dCode = action.getDiseaseSvc().getValidCodeSystems(spId);
-                if (dCode.contains("ICD-O-3") && dto.getSiteDiseaseIdentifier() == null) {
+                String dCode = action.getAccrualDiseaseTerminologyService().getCodeSystem(spId);
+                if (dCode.equals(ICD_O_3_CODESYSTEM) && dto.getSiteDiseaseIdentifier() == null) {
                     action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
-                } else if (!dCode.contains("ICD-O-3")) {
+                } else if (!dCode.equals(ICD_O_3_CODESYSTEM)) {
                     action.addActionErrorIfEmpty(dto.getDiseaseIdentifier(), "Disease is required.");
                 }
             }

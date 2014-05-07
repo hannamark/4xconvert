@@ -227,19 +227,13 @@ public class BaseValidatorBatchUploadReaderTest {
         BatchFileErrors errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
         bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
-        assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is invalid for patient ID"));
+        assertTrue(StringUtils.contains(errMsg.toString(), "Disease Code is invalid for patient ID"));
 
-        // wrong code system not found
+        // found
         AccrualDisease ad = new AccrualDisease();
         ad.setCodeSystem(CODE_SYSTEM);
         ad.setDiseaseCode(CODE);
-        when(dSvc.getByCode(anyString())).thenReturn(ad);
-        errMsg = r.new BatchFileErrors();
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true, false);
-        bean.validateDiseaseCode(valueList, errMsg, 1, null, "xyzzy", true, false);
-        assertTrue(StringUtils.startsWith(errMsg.toString(), "Patient Disease Code is invalid for patient ID"));
-
-        // found
+        when(dSvc.getByCode(anyString(), anyString())).thenReturn(ad);
         errMsg = r.new BatchFileErrors();
         doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);
         bean.validateDiseaseCode(valueList, errMsg, 1, null, CODE_SYSTEM, true, false);

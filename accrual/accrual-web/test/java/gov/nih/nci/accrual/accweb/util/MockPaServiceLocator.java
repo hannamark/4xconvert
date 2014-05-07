@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -109,6 +110,8 @@ import org.mockito.stubbing.Answer;
  * @since Aug 27, 2009
  */
 public class MockPaServiceLocator implements ServiceLocatorPaInterface {
+
+    public static AccrualDiseaseTerminologyServiceRemote accrualDiseaseTermSvc = mock(AccrualDiseaseTerminologyServiceRemote.class);
 
     private final PlannedActivityServiceRemote pActivity = new MockPaPlannedActivityServiceBean();
     private final StudyProtocolServiceRemote studyProtocolService = mock(StudyProtocolServiceRemote.class);
@@ -199,5 +202,10 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
 	@Override
 	public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
 		return accrualStatusSvc;
-	}    
+	}
+
+    @Override
+    public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
+        return accrualDiseaseTermSvc;
+    }    
 }

@@ -291,10 +291,11 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
             } else {
                 while (disease.hasMoreElements()) {
                    String diseaseCode = AccrualUtil.checkIfStringHasForwardSlash(disease.nextElement().toString());
-                   AccrualDisease dis = getDiseaseService().getByCode(diseaseCode);
-                   if (dis == null || !StringUtils.equals(dis.getCodeSystem(), codeSystem)) {
-                	   errMsg.append(new StringBuffer().append("Patient Disease Code is invalid for patient ID ")
-                			   .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
+                   AccrualDisease dis = getDiseaseService().getByCode(codeSystem, diseaseCode);
+                   if (dis == null) {
+                      errMsg.append(new StringBuffer()
+                              .append("Patient " + codeSystem + " Disease Code is invalid for patient ID ")
+                              .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append("\n"));
                    }
                 }
             }

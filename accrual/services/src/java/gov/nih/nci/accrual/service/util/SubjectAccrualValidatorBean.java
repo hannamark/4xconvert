@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.accrual.service.util;
 
+import static gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderBean.ICD_O_3_CODESYSTEM;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
@@ -144,14 +145,13 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
         if (subjects == null) {
             return;
         }
-        String diseaseCodeSystem = null;
         for (int i = 0; i < subjects.size(); i++) {
-            diseaseCodeSystem = validateRequiredFields(subjects.get(i), diseaseCodeSystem, i);
+            validateRequiredFields(subjects.get(i), i);
             validateNoStudySubjectDuplicates(subjects.get(i), i);
         }
     }
 
-    private String validateRequiredFields(SubjectAccrualDTO subjectAccrual, String diseaseCodeSystem, int index) 
+    private void validateRequiredFields(SubjectAccrualDTO subjectAccrual, int index) 
             throws PAException {
         StringBuffer errors = new StringBuffer();
         if (ISOUtil.isStNull(subjectAccrual.getAssignedIdentifier())) {
@@ -161,11 +161,10 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
         validateGenderAndEthnicity(subjectAccrual, errors);
         validateRaces(subjectAccrual, errors);
         validateCountry(subjectAccrual, errors);
-        String diseaseCS = validateDiseaseAndParticipatingSite(subjectAccrual, diseaseCodeSystem, errors);
+        validateDiseaseAndParticipatingSite(subjectAccrual, errors);
         if (errors.length() != 0) {
             throw new IndexedInputValidationException(errors.toString(), index);
         }
-        return diseaseCS;
     }
 
     void validateRaces(SubjectAccrualDTO subjectAccrual, StringBuffer errors) {
@@ -243,31 +242,27 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
         }
     }
 
-    private String validateDiseaseAndParticipatingSite(SubjectAccrualDTO subjectAccrual, String diseaseCodeSystem, 
+    private void validateDiseaseAndParticipatingSite(SubjectAccrualDTO subjectAccrual,
             StringBuffer errMsg) throws PAException {
         Ii siteIi = subjectAccrual.getParticipatingSiteIdentifier();
         if (ISOUtil.isIiNull(siteIi)) {
             errMsg.append(String.format(REQUIRED_MSG, "Participating Site Identifier"));
-            return diseaseCodeSystem;
+            return;
         }
         StudySiteDTO studySite = PaServiceLocator.getInstance().getStudySiteService().get(siteIi);
         if (studySite == null) {
             errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getParticipatingSiteIdentifier().getExtension(),
                                         "Participating Site Identifier"));
-            return diseaseCodeSystem;
+            return;
         }
         Long spId = IiConverter.convertToLong(studySite.getStudyProtocolIdentifier());
-        String testCS = diseaseCodeSystem;
+        String dCode = PaServiceLocator.getInstance().getAccrualDiseaseTerminologyService().getCodeSystem(spId);
         if (ISOUtil.isIiNull(subjectAccrual.getDiseaseIdentifier())) {
-            if (diseaseService.diseaseCodeMandatory(spId)) {            
-                List<String> dCode = diseaseService.getValidCodeSystems(spId);
-                if (dCode.contains("ICD-O-3") 
-                        && subjectAccrual.getDiseaseIdentifier() == null 
-                        && subjectAccrual.getSiteDiseaseIdentifier() == null) {
+            if (diseaseService.diseaseCodeMandatory(spId)
+                && !(dCode.equals(ICD_O_3_CODESYSTEM)
+                      && !ISOUtil.isIiNull(subjectAccrual.getSiteDiseaseIdentifier()))) {
                     errMsg.append(String.format(REQUIRED_MSG, DIDENTIFIERSTRING));
-                } else if (!dCode.contains("ICD-O-3")) {
-                    errMsg.append(String.format(REQUIRED_MSG, DIDENTIFIERSTRING));
-                }
+               
             }
         } else {
             AccrualDisease disease = diseaseService.get(subjectAccrual.getDiseaseIdentifier());
@@ -275,13 +270,7 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
                 errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(),
                         DIDENTIFIERSTRING));
             } else {
-                if (testCS == null) {
-                    testCS = diseaseService.getTrialCodeSystem(spId);
-                    if (testCS == null) {
-                        testCS = disease.getCodeSystem();
-                    }
-                }
-                if (!testCS.equals(disease.getCodeSystem())) {
+                if (!dCode.equals(disease.getCodeSystem())) {
                     errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(),
                             DIDENTIFIERSTRING));
                 }
@@ -292,20 +281,13 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
                 errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getSiteDiseaseIdentifier().getExtension(),
                                             "Site Disease Identifier"));
             } else {
-                if (testCS == null) {
-                    testCS = diseaseService.getTrialCodeSystem(spId);
-                    if (testCS == null) {
-                        testCS = disease.getCodeSystem();
-                    }
-                }
-                if (!testCS.equals(disease.getCodeSystem())) {
+                if (!dCode.equals(disease.getCodeSystem())) {
                     errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getSiteDiseaseIdentifier().getExtension(),
                             "Site Disease Identifier"));
                 }
             }
           }
         }
-        return testCS;
     }
 
     /**

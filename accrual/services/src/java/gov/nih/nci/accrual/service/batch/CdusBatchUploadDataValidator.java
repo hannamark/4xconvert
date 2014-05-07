@@ -90,7 +90,6 @@ import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
@@ -122,7 +121,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -163,9 +161,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private Date blankOrgDate;
     private String blankOrgName;
     private static final int TIME_SECONDS = 1000;
-    private String codeSystemFile;
+    private String codeSystem;
     private boolean checkDisease;
-    private boolean patientCheck;
     private boolean superAbstractor;
     private Set<SubjectAccrualKey> patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
     private BatchFileErrors bfErrors = new BatchFileErrors();
@@ -187,9 +184,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         long startTime = System.currentTimeMillis();        
         ru = user;
         initializeOrganizationLists();
-        codeSystemFile = null;
         checkDisease = false;
-        patientCheck = false;
         patientsFromBatchFile = new HashSet<SubjectAccrualKey>();
         accrualSubmissionLevel = null;
         boolean notCtepDcpTrial = false;
@@ -228,6 +223,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     sp = getStudyProtocol(protocolId, bfErrors);
                     if (sp != null) {
                         try {
+                            codeSystem = StConverter.convertToString(sp.getAccrualDiseaseCodeSystem());
                             notCtepDcpTrial = !getSearchStudySiteService().isStudyHasCTEPId(sp.getIdentifier()) 
                                 && !getSearchStudySiteService().isStudyHasDCPId(sp.getIdentifier());
                             if (notCtepDcpTrial || superAbstractor) {
@@ -305,11 +301,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     .append(p[BatchFileIndex.PATIENT_ID_INDEX]).append("\n"));
                 } 
               }
-              if (CollectionUtils.isNotEmpty(patientLines) 
-                    && sp != null && !sp.getProprietaryTrialIndicator().getValue()
-                    || accrualSubmissionLevel != null && accrualSubmissionLevel.equals(AccrualUtil.SUBJECT_LEVEL)) {
-                validateDiseaseCodeSystem();
-              }
             }
             results.setErrors(new StringBuilder(bfErrors.toString().trim())); 
             results.setHasNonSiteErrors(bfErrors.isHasNonSiteErrors());
@@ -348,16 +339,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 crit.setName(blankOrgName);
                 List<OrganizationDTO> orgList = PoRegistry.getOrganizationEntityService().
                         search(crit, new LimitOffset(1, 0));
-                Ii blankOrgId = orgList.get(0).getIdentifier();
-                listOfBlankIds.put(null, blankOrgId);
-                listOfBlankIds.put("", blankOrgId);
-                listOfBlankIds.put("CTSU", blankOrgId);
-                listOfBlankIds.put("00000", blankOrgId);
-                String rejectDateStr = PaServiceLocator.getInstance().getLookUpTableService().
-                        getPropertyValue("AccrualBlankSiteRejectDate");
-                if (rejectDateStr != null) {
-                    DateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
-                    blankOrgDate = df.parse(rejectDateStr);
+                if (!orgList.isEmpty()) {
+                    Ii blankOrgId = orgList.get(0).getIdentifier();
+                    listOfBlankIds.put(null, blankOrgId);
+                    listOfBlankIds.put("", blankOrgId);
+                    listOfBlankIds.put("CTSU", blankOrgId);
+                    listOfBlankIds.put("00000", blankOrgId);
+                    String rejectDateStr = PaServiceLocator.getInstance().getLookUpTableService().
+                            getPropertyValue("AccrualBlankSiteRejectDate");
+                    if (rejectDateStr != null) {
+                        DateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
+                        blankOrgDate = df.parse(rejectDateStr);
+                    }
                 }
             } catch (Exception e) {
                 LOG.error("Exception retrieving and parsing the AccrualBlankSite properties.", e);
@@ -386,7 +379,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     StringUtils.isNotEmpty(results.getErrors().toString()) ? false : true);
         results.setListOfOrgIds(listOfOrgIds);
         results.setListOfPoStudySiteIds(listOfPoIds);
-        results.setDiseaseCodeSystem(codeSystemFile);
+        results.setDiseaseCodeSystem(codeSystem);
 
         if (!bfErrors.isHasNonSiteErrors() && superAbstractor) {
             for (Long studySiteId : listOfPoIds.values()) {
@@ -398,28 +391,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     LOG.error("Error creating Accrual access.", e);
                 }
             }
-        }
-    }
-
-    /**
-     * Validate that the code system in the batch file matches the code system for the trial from the database. 
-     */
-    private void validateDiseaseCodeSystem() {
-        Long spId = IiConverter.convertToLong(sp.getIdentifier()); 
-        String codeSystemDB = getDiseaseService().getTrialCodeSystem(spId);
-        try {
-            if (codeSystemDB != null && !StringUtils.equals(codeSystemDB, codeSystemFile)) {
-                Map<SubjectAccrualKey, Long[]> listOfStudySubjects = getStudySubjectService()
-                        .getSubjectAndPatientKeys(spId, true);
-                Set<SubjectAccrualKey> patientsFromDB = listOfStudySubjects.keySet();
-                if (!patientsFromBatchFile.containsAll(patientsFromDB)) {
-                    bfErrors.append(new StringBuffer()
-                    .append("Please use same Disease code system used for the trial ("
-                            + codeSystemDB + ").\n"));
-                }
-             }
-        } catch (Exception e) {
-            bfErrors.append(new StringBuffer().append(e.getLocalizedMessage()));
         }
     }
 
@@ -458,23 +429,8 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             correctOrganizationId = isCorrectOrganizationId(studySiteID, registrationDate, false);
         }
         validateStudySiteAccrualAccessCode(key, values, lineNumber, correctOrganizationId);
-        if (StringUtils.equalsIgnoreCase(PATIENTS, key) && !patientCheck && codeSystemFile == null) {
-            String code = AccrualUtil.safeGet(values, PATIENT_DISEASE_INDEX);
-            if (StringUtils.isNotEmpty(code)) {
-                StringTokenizer disease = new StringTokenizer(code, ";");
-                while (disease.hasMoreElements()) {
-                    String diseaseCode = AccrualUtil.checkIfStringHasForwardSlash(disease.nextElement().toString());
-                    AccrualDisease dis = getDiseaseService().getByCode(diseaseCode);
-                    if (dis != null) {
-                        codeSystemFile = dis.getCodeSystem();
-                        patientCheck = true;
-                        break;
-                    }
-                }                
-            }
-        }
         validatePatientsMandatoryData(key, values, bfErrors, lineNumber, 
-                    sp, codeSystemFile, checkDisease, accrualSubmissionLevel, superAbstractor);
+                    sp, codeSystem, checkDisease, accrualSubmissionLevel, superAbstractor);
         validateRegisteringInstitutionCode(key, values, lineNumber, correctOrganizationId);
         validatePatientRaceData(key, values, bfErrors, lineNumber);
         validateAccrualCount(key, values, bfErrors, lineNumber, sp, accrualSubmissionLevel);

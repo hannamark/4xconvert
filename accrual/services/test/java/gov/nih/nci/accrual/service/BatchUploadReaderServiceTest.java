@@ -87,7 +87,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
@@ -401,7 +400,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         AccrualDisease disease1 = new AccrualDisease();
         disease1.setCodeSystem("SDC");
         disease1.setDiseaseCode("80000001");
-        when(diseaseSvc.getByCode("80000001")).thenReturn(disease1);
+        when(diseaseSvc.getByCode("SDC", "80000001")).thenReturn(disease1);
         
         File file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file2.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
@@ -441,7 +440,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      AccrualDisease disease1 = new AccrualDisease();
      disease1.setCodeSystem("SDC");
      disease1.setDiseaseCode("80000001");
-     when(diseaseSvc.getByCode("80000001")).thenReturn(disease1);
+     when(diseaseSvc.getByCode("SDC", "80000001")).thenReturn(disease1);
      
      File file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
      BatchFile batchFile = getBatchFile(file);
@@ -471,22 +470,22 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
      List<PatientStage> queryList = getPatientStage("NCI-2010-00003");
      assertEquals(2, queryList.size());
      
-     when(diseaseSvc.getTrialCodeSystem(any(Long.class))).thenReturn("ICD9");
+     setTrialDiseaseCodeSystem("ICD9");
      disease1.setCodeSystem("ICD9");
      disease1.setDiseaseCode("V100");     
-     when(diseaseSvc.getByCode("V100")).thenReturn(disease1);
+     when(diseaseSvc.getByCode("ICD9", "V100")).thenReturn(disease1);
      
      file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
      batchFile = getBatchFile(file);
      results = readerService.validateBatchData(batchFile); 
      verifyEmailsSent(0, 2, 0);
      
-     when(diseaseSvc.getTrialCodeSystem(any(Long.class))).thenReturn("ICD-O-3");
+     setTrialDiseaseCodeSystem("ICD-O-3");
      disease1.setCodeSystem("ICD-O-3");
      disease1.setDiseaseCode("C998");
-     when(diseaseSvc.getByCode("C998")).thenReturn(disease1);
+     when(diseaseSvc.getByCode("ICD-O-3", "C998")).thenReturn(disease1);
      disease1.setDiseaseCode("7001");
-     when(diseaseSvc.getByCode("7001")).thenReturn(disease1);
+     when(diseaseSvc.getByCode("ICD-O-3", "7001")).thenReturn(disease1);
      
      file = new File(this.getClass().getResource("/suAbs-accrual-patients-batch-file.txt").toURI());
      batchFile = getBatchFile(file);
@@ -572,15 +571,16 @@ private List<PatientStage> getPatientStage(String nciId) {
 
 	@Test
 	public void patientICDO3Coverage() throws URISyntaxException, PAException {
+         setTrialDiseaseCodeSystem("ICD-O-3");
 		 AccrualDisease disease1 = new AccrualDisease();
 	     disease1.setCodeSystem("ICD-O-3");
 	     disease1.setDiseaseCode("C34.1");
 	     AccrualDisease disease2 = new AccrualDisease();
 	     disease2.setCodeSystem("ICD-O-3");
 	     disease2.setDiseaseCode("8000");
-	     when(diseaseSvc.getByCode("C34.1")).thenReturn(disease1);
-	     when(diseaseSvc.getByCode("C341")).thenReturn(disease1);
-	     when(diseaseSvc.getByCode("8000")).thenReturn(disease2);
+	     when(diseaseSvc.getByCode("ICD-O-3", "C34.1")).thenReturn(disease1);
+	     when(diseaseSvc.getByCode("ICD-O-3", "C341")).thenReturn(disease1);
+	     when(diseaseSvc.getByCode("ICD-O-3", "8000")).thenReturn(disease2);
 	        
 		File file = new File(this.getClass().getResource("/ICD-O-3_coverage.txt").toURI());
 		BatchFile batchFile = getBatchFile(file);
@@ -693,22 +693,21 @@ private List<PatientStage> getPatientStage(String nciId) {
         disease2.setDiseaseCode("code2");
         File file = new File(this.getClass().getResource("/junit_coverage2.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
-        when(diseaseSvc.getTrialCodeSystem(anyLong())).thenReturn("SDC");
 
         // not found
-        when(diseaseSvc.getByCode("code1")).thenReturn(null);
-        when(diseaseSvc.getByCode("code2")).thenReturn(null);
+        when(diseaseSvc.getByCode("SDC", "code1")).thenReturn(null);
+        when(diseaseSvc.getByCode("SDC", "code2")).thenReturn(null);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
         verifyEmailsSent(1, 0, 0);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         String errorMsg = results.get(0).getErrors().toString();
-        assertTrue(StringUtils.contains(errorMsg, "Patient Disease Code is invalid for patient ID"));
+        assertTrue(StringUtils.contains(errorMsg, "Patient SDC Disease Code is invalid for patient ID"));
 
         // found, code systems match
-        when(diseaseSvc.getByCode("code1")).thenReturn(disease1);
-        when(diseaseSvc.getByCode("code2")).thenReturn(disease2);
+        when(diseaseSvc.getByCode("SDC", "code1")).thenReturn(disease1);
+        when(diseaseSvc.getByCode("SDC", "code2")).thenReturn(disease2);
         results = readerService.validateBatchData(batchFile);
         verifyEmailsSent(1, 1, 0);
         assertEquals(1, results.size());
@@ -716,11 +715,13 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString())); 
 
         // found, code systems don't match, all existing in file
-        when(diseaseSvc.getTrialCodeSystem(anyLong())).thenReturn("ICD9");
+        setTrialDiseaseCodeSystem("ICD9");
         results = readerService.validateBatchData(batchFile);
         assertEquals(1, results.size());
-        assertTrue(results.get(0).isPassedValidation());
-        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString())); 
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
+        errorMsg = results.get(0).getErrors().toString();
+        assertTrue(StringUtils.contains(errorMsg, "Patient ICD9 Disease Code is invalid for patient ID")); 
 
         // found, code systems don't match, file not inclusive of all existing
         StudySubject subj = new StudySubject();
@@ -735,12 +736,12 @@ private List<PatientStage> getPatientStage(String nciId) {
         subj.setDateLastCreated(PAUtil.dateStringToDateTime("1/1/2001"));
         TestSchema.addUpdObject(subj);
         results = readerService.validateBatchData(batchFile);
-        verifyEmailsSent(2, 2, 0);
+        verifyEmailsSent(3, 1, 0);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString())); 
         errorMsg = results.get(0).getErrors().toString();
-        assertTrue(StringUtils.contains(errorMsg, "Please use same Disease code system used for the trial"));
+        assertTrue(StringUtils.contains(errorMsg, "Patient ICD9 Disease Code is invalid for patient ID"));
 	}
 	
     @Test

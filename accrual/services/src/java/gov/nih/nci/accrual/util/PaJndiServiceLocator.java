@@ -82,6 +82,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -140,5 +141,14 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      */
     public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
         return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookupPa("/pa/StudySiteAccrualStatusServiceBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
+        return (AccrualDiseaseTerminologyServiceRemote)
+                JNDIUtil.lookupPa("/pa/AccrualDiseaseTerminologyServiceBean/remote");
     }
 }

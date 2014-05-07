@@ -111,10 +111,13 @@ import gov.nih.nci.accrual.util.PoServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
@@ -135,6 +138,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -152,6 +156,7 @@ import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -186,6 +191,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     protected MailManagerServiceRemote mailService;
     protected BatchFileService batchFileSvc = new BatchFileServiceBeanLocal();
     protected AccrualDiseaseServiceLocal diseaseSvc;
+    protected AccrualDiseaseTerminologyServiceRemote accDisTerminologySvc;
     protected static final String REJECT_BLANKS_NAME = "AccrualBlankSiteName";
     protected static final String REJECT_BLANKS_DATE = "AccrualBlankSiteRejectDate";
     private static final String ERROR_SUBJECT_KEY = "accrual.error.subject";
@@ -204,9 +210,12 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     private static final String EXCEPTION_SUBJECT_VALUE = "accrual.exception.subject- ${fileName}";
     private static final String EXCEPTION_BODY_KEY = "accrual.exception.body";
     private static final String EXCEPTION_BODY_VALUE = "accrual.exception.body - ${SubmitterName}, ${CurrentDate}, ${fileName}.";
-    
+
+    private St trialDiseaseCodeSystem; 
+
     @Before
     public void setUpReader() throws Exception {
+        trialDiseaseCodeSystem = StConverter.convertToSt("SDC");
         AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
         TestSchema.primeData();
         abbreviatedIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
@@ -237,6 +246,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 StudyProtocolDTO dto = new StudyProtocolDTO();
                 dto.setProprietaryTrialIndicator(BlConverter.convertToBl(false));
                 dto.setStudyProtocolType(StConverter.convertToSt(InterventionalStudyProtocol.class.getSimpleName()));
+                dto.setAccrualDiseaseCodeSystem(trialDiseaseCodeSystem);
                 Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
                 Ii spSecId = new Ii();
                 spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
@@ -360,10 +370,10 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         disease1.setCodeSystem("ICD-O-3");
         disease1.setDiseaseCode("Csite");
         diseaseSvc = mock(AccrualDiseaseServiceLocal.class);
-        when(diseaseSvc.getByCode(anyString())).thenAnswer(new Answer<AccrualDisease>() {
+        when(diseaseSvc.getByCode(anyString(), anyString())).thenAnswer(new Answer<AccrualDisease>() {
             public AccrualDisease answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
-                String medraCode = (String) args[0];
+                String medraCode = (String) args[1];
                 List<String> validCodes = Arrays.asList("1", "10053571", "10010029");
                 if (validCodes.contains(medraCode)) {
                     return disease;
@@ -434,12 +444,16 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.studySites.get(1));
             }
         });
-        
+
+        accDisTerminologySvc = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(accDisTerminologySvc.getCodeSystem(anyLong())).thenReturn("SDC");
+
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
         when(paSvcLocator.getRegistryUserService()).thenReturn(registryUserService);
+        when(paSvcLocator.getAccrualDiseaseTerminologyService()).thenReturn(accDisTerminologySvc);
         LookUpTableServiceRemote lookuptableSvc = mock(LookUpTableServiceRemote.class);
         when(paSvcLocator.getLookUpTableService()).thenReturn(lookuptableSvc);
         when(paSvcLocator.getLookUpTableService().getPropertyValue(REJECT_BLANKS_DATE)).thenReturn("01-MAR-2014");
@@ -478,7 +492,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     }
 
     protected void setUpPoRegistry() throws NullifiedEntityException, NullifiedRoleException, EntityValidationException,
-            CurationException {
+            CurationException, TooManyResultsException {
         IdentifiedOrganizationCorrelationServiceRemote identifiedOrgCorrelationSvc
         = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
         when(identifiedOrgCorrelationSvc.search(any(IdentifiedOrganizationDTO.class))).thenAnswer(new Answer<List<IdentifiedOrganizationDTO>>() {
@@ -527,10 +541,37 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return org;
             }
         });
+        when(orgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenAnswer(new Answer<List<OrganizationDTO>>() {
+            @Override
+            public List<OrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                OrganizationSearchCriteriaDTO crit = (OrganizationSearchCriteriaDTO) args[0];
+                List<OrganizationDTO> result = new ArrayList<OrganizationDTO>();
+                if (crit != null && StringUtils.equals("Unidentified Site", crit.getName())) {
+                    OrganizationDTO org = new OrganizationDTO();
+                    org.setIdentifier(IiConverter.convertToIi(TestSchema.organizations.get(2).getId()));
+                    result.add(org);
+                }
+                return result;
+            }
+        });
         
         OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
         when(organizationEntityService.getOrganization(any(Ii.class))).thenReturn(new OrganizationDTO());
-        
+        when(orgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenAnswer(new Answer<List<OrganizationDTO>>() {
+            @Override
+            public List<OrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                OrganizationSearchCriteriaDTO crit = (OrganizationSearchCriteriaDTO) args[0];
+                List<OrganizationDTO> result = new ArrayList<OrganizationDTO>();
+                if (crit != null && StringUtils.equals("Unidentified Site", crit.getName())) {
+                    OrganizationDTO org = new OrganizationDTO();
+                    result.add(org);
+                }
+                return result;
+            }
+        });
+
         HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
             mock(HealthCareFacilityCorrelationServiceRemote.class);
         when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
@@ -578,5 +619,10 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(poServiceLoc.getIdentifiedOrganizationCorrelationService()).thenReturn(identifiedOrgCorrelationSvc);
         when(poServiceLoc.getOrganizationEntityService()).thenReturn(orgSvc);
         when(poServiceLoc.getHealthCareFacilityCorrelationService()).thenReturn(healthCareFacilityCorrelationService);
+    }
+
+    protected void setTrialDiseaseCodeSystem(String codSystem) {
+        trialDiseaseCodeSystem = StConverter.convertToSt(codSystem);
+        when(accDisTerminologySvc.getCodeSystem(any(Long.class))).thenReturn(codSystem);
     }
 }

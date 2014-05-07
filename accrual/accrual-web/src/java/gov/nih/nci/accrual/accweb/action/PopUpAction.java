@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.accweb.action;
 
+import static gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderBean.ICD_O_3_CODESYSTEM;
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -94,7 +95,6 @@ import org.apache.struts2.ServletActionContext;
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class PopUpAction extends AbstractAccrualAction {
-    private static final String ICD_O_3 = "ICD-O-3";
 
     private static final long serialVersionUID = 8987838321L;
 
@@ -113,13 +113,18 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     @Override
     public String execute() {
+        List<String> dList = new ArrayList<String>();
         if (siteLookUp || selectedSite) {
-            List<String> siteDisease = new ArrayList<String>();
-            siteDisease.add(ICD_O_3);
-            setListOfDiseaseCodeSystems(siteDisease);
+            dList.add(ICD_O_3_CODESYSTEM);
         } else {
-            setListOfDiseaseCodeSystems(getDiseaseSvc().getValidCodeSystems(IiConverter.convertToLong(getSpIi())));
+            Long spId = IiConverter.convertToLong(getSpIi());
+            if (spId == null) {
+                dList.addAll(getAccrualDiseaseTerminologyService().getValidCodeSystems());
+            } else {
+                dList.add(getAccrualDiseaseTerminologyService().getCodeSystem(spId));
+            }
         }
+        setListOfDiseaseCodeSystems(dList);
         return super.execute();
     }
 
@@ -128,7 +133,7 @@ public class PopUpAction extends AbstractAccrualAction {
      * @return action result
      */
     public String diseaseSearch() {
-        setListOfDiseaseCodeSystems(getDiseaseSvc().getValidCodeSystems(null));
+        setListOfDiseaseCodeSystems(getAccrualDiseaseTerminologyService().getValidCodeSystems());
         return super.execute();
     }
 
@@ -147,7 +152,7 @@ public class PopUpAction extends AbstractAccrualAction {
         criteria.setCodeSystem(searchCodeSystem);
         List<AccrualDisease> diseaseList = getDiseaseSvc().search(criteria);
         if (siteLookUp && searchCodeSystem != null
-                && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase(ICD_O_3)) {
+                && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase(ICD_O_3_CODESYSTEM)) {
             // this is to remove the histology codes and show Site codes
             List<AccrualDisease> siteDiseaseList = new ArrayList<AccrualDisease>();
             siteDiseaseList.addAll(diseaseList);
@@ -158,7 +163,7 @@ public class PopUpAction extends AbstractAccrualAction {
                 }
             }
         } else if (!siteLookUp && searchCodeSystem != null
-                && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase(ICD_O_3)) {
+                && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase(ICD_O_3_CODESYSTEM)) {
             // this is to remove the site codes and just show histology codes
             List<AccrualDisease> histologyDiseaseList = new ArrayList<AccrualDisease>();
             histologyDiseaseList.addAll(diseaseList);

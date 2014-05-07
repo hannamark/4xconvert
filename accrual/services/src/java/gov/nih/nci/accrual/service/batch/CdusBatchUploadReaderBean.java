@@ -171,13 +171,16 @@ import org.hibernate.Session;
                 "PMD.ExcessiveClassLength", "PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength" })
 public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal {
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class);
-    private static final String ICD_O_3_CODESYSTEM = "ICD-O-3";
+    /** The ICD-O-3 disease terminology coding system. */
+    public static final String ICD_O_3_CODESYSTEM = "ICD-O-3";
     private static final String SDC_CODESYSTEM = "SDC";
     private static final String ICD9_CODESYSTEM = "ICD9";
+    private static final String ICD10_CODESYSTEM = "ICD10";
     private static final String ICDO3_HIST_DEFAULT_DISEASECODE = "7001";
     private static final String ICDO3_DEFAULT_SITEDISEASECODE = "C998";
     private static final String SDC_DEFAULT_DISEASECODE = "80000001";
     private static final String ICD9_DEFAULT_DISEASECODE = "V100";
+    private static final String ICD10_DEFAULT_DISEASECODE = "Z1000";
     private static final int PREFIXLENGTH = 3;
     
     @EJB
@@ -556,25 +559,22 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     }
 
     private void parseSubjectDisease(String[] line, SubjectAccrualDTO saDTO, RegistryUser ru,  
-    		Ii spId, String diseaseCodeSystem) throws PAException {
+          Ii spId, String diseaseCodeSystem) throws PAException {
         String diseaseCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
         if (StringUtils.isEmpty(diseaseCode) && isSuAbstractor(ru) 
               && !getSearchStudySiteService().isStudyHasDCPId(spId)) {
-        	String codeSystemDB = getDiseaseService().getTrialCodeSystem(IiConverter.convertToLong(spId));
-        	String defaultCodeSystem = SDC_CODESYSTEM;
-        	if (StringUtils.isEmpty(codeSystemDB) && StringUtils.isNotEmpty(diseaseCodeSystem)) {
-        		codeSystemDB = diseaseCodeSystem;
-        	} else if (StringUtils.isEmpty(codeSystemDB) && StringUtils.isEmpty(diseaseCodeSystem)) {
-        		codeSystemDB = defaultCodeSystem;// Checking with Farhan if this is fine
-        	}
-        	if (ICD9_CODESYSTEM.equals(codeSystemDB)) {
-        		getSubjectAccrualDisease(saDTO, ICD9_DEFAULT_DISEASECODE);
-        	} else if (SDC_CODESYSTEM.equals(codeSystemDB)) {
-        		getSubjectAccrualDisease(saDTO, SDC_DEFAULT_DISEASECODE);
-        	} else if (ICD_O_3_CODESYSTEM.equals(codeSystemDB)) {
-        		getSubjectAccrualDisease(saDTO, ICDO3_DEFAULT_SITEDISEASECODE);
-        		getSubjectAccrualDisease(saDTO, ICDO3_HIST_DEFAULT_DISEASECODE);
-        	}
+            String codeSystemDB = PaServiceLocator.getInstance().getAccrualDiseaseTerminologyService()
+                    .getCodeSystem(IiConverter.convertToLong(spId));
+            if (ICD9_CODESYSTEM.equals(codeSystemDB)) {
+                getSubjectAccrualDisease(saDTO, diseaseCodeSystem, ICD9_DEFAULT_DISEASECODE);
+            } else if (ICD10_CODESYSTEM.equals(codeSystemDB)) {
+                getSubjectAccrualDisease(saDTO, diseaseCodeSystem, ICD10_DEFAULT_DISEASECODE);
+            } else if (SDC_CODESYSTEM.equals(codeSystemDB)) {
+                getSubjectAccrualDisease(saDTO, diseaseCodeSystem, SDC_DEFAULT_DISEASECODE);
+            } else if (ICD_O_3_CODESYSTEM.equals(codeSystemDB)) {
+                getSubjectAccrualDisease(saDTO, diseaseCodeSystem, ICDO3_DEFAULT_SITEDISEASECODE);
+                getSubjectAccrualDisease(saDTO, diseaseCodeSystem, ICDO3_HIST_DEFAULT_DISEASECODE);
+            }
         }
         if (StringUtils.isEmpty(diseaseCode)) {
             return;
@@ -585,27 +585,28 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             if (StringUtils.isEmpty(code)) {
                 continue;
             }
-            getSubjectAccrualDisease(saDTO, code);
+            getSubjectAccrualDisease(saDTO, diseaseCodeSystem, code);
         }
     }
 
-	private Element getSubjectAccrualDisease(SubjectAccrualDTO saDTO, String code) {
-		AccrualDisease dis = null;
-        Element element = getDiseaseCache().get(code);
-		if (element == null) {
-		    dis = getDiseaseService().getByCode(code);
-		    if (dis != null) {
-		        element = new Element(dis.getDiseaseCode(), IiConverter.convertToIi(dis.getId()));
-		        getDiseaseCache().put(element);
-		    }
-		}
-		if (code.toUpperCase(Locale.US).charAt(0) == 'C') {
-		    saDTO.setSiteDiseaseIdentifier((Ii) element.getValue());
-		} else {
-		    saDTO.setDiseaseIdentifier((Ii) element.getValue());
-		}
-		return element;
-	}
+   private Element getSubjectAccrualDisease(SubjectAccrualDTO saDTO, String codeSystem, String code) {
+      String key = codeSystem + "||" + code;
+      AccrualDisease dis = null;
+      Element element = getDiseaseCache().get(key);
+      if (element == null) {
+          dis = getDiseaseService().getByCode(codeSystem, code);
+          if (dis != null) {
+              element = new Element(key, IiConverter.convertToIi(dis.getId()));
+              getDiseaseCache().put(element);
+          }
+      }
+      if (StringUtils.equals(ICD_O_3_CODESYSTEM, codeSystem) && code.toUpperCase(Locale.US).charAt(0) == 'C') {
+          saDTO.setSiteDiseaseIdentifier((Ii) element.getValue());
+      } else {
+          saDTO.setDiseaseIdentifier((Ii) element.getValue());
+      }
+      return element;
+   }
 
     /**
      * {@inheritDoc}

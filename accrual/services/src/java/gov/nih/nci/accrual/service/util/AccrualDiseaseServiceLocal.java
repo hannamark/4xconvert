@@ -28,28 +28,17 @@ public interface AccrualDiseaseServiceLocal {
     AccrualDisease get(Ii ii);
     /**
      * Get using code.
-     * @param diseaseCode the code to search for (any code system)
+     * @param codeSystem the disease terminology code system
+     * @param diseaseCode the code to search for
      * @return the object
      */
-    AccrualDisease getByCode(String diseaseCode);
+    AccrualDisease getByCode(String codeSystem, String diseaseCode);
     /**
      * Search for desired disease.
      * @param searchCriteria criteria
      * @return all matching diseases
      */
     List<AccrualDisease> search(AccrualDisease searchCriteria);
-    /**
-     * Return the disease code system (e.g. ICD9) for a given trial
-     * @param spId the StudyProtcol.id
-     * @return the code system, null if code system not yet defined
-     */
-    String getTrialCodeSystem(Long spId);
-    /**
-     * Return the disease code system (e.g. ICD9) for a given trial
-     * @param spId the StudyProtcol.id
-     * @return the code system, null if code system not yet defined
-     */
-    List<String> getValidCodeSystems(Long spId);
     /**
      * Return if the disease code is mandatory for patients on a given trial.
      * @param spId spId the StudyProtcol.id

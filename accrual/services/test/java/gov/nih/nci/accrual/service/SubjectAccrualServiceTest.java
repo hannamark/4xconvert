@@ -376,7 +376,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         StudySite ss = createAccessibleStudySite(); 
         SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
                 IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        when(diseaseSvc.getTrialCodeSystem(anyLong())).thenReturn("xyzzy");
+        when(accDisTerminologySvc.getCodeSystem(anyLong())).thenReturn("xyzzy");
         try {
             bean.manageSubjectAccruals(Arrays.asList(dto));
             fail();
@@ -468,7 +468,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         } catch (IndexedInputValidationException e) {
             //expected
         }
-        when(diseaseSvc.getTrialCodeSystem(any(Long.class))).thenReturn("ICD-O-3");
+        when(accDisTerminologySvc.getCodeSystem(any(Long.class))).thenReturn("ICD-O-3");
         AccrualDisease disease = new AccrualDisease();
         disease.setCodeSystem("ICD-O-3");
         disease.setDiseaseCode("Csite");

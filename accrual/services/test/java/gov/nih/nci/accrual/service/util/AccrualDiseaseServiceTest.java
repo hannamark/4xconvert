@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
@@ -14,16 +13,17 @@ import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
-import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -36,17 +36,20 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
     StudySubjectServiceLocal ssBean;
     SearchStudySiteService sssBean;
     StudyProtocolServiceRemote spBean;
+    AccrualDiseaseTerminologyServiceRemote adtBean;
 
     @Before
     public void setUp() throws Exception {
         ssBean = mock(StudySubjectServiceLocal.class);
         sssBean = mock(SearchStudySiteService.class);
         spBean = mock(StudyProtocolServiceRemote.class);
+        adtBean = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(adtBean.getValidCodeSystems()).thenReturn(Arrays.asList("SDC", "ICD9", "ICD10", "ICD-O-3"));
         bean = new AccrualDiseaseBeanLocal();
-        bean.setStudySubjectSvc(ssBean);
         bean.setSearchStudySiteSvc(sssBean);
         ServiceLocatorPaInterface svcLocator = mock(ServiceLocatorPaInterface.class);
         when(svcLocator.getStudyProtocolService()).thenReturn(spBean);
+        when(svcLocator.getAccrualDiseaseTerminologyService()).thenReturn(adtBean);
         PaServiceLocator.getInstance().setServiceLocator(svcLocator);
         TestSchema.primeData();
         criteria = new AccrualDisease();
@@ -75,8 +78,19 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
 
     @Test
     public void getByCode() {
-        assertNull(bean.getByCode("ode1"));
-        assertNotNull(bean.getByCode("code1"));
+        assertNull(bean.getByCode("ICD9", "ode1"));
+        assertNotNull(bean.getByCode("ICD9", "code1"));
+    }
+
+    @Test
+    public void getByCodeICDO3NoDot() {  // PO-6136
+        assertNull(bean.getByCode("ICD9", "C34.1"));
+        AccrualDisease ad1 = bean.getByCode("ICD-O-3", "C34.1");
+        AccrualDisease ad2 = bean.getByCode("ICD-O-3", "C341");
+        assertNotNull(ad1);
+        assertNotNull(ad2);
+        assertEquals(ad1, ad2);
+        assertNull(bean.getByCode("ICD9", "C341"));
     }
 
     @Test
@@ -96,7 +110,7 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
         assertEquals(1, bean.search(criteria).size());
         criteria.setPreferredName("ame2");
         assertEquals(1, bean.search(criteria).size());
-        criteria.setCodeSystem(null);
+        criteria.setCodeSystem("ICD-O-3");
         criteria.setPreferredName(null);
         criteria.setDiseaseCode("c341");
         assertEquals(1, bean.search(criteria).size());
@@ -112,40 +126,6 @@ public class AccrualDiseaseServiceTest  extends AbstractHibernateTestCase {
         assertEquals("code7", diseaseList.get(1).getDiseaseCode());
         assertEquals("SDC", diseaseList.get(2).getCodeSystem());
         assertEquals("SDC05", diseaseList.get(2).getDiseaseCode());
-    }
-
-    @Test
-    public void getTrialCodeSystemTest() throws Exception {
-        assertNull(bean.getTrialCodeSystem(null));
-        assertNull(bean.getTrialCodeSystem(1L));
-
-        StudySubject ss = new StudySubject();
-        AccrualDisease ad = new AccrualDisease();
-        ss.setDisease(ad);
-        ad.setCodeSystem("xyzzy");
-        when(ssBean.searchActiveByStudyProtocol(anyLong())).thenReturn(ss);
-        assertEquals("xyzzy", bean.getTrialCodeSystem(1L));
-
-        when(ssBean.searchActiveByStudyProtocol(anyLong())).thenThrow(new PAException());
-        assertNull(bean.getTrialCodeSystem(1L));
-    }
-
-    @Test
-    public void getValidCodeSystemsTest() throws Exception {
-        List<String> csList = bean.getValidCodeSystems(1L);
-        assertEquals(3, csList.size());
-        assertEquals(true, csList.contains("ICD9"));
-        assertEquals(true, csList.contains("SDC"));
-        assertEquals(true, csList.contains("ICD-O-3"));
-
-        StudySubject ss = new StudySubject();
-        AccrualDisease ad = new AccrualDisease();
-        ss.setDisease(ad);
-        ad.setCodeSystem("xyzzy");
-        when(ssBean.searchActiveByStudyProtocol(anyLong())).thenReturn(ss);
-        csList = bean.getValidCodeSystems(1L);
-        assertEquals(1, csList.size());
-        assertEquals("xyzzy", csList.get(0));
     }
 
     @Test

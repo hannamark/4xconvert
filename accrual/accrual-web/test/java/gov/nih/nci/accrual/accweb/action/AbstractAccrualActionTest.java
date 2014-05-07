@@ -77,12 +77,19 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.accweb.dto.util.RegistryUserWebDTO;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.accweb.util.MockPaServiceLocator;
+import gov.nih.nci.accrual.accweb.util.MockSearchTrialBean;
 import gov.nih.nci.accrual.accweb.util.MockServiceLocator;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.PaServiceLocator;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
@@ -92,6 +99,7 @@ import org.junit.Test;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.mockrunner.mock.web.MockServletContext;
+import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.config.Configuration;
 import com.opensymphony.xwork2.config.ConfigurationManager;
@@ -165,6 +173,9 @@ public class AbstractAccrualActionTest {
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setUserInRole(AccrualConstants.ROLE_PUBLIC, true);
         assertEquals(AccrualConstants.ROLE_PUBLIC,
                 ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_ROLE));
+        RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
+        ServletActionContext.getRequest().getSession().setAttribute("registryUserWebDTO", registryUserWebDTO);
+        assertEquals(Action.SUCCESS, action.execute());
     }
 
     @Test
@@ -198,6 +209,28 @@ public class AbstractAccrualActionTest {
     }
 
     @Test
+    public void addActionErrorIfEmptyTest() throws Exception {
+        assertFalse(action.hasActionErrors());
+        action.addActionErrorIfEmpty("", "xxx");
+        assertTrue(action.hasActionErrors());
+        action.clearErrorsAndMessages();
+        action.addActionErrorIfEmpty("xxx", "xxx");
+        assertFalse(action.hasActionErrors());
+        Set<String> hashSet = new HashSet<String>();
+        action.addActionErrorIfEmpty(hashSet, "xxx");
+        assertTrue(action.hasActionErrors());
+        hashSet.add("xxx");
+        action.clearErrorsAndMessages();
+        action.addActionErrorIfEmpty(hashSet, "xxx");
+        assertFalse(action.hasActionErrors());
+        action.addActionErrorIfEmpty(null, "xxx");
+        assertTrue(action.hasActionErrors());
+        action.clearErrorsAndMessages();
+        action.addActionErrorIfEmpty(Long.valueOf(1L), "xxx");
+        assertFalse(action.hasActionErrors());
+    }
+
+    @Test
     public void currentActionPropertyTest() {
         action.setCurrentAction("currentAction");
         assertNotNull(action.getCurrentAction());
@@ -215,6 +248,7 @@ public class AbstractAccrualActionTest {
     @After
     public void cleanUpActionContext() {
         ActionContext.setContext(null);
+        MockSearchTrialBean.exception = false;
     }
 
     public void setRole(String role) {

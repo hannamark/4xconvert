@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -92,6 +93,7 @@ import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchStudySiteResultWebDto;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import gov.nih.nci.accrual.accweb.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.accweb.util.MockSearchTrialBean;
 import gov.nih.nci.accrual.accweb.util.MockServiceLocator;
 import gov.nih.nci.accrual.accweb.util.MockStudySubjectBean;
@@ -135,6 +137,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
 
     @Before
     public void initAction() throws Exception {
+        when(MockPaServiceLocator.accrualDiseaseTermSvc.getCodeSystem(1L)).thenReturn("SDC");
         action = new PatientAction();
         action.setStudyProtocolId(1L);
         action.setUnitedStatesId(1L);
@@ -148,7 +151,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     }
     
     @Test
-    public void prepare() {
+    public void prepare() throws Exception {
         setupMockHttpSession();
         
         action = new PatientAction();
@@ -163,9 +166,14 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         codes.add("SDC");
         codes.add("ICD9");
         codes.add("ICD-O-3");
-        when(action.getDiseaseSvc().getValidCodeSystems(any(Long.class))).thenReturn(codes);
+        when(MockPaServiceLocator.accrualDiseaseTermSvc.getValidCodeSystems()).thenReturn(codes);
         action.prepare();
         assertTrue(action.isShowSite());
+        assertFalse(action.hasActionErrors());
+
+        MockSearchTrialBean.exception = true;
+        action.prepare();
+        assertTrue(action.hasActionErrors());
     }
     
     @Test
@@ -541,7 +549,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         codes.add("SDC");
         codes.add("ICD9");
         codes.add("ICD-O-3");
-        when(action.getDiseaseSvc().getValidCodeSystems(any(Long.class))).thenReturn(codes);
+        when(MockPaServiceLocator.accrualDiseaseTermSvc.getValidCodeSystems()).thenReturn(codes);
         when(action.getDiseaseSvc().diseaseCodeMandatory(any(Long.class))).thenReturn(true);
     	patient.setCountryIdentifier(Long.valueOf(101));
         patient.setZip("123456");

@@ -75,7 +75,6 @@
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package gov.nih.nci.accrual.accweb.action;
-
 import gov.nih.nci.accrual.accweb.dto.util.RegistryUserWebDTO;
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
@@ -84,7 +83,6 @@ import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
-import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
@@ -100,7 +98,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 
@@ -128,12 +126,11 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private PerformedActivityService performedActivitySvc;
     private CountryService countrySvc;
     private AccrualDiseaseServiceLocal diseaseSvc;
-    private PlannedActivityServiceRemote plannedActivitySvc;
-    private CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderSvc;
     private BatchFileService batchFileSvc;
     private SubjectAccrualServiceLocal subjectAccrualSvc;
     private LookUpTableServiceRemote lookupTableSvc;
     private SubmissionHistoryService submissionHistorySvc;
+    private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
 
     /**
      * {@inheritDoc}
@@ -146,13 +143,12 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         patientSvc = AccrualServiceLocator.getInstance().getPatientService();
         performedActivitySvc = AccrualServiceLocator.getInstance().getPerformedActivityService();
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
-        cdusBatchUploadReaderSvc = AccrualServiceLocator.getInstance().getBatchUploadReaderService();
         submissionHistorySvc = AccrualServiceLocator.getInstance().getSubmissionHistoryService();
         diseaseSvc = AccrualServiceLocator.getInstance().getAccrualDiseaseService();
-        plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         batchFileSvc = AccrualServiceLocator.getInstance().getBatchFileService();
         subjectAccrualSvc = AccrualServiceLocator.getInstance().getSubjectAccrualService();
         lookupTableSvc = PaServiceLocator.getInstance().getLookUpTableService();
+        accrualDiseaseTerminologyService = PaServiceLocator.getInstance().getAccrualDiseaseTerminologyService();
     }
     /**
      * Default execute method for action classes.
@@ -303,20 +299,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     }    
 
     /**
-     * @return the plannedActivitySvc
-     */
-    public PlannedActivityServiceRemote getPlannedActivitySvc() {
-        return plannedActivitySvc;
-    }
-    
-    /**
-     * @return the cdus batch upload reader service
-     */
-    public CdusBatchUploadReaderServiceLocal getCdusBatchUploadReaderSvc() {
-        return cdusBatchUploadReaderSvc;
-    }
-    
-    /**
      * @return the batch file service
      */
     public BatchFileService getBatchFileSvc() {
@@ -341,5 +323,11 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public SubmissionHistoryService getSubmissionHistorySvc() {
         return submissionHistorySvc;
+    }
+    /**
+     * @return the accrualDiseaseTerminologyService
+     */
+    public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
+        return accrualDiseaseTerminologyService;
     }
 }

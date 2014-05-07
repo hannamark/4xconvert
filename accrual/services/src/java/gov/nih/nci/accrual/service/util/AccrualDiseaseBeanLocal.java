@@ -1,10 +1,9 @@
 package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
+import static gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderBean.ICD_O_3_CODESYSTEM;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
-import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -17,7 +16,6 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,8 +25,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
@@ -45,8 +41,6 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
         implements AccrualDiseaseServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(AccrualDiseaseBeanLocal.class);
-
-    private static final String DEFAULT_CODE_SYSTEM = "ICD9";
 
     /**
      * Class required by the AbstractBaseSearchBean sort functionality.
@@ -77,8 +71,6 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
     }
 
     @EJB
-    private StudySubjectServiceLocal studySubjectSvc;
-    @EJB
     private SearchStudySiteService searchStudySiteSvc;
     
 
@@ -101,13 +93,14 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
         boolean isCode = false;
         String cs = ii.getIdentifierName();
         if (StringUtils.isNotBlank(cs)) {
-            List<String> csList = getValidCodeSystems(null);
+            List<String> csList = PaServiceLocator.getInstance().getAccrualDiseaseTerminologyService().
+                    getValidCodeSystems();
             if (csList.contains(cs)) {
                 isCode = true;
             }
         }
         if (isCode) {
-            return getByCode(ii.getExtension());
+            return getByCode(cs, ii.getExtension());
         }
         return get(IiConverter.convertToLong(ii));
     }
@@ -116,8 +109,12 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
      * {@inheritDoc}
      */
     @Override
-    public AccrualDisease getByCode(String diseaseCode) {
+    public AccrualDisease getByCode(String codeSystem, String diseaseCode) {
+        if (StringUtils.isBlank(codeSystem) || StringUtils.isBlank(diseaseCode)) {
+            return null;
+        }
         AccrualDisease criteria = new AccrualDisease();
+        criteria.setCodeSystem(codeSystem);
         criteria.setDiseaseCode(diseaseCode);
         List<AccrualDisease> dList = search(criteria);
         return dList.isEmpty() ? null : dList.get(0);
@@ -133,65 +130,17 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
         AccrualDiseaseSortCriterion.DISEASE_CODE), false);
         SearchCriteria<AccrualDisease> criteria = new AnnotatedBeanSearchCriteria<AccrualDisease>(searchCriteria);
         List<AccrualDisease> result = super.search(criteria, params);
-        if (result.isEmpty() && searchCriteria.getDiseaseCode() != null && !searchCriteria.getDiseaseCode().isEmpty()
-                && searchCriteria.getDiseaseCode().toUpperCase(Locale.US).charAt(0) == 'C') {
-            searchCriteria.setCodeSystem("ICD-O-3");
+        if (result.isEmpty() && StringUtils.isNotEmpty(searchCriteria.getDiseaseCode())
+                && searchCriteria.getDiseaseCode().toUpperCase(Locale.US).charAt(0) == 'C'
+                && (StringUtils.equals(ICD_O_3_CODESYSTEM, searchCriteria.getCodeSystem())
+                    || StringUtils.isEmpty(searchCriteria.getCodeSystem()))) {
+            searchCriteria.setCodeSystem(ICD_O_3_CODESYSTEM);
             int length = searchCriteria.getDiseaseCode().length();
             String appendedDC = searchCriteria.getDiseaseCode().substring(0, length - 1) 
                     + "." + searchCriteria.getDiseaseCode().substring(length - 1, length);
             searchCriteria.setDiseaseCode(appendedDC);
             criteria = new AnnotatedBeanSearchCriteria<AccrualDisease>(searchCriteria);
             result = super.search(criteria, params);
-        }
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTrialCodeSystem(Long spId) {
-        String result = null;
-        if (spId != null) {
-            try {
-                StudySubject ss = studySubjectSvc.searchActiveByStudyProtocol(spId);
-                if (ss != null) {
-                    result = ss.getDisease() != null ? ss.getDisease().getCodeSystem() 
-                                : ss.getSiteDisease().getCodeSystem();
-                }
-            } catch (PAException e) {
-                LOG.error(e);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<String> getValidCodeSystems(Long spId) {
-        LinkedList<String> result = new LinkedList<String>();
-        String existing = getTrialCodeSystem(spId);
-        if (existing != null) {
-            result.add(existing);
-        } else {
-            try {
-                Session session = PaHibernateUtil.getCurrentSession();
-                String hql = "select distinct d.codeSystem from AccrualDisease d order by d.codeSystem";
-                Query query = session.createQuery(hql);
-                List<String> qList = query.list();
-                for (String code : qList) {
-                    if (DEFAULT_CODE_SYSTEM.equals(code)) {
-                        result.addFirst(code);
-                    } else {
-                        result.add(code);
-                    }
-                }
-            } catch (Exception e) {
-                LOG.error(e);
-            }
         }
         return result;
     }
@@ -216,13 +165,6 @@ public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisea
             LOG.error(e);
         }
         return true;
-    }
-
-    /**
-     * @param studySubjectSvc the studySubjectSvc to set
-     */
-    public void setStudySubjectSvc(StudySubjectServiceLocal studySubjectSvc) {
-        this.studySubjectSvc = studySubjectSvc;
     }
 
     /**

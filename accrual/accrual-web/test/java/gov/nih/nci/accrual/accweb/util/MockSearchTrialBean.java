@@ -110,6 +110,7 @@ public class MockSearchTrialBean implements SearchTrialService {
 
     /** mock data. */
     public static List<SearchTrialResultDto> dtos;
+    public static boolean exception;
 
     static {
         dtos = new ArrayList<SearchTrialResultDto>();
@@ -176,6 +177,9 @@ public class MockSearchTrialBean implements SearchTrialService {
      * {@inheritDoc}
      */
     public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, Ii authUser) throws PAException {
+        if (exception) {
+            throw new PAException();
+    	}
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
         for (SearchTrialResultDto dto : dtos) {
             if (contains(dto.getAssignedIdentifier(), criteria.getAssignedIdentifier())
@@ -191,6 +195,9 @@ public class MockSearchTrialBean implements SearchTrialService {
      * {@inheritDoc}
      */
     public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws PAException {
+        if (exception) {
+            throw new PAException();
+    	}
         SearchTrialResultDto result = null;
         for (SearchTrialResultDto dto : dtos) {
             if (IiConverter.convertToLong(studyProtocolIi).equals(IiConverter.convertToLong(

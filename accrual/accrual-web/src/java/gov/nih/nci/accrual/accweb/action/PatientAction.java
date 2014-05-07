@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.accweb.action;
 
+import static gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderBean.ICD_O_3_CODESYSTEM;
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
@@ -146,9 +147,9 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
                 setSpIi(IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
                 loadTrialSummaryIntoSession();
             }
-            List<String> dCode = getDiseaseSvc().getValidCodeSystems(IiConverter.convertToLong(getSpIi()));
-            if (dCode.contains("ICD-O-3")) {
-                showSite = true;
+            String dCode = getAccrualDiseaseTerminologyService().getCodeSystem(IiConverter.convertToLong(getSpIi()));
+            if (dCode == null || ICD_O_3_CODESYSTEM.equals(dCode)) {
+                setShowSite(true);
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
