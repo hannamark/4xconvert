@@ -1,8 +1,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <div class="col-xs-8">
 <s:set name="leadOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getLeadOrganization()" />
-<s:hidden id="trialDTO.leadOrganizationIdentifier" value="" name="trialDTO.leadOrganizationIdentifier"/>
-<s:hidden id="trialDTO.leadOrganizationName" value="" name="trialDTO.leadOrganizationName"/>
+<s:hidden id="trialDTO.leadOrganizationIdentifier" name="trialDTO.leadOrganizationIdentifier"/>
+<s:hidden id="trialDTO.leadOrganizationName" name="trialDTO.leadOrganizationName"/>
 <div class="collapse navbar-collapse organization-dropdown">
         <div class="nav navbar-nav" style="width: 100%;">
           <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.leadOrganizationNameField">Please Select the Lead Organization <b class="caret"></b></a>  
@@ -13,9 +13,9 @@
             		<tr><td colspan="3"><hr/></td></tr>
             	</s:if>
             	<s:else>
-        			<tr><td><a href="javascript:void(0)" onclick="lookup4loadleadorg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getPoId()"/></a></td>
-        			<td><a href="javascript:void(0)" onclick="lookup4loadleadorg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getCtepId()"/></a></td>
-        			<td><a href="javascript:void(0)" onclick="lookup4loadleadorg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getName()"/></a></td></tr>
+        			<tr><td><a href="javascript:void(0)" onclick="lookup4loadleadorg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getPoId()"/></a></td>
+        			<td><a href="javascript:void(0)" onclick="lookup4loadleadorg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getCtepId()"/></a></td>
+        			<td><a href="javascript:void(0)" onclick="lookup4loadleadorg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getHTMLName()"/></a></td></tr>
         		</s:else>
         		</s:iterator>
         		<tr><td colspan="3"><a href="javascript:void(0)" onclick="lookup4loadleadorg(-1, '')">Search...</a></td></tr>

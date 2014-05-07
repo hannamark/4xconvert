@@ -71,15 +71,20 @@
           var div = document.getElementById('loadSummary4FundingSponsorField');   
           div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
           var aj = callAjaxPost(div, url, params);
-	  	} 
-		//since there can be many we reset the form each time.
-		$('trialDTO.summaryFourOrgName').innerHTML = 'Please Select the Summary 4 Sponsor Organization.';
+	  	}
 		$('dropdown-sum4Organization').hide();
 	      
 	  }
 	  
 	  document.observe("dom:loaded", function() {
 	                                     displayTrialStatusDefinition('trialDTO_statusCode');
+	                                     if($('trialDTO.leadOrganizationName').value) {
+	                                     	$('trialDTO.leadOrganizationNameField').innerHTML = $('trialDTO.leadOrganizationName').value;
+	  									 }
+	                                     if($('trialDTO.sponsorName').value) {
+	                                     	$('trialDTO.sponsorNameField').innerHTML = $('trialDTO.sponsorName').value;
+	  									 }
+	                     		  		
 	                                 });
 	  
 	             
@@ -215,8 +220,8 @@
                           </div>
                           <div class="form-group">
                               <label id="trialDTO.summaryFourOrgNameTR" for="trialDTO.summaryFourOrgName" class="col-xs-4 control-label"><fmt:message key="update.proprietary.trial.summary4Sponsor"/><span class="required">*</span></label>
-                              <div id="loadSummary4FundingSponsorField"  class="col-xs-8">
-                                  <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
+                              <div class="col-xs-8">
+                                  <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsorSelector.jsp" %>
                               </div>                                    
                           </div>
                           <div class="form-group">                               

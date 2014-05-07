@@ -8,6 +8,8 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,6 +18,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /**
  * Various functions to return the organization lists needed for populating the registry
@@ -73,12 +77,22 @@ public class FilterOrganizationUtil {
             
             if (org != null) {
                 try {
-                    List<Long> siblings = FamilyHelper.getAllRelatedOrgs(Long.parseLong(org.getIdentifier()));
+                    final List<Long> siblings = FamilyHelper.getAllRelatedOrgs(Long.parseLong(org.getIdentifier()));
+                    final List<Organization> orgList = new ArrayList<Organization>();
                     for (long orgId : siblings) {
                         final Organization tempOrg = getOrganizationByPoID(orgId);
                         if (tempOrg != null) {
-                            list.add(new OrgItem(tempOrg));
+                            orgList.add(tempOrg);
                         }
+                    }
+                    Collections.sort(orgList, new Comparator<Organization>() {
+                        @Override
+                        public int compare(Organization o1, Organization o2) {
+                            return o1.getName().compareTo(o2.getName());
+                        }
+                    });
+                    for (Organization orgItem : orgList) {
+                        list.add(new OrgItem(orgItem));
                     }
                 } catch (Exception e) {
                     //Deliberately add an error to the list in case of error...
@@ -132,12 +146,22 @@ public class FilterOrganizationUtil {
         
         if (org != null) {
             try {
-                List<Long> siblings = FamilyHelper.getAllRelatedOrgs(Long.parseLong(org.getIdentifier()));
+                final List<Long> siblings = FamilyHelper.getAllRelatedOrgs(Long.parseLong(org.getIdentifier()));
+                final List<Organization> orgList = new ArrayList<Organization>();
                 for (long orgId : siblings) {
                     final Organization tempOrg = getOrganizationByPoID(orgId);
                     if (tempOrg != null) {
-                        list.add(new OrgItem(tempOrg));
+                        orgList.add(tempOrg);
                     }
+                }
+                Collections.sort(orgList, new Comparator<Organization>() {
+                    @Override
+                    public int compare(Organization o1, Organization o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+                for (Organization orgItem : orgList) {
+                    list.add(new OrgItem(orgItem));
                 }
             } catch (Exception e) {
                 //Deliberately add an error to the list in case of error...
@@ -371,6 +395,22 @@ public class FilterOrganizationUtil {
             }
             
             return "Error!";
+        }
+        
+        /**
+         * returns the name with html escapes applied.
+         * @return the name suitable for html use
+         */
+        public String getHTMLName() {
+            return escapeHtml(getName());
+        }
+        
+        /**
+         * Get the name html esscaped and with single quotes escaped.
+         * @return the name suitable for js use.
+         */
+        public String getJSName() {
+            return escapeHtml(getName()).replaceAll("'", "\\\\'");
         }
     }
     

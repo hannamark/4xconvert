@@ -2,7 +2,7 @@
 
 <div class="col-xs-8">
 <s:set var="sponsorOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getSponsorOrganization()" />
-<s:hidden id="trialDTO.sponsorName" value="" name="trialDTO.sponsorName"/>
+<s:hidden id="trialDTO.sponsorName" name="trialDTO.sponsorName"/>
 <div class="collapse navbar-collapse organization-dropdown">
         <div class="nav navbar-nav" style="width: 100%;">
           <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.sponsorNameField">Please Select the Sponsor Organization <b class="caret"></b></a>  
@@ -13,9 +13,9 @@
             		<tr><td colspan="3"><hr/></td></tr>
             	</s:if>
             	<s:else>
-        			<tr><td><a href="javascript:void(0)" onclick="lookup4sponsor(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getPoId()"/></a></td>
-        			<td><a href="javascript:void(0)" onclick="lookup4sponsor(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getCtepId()"/></a></td>
-        			<td><a href="javascript:void(0)" onclick="lookup4sponsor(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getName()"/>')"><s:property value="#orgItem.getName()"/></a></td></tr>
+        			<tr><td><a href="javascript:void(0)" onclick="lookup4sponsor(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getPoId()"/></a></td>
+        			<td><a href="javascript:void(0)" onclick="lookup4sponsor(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getCtepId()"/></a></td>
+        			<td><a href="javascript:void(0)" onclick="lookup4sponsor(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getHTMLName()"/></a></td></tr>
         		</s:else>
         		</s:iterator>
         		<tr><td colspan="3"><a href="javascript:void(0)" onclick="lookup4sponsor(-1, '')">Search...</a></td></tr>
