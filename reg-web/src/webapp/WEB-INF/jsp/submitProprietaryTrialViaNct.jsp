@@ -23,7 +23,7 @@
 <body>
 	<!-- main content begins-->
 	<h1 class="heading"><span><fmt:message key="importctgov.title" /></span></h1>
-	<c:set var="topic" scope="request" value="submittrial" />
+	<c:set var="topic" scope="request" value="ctimport" />
 		<s:form id="importCtGovForm" cssClass="form-horizontal" role="form">
 			<s:token name="struts.token.importctgov" />
 			<s:if test="hasActionErrors()">

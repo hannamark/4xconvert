@@ -130,7 +130,7 @@
     <body>
         <!-- main content begins-->
         <h1><fmt:message key="submit.trial.page.header"/></h1>
-        <c:set var="topic" scope="request" value="submittrial"/>        
+        <c:set var="topic" scope="request" value="ctimport"/>        
         <div class="box" id="filters">
             <reg-web:failureMessage/>
             <s:form name="submitProprietaryTrial" method="POST" enctype="multipart/form-data">
