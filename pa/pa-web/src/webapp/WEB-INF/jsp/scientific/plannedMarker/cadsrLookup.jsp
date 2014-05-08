@@ -22,6 +22,14 @@
                  $('searchMeaning').value = '';
                  $('searchDescription').value = '';
                  $('searchPublicId').value = '';
+                 var ele = document.getElementsByName("caseType");
+                 for(var i=0;i<ele.length;i++){
+                    ele[i].checked = false;
+                 }
+                 var ele = document.getElementsByName("highlightRequired");
+                 for(var i=0;i<ele.length;i++){
+                    ele[i].checked = false;
+                 }
              }
               function loadTopDiv(value) {
                 var eval = $('plannedMarker.evaluationType').value;
