@@ -149,6 +149,7 @@ public class SearchTrialBean implements SearchTrialService {
     private static final int SP_ID_IDX = 4;
     private static final int SOS_STATUS_IDX = 5;
     private static final int PERSON_IDX = 6;
+    private static final int DIS_CODE_SYSTEM_IDX = 7;
 
     private static final String UNCHECKED = "unchecked";    
 
@@ -166,7 +167,14 @@ public class SearchTrialBean implements SearchTrialService {
                 List<Long> queryList = query.list();
                 Set<Long> authIds = getAuthorizedTrials(IiConverter.convertToLong(authorizedUser));
                 Collection<Long> searchIds = CollectionUtils.intersection(queryList, authIds);
-                return getTrialSummariesByStudyProtocolIdentifiers(searchIds);
+                result = getTrialSummariesByStudyProtocolIdentifiers(searchIds);
+                List<Long> searchIdList = new ArrayList<Long>(searchIds);
+                Map<Long, Boolean> changeableList = PaServiceLocator.getInstance().
+                        getAccrualDiseaseTerminologyService().canChangeCodeSystemForSpIds(searchIdList);
+                for (SearchTrialResultDto dto : result) {
+                    dto.setCanChangeDiseaseCodeSystem(BlConverter.convertToBl(
+                            changeableList.get(IiConverter.convertToLong(dto.getIdentifier()))));
+                }
             } catch (HibernateException hbe) {
                 throw new PAException("Hibernate exception in SearchTrialBean.search().", hbe);
             }
@@ -208,7 +216,7 @@ public class SearchTrialBean implements SearchTrialService {
         Session session = PaHibernateUtil.getCurrentSession();
         String hql =
             " select oi.extension, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
-            + "      sp, sos.statusCode, per "
+            + "      sp, sos.statusCode, per, sp.accrualDiseaseCodeSystem "
             + "from StudyProtocol as sp "
             + "left outer join sp.studyOverallStatuses as sos "
             + "left outer join sp.studyContacts as sc "
@@ -266,6 +274,7 @@ public class SearchTrialBean implements SearchTrialService {
         } else if (sp instanceof InterventionalStudyProtocol) {
             trial.setTrialType(StConverter.convertToSt(AccrualUtil.INTERVENTIONAL));
         }
+        trial.setDiseaseCodeSystem(StConverter.convertToSt((String) obj[DIS_CODE_SYSTEM_IDX]));
         return trial;
     }
 

@@ -77,12 +77,6 @@
 package gov.nih.nci.accrual.accweb.decorator;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
  * @author Rajani Kumar
@@ -91,68 +85,44 @@ import gov.nih.nci.pa.iso.util.StConverter;
 public class SearchTrialResultDecorator extends AbstractStudyDecorator<SearchTrialResultDto> {
 
     /**
-     *
      * @return assignedIdentifier as a String
      */
     public String getAssignedIdentifier() {
-        St assignedIdentifier = ((SearchTrialResultDto) getCurrentRowObject()).getAssignedIdentifier();
-
-        if (assignedIdentifier != null) {
-            return StConverter.convertToString(assignedIdentifier);
-        }
-        return "";
+        return getSt(((SearchTrialResultDto) getCurrentRowObject()).getAssignedIdentifier());
     }
 
     /**
-     *
      * @return officialTitle as a String
      */
     public String getOfficialTitle() {
-        St officialTitle = ((SearchTrialResultDto) getCurrentRowObject()).getOfficialTitle();
-
-        if (officialTitle != null) {
-            return StConverter.convertToString(officialTitle);
-        }
-        return "";
+        return getSt(((SearchTrialResultDto) getCurrentRowObject()).getOfficialTitle());
     }
 
     /**
-     *
      * @return studyStatusCode as a String
      */
     public String getStudyStatusCode() {
-        Cd studyStatusCode = ((SearchTrialResultDto) getCurrentRowObject()).getStudyStatusCode();
-
-        if (studyStatusCode != null) {
-            return CdConverter.convertCdToString(studyStatusCode);
-        }
-        return "";
+        return getCd(((SearchTrialResultDto) getCurrentRowObject()).getStudyStatusCode());
     }
     
     /**
-    *
     * @return true if trial is Industrial
     */
-   public boolean isIndustrial() {
-       Bl isIndustrial = ((SearchTrialResultDto) getCurrentRowObject()).getIndustrial();
+    public boolean isIndustrial() {
+        return getBl(((SearchTrialResultDto) getCurrentRowObject()).getIndustrial());
+    }
 
-       if (isIndustrial != null) {
-           return BlConverter.convertToBoolean(isIndustrial);
-       }
-       return false;
-   }
+    /**
+     * @return trialType as a String
+     */
+    public String getTrialType() {
+        return getSt(((SearchTrialResultDto) getCurrentRowObject()).getTrialType());
+    }
 
-   /**
-    *
-    * @return trialType as a String
-    */
-   public String getTrialType() {
-       St trialType = ((SearchTrialResultDto) getCurrentRowObject()).getTrialType();
-
-       if (trialType != null) {
-           return StConverter.convertToString(trialType);
-       }
-       return "";
-   }
-
+    /**
+     * @return diseaseCodeSystem as String
+     */
+    public String getDiseaseCodeSystem() {
+        return getSt(((SearchTrialResultDto) getCurrentRowObject()).getDiseaseCodeSystem());
+    }
 }

@@ -26,7 +26,7 @@ function handleEdit(rowId){
 }
 function diseaseCodeSystem() {
     var newValue = document.forms[0].accrualDiseaseTerminology.value;
-    var  url = '/pa/protected/"manageAccrualAccessupdateDiseaseTerminology.action';
+    var url = '/pa/protected/manageAccrualAccessupdateDiseaseTerminology.action';
     var params = {newValue : newValue};
     var aj = callAjaxPost(null, url, params);
     var div = $('diseaseterminologydiv');

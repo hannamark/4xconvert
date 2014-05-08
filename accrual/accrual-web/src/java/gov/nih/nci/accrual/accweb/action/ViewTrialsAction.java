@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author Rajani Kumar
@@ -94,6 +95,8 @@ public class ViewTrialsAction extends AbstractListEditAccrualAction<SearchTrialR
     private static final long serialVersionUID = 7699464509053550016L;
 
     private SearchTrialCriteriaDto criteria = new SearchTrialCriteriaDto();
+    private String diseaseCodeSystem;
+    private Long studyProtocolId;
 
     /**
      * {@inheritDoc}
@@ -109,6 +112,16 @@ public class ViewTrialsAction extends AbstractListEditAccrualAction<SearchTrialR
             addActionError(e.getLocalizedMessage());
         }
     }
+
+    /**
+     * @return the action result
+     * @throws PAException  PAException
+     */
+    public String updateDiseaseCodeSystem() throws PAException {
+        getAccrualDiseaseTerminologyService().updateCodeSystem(getStudyProtocolId(), getDiseaseCodeSystem());
+        return super.execute();
+    }
+
     /**
      *
      * @return criteria
@@ -122,5 +135,33 @@ public class ViewTrialsAction extends AbstractListEditAccrualAction<SearchTrialR
      */
     public void setCriteria(SearchTrialCriteriaDto criteria) {
         this.criteria = criteria;
+    }
+
+    /**
+     * @return diseaseCodeSystem
+     */
+    public String getDiseaseCodeSystem() {
+        return diseaseCodeSystem;
+    }
+
+    /**
+     * @param diseaseCodeSystem the diseaseCodeSystem to set
+     */
+    public void setDiseaseCodeSystem(String diseaseCodeSystem) {
+        this.diseaseCodeSystem = diseaseCodeSystem;
+    }
+
+    /**
+     * @return studyProtocolId
+     */
+    public Long getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(Long studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
 }

@@ -99,7 +99,9 @@ public class SearchTrialResultDto extends AbstractStudyDto {
     private Bl industrial;
     private St trialType;
     private St accrualSubmissionLevel;
-    
+    private St diseaseCodeSystem;
+    private Bl canChangeDiseaseCodeSystem;
+
     /**
      * @return the assignedIdentifier
      */
@@ -208,5 +210,29 @@ public class SearchTrialResultDto extends AbstractStudyDto {
      */
     public void setAccrualSubmissionLevel(St accrualSubmissionLevel) {
         this.accrualSubmissionLevel = accrualSubmissionLevel;
+    }
+    /**
+     * @return the diseaseCodeSystem
+     */
+    public St getDiseaseCodeSystem() {
+        return diseaseCodeSystem;
+    }
+    /**
+     * @param diseaseCodeSystem the diseaseCodeSystem to set
+     */
+    public void setDiseaseCodeSystem(St diseaseCodeSystem) {
+        this.diseaseCodeSystem = diseaseCodeSystem;
+    }
+    /**
+     * @return canChangeDiseaseCodeSystem
+     */
+    public Bl getCanChangeDiseaseCodeSystem() {
+        return canChangeDiseaseCodeSystem;
+    }
+    /**
+     * @param canChangeDiseaseCodeSystem the canChangeDiseaseCodeSystem to set
+     */
+    public void setCanChangeDiseaseCodeSystem(Bl canChangeDiseaseCodeSystem) {
+        this.canChangeDiseaseCodeSystem = canChangeDiseaseCodeSystem;
     }
 }

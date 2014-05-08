@@ -128,6 +128,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -149,13 +150,19 @@ import org.junit.Test;
  * @since Aug 25, 2009
  */
 public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialService> {
-	SearchTrialBean bean;
+    SearchTrialBean bean;
+    ServiceLocatorPaInterface paSvcLocator;
+    AccrualDiseaseTerminologyServiceRemote adtSvc;
 
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
         AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
         bean = new SearchTrialBean();
+        paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        adtSvc = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(paSvcLocator.getAccrualDiseaseTerminologyService()).thenReturn(adtSvc);
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
     }
 
     @Test

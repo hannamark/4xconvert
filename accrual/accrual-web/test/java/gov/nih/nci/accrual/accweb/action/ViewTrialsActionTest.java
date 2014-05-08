@@ -119,8 +119,26 @@ public class ViewTrialsActionTest extends AbstractAccrualActionTest {
     }
 
     @Test
+    public void updateDiseaseCodeSystemTest() throws Exception {
+    	action.prepare();
+        assertEquals(ActionSupport.SUCCESS, action.updateDiseaseCodeSystem());
+    }
+
+    @Test
      public void criteriaPropertyTest() {
         action.setCriteria(criteria);
         assertNotNull(action.getCriteria());
+    }
+
+    @Test
+     public void protocolIdPropertyTest() {
+        action.setStudyProtocolId(6L);
+        assertNotNull(action.getStudyProtocolId());
+    }
+
+    @Test
+     public void diseaseCodeSystemPropertyTest() {
+        action.setDiseaseCodeSystem("xyzzy");
+        assertNotNull(action.getDiseaseCodeSystem());
     }
 }

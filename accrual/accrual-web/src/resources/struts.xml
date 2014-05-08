@@ -94,7 +94,7 @@
             <result name="acceptView" type="redirectAction">viewTrials.action</result>
         </action>
 
-        <action name="viewTrials*" class="gov.nih.nci.accrual.accweb.action.ViewTrialsAction">
+        <action name="viewTrials*" class="gov.nih.nci.accrual.accweb.action.ViewTrialsAction" method="{1}">
             <interceptor-ref name="methodValidationStack"/>
             <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>

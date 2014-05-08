@@ -15,6 +15,10 @@
 		document.forms[0].action = "viewTrials.action";
 		document.forms[0].submit();
 	}
+    function saveCodeSystem(spId, codeSystem) {
+        document.forms[0].action="viewTrialsupdateDiseaseCodeSystem.action?studyProtocolId="+spId+"&diseaseCodeSystem="+codeSystem;
+        document.forms[0].submit();
+    }
 </SCRIPT>
 </head>
 <body>

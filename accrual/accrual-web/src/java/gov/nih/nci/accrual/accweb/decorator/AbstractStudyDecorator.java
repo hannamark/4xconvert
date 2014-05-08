@@ -79,8 +79,15 @@
 package gov.nih.nci.accrual.accweb.decorator;
 
 import gov.nih.nci.accrual.dto.AbstractStudyDto;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import org.displaytag.decorator.TableDecorator;
 
@@ -97,7 +104,7 @@ public abstract class AbstractStudyDecorator<DTO extends AbstractStudyDto> exten
     */
    @SuppressWarnings("unchecked")
    public String getIdentifier() {
-       Ii identifier = ((DTO) this.getCurrentRowObject()).getIdentifier();
+       Ii identifier = ((DTO) getCurrentRowObject()).getIdentifier();
        return identifier == null ? "" : IiConverter.convertToString(identifier);
    }
 
@@ -108,8 +115,37 @@ public abstract class AbstractStudyDecorator<DTO extends AbstractStudyDto> exten
      */
     @SuppressWarnings("unchecked")
     public String getStudyProtocolIdentifier() {
-        Ii studyProtocolIdentifier = ((DTO) this.getCurrentRowObject()).getStudyProtocolIdentifier();
+        Ii studyProtocolIdentifier = ((DTO) getCurrentRowObject()).getStudyProtocolIdentifier();
         return studyProtocolIdentifier == null ? "" : IiConverter.convertToString(studyProtocolIdentifier);
     }
 
+    /**
+     * @param st input iso
+     * @return string
+     */
+    protected String getSt(St st) {
+        if (!ISOUtil.isStNull(st)) {
+            return StConverter.convertToString(st);
+        }
+        return "";
+    }
+
+    /**
+     * @param cd input iso
+     * @return string
+     */
+    protected String getCd(Cd cd) {
+        if (!ISOUtil.isCdNull(cd)) {
+            return CdConverter.convertCdToString(cd);
+        }
+        return "";
+    }
+
+    /**
+     * @param bl input iso
+     * @return boolean
+     */
+    protected boolean getBl(Bl bl) {
+        return BlConverter.convertToBool(bl);
+    }
 }
