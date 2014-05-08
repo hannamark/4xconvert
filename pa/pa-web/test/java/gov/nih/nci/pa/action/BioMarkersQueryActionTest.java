@@ -84,6 +84,7 @@ package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Matchers.any;
@@ -175,6 +176,16 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         when(studyProtocolService.getTrialProcessingStatus((List<Long>) any(Util.class))).thenReturn(statusMap);
         assertEquals(bioMarkersQueryAction.execute(), "success");
         assertNotNull(bioMarkersQueryAction.getPlannedMarkerList());
+        assertEquals(1, bioMarkersQueryAction.getPlannedMarkerList().size());
+        statusMap.clear();
+        statusMap.put(123456L, "REJECTED");
+        statusMap.put(123457L, "SUBMISSION_TERMINATED");
+        when(plannedMarkerService.getPlannedMarkers()).thenReturn(dtos);
+        when(studyProtocolService.getTrialNciId((List<Long>) any(Util.class))).thenReturn(identifierMap);
+        when(studyProtocolService.getTrialProcessingStatus((List<Long>) any(Util.class))).thenReturn(statusMap);
+        assertEquals(bioMarkersQueryAction.execute(), "success");
+        assertTrue(bioMarkersQueryAction.getPlannedMarkerList().isEmpty());
+        assertEquals(0, bioMarkersQueryAction.getPlannedMarkerList().size());
     }
 
     @Test
