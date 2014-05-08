@@ -725,28 +725,17 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                     tsrDate = date;
                 }
             }
-            
+            if (!fieldsOfInterestChanged) {
+                studyInboxService.closeMostRecent(spId);
+            }
             if (lastUpdateDate != null && tsrDate != null
                     && tsrDate.after(lastUpdateDate)) {
-                closeStudyInboxAndAcceptTrial(spId);
+                acceptTrial(spId);
             }
-            
         } catch (ParseException e) {
             LOG.error(e, e);
         } catch (TooManyResultsException e) {
             LOG.error(e, e);
-        }
-    }
-
-    private void closeStudyInboxAndAcceptTrial(Ii spId) throws PAException {
-        studyInboxService.closeMostRecent(spId);
-        DocumentWorkflowStatusDTO dws = dwsService
-                .getCurrentByStudyProtocol(spId);
-        if (dws != null
-                && DocumentWorkflowStatusCode.SUBMITTED.equals(CdConverter
-                        .convertCdToEnum(DocumentWorkflowStatusCode.class,
-                                dws.getStatusCode()))) {
-            acceptTrial(spId);
         }
     }
 
@@ -755,13 +744,20 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
      * @throws PAException
      */
     private void acceptTrial(Ii spId) throws PAException {
-        DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
-        dwfDto.setStatusCode(CdConverter
-                .convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
-        dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
-                new Timestamp(System.currentTimeMillis()), null));
-        dwfDto.setStudyProtocolIdentifier(spId);
-        documentWorkflowStatusService.create(dwfDto);
+        DocumentWorkflowStatusDTO dws = dwsService
+                .getCurrentByStudyProtocol(spId);
+        if (dws != null 
+                && DocumentWorkflowStatusCode.SUBMITTED.equals(
+                        CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, 
+                                dws.getStatusCode()))) {
+            DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+            dwfDto.setStatusCode(CdConverter
+                    .convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
+            dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
+                    new Timestamp(System.currentTimeMillis()), null));
+            dwfDto.setStudyProtocolIdentifier(spId);
+            documentWorkflowStatusService.create(dwfDto);
+        }
     }
 
     /**

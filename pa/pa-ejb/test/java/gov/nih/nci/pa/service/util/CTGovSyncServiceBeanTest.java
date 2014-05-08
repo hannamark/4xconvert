@@ -540,7 +540,55 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             sp = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class, id);
             assertNotNull(sp.getOfficialTitle());
             assertTrue("Official title must match", sp.getOfficialTitle().equals(officialTitle));
+            StudyInbox inbox = sp.getStudyInbox().iterator().next();
+            assertNotNull(inbox);
+            assertEquals(inbox.getComments(), 
+                    "Trial has been updated from ClinicalTrials.gov\rDetailed Description changed\rEligibility Criteria changed");
+            //fields of interest don't get auto acknowledged
+            assertNull(inbox.getCloseDate());            
+        } finally {
+            deactivateTrial(session, id);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testPO7090() throws PAException {
+        String nctID = "NCT00001111";
+        String newNctID = "NCT00001112";
+        //Exercise new import trial
+        String nciID = serviceBean.importTrial(nctID);
+        assertTrue(StringUtils.isNotEmpty(nciID));
+        
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+        
+        final long id = getProtocolIdByNciId(nciID, session);
+        try {
+            InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
+                    .get(InterventionalStudyProtocol.class, id);
+            // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML 
+            //that actually belongs to a different trial.
+            changeNCTNumber(nctID, newNctID);
             
+            // Apply update on top of the existing record.
+            String newNciID = serviceBean.importTrial(newNctID);
+            final long newId = getProtocolIdByNciId(newNciID, session);
+            
+            session.flush();
+            session.clear();
+            
+            // Make sure we didn't create two protocols.
+            assertEquals(nciID, newNciID);
+            assertEquals(id, newId);
+            
+            sp = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class, id);
+            StudyInbox inbox = sp.getStudyInbox().iterator().next();
+            assertNotNull(inbox);
+            assertEquals(inbox.getComments(), "Trial has been updated from ClinicalTrials.gov");
+            //non fields of interest get auto acknowledged
+            assertNotNull(inbox.getCloseDate());            
         } finally {
             deactivateTrial(session, id);
         }
