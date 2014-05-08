@@ -18,7 +18,7 @@ public class StudyIdentifierDTO implements Serializable {
      */
     private static final long serialVersionUID = 1L;
 
-    private StudyIdentifierType type;
+    private final StudyIdentifierType type;
     private String value;
 
     /**

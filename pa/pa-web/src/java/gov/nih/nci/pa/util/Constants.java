@@ -163,4 +163,8 @@ public class Constants {
      * STUDY_IDENTIFIERS
      */
     public static final String STUDY_IDENTIFIERS = "studyIdentifiers";
+    /**
+     * STUDY_IDENTIFIERS_GROUPED_BY_TYPE
+     */
+    public static final String STUDY_IDENTIFIERS_GROUPED_BY_TYPE = "studyIdentifiersByType";
 }

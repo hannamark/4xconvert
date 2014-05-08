@@ -6,7 +6,9 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.StudyIdentifierDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.StudyIdentifierType;
 import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -15,7 +17,9 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -190,6 +194,7 @@ public final class ActionUtils {
      * @param paServiceUtils paServiceUtils
      * @throws PAException PAException
      */
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     public static void loadProtocolDataInSession(
             StudyProtocolQueryDTO studyProtocolQueryDTO,
             CorrelationUtilsRemote correlationUtils,
@@ -235,8 +240,28 @@ public final class ActionUtils {
             trialSubmitterOrg = userInfo.getAffiliateOrg();
         }
         session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, trialSubmitterOrg);
-        session.setAttribute(Constants.STUDY_IDENTIFIERS, PaRegistry
-                .getStudyIdentifiersService().getStudyIdentifiers(spID));
+        
+        final List<StudyIdentifierDTO> studyIdentifiers = PaRegistry
+                .getStudyIdentifiersService().getStudyIdentifiers(spID);
+        session.setAttribute(Constants.STUDY_IDENTIFIERS, studyIdentifiers);
+        
+        prepareListOfIdentifiersGroupedByType(studyIdentifiers, session);
+    }
+
+    private static void prepareListOfIdentifiersGroupedByType(
+            List<StudyIdentifierDTO> studyIdentifiers, HttpSession session) {
+        Map<StudyIdentifierType, String> map = new LinkedHashMap<StudyIdentifierType, String>();
+        session.setAttribute(Constants.STUDY_IDENTIFIERS_GROUPED_BY_TYPE, map);
+        for (StudyIdentifierDTO dto : studyIdentifiers) {
+            if (StringUtils.isNotBlank(dto.getValue())) {
+                String values = StringUtils
+                        .defaultString(map.get(dto.getType()));
+                values += (values.isEmpty() ? dto.getValue() : ", " // NOPMD
+                        + dto.getValue());
+                map.put(dto.getType(), values);
+            }
+        }
+
     }
     
 

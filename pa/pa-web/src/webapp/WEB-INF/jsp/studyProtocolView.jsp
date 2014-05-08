@@ -96,17 +96,15 @@
                         </tr>
                     </c:if>       
                     <tr><td>&nbsp;</td></tr>
-                    <c:forEach var="identifier" items="${studyIdentifiers}">
-                        <c:if test="${not empty identifier.value}">
-		                    <tr>
-		                        <td nowrap="nowrap" scope="row" class="labelDupe" id="td_${identifier.type.name}_name">		                           
-		                                <c:out value="${identifier.type.code}"/>
-		                        </td>
-		                        <td nowrap="nowrap" id="td_${identifier.type.name}_value">
-		                            <c:out value="${identifier.value}"/>
-		                        </td>
-		                    </tr>                        
-                        </c:if>
+                    <c:forEach var="identifier" items="${studyIdentifiersByType}">                      
+	                    <tr>
+	                        <td nowrap="nowrap" scope="row" class="labelDupe" id="td_${identifier.key.name}_name">		                           
+	                                <c:out value="${identifier.key.code}"/>
+	                        </td>
+	                        <td nowrap="nowrap" id="td_${identifier.key.name}_value">
+	                            <c:out value="${identifier.value}"/>
+	                        </td>
+	                    </tr>
                     </c:forEach>                                 
                      <tr><td>&nbsp;</td></tr>
                     <tr>
