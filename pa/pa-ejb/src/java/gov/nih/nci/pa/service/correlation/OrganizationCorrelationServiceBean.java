@@ -112,10 +112,13 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -129,6 +132,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 
+
 /**
  * .
  * @author NAmiruddin
@@ -139,6 +143,7 @@ import org.hibernate.Session;
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class OrganizationCorrelationServiceBean implements OrganizationCorrelationServiceRemote {
 
+    private static final int LOCK_WAIT_SECONDS = 10;
     private static final Logger LOG  = Logger.getLogger(OrganizationCorrelationServiceBean.class);
     private static final String IRB_CODE = "Institutional Review Board (IRB)";
     private CorrelationUtils corrUtils = new CorrelationUtils();
@@ -146,6 +151,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     private static Map<String, String> dcpCtepCtgovOrgIdCache = new ConcurrentHashMap<String, String>();
     private static final long CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
     private static Date cacheTimeout = new Date();
+    
+    private static final Map<String, ReentrantLock> ORG_LOCKS = new HashMap<String, ReentrantLock>();
 
     /**
      * Resets cache.
@@ -294,8 +301,9 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      * @return Long
      * @throws PAException pe
      */
+    @SuppressWarnings("deprecation")
     @Override
-    public Long createResearchOrganizationCorrelations(String orgPoIdentifier) throws PAException {
+    public Long createResearchOrganizationCorrelations(String orgPoIdentifier) throws PAException { // NOPMD
         if (orgPoIdentifier == null) {
             throw new PAException(" Organization PO Identifier is null");
         }
@@ -313,27 +321,50 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
                     + "organization from PO for id = " + orgPoIdentifier + ".");
         }
 
-        // Step 2 : check if PO has hcf correlation if not create one
-        ResearchOrganizationDTO roDTO = getOrCreatePAResearchOrganizationCorrelation(orgPoIdentifier);
-
-        // Step 3 : check for pa org, if not create one
-        Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
-                orgPoIdentifier));
-        if (paOrg == null) {
-            paOrg = getCorrUtils().createPAOrganization(poOrg);
+        // need a synchronization lock on this PO ORG ID, see PO-6695 for
+        // example.
+        ReentrantLock lock = getOrganizationLock(orgPoIdentifier);
+        try {
+            lock.tryLock(LOCK_WAIT_SECONDS, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {           
         }
-
-        // Step 4 : Check of PA has hcf , if not create one
-        ResearchOrganization ro = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(roDTO.getIdentifier()));
-        if (ro == null) {
-            // create a new crs
-            ro = new ResearchOrganization();
-            ro.setOrganization(paOrg);
-            ro.setIdentifier(DSetConverter.convertToIi(roDTO.getIdentifier()).getExtension());
-            ro.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(roDTO.getStatus()));
-            getCorrUtils().createPADomain(ro);
+        try {            
+            // Step 2 : check if PO has hcf correlation if not create one
+            ResearchOrganizationDTO roDTO = getOrCreatePAResearchOrganizationCorrelation(orgPoIdentifier);
+    
+            // Step 3 : check for pa org, if not create one
+            Organization paOrg = getCorrUtils().getPAOrganizationByIi(IiConverter.convertToPoOrganizationIi(
+                    orgPoIdentifier));
+            if (paOrg == null) {
+                paOrg = getCorrUtils().createPAOrganization(poOrg);
+            }
+    
+            // Step 4 : Check of PA has hcf , if not create one
+            ResearchOrganization ro = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(roDTO.getIdentifier()));
+            if (ro == null) {
+                // create a new crs
+                ro = new ResearchOrganization();
+                ro.setOrganization(paOrg);
+                ro.setIdentifier(DSetConverter.convertToIi(roDTO.getIdentifier()).getExtension());
+                ro.setStatusCode(getCorrUtils().convertPORoleStatusToPARoleStatus(roDTO.getStatus()));
+                getCorrUtils().createPADomain(ro);
+            }
+            return ro.getId();
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
-        return ro.getId();
+    }
+
+    private static synchronized ReentrantLock getOrganizationLock(
+            final String orgPoId) {
+        ReentrantLock lock = ORG_LOCKS.get(orgPoId);
+        if (lock == null) {
+            lock = new ReentrantLock();
+            ORG_LOCKS.put(orgPoId, lock);
+        }
+        return lock;
     }
 
     /**
