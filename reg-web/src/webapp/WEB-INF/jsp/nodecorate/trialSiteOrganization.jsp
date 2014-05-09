@@ -1,20 +1,29 @@
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<%@ taglib prefix="s" uri="/struts-tags"%>
-<table>
-<tr>
-<td><s:textfield label="Organization Name" name="trialDTO.siteOrganizationName"  id="trialDTO.siteOrganizationName" size="30" readonly="true" cssClass="readonly" cssStyle="width:200px" /> 
-</td>
-<td class="value">
-    <ul style="margin-top:-5px;">              
-        <li style="padding-left:0">
-         <a href="javascript:void(0)" class="btn" onclick="lookup4loadSiteOrg();" title="Opens a popup form to select Site Organization"/><span class="btn_img"><span class="organization">Look Up Org</span></span></a>
-        </li>
-    </ul>
-</td>
-</tr>
-</table>
- <span class="alert-danger"> 
+<div class="col-xs-8">
+<s:set var="siteOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getSponsorOrganization()" />
+<s:hidden id="trialDTO.siteOrganizationName" name="trialDTO.siteOrganizationName"/>
+<div class="collapse navbar-collapse organization-dropdown">
+        <div class="nav navbar-nav" style="width: 100%;">
+          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="trialDTO.siteOrganizationNameField">Please Select Submitting Organization<b class="caret"></b></a>  
+            <table class="dropdown-menu" id="dropdown-siteOrganization">
+                <tr><th>PO ID</th><th>CTEP ID</th><th>Name</th></tr>
+                <s:iterator var="orgItem" value="#siteOrgs">
+                <s:if test="%{#orgItem.getType() < 0}">
+                    <tr><td colspan="3"><hr/></td></tr>
+                </s:if>
+                <s:else>
+                    <tr><td><a href="javascript:void(0)" onclick="lookup4loadSiteOrg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getPoId()"/></a></td>
+                    <td><a href="javascript:void(0)" onclick="lookup4loadSiteOrg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getCtepId()"/></a></td>
+                    <td><a href="javascript:void(0)" onclick="lookup4loadSiteOrg(<s:property value="#orgItem.getPoId()"/>, '<s:property value="#orgItem.getJSName()"/>')"><s:property value="#orgItem.getHTMLName()"/></a></td></tr>
+                </s:else>
+                </s:iterator>
+                <tr><td colspan="3"><a href="javascript:void(0)" onclick="lookup4loadSiteOrg(-1, '')">Search...</a></td></tr>
+            </table>
+          </div>
+      </div>
+</div>
+<span class="alert-danger" id="sponsorErr"> 
      <s:fielderror>
-     <s:param>trialDTO.siteOrganizationIdentifier</s:param>
+        <s:param>trialDTO.siteOrganizationIdentifier</s:param>
     </s:fielderror>                            
-  </span>
+</span>
+</div>

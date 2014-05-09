@@ -107,6 +107,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.YES);
         trialDTO.setTrialType("Interventional");
         trialDTO.setSummaryFourFundingCategoryCode(getSum4FundingCatCode());
+        trialDTO.setAccrualDiseaseCodeSystem("SDC");
         setPageFrom("proprietaryTrial");
         return SUCCESS;
     }

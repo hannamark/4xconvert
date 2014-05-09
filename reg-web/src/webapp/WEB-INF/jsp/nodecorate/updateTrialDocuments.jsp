@@ -85,8 +85,7 @@
       </reg-web:displayTooltip>
     <div class="col-xs-4">
       <c:out value="${doc.fileName}"/>
-      <button type="button" class="btn btn-icon btn-default"  onclick="deleteDocument('Other',${varStatus.index})"><i class="fa-minus"></i>Remove</button>
-           
+      <button type="button" class="btn btn-icon btn-primary"  onclick="deleteDocument('Other',${varStatus.index})"><i class="fa-minus"></i>Remove</button>
 	</div>
 	</div>
 </c:forEach>

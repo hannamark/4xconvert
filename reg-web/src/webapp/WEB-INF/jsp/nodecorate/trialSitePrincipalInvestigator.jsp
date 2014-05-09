@@ -1,20 +1,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<table>
-<tr>
-<td><s:textfield label="Site Pi Full Name" name="trialDTO.sitePiName" id="trialDTO.sitePiName" size="30"  readonly="true" cssClass="readonly" cssStyle="width:200px"/>
-</td>
-<td class="value">
-    <ul style="margin-top:-5px;">              
-        <li style="padding-left:0">
-         <a href="javascript:void(0)" class="btn" onclick="lookup4loadSitePerson();" title="Opens a popup form to select Principal Investigator"/>
-         <span class="btn_img"><span class="person">Look Up Person</span></span></a>
-        </li>
-    </ul>
-</td>
-</tr>
-</table>
-<span class="alert-danger"> 
-     <s:fielderror>
-     <s:param>trialDTO.sitePiIdentifier</s:param>
+<div class="col-xs-4">
+    <s:textfield label="Site PI Full Name" name="trialDTO.sitePiName" id="trialDTO.sitePiName" size="30"  readonly="true" cssClass="form-control"/>
+    <span class="alert-danger" id="piIdentifierErr"> 
+    <s:fielderror>
+        <s:param>trialDTO.sitePiIdentifier</s:param>
     </s:fielderror>                            
-  </span>
+</span>
+</div>
+<div class="col-xs-4">
+    <button type="button" class="btn btn-icon btn-default" onclick="lookup4loadSitePerson();" title="Opens a popup form to select Principal Investigator"><i class="fa-user"></i>Look Up Person</button>
+    <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Enter the name of the individual who is responsible for all aspects of the conduct of a study at a site.'  data-placement="top" data-trigger="hover"></i>
+</div>

@@ -308,7 +308,7 @@
                    <br>Once you submit the trial you will not be able to modify the information.
                 </p>
                 <div class="align-center button-row">
-			      <button type="button" class="btn btn-icon btn-primary" onclick="reviewProtocol()"><i class="fa-floppy-o"></i>Review Trial</button>
+			      <button type="button" class="btn btn-icon btn-primary" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
 			      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
 		    	</div>
 		    	<br/>

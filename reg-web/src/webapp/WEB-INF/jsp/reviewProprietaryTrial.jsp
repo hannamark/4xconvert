@@ -45,10 +45,10 @@
         <div id="contentwide">
             <h1><fmt:message key="review.trial.view.page.title" /></h1>
             <c:set var="topic" scope="request" value="edittrial"/>
-            <div class="box">
-                <s:form>
+                <s:form cssClass="form-horizontal" role="form">
                     <s:token/> 
                     <s:actionerror/>
+                    <s:hidden name="trialDTO.accrualDiseaseCodeSystem" id="trialDTO.accrualDiseaseCodeSystem" />
                     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
                     <s:hidden name="pageFrom" id="pageFrom"/>
                     <c:if test="${requestScope.protocolId != null}">
@@ -66,132 +66,139 @@
                         </c:choose>
                     </c:if>
                     <div id="contentprint">
-                        <table class="form">
-                            <reg-web:titleRow titleKey="submit.proprietary.trial.trialIdentification"/>
-                            <reg-web:valueRow labelKey="view.trial.leadOrganization" noLabelTag="true">
+                            <reg-web:titleRowDiv titleKey="submit.proprietary.trial.trialIdentification"/>
+                            <div class="row form-horizontal details">
+                            <reg-web:valueRowDiv labelKey="view.trial.leadOrganization" noLabelTag="true">
                                 <c:out value="${trialDTO.leadOrganizationName}"/>
-                            </reg-web:valueRow>
-                            <reg-web:valueRow labelKey="view.trial.leadOrgTrialIdentifier" noLabelTag="true">
+                            </reg-web:valueRowDiv>
+                            <reg-web:valueRowDiv labelKey="view.trial.leadOrgTrialIdentifier" noLabelTag="true">
                                 <c:out value="${trialDTO.leadOrgTrialIdentifier}"/>
-                            </reg-web:valueRow>
-                            <reg-web:valueRow labelKey="submit.proprietary.trial.siteOrganization" noLabelTag="true">
+                            </reg-web:valueRowDiv>
+                            <reg-web:valueRowDiv labelKey="submit.proprietary.trial.siteOrganization" noLabelTag="true">
                                 <c:out value="${trialDTO.siteOrganizationName}"/>
-                            </reg-web:valueRow>  
-                            <reg-web:valueRow labelKey="submit.proprietary.trial.siteidentifier" noLabelTag="true">
+                            </reg-web:valueRowDiv>  
+                            <reg-web:valueRowDiv labelKey="submit.proprietary.trial.siteidentifier" noLabelTag="true">
                                 <c:out value="${trialDTO.localSiteIdentifier}"/>
-                            </reg-web:valueRow>  
+                            </reg-web:valueRowDiv>  
                             <c:if test="${fn:trim(trialDTO.nctIdentifier) != ''}">
-                                <reg-web:valueRow labelKey="view.trial.nctNumber" noLabelTag="true">
+                                <reg-web:valueRowDiv labelKey="view.trial.nctNumber" noLabelTag="true">
                                     <c:out value="${trialDTO.nctIdentifier}"/>
-                                </reg-web:valueRow>  
+                                </reg-web:valueRowDiv>  
                             </c:if>
-                            <reg-web:titleRow titleKey="view.trial.trialDetails"/>
-                            <reg-web:valueRow labelKey="view.trial.title" noLabelTag="true">
+                            </div>
+                            <reg-web:titleRowDiv titleKey="view.trial.trialDetails"/>
+                            <div class="row form-horizontal details">
+                            <reg-web:valueRowDiv labelKey="view.trial.title" noLabelTag="true">
                                 <c:out value="${trialDTO.officialTitle}"/>
-                            </reg-web:valueRow>  
-                            <reg-web:valueRow labelKey="view.trial.phase" noLabelTag="true">
+                            </reg-web:valueRowDiv>  
+                            <reg-web:valueRowDiv labelKey="view.trial.phase" noLabelTag="true">
                                 <c:out value="${trialDTO.phaseCode}"/>
-                            </reg-web:valueRow>   
+                            </reg-web:valueRowDiv>   
                             <c:if test="${trialDTO.phaseAdditionalQualifier!= '' && trialDTO.phaseCode=='NA'}">
-                                <reg-web:valueRow labelKey="view.trial.otherPhaseText" noLabelTag="true">
+                                <reg-web:valueRowDiv labelKey="view.trial.otherPhaseText" noLabelTag="true">
                                     <c:out value="${trialDTO.phaseAdditionalQualifier=='Pilot'?'Yes':'No'}"/>
-                                </reg-web:valueRow>
+                                </reg-web:valueRowDiv>
                             </c:if>                            
-                            <reg-web:valueRow labelKey="view.trial.type" noLabelTag="true">
+                            <reg-web:valueRowDiv labelKey="view.trial.type" noLabelTag="true">
                                 <c:out value="${trialDTO.trialType}"/>
-                            </reg-web:valueRow>    
-                            <reg-web:valueRow labelKey="view.trial.primaryPurpose" noLabelTag="true">
+                            </reg-web:valueRowDiv>    
+                            <reg-web:valueRowDiv labelKey="view.trial.primaryPurpose" noLabelTag="true">
                                 <c:out value="${trialDTO.primaryPurposeCode}"/>
-                            </reg-web:valueRow>     
+                            </reg-web:valueRowDiv>     
                             <c:if test="${trialDTO.primaryPurposeCode == 'Other'}">
-                                <reg-web:valueRow labelKey="view.trial.otherPurposeText" noLabelTag="true">
+                                <reg-web:valueRowDiv labelKey="view.trial.otherPurposeText" noLabelTag="true">
                                     <c:out value="${trialDTO.primaryPurposeOtherText}"/>
-                                </reg-web:valueRow>
+                                </reg-web:valueRowDiv>
                             </c:if>
                             
 	                        <c:if test="${trialDTO.trialType != 'NonInterventional'}">
-	                            <reg-web:valueRow labelKey="view.trial.secondaryPurpose">
+	                            <reg-web:valueRowDiv labelKey="view.trial.secondaryPurpose">
 	                                <c:out value="${trialDTO.secondaryPurposeAsReadableString}"/> 
-	                            </reg-web:valueRow>
+	                            </reg-web:valueRowDiv>
 	                            <c:if test="${trialDTO.secondaryPurposeAsReadableString == 'Other'}">
-	                                <reg-web:valueRow labelKey="view.trial.secOtherPurposeText" noLabelTag="true">
+	                                <reg-web:valueRowDiv labelKey="view.trial.secOtherPurposeText" noLabelTag="true">
 	                                    <c:out value="${trialDTO.secondaryPurposeOtherText}"/>
-	                                </reg-web:valueRow>
+	                                </reg-web:valueRowDiv>
                                 </c:if>                         
 	                        </c:if>
                                                     
 	                        <c:if test="${trialDTO.trialType == 'NonInterventional'}">
-	                            <reg-web:valueRow labelKey="submit.trial.studySubtypeCode" noLabelTag="true">
+	                            <reg-web:valueRowDiv labelKey="submit.trial.studySubtypeCode" noLabelTag="true">
 	                                <c:out value="${trialDTO.studySubtypeCode}"/>
-	                            </reg-web:valueRow>
-	                            <reg-web:valueRow labelKey="submit.trial.studyModelCode" noLabelTag="true">
+	                            </reg-web:valueRowDiv>
+	                            <reg-web:valueRowDiv labelKey="submit.trial.studyModelCode" noLabelTag="true">
 	                                <c:out value="${trialDTO.studyModelCode}"/>
-	                            </reg-web:valueRow>
+	                            </reg-web:valueRowDiv>
 	                            <c:if test="${trialDTO.studyModelCode == 'Other'}">
-	                                <reg-web:valueRow labelKey="submit.trial.studyModelOtherText" noLabelTag="true">
+	                                <reg-web:valueRowDiv labelKey="submit.trial.studyModelOtherText" noLabelTag="true">
 	                                    <c:out value="${trialDTO.studyModelOtherText}"/>
-	                                </reg-web:valueRow>                                
+	                                </reg-web:valueRowDiv>                                
 	                            </c:if>                                
-	                            <reg-web:valueRow labelKey="submit.trial.timePerspectiveCode" noLabelTag="true">
+	                            <reg-web:valueRowDiv labelKey="submit.trial.timePerspectiveCode" noLabelTag="true">
 	                                <c:out value="${trialDTO.timePerspectiveCode}"/>
-	                            </reg-web:valueRow>             
+	                            </reg-web:valueRowDiv>             
 	                            <c:if test="${trialDTO.timePerspectiveCode == 'Other'}">
-	                                <reg-web:valueRow labelKey="submit.trial.timePerspectiveOtherText" noLabelTag="true">
+	                                <reg-web:valueRowDiv labelKey="submit.trial.timePerspectiveOtherText" noLabelTag="true">
 	                                    <c:out value="${trialDTO.timePerspectiveOtherText}"/>
-	                                </reg-web:valueRow>                                
+	                                </reg-web:valueRowDiv>                                
 	                            </c:if>
 	                        </c:if>  
 	                                                   
-                            <reg-web:valueRow labelKey="view.trial.principalInvestigator" noLabelTag="true">
+                            <reg-web:valueRowDiv labelKey="view.trial.principalInvestigator" noLabelTag="true">
                                 <c:out value="${trialDTO.sitePiName}"/>
-                            </reg-web:valueRow>
-                            <reg-web:spaceRow/>
+                            </reg-web:valueRowDiv>
+                            </div>                            
                             <c:if test="${fn:length(trialDTO.summaryFourOrgIdentifiers) > 0}">
-                                <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
-                                <reg-web:valueRow labelKey="view.trial.SubmissionCategory" noLabelTag="true">
+                                <reg-web:titleRowDiv titleKey="view.trial.Summary4Information"/>
+                                <div class="row form-horizontal details">
+                                <reg-web:valueRowDiv labelKey="view.trial.SubmissionCategory" noLabelTag="true">
                                     <c:out value="${trialDTO.summaryFourFundingCategoryCode}"/>
-                                </reg-web:valueRow>
-                                <reg-web:valueRow labelKey="view.trial.FundingSponsor" noLabelTag="true">
+                                </reg-web:valueRowDiv>
+                                <reg-web:valueRowDiv labelKey="view.trial.FundingSponsor" noLabelTag="true">
                                     <c:forEach items="${trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers">
                                         <c:out value="${summaryFourOrgIdentifiers.orgName}"/><br/>
                                     </c:forEach>
-                                </reg-web:valueRow>
-                                <reg-web:valueRow labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
+                                </reg-web:valueRowDiv>
+                                <reg-web:valueRowDiv labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">
                                     <c:out value="${empty trialDTO.consortiaTrialCategoryCode?'Yes':'No - '}"/>
                                     <c:out value="${trialDTO.consortiaTrialCategoryCode}"/>
-                                </reg-web:valueRow>
+                                </reg-web:valueRowDiv>
+                                </div>
                             </c:if>
                             <c:if test="${fn:trim(trialDTO.siteProgramCodeText) != ''}">
                                 <c:if test="${empty trialDTO.summaryFourOrgIdentifiers}">
-                                    <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
+                                    <reg-web:titleRowDiv titleKey="view.trial.Summary4Information"/>
                                 </c:if>
-                                <reg-web:valueRow labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
-                                    <c:out value="${trialDTO.siteProgramCodeText}"/>
-                                </reg-web:valueRow>
-                                <reg-web:spaceRow/>
+                                <div class="row form-horizontal details">
+	                                <reg-web:valueRowDiv labelKey="studyProtocol.summaryFourPrgCode" noLabelTag="true">
+	                                    <c:out value="${trialDTO.siteProgramCodeText}"/>
+	                                </reg-web:valueRowDiv>
+                                </div>
                             </c:if>
-                            <reg-web:titleRow titleKey="view.trial.statusDates"/>
-                            <reg-web:valueRow labelKey="view.trial.siteRecruitmentStatus" noLabelTag="true">
-                                <c:out value="${trialDTO.siteStatusCode}"/>
-                            </reg-web:valueRow>
-                            <reg-web:valueRow labelKey="view.trial.siteRecruitmentStatusDate" noLabelTag="true">
-                                <c:out value="${trialDTO.siteStatusDate}"/>
-                            </reg-web:valueRow>
-                            <c:if test="${fn:trim(trialDTO.dateOpenedforAccrual) != ''}">
-                                <reg-web:valueRow labelKey="submit.proprietary.trial.dateOpenedforAccrual" noLabelTag="true">
-                                    <c:out value="${trialDTO.dateOpenedforAccrual}"/>
-                                </reg-web:valueRow>
-                            </c:if>
-                            <c:if test="${fn:trim(trialDTO.dateClosedforAccrual) != ''}">
-                                <reg-web:valueRow labelKey="submit.proprietary.trial.dateClosedforAccrual" noLabelTag="true">
-                                    <c:out value="${trialDTO.dateClosedforAccrual}"/>
-                                </reg-web:valueRow>
-                            </c:if>
-                        </table>
+                            <reg-web:titleRowDiv titleKey="view.trial.statusDates"/>
+                            <div class="row form-horizontal details">
+	                            <reg-web:valueRowDiv labelKey="view.trial.siteRecruitmentStatus" noLabelTag="true">
+	                                <c:out value="${trialDTO.siteStatusCode}"/>
+	                            </reg-web:valueRowDiv>
+	                            <reg-web:valueRowDiv labelKey="view.trial.siteRecruitmentStatusDate" noLabelTag="true">
+	                                <c:out value="${trialDTO.siteStatusDate}"/>
+	                            </reg-web:valueRowDiv>
+	                            <c:if test="${fn:trim(trialDTO.dateOpenedforAccrual) != ''}">
+	                                <reg-web:valueRowDiv labelKey="submit.proprietary.trial.dateOpenedforAccrual" noLabelTag="true">
+	                                    <c:out value="${trialDTO.dateOpenedforAccrual}"/>
+	                                </reg-web:valueRowDiv>
+	                            </c:if>
+	                            <c:if test="${fn:trim(trialDTO.dateClosedforAccrual) != ''}">
+	                                <reg-web:valueRowDiv labelKey="submit.proprietary.trial.dateClosedforAccrual" noLabelTag="true">
+	                                    <c:out value="${trialDTO.dateClosedforAccrual}"/>
+	                                </reg-web:valueRowDiv>
+	                            </c:if>
+                            </div>
                         <c:if test="${fn:length(trialDTO.indIdeDtos) > 0}">
-                            <div class="box">
-                                <h3>FDA IND/IDE Information for applicable trials</h3>
+                                <h3 class="heading mt20"><span>>FDA IND/IDE Information for applicable trials</span></h3>
+                                <div class="row form-horizontal details">
                                 <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
+                                </div>
                             </div>
                         </c:if>
                         <c:if test="${trialDTO.fundingDtos != null}">
@@ -199,7 +206,7 @@
                         </c:if>
                         <c:if test="${fn:length(trialDTO.docDtos) >0}">
                             <div class="box">
-                                <display:table class="data" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
+                                <display:table class=" table table-striped table-bordered sortable" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
                                                name="${trialDTO.docDtos}" requestURI="searchTrialviewDoc.action" export="false">
                                     <display:column titleKey="search.trial.view.documentTypeCode" property="proprietaryTypeCode"   sortable="true" headerClass="sortable"/>
                                     <display:column titleKey="search.trial.view.documentFileName" property="fileName"   sortable="true" headerClass="sortable"/>"
@@ -208,18 +215,13 @@
                         </c:if>
                     </div>
                     <c:if test="${requestScope.protocolId == null}">
-                        <div class="actionsrow">
-                            <del class="btnwrapper">
-                                <ul class="btnrow">
-                                    <li><a href="javascript:void(0)" class="btn" onclick="editTrial();"><span class="btn_img"> <span class="edit">Edit</span></span></a></li>
-                                    <li><a href="javascript:void(0)" class="btn" onclick="submitTrial();"><span class="btn_img"><span class="save">Submit</span></span></a></li>
-                                    <li><a href="javascript:void(0)" class="btn" onclick="printProtocol();"><span class="btn_img"><span class="print">Print</span></span></a></li>
-                                </ul>
-                            </del>
-                        </div>
+	                    <div class="bottom">
+	                        <button type="button" class="btn btn-icon btn-primary" onclick="editTrial()"> <i class="fa-edit"></i>Edit </button>
+	                        <button type="button" class="btn btn-icon btn-primary" onclick="submitTrial();"><i class="fa-save"></i>Submit</button>
+	                        <button type="button" class="btn btn-icon btn-primary" onclick="printProtocol();"><i class="fa-print"></i>Print</button>
+	                    </div>
                     </c:if>
                 </s:form>
-            </div>
         </div>
     </body>
 </html>
