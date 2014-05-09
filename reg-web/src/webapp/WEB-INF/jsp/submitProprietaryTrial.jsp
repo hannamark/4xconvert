@@ -133,6 +133,16 @@
                 $(it).style.display = (vis == "block") ? "none" : "block";
             }
             
+            document.observe("dom:loaded", function() {
+                if($('trialDTO.leadOrganizationName').value) {
+                   $('trialDTO.leadOrganizationNameField').innerHTML = $('trialDTO.leadOrganizationName').value;
+                }
+                if($('trialDTO.siteOrganizationName').value) {
+                   $('trialDTO.siteOrganizationNameField').innerHTML = $('trialDTO.siteOrganizationName').value;
+                }
+               
+            });
+            
             Event.observe(window, "load", setDisplayBasedOnTrialType);
             
         </script>

@@ -406,6 +406,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
         try {
             setTrialDTO((ProprietaryTrialDTO) util.getTrialDTOForPartiallySumbissionById(pId));
             final ProprietaryTrialDTO trialDTO = getTrialDTO();
+            trialDTO.setAccrualDiseaseCodeSystem("SDC");
             HttpSession session = ServletActionContext.getRequest().getSession();
             session.setAttribute(Constants.INDIDE_LIST, getTrialDTO().getIndIdeDtos());
             session.setAttribute(Constants.GRANT_LIST, getTrialDTO().getFundingDtos());
