@@ -15,6 +15,12 @@ jQuery(function() {
 	});
 });
 </script>
+<style type="text/css">
+#actmenu {
+    z-index:100;
+    position:relative;
+}
+</style>
 </head>
 <s:set name="records" value="records" scope="request"/>
 <s:if test="records != null">
@@ -112,7 +118,7 @@ jQuery(function() {
           	 		<s:if test="%{#attr.row.actionVisible}">
           	 		<div class="btn-group">
                         <button data-toggle="dropdown" class="btn btn-default dropdown-toggle btn-sm" type="button">Select Action <span class="caret"></span></button>
-                        <ul role="menu" class="dropdown-menu">
+                        <ul role="menu" class="dropdown-menu" id="actmenu">
                         		<li>
                         			<s:if test="%{!(#attr.row.update == null || #attr.row.update.equals(''))}">									
 										<s:if test="%{#attr.row.proprietaryTrial}">
@@ -182,11 +188,6 @@ jQuery(function() {
 					</s:if>              		                    	                    
                  </display:column>     
             </display:table>
-            <!-- Adding these <p> tags to add some free space at the bottom to display drop down for action items correctly -->
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
             </div>
             </div>
         </c:otherwise>
