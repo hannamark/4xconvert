@@ -1585,4 +1585,8 @@
         <comment>ACCRUAL_OUT_OF_SCOPE_TRIAL table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6889.sql"/>
      </changeSet>
+     <changeSet id="PO-5157-2" author="Hugh">
+        <comment>ICD 10 Codes</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-5157-2.sql"/>
+     </changeSet>
 </databaseChangeLog>
