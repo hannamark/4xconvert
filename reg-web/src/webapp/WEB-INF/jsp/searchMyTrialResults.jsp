@@ -52,14 +52,14 @@ jQuery(function() {
                     <s:else>
                         <s:url id="completeUrl" action="submitTrialcompletePartialSubmission"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
                     </s:else>
-                    <s:a href="%{completeUrl}">Complete</s:a>
+                    <s:a href="%{completeUrl}"><button type="button" class="btn btn-icon btn-primary"> <i class="fa-floppy-o"></i>Complete</button></s:a>
                 </display:column>
                 <display:column titleKey="search.trial.action" media="html">
                     <s:url id="deleteUrl" action="submitTrialdeletePartialSubmission">
                         <s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" />
                         <s:param name="usercreated" value="%{#attr.row.userLastCreated}" />
                     </s:url>
-                    <s:a href="%{deleteUrl}" onclick="return deletePartialProtocol();">Delete</s:a>
+                    <s:a href="%{deleteUrl}"><button type="button" class="btn btn-icon btn-primary" onclick="return deletePartialProtocol()"> <i class="fa-trash-o"></i>Delete</button></s:a>
                 </display:column>
             </display:table>
             <p>&nbsp;</p>
