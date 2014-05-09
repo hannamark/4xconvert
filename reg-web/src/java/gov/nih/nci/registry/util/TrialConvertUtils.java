@@ -931,6 +931,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         spStageDTO.setConsortiaTrialCategoryCode(CdConverter
                 .convertStringToCd(trialDto.getConsortiaTrialCategoryCode()));
        spStageDTO.setNciGrant(BlConverter.convertToBl(trialDto.getNciGrant()));
+       spStageDTO.setAccrualDiseaseCodeSystem(StConverter.convertToSt(trialDto.getAccrualDiseaseCodeSystem()));
        return spStageDTO;
    }
 
