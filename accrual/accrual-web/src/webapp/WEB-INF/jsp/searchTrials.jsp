@@ -16,8 +16,11 @@
 		document.forms[0].submit();
 	}
     function saveCodeSystem(spId, codeSystem) {
-        document.forms[0].action="viewTrialsupdateDiseaseCodeSystem.action?studyProtocolId="+spId+"&diseaseCodeSystem="+codeSystem;
-        document.forms[0].submit();
+        var urlx = "viewTrialsupdateDiseaseCodeSystem.action?studyProtocolId="+spId+"&diseaseCodeSystem="+codeSystem;
+        $.ajax({type: "POST",url: urlx});
+        var lblid = "#termupdlbl_" + spId;
+        $(lblid).html("Value changed to <b>" + codeSystem + "</b>.");
+        return false;
     }
 </SCRIPT>
 </head>

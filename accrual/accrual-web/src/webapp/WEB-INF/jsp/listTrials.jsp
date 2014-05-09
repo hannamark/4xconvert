@@ -33,6 +33,7 @@
                           headerKey="" headerValue="--Select--" 
                           list="#accrualDiseaseValues" value="%{#attr.row.diseaseCodeSystem.value}"
                           onchange="saveCodeSystem('%{#attr.row.studyProtocolIdentifier.extension}',this.value);"/>
+                <s:div id="termupdlbl_%{#attr.row.studyProtocolIdentifier.extension}" cssClass="text-muted"/>
            </s:if>
            <s:else>
                <s:property value="%{#attr.row.diseaseCodeSystem.value}"/>
