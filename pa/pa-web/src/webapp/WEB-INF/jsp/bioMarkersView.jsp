@@ -30,7 +30,9 @@
                 showPopWin(updatedUrl, 950, 200, '', 'Marker Search in caDSR');
             }
             function termRequestForm(pId, markerName,markerId) {
-                var url = encodeURI('/pa/protected/popupPlannedMarkersetupEmailRequest.action?fromNewRequestPage=true&nciIdentifier='+pId+'&name='+markerName+'&selectedRowIdentifier='+markerId);
+            	var markerName1 = markerName.replace("(", "%28"); 
+            	var replacedMarkerName = markerName1.replace(")", "%29"); 
+                var url = '/pa/protected/popupPlannedMarkersetupEmailRequest.action?fromNewRequestPage=true&nciIdentifier='+pId+'&name='+replacedMarkerName+'&selectedRowIdentifier='+markerId;
                 showPopWin(url, 950, 400, '', 'Create Permissible Value Request');
             }
             function resetValues() {
@@ -134,7 +136,7 @@
                                 <del class="btnwrapper"">
                                     <ul class="btnrow">
                                         <li>
-                                        <s:a cssClass="btn" href="javascript:void(0)" id="request" onclick="termRequestForm('%{#attr.row.nciIdentifier}','%{#attr.row.name}','%{#attr.row.id}');">
+                                        <s:a  escapeHtml="true"  cssClass="btn" href="javascript:void(0)" id="request" onclick="termRequestForm('%{#attr.row.nciIdentifier}','%{@org.apache.commons.lang.StringEscapeUtils@escapeJavaScript(#attr.row.name)}','%{#attr.row.id}');">
                                           <span class="btn_img">Term Request Form</span>
                                          </s:a>
                                         </li>
