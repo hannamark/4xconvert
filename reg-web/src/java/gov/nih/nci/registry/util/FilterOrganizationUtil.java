@@ -1,9 +1,14 @@
 package gov.nih.nci.registry.util;
 
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.util.CacheUtils;
+import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 
@@ -187,6 +192,7 @@ public class FilterOrganizationUtil {
             Query query = session.createQuery("select org from Organization org "
                     + "where org.id in (select id from AccountCommonOrganization) order by org.name asc");
     
+            @SuppressWarnings("unchecked")
             Iterator<Organization> iter = query.iterate();
 
             while (iter.hasNext()) {
@@ -291,7 +297,7 @@ public class FilterOrganizationUtil {
         /**
          * the ctep ID of the org,
          */
-        private final long ctepId;
+        private final String ctepId;
         
         /**
          * the organization or null if none.
@@ -314,7 +320,7 @@ public class FilterOrganizationUtil {
             type = typeId;
             
             poId = "-1";
-            ctepId = -1;
+            ctepId = "N/A";
             org = null;
             selfAffiliation = false;
         }
@@ -322,14 +328,16 @@ public class FilterOrganizationUtil {
         /**
          * the normal constructor takes the organization and does the rest.
          * @param organization the org to represent.
+         * @throws PAException if an exception occurs
+         * 
          */
-        public OrgItem(Organization organization) {
+        public OrgItem(Organization organization) throws PAException {
             if (organization == null) {
                 throw new IllegalArgumentException("The Organization cannot be null.");
             }
             type = NORMAL_TYPE;
-            ctepId = organization.getId();
             poId = organization.getIdentifier();
+            ctepId = getCtepId(poId);
             org = organization;
             selfAffiliation = false;
         }
@@ -338,14 +346,15 @@ public class FilterOrganizationUtil {
          * The  normal constructor with the addition to specify the affiliation. 
          * @param organization the org.
          * @param yourAffiliation defaults to false.
+         * @throws PAException if an exception occurs
          */
-        public OrgItem(Organization organization, boolean yourAffiliation) {
+        public OrgItem(Organization organization, boolean yourAffiliation) throws PAException {
             if (organization == null) {
                 throw new IllegalArgumentException("The Organization cannot be null.");
             }
             type = NORMAL_TYPE;
-            ctepId = organization.getId();
             poId = organization.getIdentifier();
+            ctepId = getCtepId(poId);
             org = organization;
             selfAffiliation = yourAffiliation;
         }
@@ -362,7 +371,7 @@ public class FilterOrganizationUtil {
          * returns this object's CTEP id.
          * @return the CTEP organization id.
          */
-        public long getCtepId() {
+        public String getCtepId() {
             return ctepId;
         }
         
@@ -411,6 +420,34 @@ public class FilterOrganizationUtil {
          */
         public String getJSName() {
             return escapeHtml(getName()).replaceAll("'", "\\\\'");
+        }
+        
+        /**
+         * gets the CTEP id of the org from the cache or PO if needed.
+         * @param poId the organization's po id
+         * @return the ctep id
+         * @throws PAException problems retrieving the id.
+         */
+        private static String getCtepId(final String poId) throws PAException {
+           return (String) CacheUtils.getFromCacheOrBackend(CacheUtils.getOrganizationCtepIdCache(),
+                   poId,
+                   new Closure() {
+                    
+                    @Override
+                    public Object execute() throws PAException {
+                        PaOrganizationDTO poOrg;
+                        try {
+                            poOrg = PADomainUtils.getOrgDetailsPopup(poId);
+                        } catch (Exception e) {
+                            throw new PAException(
+                                    "An exception occured while trying to retrieve the CTEP id for " + poId, e);
+                        } 
+                        if (poOrg != null) {
+                            return poOrg.getCtepId();
+                        }
+                        return null;
+                    }
+                });
         }
     }
     

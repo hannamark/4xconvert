@@ -2,6 +2,7 @@ package gov.nih.nci.registry.util;
 
 import static org.junit.Assert.*;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
@@ -36,7 +37,7 @@ public class FilterOrganizationUtilTest extends AbstractMockitoTest {
     }
     
     @Test
-    public void testCoverage() {
+    public void testCoverage() throws PAException {
         FilterOrganizationUtil xd = new FilterOrganizationUtil();
         assertTrue(xd != null); //silly test to up coverage.
         List<OrgItem> list = FilterOrganizationUtil.getLeadOrganization(null);
@@ -60,14 +61,8 @@ public class FilterOrganizationUtilTest extends AbstractMockitoTest {
         org.setId(1L);
         org.setIdentifier("2");
         org.setName("test");
-        OrgItem item = new OrgItem(org);
-        assertEquals(OrgItem.NORMAL_TYPE, item.getType());
-        assertEquals("test", item.getName());
-        assertEquals(1L, item.getCtepId());
-        assertEquals("2", item.getPoId());
         
-        item = new OrgItem(org, true);
-        assertEquals("test (Your Affiliation)", item.getName());
+        OrgItem item;
         
         item = new OrgItem(OrgItem.SPACER_TYPE);
         assertEquals("-----", item.getName());

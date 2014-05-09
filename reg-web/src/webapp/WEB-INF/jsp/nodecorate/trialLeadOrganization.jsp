@@ -23,7 +23,7 @@
           </div>
       </div>
 </div>
-<span class="formErrorMsg">
+<span class="alert-danger">
     <s:fielderror>
         <s:param>trialDTO.leadOrganizationIdentifier</s:param>
     </s:fielderror>

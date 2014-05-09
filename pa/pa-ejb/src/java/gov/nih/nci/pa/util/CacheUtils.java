@@ -23,6 +23,7 @@ public final class CacheUtils {
     private static final String SUBMITTER_REGISTRY_USERS_KEY = "SUBMITTER_REGISTRY_USERS";
     private static final String CADSR_CLASSIFICATION_SCHEMES_KEY = "CADSR_CLASSIFICATION_SCHEMES";
     private static final String VIEW_PARTICIPATING_SITES_CACHE_KEY = "VIEW_PARTICIPATING_SITES_CACHE";
+    private static final String CTEP_ORGANIZATIONS_CACHE_KEY = "CTEP_ORGANIZATIONS_CACHE";
 
     /**
      * Cache used for storing criteria's referenced collections, usually Lead
@@ -32,6 +33,17 @@ public final class CacheUtils {
      */
     public static Cache getCriteriaCollectionsCache() {
         return CACHE_MANAGER.getCache(CRITERIA_COLLECTIONS_CACHE_KEY);
+
+    }
+    
+    /**
+     * Cache used for storing CTEP ID's of select organizations, mostly for the
+     * organization dropdowns.
+     * 
+     * @return Cache
+     */
+    public static Cache getOrganizationCtepIdCache() {
+        return CACHE_MANAGER.getCache(CTEP_ORGANIZATIONS_CACHE_KEY);
 
     }
     
