@@ -3,9 +3,7 @@
 <s:set name="ssID" scope="page" value="siteDTO.id"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
 <c:url value="/protected/searchTrialview.action?studyProtocolId=${spID}" var="viewTrialUrl"/>
-<!DOCTYPE html PUBLIC
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
 <%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>

@@ -2,7 +2,7 @@
 <script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>
 
 <script type="text/javascript" src="${scriptPath}/js/jquery-1.10.2.min.js"></script> 
-<script type='text/javascript' src="${scriptPath}/js/bootstrap.min.js"></script> 
+<script type='text/javascript' src="${scriptPath}/js/bootstrap.js"></script> 
 <script type='text/javascript' src="${scriptPath}/js/bootstrap-datetimepicker.min.js"></script> 
 <script type='text/javascript' src="${scriptPath}/js/bootstrap-multiselect.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/jquery-ui-1.8.23.custom.min.js"></script> 

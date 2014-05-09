@@ -245,8 +245,8 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
                     + "sr.summary4ReportedResourceIndicator = true");
         }
         
-        hql.append(" and o.name like '%");
-        hql.append(organizationName);
+        hql.append(" and lower(o.name) like '%");
+        hql.append(organizationName.toLowerCase());
         hql.append("%' order by o.name");
         
         return hql;

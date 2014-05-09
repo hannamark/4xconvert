@@ -164,8 +164,8 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
         hql.append("select p from Person  p join p.healthCareProviders as crs "
                 + " join crs.studyContacts as sc join sc.studyProtocol as sp where sc.roleCode = '");
         hql.append(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
-        hql.append("' and ( p.firstName like '").append(term).append("%'");
-        hql.append(" or p.lastName like '").append(term).append("%' )");
+        hql.append("' and ( lower(p.firstName) like '").append(term.toLowerCase()).append("%'");
+        hql.append(" or lower(p.lastName) like '").append(term.toLowerCase()).append("%' )");
         hql.append(" order by p.lastName , p.firstName");
 
         session = PaHibernateUtil.getCurrentSession();

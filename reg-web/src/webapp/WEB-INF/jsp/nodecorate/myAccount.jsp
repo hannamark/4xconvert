@@ -1,9 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<!DOCTYPE html PUBLIC
-"-//W3C//DTD XHTML 1.1 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
 	style="min-width: 0px !important;">
 <head>
@@ -11,6 +9,14 @@
 <%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>
 <%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 <%@ include file="/WEB-INF/jsp/nodecorate/accountScripts.jsp" %>
+<script type="text/javascript" language="javascript">
+	function changeActiveStyle(windowelem, selectedstyle) {
+		windowelem.setActiveStyleSheet(selectedstyle);
+		if(window.parent != windowelem) {
+			changeActiveStyle(window.parent, selectedstyle);
+		} 
+	}
+</script>
 </head>
 <body>
 	<div class="modal-body">
@@ -28,10 +34,10 @@
 	            <label for="notifications" class="col-xs-4 control-label">Color Scheme</label>
 	            <div class="col-xs-7">
 	              <div class="btn-group" data-toggle="buttons">
-	                <label class="btn btn-default active" onClick="setActiveStyleSheet('default'); return false;">
+	                <label class="btn btn-default active" onClick="changeActiveStyle(window, 'default'); return false;">
 	                  <input type="radio" name="options" id="option1">
 	                  Light </label>
-	                <label class="btn btn-default" onClick="setActiveStyleSheet('alternate 1'); return false;">
+	                <label class="btn btn-default" onClick="changeActiveStyle(window,'alternate 1'); return false;">
 	                  <input type="radio" name="options" id="option3">
 	                  Dark </label>
 	              </div>
@@ -39,7 +45,7 @@
 	          </div> 
                <div class="modal-footer">
                	<button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" onClick="handleRegisterUserAction();"><i class="fa-floppy-o"></i>Save</button>
-		        <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin(true);" data-dismiss="modal"><i class="fa-times-circle"></i>Cancel</button>
+		        <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin(true);" data-dismiss="modal"><i class="fa-times-circle"></i>Close</button>
 		      </div>
            </s:form>
        </div>

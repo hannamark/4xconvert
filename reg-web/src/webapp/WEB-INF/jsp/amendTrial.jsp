@@ -9,22 +9,7 @@
         <title><fmt:message key="amend.trial.page.title"/></title>
         <s:head/>
     	<link href="${pageContext.request.contextPath}/styles/style.css" rel="stylesheet" type="text/css" media="all" />
-    	
-        <!-- po integration -->
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-        <!-- /po integration -->
-        <script type="text/javascript" language="javascript">
-                addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "amendTrial");
-                addCalendar("Cal2", "Select Date", "trialDTO.startDate", "amendTrial");
-                addCalendar("Cal3", "Select Date", "trialDTO.primaryCompletionDate", "amendTrial");
-                addCalendar("Cal4", "Select Date", "trialDTO.completionDate", "amendTrial");
-                addCalendar("Cal5", "Select Date", "trialDTO.amendmentDate", "amendTrial");
-                setWidth(90, 1, 15, 1);
-                setFormat("mm/dd/yyyy");
-        </script>
+    
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
         <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
@@ -338,10 +323,11 @@
     </head>
     <body>
         <!-- main content begins-->
-        <h1><fmt:message key="amend.trial.page.header"/></h1>
+        <h1 class="heading"><fmt:message key="amend.trial.page.header"/></h1>
+        <p>Use this form to register trials with the NCI Clinical Trials Reporting Program. Required fields are marked by asterisks (<span class="required">*</span>).</p>
         <c:set var="topic" scope="request" value="amendtrial"/>
-        <div class="box" id="filters">
-            <reg-web:failureMessage/>
+        <reg-web:failureMessage/>
+        <div id="general_trial_errors"></div>
             <s:form name="amendTrial" method="POST" validate="true" enctype="multipart/form-data">
                 <s:token/>
                 <s:if test="hasActionErrors()">
@@ -359,197 +345,192 @@
                     <s:hidden name="trialDTO.summaryFourFundingCategoryCode" id="trialDTO.summaryFourFundingCategoryCode" />
                 </c:if>
                 <s:hidden name="page" />
-                <p>Register trial with NCI's Clinical Trials Reporting Program.  Required fields are marked by asterisks(<span class="required">*</span>). </p>
-                <table class="form">
-                    <tr>
-                        <td scope="row" class="label">
-                            <a href="http://ClinicalTrials.gov" target="_blank">ClinicalTrials.gov</a> XML required?
-                        </td>
-                        <td>
-                            <s:radio name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="hidePrimaryCompletionDate(), toggledisplayDivs(this);"/>
-                        </td>
-                    </tr>
-                    <reg-web:spaceRow/>
-                    <reg-web:titleRow titleKey="trial.amendDetails"/>
-                    <reg-web:spaceRow/>
-                    <reg-web:valueRow labelKey="view.trial.amendmentNumber" labelFor="trialDTO.localAmendmentNumber">
-                        <s:textfield id="trialDTO.localAmendmentNumber" name="trialDTO.localAmendmentNumber" maxlength="200" size="100" cssStyle="width:200px"  />
-                        <span class="alert-danger">
-                            <s:fielderror>
-                                <s:param>trialDTO.localAmendmentNumber</s:param>
-                            </s:fielderror>
-                        </span>
-                    </reg-web:valueRow>
-                    <reg-web:spaceRow/>
-                    <reg-web:valueRow labelKey="view.trial.amendmentDate" required="true" labelFor="trialDTO.amendmentDate">
-                        <s:textfield id="trialDTO.amendmentDate" name="trialDTO.amendmentDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                        <a href="javascript:showCal('Cal5')">
-                            <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                        </a> (mm/dd/yyyy)
-                        <span class="alert-danger">
-                            <s:fielderror>
-                                <s:param>trialDTO.amendmentDate</s:param>
-                            </s:fielderror>
-                        </span>
-                    </reg-web:valueRow>
+                <div class="form-group">
+	              <label for="organization-type" class="col-xs-4 control-label left-align">XML Required, Enable "Upload from NCI CTRP" in <a data-placement="top" rel="tooltip" data-original-title="Open in new window" href="http://www.clinicaltrials.gov/" target="_new">ClinicalTrials.gov</a>?</label>                    
+	              <div class="col-xs-4">
+	                  <s:radio cssClass="radio-inline" name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="hidePrimaryCompletionDate(), toggledisplayDivs(this);"/>
+	                  <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Indicate whether you need an XML file to submit/update your trial to ClinicalTrials.gov." data-placement="top" data-trigger="hover"></i>
+	              </div>                    
+	          </div>
+	          <button type="button" class="expandcollapse btn btn-icon btn-sm btn-default" state="0"><i class="fa-minus-circle"></i> Collapse All</button>
+          	 <div class="accordion-group">
+          	 	<div class="accordion">
+                  <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section0"><fmt:message key="trial.amendDetails"/></a></div>
+                      <div id="section0" class="accordion-body in">
+                          <div class="container">
+                              <div class="form-group">
+                                  <label for="trialDTO.localAmendmentNumber" class="col-xs-4 control-label"><fmt:message key="view.trial.amendmentNumber"/></label>
+                                  <div class="col-xs-4">
+                                  		<s:textfield id="trialDTO.localAmendmentNumber" name="trialDTO.localAmendmentNumber" maxlength="200" cssStyle="form-control"  />
+                                  		<span class="alert-danger">
+				                            <s:fielderror>
+				                                <s:param>trialDTO.localAmendmentNumber</s:param>
+				                            </s:fielderror>
+				                        </span>
+                                  </div>
+                              </div>
+                              <div class="form-group">
+				                <label for="trialDTO.amendmentDate" class="col-xs-4 control-label"><fmt:message key="view.trial.amendmentDate"/><span class="required">*</span></label>
+				                <div class="col-xs-2">
+				                  <div id="datetimepicker" class="datetimepicker input-append">                    
+				                    <s:textfield id="trialDTO.amendmentDate" name="trialDTO.amendmentDate" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy"/>
+				                    <span class="add-on btn-default"><i class="fa-calendar"></i></span>
+				                    <span class="alert-danger">
+				                        <s:fielderror>
+				                            <s:param>trialDTO.amendmentDate</s:param>
+				                        </s:fielderror>
+				                    </span>
+				                  </div>
+				                </div>                                
+				                <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter or select the date of the current trial status."  data-placement="top" data-trigger="hover"></i></div>
+				             </div>
+                          </div>
+                      </div>
+                  </div>
                     
                     <%@ include file="/WEB-INF/jsp/nodecorate/amendIdentifiersSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/trialOtherIdsSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/amendDetailsSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/amendLeadOrganizationSection.jsp" %>
-                    <tr>
-                        <td colspan="2" class="space">
-                            <s:if test="%{trialDTO.xmlRequired == true}">
-                                <div id="sponsorDiv" style="display:''">
-                                    <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
-                                </div>
-                            </s:if>
-                            <s:else>
-                                <div id="sponsorDiv" style="display:none">
-                                    <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
-                                </div>
-                            </s:else>
-                        </td>
-                    </tr>
-                    <reg-web:spaceRow/>
+                    <s:if test="%{trialDTO.xmlRequired == true}">
+		                  <div id="sponsorDiv" style="display:''">
+		                      <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
+		                  </div>
+		              </s:if>
+		              <s:else>
+		                  <div id="sponsorDiv" style="display:none">
+		                      <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
+		                  </div>
+		              </s:else>
+		              
                     <!--  summary4 information -->
                     <%@ include file="/WEB-INF/jsp/nodecorate/summaryFourInfo.jsp" %>
-                    <reg-web:spaceRow/>
-                    <table class="data2">
-                        <reg-web:titleRow titleKey="submit.trial.grantInfo"/>
-                        <reg-web:spaceRow/>
-                        <reg-web:titleRow titleKey="submit.trial.grantInstructionalText"/>
-                        <tr>
-                          <td>
-                            Is this trial funded by an NCI grant?<span class="required">*</span>
-                            <s:radio name="trialDTO.nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" />
-                          </td>
-                        </tr>
-                        <tr>
-                            <td colspan="3">
-                                <table class="form">
-                                    <tbody>
-                                        <tr>
-                                            <th><label for="fundingMechanismCode"><fmt:message key="submit.trial.fundingMechanism"/></<label></th>
-                                            <th><label for="nihInstitutionCode"><fmt:message key="submit.trial.instituteCode"/></<label></th>
-                                            <th><label for="serialNumber"><fmt:message key="submit.trial.serialNumber"/></<label></th>
-                                            <th><label for="nciDivisionProgramCode"><fmt:message key="submit.trial.divProgram"/></<label></th>
-                                            <th style="display:none"><label for="fundingPercent"><fmt:message key="submit.trial.fundingPercent"/></label></th>
-                                            <th></th>
-                                        </tr>
-                                        <tr>
-                                            <s:set name="fundingMechanismValues" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
-                                            <td>
-                                                <s:select headerKey="" headerValue="--Select--"
-                                                     name="fundingMechanismCode"
-                                                     list="#fundingMechanismValues"
-                                                     listKey="fundingMechanismCode"
-                                                     listValue="fundingMechanismCode"
-                                                     id="fundingMechanismCode"
-                                                     cssStyle="width:150px" />
-                                            </td>
-                                            <s:set name="nihInstituteCodes" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
-                                            <td>
-                                                <s:select headerKey="" headerValue="--Select--"
-                                                     name="nihInstitutionCode"
-                                                     list="#nihInstituteCodes"
-                                                     listKey="nihInstituteCode"
-                                                     listValue="nihInstituteCode"
-                                                     id="nihInstitutionCode"
-                                                     cssStyle="width:150px"  />
-                                            </td>
-                                            <td>
-                                                <s:textfield name="serialNumber" id="serialNumber" maxlength="200" size="100"  cssStyle="width:150px"  />
-                                            </td>
-                                            <s:set name="programCodes" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
-                                            <td>
-                                                <s:select headerKey="" headerValue="--Select--" name="nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  cssStyle="width:150px" />
-                                            </td>
-                                            <td style="display:none">
-                                                <s:textfield name="fundingPercent" id="fundingPercent" maxlength="5" size="5"  cssStyle="width:50px" />%
-                                            </td>
-                                            <td> <input type="button" id="grantbtnid" value="Add Grant" onclick="addGrant();" /></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                    <tr>
-                        <td colspan="2" class="space">
-                            <div id="grantdiv">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
-                            </div>
-                            <span class="alert-danger">
-                                <s:fielderror>
-                                    <s:param>trialDTO.nciGrant</s:param>
-                                </s:fielderror>
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
-                    <table class="form">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
-                    </table>
-                    <table class="data2">
-                        <reg-web:titleRow titleKey="submit.trial.indInfo"/>
-                        <reg-web:spaceRow/>
-                        <reg-web:titleRow titleKey="submit.trial.indInstructionalText"/>
-                        <reg-web:spaceRow/>
-                        <tr>
-                            <td colspan="2" class="space">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="space">
-                                <div id="indidediv">
-                                    <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                    <s:if test="%{trialDTO.xmlRequired == true}">
-                       <div id="regDiv" style="display:''">
-                           <!--  Regulatory Info page -->
-                           <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
-                       </div>
-                    </s:if>
-                    <s:else>
-                       <div id="regDiv" style="display:none">
-                           <!--  Regulatory Info page -->
-                           <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
-                       </div>
-                    </s:else>
-                    <reg-web:spaceRow/>
-                    <c:if test="${requestScope.protocolDocument != null}">
-                       <div class="box">
-                           <h3>Exiting Trial Related Documents</h3>
-                           <jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
-                       </div>
-                    </c:if>
-                    <div id="uploadDocDiv">
-                       <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
-                    </div>
-                </table>
-                <p align="center" class="info">
-                   Please verify ALL the trial information you provided on this screen before clicking the &#34;Submit Trial&#34; button below.
-                   <br>Once you submit the trial you will not be able to modify the information.
-                </p>
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                            <li>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="reviewProtocol()"><span class="btn_img"><span class="save">Review Trial</span></span></s:a>
-                                <s:a href="javascript:void(0)" cssClass="btn" onclick="cancelProtocol()"><span class="btn_img"><span class="cancel">Cancel</span></span></s:a>
-                            </li>
-                        </ul>
-                    </del>
-                </div>
+                    
+                 <div class="accordion">
+                  <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section7"><fmt:message key="submit.trial.grantInfo"/><span class="required">*</span></a></div>
+                  <div id="section7" class="accordion-body in">
+                      <div class="container">
+                      <p><fmt:message key="submit.trial.grantInstructionalText"/></p>              
+                          <div class="form-group">
+                              <label for="nciGrant" class="col-xs-4 control-label">Is this trial funded by an NCI grant? <span class="required">*</span></label>
+                              <div class="col-xs-4">
+                                  <s:radio cssClass="radio-inline" name="trialDTO.nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" />
+                              </div>
+                          </div> 
+                          <table class="table table-bordered">
+                              <thead>
+                                  <tr>
+                                      <th><label for="fundingMechanismCode"><fmt:message key="submit.trial.fundingMechanism"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the NIH funding mechanism unique identifier, a 3-character code used to identify areas of extramural research activity applied to funding mechanisms."  data-placement="top" data-trigger="hover"></i></label></th>
+                                      <th><label for="nihInstitutionCode"><fmt:message key="submit.trial.instituteCode"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the two-letter code identifying the first major-level subdivision, the organization that supports an NIH grant, contract, or inter-agency agreement. The support may be financial or administrative."  data-placement="top" data-trigger="hover"></i></label></th>
+                                      <th><label for="serialNumber"><fmt:message key="submit.trial.serialNumber"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter the number generally assigned sequentially to a series within an Institute, Center, or Division."  data-placement="top" data-trigger="hover"></i></label></th>
+                                      <th><label for="nciDivisionProgramCode"> <fmt:message key="submit.trial.divProgram"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the NCI organizational unit that provides funding for the study."  data-placement="top" data-trigger="hover"></i></label></th>
+                                      <th style="display:none">
+                                          <label for="fundingPercent"><fmt:message key="submit.trial.fundingPercent"/></label>
+                                      </th>
+                                      <th>&nbsp;</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                      <s:set name="fundingMechanismValues" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getFundingMechanisms()" />
+                                      <td>
+                                          <s:select headerKey="" headerValue="--Select--"
+                                               name="fundingMechanismCode"
+                                               list="#fundingMechanismValues"
+                                               listKey="fundingMechanismCode"
+                                               listValue="fundingMechanismCode"
+                                               id="fundingMechanismCode"
+                                               cssClass="form-control"/>
+                                      </td>
+                                      <s:set name="nihInstituteCodes" value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getNihInstitutes()" />
+                                      <td>
+                                          <s:select headerKey="" headerValue="--Select--"
+                                               name="nihInstitutionCode"
+                                               list="#nihInstituteCodes"
+                                               listKey="nihInstituteCode"
+                                               listValue="nihInstituteCode"
+                                               id="nihInstitutionCode"
+                                                cssClass="form-control"/>
+                                      </td>
+                                      <td>
+                                          <s:textfield name="serialNumber" id="serialNumber" maxlength="200" cssClass="form-control"/>
+                                      </td>
+                                      <s:set name="programCodes" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
+                                      <td>
+                                          <s:select headerKey="" headerValue="--Select--" name="nciDivisionProgramCode" id="nciDivisionProgramCode" list="#programCodes"  
+                                              cssClass="form-control"/>
+                                      </td>
+                                      <td style="display:none">
+                                          <s:textfield name="fundingPercent" id="fundingPercent" maxlength="5" size="5"  cssClass="form-control"/>%
+                                      </td>
+                                      <td><button type="button" id="grantbtnid" class="btn btn-icon btn-default" onclick="addGrant();"><i class="fa-plus"></i>Add Grant</button></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                          <div class="form-group" id="grantdiv">
+                              <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
+                          </div>
+                          <span class="alert-danger">
+                              <s:fielderror>
+                                  <s:param>trialDTO.nciGrant</s:param>
+                              </s:fielderror>
+                          </span>                              
+                   		</div>
+              		</div>
+          		</div>
+  
+	  			<!-- Status section -->
+          		<%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
+          
+		          <div class="accordion">
+		          	<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section9"><fmt:message key="submit.trial.indInfo"/></a></div>
+		          		<div id="section9" class="accordion-body in">
+		            		<div class="container">
+		              			<p><fmt:message key="submit.trial.indInstructionalText"/></p>
+		              			<%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
+				              <div id="indidediv">
+				                  <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
+				              </div>
+		          			  <div class="mt10 align-center scrollable"><i class="fa-angle-left"></i> Scroll left/right to view full table <i class="fa-angle-right"></i></div>
+		            </div>
+		          </div>
+		        </div>
+        
+		        <s:if test="%{trialDTO.xmlRequired == true}">
+		             <div id="regDiv" style="display:''">
+		                 <!-- Regulatory page -->
+		                 <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
+		             </div>
+		         </s:if>
+		         <s:else>
+		             <div id="regDiv" style="display:none">
+		                 <!-- Regulatory page -->
+		                 <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
+		             </div>
+		         </s:else>
+             
+		         <c:if test="${requestScope.protocolDocument != null}">
+		            <div class="box">
+		                <h3>Existing Trial Related Documents</h3>
+		                <jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
+		            </div>
+		         </c:if>
+		         <div id="uploadDocDiv">
+		            <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
+		         </div>
+        
+     		</div> 
+     		           
+	           <p align="center" class="info">
+	              Please verify ALL the trial information you provided on this screen before clicking the &#34;Review Trial&#34; button below.
+	              <br>Once you submit the trial you will not be able to modify the information.
+	           </p>
+	        <div class="align-center button-row">
+		      <button type="button" class="btn btn-icon btn-primary" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
+		      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
+		    </div>
+                
                 <s:hidden name="uuidhidden"/>
             </s:form>
-        </div>
     </body>
 </html>

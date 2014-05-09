@@ -93,7 +93,7 @@
           <div class="tab-pane fade" id="forgot-password">
             <div class="tab-inside">
               <h4 class="heading"><span>Resetting Your Password</span></h4>
-              <p>If you forgot your password, please visit the NCI Password Station at <a href="mailto:http://password.nci.nih.gov">http://password.nci.nih.gov</a> and follow the instructions there.</p>
+              <p>If you forgot your password, please visit the NCI Password Station at <a href="http://password.nci.nih.gov" target="_blank">http://password.nci.nih.gov</a> and follow the instructions there.</p>
               <p>If you need additional assistance or have questions, you can email NCI CBIIT Application Support at <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a>,
                 or call <strong>240-276-5541</strong> or toll free <strong>888-478-4423</strong>.</p>
             </div>

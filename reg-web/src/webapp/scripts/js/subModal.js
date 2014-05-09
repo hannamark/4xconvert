@@ -137,8 +137,6 @@ function showPopWin(url, width, height, returnFunc, title) {
         document.getElementById("popupTitle").innerHTML = title;
         window.setTimeout("setPopTitle();", 600);
     }
-
-
 }
 
 //

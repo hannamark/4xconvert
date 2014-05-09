@@ -115,7 +115,8 @@ jQuery(function() {
 // Date Picker
 jQuery(function() {
     jQuery('.datetimepicker').datetimepicker({
-      pickTime: false
+      pickTime: false,
+      startView:2
     });
   });
 
@@ -160,7 +161,16 @@ jQuery('#incfont').click(function(){
 	        	includeSelectAllOption: true
 	        });
 	
-
+/*
+ * All documents loaded inside iFrame seems to have marginLeft style set far left on its <html> tag in IE and thus not displaying
+ * Clearing this marginLeft style property
+ */
+jQuery(function() {
+	if(window.navigator.userAgent.indexOf("MSIE") > -1) {
+		var htmlEl = document.body.parentNode;
+		htmlEl.style.marginLeft="";
+	}
+});	
  /*
  bootstrap 3.0 with prototype.js breaks for tooltip, popover, dropdown menu
  adding this function to check for bootstrap namespace for the event for these items
