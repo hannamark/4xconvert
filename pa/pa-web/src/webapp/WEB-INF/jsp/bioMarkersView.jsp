@@ -31,7 +31,7 @@
             }
             function termRequestForm(pId, markerName,markerId) {
                 var url = encodeURI('/pa/protected/popupPlannedMarkersetupEmailRequest.action?fromNewRequestPage=true&nciIdentifier='+pId+'&name='+markerName+'&selectedRowIdentifier='+markerId);
-                showPopWin(url, 950, 600, '', 'Create Permissible Value Request');
+                showPopWin(url, 950, 400, '', 'Create Permissible Value Request');
             }
             function resetValues() {
                 $("trialId").value="";
@@ -143,8 +143,8 @@
                  </display:column>
         </s:if>
        <s:if test="%{#attr.row.dateEmailSent != null}">
-                <display:column sortable="true" titleKey="plannedMarker.termRequest" headerClass="centered" style="text-align:center">
-                <s:date name="%{#attr.row.dateEmailSent}"  format="yyyy-MM-dd HH:mm:ss" />
+                <display:column sortable="true" titleKey="plannedMarker.termRequest" headerClass="centered">
+                <s:date name="%{#attr.row.dateEmailSent}"  format="yyyy-MM-dd HH:mm:ss"/>
                 </display:column>
          </s:if>
                <display:column titleKey="plannedMarker.caDSR.id" headerClass="sortable" >

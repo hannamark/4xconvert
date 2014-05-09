@@ -82,9 +82,13 @@
             <td scope="row" class="label">
                 <s:label for="plannedMarker.name"><fmt:message key="plannedMarker.request.markerName" />:</s:label><span class="required">*</span>
             </td>
-            <td class="value" colspan="2">
-            <s:property value="plannedMarker.name"/>
-                <s:hidden id="name" name="plannedMarker.name" />
+            <td>
+                <s:textfield id="name" name="plannedMarker.name" maxlength="200" size="200" cssStyle="width: 200px"/>
+                <span class="formErrorMsg">
+                    <s:fielderror>
+                        <s:param>plannedMarker.name</s:param>
+                    </s:fielderror> 
+                </span>
             </td>
         </tr>
         <tr>

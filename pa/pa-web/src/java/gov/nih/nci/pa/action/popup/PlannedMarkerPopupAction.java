@@ -97,6 +97,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.CsmHelper;
@@ -158,6 +159,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private boolean passedValidation = false;
     private ApplicationService appService;
     private PlannedMarkerServiceLocal plannedMarkerService;
+    private PlannedMarkerSyncWithCaDSRServiceLocal permissibleService;
     private String selectedRowIdentifier;
     private String caDsrId;
     private String caseType;
@@ -172,6 +174,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     public void prepare() {
         markers = new ArrayList<CaDSRWebDTO>();
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
+        permissibleService = PaRegistry.getPMWithCaDSRService();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
@@ -302,7 +305,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public String sendEmailRequestWithMarkerUpdate() throws PAException { 
         PlannedMarkerDTO markerDto = PaRegistry.getPlannedMarkerService()
-                .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+           .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         validateEmailRequest();
         Ii studyProtocolIi = IiConverter.convertToIi(getNciIdentifier()); 
         studyProtocolIi.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
@@ -329,6 +332,8 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             getPlannedMarker().setDateEmailSent(new Date());
             markerDto.setDateEmailSent(TsConverter.convertToTs(new Date()));
             plannedMarkerService.update(markerDto);
+            Long id = IiConverter.convertToLong(markerDto.getPermissibleValue());
+            permissibleService.updateValueById(getPlannedMarker().getName(), id);
         } catch (Exception e) {
             passedValidation = false;
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
@@ -745,5 +750,14 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public void setNciIdentifier(String nciIdentifier) {
         this.nciIdentifier = nciIdentifier;
+    }
+    
+    /**
+     * @param permissibleService
+     *            the permissibleService to set
+     */
+    public void setPermissibleService(
+            PlannedMarkerSyncWithCaDSRServiceLocal permissibleService) {
+        this.permissibleService = permissibleService;
     }
 }
