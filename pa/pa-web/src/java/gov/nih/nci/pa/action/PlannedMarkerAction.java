@@ -225,6 +225,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             Map<String, String> values = markerAttributesService
                     .getAllMarkerAttributes();
             plannedMarker = populateWebDTO(marker, values);
+            plannedMarker.setDateEmailSent(new Date());
             return super.create();
         }
         return currentActionType();
@@ -675,6 +676,9 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         marker.setName(StConverter.convertToSt(getPlannedMarker().getName()));
         if (StringUtils.isEmpty(getPlannedMarker().getMeaning()) || isEdit) {
             marker.setLongName(marker.getName());
+            if (StringUtils.isEmpty(getPlannedMarker().getMeaning())) {
+                pendingStatus = true; 
+            }
         } else {
             marker.setLongName(StConverter.convertToSt(getPlannedMarker().getMeaning()));
         }
