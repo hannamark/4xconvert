@@ -122,12 +122,14 @@ public class CaDSRSyncHelper {
                 dataElement.setVersion(version);
                 Collection<Object> results = appService.search(
                         DataElement.class, dataElement);
-                DataElement de = (DataElement) results.iterator().next();
-                String vdId = ((EnumeratedValueDomain) de.getValueDomain())
+                if (results.iterator().hasNext()) {
+                   DataElement de = (DataElement) results.iterator().next();
+                   String vdId = ((EnumeratedValueDomain) de.getValueDomain())
                         .getId();
-                List<Object> permissibleValues = appService
+                   List<Object> permissibleValues = appService
                         .query(constructSearchCriteria(vdId));
-                values = getSearchResults(permissibleValues);
+                   values = getSearchResults(permissibleValues);
+                }
             } catch (Exception e) {
                 LOG.error("Error while querying caDSR" + publicId, e);
             }
