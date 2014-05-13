@@ -23,7 +23,7 @@
            <c:set var="topic" scope="request" value="myaccount"/>
            <s:form cssClass="form-horizontal" role="form" id="myAccountForm" name="myAccountForm" method="POST" >
                <s:token/>
-               <s:actionmessage cssClass="confirm_msg"/>
+               <s:actionmessage cssClass="alert alert-info"/>
                <s:actionerror/>
                <s:hidden name="registryUserWebDTO.id" />
                <s:hidden name="registryUserWebDTO.csmUserId" />
