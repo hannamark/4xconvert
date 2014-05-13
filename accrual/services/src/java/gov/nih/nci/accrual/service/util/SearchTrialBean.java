@@ -127,6 +127,7 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -298,8 +299,7 @@ public class SearchTrialBean implements SearchTrialService {
     private String generateStudyProtocolQuery(SearchTrialCriteriaDto criteria) throws PAException {
         StringBuffer hql = new StringBuffer();
         try {
-            hql.append("select distinct sp.id from StudyProtocol as sp left outer join sp.studySites as sps "
-                            + "left outer join sp.otherIdentifiers as oi ");
+            hql.append("select distinct sp.id from StudyProtocol as sp left outer join sp.studySites as sps ");
             hql.append(generateWhereClause(criteria));
         } catch (Exception e) {
             throw new PAException("Exception thrown in SearchTrialBean.generateStudyProtocolQuery().", e);
@@ -309,24 +309,34 @@ public class SearchTrialBean implements SearchTrialService {
 
     private String generateWhereClause(SearchTrialCriteriaDto criteria) {
         String assignedIdentifier = StConverter.convertToString(criteria.getAssignedIdentifier());
-        String leadOrgTrialIdentifier = StConverter.convertToString(criteria.getLeadOrgTrialIdentifier());
+        String nctID = StConverter.convertToString(criteria.getLeadOrgTrialIdentifier());
         String officialTitle = StConverter.convertToString(criteria.getOfficialTitle());
         StringBuffer where = new StringBuffer();
 
         where.append("where sp.statusCode = '" + ActStatusCode.ACTIVE.name() + "' ");
         if (StringUtils.isNotEmpty(assignedIdentifier)) {
-            where.append(" and upper(oi.extension)  like '%"
-                    + assignedIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''")
-                    + "%'");
+            where.append(" and exists (select oi.extension from sp.otherIdentifiers oi where oi.identifierName = '"
+                    + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME
+                    + "' and upper(oi.extension) like '%"
+                    + StringEscapeUtils.escapeSql(assignedIdentifier
+                            .toUpperCase(Locale.US).trim()) + "%') ");
+
         }
         if (StringUtils.isNotEmpty(officialTitle)) {
             where.append(" and upper(sp.officialTitle)  like '%"
                     + officialTitle.toUpperCase(Locale.US).trim().replaceAll("'", "''")
                     + "%'");
         }
-        if (StringUtils.isNotEmpty(leadOrgTrialIdentifier)) {
-            where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
-                    + leadOrgTrialIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''") + "%'");
+        if (StringUtils.isNotEmpty(nctID)) {
+            where.append(" and exists (select ssdcp.id from StudySite ssdcp where " // NOPMD
+                    + "ssdcp.studyProtocol.id = sp.id and lower(ssdcp.localStudyProtocolIdentifier) like '%"
+                    + StringEscapeUtils.escapeSql(nctID // NOPMD
+                            .toLowerCase().trim()) 
+                    + "%' and ssdcp.functionalCode = '"
+                    + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.name()
+                    + "' and ssdcp.researchOrganization.organization.name='"
+                    + PAConstants.CTGOV_ORG_NAME + "') ");
+
         }
         return where.toString();
     }

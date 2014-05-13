@@ -105,7 +105,9 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySite;
@@ -118,8 +120,10 @@ import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -129,6 +133,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -153,6 +158,9 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
     SearchTrialBean bean;
     ServiceLocatorPaInterface paSvcLocator;
     AccrualDiseaseTerminologyServiceRemote adtSvc;
+    
+    Organization CTGOV_ORG;
+    ResearchOrganization CTGOV_RO;
 
     @Override
     @Before
@@ -163,6 +171,35 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         adtSvc = mock(AccrualDiseaseTerminologyServiceRemote.class);
         when(paSvcLocator.getAccrualDiseaseTerminologyService()).thenReturn(adtSvc);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
+        
+        Organization org = new Organization();
+        org.setCity("city3");
+        org.setCountryName("country name3");
+        org.setIdentifier("3");
+        org.setName(PAConstants.CTGOV_ORG_NAME);
+        org.setPostalCode("22345");
+        org.setState("MD");
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        TestSchema.addUpdObject(org);
+        CTGOV_ORG = org;
+        
+        ResearchOrganization ro = new ResearchOrganization();
+        ro.setIdentifier("234");
+        ro.setOrganization(CTGOV_ORG);
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ro.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        TestSchema.addUpdObject(ro);
+        CTGOV_RO = ro;
+        
+        StudySite ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("NCT111111111111111");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        ss.setResearchOrganization(CTGOV_RO);
+        ss.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        TestSchema.addUpdObject(ss);
+       
+       
     }
 
     @Test
@@ -226,7 +263,7 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
         // get by title
         crit = new SearchTrialCriteriaDto();
-        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
+        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("NCT111111111111111"));
         assertEquals(goodCount, bean.search(crit, ruIi).size());
         crit.setLeadOrgTrialIdentifier(BST);
         assertEquals(0, bean.search(crit, ruIi).size());

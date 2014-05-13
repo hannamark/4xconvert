@@ -7,8 +7,10 @@
     <s:set name="accrualDiseaseValues" value="@gov.nih.nci.pa.util.PaRegistry@getAccrualDiseaseTerminologyService().getValidCodeSystems()" />
     <display:table class="table table-striped sortable" summary="This table contains your trial search results.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.accweb.decorator.SearchTrialResultDecorator"
+      defaultsort="1" defaultorder="descending" 
       sort="list" pagesize="${selectedPageSize}" id="row" name="displayTagList" requestURI="viewTrials.action" export="false">
        <display:column titleKey="accrual.list.trials.protocolNumber" sortable="true" sortProperty="assignedIdentifier.value" headerClass="sortable" headerScope="col">
+           <!-- <s:property value="%{#attr.row.assignedIdentifier.value}" /> -->
            <s:if test="%{#attr.row.industrial.value && #attr.row.trialType.value == 'Interventional'}">
                 <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
            </s:if>
