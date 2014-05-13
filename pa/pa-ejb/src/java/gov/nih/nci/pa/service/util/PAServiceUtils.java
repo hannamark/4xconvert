@@ -546,6 +546,7 @@ public class PAServiceUtils {
      * @param summary4studyResourcingDTO summary four Resourcing Dto
      * @throws PAException on error
      */
+    @SuppressWarnings("deprecation")
     public void manageSummaryFour(Ii studyProtocolIi, List<OrganizationDTO> organizationDtoList,
             StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
         List<StudyResourcingDTO> summaryFourOrgList = PaRegistry.getStudyResourcingService()
@@ -614,7 +615,8 @@ public class PAServiceUtils {
             }
         }
         for (Long orgId : dbOrgIds) {
-            if (CollectionUtils.isNotEmpty(summaryFourOrgIds) && !summaryFourOrgIds.contains(orgId)) {
+            if (orgId != null && CollectionUtils.isNotEmpty(summaryFourOrgIds)
+                    && !summaryFourOrgIds.contains(orgId)) {
                 //delete the row.
                 StudyResourcingDTO summary4ResoureDTO = PaRegistry.getStudyResourcingService()
                         .getSummary4ReportedResourcingBySpAndOrgId(studyProtocolIi, orgId);
