@@ -10,7 +10,7 @@
 <%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 <%@ include file="/WEB-INF/jsp/common/includeextrajs.jsp"%>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js?534785924'/>"></script>
 <script type="text/javascript" language="javascript">
 	addCalendar("Cal1", "Select Date", "siteDTO.recruitmentStatusDate", "addSiteForm");
 	addCalendar("Cal2", "Select Date", "siteDTO.dateOpenedforAccrual",

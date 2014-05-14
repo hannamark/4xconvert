@@ -35,7 +35,7 @@
                 };
                 var div = $('getPersons');          
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-                var aj = callAjaxPost(div, url, params);
+                var aj = callAjaxPost(div, url, params, {evalScripts:true});
             }
             
             function clearUnusedSearchCriteria(){
@@ -109,6 +109,9 @@
                     }
                 }
             }
+            
+            
+            
         </script> 
     </head> 
     <body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">
@@ -128,5 +131,6 @@
                 </div>
             </s:form>
         </div>
+        <jsp:include page="/WEB-INF/jsp/common/misc.jsp"/>
     </body>
 </html>

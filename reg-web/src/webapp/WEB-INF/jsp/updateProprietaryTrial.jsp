@@ -11,7 +11,7 @@
         <script type="text/javascript" src="${scriptPath}/js/subModalcommon.js"></script>
         <script type="text/javascript" src="${scriptPath}/js/subModal.js"></script>
         <script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js?534785924'/>"></script>
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
         <script type="text/javascript">
             var bla = <s:property value="trialDTO.participatingSitesList.size"/>;

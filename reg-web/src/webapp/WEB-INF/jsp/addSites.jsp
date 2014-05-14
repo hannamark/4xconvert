@@ -31,10 +31,10 @@
 </style>
 
 <script type="text/javascript" language="javascript"
-	src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+	src="<c:url value='/scripts/js/ajaxHelper.js?534785924'/>"></script>
 
 <script type="text/javascript" language="javascript"
-	src="<c:url value='/scripts/js/jquery.dataTables.min.js?98217008'/>"></script>
+	src="<c:url value='/scripts/js/jquery.dataTables.min.js?534785924'/>"></script>
 
 <script type="text/javascript" language="javascript">
 

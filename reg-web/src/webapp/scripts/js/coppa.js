@@ -120,18 +120,26 @@ function hideWaitPanel() {
 }
 
 function displayWaitPanel() {	
-	// retrieve required dimensions	
-	var eltDims     = $('progress_indicator_panel').getDimensions();
-	var browserDims = $(document).viewport.getDimensions();
-	 
-	// calculate the center of the page using the browser and element dimensions
-	var y  = (browserDims.height - eltDims.height) / 2 + $(document).viewport.getScrollOffsets().top;
-	var x = (browserDims.width - eltDims.width) / 2;	
-	
-	$('progress_indicator_panel').absolutize();	
-	$('progress_indicator_panel').style.left = x + 'px';
-	$('progress_indicator_panel').style.top = y + 'px';
-	$('progress_indicator_panel').show();
+	if ($('progress_indicator_panel')!=null) {
+		// retrieve required dimensions	
+		var eltDims     = $('progress_indicator_panel').getDimensions();
+		var browserDims = $(document).viewport.getDimensions();
+		 
+		// calculate the center of the page using the browser and element dimensions
+		var y  = (browserDims.height - eltDims.height) / 2 + $(document).viewport.getScrollOffsets().top;
+		var x = (browserDims.width - eltDims.width) / 2;	
+		
+		$('progress_indicator_panel').absolutize();	
+		$('progress_indicator_panel').style.left = x + 'px';
+		$('progress_indicator_panel').style.top = y + 'px';
+		$('progress_indicator_panel').show();
+	}
+}
+
+function showProgressIndicatorForPaginationLinks() {
+	$$('span.pagelinks > a[href]').each(function (e) {
+		$(e).observe('click', displayWaitPanel);
+	});
 }
 
 function hidePrimaryCompletionDate() {

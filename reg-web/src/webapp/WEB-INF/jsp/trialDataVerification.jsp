@@ -8,7 +8,7 @@
     <title><fmt:message key="trial.data.verification.page.title"/></title>
     <s:head/>
     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
+     <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js?534785924'/>"></script>
      <script type="text/javascript">
         function addAction(url){
                 if (confirm("<fmt:message key='trial.data.verification.Confirm' />")) {

@@ -3,8 +3,8 @@
 <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
     <head>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js?534785924'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js?534785924'/>"></script>
         <script type="text/javascript" language="javascript">
             function submitform(persid, name) {
                 var email = $(persid+'email');

@@ -16,4 +16,12 @@
             <button type="button" class="btn btn-icon btn-primary" onclick="submitform('${row.id}','${func:escapeJavaScript(row.lastName)}' + ',' + '${func:escapeJavaScript(row.firstName)}')"> <i class="fa-check"></i>Select</button>
         </display:column>
     </display:table>
+    <script type="text/javascript" language="javascript">
+    
+	    if (Prototype.Browser.IE) {    	
+	    	showProgressIndicatorForPaginationLinks();
+	        Event.observe(document, "dom:loaded", showProgressIndicatorForPaginationLinks);
+	    }
+    
+    </script> 
 </s:if>

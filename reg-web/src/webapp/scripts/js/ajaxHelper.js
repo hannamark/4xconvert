@@ -5,8 +5,7 @@
 // providedOptions the options object to use (This object is optional and useful for specifying call back functions)
 function callAjaxPost(div, url, params, providedOptions) {
     var options = (providedOptions) ? providedOptions : {};
-    options.asynchronous = true;
-    options.evalScripts = false;
+    options.asynchronous = true;   
     options.method = 'post';
     options.parameters = params;
     if (div == null) {

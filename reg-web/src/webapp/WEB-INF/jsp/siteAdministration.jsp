@@ -7,7 +7,7 @@
     <head>
         <title><fmt:message key="siteadministration.page.title"/></title>
         <s:head/>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js?534785924'/>"></script>
     
         <script type="text/javascript" language="javascript">
             function submitForm() {
