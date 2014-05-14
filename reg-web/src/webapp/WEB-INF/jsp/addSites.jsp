@@ -441,7 +441,7 @@
 										name="trial_${trial.studyProtocolId}_site_${stat.index}_pi_poid" />
 									</td>
 									<td nowrap="nowrap">
-										<button title="Select Principal Investigator for this site"
+										<button title="Select PI for this site"
 											data-toggle="tooltip"
 											id="trial_${trial.studyProtocolId}_site_${stat.index}_pi_lookupBtn"
 											onclick="lookupPI(${trial.studyProtocolId}, ${stat.index});"

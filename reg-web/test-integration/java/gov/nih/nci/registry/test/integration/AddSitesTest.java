@@ -204,7 +204,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
         // Make sure tooltip for PI lookup button is there.
         hover(By.id("trial_" + trial.id + "_site_0_pi_lookupBtn"));
         pause(1000);
-        assertTrue(selenium.isTextPresent("Select Principal Investigator"));
+        assertTrue(selenium.isTextPresent("Select PI for this site"));
         return trial;
     }
 
