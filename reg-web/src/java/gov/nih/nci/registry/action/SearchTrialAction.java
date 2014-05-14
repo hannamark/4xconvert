@@ -887,7 +887,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
                 .getResponse();
         servletResponse.setContentType("text/plain");
         Writer writer = servletResponse.getWriter();
-        writer.write(sb.toString().replaceAll("\\.\\.", "."));
+        writer.write(sb.toString().replaceAll("\\.\\s*\\.", "."));
         writer.flush();
         return null;
     }
