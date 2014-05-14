@@ -57,6 +57,7 @@
                     <param name="includeMethods">process,edit,update,partialSave,review,
                     reviewUpdate,amend,create,popupupdate,assignOwnership,unassignOwnership,save,updateAccount,
                     assignAll,assignSelected,unassignAll,unassignSelected</param>
+                    <param name="excludeMethods">addSummaryFourOrg,deleteSummaryFourOrg</param>
                 </interceptor-ref>
             </interceptor-stack>
             
@@ -92,7 +93,7 @@
                     <param name="excludeMethods">input,back,cancel,reOrder</param>
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
-                    <param name="includeMethods">createAccount,updateAccount</param>
+                    <param name="includeMethods">createAccount,updateAccount</param>                    
                 </interceptor-ref>
             </interceptor-stack>
             

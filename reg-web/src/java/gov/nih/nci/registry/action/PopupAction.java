@@ -109,6 +109,7 @@ import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.SummaryFourSponsorsWebDTO;
+import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -247,7 +248,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             summarySp.setOrgId(orgId);
             summarySp.setOrgName(chosenName);
             if (trialDTO == null) {
-                trialDTO = new BaseTrialDTO();
+                trialDTO = new TrialDTO();
                 trialDTO.getSummaryFourOrgIdentifiers().add(summarySp);
                 ServletActionContext.getRequest().getSession()
                 .setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
