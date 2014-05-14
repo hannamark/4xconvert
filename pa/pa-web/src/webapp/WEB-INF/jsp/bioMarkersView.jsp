@@ -30,11 +30,13 @@
                 showPopWin(updatedUrl, 950, 200, '', 'Marker Search in caDSR');
             }
             function termRequestForm(pId, markerName,markerId) {
-            	var markerName1 = markerName.replace("(", "%28"); 
-            	var replacedMarkerName = markerName1.replace(")", "%29"); 
+            	var markerName1 = markerName.split("(").join("%28");
+            	var markerName2 = markerName1.split(")").join("%29"); 
+            	var replacedMarkerName = markerName2.split(";").join("%3B");
                 var url = '/pa/protected/popupPlannedMarkersetupEmailRequest.action?fromNewRequestPage=true&nciIdentifier='+pId+'&name='+replacedMarkerName+'&selectedRowIdentifier='+markerId;
                 showPopWin(url, 950, 400, '', 'Create Permissible Value Request');
             }
+            
             function resetValues() {
                 $("trialId").value="";
                 $("markerName").value="";
@@ -145,7 +147,7 @@
                  </display:column>
         </s:if>
        <s:if test="%{#attr.row.dateEmailSent != null}">
-                <display:column sortable="true" titleKey="plannedMarker.termRequest" headerClass="centered" style="width:25%">
+                <display:column sortable="true" titleKey="plannedMarker.termRequest" style="width:25%">
                 <s:date name="%{#attr.row.dateEmailSent}"  format="yyyy-MM-dd HH:mm:ss"/>
                 </display:column>
          </s:if>
