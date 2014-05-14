@@ -467,6 +467,7 @@
 											<input type="text"
 												id="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate"
 												name="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate"
+												style="min-width: 80px;"
 												placeholder="mm/dd/yyyy" maxlength="10" size="10"
 												data-format="MM/dd/yyyy" class="form-control" /> <span
 												class="add-on btn-default"><i
@@ -478,6 +479,7 @@
 											<input type="text"
 												id="trial_${trial.studyProtocolId}_site_${stat.index}_dateOpen"
 												name="trial_${trial.studyProtocolId}_site_${stat.index}_dateOpen"
+												style="min-width: 80px;"
 												placeholder="mm/dd/yyyy" maxlength="10" size="10"
 												data-format="MM/dd/yyyy" class="form-control" /> <span
 												class="add-on btn-default"><i
@@ -489,6 +491,7 @@
 											<input type="text"
 												id="trial_${trial.studyProtocolId}_site_${stat.index}_dateClosed"
 												name="trial_${trial.studyProtocolId}_site_${stat.index}_dateClosed"
+												style="min-width: 80px;"
 												placeholder="mm/dd/yyyy" maxlength="10" size="10"
 												data-format="MM/dd/yyyy" class="form-control" /> <span
 												class="add-on btn-default"><i
