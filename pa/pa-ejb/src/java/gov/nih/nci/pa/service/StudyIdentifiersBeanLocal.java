@@ -73,7 +73,7 @@ public class StudyIdentifiersBeanLocal extends
     private final ThreadLocal<Boolean> suppressEmailsToDcp = new ThreadLocal<Boolean>();
 
     @Override
-    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyIdentifierDTO> getStudyIdentifiers(Ii studyProtocolID)
             throws PAException {
         PaHibernateUtil.getCurrentSession().flush();
