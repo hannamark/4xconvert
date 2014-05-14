@@ -26,6 +26,7 @@
 .popover {
     max-width: 150px !important;
     font-size: 80%;
+    z-index: auto;
 }
 
 </style>
