@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
@@ -329,8 +330,10 @@ public class AddSitesAction extends BaseSearchTrialAction {
                     Collection<OrganizationDTO> candidates = participatingOrgService
                             .getOrganizationsThatAreNotSiteYet(
                                     dto.getStudyProtocolId(), familyMembers);
-                    dto.setOrgsThatCanBeAddedAsSite(new ArrayList<OrganizationDTO>(
-                            candidates));
+                    List<OrganizationDTO> orgsThatCanBeAddedAsSite = new ArrayList<OrganizationDTO>(
+                            candidates);
+                    sortOrgsByNameWithAffiliationBeingAlwaysFirst(orgsThatCanBeAddedAsSite);
+                    dto.setOrgsThatCanBeAddedAsSite(orgsThatCanBeAddedAsSite);
                     return !candidates.isEmpty();
                 } catch (PAException e) {
                     LOG.error(e, e);
@@ -339,6 +342,37 @@ public class AddSitesAction extends BaseSearchTrialAction {
             }
         });
 
+    }
+
+    /**
+     * @param orgs List<OrganizationDTO>
+     * @throws PAException PAException
+     */
+    void sortOrgsByNameWithAffiliationBeingAlwaysFirst(
+            final List<OrganizationDTO> orgs) throws PAException {
+        final Long affiliationOrgID = IiConverter
+                .convertToLong(getUserAffiliation().getIdentifier());
+        Collections.sort(orgs, new Comparator<OrganizationDTO>() {
+            @Override
+            public int compare(OrganizationDTO o1, OrganizationDTO o2) {
+                Long o1Id = IiConverter.convertToLong(o1.getIdentifier());
+                Long o2Id = IiConverter.convertToLong(o2.getIdentifier());
+                if (o1Id.equals(o2Id)) {
+                    return 0;
+                }
+                if (o1Id.equals(affiliationOrgID)) {
+                    return -1;
+                }
+                if (o2Id.equals(affiliationOrgID)) {
+                    return +1;
+                }
+                return StringUtils.defaultString(
+                        EnOnConverter.convertEnOnToString(o1.getName()))
+                        .compareTo(
+                                StringUtils.defaultString(EnOnConverter
+                                        .convertEnOnToString(o2.getName())));
+            }
+        });
     }
 
     @SuppressWarnings("deprecation")

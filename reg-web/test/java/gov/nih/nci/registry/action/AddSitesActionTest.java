@@ -23,6 +23,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -334,6 +335,32 @@ public class AddSitesActionTest extends AbstractRegWebTest {
                         + " that will be more manageable.",
                 ServletActionContext.getRequest()
                         .getAttribute("failureMessage"));
+
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testSortOrgsByNameWithAffiliationBeingAlwaysFirst() throws PAException {
+        prepareAction();
+        List<OrganizationDTO> orgs = new ArrayList<OrganizationDTO>();
+        
+        OrganizationDTO mayo = new OrganizationDTO();
+        mayo.setIdentifier(IiConverter.convertToIi(1000L));
+        mayo.setName(EnOnConverter.convertToEnOn("Mayo"));
+        
+        OrganizationDTO abra = new OrganizationDTO();
+        abra.setIdentifier(IiConverter.convertToIi(2000L));
+        abra.setName(EnOnConverter.convertToEnOn("Abrahamson"));
+        
+        orgs.add(mayo);
+        orgs.add(abra);
+        orgs.add(affiliation);
+        
+        action.sortOrgsByNameWithAffiliationBeingAlwaysFirst(orgs);
+        
+        assertEquals(affiliation, orgs.get(0));
+        assertEquals(abra, orgs.get(1));
+        assertEquals(mayo, orgs.get(2));
 
     }
 
