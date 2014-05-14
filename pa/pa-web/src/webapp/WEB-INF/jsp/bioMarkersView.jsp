@@ -116,7 +116,7 @@
 			<display:table name="plannedMarkerList" htmlId="plannedMarkerTable" id="row"
 							class="data" sort="list" pagesize="200"
 							requestURI="bioMarkerssearch.action">
-				<display:column sortable="true" titleKey="plannedMarker.protocolId" headerClass="sortable" style="width:15%">
+				<display:column sortable="true" titleKey="plannedMarker.protocolId" headerClass="sortable" style="width:17%">
 				<a href="javascript:void(0)" onclick="viewMarker('${row.nciIdentifier}');">
 				<s:property value="%{#attr.row.nciIdentifier}" /></a>
 					&nbsp;  &nbsp;  &nbsp; 
@@ -132,7 +132,7 @@
 								titleKey="plannedMarker.markerName" headerClass="sortable" />
 		<s:if test="%{#attr.row.dateEmailSent == null}">
                 <display:column titleKey="plannedMarker.termRequest" headerClass="centered"
-                                class="action">
+                                class="action" style="width:25%">
                                 <del class="btnwrapper"">
                                     <ul class="btnrow">
                                         <li>
@@ -145,7 +145,7 @@
                  </display:column>
         </s:if>
        <s:if test="%{#attr.row.dateEmailSent != null}">
-                <display:column sortable="true" titleKey="plannedMarker.termRequest" headerClass="centered">
+                <display:column sortable="true" titleKey="plannedMarker.termRequest" headerClass="centered" style="width:25%">
                 <s:date name="%{#attr.row.dateEmailSent}"  format="yyyy-MM-dd HH:mm:ss"/>
                 </display:column>
          </s:if>
