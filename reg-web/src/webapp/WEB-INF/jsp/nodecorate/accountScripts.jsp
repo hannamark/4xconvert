@@ -37,6 +37,7 @@
         	setorgid(orgid, name);
         	loadAffliatedOrgDiv();
         }
+        $('dropdown-affiliateOrganization').hide();
     }
 
     function loadAffliatedOrgDiv() {

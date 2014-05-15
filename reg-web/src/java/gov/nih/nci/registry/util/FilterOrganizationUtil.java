@@ -15,7 +15,6 @@ import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -193,11 +192,12 @@ public class FilterOrganizationUtil {
                     + "where org.id in (select id from AccountCommonOrganization) order by org.name asc");
     
             @SuppressWarnings("unchecked")
-            Iterator<Organization> iter = query.iterate();
+            List<Organization> orgList = query.list();
 
-            while (iter.hasNext()) {
-                list.add(new OrgItem(iter.next()));
+            for (Organization orgItem : orgList) {
+                list.add(new OrgItem(orgItem));
             }
+
         } catch (Exception ex) {
             LOG.error("An error occured while fetching the common account organizations.", ex);
         }
