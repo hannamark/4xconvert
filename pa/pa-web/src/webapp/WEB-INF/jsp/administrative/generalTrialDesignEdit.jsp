@@ -322,7 +322,7 @@
                         </td>
                     </tr>                    
                     <tr>
-                        <th colspan="3">Alternate Titles</th>
+                        <th colspan="2">Alternate Titles</th>
                     </tr>
                     <tr>                       
                         <td>
@@ -332,13 +332,11 @@
                                 list="#studyAlternateTitleTypeCodeValues" cssStyle="width:110px;"/>&nbsp;&nbsp;
                         </td>       
                         <td>
-                            <s:textarea id="studyAlternateTitle" name="studyAlternateTitle" cssStyle="width:606px" rows="4" 
+                            <s:textarea id="studyAlternateTitle" name="studyAlternateTitle" cssStyle="width:400px" rows="2" 
                                 maxlength="4000" cssClass="charcounter" />&nbsp;
-                        </td>                                                        
-                        <td>    
                             <input type="button" id="studyAlternateTitleBtnId" 
-                                value="Add Alternate Title" onclick="addStudyAlternateTitle();" style="width:110px;"/>
-                        </td>
+                                value="Add Alternate Title" onclick="addStudyAlternateTitle();" style="width:130px;"/>
+                        </td>                                                                                
                     </tr>
                     <tr>
                         <td colspan="3" class="space">
