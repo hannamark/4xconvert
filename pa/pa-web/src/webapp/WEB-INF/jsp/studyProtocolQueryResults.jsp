@@ -1,6 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<s:if test="records != null">
-    <div class="label">(*) Trial has alternate titles. Click to view.</div>
+<s:if test="records != null">    
     <h2>Search Results</h2>
     <s:form name="sForm">
         <c:if test="${empty isBare}">  
@@ -12,5 +11,5 @@
         <c:set scope="request"  var="displayTableUID" value="row"/> 
         <s:hidden name="checkInReason"/>
         <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResultsTable.jsp"/>        
-    </s:form>
+    </s:form>    
 </s:if>

@@ -20,10 +20,11 @@
 <div class="form-group">
 	<label for="submitTrial_protocolWebDTO_trialTitle" class="col-xs-4 control-label"> 
     <fmt:message key="submit.trial.title"/><span class="required">*</span></label>
+    <fmt:message key="studyAlternateTitles.text" var="title" />
     <div class="col-xs-4">
         <s:textarea id="submitTrial_protocolWebDTO_trialTitle" name="trialDTO.officialTitle" cssClass="readonly form-control" readonly="true" cols="75" rows="4" />
         <c:if test="${not empty trialDTO.studyAlternateTitles}">
-            <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialDTO.identifier}')">(*)</a>                                                   
+            <a href="javascript:void(0)" title="${title}" onclick="displayStudyAlternateTitles('${trialDTO.identifier}')">(*)</a>                                                   
         </c:if>
     </div>
 </div>

@@ -299,5 +299,8 @@
         </div>        
         <div class="line"></div>
         <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp"/>
+         <c:if test="${studyAlternateTitlesPresent}">
+             <div class="label">(*) <fmt:message key="studyAlternateTitles.text"/></div>  
+         </c:if>
     </body>
 </html>

@@ -42,6 +42,8 @@ public class BaseSearchTrialAction extends ActionSupport implements
 
     private HttpServletResponse response;
     
+    private Boolean studyAlternateTitlesPresent;
+    
     /**
      * @param spQueryCriteria StudyProtocolQueryCriteria
      * @throws PAException PAException
@@ -64,13 +66,18 @@ public class BaseSearchTrialAction extends ActionSupport implements
         }        
         records = protocolQueryService
                 .getStudyProtocolByCriteria(spQueryCriteria);
-        if (CollectionUtils.isNotEmpty(records)) {
+        if (CollectionUtils.isNotEmpty(records)) {            
             Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
                 public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
                     return StringUtils.defaultString(o2.getNciIdentifier()).compareTo(
                             StringUtils.defaultString(o1.getNciIdentifier()));
                 }
             });              
+            for (StudyProtocolQueryDTO record : records) {
+                if (CollectionUtils.isNotEmpty(record.getStudyAlternateTitles())) {
+                    studyAlternateTitlesPresent = true;
+                }
+            }
         }
     }
     
@@ -140,5 +147,18 @@ public class BaseSearchTrialAction extends ActionSupport implements
         this.protocolQueryService = protocolQueryService;
     }
 
+    /**
+     * @return studyAlternateTitlesPresent
+     */
+    public Boolean getStudyAlternateTitlesPresent() {
+        return studyAlternateTitlesPresent;
+    }
+
+    /**
+     * @param studyAlternateTitlesPresent studyAlternateTitlesPresent
+     */
+    public void setStudyAlternateTitlesPresent(Boolean studyAlternateTitlesPresent) {
+        this.studyAlternateTitlesPresent = studyAlternateTitlesPresent;
+    }
 
 }

@@ -31,11 +31,12 @@
                 sortable="true" headerClass="sortable"/>
             <display:column escapeXml="true" titleKey="studyProtocol.dcpIdentifier" property="dcpId"
                 sortable="true" headerClass="sortable"/>
-            <display:column escapeXml="false" titleKey="studyProtocol.officialTitle" maxLength= "200" sortable="true" property="officialTitle" headerClass="sortable" media="excel csv"/>  
+            <display:column escapeXml="false" titleKey="studyProtocol.officialTitle" maxLength= "200" sortable="true" property="officialTitle" headerClass="sortable" media="excel csv"/>              
             <display:column escapeXml="false" titleKey="studyProtocol.officialTitle" maxLength= "200" sortable="true" headerClass="sortable" media="html">
+                <fmt:message key="studyAlternateTitles.text" var="title" />
                 <!-- <c:out value="${row.officialTitle}"/> -->
                 <c:if test="${not empty row.studyAlternateTitles}">                    
-                    <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${row.studyProtocolId}')">(*)</a>
+                    <a href="javascript:void(0)" title="${title}" onclick="displayStudyAlternateTitles('${row.studyProtocolId}')">(*)</a>
                 </c:if>
                 <c:out value="${row.officialTitle}"/>                
             </display:column>

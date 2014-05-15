@@ -410,8 +410,13 @@
 	    			<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
 	    		</s:else>
 			</div>
-			</div>
+			</div>			
 		</div>
+		<c:if test="${studyAlternateTitlesPresent}">
+		    <div class="form-group">
+		        <label class="col-xs-4 control-label">(*) <fmt:message key="studyAlternateTitles.text"/></label>
+		    </div>
+		</c:if>
 	</s:if>
 	</div>
 </div>

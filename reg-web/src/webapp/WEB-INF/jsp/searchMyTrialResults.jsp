@@ -98,9 +98,10 @@ jQuery(function() {
                 </display:column>
                 <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength="200" headerScope="col" media="excel csv"/>
                 <display:column escapeXml="false" titleKey="search.trial.officialTitle" maxLength="100" headerScope="col" media="html">
+                    <fmt:message key="studyAlternateTitles.text" var="title" />
                     <!-- <c:out value="${row.officialTitle}"/> -->
                     <c:if test="${not empty row.studyAlternateTitles}">                    
-                        <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${row.studyProtocolId}')">(*)</a>
+                        <a href="javascript:void(0)" title="${title}" onclick="displayStudyAlternateTitles('${row.studyProtocolId}')">(*)</a>
                     </c:if>
                     <c:out value="${row.officialTitle}"/>
                 </display:column>

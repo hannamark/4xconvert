@@ -110,6 +110,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -153,6 +154,8 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private String newProcessingPriority;
     private String processingComments;
     private String pageFrom;
+    private Boolean studyAlternateTitlesPresent; 
+    
     /**
      * {@inheritDoc}
      */
@@ -239,7 +242,12 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
                         CacheUtils.getSearchResultsCache(),
                         criteria.getUniqueCriteriaKey());
             }     
-            records = protocolQueryService.getStudyProtocolByCriteria(criteria);            
+            records = protocolQueryService.getStudyProtocolByCriteria(criteria);
+            for (StudyProtocolQueryDTO record : records) {
+                if (CollectionUtils.isNotEmpty(record.getStudyAlternateTitles())) {
+                    studyAlternateTitlesPresent = true;
+                }
+            }
             ActionUtils.sortTrialsByNciId(records);
             return SUCCESS;
         } catch (Exception e) {
@@ -573,5 +581,19 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
      */
     public void setPageFrom(String pageFrom) {
         this.pageFrom = pageFrom;
+    }
+
+    /**
+     * @return studyAlternateTitlesPresent
+     */
+    public Boolean getStudyAlternateTitlesPresent() {
+        return studyAlternateTitlesPresent;
+    }
+
+    /**
+     * @param studyAlternateTitlesPresent studyAlternateTitlesPresent
+     */
+    public void setStudyAlternateTitlesPresent(Boolean studyAlternateTitlesPresent) {
+        this.studyAlternateTitlesPresent = studyAlternateTitlesPresent;
     }
 }

@@ -170,9 +170,10 @@
                         <reg-web:titleRowDiv titleKey="view.trial.trialDetails"/>
                         <div class="row form-horizontal details">
                         <reg-web:valueRowDiv labelKey="view.trial.title" noLabelTag="true">
+                            <fmt:message key="studyAlternateTitles.text" var="title" />
                             <c:out value="${requestScope.trialSummary.officialTitle.value}"/>
                             <c:if test="${not empty trialSummary.studyAlternateTitles}">
-                               <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
+                               <a href="javascript:void(0)" title="${title}" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
                             </c:if>
                         </reg-web:valueRowDiv>
                         

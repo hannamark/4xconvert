@@ -55,7 +55,7 @@
     <s:if test="redirectToSummary==false">
 	<reg-web:failureMessage/>
 	<reg-web:sucessMessage/>
-	<reg-web:actionErrorsAndMessages />
+	<reg-web:actionErrorsAndMessages />	
 	<div class="modal-body">
 	<s:form name="addSiteForm" id="addSiteForm" action="addSitepopupsave" cssClass="form-horizontal" role="form" >
 		<s:token />
@@ -73,12 +73,13 @@
 				 <c:out value="${sessionScope.LEAD_ORG_ID}"/>
 				 </div>
 			</div>
-			<div class="form-group">
+			<div class="form-group">	
+			    <fmt:message key="studyAlternateTitles.text" var="title" />					    
 				<label class="col-xs-4  control-label"> <fmt:message key="add.site.trial.officialTitle"/></label> 
 				 <div class="col-xs-4">
 				 	<c:out value="${sessionScope.TITLE}"/>
 				   	<c:if test="${not empty trialSummary.studyAlternateTitles}">
-                    	<a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
+                    	<a href="javascript:void(0)" title="${title}" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
                  	</c:if>
 				 </div>
 			</div>

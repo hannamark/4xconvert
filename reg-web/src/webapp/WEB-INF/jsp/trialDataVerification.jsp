@@ -35,6 +35,7 @@
     <body>
         <h1 class="heading"><span><fmt:message key="trial.data.verification.title" /></span></h1> 
         <c:set var="topic" scope="request" value="dataverification"/>
+        <fmt:message key="studyAlternateTitles.text" var="title" />
         <reg-web:sucessMessage/>
         <div class="row form-horizontal details">
                 <s:token/>                
@@ -72,7 +73,7 @@
                  <reg-web:valueRowDiv labelKey="view.trial.title" noLabelTag="true">
                             <c:out value="${requestScope.trialSummary.officialTitle.value}"/>
                             <c:if test="${not empty trialSummary.studyAlternateTitles}">
-                               <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
+                               <a href="javascript:void(0)" title="${title}" onclick="displayStudyAlternateTitles('${trialSummary.identifier.extension}')">(*)</a>                                                   
                             </c:if>
                  </reg-web:valueRowDiv>
                  <s:set name="webDTOList" value="webDTOList" scope="request"/>
