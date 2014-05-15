@@ -334,6 +334,7 @@
                         </c:if>
                         <c:if test="${fn:length(trialDTO.docDtos) >0}">
                             <div class="box">
+                                <h3 class="heading mt20"><span>Trial Related Documents</span></h3>
                                 <display:table class="data table table-striped table-bordered sortable" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
                                                 name="${trialDTO.docDtos}" requestURI="searchTrialviewDoc.action" export="false">
                                     <display:column titleKey="search.trial.view.documentTypeCode" property="typeCode"   sortable="true" headerClass="sortable"/>

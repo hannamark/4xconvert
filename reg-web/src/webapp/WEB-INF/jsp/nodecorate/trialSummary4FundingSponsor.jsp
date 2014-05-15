@@ -12,7 +12,6 @@
     <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Add Sponsor, and select the name of the external sponsor or funding source as defined by the Summary 4 report."  data-placement="top" data-trigger="hover"></i>
 </div>
 </div>
-<br/><br/><br/>
 <c:forEach items="${sessionScope.trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers" varStatus="stat">
 <div class="col-xs-12">
 	<div class="col-xs-6">

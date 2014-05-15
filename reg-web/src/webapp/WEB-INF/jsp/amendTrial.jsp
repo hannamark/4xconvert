@@ -8,7 +8,6 @@
     <head>
         <title><fmt:message key="amend.trial.page.title"/></title>
         <s:head/>
-    	<link href="${pageContext.request.contextPath}/styles/style.css" rel="stylesheet" type="text/css" media="all" />
     
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
@@ -57,25 +56,65 @@
                 contactPhone = phone;
             }
 
-            function lookup4loadleadorg() {
-                showPopup('${lookupOrgUrl}', loadLeadOrgDiv, 'Select Lead Organization');
-            }
+            function lookup4loadleadorg(selection, name) {
+                if(selection === undefined || selection == "") {
+                    $('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
+                    $("trialDTO.leadOrganizationIdentifier").value = '';
+                    $('trialDTO.leadOrganizationName').value = '';
+                } else if(selection == -1) {
+                    showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Lead Organization');
+                } else if(selection > 0) {
+                    $('trialDTO.leadOrganizationNameField').innerHTML = name;
+                    $('trialDTO.leadOrganizationName').value = name;
+                    $("trialDTO.leadOrganizationIdentifier").value = selection;
+                } else {
+                    //if there is no valid selection we undo the selection enteirly.
+                    $('trialDTO.leadOrganizationNameField').innerHTML = 'Please Select Lead Organization';
+                    $("trialDTO.leadOrganizationIdentifier").value = '';
+                    $('trialDTO.leadOrganizationName').value = '';
+                }
+                $('dropdown-leadOrganization').hide();
+              }
+              
+              function lookup4sponsor(selection, name) {
+                  if(selection === undefined || selection == "") {
+                        $('trialDTO.sponsorNameField').innerHTML = 'Please Select Sponsor Organization';
+                        $('trialDTO.sponsorName').value = '';
+                        $("trialDTO.sponsorIdentifier").value = '';
+                    } else if(selection == -1) {
+                        showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
+                    } else if(selection > 0) {
+                        $('trialDTO.sponsorNameField').innerHTML = name;
+                        $('trialDTO.sponsorName').value = name;
+                        $("trialDTO.sponsorIdentifier").value = selection;
+                    } else {
+                        //if there is no valid selection we undo the selection enteirly.
+                        $('trialDTO.sponsorNameField').innerHTML = 'Please Select Sponsor Organization';
+                        $("trialDTO.sponsorIdentifier").value = '';
+                        $('trialDTO.sponsorName').value = '';
+                    }
+                    $('dropdown-sponsorOrganization').hide();
+                  
+              }
+              
+              function lookup4loadSummary4Sponsor(selection, name) {
+                if(selection === undefined || selection == "") {
+                    //do nothing
+                } else if(selection == -1) {
+                    showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
+                } else if(selection > 0) {
+                  var url = '/registry/protected/popupaddSummaryFourOrg.action';
+                  var params = { orgId: selection, chosenName : name };
+                  var div = document.getElementById('loadSummary4FundingSponsorField');   
+                  div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                  var aj = callAjaxPost(div, url, params);
+                }
+                $('dropdown-sum4Organization').hide();
+                  
+              }
             
             function lookup4loadleadpers() {
                 showPopup('${lookupPersUrl}', loadLeadPersDiv, 'Select Principal Investigator');
-            }
-            
-            function lookup4sponsor() {
-                showPopup('${lookupOrgUrl}', loadSponsorDiv, 'Select Sponsor');
-            }
-                        
-            function lookup4loadSummary4Sponsor() {
-                showPopup('${lookupOrgUrl}', loadSummary4SponsorDiv, 'Select Summary 4 Sponsor/Source');
-            }
-
-            function loadLeadOrgDiv() {
-                $("trialDTO.leadOrganizationIdentifier").value = orgid;
-                $('trialDTO.leadOrganizationName').value = chosenname;
             }
             
             function loadLeadPersDiv() {
@@ -312,10 +351,17 @@
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Deleting...</div>';
                 var aj = callAjaxPost(div, url, params);
             }
-            
-            document.observe("dom:loaded", function () {
-                                               displayTrialStatusDefinition('trialDTO_statusCode');
-                                               });
+     
+            document.observe("dom:loaded", function() {
+                displayTrialStatusDefinition('trialDTO_statusCode');
+                if($('trialDTO.leadOrganizationName').value) {
+                   $('trialDTO.leadOrganizationNameField').innerHTML = $('trialDTO.leadOrganizationName').value;
+                }
+                if($('trialDTO.sponsorName').value) {
+                   $('trialDTO.sponsorNameField').innerHTML = $('trialDTO.sponsorName').value;
+                }
+               
+            });
             
             Event.observe(window, "load", setDisplayBasedOnTrialType);
             Event.observe(window, "load", disableTrialTypeChangeRadios);
@@ -323,12 +369,12 @@
     </head>
     <body>
         <!-- main content begins-->
-        <h1 class="heading"><fmt:message key="amend.trial.page.header"/></h1>
+        <h1 class="heading"><span><fmt:message key="amend.trial.page.header"/></span></h1>
         <p>Use this form to register trials with the NCI Clinical Trials Reporting Program. Required fields are marked by asterisks (<span class="required">*</span>).</p>
         <c:set var="topic" scope="request" value="amendtrial"/>
         <reg-web:failureMessage/>
         <div id="general_trial_errors"></div>
-            <s:form name="amendTrial" method="POST" validate="true" enctype="multipart/form-data">
+            <s:form cssClass="form-horizontal" role="form" name="amendTrial" method="POST" validate="true" enctype="multipart/form-data">
                 <s:token/>
                 <s:if test="hasActionErrors()">
                     <div class="alert alert-danger"><s:actionerror/></div>
@@ -336,7 +382,6 @@
                 <s:else>
                     <s:actionerror/>
                 </s:else>
-                <s:hidden name="trialDTO.leadOrganizationIdentifier" id="trialDTO.leadOrganizationIdentifier"/>
                 <s:hidden name="trialDTO.piIdentifier" id="trialDTO.piIdentifier"/>
                 <s:hidden name="trialDTO.sponsorIdentifier" id="trialDTO.sponsorIdentifier"/>                
                 <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
@@ -361,7 +406,7 @@
                               <div class="form-group">
                                   <label for="trialDTO.localAmendmentNumber" class="col-xs-4 control-label"><fmt:message key="view.trial.amendmentNumber"/></label>
                                   <div class="col-xs-4">
-                                  		<s:textfield id="trialDTO.localAmendmentNumber" name="trialDTO.localAmendmentNumber" maxlength="200" cssStyle="form-control"  />
+                                  		<s:textfield id="trialDTO.localAmendmentNumber" name="trialDTO.localAmendmentNumber" maxlength="200" cssClass="form-control"  />
                                   		<span class="alert-danger">
 				                            <s:fielderror>
 				                                <s:param>trialDTO.localAmendmentNumber</s:param>
@@ -510,10 +555,15 @@
 		         </s:else>
              
 		         <c:if test="${requestScope.protocolDocument != null}">
-		            <div class="box">
-		                <h3>Existing Trial Related Documents</h3>
+		          <div class="accordion">
+                    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section15">Existing Trial Related Documents</a></div>
+                        <div id="section15" class="accordion-body in">
+                            <div class="container">
+		                <p></p>
 		                <jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
-		            </div>
+		                </div>
+	                </div>
+	              </div>
 		         </c:if>
 		         <div id="uploadDocDiv">
 		            <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
