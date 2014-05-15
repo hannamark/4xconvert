@@ -120,6 +120,7 @@ public class ProtocolQueryResultsServiceTest {
     private String onholdDescription;
     private String study_source;
     private String accrual_disease_code_system;
+    private String prev_dws = "SUBMITTED";
         
     Object[] qryResult = { studyProtocolIdentifier, officialTitle,
             proprietaryTrialIndicator, recordVerificationDate,
@@ -146,7 +147,8 @@ public class ProtocolQueryResultsServiceTest {
             scientific_checkout_csm_lname, scientific_checkout_reg_fname,
             scientific_checkout_reg_lname, onhold_reason_code, onhold_date,
             offhold_date, cdr_id, amendment_number, admin_checkout_date,
-            scientific_checkout_date, comments, onholdDescription, study_source, ccr_id, accrual_disease_code_system};
+            scientific_checkout_date, comments, onholdDescription,
+            study_source, ccr_id, accrual_disease_code_system, prev_dws };
     Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
 
     @Before

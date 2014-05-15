@@ -102,6 +102,7 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
 
     private DocumentWorkflowStatusCode lastOffHollStatusCode;
     private DocumentWorkflowStatusCode documentWorkflowStatusCode;
+    private DocumentWorkflowStatusCode previousDocumentWorkflowStatusCode;
     private Date documentWorkflowStatusDate;
     private String piFullName;
     private Long piId;
@@ -504,4 +505,21 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
     public void setAssignedUserId(Long assignedUserId) {
         this.assignedUserId = assignedUserId;
     }
+
+    /**
+     * @return the previousDocumentWorkflowStatusCode
+     */
+    public DocumentWorkflowStatusCode getPreviousDocumentWorkflowStatusCode() {
+        return previousDocumentWorkflowStatusCode;
+    }
+
+    /**
+     * @param previousDocumentWorkflowStatusCode the previousDocumentWorkflowStatusCode to set
+     */
+    public void setPreviousDocumentWorkflowStatusCode(
+            DocumentWorkflowStatusCode previousDocumentWorkflowStatusCode) {
+        this.previousDocumentWorkflowStatusCode = previousDocumentWorkflowStatusCode;
+    }
+    
+    
 }

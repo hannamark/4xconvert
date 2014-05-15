@@ -1589,4 +1589,8 @@
         <comment>ICD 10 Codes</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-5157-2.sql"/>
      </changeSet>
+     <changeSet id="PO-7361" author="krylovd">
+        <comment>Adding a new view to retrive previous DWS for a trial</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7361.sql"/>
+     </changeSet>     
 </databaseChangeLog>

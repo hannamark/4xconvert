@@ -169,7 +169,8 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "scientific_checkout_csm_fname, scientific_checkout_csm_lname, scientific_checkout_reg_fname, "
             + "scientific_checkout_reg_lname, onhold_reason_code, onhold_date, offhold_date, cdr_id, amendment_number,"
             + "admin_checkout_date, scientific_checkout_date, comments, onhold_reason_text, study_source, ccr_id,"
-            + "accrual_disease_code_system FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
+            + "accrual_disease_code_system, previous_dwf_status_code FROM rv_search_results "
+            + "WHERE study_protocol_identifier IN (:ids)";
 
     static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier, study_site_owner.user_id "
             + "from study_protocol "
@@ -278,6 +279,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int STUDY_SOURCE_CODE = 72;
     private static final int CCR_ID_IDX = 73;
     private static final int ACCRUAL_DISEASE_CODESYSTEM_IDX = 74;
+    private static final int PREVIOUS_DWF_STATUS_CODE_IDX = 75;
     private static final int UPDATER_FIRST_NAME_IDX = 1;
     private static final int UPDATER_LAST_NAME_IDX = 2;
     private static final int UPDATER_LOGIN_NAME_IDX = 3;
@@ -668,6 +670,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.setDocumentWorkflowStatusCode(getEnumFromString(DocumentWorkflowStatusCode.class, tstr));
         dto.setViewTSR(!BaseStudyProtocolQueryConverter.NON_TSR_DWF.contains(dto.getDocumentWorkflowStatusCode()));
         dto.setDocumentWorkflowStatusDate((Date) row[CURRENT_DWF_STATUS_DATE_IDX]);
+        
+        tstr = (String) row[PREVIOUS_DWF_STATUS_CODE_IDX];
+        dto.setPreviousDocumentWorkflowStatusCode(getEnumFromString(DocumentWorkflowStatusCode.class, tstr));
         
         tstr = (String) row[CURRENT_ADMIN_MILESTONE_IDX];
         dto.getMilestones().getAdminMilestone().setMilestone(getEnumFromString(MilestoneCode.class, tstr));
