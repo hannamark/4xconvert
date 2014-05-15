@@ -21,9 +21,17 @@
            </div>
            <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the country in which the Trial Oversight Authority is located. After you select the country, you will be able to select the Trial Oversight Authority Organization name." data-placement="top" data-trigger="hover"></i>
         </div>
-       <div class="form-group">
+        <div class="form-group">
            <label for="trialDTO.selectedRegAuth"  class="col-xs-4 control-label"><fmt:message key="regulatory.oversight.auth.name"/><span class="required">*</span></label>
-            <%@ include file="/WEB-INF/jsp/nodecorate/oversightAuthInfo.jsp" %>
+           <div id="loadAuthField" class="col-xs-4">
+                <%@ include file="/WEB-INF/jsp/nodecorate/oversightAuthInfo.jsp" %>
+                <span class="alert-danger"> 
+			        <s:fielderror>
+			        <s:param>trialDTO.selectedRegAuth</s:param>
+			        </s:fielderror>                            
+			   </span>
+           </div>
+           <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the name of each national or international health organization with authority over the protocol." data-placement="top" data-trigger="hover"></i>
      	</div>
 
  <!--   FDA Regulated Intervention Indicator-->
