@@ -259,6 +259,8 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                     if (dto.getUserLastCreated() != null 
                             && !StringUtils.equalsIgnoreCase("REJECTED", trialStatusList
                                     .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))
+                            && !StringUtils.endsWithIgnoreCase("SUBMISSION_TERMINATED", trialStatusList
+                              .get(IiConverter.convertToLong(dto.getStudyProtocolIdentifier())))
                             && identifierMap.containsKey(IiConverter
                                     .convertToLong(dto.getStudyProtocolIdentifier()))) {
                             pmList.add(populateWebDTO(dto, identifierMap, trialStatusList
