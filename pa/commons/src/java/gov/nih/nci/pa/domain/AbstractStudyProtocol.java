@@ -391,7 +391,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     /**
      * @return the accrual disease code system (e.g. SDC)
      */
-    @Column(name = "ACCRUAL_DISEASE_CODE_SYSTEM", nullable = false)
+    @Transient
     public String getAccrualDiseaseCodeSystem() {
         return accrualDiseaseCodeSystem;
     }

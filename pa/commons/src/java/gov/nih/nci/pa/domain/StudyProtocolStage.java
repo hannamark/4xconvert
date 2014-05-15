@@ -701,4 +701,12 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     public void setResponsibleAffilId(String responsibleAffilId) {
         this.responsibleAffilId = responsibleAffilId;
     }
+    
+    /**
+     * @return the accrual disease code system (e.g. SDC)
+     */
+    @Column(name = "ACCRUAL_DISEASE_CODE_SYSTEM", nullable = true)
+    public String getAccrualDiseaseCodeSystem() {
+        return super.getAccrualDiseaseCodeSystem();
+    }
 }

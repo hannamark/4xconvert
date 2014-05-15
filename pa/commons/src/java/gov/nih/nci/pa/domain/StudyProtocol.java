@@ -1009,4 +1009,14 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     public void setStudySource(StudySourceCode source) {
         studySource = source;
     }
+    
+    /**
+     * @return the accrual disease code system (e.g. SDC)
+     */
+    @Column(name = "ACCRUAL_DISEASE_CODE_SYSTEM", nullable = false)
+    public String getAccrualDiseaseCodeSystem() {
+        return super.getAccrualDiseaseCodeSystem();
+    }
+
+    
 }

@@ -1592,5 +1592,10 @@
      <changeSet id="PO-7361" author="krylovd">
         <comment>Adding a new view to retrive previous DWS for a trial</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7361.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-7464" author="krylovd">
+        <comment>Making accrual_disease_code_system nullable in study_protocol_stage
+             because trial drafts are not meant to be complete</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7464.sql"/>
+     </changeSet>
 </databaseChangeLog>
