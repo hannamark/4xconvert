@@ -25,7 +25,7 @@
         <div class="box" id="filters">
             <s:form id="searchUserForm" name="searchUserForm">
                 <s:if test="hasActionErrors()">
-                    <div class="error_msg"><s:actionerror/></div>
+                    <div class="alert alert-danger"><s:actionerror/></div>
                 </s:if>
                 <p><fmt:message key="register.searchUser.formTitle"/></p>
                 <table class="form">

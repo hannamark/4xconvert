@@ -331,7 +331,7 @@
             <s:form name="amendTrial" method="POST" validate="true" enctype="multipart/form-data">
                 <s:token/>
                 <s:if test="hasActionErrors()">
-                    <div class="error_msg"><s:actionerror/></div>
+                    <div class="alert alert-danger"><s:actionerror/></div>
                 </s:if>
                 <s:else>
                     <s:actionerror/>

@@ -10,7 +10,7 @@
     <body>
         
         <s:token/>
-        <div class="error_msg" align="center">
+        <div class="alert alert-danger" align="center">
            <strong>Error encountered. Please do not use the browser back or refresh buttons.</strong> 
         </div>
     </body>

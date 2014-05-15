@@ -181,7 +181,7 @@
             <s:form name="updateTrial" id="updateTrial" method="POST" validate="false" enctype="multipart/form-data" cssClass="form-horizontal" role="form">
                 <s:token/>
                 <s:if test="hasActionErrors()">
-                    <div class="error_msg"><s:actionerror/></div>
+                    <div class="alert alert-danger"><s:actionerror/></div>
                 </s:if>
                 <s:else>
                     <s:actionerror/>
@@ -230,7 +230,7 @@
             </span>
             <br/> <br/>
             <c:forEach items="${flattenedRemainingFieldErrors}" var="error">
-	           <div class="error_msg">	            
+	           <div class="alert alert-danger">	            
 	               <strong>Trial Abstraction Error:</strong> <c:out value="${error}"></c:out>	            
 	           </div>
 	        </c:forEach>

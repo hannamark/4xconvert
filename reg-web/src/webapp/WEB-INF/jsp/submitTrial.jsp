@@ -102,7 +102,7 @@
       <s:form cssClass="form-horizontal" role="form" name="submitTrial" method="POST" enctype="multipart/form-data">
           <s:token/>
           <s:if test="hasActionErrors()">
-              <div class="error_msg">
+              <div class="alert alert-danger">
                   <s:actionerror/>
               </div>
           </s:if>

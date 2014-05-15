@@ -77,7 +77,7 @@ function setEmailNotificationsPreference(userId, trialId, enableEmails) {
       <div class="confirm_msg" style="display: none;" id="prefSaveConfirmation">
           <strong>Message.</strong>&nbsp;<fmt:message key="displaytrialownership.saved"/>
       </div>
-      <div class="error_msg" style="display: none;" id="prefSaveError">
+      <div class="alert alert-danger" style="display: none;" id="prefSaveError">
           <strong>Message.</strong>&nbsp;<fmt:message key="displaytrialownership.error"/>
       </div>         
       <div class="filter-checkbox">

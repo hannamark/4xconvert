@@ -19,7 +19,7 @@
         <p><fmt:message key="login.instructions"/></p>
      </c:when>
      <c:when test="${param.failureMessage == 'noUser'}">
-        <div class="error_msg">
+        <div class="alert alert-danger">
              <strong>Please <a title="To Create an Account" href="/registry/registerUser.action">create an account</a> before logging in.</strong>
         </div>
      </c:when>
