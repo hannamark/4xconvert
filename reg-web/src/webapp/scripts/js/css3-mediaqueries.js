@@ -366,7 +366,7 @@ _2b(_2e,_4[i].cssHelperParsed[_2e]);
 }
 return _2a[_2e];
 };
-domReady(function(){
+domReady(function(){ if (document.body == null) return;
 var els=document.body.getElementsByTagName("*");
 for(var i=0;i<els.length;i++){
 els[i].checkedByCssHelper=true;

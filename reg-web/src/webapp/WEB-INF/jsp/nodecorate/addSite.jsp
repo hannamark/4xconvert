@@ -8,18 +8,7 @@
 <head>
 <%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>
 <%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
-<%@ include file="/WEB-INF/jsp/common/includeextrajs.jsp"%>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js?534785924'/>"></script>
 <script type="text/javascript" language="javascript">
-	addCalendar("Cal1", "Select Date", "siteDTO.recruitmentStatusDate", "addSiteForm");
-	addCalendar("Cal2", "Select Date", "siteDTO.dateOpenedforAccrual",
-			"addSiteForm");
-	addCalendar("Cal3", "Select Date", "siteDTO.dateClosedforAccrual",
-			"addSiteForm");
-	setWidth(90, 1, 15, 1);
-	setFormat("mm/dd/yyyy");
-	
 	
 	function addSite() {
 		$('addSiteForm').submit();
@@ -150,22 +139,22 @@
 			<div class="form-group">
 				<label class="col-xs-4 control-label" for="statusDate"><fmt:message key="add.site.statusDate"/><span class="required">*</span></label> 
 				 <div class="col-xs-4">
-				 	<div id="datetimepicker" class="datetimepicker input-append">
+				 	<div class="datetimepicker input-append">
 					<s:textfield id="statusDate" name="siteDTO.recruitmentStatusDate"
 						maxlength="10" size="10" cssClass="form-control" data-format="MM/dd/yyyy" placeholder="mm/dd/yyyy"/>
-					<span class="add-on btn-default"><i class="fa-calendar"></i></span>	
+					<span class="add-on btn-default"><i class="fa-calendar"></i></span>	</div>
 	                <span class="alert-danger"> <s:fielderror>
 							<s:param>statusDate</s:param>
 						</s:fielderror>
 					</span>
-					</div>
+					
 				 </div>
 			</div>	
 
 			<div class="form-group">
 				<label class="col-xs-4 control-label" for="accrualOpenedDate"><fmt:message key="add.site.accrualOpenedDate"/></label> 
 				 <div class="col-xs-4">
-				 	<div id="datetimepicker" class="datetimepicker input-append">
+				 	<div  class="datetimepicker input-append">
 					<s:textfield id="accrualOpenedDate" name="siteDTO.dateOpenedforAccrual"
 						maxlength="10" size="10" cssClass="form-control" data-format="MM/dd/yyyy" placeholder="mm/dd/yyyy"/>
 					<span class="add-on btn-default"><i class="fa-calendar"></i></span>	
@@ -180,7 +169,7 @@
 			<div class="form-group">
 				<label class="col-xs-4 control-label" for="accrualClosedDate"><fmt:message key="add.site.accrualClosedDate"/></label> 
 				 <div class="col-xs-4">
-				 	<div id="datetimepicker" class="datetimepicker input-append">
+				 	<div  class="datetimepicker input-append">
 						<s:textfield id="accrualClosedDate" name="siteDTO.dateClosedforAccrual"
 						maxlength="10" size="10" cssClass="form-control" data-format="MM/dd/yyyy" placeholder="mm/dd/yyyy"/>
 						<span class="add-on btn-default"><i class="fa-calendar"></i></span>	
