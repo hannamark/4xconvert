@@ -79,6 +79,15 @@
     <body>
     <script>
 $('#viewTrials').addClass("active");
+$(function() {
+    $('input[type="text"]').keypress(function (e) {
+        if (e.which == 13) {
+          $('#mainActionBtn').click();
+          return false;   
+        }
+      });
+});
+
 </script>
     <div class="container">
     <div class="scroller_anchor"></div>
@@ -331,7 +340,7 @@ $('#viewTrials').addClass("active");
             <div class="form-group">
 			<div class="col-xs-4 col-xs-offset-4">
 				<s:if test="%{currentAction == 'create'}">
-					<button type="button" class="btn btn-icon btn-primary mr20" onclick="handleAddAction()">
+					<button id="mainActionBtn" type="button" class="btn btn-icon btn-primary mr20" onclick="handleAddAction()">
 						<i class="fa-floppy-o"></i>Save
 					</button>
 					<button type="button" class="btn btn-icon btn-primary mr20"	onclick="handleCancelAction()">
@@ -349,7 +358,7 @@ $('#viewTrials').addClass("active");
 					</s:if>
 				</s:elseif>
 				<s:elseif test="%{currentAction == 'update'}">
-					<button type="button" class="btn btn-icon btn-primary mr20"	onclick="handleEditAction()">
+					<button id="mainActionBtn" type="button" class="btn btn-icon btn-primary mr20"	onclick="handleEditAction()">
 						<i class="fa-floppy-o"></i>Save
 					</button>
 					<button type="button" class="btn btn-icon btn-primary mr20"	onclick="handleCancelAction()">

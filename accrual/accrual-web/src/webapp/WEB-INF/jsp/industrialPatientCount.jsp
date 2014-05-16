@@ -68,6 +68,18 @@ $('#viewTrials').addClass("active");
 					<s:textfield id="submittedCounts[%{#attr.row.studySite.id}]"
 						value="%{#attr.row.accrualCount}" cssClass="form-control"
 						cssStyle="width:20%" />
+						
+						<script>
+							jQuery(function() {
+							    $('#submittedCounts\\[${row.studySite.id}\\]').keypress(function (e) {
+							        if (e.which == 13) {
+							          handleUpdate(${row.studySite.id});
+							          return false;    //<---- Add this line
+							        }
+							      });
+							});
+						</script>
+						
 				</s:if>
 				<s:else>
 					<s:property value="%{#attr.row.accrualCount}" />
@@ -80,7 +92,7 @@ $('#viewTrials').addClass("active");
 				class="actions">
 				<s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
 
-					<s:a href="#" data-placement="top" rel="tooltip"
+					<s:a href="#" data-placement="top" rel="tooltip" id="saveBtn%{#attr.row.studySite.id}"
 						data-original-title="Save"
 						onclick="handleUpdate(%{#attr.row.studySite.id})">
 						<i class="fa-floppy-o"></i>

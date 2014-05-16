@@ -25,6 +25,17 @@ $(function()
 		});
 
 $('#priorSubmissions').addClass("active");
+
+$(function() {
+    $('input[type="text"]').keypress(function (e) {
+        if (e.which == 13) {
+        	handleSearch();
+          return false;    //<---- Add this line
+        }
+      });
+});
+
+
 </script>
 <div class="container">
     <h1 class="heading"><span><fmt:message key="priorSubmissions.title"/></span></h1>

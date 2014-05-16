@@ -19,6 +19,14 @@ function submitForm(btnSelected){
 <body>
 <script>
 $('#wrap').addClass("login disclaimer");
+
+$('body').keypress(function (e) {
+    if (e.which == 13) {
+      submitForm('accept');
+      return false;    //<---- Add this line
+    }
+  });
+
 </script>
 	<s:form name="disclaimer" method="POST"
 		action="disClaimerActionaccept.action">

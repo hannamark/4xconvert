@@ -1,22 +1,26 @@
 	/* affix the navbar after scroll below header */
 
-        var stickyHeaderTop = $('#nav').offset().top;
+		if ($('#nav').length > 0) {
+	        var stickyHeaderTop = $('#nav').offset().top;
+	
+	        $(window).scroll(function(){
+	                if( $(window).scrollTop() > stickyHeaderTop ) {
+	                        $('#nav').css({position: 'fixed', top: '-1px'});
+	                        $('#stickyalias').css('display', 'block');
+	                } else {
+	                        $('#nav').css({position: 'static', top: '0px'});
+	                        $('#stickyalias').css('display', 'none');
+	                }
+	        });
 
-        $(window).scroll(function(){
-                if( $(window).scrollTop() > stickyHeaderTop ) {
-                        $('#nav').css({position: 'fixed', top: '-1px'});
-                        $('#stickyalias').css('display', 'block');
-                } else {
-                        $('#nav').css({position: 'static', top: '0px'});
-                        $('#stickyalias').css('display', 'none');
-                }
-        });
-
-
+		}
 //<![CDATA[ 
 
 // This function will be executed when the user scrolls the page.
 $(window).scroll(function(e) {
+	
+	if ($(".scroller_anchor").length == 0) return; // no scroller. terminate now.
+	
     // Get the position of the location where the scroller starts.
     var scroller_anchor = $(".scroller_anchor").offset().top;
     

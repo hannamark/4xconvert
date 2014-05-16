@@ -27,6 +27,16 @@
                 		};
                 $('#getDiseases').load(url, params);  
             }
+            
+            $(function() {
+                $('input[type="text"]').keypress(function (e) {
+                    if (e.which == 13) {
+                    	loadDiv();
+                      return false;    //<---- Add this line
+                    }
+                  });
+            });
+            
         </script>
     </head> 
     <body>

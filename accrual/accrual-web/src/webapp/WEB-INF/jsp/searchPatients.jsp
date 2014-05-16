@@ -47,6 +47,14 @@ function handleSwitchUrl(spId) {
 <body>
 <script>
 $('#viewTrials').addClass("active");
+$(function() {
+    $('input[type="text"]').keypress(function (e) {
+        if (e.which == 13) {
+        	handleSearch();
+          return false;   
+        }
+      });
+});
 </script>
 <div class="container">
   <div class="scroller_anchor"></div>
