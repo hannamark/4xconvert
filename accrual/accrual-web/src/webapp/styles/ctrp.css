@@ -1839,4 +1839,4 @@ table td {
 }
 
 .scroller_anchor{height:0px; margin:0; padding:0;}
-.summary-box{ z-index:100; height:75px; }
+.summary-box{ z-index:100; height:auto; min-height: 75px; }
