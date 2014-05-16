@@ -1,5 +1,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<head>
 
+<script>
+       if (self != top) {
+               window.parent.location.href = window.parent.location.href;
+       }
+       
+       </script>
+</head>
 	<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 	<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
@@ -14,6 +22,8 @@
 				return false;
 			}
 		}
+		
+
 	</script>
 
 <!-- Begin page content -->
