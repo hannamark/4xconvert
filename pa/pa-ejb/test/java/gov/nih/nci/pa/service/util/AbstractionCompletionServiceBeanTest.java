@@ -165,7 +165,7 @@ public class AbstractionCompletionServiceBeanTest {
     private final PlannedActivityServiceLocal plannedActivityService = mock(PlannedActivityServiceLocal.class);
     private final PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
     private final ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
-    private final RegulatoryInformationServiceRemote regulatoryInformationService = mock(RegulatoryInformationServiceRemote.class);
+    private final RegulatoryInformationServiceLocal regulatoryInformationService = mock(RegulatoryInformationServiceLocal.class);
     private final StudyContactServiceLocal studyContactService = mock(StudyContactServiceLocal.class);
     private final StudyDiseaseServiceLocal studyDiseaseService = mock(StudyDiseaseServiceLocal.class);
     private final StudyIndldeServiceLocal studyIndldeService = mock(StudyIndldeServiceLocal.class);

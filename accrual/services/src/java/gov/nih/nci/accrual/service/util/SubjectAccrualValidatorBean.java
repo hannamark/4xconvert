@@ -91,6 +91,7 @@ import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
@@ -119,7 +120,7 @@ import org.apache.commons.lang.StringUtils;
  * @author merenkoi
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
 

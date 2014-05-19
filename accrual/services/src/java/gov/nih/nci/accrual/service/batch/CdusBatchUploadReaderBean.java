@@ -90,6 +90,7 @@ import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
@@ -165,7 +166,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @Local(CdusBatchUploadReaderServiceLocal.class)
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.NPathComplexity", 
                 "PMD.ExcessiveClassLength", "PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength" })

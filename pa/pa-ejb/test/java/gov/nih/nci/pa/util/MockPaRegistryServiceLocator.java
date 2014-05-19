@@ -7,7 +7,7 @@ import static org.mockito.Mockito.mock;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -53,7 +53,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
@@ -66,7 +66,7 @@ import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
@@ -80,9 +80,10 @@ import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -106,7 +107,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
     StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
     OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
-    PAHealthCareProviderRemote paHealthCareProvider = new PAHealthCareProviderServiceBean();
+    PAHealthCareProviderLocal paHealthCareProvider = new PAHealthCareProviderServiceBean();
     RegistryUserServiceLocal regSvc = mock(RegistryUserServiceLocal.class);
 
     /**
@@ -161,7 +162,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
      * {@inheritDoc}
      */
     @Override
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+    public InterventionAlternateNameServiceLocal getInterventionAlternateNameService() {
         return null;
     }
 
@@ -193,7 +194,7 @@ public PAPersonServiceRemote getPAPersonService() {
     * {@inheritDoc}
     */
    @Override
-public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
+public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
         return null;
     }
 
@@ -269,7 +270,7 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
      * {@inheritDoc}
      */
     @Override
-    public PAHealthCareProviderRemote getPAHealthCareProviderService() {
+    public PAHealthCareProviderLocal getPAHealthCareProviderService() {
         return paHealthCareProvider;
     }
 
@@ -329,7 +330,7 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
      * {@inheritDoc}
      */
     @Override
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
+    public AbstractionCompletionServiceLocal getAbstractionCompletionService() {
        return null;
     }
 
@@ -409,6 +410,14 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
      * {@inheritDoc}
      */
     @Override
+    public TSRReportGeneratorServiceLocal getTSRReportGeneratorServiceLocal() {
+       return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public RegistryUserServiceLocal getRegistryUserService() {
         return regSvc;
     }
@@ -424,7 +433,7 @@ public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
     /**
      * {@inheritDoc}
      */
-    public PAHealthCareProviderRemote getHealthCareProviderRemote() {
+    public PAHealthCareProviderLocal getHealthCareProviderRemote() {
         return null;
     }
 

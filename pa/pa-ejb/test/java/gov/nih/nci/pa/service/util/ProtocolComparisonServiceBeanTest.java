@@ -159,7 +159,7 @@ public class ProtocolComparisonServiceBeanTest extends
 
     private final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
 
-    private final RegulatoryInformationServiceRemote regulatoryInfoSvc = new RegulatoryInformationBean();
+    private final RegulatoryInformationServiceLocal regulatoryInfoSvc = new RegulatoryInformationBean();
 
     /**
      * @throws java.lang.Exception

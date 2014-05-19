@@ -79,6 +79,8 @@
 
 package gov.nih.nci.pa.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -96,8 +98,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "FUNDING_MECHANISM")
-public class FundingMechanism {
-
+public class FundingMechanism implements Serializable {
+    private static final long serialVersionUID = -7497217245467220209L;
     private Long identifier;
     private String fundingMechanismCode;
 

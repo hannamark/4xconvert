@@ -28,7 +28,7 @@ import org.junit.Test;
 public class PersonSynchronizationServiceBeanTest extends AbstractHibernateTestCase {
 
     private final PersonSynchronizationServiceBean bean = new PersonSynchronizationServiceBean();
-    private final PersonSynchronizationServiceRemote remoteEjb = bean;
+    private final PersonSynchronizationServiceLocal remoteEjb = bean;
     StudySiteContactServiceLocal spcService = new StudySiteContactBeanLocal();
     StudyContactServiceLocal scService = new StudyContactBeanLocal();
 

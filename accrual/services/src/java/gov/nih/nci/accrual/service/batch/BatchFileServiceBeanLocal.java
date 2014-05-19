@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -100,8 +101,6 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.io.FileUtils;
@@ -111,8 +110,7 @@ import org.hibernate.HibernateException;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class BatchFileServiceBeanLocal implements BatchFileService {
     
     /**

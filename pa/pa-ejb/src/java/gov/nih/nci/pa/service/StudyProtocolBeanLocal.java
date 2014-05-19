@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -191,7 +192,6 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
-import org.jboss.annotation.IgnoreDependency;
 import org.joda.time.DateMidnight;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -203,8 +203,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @since 11/03/2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol> implements StudyProtocolServiceLocal {
 
     private static final String UNCHECKED = "unchecked";
@@ -219,7 +218,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private RegistryUserServiceLocal registryUserService;
     
     @EJB
-    @IgnoreDependency
+//    @IgnoreDependency
     private MailManagerServiceLocal mailManagerService; 
     
     @EJB

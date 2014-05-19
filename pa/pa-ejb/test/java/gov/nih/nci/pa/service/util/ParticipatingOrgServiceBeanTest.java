@@ -125,7 +125,7 @@ public class ParticipatingOrgServiceBeanTest extends AbstractHibernateTestCase {
 
     private ParticipatingOrgServiceBean bean;
     private StudySiteAccrualStatusServiceLocal ssas;
-    private PAHealthCareProviderRemote paHcp;
+    private PAHealthCareProviderLocal paHcp;
 
     @Before
     public void setup() throws Exception {
@@ -133,7 +133,7 @@ public class ParticipatingOrgServiceBeanTest extends AbstractHibernateTestCase {
         ssas = mock(StudySiteAccrualStatusServiceLocal.class);
         when(ssas.getCurrentStudySiteAccrualStatus(any(Long[].class))).thenReturn(
                 new HashMap<Long, StudySiteAccrualStatus>());
-        paHcp = mock(PAHealthCareProviderRemote.class);
+        paHcp = mock(PAHealthCareProviderLocal.class);
         when(paHcp.getPersonsByStudySiteId(any(Long[].class), any(String.class))).thenReturn(
                 new HashMap<Long, List<PaPersonDTO>>());
         bean.setStudySiteAccrualStatusService(ssas);

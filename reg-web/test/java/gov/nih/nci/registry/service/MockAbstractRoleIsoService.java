@@ -2,13 +2,14 @@ package gov.nih.nci.registry.service;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.FunctionalRoleDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.RolePaService;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockAbstractRoleIsoService<DTO> extends MockAbstractStudyIsoService<DTO> implements RolePaService<DTO>{
+public class MockAbstractRoleIsoService<DTO extends FunctionalRoleDTO> extends MockAbstractStudyIsoService<DTO> implements RolePaService<DTO>{
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.AbstractRoleIsoService#cascadeRoleStatus(gov.nih.nci.iso21090.Ii)

@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.dto.PatientListDto;
 import gov.nih.nci.accrual.dto.SearchSSPCriteriaDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
@@ -109,8 +110,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -128,8 +127,7 @@ import org.hibernate.criterion.Restrictions;
  * @since Aug 29, 2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "unchecked", "PMD.TooManyMethods" })
 public class StudySubjectBeanLocal extends
         AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter> implements

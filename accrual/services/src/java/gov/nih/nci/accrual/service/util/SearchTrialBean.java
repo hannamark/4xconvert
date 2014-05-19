@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.dto.util.AccrualCountsDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -140,7 +141,7 @@ import org.hibernate.Session;
  */
 
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class SearchTrialBean implements SearchTrialService {
     
     private static final int SP_IDENTIFIER_IDX = 0;

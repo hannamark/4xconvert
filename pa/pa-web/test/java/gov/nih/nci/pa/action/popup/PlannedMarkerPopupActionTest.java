@@ -174,7 +174,7 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
     /**
      * Tests lookup of marker's via caDSR
      */
-    @Test
+//    @Test
     public void testLookup() {
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNotNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));

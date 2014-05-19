@@ -1,10 +1,9 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.cadsr.domain.DataElement;
-import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
+import gov.nih.nci.cadsr.domain.ValueDomain;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
-
 import gov.nih.nci.pa.iso.dto.CaDSRDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -13,14 +12,14 @@ import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
-import java.util.Collection;
-
 import java.util.List;
 
-
 import org.apache.log4j.Logger;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 
 /**
  * 
@@ -31,6 +30,7 @@ public class CaDSRPVSyncJobHelper {
     private ApplicationService appService;
     /** The CDE public Id for Assay Type Attribute. */
     private static final Long CDE_PUBLIC_ID = 5473L;
+    private static final Integer CHUNK_SIZE = 1000;
     /** The LOG details. */
     private static final Logger LOG = Logger
             .getLogger(CaDSRPVSyncJobHelper.class);
@@ -54,25 +54,55 @@ public class CaDSRPVSyncJobHelper {
      *             exception
      */
     
+    @SuppressWarnings("unchecked")
     public List<CaDSRDTO> getAllValuesFromCaDSR()
             throws PAException {
         List<CaDSRDTO> values = new ArrayList<CaDSRDTO>();
-        
-            appService = getApplicationService();
-            try {
-                DataElement dataElement = new DataElement();
-                dataElement.setPublicID(CDE_PUBLIC_ID);
-                dataElement.setLatestVersionIndicator("Yes");
-                Collection<Object> results = appService.search(DataElement.class, dataElement);
-                DataElement de = (DataElement) results.iterator().next();
-                String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
-                List<Object> permissibleValues = appService.query(constructSearchCriteria(vdId));
-                values = getSearchResults(permissibleValues);  
-            } catch (Exception e) {
-                LOG.error("Error while querying caDSR", e);
+
+        appService = getApplicationService();
+        try {
+            DetachedCriteria detachedCrit = DetachedCriteria.forClass(DataElement.class).add(Property
+                    .forName("publicID").eq(CDE_PUBLIC_ID)).add(Property.forName("latestVersionIndicator")
+                            .eq("Yes"));
+            detachedCrit.setFetchMode("valueDomain", FetchMode.JOIN);
+            List<DataElement> results = (List<DataElement>) (List<?>) appService.query(detachedCrit);
+            if (results.size() < 1) {
+                throw new PAException("Search of caDSR returned no results.");
             }
+            DataElement de = results.get(0);
+            String vdId = ((ValueDomain) de.getValueDomain()).getId();
+
+            DetachedCriteria dc = constructBaseCriteria(vdId);
+            ProjectionList proj = Projections.projectionList();
+            proj.add(Projections.min("vm.publicID"));
+            proj.add(Projections.groupProperty("enumeratedValueDomain.id"));
+            dc.setProjection(proj);
+            List<Object> qRslt = appService.query(dc);
+            Long minId = (Long) ((Object[]) qRslt.get(0))[0];
+
+            dc = constructBaseCriteria(vdId);
+            proj = Projections.projectionList();
+            proj.add(Projections.max("vm.publicID"));
+            proj.add(Projections.groupProperty("enumeratedValueDomain.id"));
+            dc.setProjection(proj);
+            qRslt = appService.query(dc);
+            Long maxId = (Long) ((Object[]) qRslt.get(0))[0];
+
+            List<Object> result = new ArrayList<Object>();
+            for (Long id = minId; id <= maxId; id += CHUNK_SIZE) {
+                dc = constructBaseCriteria(vdId);
+                dc.add(Property.forName("vm.publicID").ge(id));
+                dc.add(Property.forName("vm.publicID").lt(id + CHUNK_SIZE));
+                List<Object> permissibleValues = appService.query(dc);
+                result.addAll(new ArrayList<Object>(permissibleValues));
+            }
+            values = getSearchResults(result);
+        } catch (Exception e) {
+            LOG.error("Error while querying caDSR", e);
+        }
         return values;
     }
+
     /**
      * 
      * @return ApplicationService appService
@@ -87,12 +117,16 @@ public class CaDSRPVSyncJobHelper {
         }
         return appService;
     }
-    private DetachedCriteria constructSearchCriteria(String vdId) {
-        DetachedCriteria criteria = DetachedCriteria.forClass(
-                ValueDomainPermissibleValue.class, "vdpv");
-        criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
+
+    private DetachedCriteria constructBaseCriteria(String vdId) {
+        DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class);
+        criteria.add(Property.forName("enumeratedValueDomain.id").eq(vdId));
+        criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
+        criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
+        criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
         return criteria;
     }
+
     /**
      * gets the results 
      * @param permissibleValues permissibleValues

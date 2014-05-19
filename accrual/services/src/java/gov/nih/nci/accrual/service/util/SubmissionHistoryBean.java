@@ -2,6 +2,7 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.HistoricalSubmissionDto;
 import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.pa.domain.AccrualCollections;
@@ -31,8 +32,6 @@ import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import net.sf.ehcache.Cache;
@@ -50,8 +49,7 @@ import org.hibernate.Session;
  * @since Jul 23, 2012
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity" })
 public class SubmissionHistoryBean implements SubmissionHistoryService {
     private static final String YES = "Yes";

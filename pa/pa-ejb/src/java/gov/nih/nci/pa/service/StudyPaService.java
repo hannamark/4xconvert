@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.StudyDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ import java.util.Map;
  * copyright holder, NCI.
  * @param <DTO> dto
  */
-public interface StudyPaService<DTO> extends BasePaService<DTO> {
+public interface StudyPaService<DTO extends StudyDTO> extends BasePaService<DTO> {
     /**
      * Retrieves the List of DTOs related to the study protocol with the given Ii ordered by id.
      * @param ii index of object

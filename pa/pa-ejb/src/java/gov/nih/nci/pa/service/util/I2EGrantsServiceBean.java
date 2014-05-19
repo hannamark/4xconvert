@@ -1,6 +1,8 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -13,6 +15,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import oracle.jdbc.driver.OracleConnection;
 
@@ -26,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
  * @since Jun 26, 2013
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class I2EGrantsServiceBean implements I2EGrantsServiceLocal {
 
     private static final int COL_SN = 1;

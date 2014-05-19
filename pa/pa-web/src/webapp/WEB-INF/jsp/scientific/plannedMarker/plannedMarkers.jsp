@@ -36,13 +36,13 @@
                         <ul class="btnrow">
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
                                 <li>
-                                    <s:url id="addUrl" namespace="/protected" action="plannedMarker" method="create"/>
+                                    <s:url id="addUrl" namespace="/protected" action="plannedMarkercreate"/>
                                     <s:a href="%{addUrl}" cssClass="btn">
                                         <span class="btn_img"><span class="add">Add</span></span>
                                     </s:a>
                                 </li>
                                 <s:if test="%{plannedMarkerList != null && !plannedMarkerList.isEmpty()}">
-                                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarker!delete.action');" onkeypress="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarker!delete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarkerdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarkerdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                                     <li><pa:toggleDeleteBtn/></li>
                                 </s:if>                                
                             </pa:scientificAbstractorDisplayWhenCheckedOut>
@@ -93,7 +93,7 @@
                                 <display:column escapeXml="true" property="status" sortable="true" titleKey="plannedMarker.status" headerClass="sortable" />
                                 <pa:scientificAbstractorDisplayWhenCheckedOut>
                                     <display:column titleKey="plannedMarker.edit" headerClass="centered" class="action">
-                                        <s:url id="editUrl" namespace="/protected" action="plannedMarker" method="edit">
+                                        <s:url id="editUrl" namespace="/protected" action="plannedMarkeredit">
                                             <s:param name="selectedRowIdentifier" value="%{#attr.row.id}"/>
                                         </s:url>
                                         <s:a href="%{editUrl}">
@@ -114,13 +114,13 @@
                         <ul class="btnrow">
                             <pa:scientificAbstractorDisplayWhenCheckedOut>
                                 <li>
-                                    <s:url id="addUrl" namespace="/protected" action="plannedMarker" method="create"/>
+                                    <s:url id="addUrl" namespace="/protected" action="plannedMarkercreate"/>
                                     <s:a href="%{addUrl}" cssClass="btn">
                                         <span class="btn_img"><span class="add">Add</span></span>
                                     </s:a>
                                 </li>
 		                        <s:if test="%{plannedMarkerList != null && !plannedMarkerList.isEmpty()}">
-		                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarker!delete.action');" onkeypress="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarker!delete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+		                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarkerdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected marker(s) from the study. Cancel to abort.', 'plannedMarkerdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
 		                            <li><pa:toggleDeleteBtn/></li>
 		                        </s:if>                                
                             </pa:scientificAbstractorDisplayWhenCheckedOut>

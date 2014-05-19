@@ -78,12 +78,15 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 
 /**
  * @author Anupama Sharma
  * @since 10/30/2009
  */
-public class LookUpWebDTO {
+public class LookUpWebDTO implements Serializable {
+    private static final long serialVersionUID = -1983478241471468609L;
     private String id;
     private String code;
     private String displayName;

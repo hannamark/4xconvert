@@ -1,6 +1,7 @@
 package gov.nih.nci.registry.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyPaService;
 
@@ -15,7 +16,7 @@ import java.util.Map;
  * 
  * @param <DTO> The type of DTO processed
  */
-public class MockAbstractStudyIsoService<DTO> extends MockAbstractBaseIsoService<DTO> implements StudyPaService<DTO> {
+public class MockAbstractStudyIsoService<DTO extends StudyDTO> extends MockAbstractBaseIsoService<DTO> implements StudyPaService<DTO> {
     /**
      * {@inheritDoc}
      */

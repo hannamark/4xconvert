@@ -332,7 +332,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
 
     private String assign(Collection<Long> trialIDs, AccrualAccessSourceCode source) throws PAException {
         try {
-            studySiteAccrualAccessService.assignTrialLevelAccrualAccess(
+            studySiteAccrualAccessService.assignTrialLevelAccrualAccessNoTransaction(
                     model.getUser(), source, trialIDs, comments, currentUser);
             ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
                     getText("manage.accrual.access.trialsAssigned"));
@@ -346,7 +346,7 @@ public class ManageAccrualAccessAction extends ActionSupport implements
 
     private String unassign(Collection<Long> trialIDs, AccrualAccessSourceCode source) throws PAException {
         try {
-            studySiteAccrualAccessService.unassignTrialLevelAccrualAccess(
+            studySiteAccrualAccessService.unassignTrialLevelAccrualAccessNoTransaction(
                     model.getUser(), source, trialIDs, comments, currentUser);
             ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
                     getText("manage.accrual.access.trialsUnassigned"));

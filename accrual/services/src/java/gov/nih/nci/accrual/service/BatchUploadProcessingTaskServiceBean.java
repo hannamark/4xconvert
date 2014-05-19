@@ -83,6 +83,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
@@ -102,7 +103,7 @@ import org.apache.log4j.Logger;
  * @author Abraham J. Evans-EL
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Local(BatchUploadProcessingTaskServiceLocal.class)
 public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessingTaskServiceLocal {

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -112,8 +113,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class PlannedSubstanceAdministrationBeanLocal
 extends AbstractStudyIsoService<PlannedSubstanceAdministrationDTO, PlannedSubstanceAdministration,
     PlannedSubstanceAdministrationConverter> implements PlannedSubstanceAdministrationServiceLocal {

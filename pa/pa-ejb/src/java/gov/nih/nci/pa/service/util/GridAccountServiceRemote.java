@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.pa.service.util;
 
-import java.util.Map;
-
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
+
+import java.util.Map;
 
 import javax.ejb.Remote;
 
@@ -130,13 +130,7 @@ public interface GridAccountServiceRemote {
      * @throws PAException on error
      */
     void changePassword(String username, String oldPassword, String newPassword) throws PAException;
-    
-    /**
-     * Gets the map of available identitiy providers.
-     * @return the idps
-     */
-    Map<String, String> getIdentityProviders();
-    
+
     /**
      * Authenticates the given user against a authentication service.
      * @param username the user name

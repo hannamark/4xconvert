@@ -86,10 +86,13 @@ import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.io.Serializable;
+
 /**
  * @author Rajani Kumar
  */
-public class SearchStudySiteResultWebDto {
+public class SearchStudySiteResultWebDto implements Serializable {
+    private static final long serialVersionUID = -615002989848269268L;
     private String ssIi;
     private String orgName;
     private String orgIi;

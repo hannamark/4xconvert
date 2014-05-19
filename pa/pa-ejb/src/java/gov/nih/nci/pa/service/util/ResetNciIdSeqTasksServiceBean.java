@@ -82,13 +82,12 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -100,8 +99,7 @@ import org.hibernate.Session;
  * @author Max Shestopalov
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class ResetNciIdSeqTasksServiceBean implements ResetNciIdSeqTasksServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(ResetNciIdSeqTasksServiceBean.class);

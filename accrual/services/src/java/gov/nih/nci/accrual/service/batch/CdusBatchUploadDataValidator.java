@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.service.batch;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
@@ -149,7 +150,7 @@ import org.hibernate.HibernateException;
  */
 @Stateless
 @Local(CdusBatchUploadDataValidatorLocal.class)
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength", "PMD.TooManyMethods", 
                     "PMD.AvoidDeeplyNestedIfStmts", "PMD.AppendCharacterWithChar", "PMD.NPathComplexity",

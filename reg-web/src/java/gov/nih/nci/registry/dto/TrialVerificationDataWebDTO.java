@@ -3,14 +3,16 @@
  */
 package gov.nih.nci.registry.dto;
 
+import java.io.Serializable;
+
 
 /**
  * 
  * @author Reshma.Koganti
  *
  */
-public class TrialVerificationDataWebDTO {
-
+public class TrialVerificationDataWebDTO implements Serializable {
+    private static final long serialVersionUID = 4631799276433167679L;
     private String verificationMethod;
     private String id;
     private String studyProtocolId;

@@ -101,9 +101,6 @@ import org.apache.commons.lang.StringUtils;
  * @since May 18 2010
  */
 public class SubmittedOrganizationDTO implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     private String id;
     private String name;

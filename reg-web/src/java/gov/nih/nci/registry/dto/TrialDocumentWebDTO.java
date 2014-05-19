@@ -6,13 +6,15 @@ import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.ArrayUtils;
 /**
  *
  * @author Bala Nair
  */
-public class TrialDocumentWebDTO {
-
+public class TrialDocumentWebDTO implements Serializable {
+    private static final long serialVersionUID = -8148568063972210023L;
     private String typeCode;
     private String fileName;
     private String id;

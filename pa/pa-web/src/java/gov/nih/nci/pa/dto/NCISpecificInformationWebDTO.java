@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,8 +89,8 @@ import java.util.List;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class NCISpecificInformationWebDTO {    
-  
+public class NCISpecificInformationWebDTO implements Serializable {    
+    private static final long serialVersionUID = 4992964785696410306L;
     private String accrualReportingMethodCode;
     private String summaryFourFundingCategoryCode;
     private String programCodeText;

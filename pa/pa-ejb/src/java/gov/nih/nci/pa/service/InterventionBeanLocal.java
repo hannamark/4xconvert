@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -117,8 +118,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  * @author asharma
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class InterventionBeanLocal extends AbstractBaseIsoService<InterventionDTO, Intervention, InterventionConverter>
         implements InterventionServiceLocal {
 

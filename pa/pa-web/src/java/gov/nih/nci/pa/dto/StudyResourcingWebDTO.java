@@ -80,13 +80,14 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 
+import java.io.Serializable;
+
 /**
  * @author Hong Gao
  *
  */
-public class StudyResourcingWebDTO {
-    
-    //private String typeCode;
+public class StudyResourcingWebDTO implements Serializable {
+    private static final long serialVersionUID = 8804333863553972903L;
     private String summaryFourFundingCategoryCode;
     private String studyProtocolIi;
     private String id;
@@ -144,5 +145,4 @@ public class StudyResourcingWebDTO {
     public void setId(String id) {
         this.id = id;
     }
-
 }

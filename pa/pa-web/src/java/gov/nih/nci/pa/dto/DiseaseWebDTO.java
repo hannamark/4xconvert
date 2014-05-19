@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 
 
 /**
@@ -87,7 +89,8 @@ package gov.nih.nci.pa.dto;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class DiseaseWebDTO {
+public class DiseaseWebDTO implements Serializable {
+    private static final long serialVersionUID = 5484432673126229919L;
     private String studyDiseaseIdentifier;
     private String diseaseIdentifier;
     private String preferredName;

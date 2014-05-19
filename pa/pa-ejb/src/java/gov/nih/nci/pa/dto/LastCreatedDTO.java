@@ -84,14 +84,15 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.util.CsmUserUtil;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author mshestopalov
  *
  */
-public class LastCreatedDTO {
-
+public class LastCreatedDTO implements Serializable {
+    private static final long serialVersionUID = 6278080936014142515L;
     private String userLastCreated;
     private String userLastCreatedUsername;
     private Date dateLastCreated;

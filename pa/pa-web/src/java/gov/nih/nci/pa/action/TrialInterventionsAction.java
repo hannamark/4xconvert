@@ -101,7 +101,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.BaseLookUpService;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
@@ -138,7 +138,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     private static final String MIN = "0.0";
     private static final String MAX = "999999.99";
 
-    private InterventionAlternateNameServiceRemote interventionAlternateNameService;
+    private InterventionAlternateNameServiceLocal interventionAlternateNameService;
     private InterventionServiceLocal interventionService;
     private PlannedActivityServiceLocal plannedActivityService;
 
@@ -1086,7 +1086,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @param interventionAltNameSvc the interventionAlternateNameService to set
      */
-    public void setInterventionAlternateNameService(InterventionAlternateNameServiceRemote interventionAltNameSvc) {
+    public void setInterventionAlternateNameService(InterventionAlternateNameServiceLocal interventionAltNameSvc) {
         this.interventionAlternateNameService = interventionAltNameSvc;
     }
 

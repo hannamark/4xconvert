@@ -17,6 +17,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @MappedSuperclass
 public class OrganizationalStructuralRole extends StructuralRole {
+    private static final long serialVersionUID = -3599890593921898089L;
     private Organization organization;
     /**
     *

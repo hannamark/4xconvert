@@ -9,13 +9,15 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * @author Vrushali
  *
  */
-public class TrialIndIdeDTO {
+public class TrialIndIdeDTO implements Serializable {
+    private static final long serialVersionUID = -709833256680062237L;
     private String indIdeId;
     private String expandedAccess;
     private String expandedAccessType; //expandedAccessStatusCode

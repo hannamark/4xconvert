@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
@@ -26,8 +27,6 @@ import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -41,8 +40,7 @@ import org.hibernate.Session;
  * @since Nov 15, 2012
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class FamilyServiceBeanLocal implements FamilyServiceLocal {
     private static final Logger LOG = Logger.getLogger(FamilyServiceBeanLocal.class);
     private static final String ORG_IDS = "orgIds";

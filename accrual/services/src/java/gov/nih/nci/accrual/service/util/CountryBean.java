@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -106,7 +107,7 @@ import org.hibernate.criterion.Restrictions;
  * @since Sep 25, 2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class CountryBean implements CountryService {
 
     private static final List<String> COUNTRY_ALPHA_2 = Collections.synchronizedList(new ArrayList<String>());

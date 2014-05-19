@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -100,8 +101,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
@@ -116,8 +115,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @since 02/11/2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyCheckoutServiceBean
 extends AbstractStudyIsoService<StudyCheckoutDTO, StudyCheckout, StudyCheckoutConverter>
 implements StudyCheckoutServiceLocal {

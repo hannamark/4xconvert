@@ -80,12 +80,15 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -93,6 +96,9 @@ import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 /**
  * @author Larry Hebel
@@ -100,6 +106,8 @@ import javax.ejb.Stateless;
  */
 
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@SecurityDomain(AccrualUtil.SECURITY_DOMAIN)
 public class POPatientBean implements POPatientService {
 
     private static void copyDtoFromPaToPo(PatientDTO patient, POPatientDTO dto) {

@@ -81,6 +81,7 @@ package gov.nih.nci.pa.dto;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -90,7 +91,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Naveen Amiruddin, Harsha
  * @since 7/28/2008
  */
-public class PaPersonDTO {
+public class PaPersonDTO implements Serializable {
+    private static final long serialVersionUID = 7576215348756326812L;
     private Long id;
     private String firstName;
     private String lastName;

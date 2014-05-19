@@ -280,22 +280,32 @@ public class PdqXmlGenHelperTest extends AbstractMockitoTest {
         PdqXmlGenHelper.addPoOrganizationByPaHcfIi(root, "organization",
                 IiConverter.convertToPoHealthCareFacilityIi("1"), doc, getCorUtils());
         String docStr = getXml(doc);
-        assertTrue(docStr.contains("<test>" + NEWLINE));
-        assertTrue(docStr.contains("<organization>" + NEWLINE));
-        assertTrue(docStr.contains("<name>some org name</name>" + NEWLINE));
-        assertTrue(docStr.contains("<po_id>1</po_id>" + NEWLINE));
-        assertTrue(docStr.contains("<ctep_id>ctep org id</ctep_id>" + NEWLINE));
-        assertTrue(docStr.contains("<address>" + NEWLINE));
-        assertTrue(docStr.contains("<street>street</street>" + NEWLINE));
-        assertTrue(docStr.contains("<city>city</city>" + NEWLINE));
-        assertTrue(docStr.contains("<state>MD</state>" + NEWLINE));
-        assertTrue(docStr.contains("<zip>20000</zip>" + NEWLINE));
-        assertTrue(docStr.contains("<country>United States</country>" + NEWLINE));
-        assertTrue(docStr.contains("</address>" + NEWLINE));
-        assertTrue(docStr.contains("<phone>111-222-3333</phone>" + NEWLINE));
-        assertTrue(docStr.contains("<email>X</email>" + NEWLINE));
-        assertTrue(docStr.contains("</organization>" + NEWLINE));
-        assertTrue(docStr.contains("</test>"));
+        String[] ss = new String[]{"<test>" + NEWLINE, "<organization>" + NEWLINE, 
+                "<name>some org name</name>" + NEWLINE,"<po_id>1</po_id>" + NEWLINE,
+                "<ctep_id>ctep org id</ctep_id>" + NEWLINE, "<address>" + NEWLINE,
+                "<street>street</street>" + NEWLINE, "<city>city</city>" + NEWLINE,
+                "<state>MD</state>" + NEWLINE, "<zip>20000</zip>" + NEWLINE,
+                "<country>United States</country>" + NEWLINE, "</address>" + NEWLINE,
+                "<phone>111-222-3333</phone>" + NEWLINE, "<email>X</email>" + NEWLINE,
+                "</organization>" + NEWLINE, "</test>"};
+        for (String s : ss) {
+            StringBuffer assertMsg = new StringBuffer("\n=====================================================\n");
+            assertMsg.append("NEWLINE:\n");
+            if (NEWLINE == null) {
+                assertMsg.append("NULL\n");
+            } else  {
+                assertMsg.append("length() == " + NEWLINE.length() + "\n");
+                for (int x = 0; x < NEWLINE.length(); x++) {
+                    int ascii = NEWLINE.charAt(x);
+                    assertMsg.append(ascii);
+                    assertMsg.append("\n");
+                }
+            }
+            assertMsg.append("=====================================================\n");
+            assertMsg.append("Looking for\n[" + s + "]\n");
+            assertMsg.append("Found\n[" + docStr + "]\n");
+            assertTrue(assertMsg.toString(), docStr.contains(s));
+        }
     }
 
     @Test

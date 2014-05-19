@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseAltername;
@@ -29,8 +30,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class PDQDiseaseAlternameBeanLocal
     extends AbstractBaseIsoService<PDQDiseaseAlternameDTO, PDQDiseaseAltername, PDQDiseaseAlternameConverter>
     implements PDQDiseaseAlternameServiceLocal {

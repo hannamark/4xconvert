@@ -83,8 +83,8 @@
 
 package gov.nih.nci.pa.service;
 
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SECURITY_DOMAIN;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
@@ -121,23 +121,20 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.jboss.annotation.security.SecurityDomain;
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 /**
  * @author mshestopalov
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SecurityDomain("pa")
-@RolesAllowed({CLIENT_ROLE, ABSTRACTOR_ROLE })
+@SecurityDomain(SECURITY_DOMAIN)
+@RolesAllowed(SUBMITTER_ROLE)
 public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal implements ParticipatingSiteServiceRemote {
 
     /**

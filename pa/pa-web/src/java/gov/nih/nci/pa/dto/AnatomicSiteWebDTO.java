@@ -86,13 +86,15 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.io.Serializable;
+
 /**
  * Web dto for anatomic site.
  * @author mshestopalov
  *
  */
-public class AnatomicSiteWebDTO {
-    
+public class AnatomicSiteWebDTO implements Serializable {
+    private static final long serialVersionUID = 6536049459492661512L;
     private String displayName;
     private String code;
     private Long id;

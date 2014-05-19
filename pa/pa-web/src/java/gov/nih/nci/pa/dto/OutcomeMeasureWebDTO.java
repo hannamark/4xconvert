@@ -82,14 +82,16 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 /**
  * Web DTO used to store OutcomeMeasure fields.
  *
  * @author ludetc
  *
  */
-public class OutcomeMeasureWebDTO {
-
+public class OutcomeMeasureWebDTO implements Serializable {
+    private static final long serialVersionUID = -3043293883608050939L;
     private String name;
     private String timeFrame;
     private Boolean primaryIndicator;

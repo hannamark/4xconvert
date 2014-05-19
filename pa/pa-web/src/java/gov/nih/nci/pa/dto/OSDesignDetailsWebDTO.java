@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 /**
  * @author Kalpana Guthikonda
  * @since 10/27/2008
@@ -85,8 +87,8 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class OSDesignDetailsWebDTO {
-
+public class OSDesignDetailsWebDTO implements Serializable {
+    private static final long serialVersionUID = 7930733088990804000L;
     private String primaryPurposeCode;
     private String primaryPurposeOtherText;
     private String primaryPurposeAdditionalQualifierCode;

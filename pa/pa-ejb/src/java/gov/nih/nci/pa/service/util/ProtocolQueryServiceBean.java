@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
@@ -166,8 +167,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  *        holder, NCI.
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {

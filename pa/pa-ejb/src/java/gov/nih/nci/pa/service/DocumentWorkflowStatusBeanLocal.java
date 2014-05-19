@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -94,8 +95,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.joda.time.DateTime;
@@ -105,8 +104,7 @@ import org.joda.time.DateTime;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class DocumentWorkflowStatusBeanLocal extends
 AbstractCurrentStudyIsoService<DocumentWorkflowStatusDTO, DocumentWorkflowStatus, DocumentWorkflowStatusConverter>
 implements DocumentWorkflowStatusServiceLocal {

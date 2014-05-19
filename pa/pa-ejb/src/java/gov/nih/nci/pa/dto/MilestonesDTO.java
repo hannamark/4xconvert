@@ -82,13 +82,15 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 
 /**
  * @author mshestopalov
  *
  */
-public class MilestonesDTO {
-
+public class MilestonesDTO implements Serializable {
+    private static final long serialVersionUID = -2308139226752880119L;
     private MilestoneDTO studyMilestone = new MilestoneDTO();
     private MilestoneDTO adminMilestone = new MilestoneDTO();
     private MilestoneDTO scientificMilestone = new MilestoneDTO();

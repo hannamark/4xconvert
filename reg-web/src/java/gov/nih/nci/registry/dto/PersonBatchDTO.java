@@ -9,6 +9,7 @@ import org.hibernate.validator.Pattern;
  *
  */
 public class PersonBatchDTO extends AddressDTO {
+    private static final long serialVersionUID = 7249944354419266706L;
     private String firstName;
     private String middleName;
     private String lastName;

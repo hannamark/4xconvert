@@ -87,7 +87,12 @@ import gov.nih.nci.pa.service.util.AccrualUtilityServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
-import gov.nih.nci.pa.util.JNDIUtil;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
 
 /**
  * @author Hugh Reinhart
@@ -95,53 +100,56 @@ import gov.nih.nci.pa.util.JNDIUtil;
  */
 public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
 
+    private static final Logger LOG = Logger.getLogger(PaJndiServiceLocator.class);
+    private static Context ctx;
+
     /**
      * {@inheritDoc}
      */
     public PlannedActivityServiceRemote getPlannedActivityService() {
-        return (PlannedActivityServiceRemote) JNDIUtil.lookupPa("/pa/PlannedActivityServiceBean/remote");
+        return lookup("PlannedActivityServiceBean!gov.nih.nci.pa.service.PlannedActivityServiceRemote");
     }
 
     /**
      * {@inheritDoc}
      */
     public StudyProtocolServiceRemote getStudyProtocolService() {
-        return (StudyProtocolServiceRemote) JNDIUtil.lookupPa("/pa/StudyProtocolServiceBean/remote");
+        return lookup("StudyProtocolServiceBean!gov.nih.nci.pa.service.StudyProtocolServiceRemote");
     }
     
     /**
      * {@inheritDoc}
      */
     public MailManagerServiceRemote getMailManagerService() {
-        return (MailManagerServiceRemote) JNDIUtil.lookupPa("/pa/MailManagerServiceBean/remote");
+        return lookup("MailManagerServiceBean!gov.nih.nci.pa.service.util.MailManagerServiceRemote");
     }
 
     /**
      * {@inheritDoc}
      */
     public RegistryUserServiceRemote getRegistryUserService() {
-        return (RegistryUserServiceRemote) JNDIUtil.lookupPa("/pa/RegistryUserServiceBean/remote");
+        return lookup("RegistryUserServiceBean!gov.nih.nci.pa.service.util.RegistryUserServiceRemote");
     }
     
     /**
      * {@inheritDoc}
      */
     public StudySiteServiceRemote getStudySiteService() {
-        return (StudySiteServiceRemote) JNDIUtil.lookupPa("/pa/StudySiteServiceBean/remote");
+        return lookup("StudySiteServiceBean!gov.nih.nci.pa.service.StudySiteServiceRemote");
     }
     
     /**
      * {@inheritDoc}
      */
     public LookUpTableServiceRemote getLookUpTableService() {
-        return (LookUpTableServiceRemote) JNDIUtil.lookupPa("/pa/LookUpTableServiceBean/remote");
+        return lookup("LookUpTableServiceBean!gov.nih.nci.pa.service.util.LookUpTableServiceRemote");
     }
     
     /**
      * {@inheritDoc}
      */
     public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() {
-        return (StudySiteAccrualStatusServiceRemote) JNDIUtil.lookupPa("/pa/StudySiteAccrualStatusServiceBean/remote");
+        return lookup("StudySiteAccrualStatusServiceBean!gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote");
     }
 
     /**
@@ -149,12 +157,34 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      */
     @Override
     public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
-        return (AccrualDiseaseTerminologyServiceRemote)
-                JNDIUtil.lookupPa("/pa/AccrualDiseaseTerminologyServiceBean/remote");
+        return lookup("AccrualDiseaseTerminologyServiceBean"
+                + "!gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AccrualUtilityServiceRemote getAccrualUtilityService() {
-        return (AccrualUtilityServiceRemote) JNDIUtil.lookupPa("/pa/AccrualUtilityServiceBeanRemote/remote");
+        return lookup("AccrualUtilityServiceBeanRemote!gov.nih.nci.pa.service.util.AccrualUtilityServiceRemote");
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T lookup(String name) {
+        T svc = null;
+        try {
+            Context context = getContext();
+            svc = (T) context.lookup("java:global/pa/pa-ejb/" + name);
+        } catch (NamingException e) {
+            LOG.error(e);
+        }
+        return svc;
+    }
+
+    private static synchronized Context getContext() throws NamingException {
+        if (ctx == null) {
+            ctx = new InitialContext();
+        }
+        return ctx;
     }
 }

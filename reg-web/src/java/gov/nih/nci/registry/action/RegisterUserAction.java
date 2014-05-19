@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.services.grid.util.CaGridFormAuthenticatorValve;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -97,6 +98,7 @@ import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.SAMLToAttributeMapper;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.dto.UserWebDTO;
 import gov.nih.nci.registry.mail.MailManager;
@@ -104,7 +106,6 @@ import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.EncoderDecoder;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.cgmm.constants.CGMMConstants;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -296,9 +297,9 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         }
         ServletActionContext.getRequest().getSession().setAttribute("selectedIdentityProvider"
               , getSelectedIdentityProvider());
-        registryUserWebDTO.setEmailAddress(userInfo.get(CGMMConstants.CGMM_EMAIL_ID));
-        registryUserWebDTO.setFirstName(userInfo.get(CGMMConstants.CGMM_FIRST_NAME));
-        registryUserWebDTO.setLastName(userInfo.get(CGMMConstants.CGMM_LAST_NAME));
+        registryUserWebDTO.setEmailAddress(userInfo.get(SAMLToAttributeMapper.EMAIL));
+        registryUserWebDTO.setFirstName(userInfo.get(SAMLToAttributeMapper.FIRST_NAME));
+        registryUserWebDTO.setLastName(userInfo.get(SAMLToAttributeMapper.LAST_NAME));
         userWebDTO.setUsername(fullyQualifiedUsername);
         return Constants.CREATE_ACCOUNT;
     }
@@ -596,7 +597,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
      */
     public Map<String, String> getIdentityProviders() {
         if (identityProviders == null) {
-            identityProviders = gridAccountService.getIdentityProviders();
+            identityProviders = CaGridFormAuthenticatorValve.getAuthSourceMap();
         }
         return identityProviders;
     }

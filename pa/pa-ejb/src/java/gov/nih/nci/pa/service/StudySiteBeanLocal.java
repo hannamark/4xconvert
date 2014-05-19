@@ -5,6 +5,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -57,7 +58,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -77,8 +77,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, StudySite, StudySiteConverter> implements
         StudySiteServiceLocal {
 
@@ -91,7 +90,6 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      * @throws PAException PAException
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudySiteDTO create(StudySiteDTO dto) throws PAException {
         StudySiteDTO createDto = businessRules(dto);
         createDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
@@ -106,7 +104,6 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      * @throws PAException PAException
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudySiteDTO update(StudySiteDTO dto) throws PAException {
         StudySiteDTO updateDto = businessRules(dto);
         getStatusCode(updateDto);

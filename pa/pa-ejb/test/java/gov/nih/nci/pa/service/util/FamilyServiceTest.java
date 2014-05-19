@@ -82,7 +82,7 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         siteAccessEjb = new StudySiteAccrualAccessServiceBean();
         partOrgEjb = new ParticipatingOrgServiceBean();
         partOrgEjb.setStudySiteAccrualStatusService(mock(StudySiteAccrualStatusServiceLocal.class));
-        partOrgEjb.setPaHealthCareProviderService(mock(PAHealthCareProviderRemote.class));
+        partOrgEjb.setPaHealthCareProviderService(mock(PAHealthCareProviderLocal.class));
         siteAccessEjb.setParticipatingOrgServiceLocal(partOrgEjb);
         siteAccessEjb.setStudySiteAccrualStatusService(mock(StudySiteAccrualStatusServiceLocal.class));
         dwsEjb = new DocumentWorkflowStatusBeanLocal();

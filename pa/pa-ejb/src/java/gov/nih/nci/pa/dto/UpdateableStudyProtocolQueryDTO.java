@@ -91,7 +91,7 @@ import java.util.List;
  *
  */
 public class UpdateableStudyProtocolQueryDTO extends BaseStudyProtocolQueryDTO {
-
+    private static final long serialVersionUID = 5230572986536976702L;
     private String amendmentNumber;
     private Date amendmentDate;
     private MilestonesDTO milestones = new MilestonesDTO();

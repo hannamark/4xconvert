@@ -77,11 +77,16 @@
 *
 */
 package gov.nih.nci.pa.dto;
+
+import java.io.Serializable;
+
 /**
  * @author Kalpana Guthikonda
  * @since 11/24/2008
  */
-public class AbstractionCompletionDTO implements Comparable<AbstractionCompletionDTO> {
+public class AbstractionCompletionDTO implements Serializable, Comparable<AbstractionCompletionDTO> {
+    private static final long serialVersionUID = 4978714486739701344L;
+
     /**
      * type for error messages.
      */

@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.iso.convert.StudyDiseaseConverter;
@@ -15,11 +16,8 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,8 +27,7 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyDiseaseBeanLocal extends
         AbstractStudyIsoService<StudyDiseaseDTO, StudyDisease, StudyDiseaseConverter> implements
         StudyDiseaseServiceLocal {
@@ -95,7 +92,6 @@ public class StudyDiseaseBeanLocal extends
      * @throws PAException exception
      */
     @Override
-    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public StudyDiseaseDTO create(StudyDiseaseDTO dto) throws PAException {
         businessRules(dto);
         return super.create(dto);
@@ -107,7 +103,6 @@ public class StudyDiseaseBeanLocal extends
      * @throws PAException exception
      */
     @Override
-    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public StudyDiseaseDTO update(StudyDiseaseDTO dto) throws PAException {
         businessRules(dto);
         return super.update(dto);

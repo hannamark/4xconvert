@@ -142,6 +142,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.comparators.NullComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.time.DateUtils;
@@ -876,7 +877,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         }
         Ii studyProtocolIi =
             (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-        setAuditTrail(new TreeSet<AuditLogDetail>(new BeanComparator("id")));
+        setAuditTrail(new TreeSet<AuditLogDetail>(new BeanComparator("id", new NullComparator())));
         if (getAuditTrailCode() == AuditTrailCode.NCI_SPECIFIC_INFORMATION) {
             loadNciSpecificInformation(studyProtocolIi);
         } else if (getAuditTrailCode() != null) {

@@ -56,7 +56,6 @@
 			        </c:if>
                   </div>
                </c:if>
-                  
             
                 <c:if test="${param.trialAction == 'submit'}">
                     <div class="confirm_msg">

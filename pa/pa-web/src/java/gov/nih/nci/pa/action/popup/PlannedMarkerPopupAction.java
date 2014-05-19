@@ -111,7 +111,6 @@ import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -120,9 +119,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Property;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -186,20 +187,25 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      * Performs the caDSR lookup for markers.
      * @return results
      */
+    @SuppressWarnings("unchecked")
     public String lookup() {
         if (validateInput()) {
             return CADSR_RESULTS;
         }
         try {
-            DataElement dataElement = new DataElement();
-            dataElement.setPublicID(CDE_PUBLIC_ID);
-            dataElement.setLatestVersionIndicator("Yes");
-            Collection<Object> results = appService.search(DataElement.class, dataElement);
-            DataElement de = (DataElement) results.iterator().next();
+            DetachedCriteria detachedCrit = DetachedCriteria.forClass(DataElement.class).add(Property
+                    .forName("publicID").eq(CDE_PUBLIC_ID)).add(Property.forName("latestVersionIndicator")
+                    .eq("Yes"));
+            detachedCrit.setFetchMode("valueDomain", FetchMode.JOIN);
+            List<DataElement> results = (List<DataElement>) (List<?>) appService.query(detachedCrit);
+            if (results.size() < 1) {
+                throw new PAException("Search of caDSR returned no results.");
+            }
+            DataElement de = results.get(0);
             String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
             
-            List<Object> permissibleValues = appService.query(constructSearchCriteria(vdId));
-            List<CaDSRWebDTO> values = getSearchResults(permissibleValues);
+            List<Object> permissibleValues = (List<Object>) (List<?>) appService.query(constructSearchCriteria(vdId));
+            List<CaDSRWebDTO> values = getSearchResults(new ArrayList<Object>(permissibleValues));
             markers.addAll(values);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
@@ -362,49 +368,34 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     @SuppressWarnings({ "PMD.CyclomaticComplexity" })
     private DetachedCriteria constructSearchCriteria(String vdId) {
         DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class, "vdpv");
-        criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
+        criteria.add(Property.forName("enumeratedValueDomain.id").eq(vdId));
+        criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
+        criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
         criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
+
         //If public id is specified we only want to search using that.
         if (StringUtils.isNotEmpty(getPublicId())) {
             criteria.add(Expression.eq("vm.publicID", Long.valueOf(getPublicId())));
             return criteria;
         }
-        if (StringUtils.equals(TRUE, getCaseType())) {
-           if (StringUtils.isNotEmpty(getName())) {
-                String newName = getName();
-                if (newName.contains("-")) {
-                     newName = getName().replaceAll("-", "");
-                }
-               criteria.add(Expression.or(Expression.or(
-                      Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
-                      Expression.like(PV_VALUE, getName(), MatchMode.ANYWHERE)), 
-                      Expression.like(PV_VALUE, newName, MatchMode.ANYWHERE)));
+        if (StringUtils.isNotEmpty(getName())) {
+            String newName = getName();
+            if (newName.contains("-")) {
+                 newName = getName().replaceAll("-", "");
             }
-            if (StringUtils.isNotEmpty(getMeaning())) {
-                criteria.add(Expression.like(LONG_NAME, getMeaning(), MatchMode.ANYWHERE));
-            }
-            if (StringUtils.isNotEmpty(getDescription())) {
-                criteria.add(Expression.like(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
-            }
-        } else {
-           if (StringUtils.isNotEmpty(getName())) {
-                String newName = getName();
-                if (newName.contains("-")) {
-                     newName = getName().replaceAll("-", "");
-                }
-               criteria.add(Expression.or(Expression.or(
-                      Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
-                      Expression.ilike(PV_VALUE, getName(), MatchMode.ANYWHERE)), 
-                      Expression.ilike(PV_VALUE, newName, MatchMode.ANYWHERE)));
-            }
-            if (StringUtils.isNotEmpty(getMeaning())) {
-                criteria.add(Expression.ilike(LONG_NAME, getMeaning(), MatchMode.ANYWHERE));
-            }
-            if (StringUtils.isNotEmpty(getDescription())) {
-                criteria.add(Expression.ilike(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
-            }
+           criteria.add(Expression.or(Expression.or(
+                  Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
+                  Expression.ilike("pv.value", getName(), MatchMode.ANYWHERE)), 
+                  Expression.ilike("pv.value", newName, MatchMode.ANYWHERE)));
+           
+            
         }
-        
+        if (StringUtils.isNotEmpty(getMeaning())) {
+            criteria.add(Expression.ilike("vm.longName", getMeaning(), MatchMode.ANYWHERE));
+        }
+        if (StringUtils.isNotEmpty(getDescription())) {
+            criteria.add(Expression.ilike("vm.description", getDescription(), MatchMode.ANYWHERE));
+        }
         return criteria;
     }
 
@@ -412,16 +403,16 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         List<CaDSRWebDTO> results = new ArrayList<CaDSRWebDTO>();
         List<CaDSRWebDTO> resultsMain = new ArrayList<CaDSRWebDTO>();
         for (Object obj : permissibleValues) {
-          ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) obj;
-          CaDSRWebDTO dto = new CaDSRWebDTO();
-          ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
-          dto.setId(vdpv.getId());
-          dto.setVmName(vdpv.getPermissibleValue().getValue());
-          dto.setVmMeaning(vm.getLongName());
-          dto.setVmDescription(vm.getDescription());
-          dto.setPublicId(vm.getPublicID());
-          results.add(dto);
-       }
+            ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) obj;
+            CaDSRWebDTO dto = new CaDSRWebDTO();
+            ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
+            dto.setId(vdpv.getId());
+            dto.setVmName(vdpv.getPermissibleValue().getValue());
+            dto.setVmMeaning(vm.getLongName());
+            dto.setVmDescription(vm.getDescription());
+            dto.setPublicId(vm.getPublicID());
+            results.add(dto);
+        }
         List<CaDSRWebDTO> output = new ArrayList<CaDSRWebDTO>();
         if (getName() != null && !getName().isEmpty()) {
             // Sort the results as per PO-6898
@@ -472,7 +463,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     }
     /**
      * Validates search form input.
-     * @return true if a validation error has occurred
+     * @return true iff a validation error has occurred
      */
     private boolean validateInput() {
         String allParams = StringUtils.join(new String[] {getMeaning(), getName(), getDescription(), getPublicId()});

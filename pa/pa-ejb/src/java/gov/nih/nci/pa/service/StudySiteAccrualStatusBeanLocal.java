@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
@@ -35,7 +36,6 @@ import javax.interceptor.Interceptors;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.jboss.annotation.IgnoreDependency;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
@@ -45,15 +45,14 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<StudySiteAccrualStatus>
     implements StudySiteAccrualStatusServiceLocal {
 
     private static String errMsgMethodNotImplemented = "Method not yet implemented.";
     
     @EJB
-    @IgnoreDependency
+//    @IgnoreDependency
     private StudySiteAccrualAccessServiceLocal studySiteAccrualAccessServiceLocal;
 
     /**

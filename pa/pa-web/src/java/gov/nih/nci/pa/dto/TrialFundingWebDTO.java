@@ -83,6 +83,8 @@ import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.io.Serializable;
+
 /**
  * Class for holding attributes for StudyResourcing DTO.
  * @author Kalpana Guthikonda
@@ -90,8 +92,8 @@ import gov.nih.nci.pa.iso.util.TsConverter;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class TrialFundingWebDTO {
-    
+public class TrialFundingWebDTO implements Serializable {
+    private static final long serialVersionUID = 2956059326397367671L;
     private String fundingMechanismCode;
     private String nihInstitutionCode;
     private String nciDivisionProgramCode;

@@ -84,6 +84,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.Document;
@@ -124,7 +125,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -144,8 +144,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  * @author asharma
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Document, DocumentConverter> implements
         DocumentServiceLocal { //NOPMD
     
@@ -187,7 +186,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public DocumentDTO create(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         enforceDuplicateDocument(docDTO);
@@ -243,7 +241,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         
@@ -264,7 +261,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void delete(Ii documentIi) throws PAException {
         this.delete(documentIi, StConverter.convertToSt(null));
     }
@@ -273,7 +269,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void forceDelete(Ii documentIi) throws PAException {
         if (ISOUtil.isIiNull(documentIi)) {
             throw new PAException("Document Ii should not be null.");
@@ -539,7 +534,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     }
 
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void delete(Ii documentIi, St reasonToDelete) throws PAException {
         if (ISOUtil.isIiNull(documentIi)) {
             throw new PAException("Document Ii should not be null.");

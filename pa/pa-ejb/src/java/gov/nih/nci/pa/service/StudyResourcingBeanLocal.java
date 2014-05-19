@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.logging.api.util.StringUtils;
@@ -120,7 +121,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -139,8 +139,7 @@ import org.mockito.cglib.core.Predicate;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyResourcingBeanLocal extends
         AbstractStudyIsoService<StudyResourcingDTO, StudyResourcing, StudyResourcingConverter> implements
         StudyResourcingServiceLocal {
@@ -236,7 +235,6 @@ public class StudyResourcingBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         validate(studyResourcingDTO);
 
@@ -261,7 +259,6 @@ public class StudyResourcingBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         validate(studyResourcingDTO);
         studyResourcingDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.TRUE));
@@ -297,7 +294,6 @@ public class StudyResourcingBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO) throws PAException {
         if (studyResourcingDTO == null) {
             throw new PAException("studyResourcingDTO should not be null.");
@@ -504,7 +500,6 @@ public class StudyResourcingBeanLocal extends
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
         if (ISOUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
             throw new PAException("The summary4ReportedResourceIndicator is not set.");
@@ -520,7 +515,6 @@ public class StudyResourcingBeanLocal extends
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
         if (ISOUtil.isBlNull(dto.getSummary4ReportedResourceIndicator())) {
             throw new PAException("The summary4ReportedResourceIndicator is not set.");

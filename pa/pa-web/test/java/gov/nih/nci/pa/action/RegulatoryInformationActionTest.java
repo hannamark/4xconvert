@@ -8,10 +8,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.RegulatoryAuthorityWebDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -21,10 +17,14 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ public class RegulatoryInformationActionTest extends AbstractPaActionTest {
     private static RegulatoryInformationAction regulatoryInformationAction;
     private StudyProtocolServiceLocal studyProtocolServiceLocal;
     private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityServiceLocal;
-    private RegulatoryInformationServiceRemote regRemote;
+    private RegulatoryInformationServiceLocal regRemote;
     private Ii id = IiConverter.convertToIi(1L);
     @Before
     public void setUp(){
@@ -46,7 +46,7 @@ public class RegulatoryInformationActionTest extends AbstractPaActionTest {
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, id);
         studyProtocolServiceLocal =  mock(StudyProtocolServiceLocal.class);
         studyRegulatoryAuthorityServiceLocal = mock(StudyRegulatoryAuthorityServiceLocal.class);
-        regRemote = mock(RegulatoryInformationServiceRemote.class);
+        regRemote = mock(RegulatoryInformationServiceLocal.class);
         ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
         when(paRegSvcLoc.getStudyProtocolService()).thenReturn(studyProtocolServiceLocal);

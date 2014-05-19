@@ -78,14 +78,17 @@
 */
 package gov.nih.nci.accrual.accweb.dto.util;
 
+import java.io.Serializable;
+
 
 /**
  * Web DTO class for displaying list of diseases associated with SP.
  * @author Hugh Reinhart
  * @since 12/02/2008
  */
-public class DiseaseWebDTO {
+public class DiseaseWebDTO implements Serializable {
 
+    private static final long serialVersionUID = -2841150242284086849L;
     private String studyDiseaseIdentifier;
     private String diseaseIdentifier;
     private String preferredName;

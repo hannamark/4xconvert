@@ -82,11 +82,14 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 /**
  * @author mshestopalov
  *
  */
-public class BaseISDesignDetailsWebDTO {
+public class BaseISDesignDetailsWebDTO implements Serializable {
+    private static final long serialVersionUID = 7596932135076679411L;
     private String id;
     private String minUOM;
     private String maxUOM;

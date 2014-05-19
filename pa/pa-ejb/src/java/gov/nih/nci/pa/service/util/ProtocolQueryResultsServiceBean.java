@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -125,8 +126,8 @@ import org.apache.commons.lang.StringUtils;
  * @since Feb 7, 2012
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(PaHibernateSessionInterceptor.class)
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServiceLocal {
 

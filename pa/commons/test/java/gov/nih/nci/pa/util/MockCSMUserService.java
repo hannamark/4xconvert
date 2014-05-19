@@ -105,6 +105,14 @@ public class MockCSMUserService implements CSMUserUtil {
     public static List<User> users;
     static {
         users = new ArrayList<User>();
+    }
+
+    public MockCSMUserService() {
+        initUsers();
+    }
+    
+    private void initUsers() {
+        users = new ArrayList<User>();
         User user = new User();
         user.setLoginName("user1@mail.nih.gov");
         user.setUserId(1L);

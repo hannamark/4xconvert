@@ -81,6 +81,8 @@ package gov.nih.nci.pa.dto;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 
+import java.io.Serializable;
+
 /**
  * DTO class for storing form data used in participating org.
  * 
@@ -89,7 +91,8 @@ import gov.nih.nci.pa.domain.Organization;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class ParticipatingOrganizationsTabWebDTO {
+public class ParticipatingOrganizationsTabWebDTO implements Serializable {
+    private static final long serialVersionUID = 3813267517411548037L;
     private Ii poOrganizationIi;
     private Ii poHealthCareFacilityIi;
     private Long studyParticipationId;

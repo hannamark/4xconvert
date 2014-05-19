@@ -85,6 +85,7 @@ package gov.nih.nci.registry.dto;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -93,7 +94,8 @@ import java.util.List;
  * @author moweis
  *
  */
-public class DocumentDTO {
+public class DocumentDTO implements Serializable {
+    private static final long serialVersionUID = 6056312129183963516L;
     private final DocumentTypeCode typeCode;
     private final List<String> fromPages;
     private final String fieldName;

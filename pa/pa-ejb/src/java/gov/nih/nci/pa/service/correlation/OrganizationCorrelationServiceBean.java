@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -139,8 +140,8 @@ import org.hibernate.Session;
  *
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(PaHibernateSessionInterceptor.class)
 public class OrganizationCorrelationServiceBean implements OrganizationCorrelationServiceRemote {
 
     private static final int LOCK_WAIT_SECONDS = 10;

@@ -85,6 +85,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 
+import java.io.Serializable;
+
 /**
  * DTO class for displaying study status history as a list.
  * 
@@ -93,7 +95,8 @@ import gov.nih.nci.pa.iso.util.TsConverter;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class StudyOverallStatusWebDTO {
+public class StudyOverallStatusWebDTO implements Serializable {
+    private static final long serialVersionUID = 1309182659162634720L;
     private String statusCode;
     private String statusDate;
     private String reason;

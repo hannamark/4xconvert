@@ -84,14 +84,16 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
 * @author Hugh Reinhart
 * @since 1/16/2009
 */
-public class MilestoneWebDTO {
-    
+public class MilestoneWebDTO implements Serializable {
+    private static final long serialVersionUID = -4460367849863975384L;
     private String milestone;
     private String date;
     private String comment;

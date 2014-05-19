@@ -39,10 +39,9 @@ import org.hibernate.SQLQuery;
  * 
  */
 @Stateless
-@SuppressWarnings("unchecked")
-@Interceptors({ RemoteAuthorizationInterceptor.class,
-        PaHibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@SuppressWarnings("unchecked")
 public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
 
     private static final int DAYS_TO_KEEP_HISTORY = -30;

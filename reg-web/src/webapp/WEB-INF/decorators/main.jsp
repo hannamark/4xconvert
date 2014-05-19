@@ -45,9 +45,6 @@
         <jsp:include page="/WEB-INF/jsp/nodecorate/categoryDefinitions.jsp"/>
         <jsp:include page="/WEB-INF/jsp/nodecorate/contactus.jsp"/>
         <jsp:include page="/WEB-INF/jsp/processBatch.jsp"/>
-        <c:if test="${sessionScope.disclaimerAccepted}">
-        	<jsp:include page="/WEB-INF/jsp/myAccount.jsp"/>
-         </c:if>
         <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
         <jsp:include page="/WEB-INF/jsp/common/misc.jsp"/>
         <s:form id="xsrfForm"><s:token/></s:form>

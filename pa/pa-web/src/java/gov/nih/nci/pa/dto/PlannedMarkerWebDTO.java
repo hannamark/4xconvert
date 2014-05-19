@@ -84,6 +84,7 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
 import java.util.Date;
+import java.io.Serializable;
 import java.util.List;
 /**
  * Web DTO for planned markers.
@@ -91,8 +92,8 @@ import java.util.List;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
-public class PlannedMarkerWebDTO {
-
+public class PlannedMarkerWebDTO implements Serializable {
+    private static final long serialVersionUID = -6084195422625807929L;
     private Long id;
     private String name;
     private String meaning;

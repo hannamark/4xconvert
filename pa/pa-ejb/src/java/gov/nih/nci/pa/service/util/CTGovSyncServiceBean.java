@@ -165,11 +165,10 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * 
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @SuppressWarnings({ "unchecked", "PMD.TooManyMethods",
         "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
-@Interceptors({ RemoteAuthorizationInterceptor.class,
-        PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
     /**
@@ -243,7 +242,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     @EJB
     private LookUpTableServiceRemote lookUpTableService;
     @EJB
-    private RegulatoryInformationServiceRemote regulatoryAuthorityService;
+    private RegulatoryInformationServiceLocal regulatoryAuthorityService;
     @EJB
     private TrialRegistrationServiceLocal trialRegistrationService;
     @EJB
@@ -2033,7 +2032,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
      *            the regulatoryAuthorityService to set
      */
     public void setRegulatoryAuthorityService(
-            RegulatoryInformationServiceRemote regulatoryAuthorityService) {
+            RegulatoryInformationServiceLocal regulatoryAuthorityService) {
         this.regulatoryAuthorityService = regulatoryAuthorityService;
     }
 

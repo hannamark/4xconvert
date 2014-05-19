@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
@@ -124,14 +125,12 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.jboss.annotation.IgnoreDependency;
 
 /**
  * @author aevansel@5amsolutions.com
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final String UNCHECKED = "unchecked";
@@ -148,7 +147,6 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             + "join fetch ru.csmUser as csmu where ru.emailAddress = :emailAddress";
     
     @EJB
-    @IgnoreDependency
     private MailManagerServiceLocal mailManagerService;
     
     /**
@@ -238,9 +236,9 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
             if (csmUser != null) {
                 Session session = PaHibernateUtil.getCurrentSession();
-                String hql = "from RegistryUser where csmUser = :csmuser";
+                String hql = "select ru from RegistryUser ru join ru.csmUser cu where cu.id = :csmuser";
                 Query query = session.createQuery(hql);
-                query.setParameter("csmuser", csmUser);
+                query.setParameter("csmuser", csmUser.getUserId());
                 registryUser = (RegistryUser) query.uniqueResult();
             }
         } catch (Exception cse) {
@@ -674,9 +672,9 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
             if (csmUser != null) {
                 Session session = PaHibernateUtil.getCurrentSession();
-                String hql = "select ru.id from RegistryUser ru where ru.csmUser = :csmuser";
+                String hql = "select ru.id from RegistryUser ru join ru.csmUser cu where cu.id = :csmuser";
                 Query query = session.createQuery(hql);
-                query.setParameter("csmuser", csmUser);
+                query.setParameter("csmuser", csmUser.getUserId());
                 id = (Long) query.uniqueResult();
             }
         } catch (Exception cse) {

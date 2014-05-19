@@ -87,6 +87,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -96,8 +97,8 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 @SuppressWarnings("PMD.TooManyFields")
-public class BaseStudyProtocolQueryDTO {
-
+public class BaseStudyProtocolQueryDTO implements Serializable {
+    private static final long serialVersionUID = -5823207454734658529L;
     private Long studyProtocolId;
     private String nciIdentifier;
     private String officialTitle;

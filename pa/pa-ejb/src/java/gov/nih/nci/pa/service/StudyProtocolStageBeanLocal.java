@@ -5,6 +5,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.OrganizationalContact;
@@ -78,8 +79,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyProtocolStage>
     implements StudyProtocolStageServiceLocal {
 

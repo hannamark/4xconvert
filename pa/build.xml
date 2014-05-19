@@ -3,50 +3,72 @@
 <!-- Main ant script for COPPA PA                                           -->
 <!-- ====================================================================== -->
 
-<project name="pa" default="package" basedir=".">
-    <property file="${basedir}/build.properties"/>
-    <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
-    <property name="jdbc.base" value="jdbc:${db.type}://${db.server}:${db.port}"/>
+<project name="pa" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="tier" value="LOCAL"/>
+    <property file="${basedir}/../build-pa/tier-properties/build-lite-${tier}.properties"/>
+    <property file="${basedir}/../build-pa/build-lite.properties"/>
+    <property file="${basedir}/../build-pa/version.properties"/>
+    <property name="build.dir" value="${basedir}/../build-pa"/>
+    <property name="lib.dir" value="${basedir}/../target/pa/lib"/>
+    <property name="local.repo.dir" location="${basedir}/../local-ivy-repo" />
+    <property name="commons.target" value="${basedir}/commons/target"/>
+    <property name="ejb.target" value="${basedir}/pa-ejb/target"/>
+    <property name="pa-web.target" value="${basedir}/pa-web/target"/>
+    <property name="reg-web.target" value="${basedir}/../reg-web/target"/>
+    <property name="ear.target" value="${basedir}/pa-ear/target"/>
+    <property name="ear.dir" value="${ear.target}/pa"/>
+    <property name="jboss.deploy.directory" value="${application.base.path}/standalone/deployments"/>
+    
+    <!-- ====================================================================== -->
+    <!-- Defining classpaths                                                    -->
+    <!-- ====================================================================== -->
 
-    <!-- PATHS -->
-    <path id="macrodef">
-        <fileset dir="${bda-utils}">
+    <path id="build.classpath">
+        <fileset dir="${lib.dir}/build">
             <include name="**/*.jar" />
         </fileset>
     </path>
-    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
 
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
 
-    <target name="clean" description="Clean the output directory">
-        <ant target="clean" dir="commons" inheritAll="false"/>
-        <ant target="clean" dir="pa-ejb" inheritAll="false"/>
-        <ant target="clean" dir="pa-ear" inheritAll="false"/>
-        <ant target="clean" dir="pa-web" inheritAll="false"/>
+    <target name="clean" depends="storage-init" description="Clean the output directory">
+        <ant target="clean" dir="commons" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="clean" dir="pa-ejb" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="clean" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="clean" dir="../reg-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
     </target>
 
-    <!-- ====================================================================== -->
-    <!-- Compilation target                                                     -->
-    <!-- ====================================================================== -->
-
-    <target name="compile" description="Compile the code">
-        <ant target="compile" dir="commons" inheritAll="false"/>
-        <ant target="compile" dir="pa-ejb" inheritAll="false"/>
-        <ant target="compile" dir="pa-web" inheritAll="false"/>
-        <ant target="compile-tests" dir="commons" inheritAll="false"/>
-        <ant target="compile-tests" dir="pa-ejb" inheritAll="false"/>
-        <ant target="compile-tests" dir="pa-web" inheritAll="false"/>
+    <target name="storage-init" description="Initialize hard drive storage directories" unless="remote.build">
+        <mkdir dir="${doc.upload.filepath.loc}"/>
+        <mkdir dir="${pdq.upload.filepath.loc}"/>
+        <mkdir dir="${tooltips.filepath.loc}"/>
+        <mkdir dir="${batch.upload.filepath.loc}"/>
+        <mkdir dir="${accrual.batch.upload.filepath.loc}"/>
     </target>
 
     <!-- ====================================================================== -->
     <!-- run PMD / Checkstyle                                                    -->
     <!-- ====================================================================== -->
     <target name="test-static-analysis" description="Runs PMD / Checkstyle">
-        <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
-        <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
-        <ant target="test-static-analysis" dir="commons" inheritAll="false"/>
+        <ant target="test-static-analysis" dir="commons" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="test-static-analysis" dir="pa-ejb" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="test-static-analysis" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
     </target>
 
     <!-- ====================================================================== -->
@@ -54,9 +76,18 @@
     <!-- ====================================================================== -->
 
     <target name="test" description="Run all tests">
-        <ant target="test-all" dir="commons" inheritAll="false"/>
-        <ant target="test-all" dir="pa-ejb" inheritAll="false"/>
-        <ant target="test-all" dir="pa-web" inheritAll="false"/>
+        <ant target="test-all" dir="commons" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="test-all" dir="pa-ejb" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="test-all" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="test-all" dir="../reg-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
     </target>
 
     <target name="runTest" description="Runs the pa-ejb test you specify on the command line with -Dtest=">
@@ -66,44 +97,83 @@
     <!-- ====================================================================== -->
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
-
-    <target name="package" description="Package the application">
-        <ant target="package" dir="commons" inheritAll="false"/>
-        <ant target="package" dir="pa-ejb" inheritAll="false"/>
-        <ant target="package" dir="pa-web" inheritAll="false"/>
-        <ant target="package" dir="pa-ear" inheritAll="false"/>
+ 
+   <target name="package-subs" depends="clean" description="Package the sub-projects">
+        <ant target="package-notest" dir="commons" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="package-notest" dir="pa-ejb" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="package-notest" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="package-notest" dir="../reg-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
     </target>
+
+    <target name="ear" description="Build the EAR">
+        <delete dir="${ear.target}"/>
+          <copy todir="${ear.dir}">
+            <fileset dir="${basedir}/pa-ear/src"/>
+        </copy>
+          <copy todir="${ear.dir}/lib">
+            <fileset dir="${lib.dir}/ear"/>
+        </copy>
+
+        <copy todir="${ear.dir}/lib">
+            <fileset dir="${lib.dir}/ear"/>
+        </copy>
+        <copy file="${commons.target}/pa-commons.jar" todir="${ear.dir}/lib"/>
+        <copy file="${ejb.target}/pa-ejb.jar" todir="${ear.dir}"/>
+        <copy file="${pa-web.target}/pa-web.war" todir="${ear.dir}"/>
+        <copy file="${reg-web.target}/reg-web.war" todir="${ear.dir}"/>
+        <ear destfile="${ear.target}/pa.ear"
+             basedir="${ear.dir}"
+             compress="false"
+             appxml="${ear.dir}/META-INF/application.xml"/>
+    </target>
+
+    <target name="package" depends="ivy-clean,ivy-get,package-subs,ear" description="Package the application"/>
 
     <!-- ====================================================================== -->
     <!-- Deploy locally                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="deploy-notest" depends="clean" description="Quick shortcut">
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
+    <target name="deploy-notest" depends="package-subs,ear" description="Quick shortcut">
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
-
-        <ant target="package-notest-noivy" dir="commons" inheritAll="false"/>
-        <ant target="package-notest-noivy" dir="pa-ejb" inheritAll="false"/>
-        <ant target="package-notest-noivy" dir="pa-web" inheritAll="false"/>
-        <ant target="ear" dir="pa-ear"  inheritAll="false"/>
+        <copy todir="${jboss.deploy.directory}" file="${ear.target}/pa.ear"/>
     </target>
 
     <target name="deploy" depends="clean" description="Deploys the application">
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
 
-        <ant target="package" dir="commons" inheritAll="false"/>
-        <ant target="package" dir="pa-ejb" inheritAll="false"/>
-        <ant target="package" dir="pa-web" inheritAll="false"/>
-        <ant target="ear" dir="pa-ear" inheritAll="false"/>
+        <ant target="package" dir="commons" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="package" dir="pa-ejb" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="package" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="package" dir="../reg-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="ear" dir="${basedir}" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <copy todir="${jboss.deploy.directory}" file="${ear.target}/pa.ear"/>
     </target>
 
     <target name="maven:install" depends="clean">
         <ant target="maven:install" dir="commons" inheritall="true"/>
         <ant target="maven:install" dir="pa-ejb" inheritall="true"/>
     </target>
+
     <target name="maven:deploy" depends="clean">
         <ant target="maven:deploy" dir="commons" inheritall="true"/>
         <ant target="maven:deploy" dir="pa-ejb" inheritall="true"/>
@@ -114,15 +184,33 @@
     <!-- ====================================================================== -->
 
     <target name="init-test-db" description="Drops and recreates the ci db.">
-        <ant target="init-test-db" dir="pa-web" inheritAll="false"/>
+        <ant target="init-test-db" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
     </target>
 
     <target name="populate-test-db" description="Populates the ci db with test data.">
-        <ant target="populate-test-db" dir="pa-web" inheritAll="false"/>
+        <ant target="populate-test-db" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
     </target>
 
     <target name="run-selenium-tests" description="Runs integration tests against an already deployed application">
-        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>
+        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+    </target>
+
+    <target name="start-selenium-server" description="Starts the selenium server">
+        <ant target="start-selenium-server" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+    </target>
+
+    <target name="stop-selenium-server" description="Stops the selenium server">
+        <ant target="stop-selenium-server" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
     </target>
 
     <target name="test-integration" depends="clean" description="Runs integration tests against the automatically deploy application.">
@@ -132,6 +220,30 @@
         <ant target="start-jboss-server" dir="pa-ear" inheritAll="false"/>
         <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>        
         <ant target="stop-jboss-server" dir="pa-ear" inheritAll="false"/>
+        <ant target="init-test-db" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="populate-test-db" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="deploy">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="start-jboss-server" dir="pa-ear" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="start-selenium-server" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="stop-selenium-server" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+        <ant target="stop-jboss-server" dir="pa-ear" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
     </target>
 
     <!-- ====================================================================== -->
@@ -146,37 +258,121 @@
     <!-- Ivy targets                                                            -->
     <!-- ====================================================================== -->
 
-    <target name="ivy-get">
-        <ant target="ivy-get" dir="./commons" inheritAll="false"/>
-        <ant target="ivy-get" dir="./pa-ejb" inheritAll="false"/>
-        <ant target="ivy-get" dir="./pa-web" inheritAll="false"/>
-        <ant target="ivy-get" dir="./pa-ear" inheritAll="false"/>
+    <target name="ivy-get" depends="ivy-clean,ivy-build,ivy-compile,ivy-ear,ivy-pa-web,ivy-reg-web,ivy-test">
     </target>
 
     <target name="ivy-clean">
-        <ant target="ivy-clean" dir="commons" inheritAll="false"/>
-        <ant target="ivy-clean" dir="pa-ejb" inheritAll="false"/>
-        <ant target="ivy-clean" dir="pa-web" inheritAll="false"/>
-        <ant target="ivy-clean" dir="pa-ear" inheritAll="false"/>
+        <delete dir="${lib.dir}" failonerror="false"/>
+    </target>
+
+    <target name="ivy-init">
+        <echo message="${build.dir}/common/ivysettings.xml"/>
+        <mkdir dir="${local.repo.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
+            <classpath>
+                <pathelement location="${build.dir}/common/ivy-2.0.0.jar"/>
+            </classpath>
+        </taskdef>
+        <ivy:settings file="${build.dir}/common/ivysettings.xml"/>
+    </target>
+  
+    <target name="ivy-build" depends="ivy-init">
+        <ivy:resolve refresh="true" conf="build"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="build"/>
+        <copy file="${build.dir}/common/postgresql-9.2-1004.jdbc3.jar" todir="${lib.dir}/build"/>
+    </target>
+  
+    <target name="ivy-compile" depends="ivy-init">
+        <ivy:resolve refresh="true" conf="compile"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile"/>
+    </target>
+
+    <target name="ivy-ear" depends="ivy-init">
+        <ivy:resolve refresh="true" conf="ear"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="ear"/>
+        <copy file="${build.dir}/common/ojdbc6.jar" todir="${lib.dir}/ear"/>
+    </target>
+ 
+    <target name="ivy-pa-web" depends="ivy-init">
+        <ivy:resolve refresh="true" conf="pa-web"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="pa-web"/>
+    </target>
+ 
+    <target name="ivy-reg-web" depends="ivy-init">
+        <ivy:resolve refresh="true" conf="reg-web"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="reg-web"/>
+    </target>
+ 
+    <target name="ivy-test" depends="ivy-init">
+        <ivy:resolve refresh="true" conf="test"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test"/>
+        <ivy:resolve refresh="true" conf="test-checkstyle"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-checkstyle"/>
+        <ivy:resolve refresh="true" conf="test-cobertura"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-cobertura"/>
+        <ivy:resolve refresh="true" conf="test-junit"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-junit"/>
+        <ivy:resolve refresh="true" conf="test-selenium"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-selenium"/>
+        <ivy:resolve refresh="true" conf="test-pmd"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd"/>
+        <ivy:resolve refresh="true" conf="test-simian"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian"/>
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Copies JSP to the tmp folder                                           -->
+    <!-- Database targets                                                       -->
     <!-- ====================================================================== -->
+    <target name="database.install">
+        <echo message="Creating Postgres database named ${db.name} in ${jdbc.base}."/>
+        <sql driver="org.postgresql.Driver"
+             url="${jdbc.base}/postgres"
+             userid="${db.username}"
+             password="${db.password}"
+             expandproperties="true"
+             onerror="continue"
+             autocommit="true"
+             classpathref="build.classpath">
+            <transaction>drop database if exists ${db.name};</transaction>
+            <transaction>create database ${db.name};</transaction>
+        </sql>
 
-    <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
-        <for param="toDir">
-            <path>
-                <dirset dir="${jboss.deploy.directory}/../tmp/deploy" includes="tmp*pa.ear-contents/pa-web-exp.war"/>
-            </path>
-            <sequential>
-                <copy todir="@{toDir}">
-                    <fileset dir="${basedir}/pa-web/src/webapp" excludes="*.xml" />
-                </copy>
-            </sequential>
-        </for>
+        <property name="dbinstscript.dir" value="${basedir}/dbscripts/db-install/postgresql"/>
+        <sql driver="org.postgresql.Driver"
+             url="${jdbc.url}"
+             userid="${db.username}"
+             password="${db.password}"
+             onerror="continue"
+             autocommit="true"
+             classpathref="build.classpath"
+ 			 delimiter="/" 
+             delimitertype="row" 
+             keepformat="true">
+            <transaction src="${dbinstscript.dir}/csmCreateSchema.sql"/>
+            <transaction src="${dbinstscript.dir}/csmBootstrapData.sql"/>
+            <transaction src="${dbinstscript.dir}/PG_CTODS_PA.sql"/>
+            <transaction src="${dbinstscript.dir}/country.sql"/>
+            <transaction src="${dbinstscript.dir}/regulatoryAuthority.sql"/>
+            <transaction src="${dbinstscript.dir}/FUNDING_MECHANISM.SQL"/>
+            <transaction src="${dbinstscript.dir}/PA_PROPERTIES.SQL"/>
+            <transaction src="${dbinstscript.dir}/organizationBootstrapData.sql"/>
+        </sql>
     </target>
 
+    <target name="database.update">
+        <delete dir="${basedir}/target"/>
+        <taskdef resource="liquibasetasks.properties" classpathref="build.classpath"/>
+        <property name="dbscript.dir" value="${basedir}/dbscripts/db-upgrade"/>
+        <copy file="${dbscript.dir}/db-upgrade.xml" todir="${basedir}/target" overwrite="true">
+            <filterset>
+                <filter token="db-upgrade.run.dir" value="${dbscript.dir}/postgresql"/>
+            </filterset>
+        </copy>
+        <updateDatabase driver="${jdbc.driver}" url="${jdbc.url}" username="${db.username}" password="${db.password}"
+                        classpathref="build.classpath" changeLogFile="${basedir}/target/db-upgrade.xml"/>
+    </target>
+    
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->

@@ -83,10 +83,7 @@
 package gov.nih.nci.pa.util;
 
 import java.lang.reflect.Method;
-import java.util.Hashtable;
-import java.util.Map;
 
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
@@ -247,13 +244,16 @@ public class EJBInvokerJob implements Job {
      */
     @SuppressWarnings("unchecked")
     private <T> T locateEjb(JobDataMap dataMap) throws JobExecutionException {
-
-        String ejbJNDIName = dataMap.getString(EJB_JNDI_NAME_KEY);
+        StringBuffer tBuffer = new StringBuffer("java:global/pa/pa-ejb/");
+        tBuffer.append(dataMap.getString(EJB_JNDI_NAME_KEY));
+        tBuffer.append('!');
+        tBuffer.append(dataMap.getString(EJB_INTERFACE_NAME_KEY));
+        String ejbJNDIName = tBuffer.toString();
 
         Object object = null;
 
         try {
-            initialContext = getInitialContext(dataMap);
+            initialContext = new InitialContext();
 
             object = initialContext.lookup(ejbJNDIName);
 
@@ -281,41 +281,4 @@ public class EJBInvokerJob implements Job {
 
         return (T) object;
     }
-
-    /**
-     * Gets the initial context.
-     *
-     * @param jobDataMap the job data map
-     *
-     * @return the initial context
-     *
-     * @throws NamingException the naming exception
-     */
-    @SuppressWarnings("PMD.ReplaceHashtableWithMap") // hashtable is needed here for external dependency
-    private InitialContext getInitialContext(JobDataMap jobDataMap) throws NamingException {
-        Hashtable<String, String> params = new Hashtable<String, String>();
-        addParameter(jobDataMap, params, INITIAL_CONTEXT_FACTORY, Context.INITIAL_CONTEXT_FACTORY);
-        addParameter(jobDataMap, params, PROVIDER_URL, Context.PROVIDER_URL);
-        addParameter(jobDataMap, params, URL_PKG_PREFIXES, Context.URL_PKG_PREFIXES);
-        addParameter(jobDataMap, params, PRINCIPAL, Context.SECURITY_PRINCIPAL);
-        addParameter(jobDataMap, params, CREDENTIALS, Context.SECURITY_CREDENTIALS);
-        return (params.size() == 0) ? new InitialContext() : new InitialContext(params);
-
-    }
-
-    /**
-     * Add a parameter from the the input into the given parameter map.
-     * @param inpuMap The input map
-     * @param parameterMap The parameter map
-     * @param inputName The name of the input
-     * @param parameterName The name of the parameter corresponding to the input
-     */
-    private void addParameter(JobDataMap inpuMap, Map<String, String> parameterMap, String inputName,
-            String parameterName) {
-        String parameterValue = inpuMap.getString(inputName);
-        if (parameterValue != null) {
-            parameterMap.put(parameterName, parameterValue);
-        }
-    }
-
 }

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
@@ -128,7 +129,7 @@ import org.apache.log4j.Logger;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTaskServiceLocal {
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);

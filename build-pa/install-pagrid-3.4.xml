@@ -583,6 +583,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <target name="upgrade:pa-grid-3.4-jboss:init:prep" depends="upgrade:common:init:prep" unless="exclude.pa-grid-3.4">
       <property name="pa-grid-3.4-jboss.home" value="${application.base.path}/${pa-grid-3.4-jboss.relative.path}"/>
+      <echo>xyzzy pa-grid-3.4-jboss.home = ${pa-grid-3.4-jboss.home}</echo>
       <jboss-version
           />
       <if>

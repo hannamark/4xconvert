@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.PlannedActivity;
@@ -108,7 +109,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -126,8 +126,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors({ PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> implements ArmServiceLocal {
 
     @EJB private PlannedActivityServiceLocal plannedActivityService = null;
@@ -170,7 +169,6 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
      * @throws PAException exception
      */
     @Override
-    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public ArmDTO create(ArmDTO dto) throws PAException {
         businessRules(dto);
         return super.create(dto);
@@ -182,7 +180,6 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
      * @throws PAException exception
      */
     @Override
-    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public ArmDTO update(ArmDTO dto) throws PAException {
         businessRules(dto);
         return super.update(dto);

@@ -78,8 +78,6 @@
 package gov.nih.nci.pa.service.util;
 
 
-import gov.nih.nci.pa.service.exception.PAValidationException;
-import gov.nih.nci.pa.service.exception.PAValidationException.Level;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
@@ -150,6 +148,8 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.service.exception.PAValidationException.Level;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -182,8 +182,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
+public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceLocal {
 
     private static final String NO_GROUPS_COHORTS_EXISTS_FOR_THE_TRIAL = "No Groups/Cohorts exists for the trial.";
     private static final String SELECT_GROUPS_COHORTS_HINT = "Select Groups/Cohorts from "
@@ -222,7 +221,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     @EJB
     private PlannedMarkerServiceLocal plannedMarkerService;
     @EJB
-    private RegulatoryInformationServiceRemote regulatoryInformationService;
+    private RegulatoryInformationServiceLocal regulatoryInformationService;
     @EJB
     private StudyContactServiceLocal studyContactService;
     @EJB
@@ -1751,7 +1750,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     /**
      * @param regulatoryInformationService the regulatoryInformationService to set
      */
-    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+    public void setRegulatoryInformationService(RegulatoryInformationServiceLocal regulatoryInformationService) {
         this.regulatoryInformationService = regulatoryInformationService;
     }
 

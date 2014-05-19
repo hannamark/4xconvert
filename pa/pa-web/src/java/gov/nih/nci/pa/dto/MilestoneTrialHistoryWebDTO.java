@@ -86,12 +86,14 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IntConverter;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Michael Visee
  */
-public class MilestoneTrialHistoryWebDTO {
-
+public class MilestoneTrialHistoryWebDTO implements Serializable {
+    private static final long serialVersionUID = 5694145138606644522L;
     private Ii identifier;
     private Integer submissionNumber;
 

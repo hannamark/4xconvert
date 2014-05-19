@@ -128,7 +128,7 @@ import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -214,7 +214,7 @@ public class TrialRegistrationValidator {
     private LookUpTableServiceRemote lookUpTableServiceRemote;
     private PAServiceUtils paServiceUtils;
     private RegistryUserServiceLocal registryUserServiceLocal;
-    private RegulatoryInformationServiceRemote regulatoryInfoBean;
+    private RegulatoryInformationServiceLocal regulatoryInfoBean;
     private StudyInboxServiceLocal studyInboxServiceLocal;
     private StudyIndldeServiceLocal studyIndldeService;
     private StudyOverallStatusServiceLocal studyOverallStatusService;
@@ -1205,7 +1205,7 @@ public class TrialRegistrationValidator {
     /**
      * @param regulatoryInfoBean the regulatoryInfoBean to set
      */
-    public void setRegulatoryInfoBean(RegulatoryInformationServiceRemote regulatoryInfoBean) {
+    public void setRegulatoryInfoBean(RegulatoryInformationServiceLocal regulatoryInfoBean) {
         this.regulatoryInfoBean = regulatoryInfoBean;
     }
 

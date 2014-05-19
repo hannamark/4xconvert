@@ -107,7 +107,7 @@ import org.junit.Test;
 public class PAHealthCareProviderServiceTest extends AbstractHibernateTestCase {
 
     private final PAHealthCareProviderServiceBean bean = new PAHealthCareProviderServiceBean();
-    private final PAHealthCareProviderRemote remoteEjb = bean;
+    private final PAHealthCareProviderLocal remoteEjb = bean;
     private Long ssId = null;
 
     @Before

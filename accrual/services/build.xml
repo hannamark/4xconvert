@@ -4,21 +4,24 @@
 <!-- ant script for CTRP Accrual Services                                   -->
 <!-- ====================================================================== -->
 
-<project name="accrual.services" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+<project name="accrual.services" default="jar-notest" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+    <property name="tier" value="LOCAL"/>
+    <property file="${basedir}/../../build-pa/tier-properties/build-lite-${tier}.properties"/>
+    <property file="${basedir}/../../build-pa/build-lite.properties"/>
+    <property file="${basedir}/../../build-pa/version.properties"/>
     <property name="services.coverage.line" value="91"/>
     <property name="services.coverage.branch" value="85"/>
     <property name="services.pmd.maxerrors" value="2"/>
 
-    <property file="${basedir}/../../build-pa/version.properties"/>
-    <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
     <property name="resource.dir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
     <property name="checkstyle.url" value="${resource.dir}/checkstyle.xml"/>
-    <property name="java.major.version" value="1.6"/>
+    <property name="java.major.version" value="1.7"/>
     <property name="java.encoding" value="utf-8"/>
 
+    <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="services.report.dir" value="${software.dir}/target/accrual/reports/services"/>
     <property name="services.build.dir" value="${basedir}/target"/>
@@ -36,93 +39,70 @@
     <property name="services.test.reports" value="${services.report.dir}/test-reports"/>
     <property name="services.coverage.reports" value="${services.report.dir}/coverage-reports"/>
 
-    <property name="ivy.file" value="ivy-2.0.0.jar" />
-    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
-    <property name="ivy.def.file" location="ivy-accrual-services.xml" />
-    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-
-
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
+ 
+    <path id="build.classpath">
+        <fileset dir="${lib.dir}/build">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
 
-    <property name="compile.jar.dir" location="${lib.dir}/services/compile"/>
     <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}">
+        <fileset dir="${lib.dir}/ear">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/compile">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="maven.jar.dir" location="${lib.dir}/services/maven" />
-    <path id="maven.classpath">
-        <fileset dir="${maven.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-
-    <property name="test.jar.dir" location="${lib.dir}/services/test"/>
-    <!-- order here is important so that the tests pull hibernate.cfg.xml from pa-commons-test.jar instead of just
-         pa-commons.jar -->
     <path id="test.classpath">
-        <fileset dir="${test.jar.dir}">
-            <include name="pa-commons-*-test.jar"/>
+        <fileset dir="${lib.dir}/test">
+            <include name="*.jar"/>
         </fileset>
-        <fileset dir="${test.jar.dir}">
-            <exclude name="pa-commons-*-test.jar"/>
+        <fileset dir="${lib.dir}/ear">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/compile">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="test-simian.jar.dir" location="${lib.dir}/services/test-simian"/>
     <path id="test-simian.classpath">
-        <fileset dir="${test-simian.jar.dir}">
+        <fileset dir="${lib.dir}/test-simian">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="test-cobertura.jar.dir" location="${lib.dir}/services/test-cobertura"/>
     <path id="test-cobertura.classpath">
-        <fileset dir="${test-cobertura.jar.dir}">
+        <fileset dir="${lib.dir}/test-cobertura">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="test-checkstyle.jar.dir" location="${lib.dir}/services/test-checkstyle"/>
     <path id="test-checkstyle.classpath">
-        <fileset dir="${test-checkstyle.jar.dir}">
+        <fileset dir="${lib.dir}/test-checkstyle">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="test-pmd.jar.dir" location="${lib.dir}/services/test-pmd"/>
     <path id="test-pmd.classpath">
-        <fileset dir="${test-pmd.jar.dir}">
+        <fileset dir="${lib.dir}/test-pmd">
             <include name="*.jar"/>
         </fileset>
     </path>
-
-    <path id="ivy.classpath">
-        <fileset dir="${lib.dir}">
-            <include name="${ivy.file}"/>
-        </fileset>
-    </path>
-
-    <!-- ====================================================================== -->
-    <!-- Task definitions                                                       -->
-    <!-- ====================================================================== -->
-
-    <mkdir dir="${lib.dir}"/>
-    <mkdir dir="${services.report.dir}"/>
-    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
 
     <!-- ====================================================================== -->
     <!-- Cleaning target                                                        -->
     <!-- ====================================================================== -->
 
-    <target name="pre-clean"
+    <target name="clean"
             description="Deletes subproject's classes and other target directories which should not exist before starting the build">
         <delete dir="${services.build.dir}"/>
-        <delete dir="${services.test.reports}"/>
+        <delete dir="${services.report.dir}"/>
+        <mkdir dir="${services.report.dir}"/>
     </target>
 
 
@@ -131,19 +111,15 @@
     <!-- ====================================================================== -->
 
     <target name="get-domain">
+        <property name="paear.properties.file" value="${software.dir}/pa/pa-ejb/target/classes/paear.properties"/>
+        <available file="${paear.properties.file}" property="earPropertiesPresent"/>
+        <fail unless="earPropertiesPresent" message="File paear.properties not found. Please build PA."/>
         <delete dir="${services.build.domainDir}"/>
-        <copy todir="${services.build.domainDir}/util">
-            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/PaEarPropertyReader.java"/>
-        </copy>
         <copy todir="${services.build.domainDir}/service/correlation">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/correlation/OrganizationCorrelationServiceRemote.java"/>
         </copy>
-        <copy todir="${services.build.outputDir}" filtering="true" overwrite="true">
-            <filterset begintoken="$${" endtoken="}" >
-                <filter token="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}"/>
-                <filter token="wikiHelp.baseUrl.accrual" value="${wikiHelp.baseUrl.accrual}" />
-            </filterset>
-            <fileset file="${software.dir}/pa/pa-ejb/src/resources/paear.properties"/>
+        <copy todir="${services.build.outputDir}" overwrite="true">
+            <fileset file="${paear.properties.file}"/>
         </copy>
      </target>
 
@@ -152,7 +128,7 @@
     <!-- Compile target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="compile" depends="pre-clean, get-domain" description="Compiles the subproject">
+    <target name="compile" depends="get-domain" description="Compiles the subproject">
         <mkdir dir="${services.build.outputDir}"/>
         <javac destdir="${services.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
@@ -165,17 +141,6 @@
         </javac>
 
         <copy todir="${services.build.outputDir}">
-            <filterset>
-                <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
-                <filter token="accrual.jnp.url" value="${accrual.jnp.url}"/>
-                <filter token="pa.jnp.url" value="${pa.jnp.url}"/>
-                <filter token="po.jnp.url" value="${po.jnp.url}"/>
-                <filter token="po.port.number" value="${po.port.number}"/>
-                <filter token="jboss.server.hostname" value="${jboss.server.hostname}"/>
-                <filter token="po.username" value="${po.username}"/>
-                <filter token="po.pass" value="${po.pass}"/>
-                <filter token="po.server.name" value="${po.server.name}"/>
-            </filterset>
             <fileset dir="${services.build.resourceDir}"/>
         </copy>
     </target>
@@ -195,7 +160,6 @@
             </src>
             <classpath>
                 <pathelement location="${services.build.outputDir}"/>
-                <path refid="compile.classpath"/>
                 <path refid="test.classpath"/>
             </classpath>
         </javac>
@@ -215,6 +179,7 @@
     <target name="runTest" description="Runs the test you specify on the command line with -Dtest=" depends="compile-tests">
         <mkdir dir="${services.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
             <sysproperty key="basedir" value="."/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
@@ -247,6 +212,7 @@
 
         <mkdir dir="${services.test.reports}"/>
         <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." failureproperty="junit.failure">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${services.build.dir}/cobertura.ser"/>
             <formatter type="xml"/>
@@ -347,7 +313,7 @@
     <!-- Static analysis target                                                 -->
     <!-- ====================================================================== -->
 
-    <target name="inspect" depends="ivy-get, create-jar, test-checkstyle, test-pmd, test-simian"
+    <target name="inspect" depends="create-jar, test-checkstyle, test-pmd, test-simian"
             description="Runs various static analysis tools such as PMD, Checkstyle, Simian">
     </target>
 
@@ -387,22 +353,20 @@
                                     **/service/Abstract*.class"/>
     </target>
 
-    <target name="jar" depends="ivy-get, create-jar, test-dynamic-analysis"
+    <target name="jar" depends="create-jar, test-dynamic-analysis"
             description="Makes services jar">
     </target>
 
-    <target name="jar-notest" depends="ivy-get, create-jar"
+    <target name="jar-notest" depends="create-jar"
             description="Makes services jar, doesn't run tests">
     </target>
-
-    <target name="jar-notest-noivy" depends="create-jar"/>
 
     <!-- ====================================================================== -->
     <!-- Maven Installation Targets                                             -->
     <!-- ====================================================================== -->
     <target name="maven:generate-pom">
         <!-- We cannot use in memory poms due to a bug: http://jira.codehaus.org/browse/MANTTASKS-170 -->
-        <taskdef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven.classpath" />
+        <taskdef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="build.classpath" />
         <artifact:pom id="accrual-pom-temp" groupId="gov.nih.nci.coppa.accrual" artifactId="accrual-services-client" version="${pa.clients.version}" name="Accrual Services Client"/>
         <artifact:writepom pomRefId="accrual-pom-temp" file="target/pom.xml"/>
         <artifact:pom id="accrual-pom" file="target/pom.xml"/>
@@ -424,63 +388,6 @@
             <remoteRepository refid="remote.repository" />
             <pom refid="accrual-pom"/>
         </artifact:deploy>
-    </target>
-
-
-    <!-- ====================================================================== -->
-    <!-- Ivy targets                                                            -->
-    <!-- ====================================================================== -->
-
-    <target name="init:ivy">
-        <mkdir dir="${local.repo.dir}"/>
-        <mkdir dir="${lib.dir}/services"/>
-        <property name="ivy.dep.file" value="${ivy.def.file}"/>
-        <ivy:settings file="${ivy.settings.file}"/>
-    </target>
-
-    <target name="ivy-test-pmd" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-pmd"/>
-        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd"/>
-    </target>
-
-    <target name="ivy-test-checkstyle" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-checkstyle"/>
-        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-checkstyle"/>
-    </target>
-
-    <target name="ivy-test-simian" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-simian"/>
-        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian"/>
-    </target>
-
-    <target name="ivy-test-cobertura" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-cobertura"/>
-        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-cobertura"/>
-    </target>
-
-    <target name="ivy-compile" depends="init:ivy"
-            description="Resolves and retrieves the JARs needed to compile the subproject">
-        <ivy:resolve refresh="true" conf="compile"/>
-        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile"/>
-    </target>
-
-    <target name="ivy-maven" depends="init:ivy" description="Resolves and retrieves the JARs needed to upload artifacts to maven.">
-        <ivy:resolve refresh="true" conf="maven"/>
-        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision].[ext]" conf="maven"/>
-    </target>
-
-    <target name="ivy-test"
-            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura"
-            description="Resolves and retrieves the JARs needed to test the subproject">
-        <ivy:resolve refresh="true" conf="test"/>
-        <ivy:retrieve pattern="${lib.dir}/services/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test"/>
-    </target>
-
-    <target name="ivy-get" depends="ivy-compile,ivy-maven,ivy-test" description="Updates the local ivy repository">
-    </target>
-
-    <target name="ivy-clean" description="Delete jars.">
-        <delete dir="${lib.dir}/services" failonerror="false"/>
     </target>
 
     <!-- ====================================================================== -->

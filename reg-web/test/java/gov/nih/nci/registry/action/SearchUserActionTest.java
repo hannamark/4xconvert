@@ -87,17 +87,16 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.MailManagerService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 
 import java.util.Collection;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.CollectionUtils;
 
 import com.opensymphony.xwork2.ActionContext;
 

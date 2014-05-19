@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.convert.PatientConverter;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
@@ -95,8 +96,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.util.Date;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -108,8 +107,7 @@ import org.hibernate.Session;
  * @since Aug 18, 2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class PatientBeanLocal implements PatientServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(PatientBeanLocal.class);

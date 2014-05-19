@@ -77,6 +77,7 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudyInbox;
@@ -114,8 +115,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -132,8 +131,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @since 09/08/2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyInboxServiceBean // NOPMD
     extends AbstractStudyIsoService<StudyInboxDTO, StudyInbox, StudyInboxConverter> 
         implements StudyInboxServiceLocal { //NOPMD

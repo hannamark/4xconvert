@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -20,8 +21,6 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -34,14 +33,13 @@ import org.hibernate.Query;
  * @since Jun 18, 2012
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal {
 
     @EJB
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB
-    private PAHealthCareProviderRemote paHealthCareProviderService;
+    private PAHealthCareProviderLocal paHealthCareProviderService;
 
     private static final String BY_PROTOCOL_HQL =
             "select ss, org.name, org.identifier, sp.id "
@@ -190,7 +188,7 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
     /**
      * @param paHealthCareProviderService the paHealthCareProviderService to set
      */
-    public void setPaHealthCareProviderService(PAHealthCareProviderRemote paHealthCareProviderService) {
+    public void setPaHealthCareProviderService(PAHealthCareProviderLocal paHealthCareProviderService) {
         this.paHealthCareProviderService = paHealthCareProviderService;
     }
 

@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -55,10 +56,10 @@ import org.hibernate.Session;
  * 
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity",
         "PMD.TooManyMethods" })
-@Interceptors({ PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class ProtocolComparisonServiceBean implements
         ProtocolComparisonServiceLocal {
 
@@ -72,7 +73,7 @@ public class ProtocolComparisonServiceBean implements
     private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
 
     @EJB
-    private RegulatoryInformationServiceRemote regulatoryInformationService;
+    private RegulatoryInformationServiceLocal regulatoryInformationService;
 
     private static final Logger LOG = Logger
             .getLogger(ProtocolComparisonServiceBean.class);
@@ -491,7 +492,7 @@ public class ProtocolComparisonServiceBean implements
      *            the regulatoryInformationService to set
      */
     public void setRegulatoryInformationService(
-            RegulatoryInformationServiceRemote regulatoryInformationService) {
+            RegulatoryInformationServiceLocal regulatoryInformationService) {
         this.regulatoryInformationService = regulatoryInformationService;
     }
 

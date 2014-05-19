@@ -155,7 +155,7 @@ public abstract class AbstractHibernateTestCase extends AbstractRegWebTest {
         se.create(false, true);
         TestSchema.loadPrimaryPurposeCodes();
         tx.commit();
-        
+        transaction = PaHibernateUtil.getHibernateHelper().beginTransaction();
     }
 
     private void createAuditTable() throws HibernateException, SQLException {

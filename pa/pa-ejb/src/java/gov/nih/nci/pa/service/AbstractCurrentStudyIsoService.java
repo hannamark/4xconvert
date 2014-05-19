@@ -79,12 +79,15 @@
 
 package gov.nih.nci.pa.service;
 
-import java.util.List;
-
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
+
+import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
 
 /**
  * 
@@ -94,6 +97,7 @@ import gov.nih.nci.pa.iso.dto.StudyDTO;
  * @param <BO> bo
  * @param <CONVERTER> converter
  */
+@RolesAllowed(SUBMITTER_ROLE)
 public class AbstractCurrentStudyIsoService <DTO extends StudyDTO, BO extends AbstractEntity, 
     CONVERTER extends AbstractConverter<DTO, BO>>  extends AbstractStudyIsoService <DTO, BO, CONVERTER> {
     

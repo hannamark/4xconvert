@@ -10,8 +10,6 @@ import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
 import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
-import gov.nih.nci.pa.action.AbstractPaActionTest;
-import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;

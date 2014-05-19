@@ -37,8 +37,7 @@ import org.apache.log4j.Logger;
  * 
  */
 @Stateless
-@Interceptors({ RemoteAuthorizationInterceptor.class,
-    PaHibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class VerifyTrialDataNightlyServiceBeanLocal implements 
               VerifyTrialDataNightlyServiceLocal {

@@ -80,6 +80,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.BaseDTO;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ import java.util.List;
  * copyright holder, NCI.
  * @param <DTO> dto
  */
-public interface BasePaService<DTO> {
+public interface BasePaService<DTO extends BaseDTO> {
     /**
      * @param ii index of object
      * @return object

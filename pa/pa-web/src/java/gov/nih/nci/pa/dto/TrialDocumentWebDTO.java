@@ -82,6 +82,8 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
+
+import java.io.Serializable;
 /**
  * 
  * @author Kalpana Guthikonda
@@ -90,8 +92,8 @@ import gov.nih.nci.pa.util.PAUtil;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class TrialDocumentWebDTO {
-
+public class TrialDocumentWebDTO implements Serializable {
+   private static final long serialVersionUID = -5094483920461207094L;
     private String typeCode;
     private String fileName;
     private String id;

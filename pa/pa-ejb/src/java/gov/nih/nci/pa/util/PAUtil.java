@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.util;
 
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Cd;
@@ -1308,8 +1307,7 @@ public class PAUtil {
     public static void checkUserIsTrialOwnerOrAbstractor(StudyProtocolDTO spDTO) throws PAException {
         CSMUserUtil userService = CSMUserService.getInstance();
         String userName = UsernameHolder.getUser();
-        if (userService.isUserInGroup(userName, ADMIN_ABSTRACTOR_ROLE)
-                || userService.isUserInGroup(userName, CLIENT_ROLE)) {
+        if (userService.isUserInGroup(userName, ADMIN_ABSTRACTOR_ROLE)) {
             return;
         }
         User user = userService.getCSMUser(userName);

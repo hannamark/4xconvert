@@ -134,6 +134,10 @@ public class AccrualUtil {
     public static final String SUMMARY_LEVEL = "Summary Level";
     /** Accrual Submission type. */
     public static final String BOTH = "Both";
+    /** The security domain. */
+    public static final String SECURITY_DOMAIN = "accrual";
+    /** Submitter Role name. */
+    public static final String SUBMITTER_ROLE = "Submitter";
 
     /**
      * Static ordered list of valid date format patterns.

@@ -336,7 +336,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     @After
     public void done() throws Exception {
         try {
-            server.stop(0);
+            server.stop(1);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -78,12 +78,15 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 
 /**
  * @author Hugh Reinhart
  * @since 11/01/2008
  */
-public class InterventionWebDTO {
+public class InterventionWebDTO implements Serializable {
+    private static final long serialVersionUID = 7601311544392121273L;
     private String identifier;
     private String plannedActivityIdentifier;
     private String name;

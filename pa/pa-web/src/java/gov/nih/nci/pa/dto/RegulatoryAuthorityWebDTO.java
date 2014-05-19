@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Harsha
@@ -86,7 +88,8 @@ package gov.nih.nci.pa.dto;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class RegulatoryAuthorityWebDTO {    
+public class RegulatoryAuthorityWebDTO implements Serializable {    
+    private static final long serialVersionUID = -4512892598108202175L;
     private String fdaRegulatedInterventionIndicator;  
     private String section801Indicator;
     private String delayedPostingIndicator;  

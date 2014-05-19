@@ -142,6 +142,8 @@
    
     <!-- Listeners -->
     <listener>
+        <listener-class>gov.nih.nci.coppa.web.SyncGTSListener</listener-class>
+    </listener>    <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
     <listener>
@@ -300,12 +302,4 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
-    <ejb-local-ref>
-        <ejb-ref-name>pa/StudyMilestoneTasksServiceBean/local</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local-home>gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocalHome</local-home>
-        <local>gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal</local>
-        <ejb-link>pa/StudyMilestoneTasksServiceBean/local</ejb-link>
-    </ejb-local-ref>
 </web-app>

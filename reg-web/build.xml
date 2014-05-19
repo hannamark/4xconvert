@@ -4,21 +4,25 @@
 <!-- reg-web ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
-<project name="reg-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property name="reg-web.coverage.line" value="79"/>
-    <property name="reg-web.coverage.branch" value="64"/>
+<project name="reg-web" default="package" basedir=".">
+    <property name="tier" value="LOCAL"/>
+    <property file="${basedir}/../build-pa/tier-properties/build-lite-${tier}.properties"/>
+    <property file="${basedir}/../build-pa/build-lite.properties"/>
+    <property file="${basedir}/../build-pa/version.properties"/>
+    <property name="reg-web.coverage.line" value="78"/>
+    <property name="reg-web.coverage.branch" value="63"/>
     <property name="reg-web.pmd.maxerrors" value="144"/>
 	<property name="software.dir" value="${basedir}/.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
     <property name="pa.ear.file" value="${software.dir}/pa/pa-ear/target/pa.ear"/>
+    <property name="jboss.deploy.directory" value="${application.base.path}/standalone/deployments"/>
 
-    <property file="${pa.dir}/build.properties"/>
     <property name="pa.resourceDir" value="${basedir}/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paRegPmd.xml"/>
     <property name="pa.checkstyle.url" value="${pa.resourceDir}/checkstyle.xml"/>
-    <property name="java.major.version" value="1.6"/>
+    <property name="java.major.version" value="1.7"/>
     <property name="java.encoding" value="utf-8"/>
 
     <property name="reg-web.build.finalName" value="reg-web"/>
@@ -42,20 +46,17 @@
 
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
-    <property name="ivy.file" value="ivy-2.0.0.jar" />
-    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
-    <property name="ivy.def.file" location="ivy-reg-web.xml" />
-    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-
-    <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
 
     <property name="selenium.delay" value="10"/>
-    <property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
-    <property name="phantomjs.binary.path" value="/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
+    <path id="build.classpath">
+        <fileset dir="${lib.dir}/build">
+            <include name="*.jar" />
+        </fileset>
+    </path>
 
     <path id="common.package.classpath">
         <fileset dir="${pa.dir}/commons/target">
@@ -63,72 +64,66 @@
         </fileset>
     </path>
 
-    <property name="compile.jar.dir" location="${lib.dir}/reg-web/compile" />
     <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}">
+        <fileset dir="${lib.dir}/reg-web">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/ear">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/compile">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="runtime.jar.dir" location="${lib.dir}/reg-web/runtime" />
-    <path id="runtime.classpath">
-        <fileset dir="${runtime.jar.dir}">
-            <include name="*.jar"/>
-       </fileset>
-    </path>
-
-    <property name="test.jar.dir" location="${lib.dir}/reg-web/test" />
     <path id="test.classpath">
-        <fileset dir="${test.jar.dir}">
+        <fileset dir="${lib.dir}/test">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/reg-web">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/ear">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/compile">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="test-simian.jar.dir" location="${lib.dir}/reg-web/test-simian" />
     <path id="test-simian.classpath">
-        <fileset dir="${test-simian.jar.dir}">
+        <fileset dir="${lib.dir}/test-simian">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="test-junit.jar.dir" location="${lib.dir}/reg-web/test-junit" />
     <path id="test-junit.classpath">
-        <fileset dir="${test-junit.jar.dir}">
+        <fileset dir="${lib.dir}/test-junit">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="selenium.jar.dir" location="${lib.dir}/reg-web/selenium" />
     <path id="selenium.classpath">
-        <fileset dir="${selenium.jar.dir}">
+        <fileset dir="${lib.dir}/test-selenium">
             <include name="*.jar"/>
         </fileset>
      </path>
 
-    <property name="test-cobertura.jar.dir" location="${lib.dir}/reg-web/test-cobertura" />
     <path id="test-cobertura.classpath">
-        <fileset dir="${test-cobertura.jar.dir}">
+        <fileset dir="${lib.dir}/test-cobertura">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="test-checkstyle.jar.dir" location="${lib.dir}/reg-web/test-checkstyle" />
     <path id="test-checkstyle.classpath">
-        <fileset dir="${test-checkstyle.jar.dir}">
+        <fileset dir="${lib.dir}/test-checkstyle">
             <include name="*.jar"/>
         </fileset>
     </path>
 
-    <property name="test-pmd.jar.dir" location="${lib.dir}/reg-web/test-pmd" />
     <path id="test-pmd.classpath">
-        <fileset dir="${test-pmd.jar.dir}">
+        <fileset dir="${lib.dir}/test-pmd">
             <include name="*.jar"/>
-        </fileset>
-    </path>
-
-    <path id="ivy.classpath">
-        <fileset dir="${lib.dir}">
-            <include name="${ivy.file}" />
         </fileset>
     </path>
 
@@ -141,20 +136,8 @@
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
-   
-    <mkdir dir="${lib.dir}"/>
-    <mkdir dir="${pa.report.dir}/reg-web"/>
-    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
-   
-    <path id="macrodef">
-        <fileset dir="${bda-utils}">
-            <include name="**/*.jar" />
-        </fileset>
-    </path>
-    
-    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
-    <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="macrodef"/>
-   
+
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="build.classpath"/>
 
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
@@ -172,7 +155,6 @@
     <!-- ====================================================================== -->
 
     <target name="compile" description="Compile the code">
-        <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <mkdir dir="${reg-web.build.outputDir}"/>
         <javac destdir="${reg-web.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
@@ -187,21 +169,9 @@
         </javac>
         <copy todir="${reg-web.build.outputDir}">
             <filterset>
-                <filter token="po.server.name" value="${po.server.name}"/>
-                <filter token="po.port.number" value="${po.port.number}"/>
+                <filter token="grid.target" value="${grid.target}"/>
             </filterset>
             <fileset dir="${reg-web.build.resourceDir.0}"/>
-        </copy>
-        <copy file="${pa.resourceDir}/csm.properties" todir="${reg-web.build.outputDir}" overwrite="true">
-              <filterset>
-                 <filter token="jdbc.driver" value="${jdbc.driver}"/>
-                 <filter token="jdbc.url" value="${jdbc.url}"/>
-                 <filter token="db.username" value="${db.username}"/>
-                 <filter token="db.password" value="${db.password}"/>
-                 <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
-                 <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
-                 <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
-              </filterset>
         </copy>
     </target>
 
@@ -216,13 +186,7 @@
                 <filter token="pa.server.name" value="${pa.server.name}"/>
                 <filter token="jboss.port" value="${jboss.port}" />
                 <filter token="selenium.server.port" value="${selenium.server.port}"/>
-                <filter token="selenium.delay" value="${selenium.delay}"/>            	
-            	<filter token="webdriver.class" value="${webdriver.class}"/>
-            	<filter token="phantomjs.binary.path" value="${phantomjs.binary.path}" />
-            	<filter token="jdbc.driver" value="${jdbc.driver}"/>
-                <filter token="jdbc.url" value="${jdbc.url}"/>
-                <filter token="db.username" value="${db.username}"/>
-                <filter token="db.password" value="${db.password}"/>                
+                <filter token="selenium.delay" value="${selenium.delay}"/>
             </filterset>
         </copy>
     </target>
@@ -243,7 +207,6 @@
                 <path refid="common.package.classpath"/>
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
-                <path refid="compile.classpath"/>
                 <path refid="selenium.classpath"/>
                 <path refid="ejb.package.classpath"/>
             </classpath>
@@ -259,6 +222,7 @@
     <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
         <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath>
@@ -329,11 +293,11 @@
     <!-- ====================================================================== -->
 
     <target name="test-dynamic-analysis"
-            depends="ivy-get,compile,compile-tests,test-cobertura"
+            depends="compile,compile-tests,test-cobertura"
             description="Run dynamic analysis."/>
 
     <target name="test-static-analysis"
-            depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
+            depends="compile,test-checkstyle,test-pmd,test-simian"
             description="Run static analysis."/>
 
     <target name="test-all"
@@ -348,7 +312,7 @@
     <target name="war" depends="copy-tooltips, determine-build-version">
         <mkdir dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
         <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib">
-            <fileset dir="${runtime.jar.dir}"/>
+            <fileset dir="${lib.dir}/reg-web"/>
         </copy>
 
         <copy todir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF" file="${software.dir}/reg-web/src/webapp/WEB-INF/web.xml"
@@ -359,20 +323,19 @@
             </filterset>
         </copy>
 
-        <war destfile="${reg-web.build.dir}/${reg-web.war}" compress="false" webxml="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/web.xml">
+        <war destfile="${reg-web.build.dir}/${reg-web.war}"
+             compress="false" duplicate="fail"
+             webxml="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/web.xml">
             <lib dir="${reg-web.build.dir}/${reg-web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${reg-web.build.outputDir}"/>
-            <webinf dir="${software.dir}/reg-web/src/webapp/WEB-INF" excludes="web.xml"/>
             <fileset dir="${software.dir}/reg-web/src/webapp"/>
         </war>
     </target>
 
-    <target name="package-notest-noivy" depends="compile,war"/>
-
-    <target name="package-notest" depends="ivy-get,compile,war"
+    <target name="package-notest" depends="compile,war"
             description="Package the application.  Do not run tests."/>
 
-    <target name="package" depends="clean,ivy-get,compile,test-all,war"
+    <target name="package" depends="clean,compile,test-all,war"
             description="Package the application"/>
 
     <!-- ====================================================================== -->
@@ -380,26 +343,13 @@
     <!-- ====================================================================== -->
 
     <target name="ear">
-        <available file="${pa.ear.file}" type="file" property="pa.ear.present"/>
-        <fail unless="pa.ear.present" message="File pa.ear not available(should be at ${pa.ear.file}).  Please build pa first before reg-web."/>
-        <available file="${reg-web.build.dir}/${reg-web.war}" type="file" property="reg-web.war.present"/>
-        <fail unless="reg-web.war.present" message="File reg-web.war not available."/>
-
-        <delete dir="${reg-web.ear.dir}" failonerror="false"/>
-        <unjar src="${pa.ear.file}" dest="${reg-web.ear.dir}"/>
-        <copy file="${reg-web.build.dir}/${reg-web.war}" todir="${reg-web.ear.dir}" overwrite="true"/>
-        <ear destfile="${reg-web.ear.file}"
-             basedir="${reg-web.ear.dir}"
-             compress="false"
-             appxml="${reg-web.ear.dir}/META-INF/application.xml"/>
+        <ant target="ear" dir="${pa.dir}" inheritAll="false"/>
     </target>
 
     <target name="deploy-ear">
         <available file="${jboss.deploy.directory}" type="dir" property="container.present"/>
         <fail unless="container.present" message="Deploy directory ${jboss.deploy.directory} not available."/>
-        <available file="${reg-web.ear.file}" property="reg-web.ear.present"/>
-        <fail unless="reg-web.ear.present" message="Ear file not found."/>
-        <copy todir="${jboss.deploy.directory}" file="${reg-web.ear.file}"/>
+        <copy todir="${jboss.deploy.directory}" file="${pa.ear.file}"/>
     </target>
 
     <target name="prepare-tooltips">
@@ -413,16 +363,16 @@
         </condition>
     </target>
 
-    <target name="copy-tooltips-file" if="copy.tooltips.file">
+    <target name="copy-tooltips-file" if="copy.tooltips.file"  unless="remote.build">
         <echo message="Copying ${reg-web.build.resourceDir.0}/RegWebTooltips.properties to ${tooltips.filepath.loc}" />
         <copy file="${reg-web.build.resourceDir.0}/RegWebTooltips.properties" todir="${tooltips.filepath.loc}" overwrite="true" />
     </target>
 
     <target name="copy-tooltips"  depends="prepare-tooltips, copy-tooltips-file"/>
 
-    <target name="deploy" depends="package,ear,deploy-ear,fix-server-xml"
+    <target name="deploy" depends="package,ear,deploy-ear"
             description="Build test and deploy."/>
-    <target name="deploy-notest" depends="package-notest-noivy,ear,deploy-ear,fix-server-xml"
+    <target name="deploy-notest" depends="package-notest,ear,deploy-ear"
             description="Build and deploy without testing or getting dependencies."/>
 
 
@@ -442,6 +392,7 @@
     <target name="runTest" description="Runs the test you specify on the command line with -Dtest=" depends="compile-tests">
         <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no" maxmemory="128m">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
             <sysproperty key="basedir" value="."/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
@@ -473,6 +424,7 @@
         </cobertura-instrument>
         <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." failureproperty="junit.failure" maxmemory="256m">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${reg-web.build.dir}/cobertura.ser" />
             <formatter type="xml"/>
@@ -517,87 +469,6 @@
                          haltonfailure="true"/>
      </target>
 
-
-    <!-- ====================================================================== -->
-    <!-- Ivy Targets                                                            -->
-    <!-- ====================================================================== -->
-    <target name="init:ivy">
-        <mkdir dir="${local.repo.dir}"/>
-        <mkdir dir="${lib.dir}"/>
-        <property name="ivy.dep.file" value="${ivy.def.file}"/>
-        <ivy:settings file="${ivy.settings.file}" />
-    </target>
-    <target name="ivy-test-cobertura" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-cobertura" />
-        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-cobertura" />
-    </target>
-    <target name="ivy-test-junit" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-junit" />
-        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-junit" />
-    </target>
-    <target name="ivy-test-pmd" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-pmd" />
-        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd" />
-    </target>
-    <target name="ivy-test-checkstyle" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-checkstyle" />
-        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-checkstyle" />
-    </target>
-    <target name="ivy-test-simian" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-simian" />
-        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian" />
-    </target>
-    <target name="ivy-selenium" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="selenium" />
-        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="selenium" />
-    </target>
-    <target name="ivy-compile" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="compile" />
-        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile" />
-    </target>
-    <target name="ivy-test"
-            depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
-            <ivy:resolve refresh="true" conf="test" />
-            <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test" />
-    </target>
-    <target name="ivy-runtime" depends="init:ivy" description="Updates the local ivy repository">
-        <ivy:resolve refresh="true" conf="runtime" />
-        <ivy:retrieve pattern="${lib.dir}/reg-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="runtime" />
-    </target>
-    <target name="ivy-get" depends="init:ivy,ivy-compile,ivy-test,ivy-runtime,ivy-selenium" description="Updates the local ivy repository">
-    </target>
-    <target name="ivy-clean" description="Delete jars.">
-        <delete dir="${lib.dir}/reg-web"/>
-    </target>
-    <!-- ====================================================================== -->
-    <!-- Copies JSP to the tmp folder                                           -->
-    <!-- ====================================================================== -->
-
-    <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
-    
-			<for param="toDir">
-              <path>
-                <dirset dir="${jboss.deploy.directory}/../tmp/deploy" includes="tmp*pa.ear-contents/reg-web-exp.war"/>
-              </path>
-              <sequential>
-                  <copy todir="@{toDir}">
-                      <fileset dir="${basedir}/src/webapp">
-                            <include name="*.jsp"/>
-                            <include name="WEB-INF/decorators/*.jsp"/>
-                            <include name="WEB-INF/jsp/*.jsp"/>
-                            <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
-                            <include name="WEB-INF/jsp/common/*.jsp"/>
-                            <include name="WEB-INF/tags/*.tag"/>
-                      		<include name="styles/**/*.css"/>
-                      		<include name="styles/**/images/*.*"/>
-                            <include name="scripts/js/*.js"/>
-                            <include name="scripts/ajax/*.js"/>
-                      </fileset>
-                  </copy>
-              </sequential>
-            </for>
-      </target>
-
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
     <!-- ====================================================================== -->
@@ -618,55 +489,15 @@
         </zip>
     </target>
 
-    <!--  ======================================================================
-               The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
-               security-config.xml login-module definitions. This is duplicated in the install.xml to support BDA
-               remote deployments. This definition supports the developer local deployments.
-               ====================================================================== -->
-               <target name="find-server-xml">
-                    <available file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" property="server-xml.present"/>
-                </target>
-                <target name="fix-server-xml" depends="find-server-xml" if="server-xml.present">
-                    <copy file="${jboss.deploy.directory}/jbossweb-tomcat55.sar/server.xml" todir="${reg-web.build.dir}" overwrite="true"/>
-                    <copy file="${reg-web.build.dir}/server.xml" todir="${jboss.deploy.directory}/jbossweb-tomcat55.sar" overwrite="true">
-                        <filterchain>
-                            <tokenfilter>
-                                <replacestring from="emptySessionPath=&quot;true&quot;" to="emptySessionPath=&quot;false&quot;"/>
-                            </tokenfilter>
-                        </filterchain>
-                    </copy>
-                </target>
-
 
     <!-- ====================================================================== -->
     <!-- Determines build version and revision                                  -->
     <!-- ====================================================================== -->
     <target name="determine-build-version">
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="compile.classpath"/>
-        <svn>
-            <status path="." revisionproperty="project.revision" urlproperty="project.url" />
-        </svn>
-        <propertyregex property="project.base" input="${project.url}" casesensitive="false"
-            select="\1" regexp="coppa\/([^/]*)\/"/>
-        <if>
-            <equals arg1="${project.base}" arg2="trunk"/>
-            <then>
-                <property name="project.version" value="${project.base}"/>
-            </then>
-            <elseif>
-                <!-- We're expecting tags to be in the tags/pa-[version]-code format-->
-                <equals arg1="${project.base}" arg2="tags"/>
-                <then>
-                    <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
-                        select="\2" regexp="coppa\/([^/]*)\/pa-([^/]*)-code\/"/>
-                    <property name="project.version" value="${project.base}"/>
-                </then>
-           </elseif>
-           <else>
-               <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
-                   select="\2" regexp="coppa\/([^/]*)\/([^/]*)\/"/>
-               <property name="project.version" value="${project.base}"/>
-           </else>
-       </if>
+        <property name="project.version" value="${pa.version}"/>
+        <tstamp>
+            <format property="now" pattern="yyyy MMMM dd HH:mm:ss" locale="en"/>
+        </tstamp>
+        <property name="project.revision" value="${now}"/>
    </target>
 </project>

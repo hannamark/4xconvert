@@ -87,13 +87,16 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
 * @author Hugh Reinhart
 * @since 2/19/2009
 */
-public class OnholdWebDTO {
+public class OnholdWebDTO implements Serializable {
+    private static final long serialVersionUID = -8451481638841127437L;
     private String identifier;
     private String reasonCode;
     private String reasonText;

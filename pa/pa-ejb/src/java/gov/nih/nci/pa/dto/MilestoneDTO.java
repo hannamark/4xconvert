@@ -84,14 +84,15 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.enums.MilestoneCode;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author mshestopalov
  *
  */
-public class MilestoneDTO {
-
+public class MilestoneDTO implements Serializable {
+    private static final long serialVersionUID = -1489894983065379981L;
     private MilestoneCode milestone;
     private Date milestoneDate;
     private String creator;

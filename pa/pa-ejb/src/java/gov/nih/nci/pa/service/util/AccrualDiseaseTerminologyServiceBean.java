@@ -1,6 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SECURITY_DOMAIN;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -27,15 +27,15 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.jboss.annotation.security.SecurityDomain;
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 /**
  * @author Hugh Reinhart
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@SecurityDomain("pa")
-@RolesAllowed({CLIENT_ROLE, SUBMITTER_ROLE })
+@SecurityDomain(SECURITY_DOMAIN)
+@RolesAllowed(SUBMITTER_ROLE)
 public class AccrualDiseaseTerminologyServiceBean implements
         AccrualDiseaseTerminologyServiceRemote {
 

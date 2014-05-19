@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.audittrail;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -112,7 +113,7 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class AuditTrailServiceBean implements AuditTrailServiceLocal {
     private static final String UNCHECKED = "unchecked";

@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
@@ -23,10 +24,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -38,8 +36,7 @@ import org.apache.log4j.Logger;
  *
  */
 @Stateless
-@Interceptors({PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter>
         implements StudyIndldeServiceLocal {
    private static final int IND_FIELD_COUNT = 6;
@@ -61,7 +58,6 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
     * @throws PAException PAException
     */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyIndldeDTO create(StudyIndldeDTO dto) throws PAException {
       validate(dto);
       return super.create(dto);
@@ -73,7 +69,6 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
      * @throws PAException PAException
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyIndldeDTO update(StudyIndldeDTO dto) throws PAException {
       validate(dto);
       return super.update(dto);

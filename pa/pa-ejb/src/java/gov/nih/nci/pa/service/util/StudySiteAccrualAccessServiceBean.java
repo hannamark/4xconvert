@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -155,8 +156,7 @@ import org.hibernate.Session;
  * @since Sep 2, 2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudySiteAccrualAccessServiceBean // NOPMD
     extends AbstractBaseIsoService<StudySiteAccrualAccessDTO, StudySiteAccrualAccess, StudySiteAccrualAccessConverter>
     implements StudySiteAccrualAccessServiceLocal { // NOPMD
@@ -762,6 +762,19 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void unassignTrialLevelAccrualAccess(RegistryUser user, AccrualAccessSourceCode source,
+            Collection<Long> trialIDs, String comment, RegistryUser creator)
+            throws PAException {
+        unassignTrialLevelAccrualAccessPrivate(user, source, trialIDs, comment, creator);
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void unassignTrialLevelAccrualAccessNoTransaction(RegistryUser user, AccrualAccessSourceCode source,
+            Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException {
+        unassignTrialLevelAccrualAccessPrivate(user, source, trialIDs, comment, creator);
+    }
+
+    private void unassignTrialLevelAccrualAccessPrivate(RegistryUser user, AccrualAccessSourceCode source,
             Collection<Long> trialIDs, String comment, RegistryUser creator)
             throws PAException {
         List<Long> currentTrialAccess = getActiveTrialLevelAccrualAccess(user);        

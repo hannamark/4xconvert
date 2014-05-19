@@ -83,6 +83,7 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -105,8 +106,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
@@ -118,8 +117,7 @@ import org.hibernate.criterion.Restrictions;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class SubjectAccrualCountBean implements SubjectAccrualCountService {
 
     @EJB

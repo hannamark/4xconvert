@@ -5,6 +5,7 @@ package gov.nih.nci.registry.dto;
 
 import gov.nih.nci.pa.enums.StudySourceCode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,11 +13,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotEmpty;
 
+
 /**
  * @author Vrushali
  *
  */
-public class BaseTrialDTO { // NOPMD
+public class BaseTrialDTO implements Serializable { // NOPMD
+    private static final long serialVersionUID = 3124621274920216421L;
     private String assignedIdentifier; // used to store nci-accession number
     private String officialTitle;
     private String phaseCode;
@@ -30,7 +33,7 @@ public class BaseTrialDTO { // NOPMD
     private String leadOrganizationName;
     private StudySourceCode studySource;
 
-    private List<SummaryFourSponsorsWebDTO> summaryFourOrgIdentifiers = new ArrayList<SummaryFourSponsorsWebDTO>();
+    private List<SummaryFourSponsorsWebDTO> summaryFourOrgIdentifiers;
     private String summaryFourFundingCategoryCode;
     private String nctIdentifier;
     private String trialType;
@@ -46,9 +49,9 @@ public class BaseTrialDTO { // NOPMD
     private String studyModelOtherText;
     private String timePerspectiveCode;
     private String timePerspectiveOtherText;
-    private List<String> secondaryPurposes = new ArrayList<String>();
+    private List<String> secondaryPurposes;
     private String consortiaTrialCategoryCode;
-    private Boolean nciGrant = true;
+    private Boolean nciGrant;
     private String accrualDiseaseCodeSystem;
 
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
@@ -57,9 +60,12 @@ public class BaseTrialDTO { // NOPMD
      * default Cons.
      */
     public BaseTrialDTO() {
+        summaryFourOrgIdentifiers = new ArrayList<SummaryFourSponsorsWebDTO>();
         fundingDtos = new ArrayList<TrialFundingWebDTO>();
         docDtos = new ArrayList<TrialDocumentWebDTO>();
         indIdeDtos = new ArrayList<TrialIndIdeDTO>();
+        secondaryPurposes = new ArrayList<String>();
+        nciGrant = true;
     }
     /**
      * @return the assignedIdentifier

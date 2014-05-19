@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -110,6 +111,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -119,6 +121,7 @@ import org.apache.commons.collections.CollectionUtils;
  * @author mshestopalov
  *
  */
+@RolesAllowed(SUBMITTER_ROLE)
 public class AbstractBaseParticipatingSiteEjbBean {
     private CorrelationUtils corrUtils = new CorrelationUtils();
     @EJB

@@ -91,7 +91,7 @@ import java.util.List;
  * copyright holder, NCI.
  */
 public class ISDesignDetailsWebDTO extends BaseISDesignDetailsWebDTO { //NOPMD
-
+    private static final long serialVersionUID = 3749727434500756859L;
     private String primaryPurposeCode;
     private List<String> secondaryPurposes = new ArrayList<String>();
     private String phaseCode;

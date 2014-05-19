@@ -99,7 +99,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -128,7 +128,7 @@ public class ParticipatingSitesAction extends ActionSupport implements Preparabl
     private static final String INVESTIGATOR_DISPLAY_FMT = "[%s - %s, %s]</br>";
     
     private StudySiteServiceLocal studySiteService;
-    private PAHealthCareProviderRemote paHealthCareProviderService;
+    private PAHealthCareProviderLocal paHealthCareProviderService;
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
     
     private List<PaOrganizationDTO> organizationList;

@@ -78,21 +78,19 @@
 */
 package gov.nih.nci.pa.dto;
 
-//import gov.nih.nci.iso21090.Bl;
-//import gov.nih.nci.iso21090.Cd;
-//import gov.nih.nci.iso21090.Ii;
-//import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+
+import java.io.Serializable;
 
 
 /**
  * @author Hong Gao
  *
  */
-public class StudyIndldeWebDTO {
-
+public class StudyIndldeWebDTO implements Serializable {
+   private static final long serialVersionUID = -6261047208109210957L;
     private String studyProtocolIi;
     private String expandedAccessStatus;
     private String expandedAccessIndicator;

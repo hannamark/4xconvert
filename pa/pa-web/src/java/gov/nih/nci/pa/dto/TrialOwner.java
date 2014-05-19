@@ -5,11 +5,14 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 
+import java.io.Serializable;
+
 /**
  * @author vrushali
  *
  */
-public class TrialOwner {
+public class TrialOwner implements Serializable {
+    private static final long serialVersionUID = -1587594233640048235L;
     private RegistryUser regUser;
     private boolean owner;
     private boolean enableEmails;

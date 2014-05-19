@@ -90,16 +90,17 @@ import gov.nih.nci.cagrid.gridgrouper.stubs.types.GroupNotFoundFault;
 import gov.nih.nci.cagrid.gridgrouper.stubs.types.InsufficientPrivilegeFault;
 import gov.nih.nci.cagrid.gridgrouper.stubs.types.MemberAddFault;
 import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
+import gov.nih.nci.coppa.services.grid.util.CaGridFormAuthenticatorValve;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.USStateCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAInvalidPasswordException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.security.cgmm.CGMMManager;
-import gov.nih.nci.security.cgmm.CGMMManagerImpl;
-import gov.nih.nci.security.cgmm.helper.impl.SAMLToAttributeMapperImpl;
+import gov.nih.nci.pa.util.SAMLToAttributeMapper;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -107,6 +108,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -130,6 +132,7 @@ import org.globus.gsi.GlobusCredential;
  * @author aevansel
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class GridAccountServiceBean implements GridAccountServiceRemote {
     private static final int CERTIFICATE_LIFETIME = 12;
     private static final Logger LOG = Logger.getLogger(GridAccountServiceBean.class);
@@ -243,22 +246,6 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         }
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public Map<String, String> getIdentityProviders() {
-        Map<String, String> urls = new HashMap<String, String>();
-        try {
-            CGMMManager cgmmManager = new CGMMManagerImpl();
-            urls.putAll(cgmmManager.getAuthenticationServiceURLMap());
-        } catch (Exception e) {
-            LOG.error("ERROR retrieving idps", e);
-        }
-        return urls;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -272,7 +259,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         try {
             AuthenticationClient authClient = new AuthenticationClient(authUrl);
             SAMLAssertion saml = authClient.authenticate(auth);
-            userInfo = new SAMLToAttributeMapperImpl().convertSAMLtoHashMap(saml);
+            userInfo = SAMLToAttributeMapper.convertSAMLtoHashMap(saml);
         } catch (Exception e) {
             LOG.error("ERROR Authenticating User.", e);
         }
@@ -289,7 +276,7 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
         GlobusCredential credential = null;
 
         try {
-            credential = new CGMMManagerImpl().performGridLogin(username, password, authUrl);
+            credential = performGridLogin(username, password, authUrl);
         } catch (Exception e) {
             LOG.error("Error determing fully Qualified username", e);
         }
@@ -353,5 +340,40 @@ public class GridAccountServiceBean implements GridAccountServiceRemote {
             LOG.error("ERROR Authenticating User.", e);
         }
         return credential;
+    }
+
+    private GlobusCredential performGridLogin(String username, String password, String authenticationServiceURL) 
+            throws PAException {
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            throw new PAException("Username or password not set.");
+        }
+
+        if (StringUtils.isBlank(authenticationServiceURL)) {
+            throw new PAException("AutheticationSeviceURL not set.");
+        }
+        GlobusCredential gc = null;
+        SAMLAssertion samlAssertion = null;
+        CertificateLifetime certLifetime = new CertificateLifetime(CERTIFICATE_LIFETIME, 0, 0);
+ 
+        // Authenticate the user credentials and retrieve
+        BasicAuthentication auth = new BasicAuthentication();
+        auth.setUserId(username);
+        auth.setPassword(password);
+        AuthenticationClient authenticationClient;
+        try {
+            authenticationClient = new AuthenticationClient(authenticationServiceURL);
+            samlAssertion = authenticationClient.authenticate(auth);
+            GridUserClient guc = new GridUserClient(
+                    CaGridFormAuthenticatorValve.findDorianByAuthenticationServiceURL(authenticationServiceURL));
+            gc = guc.requestUserCertificate(samlAssertion, certLifetime);
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+        if (gc != null) {
+            LOG.info("Successfully performed login for Grid User ID :" + username);
+        } else {
+            LOG.info("Unable to perform Grid Login for User Grid ID " + username);
+        }
+        return gc;
     }
 }

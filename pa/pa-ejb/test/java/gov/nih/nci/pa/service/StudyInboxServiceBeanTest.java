@@ -3,9 +3,13 @@
  */
 package gov.nih.nci.pa.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.enums.StudyInboxSectionCode;
 import gov.nih.nci.pa.enums.StudyInboxTypeCode;
+import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -22,8 +26,6 @@ import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
-import static org.junit.Assert.*;
-
 /**
  * @author Denis G. Krylov
  * 
@@ -31,13 +33,15 @@ import static org.junit.Assert.*;
 public class StudyInboxServiceBeanTest extends AbstractHibernateTestCase {
 
     private StudyInboxServiceBean bean = new StudyInboxServiceBean();
+    private CSMUserUtil csmUtil;
 
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setInstance(new MockCSMUserService());
+        csmUtil = new MockCSMUserService();
+        CSMUserService.setInstance(csmUtil);
         UsernameHolder.setUser(TestSchema.getUser().getLoginName());
     }
 
@@ -55,6 +59,7 @@ public class StudyInboxServiceBeanTest extends AbstractHibernateTestCase {
         s.save(inbox);
         s.flush();
 
+        AbstractStudyProtocolConverter.setCsmUserUtil(csmUtil);
         bean.acknowledge(IiConverter.convertToIi(inbox.getId()),
                 StudyInboxSectionCode.BOTH);
 
@@ -73,6 +78,7 @@ public class StudyInboxServiceBeanTest extends AbstractHibernateTestCase {
         s.save(inbox);
         s.flush();
 
+        AbstractStudyProtocolConverter.setCsmUserUtil(csmUtil);
         bean.acknowledge(IiConverter.convertToIi(inbox.getId()),
                 StudyInboxSectionCode.ADMIN);
 
@@ -92,6 +98,7 @@ public class StudyInboxServiceBeanTest extends AbstractHibernateTestCase {
         s.save(inbox);
         s.flush();
 
+        AbstractStudyProtocolConverter.setCsmUserUtil(csmUtil);
         bean.acknowledge(IiConverter.convertToIi(inbox.getId()),
                 StudyInboxSectionCode.SCIENTIFIC);
 
@@ -111,6 +118,7 @@ public class StudyInboxServiceBeanTest extends AbstractHibernateTestCase {
         s.save(inbox);
         s.flush();
 
+        AbstractStudyProtocolConverter.setCsmUserUtil(csmUtil);
         bean.acknowledge(IiConverter.convertToIi(inbox.getId()),
                 StudyInboxSectionCode.ADMIN);
         s.flush();

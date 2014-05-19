@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
@@ -104,6 +105,8 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -113,6 +116,7 @@ import org.apache.commons.lang.StringUtils;
  * @author mshestopalov
  *
  */
+@RolesAllowed(SUBMITTER_ROLE)
 public abstract class AbstractBaseParticipatingSiteBean extends AbstractBaseParticipatingSiteEjbBean {
     private static final String INVALID_STATUS_DATE_CURRENT = "Trial Status Date cannot be in the future.";
     private static final String INVALID_OPEN_DATE_CURRENT = "Open Date cannot be in the future.";

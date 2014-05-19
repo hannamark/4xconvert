@@ -101,7 +101,7 @@ import org.junit.Test;
 public class RegulatoryInformationServiceTest extends AbstractHibernateTestCase  {
 
     private RegulatoryInformationBean bean = new RegulatoryInformationBean();
-    private RegulatoryInformationServiceRemote remoteEjb = bean;
+    private RegulatoryInformationServiceLocal remoteEjb = bean;
     private Long raId;
     private Long countryId;
 

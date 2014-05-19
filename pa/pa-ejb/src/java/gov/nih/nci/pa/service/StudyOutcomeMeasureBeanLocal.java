@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.iso.convert.StudyOutcomeMeasureConverter;
@@ -13,8 +14,6 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -22,8 +21,7 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyOutcomeMeasureBeanLocal extends
         AbstractStudyIsoService<StudyOutcomeMeasureDTO, StudyOutcomeMeasure, StudyOutcomeMeasureConverter> implements
         StudyOutcomeMeasureServiceLocal {

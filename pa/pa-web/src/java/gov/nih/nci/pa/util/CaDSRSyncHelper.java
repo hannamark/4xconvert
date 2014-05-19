@@ -11,15 +11,17 @@ import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
-import java.util.Collection;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Property;
 
 /**
  * 
@@ -112,24 +114,31 @@ public class CaDSRSyncHelper {
      * @param version version
      * @return map<Stirng, String> map
      */
+    @SuppressWarnings("unchecked")
     public Map<Long, Map<String, String>> getCaDSRValues(Long publicId, Float version) {
         Map<Long, Map<String, String>> values = new HashMap<Long, Map<String, String>>();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
             try {
-                DataElement dataElement = new DataElement();
-                dataElement.setPublicID(publicId);
-                dataElement.setVersion(version);
-                Collection<Object> results = appService.search(
-                        DataElement.class, dataElement);
-                if (results.iterator().hasNext()) {
-                   DataElement de = (DataElement) results.iterator().next();
-                   String vdId = ((EnumeratedValueDomain) de.getValueDomain())
-                        .getId();
-                   List<Object> permissibleValues = appService
-                        .query(constructSearchCriteria(vdId));
-                   values = getSearchResults(permissibleValues);
+                DetachedCriteria detachedCrit = DetachedCriteria.forClass(DataElement.class).add(Property
+                        .forName("publicID").eq(publicId)).add(Property.forName("latestVersionIndicator")
+                        .eq("Yes"));
+                detachedCrit.setFetchMode("valueDomain", FetchMode.JOIN);
+                List<DataElement> results = (List<DataElement>) (List<?>) appService.query(detachedCrit);
+                if (results.size() < 1) {
+                    throw new PAException("Search of caDSR returned no results.");
                 }
+                DataElement de = results.get(0);
+                String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
+
+
+                DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class);
+                criteria.add(Property.forName("enumeratedValueDomain.id").eq(vdId));
+                criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
+                criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
+
+                List<Object> permissibleValues = (List<Object>) (List<?>) appService.query(criteria);
+                values = getSearchResults(new ArrayList<Object>(permissibleValues));
             } catch (Exception e) {
                 LOG.error("Error while querying caDSR" + publicId, e);
             }
@@ -139,15 +148,6 @@ public class CaDSRSyncHelper {
                     e);
         }
         return values;
-    }
-
-    private DetachedCriteria constructSearchCriteria(String vdId) {
-        DetachedCriteria criteria = DetachedCriteria.forClass(
-                ValueDomainPermissibleValue.class, "vdpv");
-        criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
-        criteria.createAlias("permissibleValue", "pv").createAlias(
-                "pv.valueMeaning", "vm");
-        return criteria;
     }
 
     private Map<Long, Map<String, String>> getSearchResults(

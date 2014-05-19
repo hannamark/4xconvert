@@ -7,4 +7,5 @@
   <fileset name="main source" enabled="true" check-config-name="CTRP" local="true">
     <file-match-pattern match-pattern="src/java/*" include-pattern="true"/>
   </fileset>
+  <filter name="FilesInSync" enabled="true"/>
 </fileset-config>

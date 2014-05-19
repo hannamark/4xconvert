@@ -857,6 +857,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         sssac.setStudyProtocol(ss.getStudyProtocol());
         sssac.setStudySite(ss);
         sssac.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
+        sssac.setDateLastUpdated(new Date());
         sess.save(sssac);
         sess.flush();
         sess.clear();

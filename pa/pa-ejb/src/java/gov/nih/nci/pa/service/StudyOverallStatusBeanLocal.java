@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -108,7 +109,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -126,8 +126,7 @@ import org.joda.time.DateMidnight;
  *
  */
 @Stateless
-@Interceptors({PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyOverallStatusBeanLocal extends
         AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
         implements StudyOverallStatusServiceLocal {
@@ -143,7 +142,6 @@ public class StudyOverallStatusBeanLocal extends
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })    
     public StudyOverallStatusDTO create(StudyOverallStatusDTO dto)
             throws PAException {
         return create(dto, false);
@@ -315,7 +313,6 @@ public class StudyOverallStatusBeanLocal extends
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
         checkCondition(StudyStatusCode.getByCode(dto.getStatusCode().getCode()) == null, "Study status must be set.");
         checkCondition(TsConverter.convertToTimestamp(dto.getStatusDate()) == null, "Study status date must be set.");
@@ -338,7 +335,6 @@ public class StudyOverallStatusBeanLocal extends
      * @throws PAException exception
      */
     @Override
-    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void delete(Ii ii) throws PAException {
         
         final StudyOverallStatusDTO dto = get(ii);
@@ -702,7 +698,6 @@ public class StudyOverallStatusBeanLocal extends
     }
 
     @Override    
-    @RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })      
     public StudyOverallStatusDTO createRelaxed(StudyOverallStatusDTO dto)
             throws PAException {       
         return create(dto, true);

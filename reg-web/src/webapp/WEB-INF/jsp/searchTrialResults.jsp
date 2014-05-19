@@ -176,7 +176,7 @@ jQuery(function() {
 								</li>
 								<li>
                                     <s:if test="%{#attr.row.verifyData.booleanValue() == true}">
-                                        <s:url id="editUrl" namespace="/protected" action="trialDataVerification" method="view">
+                                        <s:url id="editUrl" namespace="/protected" action="trialDataVerificationview">
                                             <s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}"/>
                                         </s:url>
                                         <s:a href="%{editUrl}">

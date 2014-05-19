@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.action;
 
-
 import gov.nih.nci.cadsr.domain.ClassificationSchemeItem;
 import gov.nih.nci.cadsr.domain.DataElement;
 import gov.nih.nci.iso21090.Ii;
@@ -122,7 +121,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
-
 
 /**
  * @author Kalpana Guthikonda
@@ -220,7 +218,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
         }
         return ELIGIBILITY;
     }
-
 
     /**
      * @return res
@@ -1075,7 +1072,6 @@ public class EligibilityCriteriaAction extends AbstractMultiObjectDeleteAction {
     public List<ClassificationSchemeItem> getCsisResult() {
         return csisResult;
     }
-
 
     /**
      *

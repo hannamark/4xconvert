@@ -9,12 +9,15 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.io.Serializable;
+
 /**
  * DTO class for displaying study status .
  *
  * @author Bala Nair
  */
-public class StudyOverallStatusWebDTO {
+public class StudyOverallStatusWebDTO implements Serializable {
+    private static final long serialVersionUID = -7501476168426334890L;
     private String statusCode;
     private String statusDate;
     private String reason;

@@ -83,7 +83,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -108,8 +107,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -302,7 +300,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         
         ServiceLocator paSvcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-        PAHealthCareProviderRemote rmtSvc = mock(PAHealthCareProviderRemote.class);
+        PAHealthCareProviderLocal rmtSvc = mock(PAHealthCareProviderLocal.class);
         when(rmtSvc.getPersonsByStudySiteId(any(Long.class), any(String.class))).thenReturn(new ArrayList<PaPersonDTO>());
         when(rmtSvc.getIdentifierBySPCId(any(Long.class))).thenReturn(new PaPersonDTO());
         when(paSvcLoc.getPAHealthCareProviderService()).thenReturn(rmtSvc);

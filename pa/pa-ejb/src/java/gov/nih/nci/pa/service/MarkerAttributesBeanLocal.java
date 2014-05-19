@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.AssayUseCode;
@@ -32,8 +33,8 @@ import org.hibernate.Session;
  * 
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(PaHibernateSessionInterceptor.class)
 @SuppressWarnings("PMD.ExcessiveParameterList")
 public class MarkerAttributesBeanLocal implements MarkerAttributesServiceLocal {
     /**

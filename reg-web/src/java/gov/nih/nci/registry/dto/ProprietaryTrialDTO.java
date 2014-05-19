@@ -13,6 +13,7 @@ import org.hibernate.validator.NotEmpty;
  *
  */
 public class ProprietaryTrialDTO extends BaseTrialDTO {
+    private static final long serialVersionUID = -6255281337610196744L;
     private String sitePiIdentifier;
     private String sitePiName;
     private String siteOrganizationIdentifier;

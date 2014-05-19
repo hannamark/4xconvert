@@ -200,7 +200,6 @@ public class StudySite extends OrganizationFunctionalRole {
      * @return the reviewBoardApprovalDate
      */
     @Column(name = "REVIEW_BOARD_APPROVAL_DATE")
-    @Enumerated(EnumType.STRING)
     @Searchable
     public Timestamp getReviewBoardApprovalDate() {
         return reviewBoardApprovalDate;

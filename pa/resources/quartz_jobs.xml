@@ -13,7 +13,7 @@
             <job-data-map allows-transient-data="true">
                 <entry>
                     <key>ejb</key>
-                    <value>pa/StudyMilestoneTasksServiceBean/local</value>
+                    <value>StudyMilestoneTasksServiceBean</value>
                 </entry>
                 <entry>
                     <key>interfaceName</key>
@@ -22,26 +22,6 @@
                 <entry>
                     <key>method</key>
                     <value>performTask</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.initial</key>
-                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
-                </entry>
-                <entry>
-                    <key>java.naming.provider.url</key>
-                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.url.pkgs</key>
-                    <value>org.jboss.naming:org.jnp.interfaces</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.principal</key>
-                    <value>@pasystem.user@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.credentials</key>
-                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail> 
@@ -67,7 +47,7 @@
             <job-data-map allows-transient-data="true">
                 <entry>
                     <key>ejb</key>
-                    <value>pa/ResetNciIdSeqTasksServiceBean/local</value>
+                    <value>ResetNciIdSeqTasksServiceBean</value>
                 </entry>
                 <entry>
                     <key>interfaceName</key>
@@ -76,26 +56,6 @@
                 <entry>
                     <key>method</key>
                     <value>performTask</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.initial</key>
-                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
-                </entry>
-                <entry>
-                    <key>java.naming.provider.url</key>
-                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.url.pkgs</key>
-                    <value>org.jboss.naming:org.jnp.interfaces</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.principal</key>
-                    <value>@pasystem.user@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.credentials</key>
-                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail>
@@ -109,7 +69,41 @@
                 <cron-expression>0 0 0 1 1 ?</cron-expression>
             </cron>
         </trigger>
-    </job>    
+    </job>
+    <job>
+        <job-detail>
+            <name>cleanUpJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>false</durability>
+            <recover>false</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>CleanUpTaskServiceBean</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.pa.service.util.CleanUpTaskServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>deleteDocAfter30DaysTask</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name>cleanUpTrigger</name>
+                <group>DailyTriggerGroup</group>
+                <description>Daily Cleaning up Trigger</description>
+                <job-name>cleanUpJob</job-name>
+                <job-group>DEFAULT</job-group>
+                <cron-expression>0 0 19 ? * MON-FRI</cron-expression>
+            </cron>
+        </trigger>
+    </job>
     <job>
         <job-detail>
             <name>onholdReminderJob</name>
@@ -121,7 +115,7 @@
             <job-data-map allows-transient-data="true">
                 <entry>
                     <key>ejb</key>
-                    <value>pa/StudyOnholdBeanLocal/local</value>
+                    <value>StudyOnholdBeanLocal</value>
                 </entry>
                 <entry>
                     <key>interfaceName</key>
@@ -130,26 +124,6 @@
                 <entry>
                     <key>method</key>
                     <value>processOnHoldTrials</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.initial</key>
-                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
-                </entry>
-                <entry>
-                    <key>java.naming.provider.url</key>
-                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.url.pkgs</key>
-                    <value>org.jboss.naming:org.jnp.interfaces</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.principal</key>
-                    <value>@pasystem.user@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.credentials</key>
-                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail> 
@@ -178,7 +152,7 @@
             <job-data-map allows-transient-data="true">
                 <entry>
                     <key>ejb</key>
-                    <value>pa/CTGovUploadServiceBeanLocal/local</value>
+                    <value>CTGovUploadServiceBeanLocal</value>
                 </entry>
                 <entry>
                     <key>interfaceName</key>
@@ -187,26 +161,6 @@
                 <entry>
                     <key>method</key>
                     <value>uploadToCTGov</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.initial</key>
-                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
-                </entry>
-                <entry>
-                    <key>java.naming.provider.url</key>
-                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.url.pkgs</key>
-                    <value>org.jboss.naming:org.jnp.interfaces</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.principal</key>
-                    <value>@pasystem.user@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.credentials</key>
-                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail> 
@@ -234,7 +188,7 @@
             <job-data-map allows-transient-data="true">
                 <entry>
                     <key>ejb</key>
-                    <value>pa/CTGovSyncNightlyServiceBeanLocal/local</value>
+                    <value>CTGovSyncNightlyServiceBeanLocal</value>
                 </entry>
                 <entry>
                     <key>interfaceName</key>
@@ -243,26 +197,6 @@
                 <entry>
                     <key>method</key>
                     <value>updateIndustrialAndConsortiaTrials</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.initial</key>
-                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
-                </entry>
-                <entry>
-                    <key>java.naming.provider.url</key>
-                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.url.pkgs</key>
-                    <value>org.jboss.naming:org.jnp.interfaces</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.principal</key>
-                    <value>@pasystem.user@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.credentials</key>
-                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail> 
@@ -334,7 +268,7 @@
             <job-data-map allows-transient-data="true">
                 <entry>
                     <key>ejb</key>
-                    <value>pa/VerifyTrialDataNightlyServiceBeanLocal/local</value>
+                    <value>VerifyTrialDataNightlyServiceBeanLocal</value>
                 </entry>
                 <entry>
                     <key>interfaceName</key>
@@ -343,26 +277,6 @@
                 <entry>
                     <key>method</key>
                     <value>getOpenTrials</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.initial</key>
-                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
-                </entry>
-                <entry>
-                    <key>java.naming.provider.url</key>
-                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.url.pkgs</key>
-                    <value>org.jboss.naming:org.jnp.interfaces</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.principal</key>
-                    <value>@pasystem.user@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.credentials</key>
-                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail> 
@@ -390,7 +304,7 @@
             <job-data-map allows-transient-data="true">
                 <entry>
                     <key>ejb</key>
-                    <value>pa/PendingPatientAccrualsServiceBean/local</value>
+                    <value>PendingPatientAccrualsServiceBean</value>
                 </entry>
                 <entry>
                     <key>interfaceName</key>
@@ -399,26 +313,6 @@
                 <entry>
                     <key>method</key>
                     <value>readAndProcess</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.initial</key>
-                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
-                </entry>
-                <entry>
-                    <key>java.naming.provider.url</key>
-                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.url.pkgs</key>
-                    <value>org.jboss.naming:org.jnp.interfaces</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.principal</key>
-                    <value>@pasystem.user@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.credentials</key>
-                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail>
@@ -444,7 +338,7 @@
             <job-data-map allows-transient-data="true">
                 <entry>
                     <key>ejb</key>
-                    <value>pa/UpdateFamilyAccrualAccessServiceBean/local</value>
+                    <value>UpdateFamilyAccrualAccessServiceBean</value>
                 </entry>
                 <entry>
                     <key>interfaceName</key>
@@ -453,26 +347,6 @@
                 <entry>
                     <key>method</key>
                     <value>updateFamilyAccrualAccess</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.initial</key>
-                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
-                </entry>
-                <entry>
-                    <key>java.naming.provider.url</key>
-                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.factory.url.pkgs</key>
-                    <value>org.jboss.naming:org.jnp.interfaces</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.principal</key>
-                    <value>@pasystem.user@</value>
-                </entry>
-                <entry>
-                    <key>java.naming.security.credentials</key>
-                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail>

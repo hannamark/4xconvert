@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
@@ -92,7 +93,7 @@ import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
@@ -116,6 +117,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 
 /**
@@ -123,6 +125,7 @@ import javax.ejb.EJB;
  * @author mshestopalov
  *
  */
+@RolesAllowed(SUBMITTER_ROLE)
 @SuppressWarnings("PMD.TooManyFields")
 public class AbstractCTGovXmlGeneratorServiceBean {
     @EJB
@@ -154,13 +157,13 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     @EJB
     private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
     @EJB
-    private RegulatoryInformationServiceRemote regulatoryInformationService;
+    private RegulatoryInformationServiceLocal regulatoryInformationService;
     @EJB
     private PDQDiseaseServiceLocal diseaseService;
     @EJB
     private InterventionServiceLocal interventionService;
     @EJB
-    private InterventionAlternateNameServiceRemote interventionAlternateNameService;
+    private InterventionAlternateNameServiceLocal interventionAlternateNameService;
     @EJB
     private RegistryUserServiceLocal registryUserService;
     @EJB
@@ -285,7 +288,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     /**
      * @param regulatoryInformationService the regulatoryInformationService to set
      */
-    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+    public void setRegulatoryInformationService(RegulatoryInformationServiceLocal regulatoryInformationService) {
         this.regulatoryInformationService = regulatoryInformationService;
     }
 
@@ -306,7 +309,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     /**
      * @param interventionAltNameSvc the interventionAlternateNameService to set
      */
-    public void setInterventionAlternateNameService(InterventionAlternateNameServiceRemote interventionAltNameSvc) {
+    public void setInterventionAlternateNameService(InterventionAlternateNameServiceLocal interventionAltNameSvc) {
         this.interventionAlternateNameService = interventionAltNameSvc;
     }
 
@@ -418,7 +421,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     /**
      * @return the regulatoryInformationService
      */
-    public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
+    public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
         return regulatoryInformationService;
     }
 
@@ -439,7 +442,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     /**
      * @return the interventionAlternateNameService
      */
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+    public InterventionAlternateNameServiceLocal getInterventionAlternateNameService() {
         return interventionAlternateNameService;
     }
 

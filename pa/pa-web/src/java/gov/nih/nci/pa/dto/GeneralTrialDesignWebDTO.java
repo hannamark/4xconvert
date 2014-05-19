@@ -80,6 +80,7 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,8 +91,8 @@ import java.util.List;
  * @author Naveen Amiruddin
  * @since 10/20/2008
  */
-public class GeneralTrialDesignWebDTO { // NOPMD
-
+public class GeneralTrialDesignWebDTO implements Serializable { // NOPMD
+    private static final long serialVersionUID = -4908420680244863700L;
     private String acronym;
     private String allocationCode;
     private String accrualReportingMethodCode;

@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.dto;
 
+import java.io.Serializable;
+
 import org.hibernate.validator.Email;
 import org.hibernate.validator.NotEmpty;
 import org.hibernate.validator.Pattern;
@@ -11,7 +13,8 @@ import org.hibernate.validator.Pattern;
  * @author Vrushali
  *
  */
-public class AddressDTO {
+public class AddressDTO implements Serializable {
+    private static final long serialVersionUID = -8248219647277396357L;
     private String streetAddress;
     private String city;
     private String state;

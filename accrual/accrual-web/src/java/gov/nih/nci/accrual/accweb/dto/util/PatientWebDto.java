@@ -102,6 +102,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
@@ -117,7 +118,9 @@ import org.apache.commons.lang.time.DateFormatUtils;
  */
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveParameterList", "PMD.ExcessiveClassLength",
     "PMD.CyclomaticComplexity", "PMD.AvoidDeeplyNestedIfStmts" })
-public class PatientWebDto {
+public class PatientWebDto implements Serializable {
+
+    private static final long serialVersionUID = 5897506784500068758L;
     // from PatientDto
     private Long patientId;
     private Set<String> raceCode = new HashSet<String>();

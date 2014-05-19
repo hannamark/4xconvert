@@ -81,13 +81,8 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-
-import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author Bala Nair
@@ -99,9 +94,6 @@ import org.jboss.annotation.security.SecurityDomain;
 
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SecurityDomain("pa")
-@RolesAllowed({"client" , "Abstractor" , "Submitter" })
 public class MailManagerServiceBean extends  MailManagerBeanLocal implements MailManagerServiceRemote {
 
 

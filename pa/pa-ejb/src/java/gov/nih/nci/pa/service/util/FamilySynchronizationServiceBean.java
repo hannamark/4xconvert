@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyAccrualAccess;
@@ -38,8 +39,7 @@ import org.hibernate.Session;
  * @since Nov 30, 2012
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class FamilySynchronizationServiceBean implements FamilySynchronizationServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(FamilySynchronizationServiceBean.class);

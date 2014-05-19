@@ -93,6 +93,7 @@ import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -178,8 +179,7 @@ import org.hibernate.criterion.Restrictions;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength", 
     "PMD.NPathComplexity" })
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
@@ -232,13 +232,17 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      */
     private class BatchFileProcessor implements Runnable {
         private final BatchFile batchFile;
-        public BatchFileProcessor(BatchFile batchFile) {
+        private final String user;
+
+        public BatchFileProcessor(BatchFile batchFile, String user) {
             this.batchFile = batchFile;
+            this.user = user;
         }
 
         @Override
         public void run() {
             try {
+                CaseSensitiveUsernameHolder.setUser(user);
                 batchUploadProcessingTaskService.processBatchUploads(batchFile);
             } catch (Exception e) {
                 LOG.error(e);
@@ -251,15 +255,17 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      */
     private class BatchThreadManager implements Runnable {
         private final BatchFile batchFile;
-        public BatchThreadManager(BatchFile batchFile) {
+        private final String user;
+        public BatchThreadManager(BatchFile batchFile, String user) {
             this.batchFile = batchFile;
+            this.user = user;
         }
 
         @Override
         public void run() {
             ExecutorService executor = Executors.newSingleThreadExecutor();
             try {
-                executor.submit(new BatchFileProcessor(batchFile)).get(
+                executor.submit(new BatchFileProcessor(batchFile, user)).get(
                         BATCH_PROCESSING_THREAD_TIMEOUT_HOURS, TimeUnit.HOURS);
             } catch (Exception e) {
                 LOG.error("Forcing shutdown of batch file processing thread.");
@@ -631,7 +637,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
     @Override
     public void processBatchFiles(BatchFile batchFile) {
-        Thread batchThread = new Thread(new BatchThreadManager(batchFile));
+        Thread batchThread = new Thread(new BatchThreadManager(batchFile, CaseSensitiveUsernameHolder.getUser()));
         batchThread.start();
     }
 

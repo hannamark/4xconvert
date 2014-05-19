@@ -82,13 +82,15 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 /**
  * Web DTO for study site accrual access.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class StudySiteAccrualAccessWebDTO {
-
+public class StudySiteAccrualAccessWebDTO implements Serializable {
+   private static final long serialVersionUID = -2132742575593039710L;
     private Long identifier;
     private Long studySiteId;
 

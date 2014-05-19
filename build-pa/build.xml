@@ -993,7 +993,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <dist-prep default.target="upgrade" />
 
         <!-- This copies container jars which for deployment to the <server>/lib directory -->
-        <copy todir="${pa-container-jar.dist.dir}" overwrite="true">
+        <copy todir="${pa-container-jar.dist.dir}" overwrite="true" failonerror="false">
             <fileset dir="${lib.dir}/pa-ear/container" />
         </copy>
         <copy todir="${dist.exploded.dir}">

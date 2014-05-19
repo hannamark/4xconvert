@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SECURITY_DOMAIN;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
@@ -115,6 +117,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -130,6 +133,7 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.ejb3.annotation.SecurityDomain;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -142,6 +146,8 @@ import org.xml.sax.SAXException;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@SecurityDomain(SECURITY_DOMAIN)
+@RolesAllowed(SUBMITTER_ROLE)
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implements PDQXmlGeneratorServiceRemote {
 

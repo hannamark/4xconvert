@@ -79,7 +79,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
@@ -117,7 +117,7 @@ import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
@@ -129,7 +129,7 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceCachingDecorator;
@@ -145,9 +145,10 @@ import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 
 /**
@@ -257,7 +258,7 @@ public final class PaRegistry {
      *
      * @return RegulatoryInformationServiceRemote
      */
-    public static RegulatoryInformationServiceRemote getRegulatoryInformationService() {
+    public static RegulatoryInformationServiceLocal getRegulatoryInformationService() {
         return getInstance().getServiceLocator().getRegulatoryInformationService();
     }
 
@@ -367,7 +368,7 @@ public final class PaRegistry {
      *
      * @return PAHealthCareProviderRemote
      */
-    public static PAHealthCareProviderRemote getPAHealthCareProviderService() {
+    public static PAHealthCareProviderLocal getPAHealthCareProviderService() {
         return getInstance().getServiceLocator().getPAHealthCareProviderService();
     }
 
@@ -388,7 +389,7 @@ public final class PaRegistry {
     /**
      * @return InterventionAlternateNameServiceRemote
      */
-    public static InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+    public static InterventionAlternateNameServiceLocal getInterventionAlternateNameService() {
         return getInstance().getServiceLocator().getInterventionAlternateNameService();
     }
 
@@ -425,7 +426,7 @@ public final class PaRegistry {
     /**
      * @return AbstractionCompletionServiceRemote
      */
-    public static AbstractionCompletionServiceRemote getAbstractionCompletionService() {
+    public static AbstractionCompletionServiceLocal getAbstractionCompletionService() {
         return getInstance().getServiceLocator().getAbstractionCompletionService();
     }
 
@@ -497,6 +498,13 @@ public final class PaRegistry {
      */
     public static TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
         return getInstance().getServiceLocator().getTSRReportGeneratorService();
+    }
+
+    /**
+     * @return TSRReportGeneratorServiceRemote
+     */
+    public static TSRReportGeneratorServiceLocal getTSRReportGeneratorServiceLocal() {
+        return getInstance().getServiceLocator().getTSRReportGeneratorServiceLocal();
     }
 
     /**

@@ -197,6 +197,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -1786,7 +1787,12 @@ public class TestSchema {
         as.setCode("Lung");
         as.setCodingSystem("Summary 4 Anatomic Sites");
         addUpdObject(as);
-        sp.setSummary4AnatomicSites(new TreeSet<AnatomicSite>());
+        sp.setSummary4AnatomicSites(new TreeSet<AnatomicSite>(new Comparator<AnatomicSite>() {
+            @Override
+            public int compare(AnatomicSite o1, AnatomicSite o2) {
+                return 0;
+            }
+        }));
         sp.getSummary4AnatomicSites().add(as);
         studySecondaryIdentifiers.add(spSecId);
         sp.setOtherIdentifiers(studySecondaryIdentifiers);

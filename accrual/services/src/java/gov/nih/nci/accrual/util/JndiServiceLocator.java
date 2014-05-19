@@ -91,73 +91,93 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.service.util.SubmissionHistoryService;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
+
 /**
  * @author Hugh Reinhart
  * @since 4/13/2009
  */
 public class JndiServiceLocator implements ServiceLocatorAccInterface {
 
+    private static final Logger LOG = Logger.getLogger(JndiServiceLocator.class);
+    private static Context ctx;
+
+    /**
+     * Constructor.
+     */
+    public JndiServiceLocator() {
+        try {
+            ctx = new InitialContext();
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     public SearchStudySiteService getSearchStudySiteService() {
-        return (SearchStudySiteService) JNDIUtil.lookup("accrual/SearchStudySiteBean/local");
+        return lookup("SearchStudySiteBean!gov.nih.nci.accrual.service.util.SearchStudySiteService");
     }
 
     /**
      * {@inheritDoc}
      */
     public SearchTrialService getSearchTrialService() {
-        return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/local");
+        return lookup("SearchTrialBean!gov.nih.nci.accrual.service.util.SearchTrialService");
     }
 
     /**
      * {@inheritDoc}
      */
     public PatientServiceLocal getPatientService() {
-        return (PatientServiceLocal) JNDIUtil.lookup("accrual/PatientBeanLocal/local");
+        return lookup("PatientBeanLocal!gov.nih.nci.accrual.service.PatientServiceLocal");
     }
 
     /**
      * {@inheritDoc}
      */
     public PerformedActivityService getPerformedActivityService() {
-        return (PerformedActivityService) JNDIUtil.lookup("accrual/PerformedActivityBeanLocal/local");
+        return lookup("PerformedActivityBeanLocal!gov.nih.nci.accrual.service.PerformedActivityServiceLocal");
     }
 
     /**
      * {@inheritDoc}
      */
     public StudySubjectServiceLocal getStudySubjectService() {
-        return (StudySubjectServiceLocal) JNDIUtil.lookup("accrual/StudySubjectBeanLocal/local");
+        return lookup("StudySubjectBeanLocal!gov.nih.nci.accrual.service.StudySubjectServiceLocal");
     }
 
     /**
      * {@inheritDoc}
      */
     public CountryService getCountryService() {
-        return (CountryService) JNDIUtil.lookup("accrual/CountryBean/local");
+        return lookup("CountryBean!gov.nih.nci.accrual.service.util.CountryService");
     }
     
     /**
      * {@inheritDoc}
      */
     public CdusBatchUploadReaderServiceLocal getBatchUploadReaderService() {
-        return (CdusBatchUploadReaderServiceLocal) JNDIUtil.lookup("accrual/CdusBatchUploadReaderBean/local");
+        return lookup("CdusBatchUploadReaderBean!gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal");
     }
 
     /**
      * {@inheritDoc}
      */
     public SubjectAccrualCountService getSubjectAccrualCountService() {
-        return (SubjectAccrualCountService) JNDIUtil.lookup("accrual/SubjectAccrualCountBean/local");
+        return lookup("SubjectAccrualCountBean!gov.nih.nci.accrual.service.util.SubjectAccrualCountService");
     }
     
     /**
      * {@inheritDoc}
      */
     public BatchFileService getBatchFileService() {
-        return (BatchFileService) JNDIUtil.lookup("accrual/BatchFileServiceBeanLocal/local");
+        return lookup("BatchFileServiceBeanLocal!gov.nih.nci.accrual.service.batch.BatchFileService");
     }
 
     /**
@@ -165,7 +185,7 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      */
     @Override
     public SubjectAccrualServiceLocal getSubjectAccrualService() {
-        return (SubjectAccrualServiceLocal) JNDIUtil.lookup("accrual/SubjectAccrualBeanLocal/local");
+        return lookup("SubjectAccrualBeanLocal!gov.nih.nci.accrual.service.SubjectAccrualServiceLocal");
     }
 
     /**
@@ -173,11 +193,22 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      */
     @Override
     public SubmissionHistoryService getSubmissionHistoryService() {
-        return (SubmissionHistoryService) JNDIUtil.lookup("accrual/SubmissionHistoryBean/local");
+        return lookup("SubmissionHistoryBean!gov.nih.nci.accrual.service.util.SubmissionHistoryService");
     }
 
     @Override
     public AccrualDiseaseServiceLocal getAccrualDiseaseService() {
-        return (AccrualDiseaseServiceLocal) JNDIUtil.lookup("accrual/AccrualDiseaseBeanLocal/local");
+        return lookup("AccrualDiseaseBeanLocal!gov.nih.nci.accrual.service.util.AccrualDiseaseServiceLocal");
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T lookup(String name) {
+        T svc = null;
+        try {
+            svc = (T) ctx.lookup("java:app/accrual-services/" + name);
+        } catch (NamingException e) {
+            LOG.error(e);
+        }
+        return svc;
     }
 }

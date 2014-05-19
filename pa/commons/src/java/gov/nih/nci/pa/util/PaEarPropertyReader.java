@@ -101,6 +101,11 @@ public class PaEarPropertyReader {
     private static final String ACCRUAL_BATCH_UPLOAD_PATH = "accrual.batch.upload.path";
     private static final String PO_SERVER_NAME = "po.server.name";
     private static final String PO_SERVER_PORT = "po.port.number";
+    private static final String PO_SERVER_PRINCIPAL = "po.principal";
+    private static final String PO_SERVER_CREDENTIALS = "po.credentials";
+    private static final String PO_JMS_CLIENT_ID = "po.topic.clientId";
+    private static final String PO_JMS_PRINCIPAL = "po.topic.userName";
+    private static final String PO_JMS_CREDENTIALS = "po.topic.password";
     private static final String CSM_SUBMITTER_GROUP = "csm.submitter.group";
     private static final String ALLOWED_UPLOAD_FILE_TYPES = "allowed.uploadfile.types";
     private static final String BATCH_UPLOAD_PATH = "batch.upload.path";
@@ -110,7 +115,6 @@ public class PaEarPropertyReader {
     private static final String PA_HELP_URL = "wikiHelp.baseUrl.pa";
     private static final String REGISTRY_HELP_URL = "wikiHelp.baseUrl.registry";
     private static final String ACCRUAL_HELP_URL = "wikiHelp.baseUrl.accrual";
-    private static final String VIEWER_HELP_URL = "wikiHelp.baseUrl.viewer";
     private static final String NCI_LDAP_PREFIX = "nci.ldap.prefix";
     private static final String STATE_TRANSITION_DIAGRAM_URL = "wikiHelp.baseUrl.trialStatusRules";
     private static final String CTGOV_FTP_URL = "ctgov.ftp.url";
@@ -185,12 +189,52 @@ public class PaEarPropertyReader {
     }
 
     /**
-     *
+     * Get the po lookup url.
      * @return String for the server info (server:port)
      * @throws PAException on error
      */
     public static String getLookUpServerInfo() throws PAException {
         return getPropTemplate(PO_SERVER_NAME) + ":" + getPropTemplate(PO_SERVER_PORT);
+    }
+
+    /**
+     * @return String for the PO principal
+     * @throws PAException exception
+     */
+    public static String getLookUpServerPoPrincipal() throws PAException {
+        return getPropTemplate(PO_SERVER_PRINCIPAL);
+    }
+
+    /**
+     * @return String for the PO credentials
+     * @throws PAException exception
+     */
+    public static String getLookUpServerPoCredentials() throws PAException {
+        return getPropTemplate(PO_SERVER_CREDENTIALS);
+    }
+
+    /**
+     * @return String for the PO credentials
+     * @throws PAException exception
+     */
+    public static String getLookUpServerPoJmsClientId() throws PAException {
+        return getPropTemplate(PO_JMS_CLIENT_ID);
+    }
+
+    /**
+     * @return String for the PO credentials
+     * @throws PAException exception
+     */
+    public static String getLookUpServerPoJmsPricipal() throws PAException {
+        return getPropTemplate(PO_JMS_PRINCIPAL);
+    }
+
+    /**
+     * @return String for the PO credentials
+     * @throws PAException exception
+     */
+    public static String getLookUpServerPoJmsCredentials() throws PAException {
+        return getPropTemplate(PO_JMS_CREDENTIALS);
     }
 
     /**
@@ -244,15 +288,6 @@ public class PaEarPropertyReader {
      */
     public static String getAccrualHelpUrl() throws PAException {
         return getPropTemplate(ACCRUAL_HELP_URL);
-    }
-
-    /**
-     * Returns the base URL of the wiki-based help for Viewer.
-     * @return url
-     * @throws PAException if the property is missing
-     */
-    public static String getViewerHelpUrl() throws PAException {
-        return getPropTemplate(VIEWER_HELP_URL);
     }
 
     /**

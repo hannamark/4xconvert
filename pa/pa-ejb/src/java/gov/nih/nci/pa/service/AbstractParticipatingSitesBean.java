@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -107,11 +108,14 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
+
 /**
  * Helper for ParticipatingSiteBeanLocal.
  * @author mshestopalov
  *
  */
+@RolesAllowed(SUBMITTER_ROLE)
 public abstract class AbstractParticipatingSitesBean
     extends AbstractBaseParticipatingSiteBean {
 

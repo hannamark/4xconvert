@@ -119,7 +119,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.util.Constants;
@@ -194,7 +194,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     
     private OrganizationalContactCorrelationServiceRemote organizationalContactCorrelationService;
     private OrganizationEntityServiceRemote organizationEntityService;
-    private PAHealthCareProviderRemote paHealthCareProviderService;
+    private PAHealthCareProviderLocal paHealthCareProviderService;
     private ParticipatingOrgServiceLocal participatingOrgService;
     private ParticipatingSiteServiceLocal participatingSiteService;
     private PersonEntityServiceRemote personEntityService;
@@ -1637,7 +1637,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     /**
      * @param paHealthCareProviderService the paHealthCareProviderService to set
      */
-    public void setPaHealthCareProviderService(PAHealthCareProviderRemote paHealthCareProviderService) {
+    public void setPaHealthCareProviderService(PAHealthCareProviderLocal paHealthCareProviderService) {
         this.paHealthCareProviderService = paHealthCareProviderService;
     }
 

@@ -81,7 +81,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
@@ -119,10 +119,9 @@ import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
-import gov.nih.nci.pa.service.util.AccrualUtilityServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
@@ -132,7 +131,7 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
@@ -145,10 +144,17 @@ import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
 
 
 /**
@@ -158,12 +164,27 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
  */
 public class JndiServiceLocator implements ServiceLocator {
 
+    private static final Logger LOG = Logger.getLogger(JndiServiceLocator.class);
+    private Context ctx;
+
+    /**
+     * Constructor.
+     */
+    public JndiServiceLocator() {
+        try {
+            ctx = new InitialContext();
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+    }
+
     /**
      * @return pdq trial registration bean.
      */
     @Override
     public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
-        return (PDQTrialRegistrationServiceBeanRemote) JNDIUtil.lookupPa("/pa/PDQTrialRegistrationServiceBean/remote");
+        return lookup("PDQTrialRegistrationServiceBean" 
+                + "!gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote");
     }
 
     /**
@@ -171,7 +192,8 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
-        return (PDQTrialAbstractionServiceBeanRemote) JNDIUtil.lookupPa("/pa/PDQTrialAbstractionServiceBean/remote");
+        return lookup("PDQTrialAbstractionServiceBean" 
+                + "!gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote");
     }
 
     /**
@@ -179,7 +201,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyProtocolServiceLocal getStudyProtocolService() {
-        return (StudyProtocolServiceLocal) JNDIUtil.lookupPa("/pa/StudyProtocolBeanLocal/local");
+        return lookup("StudyProtocolBeanLocal!gov.nih.nci.pa.service.StudyProtocolServiceLocal");
     }
 
     /**
@@ -187,7 +209,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PAOrganizationServiceRemote getPAOrganizationService() {
-        return (PAOrganizationServiceRemote) JNDIUtil.lookupPa("/pa/PAOrganizationServiceBean/remote");
+        return lookup("PAOrganizationServiceBean!gov.nih.nci.pa.service.util.PAOrganizationServiceRemote");
     }
 
     /**
@@ -195,15 +217,15 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PAPersonServiceRemote getPAPersonService() {
-        return (PAPersonServiceRemote) JNDIUtil.lookupPa("/pa/PAPersonServiceBean/remote");
+        return lookup("PAPersonServiceBean!gov.nih.nci.pa.service.util.PAPersonServiceRemote");
     }
 
     /**
      * @return RegulatoryInformationServiceRemote
      */
     @Override
-    public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-        return (RegulatoryInformationServiceRemote) JNDIUtil.lookupPa("/pa/RegulatoryInformationBean/remote");
+    public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
+        return lookup("RegulatoryInformationBean!gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal");
     }
 
     /**
@@ -212,7 +234,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyIndldeServiceLocal getStudyIndldeService() {
-        return (StudyIndldeServiceLocal) JNDIUtil.lookupPa("/pa/StudyIndldeBeanLocal/local");
+        return lookup("StudyIndldeBeanLocal!gov.nih.nci.pa.service.StudyIndldeServiceLocal");
     }
 
     /**
@@ -221,7 +243,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
-        return (DocumentWorkflowStatusServiceLocal) JNDIUtil.lookupPa("/pa/DocumentWorkflowStatusBeanLocal/local");
+        return lookup("DocumentWorkflowStatusBeanLocal!gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal");
     }
 
     /**
@@ -229,7 +251,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
-        return (StudyOverallStatusServiceLocal) JNDIUtil.lookupPa("/pa/StudyOverallStatusBeanLocal/local");
+        return lookup("StudyOverallStatusBeanLocal!gov.nih.nci.pa.service.StudyOverallStatusServiceLocal");
     }
 
     /**
@@ -237,7 +259,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyResourcingServiceLocal getStudyResoucringService() {
-        return (StudyResourcingServiceLocal) JNDIUtil.lookupPa("/pa/StudyResourcingBeanLocal/local");
+        return lookup("StudyResourcingBeanLocal!gov.nih.nci.pa.service.StudyResourcingServiceLocal");
     }
 
     /**
@@ -245,7 +267,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
-        return (StudyRegulatoryAuthorityServiceLocal) JNDIUtil.lookupPa("/pa/StudyRegulatoryAuthorityBeanLocal/local");
+        return lookup("StudyRegulatoryAuthorityBeanLocal!gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal");
     }
 
     /**
@@ -253,7 +275,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public LookUpTableServiceRemote getLookUpTableService() {
-        return (LookUpTableServiceRemote) JNDIUtil.lookupPa("/pa/LookUpTableServiceBean/remote");
+        return lookup("LookUpTableServiceBean!gov.nih.nci.pa.service.util.LookUpTableServiceRemote");
     }
 
     /**
@@ -261,7 +283,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public ProtocolQueryServiceLocal getProtocolQueryService() {
-        return (ProtocolQueryServiceLocal) JNDIUtil.lookupPa("/pa/ProtocolQueryServiceBean/local");
+        return lookup("ProtocolQueryServiceBean!gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal");
     }
 
     /**
@@ -269,7 +291,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudySiteServiceLocal getStudySiteService() {
-        return (StudySiteServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteBeanLocal/local");
+        return lookup("StudySiteBeanLocal!gov.nih.nci.pa.service.StudySiteServiceLocal");
     }
 
     /**
@@ -277,7 +299,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
-        return (StudySiteAccrualStatusServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteAccrualStatusBeanLocal/local");
+        return lookup("StudySiteAccrualStatusBeanLocal!gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal");
     }
 
     /**
@@ -285,7 +307,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public DocumentServiceLocal getDocumentService() {
-        return (DocumentServiceLocal) JNDIUtil.lookupPa("/pa/DocumentBeanLocal/local");
+        return lookup("DocumentBeanLocal!gov.nih.nci.pa.service.DocumentServiceLocal");
     }
 
     /**
@@ -293,15 +315,15 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StratumGroupServiceLocal getStratumGroupService() {
-        return (StratumGroupServiceLocal) JNDIUtil.lookupPa("/pa/StratumGroupBeanLocal/local");
+        return lookup("StratumGroupBeanLocal!gov.nih.nci.pa.service.StratumGroupServiceLocal");
     }
 
     /**
      * @return PAHealthCareProviderRemote
      */
     @Override
-    public PAHealthCareProviderRemote getPAHealthCareProviderService() {
-        return (PAHealthCareProviderRemote) JNDIUtil.lookupPa("/pa/PAHealthCareProviderServiceBean/remote");
+    public PAHealthCareProviderLocal getPAHealthCareProviderService() {
+        return lookup("PAHealthCareProviderServiceBean!gov.nih.nci.pa.service.util.PAHealthCareProviderLocal");
     }
 
     /**
@@ -309,16 +331,16 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudySiteContactServiceLocal getStudySiteContactService() {
-        return (StudySiteContactServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteContactBeanLocal/local");
+        return lookup("StudySiteContactBeanLocal!gov.nih.nci.pa.service.StudySiteContactServiceLocal");
     }
 
     /**
      * @return InterventionAlternateNameServiceRemote
      */
     @Override
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
-        return (InterventionAlternateNameServiceRemote) JNDIUtil
-            .lookupPa("/pa/InterventionAlternateNameServiceBean/remote");
+    public InterventionAlternateNameServiceLocal getInterventionAlternateNameService() {
+        return lookup("InterventionAlternateNameServiceBean"
+                + "!gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal");
     }
 
     /**
@@ -326,7 +348,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public InterventionServiceLocal getInterventionService() {
-        return (InterventionServiceLocal) JNDIUtil.lookupPa("/pa/InterventionBeanLocal/local");
+        return lookup("InterventionBeanLocal!gov.nih.nci.pa.service.InterventionServiceLocal");
     }
 
     /**
@@ -334,7 +356,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PlannedActivityServiceLocal getPlannedActivityService() {
-        return (PlannedActivityServiceLocal) JNDIUtil.lookupPa("/pa/PlannedActivityBeanLocal/local");
+        return lookup("PlannedActivityBeanLocal!gov.nih.nci.pa.service.PlannedActivityServiceLocal");
     }
 
     /**
@@ -342,7 +364,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
-        return (StudyOutcomeMeasureServiceLocal) JNDIUtil.lookupPa("/pa/StudyOutcomeMeasureBeanLocal/local");
+        return lookup("StudyOutcomeMeasureBeanLocal!gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal");
     }
 
     /**
@@ -350,7 +372,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public ArmServiceLocal getArmService() {
-        return (ArmServiceLocal) JNDIUtil.lookupPa("/pa/ArmBeanLocal/local");
+        return lookup("ArmBeanLocal!gov.nih.nci.pa.service.ArmServiceLocal");
     }
 
     /**
@@ -358,7 +380,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public CTGovXmlGeneratorServiceLocal getCTGovXmlGeneratorService() {
-        return (CTGovXmlGeneratorServiceLocal) JNDIUtil.lookupPa("/pa/CTGovXmlGeneratorServiceBeanLocal/local");
+        return lookup("CTGovXmlGeneratorServiceBeanLocal!gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal");
     }
 
     /**
@@ -366,15 +388,16 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() {
-        return (PDQXmlGeneratorServiceRemote) JNDIUtil.lookupPa("/pa/PDQXmlGeneratorServiceBean/remote");
+        return lookup("PDQXmlGeneratorServiceBean!gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote");
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
-        return (AbstractionCompletionServiceRemote) JNDIUtil.lookupPa("/pa/AbstractionCompletionServiceBean/remote");
+    public AbstractionCompletionServiceLocal getAbstractionCompletionService() {
+        return lookup("AbstractionCompletionServiceBean" 
+                + "!gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal");
     }
 
     /**
@@ -382,7 +405,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PDQDiseaseAlternameServiceLocal getDiseaseAlternameService() {
-        return (PDQDiseaseAlternameServiceLocal) JNDIUtil.lookupPa("/pa/PDQDiseaseAlternameBeanLocal/local");
+        return lookup("PDQDiseaseAlternameBeanLocal!gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal");
     }
 
     /**
@@ -390,7 +413,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PDQDiseaseParentServiceRemote getDiseaseParentService() {
-        return (PDQDiseaseParentServiceRemote) JNDIUtil.lookupPa("/pa/PDQDiseaseParentServiceBean/remote");
+        return lookup("PDQDiseaseParentServiceBean!gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote");
     }
 
     /**
@@ -398,7 +421,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PDQDiseaseServiceLocal getDiseaseService() {
-        return (PDQDiseaseServiceLocal) JNDIUtil.lookupPa("/pa/PDQDiseaseBeanLocal/local");
+        return lookup("PDQDiseaseBeanLocal!gov.nih.nci.pa.service.PDQDiseaseServiceLocal");
     }
 
     /**
@@ -406,7 +429,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyDiseaseServiceLocal getStudyDiseaseService() {
-        return (StudyDiseaseServiceLocal) JNDIUtil.lookupPa("/pa/StudyDiseaseBeanLocal/local");
+        return lookup("StudyDiseaseBeanLocal!gov.nih.nci.pa.service.StudyDiseaseServiceLocal");
     }
 
     /**
@@ -414,7 +437,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyContactServiceLocal getStudyContactService() {
-        return (StudyContactServiceLocal) JNDIUtil.lookupPa("/pa/StudyContactBeanLocal/local");
+        return lookup("StudyContactBeanLocal!gov.nih.nci.pa.service.StudyContactServiceLocal");
     }
 
     /**
@@ -422,7 +445,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyMilestoneServicelocal getStudyMilestoneService() {
-        return (StudyMilestoneServicelocal) JNDIUtil.lookupPa("/pa/StudyMilestoneBeanLocal/local");
+        return lookup("StudyMilestoneBeanLocal!gov.nih.nci.pa.service.StudyMilestoneServicelocal");
     }
 
     /**
@@ -430,7 +453,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public RegistryUserServiceLocal getRegistryUserService() {
-        return (RegistryUserServiceLocal) JNDIUtil.lookupPa("/pa/RegistryUserBeanLocal/local");
+        return lookup("RegistryUserBeanLocal!gov.nih.nci.pa.service.util.RegistryUserServiceLocal");
     }
 
     /**
@@ -438,7 +461,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public GridAccountServiceRemote getGridAccountService() {
-        return (GridAccountServiceRemote) JNDIUtil.lookupPa("/pa/GridAccountServiceBean/remote");
+        return lookup("GridAccountServiceBean!gov.nih.nci.pa.service.util.GridAccountServiceRemote");
     }
 
     /**
@@ -446,15 +469,23 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
-        return (TSRReportGeneratorServiceRemote) JNDIUtil.lookupPa("/pa/TSRReportGeneratorServiceBean/remote");
+        return lookup("TSRReportGeneratorServiceBean!gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TSRReportGeneratorServiceLocal getTSRReportGeneratorServiceLocal() {
+        return lookup("TSRReportGeneratorServiceBean!gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal");
+    }                  
 
     /**
      * @return StudyOnholdServiceLocal
      */
     @Override
     public StudyOnholdServiceLocal getStudyOnholdService() {
-        return (StudyOnholdServiceLocal) JNDIUtil.lookupPa("/pa/StudyOnholdBeanLocal/local");
+        return lookup("StudyOnholdBeanLocal!gov.nih.nci.pa.service.StudyOnholdServiceLocal");
     }
 
     /**
@@ -462,7 +493,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public MailManagerServiceLocal getMailManagerService() {
-        return (MailManagerServiceLocal) JNDIUtil.lookupPa("/pa/MailManagerBeanLocal/local");
+        return lookup("MailManagerBeanLocal!gov.nih.nci.pa.service.util.MailManagerServiceLocal");
     }
 
     /**
@@ -470,7 +501,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyObjectiveServiceLocal getStudyObjectiveService() {
-        return (StudyObjectiveServiceLocal) JNDIUtil.lookupPa("/pa/StudyObjectiveBeanLocal/local");
+        return lookup("StudyObjectiveBeanLocal!gov.nih.nci.pa.service.StudyObjectiveServiceLocal");
     }
 
     /**
@@ -478,7 +509,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
-        return (StudyRecruitmentStatusServiceLocal) JNDIUtil.lookupPa("/pa/StudyRecruitmentStatusBeanLocal/local");
+        return lookup("StudyRecruitmentStatusBeanLocal!gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal");
     }
 
     /**
@@ -486,7 +517,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyMilestoneTasksServiceLocal getStudyMilestoneTasksService() {
-        return (StudyMilestoneTasksServiceLocal) JNDIUtil.lookupPa("/pa/StudyMilestoneTasksServiceBean/local");
+        return lookup("StudyMilestoneTasksServiceBean!gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal");
     }
 
     /**
@@ -494,8 +525,8 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
-        return (OrganizationCorrelationServiceRemote)
-            JNDIUtil.lookupPa("/pa/OrganizationCorrelationServiceBean/remote");
+        return lookup("OrganizationCorrelationServiceBean" 
+                + "!gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote");
     }
 
     /**
@@ -503,7 +534,8 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
-        return (StudySiteAccrualAccessServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteAccrualAccessServiceBean/local");
+        return lookup("StudySiteAccrualAccessServiceBean" 
+                + "!gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal");
     }
 
     /**
@@ -511,7 +543,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public TrialRegistrationServiceLocal getTrialRegistrationService() {
-        return (TrialRegistrationServiceLocal) JNDIUtil.lookupPa("/pa/TrialRegistrationBeanLocal/local");
+        return lookup("TrialRegistrationBeanLocal!gov.nih.nci.pa.service.TrialRegistrationServiceLocal");
     }
 
     /**
@@ -519,7 +551,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyInboxServiceLocal getStudyInboxService() {
-        return (StudyInboxServiceLocal) JNDIUtil.lookupPa("/pa/StudyInboxServiceBean/local");
+        return lookup("StudyInboxServiceBean!gov.nih.nci.pa.service.StudyInboxServiceLocal");
     }
 
     /**
@@ -527,7 +559,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
-        return (StudySiteOverallStatusServiceLocal) JNDIUtil.lookupPa("/pa/StudySiteOverallStatusServiceBean/local");
+        return lookup("StudySiteOverallStatusBeanLocal!gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal");
     }
 
     /**
@@ -535,7 +567,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyCheckoutServiceLocal getStudyCheckoutService() {
-        return (StudyCheckoutServiceLocal) JNDIUtil.lookupPa("/pa/StudyCheckoutServiceBean/local");
+        return lookup("StudyCheckoutServiceBean!gov.nih.nci.pa.service.StudyCheckoutServiceLocal");
     }
 
     /**
@@ -543,8 +575,8 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
-        return (PlannedSubstanceAdministrationServiceRemote) JNDIUtil
-            .lookupPa("/pa/PlannedSubstanceAdministrationServiceBean/remote");
+        return lookup("PlannedSubstanceAdministrationServiceBean"
+                + "!gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote");
     }
 
     /**
@@ -552,7 +584,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyRelationshipServiceLocal getStudyRelationshipService() {
-        return (StudyRelationshipServiceLocal) JNDIUtil.lookupPa("pa/StudyRelationshipBeanLocal/local");
+        return lookup("StudyRelationshipBeanLocal!gov.nih.nci.pa.service.StudyRelationshipServiceLocal");
     }
 
     /**
@@ -560,7 +592,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
-        return (StudyProtocolStageServiceLocal) JNDIUtil.lookupPa("/pa/StudyProtocolStageBeanLocal/local");
+        return lookup("StudyProtocolStageBeanLocal!gov.nih.nci.pa.service.StudyProtocolStageServiceLocal");
     }
 
     /**
@@ -568,8 +600,8 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
-        return (ProprietaryTrialManagementServiceLocal)
-            JNDIUtil.lookupPa("/pa/ProprietaryTrialManagementBeanLocal/local");
+        return lookup("ProprietaryTrialManagementBeanLocal" 
+                + "!gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal");
     }
 
     /**
@@ -577,7 +609,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
-        return (ParticipatingSiteServiceLocal) JNDIUtil.lookupPa("/pa/ParticipatingSiteBeanLocal/local");
+        return lookup("ParticipatingSiteBeanLocal!gov.nih.nci.pa.service.ParticipatingSiteServiceLocal");
     }
 
     /**
@@ -585,7 +617,8 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
-       return (PDQUpdateGeneratorTaskServiceLocal) JNDIUtil.lookupPa("/pa/PDQUpdateGeneratorTaskServiceBean/local");
+        return lookup("PDQUpdateGeneratorTaskServiceBean" 
+                + "!gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal");
     }
 
     /**
@@ -593,7 +626,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PlannedMarkerServiceLocal getPlannedMarkerService() {
-        return (PlannedMarkerServiceLocal) JNDIUtil.lookupPa("/pa/PlannedMarkerServiceBean/local");
+        return lookup("PlannedMarkerServiceBean!gov.nih.nci.pa.service.PlannedMarkerServiceLocal");
     }
     
 
@@ -602,7 +635,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public MarkerAttributesServiceLocal getMarkerAttributesService() {
-        return (MarkerAttributesServiceLocal) JNDIUtil.lookupPa("/pa/MarkerAttributesBeanLocal/local");
+        return lookup("MarkerAttributesBeanLocal!gov.nih.nci.pa.service.MarkerAttributesServiceLocal");
     }
 
     /**
@@ -610,7 +643,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public AuditTrailServiceLocal getAuditTrailService() {
-        return (AuditTrailServiceLocal) JNDIUtil.lookupPa("/pa/AuditTrailServiceBean/local");
+        return lookup("AuditTrailServiceBean!gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal");
     }
 
     /**
@@ -618,7 +651,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public PDQTrialUploadService getPDQTrialUploadService() {
-        return (PDQTrialUploadService) JNDIUtil.lookupPa("/pa/PDQTrialUploadBean/remote");
+        return lookup("PDQTrialUploadBean!gov.nih.nci.pa.service.util.PDQTrialUploadService");
     }
 
     /**
@@ -626,7 +659,7 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public ParticipatingOrgServiceLocal getParticipatingOrgService() {
-        return (ParticipatingOrgServiceLocal) JNDIUtil.lookupPa("/pa/ParticipatingOrgServiceBean/local");
+        return lookup("ParticipatingOrgServiceBean!gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal");
     }
 
     /**
@@ -634,22 +667,22 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public FamilyServiceLocal getFamilyService() {
-        return (FamilyServiceLocal) JNDIUtil.lookupPa("/pa/FamilyServiceBeanLocal/local");
+        return lookup("FamilyServiceBeanLocal!gov.nih.nci.pa.service.util.FamilyServiceLocal");
     }
     /**
      * {@inheritDoc}
      */
     @Override
     public CTGovUploadServiceLocal getCTGovUploadService() {
-        return (CTGovUploadServiceLocal) JNDIUtil.lookupPa("/pa/CTGovUploadServiceBeanLocal/local");
+        return lookup("CTGovUploadServiceBeanLocal!gov.nih.nci.pa.service.util.CTGovUploadServiceLocal");
     }
     /**
      * {@inheritDoc}
      */
     @Override
     public PlannedMarkerSyncWithCaDSRServiceLocal getPMWithCaDSRService() {
-        return (PlannedMarkerSyncWithCaDSRServiceLocal) JNDIUtil
-        .lookupPa("/pa/PlannedMarkerSyncWithCaDSRBeanLocal/local");
+        return lookup("PlannedMarkerSyncWithCaDSRBeanLocal"
+                + "!gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal");
     }
 
     /**
@@ -657,49 +690,58 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     @Override
     public TrialDataVerificationServiceLocal getTrialDataVerificationService() {
-        return (TrialDataVerificationServiceLocal) JNDIUtil
-                .lookupPa("/pa/TrialDataVerificationBeanLocal/local");
+        return lookup("TrialDataVerificationBeanLocal!gov.nih.nci.pa.service.TrialDataVerificationServiceLocal");
     }
 
     @Override
     public I2EGrantsServiceLocal getI2EGrantsService() {
-        return (I2EGrantsServiceLocal) JNDIUtil.lookupPa("/pa/I2EGrantsServiceBean/local");
+        return lookup("I2EGrantsServiceBean!gov.nih.nci.pa.service.util.I2EGrantsServiceLocal");
     }
     @Override
     public CTGovSyncServiceLocal getCTGovSyncService() {
-        return (CTGovSyncServiceLocal) JNDIUtil.lookupPa("/pa/CTGovSyncServiceBean/local");
+        return lookup("CTGovSyncServiceBean!gov.nih.nci.pa.service.util.CTGovSyncServiceLocal");
     }
     
     @Override
     public CTGovSyncNightlyServiceLocal getCTGovSyncNightlyService() {
-        return (CTGovSyncNightlyServiceLocal) JNDIUtil.lookupPa("/pa/CTGovSyncNightlyServiceBeanLocal/local");
+        return lookup("CTGovSyncNightlyServiceBeanLocal!gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal");
     }
 
     @Override
     public ProtocolComparisonServiceLocal getProtocolComparisonService() {
-        return (ProtocolComparisonServiceLocal) JNDIUtil.lookupPa("/pa/ProtocolComparisonServiceBean/local");
+        return lookup("ProtocolComparisonServiceBean!gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal");
     }
     
     @Override
     public PendingPatientAccrualsServiceLocal getPendingPatientAccrualsService() {
-        return (PendingPatientAccrualsServiceLocal) JNDIUtil.lookupPa("/pa/PendingPatientAccrualsServiceBean/local");
+        return lookup("PendingPatientAccrualsServiceBean" 
+                + "!gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal");
     }
 
     @Override
     public StudyIdentifiersService getStudyIdentifiersService() {
-        return (StudyIdentifiersService) JNDIUtil
-                .lookupPa("/pa/StudyIdentifiersBeanLocal/local");
+        return lookup("StudyIdentifiersBeanLocal!gov.nih.nci.pa.service.StudyIdentifiersServiceLocal");
     }
 
     @Override
     public AccrualDiseaseTerminologyServiceRemote getAccrualDiseaseTerminologyService() {
-        return (AccrualDiseaseTerminologyServiceRemote) JNDIUtil.
-                lookupPa("/pa/AccrualDiseaseTerminologyServiceBean/remote");
+        return lookup("AccrualDiseaseTerminologyServiceBean"
+                + "!gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote");
     }
-    
+
     @Override
     public AccrualUtilityService getAccrualUtilityService() {
-        return (AccrualUtilityServiceLocal) JNDIUtil
-                .lookupPa("/pa/AccrualUtilityServiceBean/local");
+        return lookup("AccrualUtilityServiceBean!gov.nih.nci.pa.service.util.AccrualUtilityServiceLocal");
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T lookup(String name) {
+        T svc = null;
+        try {
+            svc = (T) ctx.lookup("java:global/pa/pa-ejb/" + name);
+        } catch (NamingException e) {
+            LOG.error(e);
+        }
+        return svc;
     }
 }

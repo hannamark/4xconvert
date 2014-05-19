@@ -25,14 +25,14 @@ import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -109,10 +109,10 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
         EXECUTE_ACTIONS.add("UPDATE");
     }
 
-    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    private AbstractionCompletionServiceLocal abstractionCompletionService;
     private DocumentServiceLocal documentService;    
     private RegistryUserServiceLocal registryUserService;
-    private RegulatoryInformationServiceRemote regulatoryInformationService;
+    private RegulatoryInformationServiceLocal regulatoryInformationService;
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyProtocolStageServiceLocal studyProtocolStageService;
     private CTGovSyncServiceLocal ctGovSyncService;    
@@ -995,7 +995,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
     /**
      * @param abstractionCompletionService the abstractionCompletionService to set
      */
-    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+    public void setAbstractionCompletionService(AbstractionCompletionServiceLocal abstractionCompletionService) {
         this.abstractionCompletionService = abstractionCompletionService;
     }
 
@@ -1016,7 +1016,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
     /**
      * @param regulatoryInformationService the regulatoryInformationService to set
      */
-    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+    public void setRegulatoryInformationService(RegulatoryInformationServiceLocal regulatoryInformationService) {
         this.regulatoryInformationService = regulatoryInformationService;
     }
 

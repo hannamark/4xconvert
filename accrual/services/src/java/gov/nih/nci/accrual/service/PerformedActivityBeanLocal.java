@@ -83,6 +83,7 @@ import gov.nih.nci.accrual.convert.PerformedActivityConverter;
 import gov.nih.nci.accrual.convert.PerformedSubjectMilestoneConverter;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
@@ -108,8 +109,7 @@ import org.hibernate.Session;
  * @since Aug 13, 2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings("unchecked")
 public class PerformedActivityBeanLocal extends
             AbstractBaseAccrualStudyBean<PerformedActivityDto, PerformedActivity, PerformedActivityConverter>

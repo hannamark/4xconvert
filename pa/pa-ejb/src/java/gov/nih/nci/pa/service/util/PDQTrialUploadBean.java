@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SECURITY_DOMAIN;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
@@ -105,6 +107,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -115,12 +118,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 /**
  * @author merenkoi
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@SecurityDomain(SECURITY_DOMAIN)
+@RolesAllowed(SUBMITTER_ROLE)
 public class PDQTrialUploadBean implements PDQTrialUploadService {
 
     private static final String ABSTRACTION_COMPLETE = "Abstraction Complete";  

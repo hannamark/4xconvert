@@ -1,21 +1,21 @@
 package gov.nih.nci.pa.service;
 
-import java.util.List;
-import java.util.Map;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.TrialDataVerification;
 import gov.nih.nci.pa.iso.convert.TrialVerificationDataConverter;
 import gov.nih.nci.pa.iso.dto.TrialVerificationDataDTO;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 
 /**
@@ -24,8 +24,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
  * 
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class TrialDataVerificationBeanLocal
         extends
         AbstractBaseIsoService<TrialVerificationDataDTO, TrialDataVerification, TrialVerificationDataConverter>

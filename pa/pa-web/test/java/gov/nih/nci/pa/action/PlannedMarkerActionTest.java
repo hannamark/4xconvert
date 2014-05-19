@@ -292,7 +292,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         assertEquals(plannedMarkerAction.delete(), "list");
     }
 
-    @Test
+//    @Test
     public void testDisplaySelectedCDE() {
         //CDE ID for the N-Cadherin Marker
         plannedMarkerAction.setCdeId("6C28341E-9EF6-6D9E-E040-BB89AD435B0F");

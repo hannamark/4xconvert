@@ -83,11 +83,9 @@
 package gov.nih.nci.pa.service;
 
 
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -131,7 +129,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -144,17 +141,13 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-import org.jboss.annotation.security.SecurityDomain;
 
 /**
  * @author mshestopalov
  *
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(PaHibernateSessionInterceptor.class)
-@SecurityDomain("pa")
-@RolesAllowed({CLIENT_ROLE, ADMIN_ABSTRACTOR_ROLE, SUBMITTER_ROLE })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
 implements ParticipatingSiteServiceLocal {

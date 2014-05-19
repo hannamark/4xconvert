@@ -83,6 +83,7 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -183,8 +184,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  *
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(PaHibernateSessionInterceptor.class)
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
@@ -244,7 +245,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     @EJB
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService;
     @EJB
-    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    private TSRReportGeneratorServiceLocal tsrReportGeneratorService;
     @EJB
     private LookUpTableServiceRemote lookUpTableService;
     @EJB
@@ -1385,7 +1386,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * @param tsrReportGeneratorService the tsrReportGeneratorService to set
      */
-    public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+    public void setTsrReportGeneratorService(TSRReportGeneratorServiceLocal tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
     }
 

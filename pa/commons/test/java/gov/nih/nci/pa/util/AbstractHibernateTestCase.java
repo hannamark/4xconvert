@@ -125,7 +125,6 @@ public abstract class AbstractHibernateTestCase {
                 sf.evictCollection(acp.getCache().getRegionName());
             }
         }
-        transaction = PaHibernateUtil.getHibernateHelper().beginTransaction();
     }
 
     /**
@@ -154,7 +153,7 @@ public abstract class AbstractHibernateTestCase {
         TestSchema.loadPrimaryPurposeCodes();
         TestSchema.alterStudyOwnerTable();
         tx.commit();
-        
+        transaction = PaHibernateUtil.getHibernateHelper().beginTransaction();
     }
 
     private void createPrsSyncHistoryTable() throws HibernateException,

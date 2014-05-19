@@ -1,0 +1,104 @@
+connect
+
+/subsystem=security/security-domain=pa/authentication=classic:remove() {allow-resource-service-restart=true}
+/subsystem=security/security-domain=pa/authentication=classic:add( \
+    login-modules=[ \   
+        { \
+            "code" => "gov.nih.nci.coppa.util.NullPasswordStackingLoginModule", \
+            "flag" => "optional", \
+            "module-options" => [ \
+                ("password-stacking"=>"useFirstPass") \                
+            ] \
+        }, \    
+        {\  
+            "code" => "com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule",\ 
+            "flag" => "optional",\  
+            "module-options" => {\  
+                "gridServicePrincipal" => "@grid.security.jndi.principal@",\   
+                "gridServiceCredential" => "@grid.security.jndi.credentials@",\  
+                "gridServicePrincipalSeparator" => "||"\    
+            }\  
+        },\ 
+        {\  
+            "code" => "com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule",\   
+            "flag" => "optional",\  
+            "module-options" => {\  
+                "driver" => "org.postgresql.Driver",\   
+                "url" => "@jdbc.url@",\    
+                "user" => "@db.username@",\   
+                "passwd" => "@db.password@",\ 
+                "query" => "SELECT * FROM csm_user WHERE login_name=? and password=?",\ 
+                "encryption-enabled" => "YES"\  
+            }\  
+        },\ 
+        { \
+            "code" => "Database", \
+            "flag" => "required", \
+            "module-options" => [ \
+                ("password-stacking"=>"useFirstPass"), \
+                ("dsJndiName"=>"java:/pa-ds"), \
+                ("rolesQuery" => "select group_name, 'Roles' FROM (SELECT cu.login_name,cg.group_name, 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id UNION SELECT cu.login_name,'SiteAdmin', 'Roles' FROM csm_user cu, registry_user ru WHERE cu.user_id = ru.csm_user_id AND ru.affiliated_org_user_type = 'ADMIN') AS Roles WHERE login_name = ?") \
+            ] \
+        } \     
+    ] \
+) {allow-resource-service-restart=true}
+
+/subsystem=security/security-domain=accrual/authentication=classic:remove() {allow-resource-service-restart=true}
+/subsystem=security/security-domain=accrual/authentication=classic:add( \
+    login-modules=[ \   
+        { \
+            "code" => "gov.nih.nci.coppa.util.NullPasswordStackingLoginModule", \
+            "flag" => "optional", \
+            "module-options" => [ \
+                ("password-stacking"=>"useFirstPass") \                
+            ] \
+        }, \    
+        {\  
+            "code" => "com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule",\ 
+            "flag" => "optional",\  
+            "module-options" => {\  
+                "gridServicePrincipal" => "@grid.security.jndi.principal@",\   
+                "gridServiceCredential" => "@grid.security.jndi.credentials@",\  
+                "gridServicePrincipalSeparator" => "||"\    
+            }\  
+        },\ 
+        {\  
+            "code" => "com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule",\   
+            "flag" => "optional",\  
+            "module-options" => {\  
+                "driver" => "org.postgresql.Driver",\   
+                "url" => "@jdbc.url@",\    
+                "user" => "@db.username@",\   
+                "passwd" => "@db.password@",\ 
+                "query" => "SELECT * FROM csm_user WHERE login_name=? and password=?",\ 
+                "encryption-enabled" => "YES"\  
+            }\  
+        },\ 
+        { \
+            "code" => "Database", \
+            "flag" => "required", \
+            "module-options" => [ \
+                ("password-stacking"=>"useFirstPass"), \
+                ("dsJndiName"=>"java:/pa-ds"), \
+                ("rolesQuery" => "SELECT cg.group_name, 'Roles' FROM csm_group cg, csm_user_group cug, csm_user cu WHERE cg.group_id = cug.group_id AND cug.user_id = cu.user_id AND cu.login_name = ?") \
+            ] \
+        } \     
+    ] \
+) {allow-resource-service-restart=true}
+
+reload
+
+data-source remove --name=paDS
+data-source add --name=paDS \
+    --jndi-name=java:/pa-ds \
+    --driver-name=postgresql \
+    --connection-url=@jdbc.url@ \
+    --user-name=@db.username@ \ 
+    --password=@db.password@
+data-source enable --name=paDS
+    
+/subsystem=logging/logger=stdout:remove
+    
+/subsystem=logging/logger=stdout:add(level=@log.level@)
+/subsystem=logging/root-logger=ROOT:change-root-log-level(level=@log.level@)
+/subsystem=logging/root-logger=ROOT:remove-handler(name=CONSOLE)

@@ -36,7 +36,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -535,7 +535,7 @@ public class TrialUtil extends TrialConvertUtils {
      * @throws PAException the PA exception
      */
     private void copyRegulatoryInformation(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-        RegulatoryInformationServiceRemote regInfoSvc = PaRegistry.getRegulatoryInformationService();
+        RegulatoryInformationServiceLocal regInfoSvc = PaRegistry.getRegulatoryInformationService();
         //trialDTO.setCountryList(regInfoSvc.getDistinctCountryNames());
         trialDTO.setCountryList(regInfoSvc.getDistinctCountryNamesStartWithUSA());
         StudyRegulatoryAuthorityServiceLocal studyRegAuthSvc = PaRegistry.getStudyRegulatoryAuthorityService();
@@ -548,7 +548,7 @@ public class TrialUtil extends TrialConvertUtils {
     }
 
     private void setRegulatoryAuthorityInfo(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-        RegulatoryInformationServiceRemote regInfoSvc = PaRegistry.getRegulatoryInformationService();
+        RegulatoryInformationServiceLocal regInfoSvc = PaRegistry.getRegulatoryInformationService();
         StudyRegulatoryAuthorityServiceLocal studyRegAuthSvc = PaRegistry.getStudyRegulatoryAuthorityService();
         StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = studyRegAuthSvc.getCurrentByStudyProtocol(studyProtocolIi);
         if (sraFromDatabaseDTO != null) {

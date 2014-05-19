@@ -5,6 +5,7 @@ package gov.nih.nci.registry.dto;
 
 import gov.nih.nci.iso21090.Ii;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.validator.Length;
@@ -15,7 +16,8 @@ import org.hibernate.validator.Pattern;
  * @author Vrushali
  *
  */
-public class StudyProtocolBatchDTO { // NOPMD
+public class StudyProtocolBatchDTO implements Serializable { // NOPMD
+    private static final long serialVersionUID = 8816656630380231435L;
     private String uniqueTrialId;
     private String localProtocolIdentifier;
     private String nctNumber;

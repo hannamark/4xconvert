@@ -75,6 +75,8 @@
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
@@ -115,6 +117,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -132,8 +135,9 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@RolesAllowed(SUBMITTER_ROLE)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(PaHibernateSessionInterceptor.class)
 public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrationBean
     implements ProprietaryTrialManagementServiceLocal {
 

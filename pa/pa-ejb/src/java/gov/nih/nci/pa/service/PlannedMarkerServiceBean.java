@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
@@ -99,7 +100,6 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -118,8 +118,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class PlannedMarkerServiceBean extends
 AbstractStudyIsoService<PlannedMarkerDTO, PlannedMarker, PlannedMarkerConverter>
 implements PlannedMarkerServiceLocal {
@@ -137,7 +136,6 @@ implements PlannedMarkerServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedMarkerDTO create(PlannedMarkerDTO dto) throws PAException {
         validate(dto);
         return super.create(dto);
@@ -147,7 +145,6 @@ implements PlannedMarkerServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedMarkerDTO update(PlannedMarkerDTO dto) throws PAException {
         validate(dto);
         return super.update(dto);

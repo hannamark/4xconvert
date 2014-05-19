@@ -14,7 +14,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderServiceBean;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  */
 public class PaPersonDTOTest extends AbstractHibernateTestCase {
-    private PAHealthCareProviderRemote remoteEjb = new PAHealthCareProviderServiceBean();
+    private PAHealthCareProviderLocal remoteEjb = new PAHealthCareProviderServiceBean();
 
     @Before
     public void init() throws Exception {

@@ -4,17 +4,20 @@
 <!-- ant script for Accrual Web                                             -->
 <!-- ====================================================================== -->
 
-<project name="accrual.accrual-web" default="war" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="accrual.accrual-web" default="war-notest" basedir=".">
+    <property name="tier" value="LOCAL"/>
+    <property file="${basedir}/../../build-pa/tier-properties/build-lite-${tier}.properties"/>
+    <property file="${basedir}/../../build-pa/build-lite.properties"/>
     <property file="${basedir}/../../build-pa/version.properties"/>
-    <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
     <property name="resource.dir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
     <property name="checkstyle.url" value="${resource.dir}/checkstyle.xml"/>
-    <property name="java.major.version" value="1.6"/>
+    <property name="java.major.version" value="1.7"/>
     <property name="java.encoding" value="utf-8"/>
 
+    <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="web.report.dir" value="${software.dir}/target/accrual/reports/accrual-web"/>
     <property name="web.build.finalName" value="accrual"/>
@@ -37,11 +40,6 @@
     <property name="web.coverage.branch" value="83"/>
     <property name="web.pmd.maxerrors" value="2"/>
 
-    <property name="ivy.file" value="ivy-2.0.0.jar" />
-    <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
-    <property name="ivy.def.file" location="ivy-accrual-accrual-web.xml" />
-    <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
-
     <property name="selenium.delay" value="10"/>
 
 
@@ -49,94 +47,70 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
+    <path id="build.classpath">
+        <fileset dir="${lib.dir}/build"/>
+    </path>
 
-    <property name="compile.jar.dir" location="${lib.dir}/accrual-web/compile"/>
     <path id="compile.classpath">
-        <fileset dir="${compile.jar.dir}"/>
+        <fileset dir="${lib.dir}/web"/>
+        <fileset dir="${lib.dir}/ear"/>
         <fileset dir="${software.dir}/accrual/services/target">
-           <include name="*.jar"/>
+           <include name="accrual-services.jar"/>
         </fileset>
-    </path>
+        <fileset dir="${lib.dir}/compile"/>
+     </path>
 
-    <property name="test.jar.dir" location="${lib.dir}/accrual-web/test"/>
     <path id="test.classpath">
-        <fileset dir="${test.jar.dir}">
-            <include name="*.jar"/>
+        <fileset dir="${lib.dir}/test"/>
+        <fileset dir="${lib.dir}/web"/>
+        <fileset dir="${lib.dir}/ear"/>
+        <fileset dir="${software.dir}/accrual/services/target">
+           <include name="accrual-services.jar"/>
         </fileset>
+        <fileset dir="${lib.dir}/compile"/>
     </path>
 
-    <property name="test-simian.jar.dir" location="${lib.dir}/accrual-web/test-simian"/>
     <path id="test-simian.classpath">
-        <fileset dir="${test-simian.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
+        <fileset dir="${lib.dir}/test-simian"/>
     </path>
 
-    <property name="test-cobertura.jar.dir" location="${lib.dir}/accrual-web/test-cobertura"/>
     <path id="test-cobertura.classpath">
-        <fileset dir="${test-cobertura.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
+        <fileset dir="${lib.dir}/test-cobertura"/>
     </path>
 
-    <property name="test-checkstyle.jar.dir" location="${lib.dir}/accrual-web/test-checkstyle"/>
     <path id="test-checkstyle.classpath">
-        <fileset dir="${test-checkstyle.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
+        <fileset dir="${lib.dir}/test-checkstyle"/>
     </path>
 
-    <property name="test-pmd.jar.dir" location="${lib.dir}/accrual-web/test-pmd"/>
     <path id="test-pmd.classpath">
-        <fileset dir="${test-pmd.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
+        <fileset dir="${lib.dir}/test-pmd"/>
     </path>
 
-    <property name="selenium.jar.dir" location="${lib.dir}/accrual-web/selenium"/>
     <path id="selenium.classpath">
-        <fileset dir="${selenium.jar.dir}">
-            <include name="*.jar"/>
-        </fileset>
+        <fileset dir="${lib.dir}/test-selenium"/>
     </path>
-
-    <path id="ivy.classpath">
-        <fileset dir="${lib.dir}">
-            <include name="${ivy.file}"/>
-        </fileset>
-    </path>
-
 
     <!-- ====================================================================== -->
     <!-- Task definitions                                                       -->
     <!-- ====================================================================== -->
 
-    <mkdir dir="${lib.dir}"/>
-    <mkdir dir="${web.report.dir}"/>
-    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath"/>
-    <path id="macrodef">
-        <fileset dir="${lib.dir}/../bda-utils">
-            <include name="*.jar"/>
-        </fileset>
-    </path>
-    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="macrodef"/>
-    <taskdef name="svn" classname="org.tigris.subversion.svnant.SvnTask" classpathref="macrodef"/>
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="build.classpath"/>
 
     <!-- ====================================================================== -->
     <!-- Cleaning up target                                                     -->
     <!-- ====================================================================== -->
 
-    <target name="pre-clean" description="Clean the output directory">
+    <target name="clean" description="Clean the output directory">
         <delete dir="${web.build.dir}"/>
-        <delete dir="${web.test.reports}"/>
+        <delete dir="${web.report.dir}"/>
+        <mkdir dir="${web.report.dir}"/>
     </target>
 
     <!-- ====================================================================== -->
     <!-- Compile target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="compile"  depends="pre-clean, determine-build-version" description="Compiles the subproject">
-        <fail unless="jboss.deploy.dir" message="Property jboss.deploy.dir not set.  Check build.properties file."/>
+    <target name="compile"  depends="determine-build-version" description="Compiles the subproject">
         <mkdir dir="${web.build.outputDir}"/>
         <javac destdir="${web.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
@@ -147,8 +121,10 @@
                 <path refid="compile.classpath"/>
             </classpath>
         </javac>
-        <fail unless="application.url" message="Property application.url not set.  Check build.properties file."/>
         <copy todir="${web.build.outputDir}">
+            <filterset>
+                <filter token="grid.target" value="${grid.target}"/>
+            </filterset>
             <fileset dir="${web.build.resourceDir}"/>
         </copy>
         <copy todir="${web.build.webappDir}">
@@ -172,7 +148,7 @@
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests" depends="compile,ivy-test,configure-tests" description="Compile the test code">
+    <target name="compile-tests" depends="compile,configure-tests" description="Compile the test code">
         <mkdir dir="${web.build.testOutputDir}"/>
         <javac destdir="${web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
@@ -209,6 +185,7 @@
 
         <mkdir dir="${web.test.reports}"/>
         <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." failureproperty="junit.failure">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${web.build.dir}/cobertura.ser"/>
             <formatter type="xml"/>
@@ -216,7 +193,6 @@
             <classpath location="${web.build.coberturaOutputDir}"/>
             <classpath location="${web.build.outputDir}"/>
             <classpath location="${web.build.testOutputDir}"/>
-            <classpath refid="compile.classpath"/>
             <classpath refid="test.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <batchtest todir="${web.test.reports}">
@@ -341,7 +317,7 @@
     <!-- Static analysis target                                                 -->
     <!-- ====================================================================== -->
 
-    <target name="inspect" depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
+    <target name="inspect" depends="compile,test-checkstyle,test-pmd,test-simian"
             description="Runs various static analysis tools such as PMD, Checkstyle, Simian">
     </target>
 
@@ -366,89 +342,21 @@
     <target name="create-war">
         <mkdir dir="${web.build.dir}/${web.build.finalName}/WEB-INF/lib"/>
         <copy todir="${web.build.dir}/${web.build.finalName}/WEB-INF/lib">
-            <fileset dir="${lib.dir}/accrual-web/runtime"/>
+            <fileset dir="${lib.dir}/web"/>
         </copy>
         <war destfile="${web.build.dir}/${web.war}"
-             compress="false"
+             compress="false" duplicate="fail"
              webxml="${web.build.webappDir}/WEB-INF/web.xml">
             <lib dir="${web.build.dir}/${web.build.finalName}/WEB-INF/lib"/>
             <classes dir="${web.build.outputDir}"/>
-            <webinf dir="${web.build.webappDir}/WEB-INF" excludes="web.xml"/>
             <fileset dir="${web.build.webappDir}"/>
         </war>
     </target>
 
-    <target name="war" depends="ivy-get, compile, test-dynamic-analysis, create-war"/>
+    <target name="war" depends="compile, test-dynamic-analysis, create-war"/>
 
-    <target name="war-notest" depends="ivy-get, ivy-runtime, compile, create-war"
+    <target name="war-notest" depends="compile, create-war"
             description="Package the application.  Do not run tests."/>
-
-    <target name="war-notest-noivy" depends="compile, create-war"/>
-
-
-    <!-- ====================================================================== -->
-    <!-- Ivy Targets                                                            -->
-    <!-- ====================================================================== -->
-
-    <target name="init:ivy">
-        <mkdir dir="${local.repo.dir}"/>
-        <mkdir dir="${lib.dir}/accrual-web"/>
-        <property name="ivy.dep.file" value="${ivy.def.file}"/>
-        <ivy:settings file="${ivy.settings.file}"/>
-    </target>
-
-    <target name="ivy-test-pmd" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-pmd"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd"/>
-    </target>
-
-    <target name="ivy-test-checkstyle" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-checkstyle"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-checkstyle"/>
-    </target>
-
-    <target name="ivy-test-simian" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-simian"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian"/>
-    </target>
-
-    <target name="ivy-test-cobertura" depends="init:ivy">
-        <ivy:resolve refresh="true" conf="test-cobertura"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-cobertura"/>
-    </target>
-
-    <target name="ivy-compile" depends="init:ivy"
-            description="Resolves and retrieves the JARs needed to compile the subproject">
-        <ivy:resolve refresh="true" conf="compile"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile"/>
-    </target>
-
-    <target name="ivy-runtime" depends="init:ivy"
-            description="Resolves and retrieves the JARs needed to run the subproject">
-        <ivy:resolve refresh="true" conf="runtime"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="runtime"/>
-    </target>
-
-    <target name="ivy-test"
-            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura,ivy-selenium"
-            description="Resolves and retrieves the JARs needed to test the subproject">
-        <ivy:resolve refresh="true" conf="test"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test"/>
-    </target>
-
-    <target name="ivy-selenium" depends="init:ivy"  description="Resolves and retrieves the JARs needed to run the subproject">
-        <ivy:resolve refresh="true" conf="selenium"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="selenium"/>
-    </target>
-
-    <target name="ivy-get"
-            depends="ivy-compile, ivy-runtime, ivy-test, ivy-selenium"
-            description="Updates the local ivy repository">
-    </target>
-
-    <target name="ivy-clean" description="Delete jars.">
-        <delete dir="${lib.dir}/accrual-web"/>
-    </target>
 
     <!-- ====================================================================== -->
     <!-- Generate Javadoc                                                       -->
@@ -465,63 +373,15 @@
         </javadoc>
     </target>
 
-
-    <!-- ====================================================================== -->
-    <!-- Copies JSP to the tmp folder                                           -->
-    <!-- ====================================================================== -->
-
-    <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
-        <for param="toDir">
-            <path>
-                <dirset dir="${jboss.deploy.dir}/../tmp/deploy" includes="tmp*accrual.ear-contents/accrual-exp.war"/>
-            </path>
-            <sequential>
-                <copy todir="@{toDir}">
-                    <fileset dir="${basedir}/src/webapp">
-                        <include name="*.jsp"/>
-                        <include name="WEB-INF/jsp/*.jsp"/>
-                        <include name="WEB-INF/jsp/nodecorate/*.jsp"/>
-                        <include name="WEB-INF/jsp/common/*.jsp"/>
-                        <include name="WEB-INF/tags/*.tag"/>
-                        <include name="styles/*.css"/>
-                        <include name="scripts/js/*.js"/>
-                        <include name="scripts/ajax/*.js"/>
-                    </fileset>
-                </copy>
-            </sequential>
-        </for>
-    </target>
-
     <!-- ====================================================================== -->
     <!-- Determines build version and revision                                  -->
     <!-- ====================================================================== -->
     <target name="determine-build-version">
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="compile.classpath"/>
-        <svn>
-            <status path="." revisionproperty="project.revision" urlproperty="project.url" />
-        </svn>
-        <propertyregex property="project.base" input="${project.url}" casesensitive="false"
-            select="\1" regexp="coppa\/([^/]*)\/"/>
-        <if>
-            <equals arg1="${project.base}" arg2="trunk"/>
-            <then>
-                <property name="project.version" value="${project.base}"/>
-            </then>
-            <elseif>
-                <!-- We're expecting tags to be in the tags/pa-[version]-code format-->
-                <equals arg1="${project.base}" arg2="tags"/>
-                <then>
-                    <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
-                        select="\2" regexp="coppa\/([^/]*)\/pa-([^/]*)-code\/"/>
-                    <property name="project.version" value="${project.base}"/>
-                </then>
-            </elseif>
-            <else>
-                <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
-                    select="\2" regexp="coppa\/([^/]*)\/([^/]*)\/"/>
-                <property name="project.version" value="${project.base}"/>
-            </else>
-        </if>
+        <property name="project.version" value="${pa.version}"/>
+        <tstamp>
+            <format property="now" pattern="yyyy MMMM dd HH:mm:ss" locale="en"/>
+        </tstamp>
+        <property name="project.revision" value="${now}"/>
     </target>
 </project>
 

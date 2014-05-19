@@ -84,6 +84,7 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.util.CsmUserUtil;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -92,8 +93,8 @@ import org.apache.commons.lang.StringUtils;
  * @author mshestopalov
  *
  */
-public class CheckoutDTO {
-
+public class CheckoutDTO implements Serializable {
+   private static final long serialVersionUID = 8326947396575585169L;
     private String checkoutBy;
     private String checkoutByUsername;    
     private Long checkoutId;

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -89,7 +90,8 @@ import java.util.Date;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  *
  */
-public class TrialUpdateWebDTO {
+public class TrialUpdateWebDTO implements Serializable {
+    private static final long serialVersionUID = -7897239145841850465L;
     private Long id;
     private String comment;
     private Date updatedDate;

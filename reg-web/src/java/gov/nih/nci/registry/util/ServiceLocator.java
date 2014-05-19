@@ -97,7 +97,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
@@ -132,7 +132,7 @@ public interface ServiceLocator {
      * 
      * @return RegulatoryInformationServiceRemote
      */
-    RegulatoryInformationServiceRemote getRegulatoryInformationService();
+    RegulatoryInformationServiceLocal getRegulatoryInformationService();
 
     /**
      * 

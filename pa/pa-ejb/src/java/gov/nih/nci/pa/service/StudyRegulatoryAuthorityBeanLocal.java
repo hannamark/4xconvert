@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
@@ -97,8 +98,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -106,8 +105,7 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({PaHibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyRegulatoryAuthorityBeanLocal
     extends AbstractCurrentStudyIsoService<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority,
         StudyRegulatoryAuthorityConverter> implements StudyRegulatoryAuthorityServiceLocal {

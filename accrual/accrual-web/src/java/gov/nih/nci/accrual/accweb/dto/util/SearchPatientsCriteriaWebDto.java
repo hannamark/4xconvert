@@ -80,11 +80,14 @@ package gov.nih.nci.accrual.accweb.dto.util;
 
 import gov.nih.nci.accrual.util.AccrualUtil;
 
+import java.io.Serializable;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 21, 2009
  */
-public class SearchPatientsCriteriaWebDto {
+public class SearchPatientsCriteriaWebDto implements Serializable {
+    private static final long serialVersionUID = 8670183363999965686L;
     private String assignedIdentifier;
     private Long studySiteId;
     private String birthDate;

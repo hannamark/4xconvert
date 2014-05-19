@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
+
+import java.io.Serializable;
 /**
  * @author Kalpana Guthikonda
  * @since 10/13/2008
@@ -86,8 +88,8 @@ import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class SubGroupsWebDTO {
-
+public class SubGroupsWebDTO implements Serializable {
+    private static final long serialVersionUID = -1240823030896148558L;
     private String description;
     private String groupNumberText;
     private String id;

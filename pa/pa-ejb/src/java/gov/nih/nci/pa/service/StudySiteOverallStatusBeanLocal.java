@@ -76,6 +76,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteOverallStatus;
@@ -90,6 +91,7 @@ import gov.nih.nci.pa.service.search.StudySiteOverallStatusSortCriterion;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
@@ -99,6 +101,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.hibernate.Session;
 
@@ -110,6 +113,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  *
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudySiteOverallStatusBeanLocal extends AbstractBaseSearchBean<StudySiteOverallStatus>
     implements StudySiteOverallStatusServiceLocal {
 

@@ -119,7 +119,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.Lov;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -311,7 +311,7 @@ public class ProprietaryTrialManagementBeanTest extends
         studyInboxSvc.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
 
         StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
-        AbstractionCompletionServiceRemote abstractionCompletionSvc = mock(AbstractionCompletionServiceRemote.class);
+        AbstractionCompletionServiceLocal abstractionCompletionSvc = mock(AbstractionCompletionServiceLocal.class);
         StudyOnholdServiceLocal studyOnholdSvc = new StudyOnholdBeanLocal();
 
         studyMilestoneSvc

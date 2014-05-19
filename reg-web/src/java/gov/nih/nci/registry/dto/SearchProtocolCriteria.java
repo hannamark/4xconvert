@@ -3,6 +3,8 @@
  */
 package gov.nih.nci.registry.dto;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -10,8 +12,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Bala Nair
  *
  */
-public class SearchProtocolCriteria {
-
+public class SearchProtocolCriteria implements Serializable {
+    private static final long serialVersionUID = -4134080705571406618L;
     private String identifierType;
     private String identifier;
     private String officialTitle;

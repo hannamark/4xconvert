@@ -22,7 +22,8 @@ import org.hibernate.validator.NotEmpty;
  *
  */
 public class TrialDTO extends BaseTrialDTO {
-    
+    private static final long serialVersionUID = 6941373311604699414L;
+
     /**
      * PI responsible party type.
      */
@@ -67,13 +68,13 @@ public class TrialDTO extends BaseTrialDTO {
     private String programCodeText;
     private String responsibleGenericContactName;
 
-    private List<PaOrganizationDTO> collaborators = new ArrayList<PaOrganizationDTO>();
-    private List<PaOrganizationDTO> participatingSites = new ArrayList<PaOrganizationDTO>();
-    private List<CountryRegAuthorityDTO> countryList = new ArrayList<CountryRegAuthorityDTO>();
-    private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
-    private List<TrialIndIdeDTO> indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
-    private List<TrialFundingWebDTO> fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
-    private List<TrialIndIdeDTO> indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
+    private List<PaOrganizationDTO> collaborators;
+    private List<PaOrganizationDTO> participatingSites;
+    private List<CountryRegAuthorityDTO> countryList;
+    private List<RegulatoryAuthOrgDTO> regIdAuthOrgList;
+    private List<TrialIndIdeDTO> indIdeUpdateDtos;
+    private List<TrialFundingWebDTO> fundingAddDtos;
+    private List<TrialIndIdeDTO> indIdeAddDtos;
     private String lst;
     private String selectedRegAuth;
 
@@ -88,11 +89,28 @@ public class TrialDTO extends BaseTrialDTO {
 
     private String trialOversgtAuthCountryName;
     private String trialOversgtAuthOrgName;
-    private boolean xmlRequired = true;
-    private List<Ii> secondaryIdentifierList = new ArrayList<Ii>();
-    private List<Ii> secondaryIdentifierAddList = new ArrayList<Ii>();
+    private boolean xmlRequired;
+    private List<Ii> secondaryIdentifierList;
+    private List<Ii> secondaryIdentifierAddList;
     private String assignedIdentifier;
     private Set<StudyAlternateTitleDTO> studyAlternateTitles; 
+
+    /**
+     * Constructor.
+     */
+    public TrialDTO() {
+        super();
+        collaborators = new ArrayList<PaOrganizationDTO>();
+        participatingSites = new ArrayList<PaOrganizationDTO>();
+        countryList = new ArrayList<CountryRegAuthorityDTO>();
+        regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
+        indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
+        fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
+        indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
+        xmlRequired = true;
+        secondaryIdentifierList = new ArrayList<Ii>();
+        secondaryIdentifierAddList = new ArrayList<Ii>();
+    }
 
     /**
      * @return the accrualReportingMethodCode

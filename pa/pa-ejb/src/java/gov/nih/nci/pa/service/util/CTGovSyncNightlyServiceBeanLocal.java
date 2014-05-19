@@ -34,11 +34,10 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @author ADas
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @SuppressWarnings({ "unchecked", "PMD.TooManyMethods",
     "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
-@Interceptors({ RemoteAuthorizationInterceptor.class,
-    PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class CTGovSyncNightlyServiceBeanLocal implements
         CTGovSyncNightlyServiceLocal {
 

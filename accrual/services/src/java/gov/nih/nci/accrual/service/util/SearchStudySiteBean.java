@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySite;
@@ -113,7 +114,7 @@ import org.hibernate.criterion.Restrictions;
  * @since Aug 17, 2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class SearchStudySiteBean implements SearchStudySiteService {
 
     private static final String FUNCTIONAL_CODE = "functionalCode";

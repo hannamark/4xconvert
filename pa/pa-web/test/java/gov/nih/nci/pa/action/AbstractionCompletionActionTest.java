@@ -16,7 +16,7 @@ import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
@@ -44,8 +44,8 @@ import com.opensymphony.xwork2.ActionContext;
  */
 public class AbstractionCompletionActionTest {
 
-    private AbstractionCompletionServiceRemote abstractionCompletionService =
-            mock(AbstractionCompletionServiceRemote.class);
+    private AbstractionCompletionServiceLocal abstractionCompletionService =
+            mock(AbstractionCompletionServiceLocal.class);
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService = mock(CTGovXmlGeneratorServiceLocal.class);
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService = mock(TSRReportGeneratorServiceRemote.class);
     private AbstractionCompletionAction sut;

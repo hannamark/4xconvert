@@ -85,6 +85,8 @@ package gov.nih.nci.registry.dto;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 
+import java.io.Serializable;
+
 import org.hibernate.validator.Email;
 import org.hibernate.validator.NotEmpty;
 
@@ -92,7 +94,8 @@ import org.hibernate.validator.NotEmpty;
  * webDTO to hold RegistryUser fields.
  *
  */
-public class RegistryUserWebDTO {
+public class RegistryUserWebDTO implements Serializable {
+    private static final long serialVersionUID = -4933064561954391907L;
     private Long id;
     private String firstName;
     private String lastName;

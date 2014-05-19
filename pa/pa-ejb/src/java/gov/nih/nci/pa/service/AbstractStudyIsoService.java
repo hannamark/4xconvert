@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.MappingIdentifier;
@@ -97,6 +98,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 /**
@@ -108,6 +111,7 @@ import org.hibernate.Session;
  * @param <BO> domain object
  * @param <CONVERTER> converter class
  */
+@RolesAllowed(SUBMITTER_ROLE)
 public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends AbstractEntity,
                                         CONVERTER extends AbstractConverter<DTO, BO>>
         extends AbstractBaseIsoService<DTO, BO, CONVERTER> implements StudyPaService<DTO> {

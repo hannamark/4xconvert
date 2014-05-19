@@ -168,7 +168,7 @@ import gov.nih.nci.pa.lov.Lov;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
@@ -196,7 +196,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -252,7 +252,7 @@ public class AbstractMockitoTest {
     protected gov.nih.nci.pa.service.correlation.CorrelationUtils corUtils;
     protected CorrelationUtils commonsCorrUtils = new CorrelationUtils();
     protected StudyRegulatoryAuthorityServiceLocal studyRegAuthSvc;
-    protected RegulatoryInformationServiceRemote regulInfoSvc;
+    protected RegulatoryInformationServiceLocal regulInfoSvc;
     protected StudyOverallStatusServiceLocal studyOverallStatusSvc;
     protected StudyRecruitmentStatusServiceLocal studyRecruitmentStatusSvc;
     protected StudyOutcomeMeasureServiceLocal studyOutcomeMeasureSvc;
@@ -268,7 +268,7 @@ public class AbstractMockitoTest {
     protected ResearchOrganizationCorrelationServiceRemote poRoSvc;
     protected InterventionServiceLocal interventionSvc;
     protected StudyResourcingServiceLocal studyResourcingSvc;
-    protected InterventionAlternateNameServiceRemote interventionAltNameSvc;
+    protected InterventionAlternateNameServiceLocal interventionAltNameSvc;
     protected DocumentServiceLocal documentSvc;
     protected LookUpTableServiceRemote lookupSvc;
     protected ClinicalResearchStaffCorrelationServiceRemote poCrsSvc;
@@ -964,7 +964,7 @@ public class AbstractMockitoTest {
         interventionSvc = mock(InterventionServiceLocal.class);
         when(interventionSvc.get(any(Ii.class))).thenReturn(interventionDto);
 
-        interventionAltNameSvc = mock(InterventionAlternateNameServiceRemote.class);
+        interventionAltNameSvc = mock(InterventionAlternateNameServiceLocal.class);
         when(interventionAltNameSvc.getByIntervention(any(Ii.class))).thenReturn(interventionAltNameDtoList);
     }
 
@@ -1029,7 +1029,7 @@ public class AbstractMockitoTest {
     }
 
     private void setupRiMock() throws PAException {
-        regulInfoSvc = mock(RegulatoryInformationServiceRemote.class);
+        regulInfoSvc = mock(RegulatoryInformationServiceLocal.class);
         when(regulInfoSvc.get(anyLong())).thenReturn(ra);
         when(regulInfoSvc.getRegulatoryAuthorityCountry(anyLong())).thenReturn(country);
     }
@@ -1149,7 +1149,7 @@ public class AbstractMockitoTest {
         return studyRegAuthSvc;
     }
 
-    public RegulatoryInformationServiceRemote getRegulInfoSvc() {
+    public RegulatoryInformationServiceLocal getRegulInfoSvc() {
         return regulInfoSvc;
     }
 
@@ -1213,7 +1213,7 @@ public class AbstractMockitoTest {
         return studyResourcingSvc;
     }
 
-    public InterventionAlternateNameServiceRemote getInterventionAltNameSvc() {
+    public InterventionAlternateNameServiceLocal getInterventionAltNameSvc() {
         return interventionAltNameSvc;
     }
 

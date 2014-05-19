@@ -83,11 +83,14 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.io.Serializable;
+
 /**
  * @author Hong Gao
  *
  */
-public class StudyProtocolWebDTO {
+public class StudyProtocolWebDTO implements Serializable {
+   private static final long serialVersionUID = -2432220372688897368L;
     private String trialTitle;
     private String trialPhase;
     private String nciAccessionNumber;

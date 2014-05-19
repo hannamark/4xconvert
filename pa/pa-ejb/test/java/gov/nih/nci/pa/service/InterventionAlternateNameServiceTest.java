@@ -95,7 +95,7 @@ import org.junit.Test;
  *
  */
 public class InterventionAlternateNameServiceTest extends AbstractHibernateTestCase {
-    private InterventionAlternateNameServiceRemote remoteEjb = new InterventionAlternateNameServiceBean();
+    private InterventionAlternateNameServiceLocal remoteEjb = new InterventionAlternateNameServiceBean();
     private Ii ii;
 
     @Before

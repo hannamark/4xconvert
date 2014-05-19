@@ -80,12 +80,13 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.StudyDTO;
 
 /**
  * @author NAmiruddin
  * @param <DTO> dto
  */
-public interface StudyCurrentPaService<DTO> extends StudyPaService<DTO> {
+public interface StudyCurrentPaService<DTO extends StudyDTO> extends StudyPaService<DTO> {
     
     /**
      * Gets the current by study protocol. 

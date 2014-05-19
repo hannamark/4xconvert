@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.cache.Cache;
+import org.jboss.resteasy.annotations.cache.ServerCached;
 import org.jboss.resteasy.annotations.providers.jaxb.Wrapped;
 
 /**
@@ -39,6 +40,7 @@ public class StudyProtocolsRsrc {
     @Wrapped(element = "studyProtocols")
     @GET
     @Cache(maxAge = ONE_HOUR)
+    @ServerCached
     public Response getStudiesXML(@QueryParam("agentNsc") String agentNsc) {
         if (StringUtils.isEmpty(agentNsc)) {
             throw new BadRequestException("Agent NSC number missing from request.");

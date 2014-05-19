@@ -282,21 +282,6 @@ public class PrimaryPurposeCode extends AbstractLov {
         return loadDisplayNamesArray(list);
     }
 
-    /**
-     * @param list
-     * @return
-     */
-    private static String[] loadDisplayNamesArray(List<PrimaryPurposeCode> list) {
-        // Make sure OTHER is always at the end of the list. After PO-5998, the order or returned rows
-        // has changed from the original INSERT order.
-        if (list.contains(OTHER)) {
-            PrimaryPurposeCode other = list.get(list.indexOf(OTHER));
-            list.remove(other);
-            list.add(other);
-        }
-        return AbstractLov.loadDisplayNamesArray(list);
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

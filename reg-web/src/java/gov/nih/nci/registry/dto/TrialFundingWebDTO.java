@@ -6,12 +6,14 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.io.Serializable;
+
 /**
  * Class for holding attributes for StudyResourcing DTO.
  * @author Bala Nair
  */
-public class TrialFundingWebDTO {
-
+public class TrialFundingWebDTO implements Serializable {
+    private static final long serialVersionUID = -7595730187521663701L;
     private String id;
     private String fundingMechanismCode;
     private String nihInstitutionCode;

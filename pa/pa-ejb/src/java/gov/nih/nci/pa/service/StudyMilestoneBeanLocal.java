@@ -6,6 +6,7 @@ package gov.nih.nci.pa.service;
 import static gov.nih.nci.pa.enums.StudyInboxTypeCode.VALIDATION;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -31,11 +32,11 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyMilestoneSortCriterion;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -61,7 +62,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.jboss.annotation.IgnoreDependency;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -70,8 +70,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyMilestoneBeanLocal
     extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
     implements StudyMilestoneServicelocal {
@@ -100,7 +99,7 @@ public class StudyMilestoneBeanLocal
     private static final String EXTENSION_RTF = ".rtf";
 
     @EJB
-    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    private AbstractionCompletionServiceLocal abstractionCompletionService;
     
     @EJB
     private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
@@ -118,7 +117,7 @@ public class StudyMilestoneBeanLocal
     private StudyProtocolServiceLocal studyProtocolService;
     
     @EJB
-    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;   
+    private TSRReportGeneratorServiceLocal tsrReportGeneratorService;   
     
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -127,7 +126,7 @@ public class StudyMilestoneBeanLocal
     private DocumentServiceLocal documentService;
 
     @EJB
-    @IgnoreDependency
+//    @IgnoreDependency
     private TrialRegistrationServiceLocal trialRegistrationService;
     
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
@@ -868,7 +867,7 @@ public class StudyMilestoneBeanLocal
     /**
      * @param abstractionCompletionService the abstractionCompletionService to set
      */
-    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+    public void setAbstractionCompletionService(AbstractionCompletionServiceLocal abstractionCompletionService) {
         this.abstractionCompletionService = abstractionCompletionService;
     }
 
@@ -917,7 +916,7 @@ public class StudyMilestoneBeanLocal
     /**
      * @return the tsrReportGeneratorService
      */
-    public TSRReportGeneratorServiceRemote getTsrReportGeneratorService() {
+    public TSRReportGeneratorServiceLocal getTsrReportGeneratorService() {
         return tsrReportGeneratorService;
     }
 
@@ -925,7 +924,7 @@ public class StudyMilestoneBeanLocal
      * @param tsrReportGeneratorService the tsrReportGeneratorService to set
      */
     public void setTsrReportGeneratorService(
-            TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+            TSRReportGeneratorServiceLocal tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
     }
 
@@ -973,7 +972,6 @@ public class StudyMilestoneBeanLocal
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
-    
     /**
      * 
      * @return the current paServiceUtils. 

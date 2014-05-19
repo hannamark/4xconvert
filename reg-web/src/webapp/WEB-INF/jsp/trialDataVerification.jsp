@@ -90,7 +90,7 @@
                <p class="info"><strong><fmt:message key="trial.data.verification.review" /></strong></p>                     
                
                <div class="align-center button-row">
-               	  <s:url id="addUrl" namespace="/protected" action="trialDataVerificationAction" method="save"/>
+               	  <s:url id="addUrl" namespace="/protected" action="trialDataVerificationActionsave"/>
 			      <s:a onclick="javascript:addAction('%{addUrl}');" href="javascript:void(0)"><button type="button" class="btn btn-icon btn-primary"><i class="fa-floppy-o"></i>Save Verification Record</button></s:a>
 			      <s:url id="cancelUrl" namespace="/protected" action="searchTrial"/>
 			      <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)"><button type="button" class="btn btn-icon btn-default" ><i class="fa-times-circle"></i>Cancel</button></s:a>

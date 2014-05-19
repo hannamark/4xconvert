@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
@@ -115,7 +116,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @since 07/29/2009
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(StudyMilestoneTasksServiceBean.class);

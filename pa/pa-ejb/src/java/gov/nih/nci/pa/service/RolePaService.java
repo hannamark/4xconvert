@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.FunctionalRoleDTO;
 
 import java.util.List;
 
@@ -89,7 +90,7 @@ import java.util.List;
  * @since 04/07/2009
  * @param <DTO> dto
  */
-public interface RolePaService<DTO> extends StudyPaService<DTO> {
+public interface RolePaService<DTO extends FunctionalRoleDTO> extends StudyPaService<DTO> {
 
     /**
      * Get list of Site for a given functional role code.

@@ -118,8 +118,6 @@ import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.log4j.Logger;
@@ -138,8 +136,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationSynchronizationServiceBean implements OrganizationSynchronizationServiceRemote {
+public class OrganizationSynchronizationServiceBean implements OrganizationSynchronizationServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(OrganizationSynchronizationServiceBean.class);
     private final CorrelationUtils cUtils = new CorrelationUtils();

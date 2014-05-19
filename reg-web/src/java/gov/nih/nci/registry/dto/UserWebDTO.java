@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.registry.dto;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotEmpty;
 
@@ -89,7 +91,8 @@ import org.hibernate.validator.NotEmpty;
  * @author ludetc
  *
  */
-public class UserWebDTO {
+public class UserWebDTO implements Serializable {
+    private static final long serialVersionUID = -6303286133227269636L;
     private String username;
     private String password;
 

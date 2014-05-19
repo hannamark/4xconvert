@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -103,7 +104,7 @@ import org.apache.commons.lang.time.DateUtils;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class CleanUpTaskServiceBean implements CleanUpTaskServiceLocal {
     private static final int MAX_FILE_AGE = -30;

@@ -35,7 +35,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -74,7 +74,7 @@ import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
@@ -86,7 +86,7 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
@@ -99,11 +99,13 @@ import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.SAMLToAttributeMapper;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.registry.service.MockCTGovSyncService;
 import gov.nih.nci.registry.service.MockLookUpTableService;
@@ -117,7 +119,6 @@ import gov.nih.nci.registry.service.MockStudyResourcingService;
 import gov.nih.nci.registry.service.MockStudySiteAccrualStatusService;
 import gov.nih.nci.registry.service.MockStudySiteService;
 import gov.nih.nci.registry.service.MockTrialRegistrationService;
-import gov.nih.nci.security.cgmm.constants.CGMMConstants;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -255,8 +256,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @Override
-    public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-        RegulatoryInformationServiceRemote svc = mock(RegulatoryInformationServiceRemote.class);
+    public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
+        RegulatoryInformationServiceLocal svc = mock(RegulatoryInformationServiceLocal.class);
         try {
             when(svc.getDistinctCountryNames()).thenReturn(regAuthorityCountries);
             when(svc.getDistinctCountryNamesStartWithUSA()).thenReturn(regAuthorityCountries);
@@ -468,8 +469,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @Override
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
-        return mock(AbstractionCompletionServiceRemote.class);
+    public AbstractionCompletionServiceLocal getAbstractionCompletionService() {
+        return mock(AbstractionCompletionServiceLocal.class);
     }
 
     /**
@@ -524,8 +525,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @Override
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
-        return mock(InterventionAlternateNameServiceRemote.class);
+    public InterventionAlternateNameServiceLocal getInterventionAlternateNameService() {
+        return mock(InterventionAlternateNameServiceLocal.class);
     }
 
     /**
@@ -540,8 +541,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @Override
-    public PAHealthCareProviderRemote getPAHealthCareProviderService() {
-        return mock(PAHealthCareProviderRemote.class);
+    public PAHealthCareProviderLocal getPAHealthCareProviderService() {
+        return mock(PAHealthCareProviderLocal.class);
     }
 
     /**
@@ -672,6 +673,11 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return mock(TSRReportGeneratorServiceRemote.class);
     }
 
+    @Override
+    public TSRReportGeneratorServiceLocal getTSRReportGeneratorServiceLocal() {
+        return mock(TSRReportGeneratorServiceRemote.class);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -701,12 +707,11 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         }
         when(svc.doesGridAccountExist(any(String.class))).thenReturn(false);
         when(svc.isValidGridPassword(any(String.class))).thenReturn(true);
-        when(svc.getIdentityProviders()).thenReturn(new HashMap<String, String>());
 
         Map<String, String> results = new HashMap<String, String>();
-        results.put(CGMMConstants.CGMM_EMAIL_ID, "test@test.com");
-        results.put(CGMMConstants.CGMM_FIRST_NAME, "firstName");
-        results.put(CGMMConstants.CGMM_LAST_NAME, "lastName");
+        results.put(SAMLToAttributeMapper.EMAIL, "test@test.com");
+        results.put(SAMLToAttributeMapper.FIRST_NAME, "firstName");
+        results.put(SAMLToAttributeMapper.LAST_NAME, "lastName");
         when(svc.authenticateUser(any(String.class), any(String.class), any(String.class))).thenReturn(results);
         when(svc.getFullyQualifiedUsername(any(String.class), any(String.class),
                 any(String.class))).thenAnswer(new Answer<String>() {

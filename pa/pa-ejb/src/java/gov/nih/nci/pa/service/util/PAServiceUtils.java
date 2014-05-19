@@ -960,8 +960,9 @@ public class PAServiceUtils {
      */
     public Integer generateSubmissionNumber(String identifier) {
         Session session = PaHibernateUtil.getCurrentSession();
-        String query = "select max(sp.submissionNumber) from StudyProtocol sp where "
-            + "sp.otherIdentifiers.extension = '" + identifier + "' ";
+        String query = "select max(sp.submissionNumber) from StudyProtocol sp "
+            + "join sp.otherIdentifiers oi where "
+            + "oi.extension = '" + identifier + "' ";
         Integer maxValue = (Integer) session.createQuery(query).list().get(0);
         return (maxValue == null ? 1 : maxValue + 1);
     }
@@ -1037,7 +1038,7 @@ public class PAServiceUtils {
     public void enforceRegulatoryInfo(StudyProtocolDTO studyProtocolDTO,
                                       StudyRegulatoryAuthorityDTO studyRegAuthDTO ,
                                       List<StudyIndldeDTO> studyIndldeDTOs,
-                                      RegulatoryInformationServiceRemote regulatoryInfoBean) throws PAException {
+                                      RegulatoryInformationServiceLocal regulatoryInfoBean) throws PAException {
         StringBuffer errMsg = new StringBuffer();
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
             if (studyRegAuthDTO == null) {

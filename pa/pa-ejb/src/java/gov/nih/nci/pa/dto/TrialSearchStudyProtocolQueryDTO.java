@@ -99,7 +99,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @SuppressWarnings("PMD.TooManyFields")
 public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQueryDTO {
-
+    private static final long serialVersionUID = -4576252706235998842L;
     private DocumentWorkflowStatusCode lastOffHollStatusCode;
     private DocumentWorkflowStatusCode documentWorkflowStatusCode;
     private DocumentWorkflowStatusCode previousDocumentWorkflowStatusCode;

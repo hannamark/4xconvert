@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyOnhold;
@@ -53,7 +54,6 @@ import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
-import org.jboss.annotation.IgnoreDependency;
 import org.joda.time.DateTime;
 
 /**
@@ -61,8 +61,7 @@ import org.joda.time.DateTime;
  *
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class StudyOnholdBeanLocal extends AbstractStudyIsoService<StudyOnholdDTO, StudyOnhold, StudyOnholdConverter>
 implements StudyOnholdServiceLocal {
@@ -88,7 +87,7 @@ implements StudyOnholdServiceLocal {
     private MailManagerServiceLocal mailManagerSerivceLocal;
     
     @EJB
-    @IgnoreDependency
+//    @IgnoreDependency
     private StudyMilestoneServicelocal studyMilestoneService;
     
     private static final Logger LOG = Logger.getLogger(StudyOnholdBeanLocal.class);

@@ -48,11 +48,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.SerializationUtils;
 import org.apache.struts2.ServletActionContext;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -393,7 +392,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testValidateSiteDataNoErrors() throws PAException, IOException {
+    public void testValidateSiteDataNoErrors() throws PAException, IOException, JSONException {
         prepareAction();
 
         List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
@@ -418,7 +417,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
 
     @Test(expected = PAException.class)
     public void testValidateSiteDataNoTrialsFound() throws PAException,
-            IOException {
+            IOException, JSONException {
         prepareAction();
 
         List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
@@ -430,7 +429,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
 
     @Test
     public void testValidateSiteDataMissingRequiredFields() throws PAException,
-            IOException {
+            IOException, JSONException {
         prepareAction();
 
         List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();

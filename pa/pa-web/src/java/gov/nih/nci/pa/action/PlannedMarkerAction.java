@@ -109,7 +109,6 @@ import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -118,6 +117,9 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.FetchMode;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Property;
 
 /**
  * Action class for listing/manipulating planned markers.
@@ -318,10 +320,16 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      */
     public String displaySelectedCDE() {
         try {
-            ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
-            vdpv.setId(getCdeId());
-            Collection<Object> results = appService.search(ValueDomainPermissibleValue.class, vdpv);
-            ValueDomainPermissibleValue result = (ValueDomainPermissibleValue) results.iterator().next();
+            DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class);
+            criteria.add(Property.forName("id").eq(getCdeId()));
+            criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
+            criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
+            List<Object> results = (List<Object>) (List<?>) appService.query(criteria);
+            if (results.size() < 1) {
+                throw new PAException("Search of caDSR returned no results.");
+            }
+            ValueDomainPermissibleValue result = (ValueDomainPermissibleValue) results.get(0);
+
             PlannedMarkerWebDTO dto = new PlannedMarkerWebDTO();
             dto.setName(result.getPermissibleValue().getValue());
             dto.setDescription(result.getPermissibleValue().getValueMeaning().getDescription());

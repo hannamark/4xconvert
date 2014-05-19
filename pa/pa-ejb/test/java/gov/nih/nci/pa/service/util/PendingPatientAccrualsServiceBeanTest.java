@@ -53,7 +53,7 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
 	private PendingPatientAccrualsServiceBean bean;
 	private ParticipatingOrgServiceBean partOrgSrv = new ParticipatingOrgServiceBean();
     private StudySiteAccrualStatusServiceLocal ssas;
-    private PAHealthCareProviderRemote paHcp;
+    private PAHealthCareProviderLocal paHcp;
 	private LookUpTableServiceRemote lookUpTableService;
     private MailManagerServiceLocal mailManagerSvc = mock(MailManagerServiceLocal.class);
     private StudyProtocolServiceLocal spSvc = mock(StudyProtocolServiceLocal.class);
@@ -78,7 +78,7 @@ public class PendingPatientAccrualsServiceBeanTest extends AbstractHibernateTest
 		ssas = mock(StudySiteAccrualStatusServiceLocal.class);
         when(ssas.getCurrentStudySiteAccrualStatus(any(Long[].class))).thenReturn(
                 new HashMap<Long, StudySiteAccrualStatus>());
-        paHcp = mock(PAHealthCareProviderRemote.class);
+        paHcp = mock(PAHealthCareProviderLocal.class);
         when(paHcp.getPersonsByStudySiteId(any(Long[].class), any(String.class))).thenReturn(
                 new HashMap<Long, List<PaPersonDTO>>());
         partOrgSrv.setStudySiteAccrualStatusService(ssas);

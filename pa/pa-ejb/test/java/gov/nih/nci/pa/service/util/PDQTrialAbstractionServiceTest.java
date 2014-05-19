@@ -187,7 +187,7 @@ public class PDQTrialAbstractionServiceTest extends AbstractHibernateTestCase {
     private IdentifiedOrganizationCorrelationServiceRemote identifierOrgSvc;
     private ServiceLocator paSvcLoc;
     private OrganizationCorrelationServiceRemote orgCorrelationSvc;
-    private RegulatoryInformationServiceRemote regulatorySvc;
+    private RegulatoryInformationServiceLocal regulatorySvc;
     private LookUpTableServiceRemote lookupSvc;
     private StudyProtocolServiceLocal studyProtocolSvc;
     private StudySiteBeanLocal studySiteSvc;
@@ -220,7 +220,7 @@ public class PDQTrialAbstractionServiceTest extends AbstractHibernateTestCase {
     private void setUpPaSvc() throws PAException {
         paSvcLoc = mock (ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-        regulatorySvc = mock(RegulatoryInformationServiceRemote.class);
+        regulatorySvc = mock(RegulatoryInformationServiceLocal.class);
         when(paSvcLoc.getRegulatoryInformationService()).thenReturn(regulatorySvc);
         when(regulatorySvc.getRegulatoryAuthorityId(anyString(),anyString())).thenReturn(1L);
         lookupSvc = mock (LookUpTableServiceRemote.class);

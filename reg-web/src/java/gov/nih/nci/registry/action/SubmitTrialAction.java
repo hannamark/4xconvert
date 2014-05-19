@@ -96,7 +96,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
@@ -124,6 +124,7 @@ import org.apache.struts2.ServletActionContext;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.Preparable;
 
+
 /**
  *
  * @author Bala Nair
@@ -136,7 +137,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
     private static final String REDIRECT_TO_SEARCH = "redirect_to_search";
     
-    private RegulatoryInformationServiceRemote regulatoryInformationService;
+    private RegulatoryInformationServiceLocal regulatoryInformationService;
     private StudyProtocolStageServiceLocal studyProtocolStageService;
     private TrialRegistrationServiceLocal trialRegistrationService;
     private final TrialUtil  trialUtil = new TrialUtil();
@@ -563,7 +564,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
     /**
      * @param regulatoryInformationService the regulatoryInformationService to set
      */
-    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+    public void setRegulatoryInformationService(RegulatoryInformationServiceLocal regulatoryInformationService) {
         this.regulatoryInformationService = regulatoryInformationService;
     }
 

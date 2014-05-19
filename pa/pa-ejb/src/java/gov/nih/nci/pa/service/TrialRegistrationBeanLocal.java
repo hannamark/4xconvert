@@ -80,6 +80,7 @@ import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang.StringUtils.trim;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -149,8 +150,8 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.POServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
-import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -197,8 +198,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  *
  */
 @Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(PaHibernateSessionInterceptor.class)
 public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean // NOPMD
     implements TrialRegistrationServiceLocal { // NOPMD
     private static final String DEPRECATION = "deprecation";
@@ -210,7 +211,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @EJB private MailManagerServiceLocal mailManagerSerivceLocal;
     @EJB private OrganizationCorrelationServiceRemote ocsr;
     @EJB private RegistryUserServiceLocal registryUserServiceLocal;
-    @EJB private RegulatoryInformationServiceRemote regulatoryInfoBean;
+    @EJB private RegulatoryInformationServiceLocal regulatoryInfoBean;
     @EJB private StudyContactServiceLocal studyContactService;
     @EJB private StudyInboxServiceLocal studyInboxServiceLocal;
     @EJB private StudyIndldeServiceLocal studyIndldeService;
@@ -224,7 +225,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @EJB private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB private StudySiteContactServiceLocal studySiteContactService;
     @EJB private StudySiteServiceLocal studySiteService;
-    @EJB private TSRReportGeneratorServiceRemote tsrReportService;
+    @EJB private TSRReportGeneratorServiceLocal tsrReportService;
     @EJB private ArmServiceLocal armService;
     @EJB private PlannedActivityServiceLocal plannedActivityService;
     @EJB private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService;
@@ -2282,7 +2283,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     /**
      * @param regulatoryInfoBean the regulatoryInfoBean to set
      */
-    public void setRegulatoryInfoBean(RegulatoryInformationServiceRemote regulatoryInfoBean) {
+    public void setRegulatoryInfoBean(RegulatoryInformationServiceLocal regulatoryInfoBean) {
         this.regulatoryInfoBean = regulatoryInfoBean;
     }
 
@@ -2380,7 +2381,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     /**
      * @param tsrReportService the tsrReportService to set
      */
-    public void setTsrReportService(TSRReportGeneratorServiceRemote tsrReportService) {
+    public void setTsrReportService(TSRReportGeneratorServiceLocal tsrReportService) {
         this.tsrReportService = tsrReportService;
     }
     

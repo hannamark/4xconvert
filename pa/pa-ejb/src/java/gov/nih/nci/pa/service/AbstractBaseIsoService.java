@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
@@ -95,6 +96,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -113,6 +116,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @param <BO> domain object
  * @param <CONVERTER> converter class
  */
+@RolesAllowed(SUBMITTER_ROLE)
 public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends AbstractEntity,
     CONVERTER extends AbstractConverter<DTO, BO>> extends AbstractBaseSearchBean<BO> implements BasePaService<DTO> {
 
@@ -120,6 +124,11 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
     private static final Logger LOG = Logger.getLogger(AbstractBaseIsoService.class);
+
+    /**
+     * The security domain.
+     */
+    public static final String SECURITY_DOMAIN = "pa";
 
     /**
      * Admin Abstractor Role name.
@@ -141,11 +150,6 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * Submitter Role name.
      */
     public static final String SUBMITTER_ROLE = "Submitter";
-
-    /**
-     * EJB client Role name.
-     */
-    public static final String CLIENT_ROLE = "client";
 
     /**
      * default constructor.

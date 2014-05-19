@@ -1,6 +1,7 @@
 package gov.nih.nci.accrual.service.util;
 
 import static gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderBean.ICD_O_3_CODESYSTEM;
+import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
@@ -36,7 +37,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  * @since Dec 14, 2012
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class AccrualDiseaseBeanLocal extends AbstractBaseSearchBean<AccrualDisease> 
         implements AccrualDiseaseServiceLocal {
 

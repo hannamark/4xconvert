@@ -208,6 +208,18 @@ public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudyS
             Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
 
     /**
+     * Un-assigns trial-level access to the given trials from the given user.
+     * @param user RegistryUser
+     * @param source the source of the assignment
+     * @param trialIDs Collection<Long>
+     * @param comment comment
+     * @param creator creator
+     * @throws PAException PAException
+     */
+    void unassignTrialLevelAccrualAccessNoTransaction(RegistryUser user, AccrualAccessSourceCode source,
+            Collection<Long> trialIDs, String comment, RegistryUser creator) throws PAException;
+
+    /**
      * Un-assigns all access for the given user.
      * @param user RegistryUser
      * @param source the source of the assignment

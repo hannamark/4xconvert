@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -103,7 +104,7 @@ import org.hibernate.Session;
  * @author Michael Visee
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class DataAccessServiceBean implements DataAccessServiceLocal {
     private static final Logger LOG = Logger.getLogger(DataAccessServiceBean.class);
 

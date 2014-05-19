@@ -1,9 +1,13 @@
 package gov.nih.nci.pa.dto;
+
+import java.io.Serializable;
+
 /**
  * @author Reshma Koganti
  *
  */
-public class CaDSRDTO {
+public class CaDSRDTO implements Serializable {
+    private static final long serialVersionUID = -2615508147751532945L;
     private String id;
     private String preferredQuestion;
     private Long publicId;

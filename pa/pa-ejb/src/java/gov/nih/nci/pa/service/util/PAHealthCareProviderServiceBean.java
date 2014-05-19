@@ -109,8 +109,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
+public class PAHealthCareProviderServiceBean implements PAHealthCareProviderLocal {
     private static final int THREE = 3;
     private static final String PERSON_BY_STUDY_SITE_ID_QUERY = "select sp, spc, hcp, p from StudySite as sp  "
             + " join sp.studySiteContacts as spc join spc.clinicalResearchStaff as hcp "

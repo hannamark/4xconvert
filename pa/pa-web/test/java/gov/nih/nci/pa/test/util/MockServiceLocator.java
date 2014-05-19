@@ -123,7 +123,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -163,7 +163,7 @@ import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
@@ -175,7 +175,7 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
@@ -188,12 +188,13 @@ import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.SAMLToAttributeMapper;
 import gov.nih.nci.pa.util.ServiceLocator;
-import gov.nih.nci.security.cgmm.constants.CGMMConstants;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
 import gov.nih.nci.service.MockPlannedActivityService;
 import gov.nih.nci.service.MockProtocolQueryService;
@@ -331,7 +332,7 @@ public class MockServiceLocator implements ServiceLocator {
      * @return InterventionAlternateNameServiceRemote
      */
     @Override
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
+    public InterventionAlternateNameServiceLocal getInterventionAlternateNameService() {
         List<InterventionAlternateNameDTO> results = new ArrayList<InterventionAlternateNameDTO>();
         InterventionAlternateNameDTO dto = new InterventionAlternateNameDTO();
         dto.setIdentifier(IiConverter.convertToIi(1L));
@@ -345,7 +346,7 @@ public class MockServiceLocator implements ServiceLocator {
         dto.setName(StConverter.convertToSt("altername 2"));
         results.add(dto);
 
-        InterventionAlternateNameServiceRemote svc = mock(InterventionAlternateNameServiceRemote.class);
+        InterventionAlternateNameServiceLocal svc = mock(InterventionAlternateNameServiceLocal.class);
         try {
             when(svc.getByIntervention(any(Ii.class))).thenReturn(results);
             when(svc.getByIntervention(any(Ii[].class))).thenReturn(results);
@@ -406,8 +407,8 @@ public class MockServiceLocator implements ServiceLocator {
      * @return RegulatoryInformationServiceRemote
      */
     @Override
-    public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-        RegulatoryInformationServiceRemote svc = mock(RegulatoryInformationServiceRemote.class);
+    public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
+        RegulatoryInformationServiceLocal svc = mock(RegulatoryInformationServiceLocal.class);
         try {
             when(svc.getDistinctCountryNames()).thenReturn(new ArrayList<CountryRegAuthorityDTO>());
             when(svc.getDistinctCountryNamesStartWithUSA()).thenReturn(new ArrayList<CountryRegAuthorityDTO>());
@@ -492,11 +493,11 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     @Override
-    public PAHealthCareProviderRemote getPAHealthCareProviderService() {
+    public PAHealthCareProviderLocal getPAHealthCareProviderService() {
         PaPersonDTO paPersonDTO = new PaPersonDTO();
         paPersonDTO.setFullName("John Investigator");
 
-        PAHealthCareProviderRemote svc = mock(PAHealthCareProviderRemote.class);
+        PAHealthCareProviderLocal svc = mock(PAHealthCareProviderLocal.class);
         try {
             when(svc.getPersonsByStudySiteId(any(Long.class), any(String.class))).thenReturn(Arrays.asList(paPersonDTO));
         } catch (PAException e) {
@@ -565,8 +566,8 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     @Override
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
-        AbstractionCompletionServiceRemote svc = mock(AbstractionCompletionServiceRemote.class);
+    public AbstractionCompletionServiceLocal getAbstractionCompletionService() {
+        AbstractionCompletionServiceLocal svc = mock(AbstractionCompletionServiceLocal.class);
         try {
             when(svc.validateAbstractionCompletion(any(Ii.class))).thenReturn(new ArrayList<AbstractionCompletionDTO>());
         } catch (PAException e) {
@@ -681,6 +682,11 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     @Override
+    public TSRReportGeneratorServiceLocal getTSRReportGeneratorServiceLocal() {
+        return tsrReportGeneratorService;
+    }
+
+    @Override
     public RegistryUserServiceLocal getRegistryUserService() {
         return registryUserService;
     }
@@ -790,12 +796,11 @@ public class MockServiceLocator implements ServiceLocator {
         }
         when(svc.doesGridAccountExist(any(String.class))).thenReturn(false);
         when(svc.isValidGridPassword(any(String.class))).thenReturn(true);
-        when(svc.getIdentityProviders()).thenReturn(new HashMap<String, String>());
 
         Map<String, String> results = new HashMap<String, String>();
-        results.put(CGMMConstants.CGMM_EMAIL_ID, "test@test.com");
-        results.put(CGMMConstants.CGMM_FIRST_NAME, "firstName");
-        results.put(CGMMConstants.CGMM_LAST_NAME, "lastName");
+        results.put(SAMLToAttributeMapper.EMAIL, "test@test.com");
+        results.put(SAMLToAttributeMapper.FIRST_NAME, "firstName");
+        results.put(SAMLToAttributeMapper.LAST_NAME, "lastName");
         when(svc.authenticateUser(any(String.class), any(String.class), any(String.class))).thenReturn(results);
         when(svc.getFullyQualifiedUsername(any(String.class), any(String.class),
                 any(String.class))).thenAnswer(new Answer<String>() {

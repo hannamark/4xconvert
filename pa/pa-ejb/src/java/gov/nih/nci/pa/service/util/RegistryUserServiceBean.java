@@ -86,8 +86,6 @@ import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 /**
@@ -95,7 +93,6 @@ import javax.interceptor.Interceptors;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class RegistryUserServiceBean extends RegistryUserBeanLocal implements RegistryUserServiceRemote {
 
 }

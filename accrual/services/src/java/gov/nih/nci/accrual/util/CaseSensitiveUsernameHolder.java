@@ -83,7 +83,8 @@
 package gov.nih.nci.accrual.util;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  *  Case sensitive version of the UsernameHolder found in nci-commons.
@@ -92,26 +93,23 @@ import org.apache.log4j.Logger;
  *
  *  @author oweisms
  */
-//TODO Remove as part of PO-3500 and use Coppa-Commons CaseSensitiveUsernameHolder.
 public class CaseSensitiveUsernameHolder {
-
-    private static final Logger LOG = Logger.getLogger(CaseSensitiveUsernameHolder.class);
 
     private static ThreadLocal<String> usernameThreadLocal = new ThreadLocal<String>();
 
-    /**
-     * The username returned for anonymous access, or when setUser has not been called.
-     */
+    /** The username returned for anonymous access, or when setUser has not been called. */
     public static final String ANONYMOUS_USERNAME = "__anonymous__";
+    /** Second possible anonymous username. */
+    public static final String ANONYMOUS_USERNAME2 = "anonymous";
 
     /**
      * @param user the user to set for the current thread
      */
     public static void setUser(String user) {
-        if (ANONYMOUS_USERNAME.equals(user)) {
-            LOG.warn("explicitly setting user to the ANONYMOUS_USERNAME");
+        if (user != null && !ANONYMOUS_USERNAME.equals(user) && !ANONYMOUS_USERNAME2.equals(user)) {
+            usernameThreadLocal.set(user);
+            UsernameHolder.setUserCaseSensitive(user); // necessary for audit log
         }
-        usernameThreadLocal.set(user == null ? null : user);
     }
 
     /**

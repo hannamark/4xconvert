@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.PatientStage;
@@ -58,8 +59,7 @@ import org.hibernate.criterion.Restrictions;
  * @author Kalpana Guthikonda
  */
 @Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "unchecked", "PMD.CyclomaticComplexity", "PMD.NPathComplexity", 
     "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" })
 public class PendingPatientAccrualsServiceBean implements PendingPatientAccrualsServiceLocal {

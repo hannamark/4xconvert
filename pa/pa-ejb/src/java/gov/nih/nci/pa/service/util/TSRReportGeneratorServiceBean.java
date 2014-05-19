@@ -134,7 +134,7 @@ import gov.nih.nci.pa.iso.util.PqConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
@@ -209,7 +209,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.jboss.annotation.IgnoreDependency;
 
 /**
  * service bean for generating TSR.
@@ -220,8 +219,7 @@ import org.jboss.annotation.IgnoreDependency;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceRemote {
+public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceLocal, TSRReportGeneratorServiceRemote {
 
     private static final String N_A = "N/A";
     @EJB
@@ -249,13 +247,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     private OrganizationCorrelationServiceRemote ocsr;
     @EJB
-    private RegulatoryInformationServiceRemote regulatoryInformationService;
+    private RegulatoryInformationServiceLocal regulatoryInformationService;
     @EJB
     private PDQDiseaseServiceLocal diseaseService;
     @EJB
     private InterventionServiceLocal interventionService;
     @EJB
-    private InterventionAlternateNameServiceRemote interventionAlternateNameService;
+    private InterventionAlternateNameServiceLocal interventionAlternateNameService;
     @EJB
     private StudyResourcingServiceLocal studyResourcingService;
     @EJB
@@ -265,7 +263,6 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     @EJB
     private PlannedMarkerServiceLocal plannedMarkerService;
     @EJB
-    @IgnoreDependency
     private StudyIdentifiersServiceLocal studyIdentifiersService;
 
     private final CorrelationUtils correlationUtils = new CorrelationUtils();
@@ -1418,7 +1415,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     /**
      * @param regulatoryInformationService the regulatoryInformationService to set
      */
-    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+    public void setRegulatoryInformationService(RegulatoryInformationServiceLocal regulatoryInformationService) {
         this.regulatoryInformationService = regulatoryInformationService;
     }
 
@@ -1439,7 +1436,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
     /**
      * @param interventionAltNameSvc the interventionAlternateNameService to set
      */
-    public void setInterventionAlternateNameService(InterventionAlternateNameServiceRemote interventionAltNameSvc) {
+    public void setInterventionAlternateNameService(InterventionAlternateNameServiceLocal interventionAltNameSvc) {
         this.interventionAlternateNameService = interventionAltNameSvc;
     }
 

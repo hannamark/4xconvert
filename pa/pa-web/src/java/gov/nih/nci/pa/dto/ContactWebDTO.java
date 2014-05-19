@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 /**
  * Generic DTO class for displaying contact information.
  * 
@@ -86,7 +88,8 @@ package gov.nih.nci.pa.dto;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class ContactWebDTO {
+public class ContactWebDTO implements Serializable {
+    private static final long serialVersionUID = -4226737575052177202L;
     private String id;
     private String name;
     private String address;

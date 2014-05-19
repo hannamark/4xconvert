@@ -82,9 +82,10 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -119,9 +120,9 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
     private static final String EXTENSION_RTF = ".rtf";
     private static final String ABSTRACTION_ERROR = "An error happened during abstraction: ";
 
-    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    private AbstractionCompletionServiceLocal abstractionCompletionService;
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService;   
-    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    private TSRReportGeneratorServiceLocal tsrReportGeneratorService;
 
     private List<AbstractionCompletionDTO> abstractionList;
     private List<AbstractionCompletionDTO> abstractionAdminList;
@@ -141,7 +142,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
     public void prepare() {
         abstractionCompletionService = PaRegistry.getAbstractionCompletionService();
         ctGovXmlGeneratorService = PaRegistry.getCTGovXmlGeneratorService();        
-        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorServiceLocal();
     }
 
     /**
@@ -329,7 +330,7 @@ public class AbstractionCompletionAction extends ActionSupport implements Prepar
     /**
      * @param abstractionCompletionService the abstractionCompletionService to set
      */
-    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+    public void setAbstractionCompletionService(AbstractionCompletionServiceLocal abstractionCompletionService) {
         this.abstractionCompletionService = abstractionCompletionService;
     }
 

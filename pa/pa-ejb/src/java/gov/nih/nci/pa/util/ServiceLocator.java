@@ -81,7 +81,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.MarkerAttributesServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
@@ -119,7 +119,7 @@ import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
 import gov.nih.nci.pa.service.util.CTGovSyncNightlyServiceLocal;
@@ -131,7 +131,7 @@ import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
+import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
@@ -144,9 +144,10 @@ import gov.nih.nci.pa.service.util.PendingPatientAccrualsServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolComparisonServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 
 
@@ -182,50 +183,41 @@ public interface ServiceLocator {
 
 
     /**
-     *
      * @return PAPersonServiceRemote
      */
     PAPersonServiceRemote getPAPersonService();
 
     /**
-     *
      * @return RegulatoryInformationServiceRemote
      */
-    RegulatoryInformationServiceRemote getRegulatoryInformationService();
+    RegulatoryInformationServiceLocal getRegulatoryInformationService();
 
     /**
-     *
      * @return StudyIndldeServiceLocal
-     *
      */
     StudyIndldeServiceLocal getStudyIndldeService();
 
 
     /**
-     *
      * @return StudyOverallStatusServiceLocal
      */
     StudyOverallStatusServiceLocal getStudyOverallStatusService();
 
     /**
-     *
      * @return StudyResourcingServiceLocal
      */
     StudyResourcingServiceLocal getStudyResoucringService();
 
     /**
-     *
      * @return StudyRegulatoryAuthorityServiceLocal
      */
     StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService();
     /**
-    *
     * @return LookUpTableServiceRemote
     */
     LookUpTableServiceRemote getLookUpTableService();
 
     /**
-     *
      * @return ProtocolQueryServiceRemote
      */
     ProtocolQueryServiceLocal getProtocolQueryService();
@@ -235,31 +227,30 @@ public interface ServiceLocator {
      */
     StudySiteServiceLocal getStudySiteService();
 
-
     /**
      * @return StudySiteAccrualStatusServiceLocal
      */
     StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService();
+
     /**
-     *
      * @return DocumentServiceLocal
      */
     DocumentServiceLocal getDocumentService();
+
     /**
-     *
      * @return StratumGroupServiceLocal
      */
     StratumGroupServiceLocal getStratumGroupService();
 
     /**
-    *
     * @return StudySiteContactServiceLocal
     */
     StudySiteContactServiceLocal getStudySiteContactService();
     /**
      * @return PAHealthCareProviderRemote
      */
-    PAHealthCareProviderRemote getPAHealthCareProviderService();
+    PAHealthCareProviderLocal getPAHealthCareProviderService();
+
     /**
      * @return PlannedActivityServiceLocal
      */
@@ -273,7 +264,7 @@ public interface ServiceLocator {
     /**
      * @return InterventionAlternateNameServiceRemote
      */
-    InterventionAlternateNameServiceRemote getInterventionAlternateNameService();
+    InterventionAlternateNameServiceLocal getInterventionAlternateNameService();
 
     /**
      * @return OutcomeMeasureServiceLocal
@@ -297,12 +288,10 @@ public interface ServiceLocator {
     /**
      * @return AbstractionCompletionService
      */
-    AbstractionCompletionServiceRemote getAbstractionCompletionService();
+    AbstractionCompletionServiceLocal getAbstractionCompletionService();
 
     /**
-     *
      * @return StudyIndldeServiceLocal
-     *
      */
     DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService();
 
@@ -330,6 +319,7 @@ public interface ServiceLocator {
      * @return StudyContactServiceLocal
      */
     StudyContactServiceLocal getStudyContactService();
+
     /**
      * @return StudyMilestoneServiceLocal
      */
@@ -346,10 +336,15 @@ public interface ServiceLocator {
     GridAccountServiceRemote getGridAccountService();
 
     /**
-     *
      * @return TSRReportGeneratorServiceRemote
      */
     TSRReportGeneratorServiceRemote getTSRReportGeneratorService();
+
+    /**
+     * @return TSRReportGeneratorServiceLocal
+     */
+    TSRReportGeneratorServiceLocal getTSRReportGeneratorServiceLocal();
+
     /**
      * @return StudyOnholdService
      */
@@ -365,6 +360,7 @@ public interface ServiceLocator {
      * @return StudyObjectiveServiceLocal
      */
     StudyObjectiveServiceLocal getStudyObjectiveService();
+
     /**
      *
      * @return StudyRecruitmentStatusServiceLocal
@@ -397,7 +393,6 @@ public interface ServiceLocator {
     TrialRegistrationServiceLocal getTrialRegistrationService();
 
     /**
-     *
      * @return StudySiteOverallStatusServiceLocal
      */
     StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService();
@@ -418,8 +413,8 @@ public interface ServiceLocator {
      * @return the study relationship service
      */
     StudyRelationshipServiceLocal getStudyRelationshipService();
+
     /**
-     *
      * @return service for partial save
      */
     StudyProtocolStageServiceLocal getStudyProtocolStageService();
@@ -433,8 +428,8 @@ public interface ServiceLocator {
      * @return service for Participating Sites.
      */
     ParticipatingSiteServiceLocal getParticipatingSiteService();
+
     /**
-    *
     * @return service for PDQ Update Generator Task Service
     */
    PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService();
@@ -448,10 +443,12 @@ public interface ServiceLocator {
     * @return the planned marker service
     */
    MarkerAttributesServiceLocal getMarkerAttributesService();
+
    /**
     * @return the plannedMarkerSyncWithCaDSR Service
     */
    PlannedMarkerSyncWithCaDSRServiceLocal getPMWithCaDSRService();
+
    /**
     * @return the audit history service
     */
@@ -471,11 +468,12 @@ public interface ServiceLocator {
      * @return the family service
      */
     FamilyServiceLocal getFamilyService();
-    
+
     /**
      * @return CTGovUploadServiceLocal
      */
     CTGovUploadServiceLocal getCTGovUploadService();
+
     /**
      * @return the TrialDataVerificationServiceLocal
      */

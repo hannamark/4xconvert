@@ -8,6 +8,7 @@ import org.hibernate.validator.NotEmpty;
  *
  */
 public class OrganizationBatchDTO extends AddressDTO {
+    private static final long serialVersionUID = -1007617488248050075L;
     private String poIdentifier;
     private String name;
     private String type;

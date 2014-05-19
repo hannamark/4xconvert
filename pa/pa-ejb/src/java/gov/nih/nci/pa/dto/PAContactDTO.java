@@ -5,13 +5,16 @@ package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Vrushali
  *
  */
-public class PAContactDTO {
+public class PAContactDTO implements Serializable {
+    private static final long serialVersionUID = -8882819211753249799L;
     private Ii srIdentifier = null; // structural role
     private Ii organizationIdentifier; // org
     private Ii personIdentifier; // person

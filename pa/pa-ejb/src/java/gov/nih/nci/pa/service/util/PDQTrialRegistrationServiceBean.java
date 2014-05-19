@@ -83,6 +83,8 @@
 
 package gov.nih.nci.pa.service.util;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SECURITY_DOMAIN;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -136,6 +138,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
@@ -144,6 +147,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 /**
  * service for loading registration element from pdq.xml into CTRP.
@@ -152,6 +156,8 @@ import org.apache.log4j.Logger;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@SecurityDomain(SECURITY_DOMAIN)
+@RolesAllowed(SUBMITTER_ROLE)
 public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelper
     implements PDQTrialRegistrationServiceBeanRemote {
     @EJB

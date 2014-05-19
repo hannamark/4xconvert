@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.dto;
 
+import java.io.Serializable;
+
 /**
  * Class for holding attributes for Arms DTO.
  * @author Hugh Reinhart
@@ -85,7 +87,8 @@ package gov.nih.nci.pa.dto;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class TrialArmsWebDTO {
+public class TrialArmsWebDTO implements Serializable {
+    private static final long serialVersionUID = -8984411380923055354L;
     private String identifier;
     private String name;
     private String type;

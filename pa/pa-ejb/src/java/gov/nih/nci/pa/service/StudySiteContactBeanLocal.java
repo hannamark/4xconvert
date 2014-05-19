@@ -76,6 +76,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudySite;
@@ -107,8 +108,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(PaHibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudySiteContactBeanLocal extends
         AbstractRoleIsoService<StudySiteContactDTO, StudySiteContact, StudySiteContactConverter> implements
         StudySiteContactServiceLocal {

@@ -110,10 +110,9 @@ import org.hibernate.criterion.Restrictions;
 *
 * @author Naveen Amiruddin
 */
-@SuppressWarnings("unchecked")
 @Stateless
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@SuppressWarnings("unchecked")
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 
     private static final String ALL_FUNDING_MECHANISMS_QUERY = "select fm from FundingMechanism fm "

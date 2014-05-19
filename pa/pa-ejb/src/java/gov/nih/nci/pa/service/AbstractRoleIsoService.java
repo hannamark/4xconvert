@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.FunctionalRole;
@@ -88,8 +89,8 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
+import gov.nih.nci.pa.iso.dto.FunctionalRoleDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -101,6 +102,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.security.RolesAllowed;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.Query;
@@ -114,7 +117,8 @@ import org.hibernate.Session;
  * @param <BO> domain object
  * @param <CONVERTER> converter class
  */
-public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends FunctionalRole,
+@RolesAllowed(SUBMITTER_ROLE)
+public abstract class AbstractRoleIsoService<DTO extends FunctionalRoleDTO, BO extends FunctionalRole,
     CONVERTER extends AbstractConverter<DTO, BO>>
     extends AbstractStudyIsoService<DTO, BO, CONVERTER>
     implements RolePaService<DTO> {

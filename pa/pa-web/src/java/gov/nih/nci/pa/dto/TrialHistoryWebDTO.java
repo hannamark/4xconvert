@@ -78,10 +78,6 @@
 */
 package gov.nih.nci.pa.dto;
 
-import java.util.Date;
-
-import org.apache.commons.lang.time.DateFormatUtils;
-
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -93,18 +89,21 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateFormatUtils;
+
 /**
  * The Class TrialHistoryWebDTO.
  *
  * @author Anupama Sharma
  * @since 4/21/2009
  */
-public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO> {
-
+public class TrialHistoryWebDTO implements Comparable<TrialHistoryWebDTO>, Serializable {
+    private static final long serialVersionUID = -177398658732200978L;
     private static final String AMEND = "Amendment";
-
     private static final String ACTUAL = "Original";
-
     private static final String UPDATE = "Update";
 
     /** The submission number. */

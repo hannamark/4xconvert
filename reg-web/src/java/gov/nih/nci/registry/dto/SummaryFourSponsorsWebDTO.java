@@ -1,12 +1,12 @@
 package gov.nih.nci.registry.dto;
 
-
+import java.io.Serializable;
 /**
  * @author Kalpana Guthikonda
  *
  */
-public class SummaryFourSponsorsWebDTO {
-    
+public class SummaryFourSponsorsWebDTO implements Serializable {
+    private static final long serialVersionUID = 1914801499424205328L;
     private String rowId;
     private String orgId;
     private String orgName;
