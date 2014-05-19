@@ -1,1 +1,0 @@
-NetBean 6.5 freeform (ant) project directory.
