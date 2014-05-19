@@ -7,6 +7,13 @@
 <body>
 <script>
 $('#batchUpload').addClass("active");
+
+$(function() {
+	$( "#upload" ).on( "click", function() {
+		$(".alert").hide();
+	});
+});
+
 </script>
 	<s:if test="hasActionErrors()">
 		<div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong>
