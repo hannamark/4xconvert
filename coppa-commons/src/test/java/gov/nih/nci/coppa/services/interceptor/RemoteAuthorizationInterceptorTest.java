@@ -148,6 +148,11 @@ public class RemoteAuthorizationInterceptorTest {
             public Map<String, Object> getContextData() {
                 return null;
             }
+
+           
+            public Object getTimer() {                
+                return null;
+            }
         });
         assertEquals(UsernameHolder.ANONYMOUS_USERNAME, UsernameHolder.getUser());
         
@@ -188,6 +193,11 @@ public class RemoteAuthorizationInterceptorTest {
             
             @Override
             public Map<String, Object> getContextData() {
+                return null;
+            }
+
+            
+            public Object getTimer() {               
                 return null;
             }
         });

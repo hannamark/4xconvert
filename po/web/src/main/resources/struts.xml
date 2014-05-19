@@ -632,7 +632,13 @@
             <result name="input">/WEB-INF/jsp/import/ctep/importPeople.jsp</result>
             <result name="success">/WEB-INF/jsp/import/ctep/importPeople.jsp</result>
         </action>
-
+        
+        <action name="import/ctep/jms/*" class="gov.nih.nci.po.web.externalimport.CtepImportAction" method="{1}">
+            <interceptor-ref name="poDefaultStack" />
+            <result name="input">/WEB-INF/jsp/import/ctep/mockCtepJms.jsp</result>
+            <result name="success">/WEB-INF/jsp/import/ctep/mockCtepJms.jsp</result>
+        </action>
+        
         <action name="ajax/curate/states" class="gov.nih.nci.po.web.curation.StatesAction" method="loadCountry">
             <result name="success">/WEB-INF/jsp/curate/states.jsp</result>
         </action>

@@ -47,6 +47,9 @@
     <!-- added for remote deployments since file is copied to root of install dir -->
     <basename property="properties.file.name" file="${properties.file}" />
 
+	<!-- No database installation since v4.0 -->
+	<property name="exclude.database" value="true"  />
+	
     <!-- BDA standard structure -->
     <property name="build.dir" location="." />
     <property name="software.dir" location=".." />
@@ -87,8 +90,6 @@
     <property name="iso-datatypes.base.dir" location="${software.dir}/iso-datatypes" />
 
     <!-- Maven comamnd line arguments, bda profile is inside profiles.xml that gets copied to ear folder before build to override exiting properties -->
-    <property name="po.maven.profile.list" value="local,bda" />
-    <property name="po.maven.goal.list" value="clean install" />
     <property name="iso-datatypes.maven.goal.list" value="clean install" />
 
     <!-- Distribution Structure properties, used to copy files into the distribution area.
@@ -111,13 +112,6 @@
     <property name="po-grid-3.2.build.target" value="clean:deployJBoss"/>
     <property name="po-grid-3.2.artifact.dir" value="${po-grid-3.2.base.dir}/target" />
     <property name="po-grid-3.2.dist.dir" value="${dist.exploded.dir}/${po-grid-3.2.dist.relative.dir}"/>
-    <!-- Properties to control po-grid-3.1 build     -->
-    <property name="po-grid-3.1.base.dir" location="${software.dir}/po-grid-3.1"/>
-    <property name="po-grid-3.1.build.file" location="${po-grid-3.1.base.dir}/build.xml"/>
-    <property name="po-grid-3.1.dir.target" value="wsrf.war" />
-    <property name="po-grid-3.1.build.target" value="clean:deployJBoss"/>
-    <property name="po-grid-3.1.artifact.dir" value="${po-grid-3.1.base.dir}/target" />
-    <property name="po-grid-3.1.dist.dir" value="${dist.exploded.dir}/${po-grid-3.1.dist.relative.dir}"/>
     <!-- Properties to control the po-grid-3.0 build -->
     <property name="po-grid-3.0.base.dir" location="${software.dir}/po-grid-3.0"/>
     <property name="po-grid-3.0.build.file" location="${po-grid-3.0.base.dir}/build.xml"/>
@@ -240,8 +234,7 @@
     <target name="clean">
         <delete dir="${dist.dir}" />
         <delete dir="${temp.dir}" />
-        <delete dir="${po-grid-3.2.artifact.dir}" />
-        <delete dir="${po-grid-3.1.artifact.dir}" />
+        <delete dir="${po-grid-3.2.artifact.dir}" />        
         <delete dir="${po-grid-3.0.artifact.dir}" />
     </target>
 
@@ -262,9 +255,7 @@
         <mkdir dir="${download.dir}"/>
         <mkdir dir="${pt.dir}"/>
         <mkdir dir="${po-grid-3.2.artifact.dir}"/>
-        <mkdir dir="${po-grid-3.2.dist.dir}"/>
-        <mkdir dir="${po-grid-3.1.artifact.dir}"/>
-        <mkdir dir="${po-grid-3.1.dist.dir}"/>
+        <mkdir dir="${po-grid-3.2.dist.dir}"/>        
         <mkdir dir="${po-grid-3.0.artifact.dir}"/>
         <mkdir dir="${po-grid-3.0.dist.dir}"/>
         <available file="${jboss.dest.file}" property="jboss.tools.exists"/>
@@ -314,52 +305,15 @@
     clean,
     init,
     build:po,
-    build:po-grid-3.2,
-    build:po-grid-3.1,
+    build:po-grid-3.2,    
     build:po-grid-3.0
     " />
 
     <!-- First Maven Target -->
-    <target name="build:po" depends="init">
-        <delete>
-            <fileset dir="${po.base.dir}">
-                <include name="**/profiles.xml" />
-            </fileset>
-        </delete>
-        <copy todir="${po-client.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-            <filterset>
-                <filter token="jboss.home" value="${local.jboss.home}" />
-                <filter token="db.po.file.name" value="${db.po.create-schema.file}" />
-                <filter token="db.po.generate.drop" value="false" />
-                <filter token="db.po.generate.create" value="true" />
-            </filterset>
-        </copy>
-        <copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-            <filterset>
-                <filter token="jboss.home" value="${local.jboss.home}" />
-                <filter token="db.po.file.name" value="${db.po.create-schema.file}" />
-                <filter token="db.po.generate.drop" value="false" />
-                <filter token="db.po.generate.create" value="true" />
-            </filterset>
-        </copy>
-        <copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-            <filterset>
-                <filter token="jboss.home" value="${local.jboss.home}" />
-                <filter token="db.po.file.name" value="${db.po.create-schema.file}" />
-                <filter token="db.po.generate.drop" value="false" />
-                <filter token="db.po.generate.create" value="true" />
-            </filterset>
-        </copy>
-        <copy todir="${po-web.base.dir}" file="${common.dir}/maven/profiles.xml" overwrite="true">
-            <filterset>
-                <filter token="jboss.home" value="${local.jboss.home}" />
-                <filter token="db.po.file.name" value="${db.po.create-schema.file}" />
-                <filter token="db.po.generate.drop" value="false" />
-                <filter token="db.po.generate.create" value="true" />
-            </filterset>
-        </copy>
-        <maven maven.profile.list="-P ${po.maven.profile.list} -Dskip-liquibase" maven.goal.list="${po.maven.goal.list}" maven.dir="${po.base.dir}" />
-        <copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear" />
+    <target name="build:po" unless="exclude.po-ear">
+    	<ant antfile="build-lite.xml" target="dist">
+    		 <property name="skip.initialization" value="true" />
+    	</ant>
     </target>
 
     <!-- Build po-grid sub-project produces project level artifact -->
@@ -381,32 +335,9 @@
         <zip update="false" destfile="${po-grid-3.2.dist.dir}/${po-grid-3.2.artifact.file}">
           <zipfileset dir="${po-grid-3.2.artifact.dir}/server/${po-grid-3.2-jboss.server.name}/deploy/${po-grid-3.2.dir.target}/" />
         </zip>
-        <delete dir="${po-grid-3.2.artifact.dir}/server" />
+        <delete dir="${po-grid-3.2.artifact.dir}/server" /> 
     </target>
 
-    <!-- Build po-grid sub-project produces project level artifact -->
-    <target name="build:po-grid-3.1" depends="init" unless="exclude.po-grid-3.1">
-        <fail unless="jboss.server.hostname"/>
-
-        <ant inheritAll="false" inheritRefs="false" antfile="${po-grid-3.1.build.file}"
-                target="${po-grid-3.1.build.target}"
-                dir="${po-grid-3.1.base.dir}" >
-          <property name="project.name" value="${project.name}"/>
-          <property name="jboss.dir" value="target"/>
-          <property name="jboss.serverinstance.name" value="${po-grid-3.1-jboss.server.name}"/>
-          <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}"/>
-          <property name="java.naming.provider.url.host" value="localhost"/>
-          <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%"/>
-          <property name="java.naming.security.principal" value="%%pogrid.jndi.principal%%"/>
-          <property name="java.naming.security.credentials" value="%%pogrid.jndi.credentials%%"/>
-          <property name="no.deployment.validation" value="true"/>
-        </ant>
-
-        <zip update="false" destfile="${po-grid-3.1.dist.dir}/${po-grid-3.1.artifact.file}">
-          <zipfileset dir="${po-grid-3.1.artifact.dir}/server/${po-grid-3.1-jboss.server.name}/deploy/${po-grid-3.1.dir.target}/" />
-        </zip>
-        <delete dir="${po-grid-3.1.artifact.dir}/server" />
-    </target>
 
     <!-- Build po-grid-3.0 sub-project produces project level artifact -->
     <target name="build:po-grid-3.0" depends="init" unless="exclude.po-grid-3.0">
@@ -537,15 +468,12 @@
         <unzip src="${cagrid-console.dest.file}" dest="${dist.exploded.dir}" />
         <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true" match="override=.true." replace="" />
         <replaceregexp file="${cagrid-console.dist.dir}/ivy-build.xml" byline="true" match="id=.ivy.instance." replace="" />
-        <!--
-            <ant inheritAll="false" inheritRefs="false"
-                antfile="build.xml"
-                target="deployJBoss"
-                dir="${cagrid-console.dist.dir}"
-                >
-                <property name="jboss.dir" value="${tmp.jboss.dir}"/>
-            </ant>
-            -->
+    	
+    	<replace dir="${cagrid-console.dist.dir}" summary="true">
+    	             <include name="**/build.xml"/>
+    	             <replacetoken><![CDATA[<javac]]></replacetoken>
+    	             <replacevalue><![CDATA[<javac source="1.6" target="1.6"]]></replacevalue>
+    	        </replace>
     </target>
 
 
@@ -563,13 +491,18 @@
         </if>
         <property name="sync-gts.dist.dir" location="${dist.exploded.dir}/${sync-gts.dist.relative.dir}" />
         <unzip src="${download.dir}/${sync-gts.binaries.file}" dest="${sync-gts.dist.dir}" />
-        <!--
-            <ant inheritAll="false" inheritRefs="false"
-                antfile="build.xml"
-                target="all"
-                dir="${sync-gts.dist.dir}/syncgts"
-                />
-            -->
+    	
+        <replace dir="${sync-gts.dist.dir}" summary="true">
+        	 <include name="**/build.xml"/>
+        	 <replacetoken><![CDATA[<javac]]></replacetoken>
+        	 <replacevalue><![CDATA[<javac source="1.6" target="1.6"]]></replacevalue>
+        </replace>
+        	
+    	<replace dir="${sync-gts.dist.dir}" summary="true">
+             <include name="**/build.xml"/>
+             <replacetoken><![CDATA[<antcall target="stubGenerationPostProcessor" />]]></replacetoken>
+             <replacevalue><![CDATA[<antcall target="stubGenerationPostProcessor" inheritRefs="true"/>]]></replacevalue>
+    	</replace>        	
     </target>
 
     <target name="dist:tools:retrieve:cagrid-target">
@@ -592,7 +525,7 @@
         <ant dir="${common.dir}/cgmm" />
     </target>
 
-    <target name="deploy:remote:upgrade:ahp" description="Installs and configures the application and required binaries and re-creates the datbase  on a remote machine. Used for NCI tiers (dev, qa, stg, prod)" depends="remote:upgrade:po-ear,remote:upgrade:po-grid-3.2,remote:upgrade:po-grid-3.1,remote:upgrade:po-grid-3.0">
+    <target name="deploy:remote:upgrade:ahp" description="Installs and configures the application and required binaries and re-creates the datbase  on a remote machine. Used for NCI tiers (dev, qa, stg, prod)" depends="remote:upgrade:po-ear,remote:upgrade:po-grid-3.2,remote:upgrade:po-grid-3.0">
     </target>
 
     <target name="dist:tools:retrieve:jboss-bindings" description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">
@@ -643,8 +576,7 @@
         <copy todir="${dist.exploded.dir}">
             <fileset dir="${build.dir}">
                 <include name="install-poear.xml"/>
-                <include name="install-pogrid-3.2.xml"/>
-                <include name="install-pogrid-3.1.xml"/>
+                <include name="install-pogrid-3.2.xml"/>                
                 <include name="install-pogrid-3.0.xml"/>
             </fileset>
         </copy>
@@ -654,8 +586,7 @@
   <!-- Creates the installer distribution used by automated or manual remote installations -->
   <target name="dist:installer" depends="build:all, dist:installer:prep">
     <delete file="${dist.dir}/${po-ear.install.zip.file}"/>
-    <delete file="${dist.dir}/${po-grid-3.2.install.zip.file}"/>
-    <delete file="${dist.dir}/${po-grid-3.1.install.zip.file}"/>
+    <delete file="${dist.dir}/${po-grid-3.2.install.zip.file}"/>    
     <delete file="${dist.dir}/${po-grid-3.0.install.zip.file}"/>
     <!-- Set environment name to external -->
     <replaceregexp file="${dist.exploded.dir}/install.properties" byline="true" match="^(env.name)=.*" replace="\1=external" />
@@ -665,10 +596,9 @@
       optional.property.list="ldap.url,ldap.basedn"
       delete.property.list="exclude.jboss.backup"
       />
-    <zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid-3.2.dist.relative.dir}/**,${po-grid-3.1.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid-3.2.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.1.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid-3.1.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.2.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
-    <zip destfile="${dist.dir}/${po-grid-3.0.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.2.dist.relative.dir}/**,${po-grid-3.1.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-ear.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid-3.2.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid-3.2.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
+    <zip destfile="${dist.dir}/${po-grid-3.0.install.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.2.dist.relative.dir}/**"/>
   </target>
 
   <!-- Copies install time resources into distribution tree -->
@@ -691,8 +621,7 @@
         <copy todir="${dist.exploded.dir}">
             <fileset dir="${build.dir}">
                 <include name="install-poear.xml"/>
-                <include name="install-pogrid-3.2.xml"/>
-                <include name="install-pogrid-3.1.xml"/>
+                <include name="install-pogrid-3.2.xml"/>                
                 <include name="install-pogrid-3.0.xml"/>
             </fileset>
         </copy>
@@ -702,8 +631,7 @@
     <!-- Creates upgrader distribution -->
     <target name="dist:upgrader" depends="build:all, dist:upgrader:prep">
         <delete file="${dist.dir}/${po-ear.upgrade.zip.file}"/>
-        <delete file="${dist.dir}/${po-grid-3.2.upgrade.zip.file}"/>
-        <delete file="${dist.dir}/${po-grid-3.1.upgrade.zip.file}"/>
+        <delete file="${dist.dir}/${po-grid-3.2.upgrade.zip.file}"/>        
         <delete file="${dist.dir}/${po-grid-3.0.upgrade.zip.file}"/>
         <!-- Set environment name to external -->
         <copy todir="${dist.exploded.dir}" overwrite="true">
@@ -721,10 +649,9 @@
           delete.property.list="exclude.jboss.backup"
           />
         <replaceregexp file="${dist.exploded.dir}/build.xml" byline="true" match="(&lt;property name=&quot;properties.file&quot;\s+value=&quot;).*(&quot;\s*\/&gt;)" replace="\1upgrade.properties\2" />
-        <zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid-3.2.dist.relative.dir}/**,${po-grid-3.1.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${po-grid-3.2.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.1.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${po-grid-3.1.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.2.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
-        <zip destfile="${dist.dir}/${po-grid-3.0.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.2.dist.relative.dir}/**,${po-grid-3.1.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${po-ear.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-grid-3.2.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>
+        <zip destfile="${dist.dir}/${po-grid-3.2.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>        
+        <zip destfile="${dist.dir}/${po-grid-3.0.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.2.dist.relative.dir}/**"/>
     </target>
 
 
@@ -746,7 +673,7 @@
 
 
     <!-- Upgrades the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${upgrade.target} (defaults to upgrade unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) upgrades. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
-    <target name="deploy:local:upgrade" depends="build:all,local:upgrade" description="Upgrades the application on the local machine, used for developer desktops and ci environments">
+    <target name="deploy:local:upgrade" depends="deploy:local:install" description="Upgrades the application on the local machine, used for developer desktops and ci environments">
 
     </target>
     <target name="local:upgrade" depends="dist:upgrader:prep">
@@ -796,23 +723,6 @@
       remoteSshKeyfile="${pogrid-3.2.ssh.key.file}"
       remotesshcommand=". .bash_profile;cd ${pogrid-3.2.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:po-grid-3.2-jboss" />
   </target>
-  <target name="remote:install:po-grid-3.1" unless="exclude.po-grid-3.1">
-    <!-- install po-grid only-->
-    <deploy-files
-         ssh.user="${pogrid-3.1.ssh.server.username}"
-         ssh.host="${pogrid-3.1.ssh.server.hostname}"
-         ssh.port="${pogrid-3.1.ssh.port}"
-         ssh.key.file="${pogrid-3.1.ssh.key.file}"
-         remote.directory.property.name="pogrid-3.1.ssh.dir.temp"
-         dist.file="${po-grid-3.1.install.zip.file}"
-         />
-    <remote-ssh
-      remoteSshUser="${pogrid-3.1.ssh.server.username}"
-      remoteSshHost="${pogrid-3.1.ssh.server.hostname}"
-      remoteSshPort="${pogrid-3.1.ssh.port}"
-      remoteSshKeyfile="${pogrid-3.1.ssh.key.file}"
-      remotesshcommand=". .bash_profile;cd ${pogrid-3.1.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} -Dforce.reinstall=true install:po-grid-3.1-jboss" />
-  </target>
   <target name="remote:install:po-grid-3.0" unless="exclude.po-grid-3.0">
     <!-- install po-grid-3.0 only-->
     <deploy-files
@@ -841,7 +751,7 @@
     ">
     </target>
 
-  <target name="remote:upgrade" depends="dist:upgrader,remote:upgrade:po-ear,remote:upgrade:po-grid-3.2,remote:upgrade:po-grid-3.1,remote:upgrade:po-grid-3.0">
+  <target name="remote:upgrade" depends="dist:upgrader,remote:upgrade:po-ear,remote:upgrade:po-grid-3.2,remote:upgrade:po-grid-3.0">
   </target>
 
   <target name="remote:upgrade:po-ear">
@@ -879,27 +789,6 @@
            remotesshcommand=". .bash_profile;cd ${pogrid-3.2.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} ${override.properties.string} -Dforce.reinstall=true upgrade-dac:po-grid-3.2-jboss" />
   </target>
 
-  <target name="remote:upgrade:po-grid-3.1" unless="exclude.po-grid-3.1">
-    <!-- install po-grid only-->
-    <deploy-files
-             ssh.user="${pogrid-3.1.ssh.server.username}"
-             ssh.host="${pogrid-3.1.ssh.server.hostname}"
-             ssh.port="${pogrid-3.1.ssh.port}"
-             ssh.key.file="${pogrid-3.1.ssh.key.file}"
-             remote.directory.property.name="pogrid-3.1.ssh.dir.temp"
-             dist.file="${po-grid-3.1.upgrade.zip.file}"
-             />
-      <override-properties-prep
-                                  override.properties="${override.properties}"
-                                  override.properties.string.property.name="override.properties.string"
-                                  />
-    <remote-ssh
-           remoteSshUser="${pogrid-3.1.ssh.server.username}"
-           remoteSshHost="${pogrid-3.1.ssh.server.hostname}"
-            remoteSshPort="${pogrid-3.1.ssh.port}"
-           remoteSshKeyfile="${pogrid-3.1.ssh.key.file}"
-           remotesshcommand=". .bash_profile;cd ${pogrid-3.1.ssh.dir.temp}; ant -Dproperties.file=${properties.file.name} ${override.properties.string} -Dforce.reinstall=true upgrade-dac:po-grid-3.1-jboss" />
-  </target>
 
 
   <target name="remote:upgrade:po-grid-3.0" unless="exclude.po-grid-3.0">

@@ -133,7 +133,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         // Goto Manage IP Page
         accessManageIdentifiedPersonScreen();
         // add IP
-        clickAndWait("add_button");
+        clickAndWait("add_button_io");
         assertTrue(selenium.isTextPresent("Other Person Identifier Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
@@ -155,10 +155,11 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         clickAndWaitSaveButton();
 
         assertTrue(selenium.isTextPresent("exact:Other Person Identifier was successfully created!"));
-        String ocId = selenium.getTable("row.1.0");
+        String ocId = selenium.getTable("ip_row.1.0");
         assertNotEquals("null", ocId.trim());
         selenium.click("link=" + getSortFieldTestColumnName());
-        ocId = selenium.getTable("row.1.0");
+        pause(1000);
+        ocId = selenium.getTable("ip_row.1.0");
         assertNotEquals("null", ocId.trim());
 
         clickAndWait("return_to_button");

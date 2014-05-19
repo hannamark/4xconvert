@@ -85,6 +85,10 @@ package gov.nih.nci.coppa.test.integration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.UUID;
+
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.ConnectionMetaData;
@@ -96,6 +100,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicSubscriber;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -114,14 +119,14 @@ public class TopicIntegrationTest {
 
     private static final String SUBSCRIBER_ROLE_USER = "subscriber";
     private static final String SUBSCRIBER_ROLE_USER_PASS = "pass";
-    private static final String CONNECTION_FACTORY_JNDI_BINDING_NAME = "/POConnectionFactory";
+    private static final String CONNECTION_FACTORY_JNDI_BINDING_NAME = "jms/PORemoteConnectionFactory";
     private static final String PUBLISHER_ROLE_USER_PASS = "pass";
     private static final String PUBLISHER_ROLE_USER = "publisher";
-    private static final String PO_TOPIC_NAME = "POTopic";
+    private static final String PO_TOPIC_NAME = "jms/topic/POTopic";
 
     @Before
     public void setUp() throws Exception {
-        JBossMbeanUtility.removeAllMessagesOnTopic(getDestinationJNDIName(),PO_TOPIC_NAME);
+        //JBossMbeanUtility.removeAllMessagesOnTopic(getDestinationJNDIName(),PO_TOPIC_NAME);
     }
 
     @After
@@ -131,13 +136,15 @@ public class TopicIntegrationTest {
     @Test
     public void publishMessageToTopicThenHaveMultipleSubscribersReceiveMessage() throws Exception {
 
-        //create subscription1
         subscribe("subscriber1");
         subscribe("subscriber2");
-        //create subscription2
+        
+        // get rid of possible old messages not yet received
+        consumeAll("subscriber1");      
+        consumeAll("subscriber2");        
 
         // publish a message
-        String msg = "" + System.currentTimeMillis();
+        String msg = "publishMessageToTopicThenHaveMultipleSubscribersReceiveMessage_"+UUID.randomUUID().toString();
         publish(msg);
 
         // consume messages for both subscriptions
@@ -149,9 +156,10 @@ public class TopicIntegrationTest {
     public void subscribeThenUnsubscribeThenPostMessageThenReceiveMessage() throws Exception {
         //create subscription1
         subscribe("subscriber1");
+        consumeAll("subscriber1");    
         unsubscribe("subscriber1");
         // publish a message
-        String msg = "" + System.currentTimeMillis();
+        String msg = "subscribeThenUnsubscribeThenPostMessageThenReceiveMessage_"+UUID.randomUUID().toString();
         publish(msg);
 
         // attempt to get  both messages
@@ -163,18 +171,19 @@ public class TopicIntegrationTest {
         assertEquals(msg, receiveMessage("subscriber1"));
     }
 
-    private String unsubscribe(String subscriptionIdentity) throws NamingException, JMSException,
-    Exception {
+    private String unsubscribe(String subscriptionIdentity)
+            throws NamingException, JMSException, Exception {
         InitialContext ic = null;
         Connection connection = null;
         String messageReceived = null;
         try {
-            ic = new InitialContext();
+            ic = getContext();
             ConnectionFactory cf = (ConnectionFactory) ic
-            .lookup(CONNECTION_FACTORY_JNDI_BINDING_NAME);
+                    .lookup(CONNECTION_FACTORY_JNDI_BINDING_NAME);
             log("Topic " + getDestinationJNDIName() + " exists");
 
-            connection = cf.createConnection(SUBSCRIBER_ROLE_USER, SUBSCRIBER_ROLE_USER_PASS);
+            connection = cf.createConnection(SUBSCRIBER_ROLE_USER,
+                    SUBSCRIBER_ROLE_USER_PASS);
             connection.setClientID(subscriptionIdentity);
             Session session = connection.createSession(false,
                     Session.AUTO_ACKNOWLEDGE);
@@ -193,13 +202,14 @@ public class TopicIntegrationTest {
         Connection connection = null;
         String messageReceived = null;
         try {
-            ic = new InitialContext();
+            ic = getContext();
             ConnectionFactory cf = (ConnectionFactory) ic
-            .lookup(CONNECTION_FACTORY_JNDI_BINDING_NAME);
+                    .lookup(CONNECTION_FACTORY_JNDI_BINDING_NAME);
             Topic topic = (Topic) ic.lookup(getDestinationJNDIName());
             log("Topic " + getDestinationJNDIName() + " exists");
 
-            connection = cf.createConnection(SUBSCRIBER_ROLE_USER, SUBSCRIBER_ROLE_USER_PASS);
+            connection = cf.createConnection(SUBSCRIBER_ROLE_USER,
+                    SUBSCRIBER_ROLE_USER_PASS);
             connection.setClientID(subscriptionIdentity);
             Session session = connection.createSession(false,
                     Session.AUTO_ACKNOWLEDGE);
@@ -212,6 +222,47 @@ public class TopicIntegrationTest {
         }
         return messageReceived;
     }
+    
+    private void consumeAll(String subscriptionIdentity)
+            throws NamingException, JMSException, Exception {
+        InitialContext ic = null;
+        Connection connection = null;       
+        try {
+            ic = getContext();
+            TopicConnectionFactory cf = (TopicConnectionFactory) ic
+                    .lookup(CONNECTION_FACTORY_JNDI_BINDING_NAME);
+            Topic topic = (Topic) ic.lookup(getDestinationJNDIName());
+            log("Topic " + getDestinationJNDIName() + " exists");
+
+            connection = cf.createConnection(SUBSCRIBER_ROLE_USER,
+                    SUBSCRIBER_ROLE_USER_PASS);
+            connection.setClientID(subscriptionIdentity);
+            Session session = connection.createSession(false,
+                    Session.AUTO_ACKNOWLEDGE);
+            TopicSubscriber durableSubscriber = session
+                    .createDurableSubscriber(topic, subscriptionIdentity);
+
+            ExampleListener messageListener = new ExampleListener(500L);
+            durableSubscriber.setMessageListener(messageListener);
+
+            connection.start();
+
+            while (true) {
+                messageListener.waitForMessage();
+                if (messageListener.getMessage() != null) {
+                    messageListener.setMessage(null);
+                } else {
+                    break;
+                }
+            }
+
+        } finally {
+            close(ic, connection);
+        }
+
+    }
+
+
 
     private String receiveMessage(String subscriptionIdentity) throws NamingException, JMSException,
             Exception {
@@ -219,8 +270,8 @@ public class TopicIntegrationTest {
         Connection connection = null;
         String messageReceived = null;
         try {
-            ic = new InitialContext();
-            ConnectionFactory cf = (ConnectionFactory) ic
+            ic = getContext();
+            TopicConnectionFactory cf = (TopicConnectionFactory) ic
                     .lookup(CONNECTION_FACTORY_JNDI_BINDING_NAME);
             Topic topic = (Topic) ic.lookup(getDestinationJNDIName());
             log("Topic " + getDestinationJNDIName() + " exists");
@@ -249,6 +300,8 @@ public class TopicIntegrationTest {
         }
         return messageReceived;
     }
+    
+    
 
 
     private String publish(String textMsg) throws NamingException, JMSException, Exception {
@@ -256,7 +309,7 @@ public class TopicIntegrationTest {
         Connection connection = null;
         String messagePublised = null;
         try {
-            ic = new InitialContext();
+            ic = getContext();
             ConnectionFactory cf = (ConnectionFactory) ic
                     .lookup(CONNECTION_FACTORY_JNDI_BINDING_NAME);
             Topic topic = (Topic) ic.lookup(getDestinationJNDIName());
@@ -288,7 +341,7 @@ public class TopicIntegrationTest {
         Connection connection = null;
 
         try {
-            ic = new InitialContext();
+            ic = getContext();
             ConnectionFactory cf = (ConnectionFactory) ic
                     .lookup(CONNECTION_FACTORY_JNDI_BINDING_NAME);
             Topic topic = (Topic) ic.lookup(getDestinationJNDIName());
@@ -312,6 +365,10 @@ public class TopicIntegrationTest {
         }
     }
 
+    private InitialContext getContext() throws NamingException {
+       return RemoteServiceHelper.createNewJndiContext();
+    }
+
     private void closeConnection(Connection connection) {
         try {
             if (connection != null) {
@@ -323,11 +380,11 @@ public class TopicIntegrationTest {
     }
 
     protected String getDestinationJNDIName() {
-        return "topic/" + PO_TOPIC_NAME;
+        return PO_TOPIC_NAME;
     }
 
     protected void log(String s) {
-        LOG.debug(s);
+        LOG.info(s);
     }
 
     protected void displayProviderInfo(ConnectionMetaData metaData)
@@ -359,6 +416,14 @@ public class TopicIntegrationTest {
 
     public class ExampleListener implements MessageListener {
         private Message message;
+        private long blockTimeMillis = 5000L;
+
+        public ExampleListener() {
+        }
+
+        public ExampleListener(long blockTimeMillis) {
+            this.blockTimeMillis = blockTimeMillis;
+        }
 
         public synchronized void onMessage(Message msg) {
             this.message = msg;
@@ -368,6 +433,10 @@ public class TopicIntegrationTest {
         public synchronized Message getMessage() {
             return message;
         }
+        
+        public synchronized void setMessage(Message message) {
+            this.message = message;
+        }
 
         protected synchronized void waitForMessage() {
             if (message != null) {
@@ -375,7 +444,7 @@ public class TopicIntegrationTest {
             }
 
             try {
-                wait(5000);
+                wait(blockTimeMillis);
             } catch (InterruptedException e) {
                 // OK
             }

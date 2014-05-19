@@ -107,9 +107,10 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
     public void testOversightCommittee() throws Exception {
         // Setup
         setOrgRoleTitleText("Oversight Committee Information");
-        setOrgRoleLinkText("link=Manage Oversight Committee(s)");
+        setOrgRoleLinkText("link=Oversight Committee (0)");
         setOrgRoleCreateMessage("Oversight Committee was successfully created!");
         setOrgRoleUpdateMessage("Oversight Committee was successfully updated!");
+        setOrgRoleSearchResultsRowNumber("oc_row.1.0");
 
         // Create a new organization.
         createActiveOrganization();
@@ -120,11 +121,13 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         // Create
         setOrgRoleSearchResultsMessage("One item found");
         createOversightCommittee(TYPE_IRB, ROLE_STATUS_ACTIVE);
+        setOrgRoleLinkText("link=Oversight Committee (1)");
         createDuplicateOversightCommittee(TYPE_IRB, ROLE_STATUS_ACTIVE);
 
         setOrgRoleSearchResultsMessage("2 items found, displaying all items");
-        setOrgRoleSearchResultsRowNumber("row.2.0");
+        setOrgRoleSearchResultsRowNumber("oc_row.2.0");
         createOversightCommittee(TYPE_EC, ROLE_STATUS_PENDING);
+        setOrgRoleLinkText("link=Oversight Committee (2) P");
         createDuplicateOversightCommittee(TYPE_EC, ROLE_STATUS_PENDING);
 
         // Test update.
@@ -137,8 +140,9 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
 
         // Ensure that you can now add TYPE_EC again, since the previous one was updated to TYPE_REB.
         setOrgRoleSearchResultsMessage("3 items found, displaying all items");
-        setOrgRoleSearchResultsRowNumber("row.3.0");
+        setOrgRoleSearchResultsRowNumber("oc_row.3.0");
         createOversightCommittee(TYPE_EC, ROLE_STATUS_PENDING);
+        setOrgRoleLinkText("link=Oversight Committee (3) P");
         createDuplicateOversightCommittee(TYPE_EC, ROLE_STATUS_PENDING);
 
         // Check the duplicate error message when attempting to add TYPE_REB again.
@@ -149,9 +153,11 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         // Then test the CR.
         createPendingOrganization();
         setOrgRoleSearchResultsMessage("One item found");
-        setOrgRoleSearchResultsRowNumber("row.1.0");
+        setOrgRoleSearchResultsRowNumber("oc_row.1.0");
+        setOrgRoleLinkText("link=Oversight Committee (0)");
         createOversightCommittee(TYPE_IRB, ROLE_STATUS_PENDING);
 
+        setOrgRoleLinkText("link=Oversight Committee (1) P");
         openOrgRoleScreen(true);
         selenium.select("curateRoleForm_role_typeCode", TYPE_EC);
         selenium.select("curateRoleForm.role.status", ROLE_STATUS_ACTIVE);
@@ -165,7 +171,7 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         openOrganizationCuratePage();
         accessOrgRoleScreen();
         if (addMode) {
-            clickAndWait("add_button");
+            clickAndWait("add_button_oc");
         } else {
             clickAndWait("id=edit_oversightCommittee_id_" + getOrganizationalRoleId());
         }

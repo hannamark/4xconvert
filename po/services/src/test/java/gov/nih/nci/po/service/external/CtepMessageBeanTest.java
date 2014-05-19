@@ -33,6 +33,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.naming.Context;
 
+import org.apache.log4j.SimpleLayout;
 import org.apache.log4j.WriterAppender;
 import org.junit.After;
 import org.junit.Assert;
@@ -69,18 +70,18 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
     }
 
     private StringWriter logWriter;
+    private WriterAppender appender;
 
     @Before
-    public void setUpLogger() {
-        WriterAppender wa = (WriterAppender) EmailLogger.LOG.getAppender("EMAIL");
-        logWriter = new StringWriter();
-        wa.setWriter(logWriter);
+    public void setUpLogger() {                
+        logWriter = new StringWriter();   
+        appender = new WriterAppender(new SimpleLayout(), logWriter);
+        EmailLogger.LOG.addAppender(appender);
     }
 
     @After
     public void undoLogger() {
-        WriterAppender wa = (WriterAppender) EmailLogger.LOG.getAppender("EMAIL");
-        wa.close();
+        EmailLogger.LOG.removeAppender(appender);
         logWriter.getBuffer().setLength(0);
         logWriter = null;
     }
@@ -114,14 +115,11 @@ public class CtepMessageBeanTest extends AbstractServiceBeanTest {
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_ADDRESS, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.NULLIFY, RecordType.PERSON_CONTACT, "42", idx++);
         checkers[idx] = new Checker(true, TransactionType.INSERT, RecordType.PERSON_CONTACT, "42", idx++);
-        checkers[idx] = new Checker(false, null, null, null, idx++ /*,
+        checkers[idx] = new Checker(false, null, null, null, idx++,
                 "Failed to process JMS message ID:13",
-                "org.xml.sax.SAXParseException: The markup in the document preceding the root element must be well-formed",
-                "at org.apache.commons.digester.Digester.parse"*/);
-        checkers[idx] = new Checker(false, null, null, null, idx++/*,
-                "Failed to process JMS message ID:14",
-                "java.lang.IllegalArgumentException: Unsupported Record Type in message BOGUS_TYPE",
-                "at gov.nih.nci.po.service.external.CtepMessageBean.processMessage"*/);
+                "org.xml.sax.SAXParseException");
+        checkers[idx] = new Checker(false, null, null, null, idx++,
+                "Unsuported Record Type in message BOGUS_TYPE");
         checkers[idx] = new Checker(true, TransactionType.REJECT, RecordType.ORGANIZATION, "abc", idx++);
         checkers[idx] = new Checker(true, TransactionType.DUPLICATE, RecordType.ORGANIZATION, "abc", idx++);
         checkers[idx] = new Checker(true, TransactionType.DELETE, RecordType.ORGANIZATION_ADDRESS, "03013", idx++);

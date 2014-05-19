@@ -243,7 +243,7 @@
 				</antcall>
 			</sequential>
 		</for>
-		<antcall target="stubGenerationPostProcessor" />
+		<antcall target="stubGenerationPostProcessor" inheritRefs="true"/>
 		<runtarget target="postStubs" />
 	</target>
 
@@ -257,7 +257,7 @@
 	<!-- Compile the stubs generated in the previous step -->
 	<target name="compileStubs" depends="stubs">
 		<runtarget target="preCompileStubs" />
-		<javac srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
+		<javac source="1.6" target="1.6" srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
 			<include name="**/*.java" />
 		</javac>
 		<runtarget target="postCompileStubs" />
@@ -267,7 +267,7 @@
 	<!-- Compile the implementation classes (service, resource, etc.) -->
 	<target name="compile" depends="compileStubs" description="Compiles the service.">
 		<runtarget target="preCompile" />
-		<javac srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
+		<javac source="1.6" target="1.6" srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
 
 		<!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
 		<copy toDir="${build.dest}">
@@ -282,7 +282,7 @@
 	<!-- Compile the test implementation classes (service, resource, etc.) -->
 	<target name="compileTests" depends="compile">
 		<runtarget target="preCompileTests" />
-		<javac srcdir="${test.src.dir}" classpathref="test.build.classpath" destdir="${test.build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
+		<javac source="1.6" target="1.6" srcdir="${test.src.dir}" classpathref="test.build.classpath" destdir="${test.build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
 		<runtarget target="postCompileTests" />
 	</target>
 

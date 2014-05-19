@@ -108,16 +108,27 @@ import javax.naming.NamingException;
  */
 public class RemoteServiceHelper {
 
-    static final String PERSON_SERVICE_BEAN_REMOTE = "po/PersonEntityServiceBean/remote";
-    static final String ORG_SERVICE_BEAN_REMOTE = "po/OrganizationEntityServiceBean/remote";
-    static final String BUSINESS_SERVICE_BEAN_REMOTE = "po/BusinessServiceBean/remote";
+    static final String PERSON_SERVICE_BEAN_REMOTE = "po/po-services/PersonEntityServiceBean"
+            + "!gov.nih.nci.services.person.PersonEntityServiceRemote";
+    static final String ORG_SERVICE_BEAN_REMOTE = "po/po-services/"
+            + "OrganizationEntityServiceBean!"
+            + "gov.nih.nci.services.organization.OrganizationEntityServiceRemote";
+    static final String BUSINESS_SERVICE_BEAN_REMOTE = "po/po-services/BusinessServiceBean"
+            + "!gov.nih.nci.services.BusinessServiceRemote";
 
-    static final String HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareProviderCorrelationServiceBean/remote";
-    static final String CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE = "po/ClinicalResearchStaffCorrelationServiceBean/remote";
-    static final String PATIENT_CORRELATION_BEAN_REMOTE = "po/PatientCorrelationServiceBean/remote";
-    static final String HEALTH_CARE_FACILITY_CORRELATION_SERVICE_BEAN_REMOTE = "po/HealthCareFacilityCorrelationServiceBean/remote";
-    static final String OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE = "po/OversightCommitteeCorrelationServiceBean/remote";
-    static final String RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE = "po/ResearchOrganizationCorrelationServiceBean/remote";
+    static final String HEALTH_CARE_PROVIDER_CORRELATION_SERVICE_BEAN_REMOTE = "po/po-services/HealthCareProviderCorrelationServiceBean"
+            + "!gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote";
+    static final String CLINICAL_RESEARCH_STAFF_CORRELATION_BEAN_REMOTE = "po/po-services/ClinicalResearchStaffCorrelationServiceBean"
+            + "!gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote";
+    static final String PATIENT_CORRELATION_BEAN_REMOTE = "po/po-services/PatientCorrelationServiceBean"
+            + "!gov.nih.nci.services.correlation.PatientCorrelationServiceRemote";
+    static final String HEALTH_CARE_FACILITY_CORRELATION_SERVICE_BEAN_REMOTE = "po/po-services/"
+            + "HealthCareFacilityCorrelationServiceBean"
+            + "!gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote";
+    static final String OVERSIGHT_COMMITTEE_CORRELATION_SERVICE_BEAN_REMOTE = "po/po-services/OversightCommitteeCorrelationServiceBean"
+            + "!gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote";
+    static final String RESEARCH_ORG_CORRELATION_SERVICE_BEAN_REMOTE = "po/po-services/ResearchOrganizationCorrelationServiceBean!"
+            + "gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote";
     static final String QUALIFIED_ENTITY_CORRELATION_SERVICE_BEAN_REMOTE = "po/QualifiedEntityCorrelationServiceBean/remote";
 
     private static String username = "ejbclient";
@@ -127,14 +138,42 @@ public class RemoteServiceHelper {
     private static InitialContext jmxCtx;
 
     private static Object lookup(String resource) throws NamingException {
-        if (ctx == null) {
-            Properties env = new Properties();
-            env.setProperty(Context.SECURITY_PRINCIPAL, username);
-            env.setProperty(Context.SECURITY_CREDENTIALS, password);
-            env.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.security.jndi.JndiLoginInitialContextFactory");
-            ctx = new InitialContext(env);
-        }
+        initializeJndiCtx();
         return ctx.lookup(resource);
+        
+    }
+
+    /**
+     * @throws NamingException
+     */
+    private static void initializeJndiCtx() throws NamingException {
+        if (ctx == null) {            
+            ctx = createNewJndiContext();
+        }
+    }
+
+    /**
+     * @throws NamingException
+     */
+    public static InitialContext createNewJndiContext() throws NamingException {
+        Properties jndiProps = new Properties();
+        jndiProps.put(Context.INITIAL_CONTEXT_FACTORY,
+                "org.jboss.naming.remote.client.InitialContextFactory");
+        jndiProps.put(Context.PROVIDER_URL,
+                "remote://" + TstProperties.getServerHostname() + ":"
+                        + TstProperties.getServerJndiPort());
+        jndiProps.put(Context.SECURITY_PRINCIPAL, username);
+        jndiProps.put(Context.SECURITY_CREDENTIALS, password);
+        jndiProps.put("jboss.naming.client.ejb.context", true);
+        jndiProps
+                .put("jboss.naming.client.connect.options.org.xnio.Options.SASL_POLICY_NOPLAINTEXT",
+                        "false");
+        return new InitialContext(jndiProps);
+    }
+    
+    public static InitialContext getCtx() throws NamingException {
+        initializeJndiCtx();
+        return ctx;
     }
 
     /**
@@ -210,12 +249,14 @@ public class RemoteServiceHelper {
 
     public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationServiceRemote()
             throws NamingException {
-        return (IdentifiedOrganizationCorrelationServiceRemote) lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+        return (IdentifiedOrganizationCorrelationServiceRemote) lookup("po/po-services/IdentifiedOrganizationCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote");
     }
 
     public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonCorrelationServiceRemote()
             throws NamingException {
-        return (IdentifiedPersonCorrelationServiceRemote) lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
+        return (IdentifiedPersonCorrelationServiceRemote) lookup("po/po-services/IdentifiedPersonCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote");
     }
 
     public static BusinessServiceRemote getBusinessService()
@@ -239,6 +280,7 @@ public class RemoteServiceHelper {
 
     public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService()
             throws NamingException {
-        return (OrganizationalContactCorrelationServiceRemote) lookup("po/OrganizationalContactCorrelationServiceBean/remote");
+        return (OrganizationalContactCorrelationServiceRemote) lookup("po/po-services/OrganizationalContactCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote");
     }
 }

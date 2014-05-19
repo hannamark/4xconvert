@@ -83,17 +83,25 @@
 package gov.nih.nci.po.data.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.service.AbstractHibernateTestCase;
+import gov.nih.nci.po.service.AbstractServiceBeanTest;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.util.FamilyOrganizationRelationshipFamilyComparator;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.ServiceLocator;
 
 import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -101,7 +109,30 @@ import org.junit.Test;
  * @author moweis
  *
  */
-public class FamilyOrganizationRelationshipConverterTest extends AbstractHibernateTestCase {
+public class FamilyOrganizationRelationshipConverterTest extends AbstractServiceBeanTest {
+    
+   
+    private ServiceLocator serviceLocator;
+
+    @Before
+    public void before() {
+        serviceLocator = PoRegistry.getInstance().getServiceLocator();
+        ServiceLocator mockLocator = mock(ServiceLocator.class);
+        
+        FamilyOrganizationRelationshipServiceLocal bean = mock(FamilyOrganizationRelationshipServiceLocal.class);
+        when(bean.getById(anyLong())).thenReturn(
+               new FamilyOrganizationRelationship());
+        
+        when(mockLocator.getFamilyOrganizationRelationshipService())
+                .thenReturn(bean);
+        PoRegistry.getInstance().setServiceLocator(mockLocator);
+    }
+    
+    @After
+    public void after() {
+        PoRegistry.getInstance().setServiceLocator(serviceLocator);
+    }
+    
     
     @Test(expected = UnsupportedOperationException.class)
     public void testUnsupportedTypeSortedSet() {
@@ -120,7 +151,7 @@ public class FamilyOrganizationRelationshipConverterTest extends AbstractHiberna
         for (int i=1 ; i<5 ; i++) {
             dSet.setItem(new HashSet<Ii>());
             dSet.getItem().add(new IdConverter.FamilyOrganizationRelationshipIdConverter().convertToIi((long) i));
-        }
+        }        
         SortedSet<FamilyOrganizationRelationship> retSet = converter.convert(SortedSet.class, dSet);
         assertEquals(dSet.getItem().size(), retSet.size());
     }

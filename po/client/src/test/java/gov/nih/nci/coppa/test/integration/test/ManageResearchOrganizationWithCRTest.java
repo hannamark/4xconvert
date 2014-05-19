@@ -114,8 +114,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
 
         // Goto Manage RO Page
         accessManageResearchOrganizationScreen();
-        // add RO
-        clickAndWait("add_button");
+        clickAndWait("add_button_ro");        
         assertTrue(selenium.isTextPresent("Research Organization Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
@@ -137,10 +136,11 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         clickAndWaitSaveButton();
 
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully created!"));
-        String roId = selenium.getTable("row.1.0");
+        String roId = selenium.getTable("ro_row.1.0");
         assertNotEquals("null", roId.trim());
         selenium.click("link=" + getSortFieldTestColumnName());
-        roId = selenium.getTable("row.1.0");
+        pause(1000);
+        roId = selenium.getTable("ro_row.1.0");
         assertNotEquals("null", roId.trim());
 
         clickAndWait("return_to_button");
@@ -187,10 +187,10 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
     private void checkContactInformation() throws Exception {
         // Check contact information functionality - add/remove, eror messages etc.
         checkPostalAddress();
-        checkEmail();
+        checkEmail(0);
         checkUrl();
-        checkPhone();
-        checkFax();
+        checkPhone(0);
+        checkFax(0);
         checkTty();
     }
 

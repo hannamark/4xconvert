@@ -80,7 +80,7 @@
             </div>
             <div class="clearfloat"></div>
             <div class="btnwrapper">
-                <po:buttonRow><po:button href="#" onclick="startLogin();" style="continue" text="Login"/></po:buttonRow>
+                <po:buttonRow><po:button id="loginButton" href="#" onclick="startLogin();" style="continue" text="Login"/></po:buttonRow>
             </div>
         </form>
     </div>

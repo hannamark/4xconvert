@@ -87,10 +87,12 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.external.CtepImportException;
+import gov.nih.nci.po.service.external.CtepMessageReceiver;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.MockTextMessage;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -103,14 +105,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.transaction.RollbackException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
-import org.jboss.tm.JBossRollbackException;
 
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
@@ -128,6 +133,23 @@ public class CtepImportAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private File file;
     private String ctepId;
+    private String jmsMsg;
+
+   
+
+    /**
+     * @return the jmsMsg
+     */
+    public String getJmsMsg() {
+        return jmsMsg;
+    }
+
+    /**
+     * @param jmsMsg the jmsMsg to set
+     */
+    public void setJmsMsg(String jmsMsg) {
+        this.jmsMsg = StringEscapeUtils.unescapeXml(jmsMsg);
+    }
 
     /**
      * Action to go to the page allowing file upload.
@@ -135,6 +157,14 @@ public class CtepImportAction extends ActionSupport {
      */
     @SkipValidation
     public String start() {
+        return INPUT;
+    }
+    
+    /**
+     * @return String
+     */
+    @SkipValidation
+    public String mockCtepJms() {
         return INPUT;
     }
 
@@ -156,6 +186,46 @@ public class CtepImportAction extends ActionSupport {
      */
     public String uploadPeople() throws IOException, JMSException {
         return upload(new PersonImporter());
+    }
+    
+    /**
+     * @return SUCCESS
+     */
+    @SkipValidation
+    public String sendMockedCtepJms() {
+        try {
+            sendJmsMessageToListener();
+            ActionHelper
+                    .saveMessage("JMS Message sent; please check application log to see processing results.");
+            return SUCCESS;
+        } catch (Exception e) {
+            addActionError(ExceptionUtils.getFullStackTrace(e));
+            return INPUT;
+        }
+    }
+
+    /**
+     * 
+     */
+    private void sendJmsMessageToListener() {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    CtepMessageReceiver.getCtepMessageListener().onMessage(
+                            createJmsMessage(jmsMsg));
+                } catch (Exception e) {
+                    LOG.error(e, e);
+                }
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+
+    }
+
+    private Message createJmsMessage(String txt) {
+        return new MockTextMessage((txt));
     }
 
     private String upload(Importer importer) throws IOException {
@@ -313,11 +383,10 @@ public class CtepImportAction extends ActionSupport {
         }
 
         private void handleInvalidStateExceptions(Exception e) {
-            if (e.getCause() instanceof JBossRollbackException
-                    && ((JBossRollbackException) e.getCause()).getNested() 
-                        instanceof InvalidStateException) {
-                InvalidStateException exception = 
-                    (InvalidStateException) ((JBossRollbackException) e.getCause()).getNested();
+            if (e.getCause() instanceof RollbackException
+                    && e.getCause().getCause() instanceof InvalidStateException) {
+                InvalidStateException exception = (InvalidStateException) e
+                        .getCause().getCause();
                 for (InvalidValue invalidValue : exception.getInvalidValues()) {
                     LOG.error(MessageFormat.format(INVALID_STATE_MSG, invalidValue.getPropertyName(),
                             invalidValue.getValue(), invalidValue.getMessage()));

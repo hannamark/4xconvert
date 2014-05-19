@@ -269,6 +269,7 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
         this.target = target;
     }
     
+    
     /**
      * @return boolean
      */

@@ -27,7 +27,14 @@ public class CSMSyncListener implements ServletContextListener {
      */
     public void contextInitialized(ServletContextEvent context) {
         try {
-            properties.load(getClass().getResourceAsStream("/WEB-INF/classes/csm.properties"));
+            try {
+                properties.load(getClass().getResourceAsStream(
+                        "/WEB-INF/classes/csm.properties"));
+            } catch (RuntimeException e) {
+                LOG.warn("Unable to load /WEB-INF/classes/csm.properties; now trying /csm.properties...");
+                properties.load(Thread.currentThread().getContextClassLoader()
+                        .getResourceAsStream("/csm.properties"));
+            }
         } catch (Exception e) {
             throw new RuntimeException("ERROR LOADING CSM PROPERTIES FILE!", e);
         }

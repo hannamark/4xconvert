@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog
+<databaseChangeLog logicalFilePath="/tmp/po/db-upgrade.xml"
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
@@ -8,188 +8,192 @@
     <preConditions>
         <dbms type="postgresql" />
     </preConditions>
-    <changeSet id="PO-787" author="smiller">
+    <changeSet id="PO-787" author="smiller"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-787 - ctep oids</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/1.1/ctepOids.sql"/>
     </changeSet>
-    <changeSet id="PO-933" author="smatyas">
+    <changeSet id="PO-933" author="smatyas"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-933 - setting organization.name and organizationcr.name lengths to 160</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/2.1/PO-933.sql"/>
     </changeSet>
-    <changeSet id="PO-1119" author="smatyas">
+    <changeSet id="PO-1119" author="smatyas"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1119 - dropping auditlogdetail.foreignkey column </comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-1119.sql"/>
     </changeSet>
-    <changeSet id="PO-893" author="slustbader">
+    <changeSet id="PO-893" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-893 - organization generic contact</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-893.sql"/>
     </changeSet>
-    <changeSet id="PO-1189" author="slustbader">
+    <changeSet id="PO-1189" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1189 - new organizational contact types</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/2.2/PO-1189.sql"/>
     </changeSet>
-    <changeSet id="PO-1214" author="smatyas">
+    <changeSet id="PO-1214" author="smatyas"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1214 - adding postal address and telecoms to HealthCareFacility and ResearchOrganizaiton</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1214.sql"/>
     </changeSet>
-    <changeSet id="PO-1199" author="slustbader">
+    <changeSet id="PO-1199" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1199 - set of otherIdentifiers on correlations</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1199.sql"/>
     </changeSet>
-    <changeSet id="PO-1213" author="slustbader">
+    <changeSet id="PO-1213" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1213 - adding person props sex, race, ethnic codes, birthdatw</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1213.sql"/>
     </changeSet>
-    <changeSet id="PO-1213-2" author="mshestopalov">
+    <changeSet id="PO-1213-2" author="mshestopalov"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1213 - adding indexes for person bio fields</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1213-2.sql"/>
     </changeSet>
-    <changeSet id="PO-1241" author="mshestopalov">
+    <changeSet id="PO-1241" author="mshestopalov"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1241 - adding patient role</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1241.sql"/>
     </changeSet>
-    <changeSet id="PO-1229" author="slustbader">
+    <changeSet id="PO-1229" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1229 - add CTEP ID to structural role otherIdentifiers</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1229.sql"/>
     </changeSet>
-    <changeSet id="PO-1309" author="slustbader">
+    <changeSet id="PO-1309" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1309 - add index on otheridentifier join tables</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1309.sql"/>
     </changeSet>
-    <changeSet id="PO-1292-cleanup" author="smatyas">
+    <changeSet id="PO-1292-cleanup" author="smatyas"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1292 - cleans up the broken version of PO-1292.sql if it has already been run</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1292-cleanup.sql"/>
     </changeSet>
-    <changeSet id="PO-1292" author="smatyas">
+    <changeSet id="PO-1292" author="smatyas"><validCheckSum>ANY</validCheckSum>
        <!--  The initial version of this file would have failed on production, so it was corrected.  runOnChange is
              set to true so that the corrected version will be run, even if the broken version had already been run
              (after running the PO-1292-cleanup.sql script). -->
        <comment>Upgrade for PO-1292 - updates to support grid security</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1292.sql"/>
     </changeSet>
-    <changeSet id="PO-1369" author="slustbader">
+    <changeSet id="PO-1369" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1309 - Change CTEP org root</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1369.sql"/>
     </changeSet>
-    <changeSet id="PO-1214-data" author="slustbader">
+    <changeSet id="PO-1214-data" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1214 - Setting name for HealthCareFacility and ResearchOrganizaiton based on Organization name</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.0/PO-1214-data.sql"/>
     </changeSet>
-    <changeSet id="PO-1334" author="kkanchinadam">
+    <changeSet id="PO-1334" author="kkanchinadam"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1334 - add type_id columns to the organizationalcontact and organizationalcontactcr tables.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1334.sql"/>
     </changeSet>
-    <changeSet id="PO-1335-oc" author="kkanchinadam">
+    <changeSet id="PO-1335-oc" author="kkanchinadam"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1335 - Procedures for migrating existing type_ids to the organizationalcontact table.. Delete orgcontact_types table.</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.1/PO-1335-oc.sql"/>
     </changeSet>
-    <changeSet id="PO-1335-ocr" author="kkanchinadam">
+    <changeSet id="PO-1335-ocr" author="kkanchinadam"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1335 - Procedures for migrating existing type_ids to the organizationalcontactcr table. Delete orgcontactcr_types table.</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.1/PO-1335-ocr.sql"/>
     </changeSet>
-    <changeSet id="PO-1371" author="kkanchinadam">
+    <changeSet id="PO-1371" author="kkanchinadam"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1371 - For the tables - organizationalcontact and organizationalcontactcr - set orgcontacttype_id to code="Site" (if null), alter the orgcontacttype_id column to NOT NULL</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.1/PO-1371.sql"/>
     </changeSet>
-    <changeSet id="PO-1353" author="smatyas">
+    <changeSet id="PO-1353" author="smatyas"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1353 - DDL to be CSM/UPT 4.0.1 compliant</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.1/PO-1353.sql"/>
     </changeSet>
-    <changeSet id="PO-1129" author="ludetc">
+    <changeSet id="PO-1129" author="ludetc"><validCheckSum>ANY</validCheckSum>
        <comment>Replace Research Org. funding mechanism from Hibernate generated bytea to a foreign key into the FundingMechanism table. Data Migration is handle in a separate context listener</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-1129.sql"/>
     </changeSet>
-    <changeSet id="PO-1318" author="smatyas">
+    <changeSet id="PO-1318" author="smatyas"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade for PO-1318 - II.reliability changed to VRF from VER</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-1318.sql"/>
     </changeSet>
-    <changeSet id="PO-1478" author="slustbader">
+    <changeSet id="PO-1478" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>Ensure all ROs and HCFs are PENDING if they don't have a CTEP ID</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-1478.sql"/>
     </changeSet>
-    <changeSet id="PO-850" author="mshestopalov">
+    <changeSet id="PO-850" author="mshestopalov"><validCheckSum>ANY</validCheckSum>
        <comment>Change all reliability to VRF from ISS where root is CTEP on Org related imports.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-850.sql"/>
     </changeSet>
-    <changeSet id="PO-657" author="ludetc">
+    <changeSet id="PO-657" author="ludetc"><validCheckSum>ANY</validCheckSum>
        <comment>Add missing FK indexes on patient race and ethnicgroup.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-647.sql"/>
     </changeSet>
-    <changeSet id="PO-1492" author="mshestopalov">
+    <changeSet id="PO-1492" author="mshestopalov"><validCheckSum>ANY</validCheckSum>
        <comment>Add function for filling in unknown person emails.</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1492.sql"/>
     </changeSet>
-    <changeSet id="PO-1501" author="ludetc">
+    <changeSet id="PO-1501" author="ludetc"><validCheckSum>ANY</validCheckSum>
        <comment>Upgrade to CSM 4.2.</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1501.MigrationScript4.1.sql"/>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.2/PO-1501.MigrationScript4.2.sql"/>
     </changeSet>
-    <changeSet id="PO-1696" author="aevansel">
+    <changeSet id="PO-1696" author="aevansel"><validCheckSum>ANY</validCheckSum>
        <comment>Setting csm_applications settings for po to null.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.2/PO-1696.sql"/>
     </changeSet>
-    <changeSet id="PO-2339" author="aevansel">
+    <changeSet id="PO-2339" author="aevansel"><validCheckSum>ANY</validCheckSum>
        <comment>PO-2339: Updating CSM table structures to mirror those found in the PA database.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.3/PO-2339.sql"/>
     </changeSet>
-    <changeSet id="PO-1458" author="slustbader">
+    <changeSet id="PO-1458" author="slustbader"><validCheckSum>ANY</validCheckSum>
        <comment>PO-1458: Final cleanup of RO funding mechanism</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-1458.sql"/>
     </changeSet>
-    <changeSet id="PO-3030" author="aevansel">
+    <changeSet id="PO-3030" author="aevansel"><validCheckSum>ANY</validCheckSum>
        <comment>PO-3030: Removing leading spaces from the CTEP root of older Idenfied Persons.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-3030.sql"/>
     </changeSet>
-    <changeSet id="PO-3152" author="oweisms">
+    <changeSet id="PO-3152" author="oweisms"><validCheckSum>ANY</validCheckSum>
        <comment>PO-3152: Create schema for organization roll-up.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-3152.sql"/>
     </changeSet>
-    <changeSet id="PO-3203" author="oweisms">
+    <changeSet id="PO-3203" author="oweisms"><validCheckSum>ANY</validCheckSum>
        <comment>PO-3203: Synchronized family schema and hibernate annotations.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-3203.sql"/>
     </changeSet>
-    <changeSet id="PO-3579" author="oweisms">
+    <changeSet id="PO-3579" author="oweisms"><validCheckSum>ANY</validCheckSum>
        <comment>PO-3579: Nullify PO records of CTEP internal ids.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.5/PO-3579.sql"/>
     </changeSet>
-    <changeSet id="PO-3672" author="oweisms">
+    <changeSet id="PO-3672" author="oweisms"><validCheckSum>ANY</validCheckSum>
        <comment>PO-3672: Update CTEP Person root.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.5/PO-3672.sql"/>
     </changeSet>
-    <changeSet id="PO-3509" author="oweisms">
+    <changeSet id="PO-3509" author="oweisms"><validCheckSum>ANY</validCheckSum>
        <comment>PO-3509: Fix bad po phone/fax numbers.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.5/PO-3509.sql"/>
     </changeSet>
-    <changeSet id="PO-3445" author="krylovd">
+    <changeSet id="PO-3445" author="krylovd"><validCheckSum>ANY</validCheckSum>
        <comment>PO-3445: adding multiple comments per org.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9/PO-3445.sql"/>
     </changeSet>
-    <changeSet id="PO-5735" author="krylovd">
+    <changeSet id="PO-5735" author="krylovd"><validCheckSum>ANY</validCheckSum>
        <comment>PO-5735: adding multiple comments per org.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9/PO-5735.sql"/>
     </changeSet>
-    <changeSet id="PO-5833" author="krylovd">
+    <changeSet id="PO-5833" author="krylovd"><validCheckSum>ANY</validCheckSum>
        <comment>Added table to keep OMB/Disclaimer text.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9/PO-5833.sql"/>
     </changeSet>
-    <changeSet id="PO-5803" author="Kalpana">
+    <changeSet id="PO-5803" author="Kalpana"><validCheckSum>ANY</validCheckSum>
        <comment>Added table to log ctep jms messages.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9.1/PO-5803.sql"/>
     </changeSet>
-    <changeSet id="PO-5803-2" author="Kalpana">
+    <changeSet id="PO-5803-2" author="Kalpana"><validCheckSum>ANY</validCheckSum>
        <comment>altered table ctep jms messages.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9.1/PO-5803-2.sql"/>
     </changeSet>
-    <changeSet id="PO-5803-3" author="Kalpana">
+    <changeSet id="PO-5803-3" author="Kalpana"><validCheckSum>ANY</validCheckSum>
        <comment>added PK to ctep jms messages table.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.9.1/PO-5803-3.sql"/>
     </changeSet>
-    <changeSet id="PO-5922" author="Hugh">
+    <changeSet id="PO-5922" author="Hugh"><validCheckSum>ANY</validCheckSum>
        <comment>Remove not null constraint from zip.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.10/PO-5922.sql"/>
     </changeSet>
-    <changeSet id="PO-6248" author="Hugh">
+    <changeSet id="PO-6248" author="Hugh"><validCheckSum>ANY</validCheckSum>
        <comment>Add P30 grants table.</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/3.10/PO-6248.sql"/>
+    </changeSet>
+    <changeSet id="PO-6437-1" author="krylovd"><validCheckSum>ANY</validCheckSum>
+       <comment>In case of new install, inserts csm_remote_group records poiniting to Training. Won't do anything for existing databases.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/4.0/PO-6437-1.sql"/>
     </changeSet>
 </databaseChangeLog>

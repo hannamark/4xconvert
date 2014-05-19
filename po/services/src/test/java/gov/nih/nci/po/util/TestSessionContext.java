@@ -2,6 +2,8 @@ package gov.nih.nci.po.util;
 
 import java.security.Identity;
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.ejb.EJBHome;
@@ -105,6 +107,18 @@ public class TestSessionContext implements SessionContext {
             return "test_principal_name";
         }
         
+    }
+
+    @Override
+    public Map<String, Object> getContextData() {
+        // TODO Auto-generated method stub
+        return new HashMap<String, Object>();
+    }
+
+    @Override
+    public boolean wasCancelCalled() throws IllegalStateException {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

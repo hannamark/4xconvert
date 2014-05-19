@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
  
-<databaseChangeLog
+<databaseChangeLog logicalFilePath="/tmp/po/db-upgrade.xml"
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd">
     
-    <include file="db-install.xml"/>
-    <include file="db-upgrade.xml"/>
+    <include file="/db/db-install/db-install.xml"/>
+    <include file="/db/db-upgrade/db-upgrade.xml"/>
     
 </databaseChangeLog>

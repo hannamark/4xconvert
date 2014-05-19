@@ -127,10 +127,9 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         savePersonAsActive(personId);
         // open Person Curate page
         openAndWait("po-web/protected/person/curate/start.action?person.id=" + personIdExt);
-        // Goto Manage HCP Page
-        accessManageHealthCareProviderScreen();
-        // add HCP
-        clickAndWait("add_button");
+        
+        clickAndWait("link=HCP (0)");
+        clickAndWait("add_button_ro");
         assertTrue(selenium.isTextPresent("Health Care Provider Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
@@ -147,13 +146,9 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         
         // select a ACTIVE Scoper
         selectOrganizationScoper(activeOrgId.trim(), AFFILIATE_ORG_FOR_PERSON);
-        clickAndWaitSaveButton();
-        assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
-        assertFalse(selenium.isTextPresent("exact:Role status not compatible with associated entity's status."));
-        assertFalse(selenium.isTextPresent("exact:Affiliated Organization ID must be set."));
-        // add postal addresses
+        
         addPostalAddressUsingPopup("456 jik", "suite xyz", "phoenix", "AZ", "67890", "United States", 1);
-        selenium.selectFrame("relative=parent");
+        driver.switchTo().defaultContent();
       
         // add Contact Information
         inputContactInfoForUSAndCan("abc@example.com", new String[] {"123", "456", "7890"}, new String[] {"234", "567",
@@ -161,10 +156,11 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         // save HCP
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Health Care Provider was successfully created!"));
-        String hcpId = selenium.getTable("row.1.0");
+        String hcpId = selenium.getTable("hcp_row.1.0");
         assertNotEquals("null", hcpId.trim());
         selenium.click("link=" + getSortFieldTestColumnName());
-        hcpId = selenium.getTable("row.1.0");
+        pause(500);
+        hcpId = selenium.getTable("hcp_row.1.0");
         assertNotEquals("null", hcpId.trim());
 
         clickAndWait("return_to_button");
@@ -195,14 +191,14 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertEquals("United States", selenium.getText("wwctrl_address.country1"));
 
         // email, phone, fax, tty, url
-        waitForElementById("email-remove-0", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-0"));
+        waitForElementById("email-remove-1", 5);
+        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-1"));
 
-        waitForElementById("phone-remove-0", 5);
-        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-0"));
+        waitForElementById("phone-remove-1", 5);
+        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-1"));
 
-        waitForElementById("fax-remove-0", 5);
-        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-0"));
+        waitForElementById("fax-remove-1", 5);
+        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-1"));
 
         waitForElementById("tty-remove-0", 5);
         assertEquals("345-678-9012 | Remove", selenium.getText("id=tty-entry-0"));
@@ -219,16 +215,16 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertEquals("CR cert license change", selenium.getValue("curateRoleForm.role.certificateLicenseText").trim());
 
         selenium.click("copy_emailEntry_value0"); 
-        waitForElementById("email-remove-1", 5);
-        assertEquals("cr@example.com | Remove", selenium.getText("id=email-entry-1"));
+        waitForElementById("email-remove-2", 5);
+        assertEquals("cr@example.com | Remove", selenium.getText("id=email-entry-2"));
          
         selenium.click("copy_phoneEntry_value0"); 
-        waitForElementById("phone-remove-1", 5);
-        assertEquals("112-233-4455 | Remove", selenium.getText("id=phone-entry-1"));
+        waitForElementById("phone-remove-2", 5);
+        assertEquals("112-233-4455 | Remove", selenium.getText("id=phone-entry-2"));
          
         selenium.click("copy_faxEntry_value0"); 
-        waitForElementById("fax-remove-1", 5);
-        assertEquals("112-233-4455 | Remove", selenium.getText("id=fax-entry-1"));
+        waitForElementById("fax-remove-2", 5);
+        assertEquals("112-233-4455 | Remove", selenium.getText("id=fax-entry-2"));
          
         selenium.click("copy_ttyEntry_value0"); 
         waitForElementById("tty-remove-1", 5);

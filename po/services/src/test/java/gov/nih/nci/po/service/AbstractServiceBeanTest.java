@@ -9,18 +9,18 @@ public abstract class AbstractServiceBeanTest extends AbstractBeanTest {
     
     @BeforeClass
     public static void setUpJNDI() {
-        contextBuilder.bind("po/ResearchOrganizationServiceBean/local", EjbTestHelper.getResearchOrganizationServiceBean());
-        contextBuilder.bind("po/IdentifiedOrganizationServiceBean/local", EjbTestHelper.getIdentifiedOrganizationServiceBean());
-        contextBuilder.bind("po/IdentifiedPersonServiceBean/local", EjbTestHelper.getIdentifiedPersonServiceBean());
-        contextBuilder.bind("po/HealthCareProviderServiceBean/local", EjbTestHelper.getHealthCareProviderServiceBean());
-        contextBuilder.bind("po/HealthCareFacilityServiceBean/local", EjbTestHelper.getHealthCareFacilityServiceBean());
-        contextBuilder.bind("po/ClinicalResearchStaffServiceBean/local", EjbTestHelper.getClinicalResearchStaffServiceBean());
-        contextBuilder.bind("po/OrganizationalContactServiceBean/local", EjbTestHelper.getOrganizationalContactService());
-        contextBuilder.bind("po/OversightCommitteeServiceBean/local", EjbTestHelper.getOversightCommitteeServiceBean());
-        contextBuilder.bind("po/PatientServiceBean/local", EjbTestHelper.getPatientServiceBean());
-        contextBuilder.bind("po/FamilyServiceBean/local", EjbTestHelper.getFamilyServiceBean());
-        contextBuilder.bind("po/FamilyOrganizationRelationshipServiceBean/local", EjbTestHelper.getFamilyOrganizationRelationshipService());
-        contextBuilder.bind("po/OrganizationRelationshipServiceBean/local", EjbTestHelper.getOrganizationRelationshipService());
+        contextBuilder.bind("java:app/po-services/ResearchOrganizationServiceBean", EjbTestHelper.getResearchOrganizationServiceBean());
+        contextBuilder.bind("java:app/po-services/IdentifiedOrganizationServiceBean", EjbTestHelper.getIdentifiedOrganizationServiceBean());
+        contextBuilder.bind("java:app/po-services/IdentifiedPersonServiceBean", EjbTestHelper.getIdentifiedPersonServiceBean());
+        contextBuilder.bind("java:app/po-services/HealthCareProviderServiceBean", EjbTestHelper.getHealthCareProviderServiceBean());
+        contextBuilder.bind("java:app/po-services/HealthCareFacilityServiceBean", EjbTestHelper.getHealthCareFacilityServiceBean());
+        contextBuilder.bind("java:app/po-services/ClinicalResearchStaffServiceBean", EjbTestHelper.getClinicalResearchStaffServiceBean());
+        contextBuilder.bind("java:app/po-services/OrganizationalContactServiceBean", EjbTestHelper.getOrganizationalContactService());
+        contextBuilder.bind("java:app/po-services/OversightCommitteeServiceBean", EjbTestHelper.getOversightCommitteeServiceBean());
+        contextBuilder.bind("java:app/po-services/PatientServiceBean", EjbTestHelper.getPatientServiceBean());
+        contextBuilder.bind("java:app/po-services/FamilyServiceBean", EjbTestHelper.getFamilyServiceBean());
+        contextBuilder.bind("java:app/po-services/FamilyOrganizationRelationshipServiceBean", EjbTestHelper.getFamilyOrganizationRelationshipService());
+        contextBuilder.bind("java:app/po-services/OrganizationRelationshipServiceBean", EjbTestHelper.getOrganizationRelationshipService());
     }
 
     @AfterClass
@@ -29,12 +29,12 @@ public abstract class AbstractServiceBeanTest extends AbstractBeanTest {
     }
     
     public HealthCareFacilityServiceBean getHealthCareFacilityServiceBean() {
-        return (HealthCareFacilityServiceBean) JndiUtils.lookup("po/HealthCareFacilityServiceBean/local");
+        return (HealthCareFacilityServiceBean) JndiUtils.lookup("java:app/po-services/HealthCareFacilityServiceBean");
     }
     public ResearchOrganizationServiceBean getResearchOrganizationServiceBean() {
-        return (ResearchOrganizationServiceBean) JndiUtils.lookup("po/ResearchOrganizationServiceBean/local");
+        return (ResearchOrganizationServiceBean) JndiUtils.lookup("java:app/po-services/ResearchOrganizationServiceBean");
     }
     public OversightCommitteeServiceBean getOversightCommitteeServiceBean() {
-        return (OversightCommitteeServiceBean) JndiUtils.lookup("po/OversightCommitteeServiceBean/local");
+        return (OversightCommitteeServiceBean) JndiUtils.lookup("java:app/po-services/OversightCommitteeServiceBean");
     }
 }

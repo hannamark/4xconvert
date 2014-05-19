@@ -7,7 +7,7 @@
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
         <artifactId>po</artifactId>
-        <version>3.10.0</version>
+        <version>4.0.0</version>
     </parent>
 
     <artifactId>po-services</artifactId>
@@ -27,16 +27,18 @@
         <admin.db.username>poadmin</admin.db.username>
         <admin.db.password>poadmin123</admin.db.password>
         <hbm2ddl.drop.table>true</hbm2ddl.drop.table>
-        <hbm2ddl.create.table>true</hbm2ddl.create.table>
-        <jboss.home>target/jbossDeploy</jboss.home>
+        <hbm2ddl.create.table>true</hbm2ddl.create.table>        
         <xsnapshot.version>1.1-beta4</xsnapshot.version>
         <ctep.username>coppauser20</ctep.username>
         <ctep.password>coppa#2009</ctep.password>
-        <ctep.url>t3://156.40.130.202:7036</ctep.url>
+        <ctep.url>t3://gappsbeta-ctep.nci.nih.gov:7036</ctep.url>
         <ctep.jms.client.id>POApplication</ctep.jms.client.id>
         <ctep.jms.subscription.name>JMSSUBSCRIBER</ctep.jms.subscription.name>
         <ctep.jms.topic.connection.factory.name>jms/weblogicConnectionFactory</ctep.jms.topic.connection.factory.name>
         <ctep.jms.topic.name>jms/ces_out_topic</ctep.jms.topic.name>
+        <log.smtp.host>smtp.example.com</log.smtp.host>
+        <log.smtp.from>changeme@example.com</log.smtp.from>
+        <log.smtp.to>changeme@example.com</log.smtp.to>
         <db-upgrade.run.dir>${pom.basedir}/src/main/db/db-upgrade</db-upgrade.run.dir>
         <db-install.run.dir>${pom.basedir}/src/main/db/db-install</db-install.run.dir>
     </properties>
@@ -44,9 +46,9 @@
     <dependencies>
         <!-- JBoss Provided Libs -->
         <dependency>
-            <groupId>javax.ejb</groupId>
-            <artifactId>ejb-api</artifactId>
-            <version>3.0</version>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <version>1.0.2.Final</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -62,14 +64,26 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jboss-annotations-ejb3</artifactId>
-            <version>RC9.Patch-1</version>
+            <groupId>org.jboss.ejb3</groupId>
+            <artifactId>jboss-ejb3-ext-api</artifactId>
+            <version>2.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.spec.javax.interceptor</groupId>
+            <artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+            <version>1.0.1.Final</version>
+            <scope>provided</scope>
+        </dependency>  
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>          
+        <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
+            <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -80,15 +94,33 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>jms</artifactId>
-            <version>1.1</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jbosssx</artifactId>
-            <version>3.2.3</version>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.6</version>
+           <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.6</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <version>1.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -124,8 +156,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.fiveamsolutions</groupId>
-            <artifactId>nci-commons-core</artifactId>
+            <groupId>gov.nih.nci.coppa</groupId>
+            <artifactId>nci-commons-ctrp-core</artifactId>
             <version>${nci-commons.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -258,6 +290,14 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>${cargo-maven2-plugin.version}</version>
+                <configuration>                   
+                         <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
@@ -280,6 +320,14 @@
                     <instrumentation>
                         <excludes>
                             <exclude>gov/nih/nci/po/service/external/*</exclude>
+                            <exclude>gov/nih/nci/po/util/EmailLogger*</exclude>
+                            <exclude>gov/nih/nci/po/data/bo/PersonCR*</exclude>
+                            <exclude>gov/nih/nci/po/data/bo/OrganizationCR*</exclude>                            
+                            <exclude>gov/nih/nci/po/data/bo/ClinicalResearchStaffCR*</exclude>
+                            <exclude>gov/nih/nci/po/data/bo/HealthCareFacilityCR*</exclude>
+                            <exclude>gov/nih/nci/po/data/bo/HealthCareProviderCR*</exclude>
+                            <exclude>gov/nih/nci/po/data/bo/OrganizationalContactCR*</exclude>
+                            <exclude>gov/nih/nci/po/data/bo/ResearchOrganizationCR*</exclude>
                         </excludes>
                     </instrumentation>
                 </configuration>
@@ -327,8 +375,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.fiveamsolutions</groupId>
-                <artifactId>nci-commons-maven-plugin</artifactId>
+                <groupId>gov.nih.nci.coppa</groupId>
+                <artifactId>nci-commons-ctrp-maven-plugin</artifactId>
                 <version>${nci-commons.version}</version>
                 <configuration>
                     <autoNameIndexes>true</autoNameIndexes>
@@ -351,7 +399,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate</artifactId>
+                        <artifactId>hibernate-core</artifactId>
                         <version>${hibernate.version}</version>
                         <scope>provided</scope>
                     </dependency>
@@ -361,6 +409,30 @@
                         <version>${hibernate.annotations.version}</version>
                         <scope>provided</scope>
                     </dependency>
+                    <dependency>
+                       <groupId>org.hibernate</groupId>
+                       <artifactId>hibernate-validator</artifactId>
+                       <version>${hibernate.validator.version}</version>
+                       <scope>provided</scope>
+                    </dependency>
+                    <dependency>
+			            <groupId>cglib</groupId>
+			            <artifactId>cglib</artifactId>
+			            <version>2.2</version>
+			            <scope>provided</scope>
+			        </dependency>
+			        <dependency>
+			            <groupId>org.slf4j</groupId>
+			            <artifactId>slf4j-api</artifactId>
+			            <version>1.5.6</version>
+			           <scope>provided</scope>
+			        </dependency>
+			        <dependency>
+			            <groupId>org.slf4j</groupId>
+			            <artifactId>slf4j-log4j12</artifactId>
+			            <version>1.5.6</version>
+			            <scope>provided</scope>
+			        </dependency>
                     <dependency>
                         <groupId>${jdbc.groupId}</groupId>
                         <artifactId>${jdbc.artifactId}</artifactId>
@@ -452,37 +524,6 @@
     </build>
     <profiles>
         <profile>
-            <id>local-db</id>
-            <activation>
-                <property><name>!skip-liquibase</name></property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.liquibase</groupId>
-                        <artifactId>liquibase-plugin</artifactId>
-                        <version>1.9.0.0</version>
-                        <executions>
-                            <execution>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <changeLogFile>src/main/db/db-changelog.xml</changeLogFile>
-                            <driver>${jdbc.driverClassName}</driver>
-                            <url>${jdbc.url}</url>
-                            <username>${jdbc.username}</username>
-                            <password>${jdbc.password}</password>
-                            <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
             <id>init-db</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -498,8 +539,8 @@
                             <password>${admin.db.password}</password>
                             <autocommit>true</autocommit>
                             <sqlCommand>
-                                drop database if exists ${database.name};
-                                create database ${database.name};
+                                drop database if exists ${database.name};                                
+                                create database ${database.name};                                
                                 grant all on database ${database.name} to ${jdbc.username};
                             </sqlCommand>
                         </configuration>

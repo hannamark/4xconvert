@@ -104,6 +104,7 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
      * Verifies PO-1155 via UI.
      */
     public void testVerifyReasearchOrganizationTypeOrder() throws Exception {
+        
         getToCreateResearchOrganization();
 
         List<String> selectOptions = Arrays.asList(selenium.getSelectOptions("role.typeCode"));
@@ -128,6 +129,7 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
      * Verifies PO-979 via UI
      */
     public void testVerifyReasearchOrganizationFundingMechanismHasDescription() throws Exception {
+        
         getToCreateResearchOrganization();
 
         selenium.select("role.typeCode", "label=" + SELECT_A_ROLE_TYPE);
@@ -162,6 +164,7 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
     }
 
     public void testFundingMechanismIsSelectedIfOnlyOneOption() throws Exception {
+        
         getToCreateResearchOrganization();
 
         selenium.select("role.typeCode", SELECT_ROLE_WITH_ONE_FUNDING);

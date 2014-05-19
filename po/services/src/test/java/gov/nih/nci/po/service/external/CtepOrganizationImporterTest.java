@@ -423,6 +423,9 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
         // update the org.
         Organization importedOrg = importer.importOrganization(org.getIdentifier());
+        importedOrg.getResearchOrganizations().size();
+        importedOrg.getHealthCareFacilities().size();
+        
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         MessageProducerTest.assertMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService(), false);

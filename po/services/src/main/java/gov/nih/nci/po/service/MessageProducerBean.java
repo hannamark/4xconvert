@@ -167,7 +167,7 @@ public class MessageProducerBean implements MessageProducerLocal {
      * @return the topic.
      */
     protected Topic getTopic(InitialContext ic) {
-        return (Topic) JndiUtils.lookup(ic, "/topic/" + MessageProducerBean.TOPIC_NAME);
+        return (Topic) JndiUtils.lookup(ic, "topic/" + MessageProducerBean.TOPIC_NAME);
     }
 
     /**

@@ -3,22 +3,14 @@
 
 1.1    Source Tree Structure
 
-  * services /
+  * services 
     Sub-project that packages all PO services for deployment
-  * services / common
-    Common services, including PO data model, persistence, generated DTO
-  * services / grid
-    caGrid analytic service
-  * services / ear
-    deployment archive for the services
-
-  * applications /
-    Sub-project for packaging relevant applications for deployment
-  * applications / web
+  * ear
+    deployment archive for the application
+  * web
     Sub-project for web-based UI for P, O, and correlation services
-  * applications / ear
-    Sub-project to package the applications in an ear.
-
+  * client
+    Integration tests including Selenium UI tests.  
   * pom.xml
     Top level Maven project file
   * profiles.xml.example
@@ -30,16 +22,13 @@
 
 1.2 Development Environment Setup
 
-  * Install maven (if needed)
-    PO is not compatible with maven 2.1.0+, so you'll need to use 2.0.10 (or a later version of 2.0.x).
-
-  * Install postgres 8.4+ (if needed)
-    With Postgres 8.4, you'll have to set max_prepared_transactions to 5 in postgresql.conf (on a Mac, that file is located in /Library/PostgreSQL/8.4/data/);
+  * Install maven 2.2
+  * Install postgres 9.2
+    You'll have to set max_prepared_transactions to 5 in postgresql.conf (on a Mac, that file is located in /Library/PostgreSQL/8.4/data/);
     you'll need to restart Postgres after changing the value.
 
-  * Install JBoss
-    Installation of JBoss is handled by build-po.
-    Please read build-po/readme.txt for setup instructions.
+  * Install JBoss 6.2 EAP    
+    Please read build-po/readme.txt for setup instructions; you need to execute build-po install at least once.
     From build-po, run: ant deploy:local:install
     Note location of jboss install. If the jboss location in build-po has been changed from the default,
     set the jboss.home property in profiles.xml files to match.
@@ -53,90 +42,42 @@
         * Checkstyle - http://eclipse-cs.sourceforge.net/update
   * Initial DB setup
 
-    The build-po install will handle the creation of a db. You may create a different db for use by unit tests, selenium tests,
-    etc. The db settings set by default can be overwritten in your profiles.xml. For example you may set up a db profile such as:
-    <profile>
-        <!--
-            Use to run integration-tests against a poear server instance running from build-po build process
-            (easily populates instance with data for testing of grid service instances)
-        -->
-        <id>buildpo</id>
-        <activation>
-            <activeByDefault>false</activeByDefault>
-        </activation>
-        <properties>
-            <database.name>podb</database.name>
-            <jdbc.url>${database.url.prefix}${database.name}</jdbc.url>
-            <jdbc.username>pouser</jdbc.username>
-            <jdbc.password>pouser</jdbc.password>
-            <jboss.configuration>poear</jboss.configuration>
-            <jboss.port>39080</jboss.port>
-            <jboss.naming.port>31099</jboss.naming.port>
-            <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug>
-        </properties>
-    </profile>
+    You should have created a database during the build-po install. 
 
-
-    From the services/ directory, run:
-        mvn -Plocal,init-db sql:execute
-
-    NOTE: If you plan on running against a dev po instance against the same db that was created with build po, you'll need to run the following sql commands to prevent liquibase from balking:
-    $ psql -U poadmin podb
-    (password: poadmin123 [default])
-    podb=# update databasechangelog set filename='db-install.xml' where id = '1.0';
-    podb=# update databasechangelog set filename='db-upgrade.xml' where filename like '%db-upgrade.xml';
-    (Running this sql command you may get the following error: duplicate key value violates unique constraint "pk_databasechangelog"
-     If so, run the following first:
-     podb=# delete from databasechangelog where filename='db-upgrade.xml';
-    ) 
-1.3 CI build (Maven 2.0.9)
-    mvn -Plocal,init-db sql:execute
-    mvn -Plocal clean install
-    mvn -Pci,local integration-test
-    mvn -Plocal site
+1.3 CI build (WILL DROP AND RE-CREATE YOUR DATABASE!)
+    Stop JBoss
+    mvn clean install
+    mvn cargo:deploy
+    mvn -Pinit-db sql:execute    
+    Start JBoss
+    mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test
+    mvn site
 
 1.4 Useful, non standard mvn targets
 
-    mvn nci-commons:jboss-undeploy  - removes the deployable from jboss.
-    mvn nci-commons:hbm2ddl - generates the hibernate scheam.sql - usefull when writing migration scripts. (run from services dir)
-    mvn cargo:deploy - deploys to jboss
-    mvn nci-commons:copy-web-files - copies the web files (jsps, javascript, etc) without redeploying
-    mvn -Pinit-db sql:execute - reinit the db by completely dropping and recreating.
-    mvn liquibase:update run the liquibase update process, thus creating the schema (if needed) and bring the app in to line with the latest.
-        ** Note this is run as part of nearly every build cycle, so there is no need to run it unless
-            you are trying to recreate the db without running the full build.  Also, it will ONLY work in the
-            services sub directory.
-
+    mvn cargo:deploy - deploys to jboss    
+    mvn -Pinit-db sql:execute - reinit the db by completely dropping and recreating. WILL DROP AND RE-CREATE YOUR DATABASE!
+    
 1.5 Power-Maven Usage
     Deploy and run your integration tests to an already running container
-    mvn -Pci-nostart integration-test
+		mvn cargo:deploy
+		mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test
 
     Run your integration tests against an already running container.
-    cd client
-    mvn -Pci-nostart integration-test
-    OR
-    mvn -Pci-nostart integration-test -Dtest=<testclass>
+		mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test
+	OR:
+		mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test -Dtest=<testclass>
+		
 
     Run just the Selenium tests
-     - Start and deploy to JBoss
-
-    cd services
-    mvn -Pinit-db sql:execute
-    mvn liquibase:update
-    cd ..
-
-    or on unix,
-    pushd services/; mvn -Pinit-db sql:execute && mvn liquibase:update; popd
-
-    cd client
-    mvn -Pci-nostart-nodeploy integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
+		Start and deploy to JBoss
+		mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
 
 1.6 Peer Review
-    We are using Fisheye/Crucible for peer reviews.  Follow the directions on the wiki for setup and use instructions.
-    http://fisheye.5amsolutions.com
+    We are using NCI Fisheye/Crucible for peer reviews.  Follow the directions on the wiki for setup and use instructions.    
 
 1.7 Pre-commit check
-    Verify everything is working properly by running 'mvn -Plocal,nuke-db sql:execute && mvn -Plocal clean install sql:execute && mvn -Pci,local integration-test'
+    Verify everything is working properly by running the CI workflow outlined above.
 
 1.8 Logging into applications:
     Username/passwords use grid based authentication. Users must have a grid account to access any app.

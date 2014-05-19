@@ -83,6 +83,7 @@
 package com.fiveamsolutions.nci.commons.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -121,8 +122,22 @@ public final class JndiUtils {
      */
     public static Properties getProperties() throws IOException {
         Properties props = new Properties();
-        props.load(JndiUtils.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
+        props.load(getPropertiesFileStream());
         return props;
+    }
+
+    /**
+     * @return
+     */
+    private static InputStream getPropertiesFileStream() {
+        InputStream stream = JndiUtils.class.getClassLoader()
+                .getResourceAsStream(RESOURCE_NAME);
+        // Stream will be null in JBoss 6.
+        if (stream == null) {
+            stream = Thread.currentThread().getContextClassLoader()
+                    .getResourceAsStream(RESOURCE_NAME);
+        }
+        return stream;
     }
 
     /**

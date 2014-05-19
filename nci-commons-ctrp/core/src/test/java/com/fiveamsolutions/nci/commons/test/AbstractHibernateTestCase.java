@@ -113,6 +113,14 @@ public class AbstractHibernateTestCase {
     @SuppressWarnings("unchecked")
     @Before
     public final void setUp() {
+        
+        Transaction tx = HibernateUtil.getHibernateHelper().beginTransaction();
+        SchemaExport se = new SchemaExport(HibernateUtil.getHibernateHelper().getConfiguration());
+        se.drop(false, true);
+        se.create(false, true);
+        tx.commit();
+        
+        
         // clean up the hibernate second level cache between runs
         SessionFactory sf = getCurrentSession().getSessionFactory();
         Map<?, EntityPersister> classMetadata = sf.getAllClassMetadata();
@@ -129,6 +137,8 @@ public class AbstractHibernateTestCase {
             }
         }
         transaction = HibernateUtil.getHibernateHelper().beginTransaction();
+        
+        
     }
 
     /**
@@ -144,16 +154,7 @@ public class AbstractHibernateTestCase {
             HibernateUtil.getHibernateHelper().rollbackTransaction(transaction);
         }
     }
-
-    @Before
-    final public void initDb() throws HibernateException {
-        Transaction tx = HibernateUtil.getHibernateHelper().beginTransaction();
-        SchemaExport se = new SchemaExport(HibernateUtil.getHibernateHelper().getConfiguration());
-        se.drop(false, true);
-        se.create(false, true);
-        tx.commit();
-    }
-
+  
     protected Session getCurrentSession() {
         return HibernateUtil.getHibernateHelper().getCurrentSession();
     }

@@ -114,119 +114,123 @@ public class JndiServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public GenericServiceLocal getGenericService()  {
-        return (GenericServiceLocal) JndiUtils.lookup("po/GenericServiceBean/local");
+        return (GenericServiceLocal) JndiUtils.lookup("java:app/po-services/GenericServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationServiceLocal getOrganizationService() {
-        return (OrganizationServiceLocal) JndiUtils.lookup("po/OrganizationServiceBean/local");
+        return (OrganizationServiceLocal) JndiUtils.lookup("java:app/po-services/OrganizationServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public FamilyServiceLocal getFamilyService() {
-        return (FamilyServiceLocal) JndiUtils.lookup("po/FamilyServiceBean/local");
+        return (FamilyServiceLocal) JndiUtils.lookup("java:app/po-services/FamilyServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public PersonServiceLocal getPersonService() {
-        return (PersonServiceLocal) JndiUtils.lookup("po/PersonServiceBean/local");
+        return (PersonServiceLocal) JndiUtils.lookup("java:app/po-services/PersonServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public CountryServiceLocal getCountryService() {
-        return (CountryServiceLocal) JndiUtils.lookup("po/CountryServiceBean/local");
+        return (CountryServiceLocal) JndiUtils.lookup("java:app/po-services/CountryServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public HealthCareProviderServiceLocal getHealthCareProviderService() {
-        return (HealthCareProviderServiceLocal) JndiUtils.lookup("po/HealthCareProviderServiceBean/local");
+        return (HealthCareProviderServiceLocal) JndiUtils.lookup("java:app/po-services/HealthCareProviderServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public OversightCommitteeServiceLocal getOversightCommitteeService() {
-        return (OversightCommitteeServiceLocal) JndiUtils.lookup("po/OversightCommitteeServiceBean/local");
+        return (OversightCommitteeServiceLocal) JndiUtils.lookup("java:app/po-services/OversightCommitteeServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public ResearchOrganizationServiceLocal getResearchOrganizationService() {
-        return (ResearchOrganizationServiceLocal) JndiUtils.lookup("po/ResearchOrganizationServiceBean/local");
+        return (ResearchOrganizationServiceLocal) JndiUtils
+                .lookup("java:app/po-services/ResearchOrganizationServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public HealthCareFacilityServiceLocal getHealthCareFacilityService() {
-        return (HealthCareFacilityServiceLocal) JndiUtils.lookup("po/HealthCareFacilityServiceBean/local");
+        return (HealthCareFacilityServiceLocal) JndiUtils.lookup("java:app/po-services/HealthCareFacilityServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public ClinicalResearchStaffServiceLocal getClinicalResearchStaffService() {
-        return (ClinicalResearchStaffServiceLocal) JndiUtils.lookup("po/ClinicalResearchStaffServiceBean/local");
+        return (ClinicalResearchStaffServiceLocal) JndiUtils
+                .lookup("java:app/po-services/ClinicalResearchStaffServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public PatientServiceLocal getPatientService() {
-        return (PatientServiceLocal) JndiUtils.lookup("po/PatientServiceBean/local");
+        return (PatientServiceLocal) JndiUtils.lookup("java:app/po-services/PatientServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public IdentifiedOrganizationServiceLocal getIdentifiedOrganizationService() {
-        return (IdentifiedOrganizationServiceLocal) JndiUtils.lookup("po/IdentifiedOrganizationServiceBean/local");
+        return (IdentifiedOrganizationServiceLocal) JndiUtils
+                .lookup("java:app/po-services/IdentifiedOrganizationServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public IdentifiedPersonServiceLocal getIdentifiedPersonService() {
-        return (IdentifiedPersonServiceLocal) JndiUtils.lookup("po/IdentifiedPersonServiceBean/local");
+        return (IdentifiedPersonServiceLocal) JndiUtils.lookup("java:app/po-services/IdentifiedPersonServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationalContactServiceLocal getOrganizationalContactService() {
-        return (OrganizationalContactServiceLocal) JndiUtils.lookup("po/OrganizationalContactServiceBean/local");
+        return (OrganizationalContactServiceLocal) JndiUtils
+                .lookup("java:app/po-services/OrganizationalContactServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public GenericCodeValueServiceLocal getGenericCodeValueService() {
-        return (GenericCodeValueServiceLocal) JndiUtils.lookup("po/GenericCodeValueServiceBean/local");
+        return (GenericCodeValueServiceLocal) JndiUtils.lookup("java:app/po-services/GenericCodeValueServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public CtepImportService getCtepImportService() {
-        return (CtepImportService) JndiUtils.lookup("po/CtepImportServiceBean/local");
+        return (CtepImportService) JndiUtils.lookup("java:app/po-services/CtepImportServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationCRServiceLocal getOrganizationCRService() {
-        return (OrganizationCRServiceLocal) JndiUtils.lookup("po/OrganizationCRServiceBean/local");
+        return (OrganizationCRServiceLocal) JndiUtils.lookup("java:app/po-services/OrganizationCRServiceBean");
     }
 
     /**
@@ -234,13 +238,14 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
         return (FamilyOrganizationRelationshipServiceLocal) JndiUtils
-            .lookup("po/FamilyOrganizationRelationshipServiceBean/local");
+            .lookup("java:app/po-services/FamilyOrganizationRelationshipServiceBean");
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationRelationshipServiceLocal getOrganizationRelationshipService() {
-        return (OrganizationRelationshipServiceLocal) JndiUtils.lookup("po/OrganizationRelationshipServiceBean/local");
+        return (OrganizationRelationshipServiceLocal) JndiUtils
+                .lookup("java:app/po-services/OrganizationRelationshipServiceBean");
     }
 }

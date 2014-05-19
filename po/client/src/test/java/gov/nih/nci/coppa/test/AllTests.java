@@ -91,7 +91,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses(value = {AllSeleniumTests.class, AllApiTests.class, DataGeneratorUtilTest.class, TopicIntegrationTest.class })
+@SuiteClasses(value = { AllApiTests.class, DataGeneratorUtilTest.class,
+        TopicIntegrationTest.class, AllSeleniumTests.class })
 public class AllTests {
 
 }

@@ -116,7 +116,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         // Goto Manage OC Page
         accessManageOrganizationalContactScreen();
         // add OC
-        clickAndWait("add_button");
+        clickAndWait("add_button_octc");
         assertTrue(selenium.isTextPresent("Organizational Contact Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
@@ -124,13 +124,10 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         selenium.select("curateRoleForm.role.status", "label=ACTIVE"); 
         selenium.type("curateRoleForm_role_title", "original OC title");
         selenium.select("curateRoleForm.role.type", "label=IRB"); 
-        clickAndWaitSaveButton();
-        
-        assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
         
         //add Contact Information
         waitForTelecomFormsToLoad();
-        checkContactInformation();
+        checkContactInformation(0);
 
         addUSPostalAddress();
         waitForTelecomFormsToLoad();
@@ -139,7 +136,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully created!"));
-        String ocId = selenium.getTable("row.1.0");
+        String ocId = selenium.getTable("orgc_row.1.0");
         assertNotEquals("null", ocId.trim());
 
         clickAndWait("return_to_button");
@@ -154,8 +151,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         clickAndWait("edit_organizationalContact_id_" + ocId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Organizational Contact - Comparison"));
         // status
-        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
-        assertTrue(selenium.isVisible("id=onload_phone_number_required"));
+        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));        
         // old values
         assertEquals("original OC title", selenium.getValue("curateRoleForm_role_title").trim());
         assertEquals("1", selenium.getValue("curateRoleForm.role.type").trim());
@@ -174,13 +170,13 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully updated!".trim()));
     }
     
-    private void checkContactInformation() throws Exception {
+    private void checkContactInformation(int index) throws Exception {
         // Check contact information functionality - add/remove, eror messages etc.
         checkPostalAddress();
-        checkEmail();
+        checkEmail(index);
         checkUrl();
-        checkPhone();
-        checkFax();
+        checkPhone(index);
+        checkFax(index);
         checkTty();
     }
     
@@ -213,7 +209,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         // Goto Manage OC Page
         accessManageOrganizationalContactScreen();
         // add OC
-        clickAndWait("add_button");
+        clickAndWait("add_button_oc");
         assertTrue(selenium.isTextPresent("Organizational Contact Role Information"));     
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
@@ -227,12 +223,8 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         
         selenium.select("curateRoleForm.role.type", "label=IRB"); 
         
-        assertTrue(selenium.isVisible("id=onload_phone_number_required"));
-        clickAndWaitSaveButton();
-        
-        assertTrue(selenium.isTextPresent("exact:Phone number is required for this status."));
         //add Contact Information  
-        checkContactInformation();
+        checkContactInformation(1);
 
         addUSPostalAddress();
         waitForTelecomFormsToLoad();
@@ -240,10 +232,11 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         clickAndWaitSaveButton();
         
         assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully created!"));
-        String ocId = selenium.getTable("row.1.0");
+        String ocId = selenium.getTable("orgc_row.1.0");
         assertNotEquals("null", ocId.trim());
         selenium.click("link=" + getSortFieldTestColumnName());
-        ocId = selenium.getTable("row.1.0");
+        pause(1000);
+        ocId = selenium.getTable("orgc_row.1.0");
         assertNotEquals("null", ocId.trim());
         
         clickAndWait("return_to_button");

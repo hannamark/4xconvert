@@ -6,30 +6,30 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa.po</groupId>
     <artifactId>po</artifactId>
-    <version>3.10.0</version>
+    <version>4.0.0</version>
     <packaging>pom</packaging>
     <name>po</name>
     <url>https://wiki.nci.nih.gov/x/BAAuAQ</url>
     <inceptionYear>2008</inceptionYear>
 
     <properties>
-        <jboss.home>${user.home}/apps/po/poear/jboss-4.0.5.GA-jems-ejb3</jboss.home>
+        <grid.target>training-1.3</grid.target>
+        <jboss.home>${user.home}/apps/po/poear/jboss-eap-6.2</jboss.home>
         <jboss.hostname>localhost</jboss.hostname>
         <jboss.port>39080</jboss.port>
-        <jboss.naming.port>31099</jboss.naming.port>
-        <jboss.configuration>poear</jboss.configuration>
+        <jboss.naming.port>31099</jboss.naming.port>        
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.3.2</nci-commons.version>
-        <coppa-commons.version>1.3.7</coppa-commons.version>
+        <nci-commons.version>1.4.10.1-SNAPSHOT</nci-commons.version>
+        <coppa-commons.version>1.3.10.1-SNAPSHOT</coppa-commons.version>
         <iso-datatypes.version>2.0</iso-datatypes.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
         <maven-checkstyle-plugin.version>2.4</maven-checkstyle-plugin.version>
         <maven-pmd-plugin.version>2.5</maven-pmd-plugin.version>
-        <cargo-maven2-plugin.version>1.0.1-alpha-2</cargo-maven2-plugin.version>
+        <cargo-maven2-plugin.version>1.4.7</cargo-maven2-plugin.version>
         <maven-surefire-plugin.version>2.4.3</maven-surefire-plugin.version>
         <cobertura-maven-plugin.version>2.4</cobertura-maven-plugin.version>
-        <buildnumber-maven-plugin.version>1.0-beta-1</buildnumber-maven-plugin.version>
+        <buildnumber-maven-plugin.version>1.2</buildnumber-maven-plugin.version>
         <maven-release-plugin.version>2.0-beta-9</maven-release-plugin.version>
         <sql-maven-plugin.version>1.4</sql-maven-plugin.version>
         <maven-javadoc-plugin.version>2.4</maven-javadoc-plugin.version>
@@ -40,10 +40,12 @@
         <maven-jar-plugin.version>2.3</maven-jar-plugin.version>
         <maven-ejb-plugin.version>2.2</maven-ejb-plugin.version>
         <maven-antrun-plugin.version>1.3</maven-antrun-plugin.version>
-        <maven-war-plugin.version>2.1-beta-1</maven-war-plugin.version>
+        <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
         <compileSource>1.6</compileSource>
-        <hibernate.version>3.2.0.ga</hibernate.version>
-        <hibernate.annotations.version>3.2.0.ga</hibernate.annotations.version>
+        <hibernate.version>3.3.0.SP1</hibernate.version>
+        <hibernate.annotations.version>3.4.0.GA</hibernate.annotations.version>
+        <hibernate.validator.version>3.1.0.GA</hibernate.validator.version>
+        <hibernate.annotations.commons.version>3.1.0.GA</hibernate.annotations.commons.version>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
 
         <csm.sync.frequency.seconds>240</csm.sync.frequency.seconds>
@@ -66,7 +68,7 @@
         <ldap.user.id.label></ldap.user.id.label>
 
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
-        <web.auth.method>CAGRIDFORM</web.auth.method>
+        <web.auth.method>FORM</web.auth.method>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -181,8 +183,8 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>com.fiveamsolutions</groupId>
-                        <artifactId>nci-commons-core</artifactId>
+                        <groupId>gov.nih.nci.coppa</groupId>
+                        <artifactId>nci-commons-ctrp-core</artifactId>
                         <version>${nci-commons.version}</version>
                     </dependency>
                 </dependencies>
@@ -195,6 +197,14 @@
                         <!-- CPD violations necessary to maintain compatibility with CTEP services. -->
                         <exclude>**/AbstractEnhancedOrganizationRole.java</exclude>
                         <exclude>**/AbstractOversightCommittee.java</exclude>
+                        <exclude>**/EmailLogger.java</exclude>
+                        <exclude>**/MockTextMessage.java</exclude>
+                        <exclude>**/OrganizationCR.java</exclude>
+                        <exclude>**/ClinicalResearchStaffCR.java</exclude>
+                        <exclude>**/HealthCareFacilityCR.java</exclude>
+                        <exclude>**/HealthCareProviderCR.java</exclude>
+                        <exclude>**/OrganizationalContactCR.java</exclude>
+                        <exclude>**/ResearchOrganizationCR.java</exclude>
                     </excludes>
                     <excludeRoots>
                         <excludeRoot>target/generated-sources/xsnapshot/</excludeRoot>
@@ -213,8 +223,8 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>com.fiveamsolutions</groupId>
-                        <artifactId>nci-commons-core</artifactId>
+                        <groupId>gov.nih.nci.coppa</groupId>
+                        <artifactId>nci-commons-ctrp-core</artifactId>
                         <version>${nci-commons.version}</version>
                     </dependency>
                 </dependencies>
@@ -253,8 +263,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.fiveamsolutions</groupId>
-                <artifactId>nci-commons-maven-plugin</artifactId>
+                <groupId>gov.nih.nci.coppa</groupId>
+                <artifactId>nci-commons-ctrp-maven-plugin</artifactId>
                 <version>${nci-commons.version}</version>
                 <configuration>
                     <deployDirectory>${jboss.home}/server/${jboss.configuration}/tmp/deploy</deployDirectory>
@@ -321,16 +331,16 @@
                     <artifactId>cargo-maven2-plugin</artifactId>
                     <version>${cargo-maven2-plugin.version}</version>
                     <configuration>
+                        <skip>true</skip>
                         <container>
-                            <containerId>jboss4x</containerId>
+                            <containerId>jboss73x</containerId>
                             <type>installed</type>
                             <home>${jboss.home}</home>
                         </container>
-                        <configuration>
+                        <configuration>                        
                             <type>existing</type>
-                            <home>${jboss.home}/server/${jboss.configuration}</home>
-                            <properties>
-                                <cargo.jboss.configuration>${jboss.configuration}</cargo.jboss.configuration>
+                            <home>${jboss.home}/standalone</home>
+                            <properties>                                
                                 <cargo.hostname>${jboss.hostname}</cargo.hostname>
                                 <cargo.servlet.port>${jboss.port}</cargo.servlet.port>
                             </properties>
@@ -355,7 +365,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
                 <configuration>
-                    <configLocation>5amCheckstyle-5.xml</configLocation>
+                    <configLocation>ctrpCheckstyle-5.xml</configLocation>
                </configuration>
             </plugin>
             <plugin>
@@ -369,7 +379,7 @@
                 <version>${maven-pmd-plugin.version}</version>
                 <configuration>
                     <rulesets>
-                        <ruleset>5amPmd.xml</ruleset>
+                        <ruleset>ctrpPmd.xml</ruleset>
                     </rulesets>
                     <failOnViolation>true</failOnViolation>
                     <linkXref>true</linkXref>

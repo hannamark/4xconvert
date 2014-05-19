@@ -7,6 +7,33 @@
 
     <dependencies>
         <dependency>
+	         <groupId>org.jboss.as</groupId>
+	         <artifactId>jboss-as-ejb-client-bom</artifactId>
+	         <version>7.2.0.Final</version>
+	         <type>pom</type>
+	         <exclusions>
+                <exclusion>                  
+                     <groupId>org.jboss</groupId>
+                     <artifactId>jboss-remote-naming</artifactId>                  
+                </exclusion>
+             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-remote-naming</artifactId>
+            <version>1.0.7.Final</version>
+        </dependency>            
+        <dependency>
+            <groupId>org.jboss.logmanager</groupId>
+            <artifactId>jboss-logmanager</artifactId>
+            <version>1.5.1.Final</version>
+        </dependency>        
+		<dependency>
+		  <groupId>org.jboss.logbridge</groupId>
+		  <artifactId>jboss-logbridge</artifactId>
+		  <version>1.0.1.GA</version>
+		</dependency>        
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>

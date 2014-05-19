@@ -110,7 +110,7 @@ import org.xml.sax.SAXException;
  *
  * Ideally, this should have been a MDB, but JBoss has no docs on how to connect to an external non-JBoss JMS topic.
  *
- * @see CtepMessageMBean
+ * @see CtepMessageReceiver
  *
  * @author gax
  *

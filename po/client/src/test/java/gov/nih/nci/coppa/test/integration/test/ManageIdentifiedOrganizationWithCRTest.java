@@ -95,6 +95,8 @@ import java.net.URISyntaxException;
 
 import javax.naming.NamingException;
 
+
+
 /**
  * @author mshestopalov
  *
@@ -120,7 +122,7 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         // Goto Manage IO Page
         accessManageIdentifiedOrganizationScreen();
         // add IO
-        clickAndWait("add_button");
+        clickAndWait("add_button_io");
         assertTrue(selenium.isTextPresent("Identified Organization Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
@@ -140,10 +142,11 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         clickAndWaitSaveButton();
 
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully created!"));
-        String ioId = selenium.getTable("row.1.0");
+        String ioId = selenium.getTable("io_row.1.0");
         assertNotEquals("null", ioId.trim());
         selenium.click("link=" + getSortFieldTestColumnName());
-        ioId = selenium.getTable("row.1.0");
+        pause(1000);
+        ioId = selenium.getTable("io_row.1.0");
         assertNotEquals("null", ioId.trim());
 
         clickAndWait("return_to_button");

@@ -123,7 +123,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
     @SuppressWarnings({ "PMD.AvoidThrowingRawExceptionTypes", UNCHECKED })
     protected <R extends Correlation> GenericStructrualRoleServiceLocal<R> getServiceForRole(Class<R> roleType) {
         String className = ProxyUtils.unEnhanceCGLIBClass(roleType).getSimpleName();
-        String serviceName = String.format("po/%sServiceBean/local", className);
+        String serviceName = String.format("java:app/po-services/%sServiceBean", className);
         return (GenericStructrualRoleServiceLocal<R>) JndiUtils.lookup(serviceName);
     }
 

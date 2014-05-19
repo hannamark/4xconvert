@@ -122,7 +122,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="2L"
  */
 @Entity
-@Table(appliesTo = "IdentifiedPerson", indexes = {
+@Table(appliesTo = "IdentifiedOrganization", indexes = {
         @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "assignedIi",
                 columnNames = {"assigned_identifier_extension", "assigned_identifier_root" }) })
 @RoleStatusChange

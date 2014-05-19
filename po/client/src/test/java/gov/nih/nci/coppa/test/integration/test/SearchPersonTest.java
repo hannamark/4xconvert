@@ -99,7 +99,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
         loginAsCurator();
         openCreatePerson();
         // verify the presence of required indicator in create screen.
-        verifyRequiredIndicators(true);
+        //verifyRequiredIndicators(true);
 
         createPerson("PENDING", "Dr", firstName, "L", lastName, "III",
                 getAddress(), email, "703-111-2345", "http://www.example.com", "703-111-1234");
@@ -147,9 +147,10 @@ public class SearchPersonTest extends AbstractPoWebTest {
         verify();
     }
 
+    @SuppressWarnings("deprecation")
     private void verify() {
-        int thirdColumn = 3;
-        int row = getRow(lastName, thirdColumn);
+        int lastNameColumn = 3;
+        int row = getRow(lastName, lastNameColumn);
         if (row == -1){
             fail("Did not find " + lastName + " in search results");
         }else{
@@ -158,7 +159,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
             assertEquals(firstName, selenium.getTable("row."+row+".2"));
             assertEquals(lastName, selenium.getTable("row."+row+".3"));
             assertEquals("PENDING", selenium.getTable("row."+row+".8"));
-            assertEquals("NONE", selenium.getTable("row."+row+".9"));
+            assertEquals("", selenium.getTable("row."+row+".5"));
             clear();
         }
     }
@@ -175,7 +176,7 @@ public class SearchPersonTest extends AbstractPoWebTest {
         assertTrue("Person last name is missing", selenium.isElementPresent("searchPersonForm_criteria_lastName"));
         assertTrue("Person email is missing", selenium.isElementPresent("searchPersonForm_criteria_email"));
         assertTrue("Organization Affiliation is missing", selenium.isElementPresent("searchPersonForm_criteria_org"));
-        assertTrue("CTEP Person Identifier is missing", selenium.isElementPresent("searchPersonForm_criteria_ctepId"));
+        assertTrue("CTEP Person Identifier is missing", selenium.isElementPresent("searchPersonForm_criteria_ctepID"));
 
         // Test for JIRA Issue# PO-1291, GForge Issue# 18768
         assertTrue("Incorrect CTEP Person Identifier text.", selenium.isTextPresent("CTEP Person Identifier"));

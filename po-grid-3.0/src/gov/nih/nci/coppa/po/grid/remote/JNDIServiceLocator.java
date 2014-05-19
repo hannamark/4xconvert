@@ -75,6 +75,10 @@ public final class JNDIServiceLocator implements ServiceLocator {
         try {
             Properties props = new Properties();
             props.load(JNDIServiceLocator.class.getClassLoader().getResourceAsStream("jndi.properties"));
+            props.put("jboss.naming.client.ejb.context", true);
+            props
+                    .put("jboss.naming.client.connect.options.org.xnio.Options.SASL_POLICY_NOPLAINTEXT",
+                            "false");
             context = new InitialContext(props);
         } catch (Exception e) {
             LOG.error("Unable to load jndi properties.", e);
@@ -109,97 +113,119 @@ public final class JNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public PersonEntityServiceRemote getPersonService() throws NamingException {
-        PersonEntityServiceRemote object = (PersonEntityServiceRemote) lookup("po/PersonEntityServiceBean/remote");
+        PersonEntityServiceRemote object = (PersonEntityServiceRemote) lookup("po/po-services/PersonEntityServiceBean"
+                + "!gov.nih.nci.services.person.PersonEntityServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public OrganizationEntityServiceRemote getOrganizationService() throws NamingException {
-        OrganizationEntityServiceRemote object = (OrganizationEntityServiceRemote)
-            lookup("po/OrganizationEntityServiceBean/remote");
+    public OrganizationEntityServiceRemote getOrganizationService()
+            throws NamingException {
+        OrganizationEntityServiceRemote object = (OrganizationEntityServiceRemote) lookup("po/po-services/"
+                + "OrganizationEntityServiceBean!"
+                + "gov.nih.nci.services.organization.OrganizationEntityServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityService() throws NamingException {
-        HealthCareFacilityCorrelationServiceRemote object = (HealthCareFacilityCorrelationServiceRemote)
-            lookup("po/HealthCareFacilityCorrelationServiceBean/remote");
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityService()
+            throws NamingException {
+        HealthCareFacilityCorrelationServiceRemote object = 
+                (HealthCareFacilityCorrelationServiceRemote) lookup("po/po-services/"
+                + "HealthCareFacilityCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffService() throws NamingException {
-        ClinicalResearchStaffCorrelationServiceRemote object = (ClinicalResearchStaffCorrelationServiceRemote)
-            lookup("po/ClinicalResearchStaffCorrelationServiceBean/remote");
+    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffService()
+            throws NamingException {
+        ClinicalResearchStaffCorrelationServiceRemote object = (ClinicalResearchStaffCorrelationServiceRemote) 
+                lookup("po/po-services/ClinicalResearchStaffCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderService() throws NamingException {
-        HealthCareProviderCorrelationServiceRemote object = (HealthCareProviderCorrelationServiceRemote)
-            lookup("po/HealthCareProviderCorrelationServiceBean/remote");
+    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderService()
+            throws NamingException {
+        HealthCareProviderCorrelationServiceRemote object = (HealthCareProviderCorrelationServiceRemote) 
+                lookup("po/po-services/HealthCareProviderCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationService() throws NamingException {
-        IdentifiedOrganizationCorrelationServiceRemote object = (IdentifiedOrganizationCorrelationServiceRemote)
-            lookup("po/IdentifiedOrganizationCorrelationServiceBean/remote");
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationService()
+            throws NamingException {
+        IdentifiedOrganizationCorrelationServiceRemote object = (IdentifiedOrganizationCorrelationServiceRemote) 
+                lookup("po/po-services/IdentifiedOrganizationCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonService() throws NamingException {
-        IdentifiedPersonCorrelationServiceRemote object = (IdentifiedPersonCorrelationServiceRemote)
-            lookup("po/IdentifiedPersonCorrelationServiceBean/remote");
+    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonService()
+            throws NamingException {
+        IdentifiedPersonCorrelationServiceRemote object = (IdentifiedPersonCorrelationServiceRemote) 
+                lookup("po/po-services/IdentifiedPersonCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationService() throws NamingException {
+    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationService()
+            throws NamingException {
         ResearchOrganizationCorrelationServiceRemote object = (ResearchOrganizationCorrelationServiceRemote)
-            lookup("po/ResearchOrganizationCorrelationServiceBean/remote");
+                lookup("po/po-services/ResearchOrganizationCorrelationServiceBean!"
+                + "gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeService() throws NamingException {
-        OversightCommitteeCorrelationServiceRemote object = (OversightCommitteeCorrelationServiceRemote)
-            lookup("po/OversightCommitteeCorrelationServiceBean/remote");
+    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeService()
+            throws NamingException {
+        OversightCommitteeCorrelationServiceRemote object = (OversightCommitteeCorrelationServiceRemote) 
+                lookup("po/po-services/OversightCommitteeCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote");
         return object;
     }
 
     /**
      * {@inheritDoc}
      */
-    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactService() throws NamingException {
-        OrganizationalContactCorrelationServiceRemote object = (OrganizationalContactCorrelationServiceRemote)
-            lookup("po/OrganizationalContactCorrelationServiceBean/remote");
+    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactService()
+            throws NamingException {
+        OrganizationalContactCorrelationServiceRemote object = (OrganizationalContactCorrelationServiceRemote) 
+                lookup("po/po-services/OrganizationalContactCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote");
         return object;
     }
     
     /**
      * {@inheritDoc}
      */
-    public PatientCorrelationServiceRemote getPatientService() throws NamingException {
+    public PatientCorrelationServiceRemote getPatientService()
+            throws NamingException {
         PatientCorrelationServiceRemote object = (PatientCorrelationServiceRemote)
-            lookup("po/PatientCorrelationServiceBean/remote");
+                lookup("po/po-services/PatientCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.PatientCorrelationServiceRemote");
         return object;
     }
 

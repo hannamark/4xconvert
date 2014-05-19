@@ -108,7 +108,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
     public void testHealthCareFacility() throws Exception {
      // Setup
         setOrgRoleTitleText("Health Care Facility Information");
-        setOrgRoleLinkText("link=Manage Health Care Facility(s)");
+        setOrgRoleLinkText("link=Add Health Care Facility");
         setOrgRoleCreateMessage("The health care facility was successfully created!");
         setOrgRoleUpdateMessage("The health care facility role was successfully updated!");
         setOrgRoleName("Facility 1");
@@ -134,7 +134,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         // Go to the Manage HCF Screen
         accessOrgRoleScreen();
 
-        clickAndWait("add_button");
+        
         // check Status
         checkStatus();
         // Check contact information functionality - add/remove, eror messages etc.
@@ -153,7 +153,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         //curate org
         openOrganizationCuratePage();
         // Go to the Manage HCF Screen
-        accessOrgRoleScreen();
+        //accessOrgRoleScreen();
 
         clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
         // check Status
@@ -185,10 +185,10 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
     private void checkContactInformation() throws Exception {
         // Check contact information functionality - add/remove, eror messages etc.
         checkPostalAddress();
-        checkEmail();
+        checkEmail(0);
         checkUrl();
-        checkPhone();
-        checkFax();
+        checkPhone(0);
+        checkFax(0);
         checkTty();
     }
 
@@ -208,7 +208,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         //curate org
         openOrganizationCuratePage();
         // Go to the Manage HCF Screen
-        accessOrgRoleScreen();
+        //accessOrgRoleScreen();
 
         clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
         assertTrue(selenium.isTextPresent("exact:Edit Health Care Facility - Comparison"));

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="build-po" default="dist" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
+	<description>
+		Builds the application.
+	</description>
+
+	<property environment="env" />
+	<property file="common/properties/${tier}.properties" />
+	<property file="local.properties" />
+	<property file="project.properties" />
+	<property file="install.properties" />
+
+	<property name="build.dir" location="." />
+	<property name="software.dir" location=".." />
+	<property name="common.dir" location="${build.dir}/common" />
+	<property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+	<property name="target.dir" location="${software.dir}/target/po" />
+	<property name="lib.dir" location="${target.dir}/lib" />
+	<property name="temp.dir" location="${target.dir}/temp" />
+	<property name="reports.dir" location="${target.dir}/reports" />
+	<property name="log.dir" location="${target.dir}/logs" />
+	<property name="dist.dir" location="${target.dir}/dist" />
+	<property name="download.dir" location="${target.dir}/download" />
+	<property name="ivy.settings.dir" location="${common.dir}/ivy" />
+	<property name="working.dir" location="${target.dir}/working" />
+
+	<property name="po.base.dir" location="${software.dir}/po" />
+	<property name="po-client.base.dir" location="${software.dir}/po/client" />
+	<property name="po-ear.base.dir" location="${software.dir}/po/ear" />
+	<property name="po-services.base.dir" location="${software.dir}/po/services" />
+	<property name="po-web.base.dir" location="${software.dir}/po/web" />
+
+	<!-- Maven comamnd line arguments, bda profile is inside profiles.xml that 
+		gets copied to ear folder before build to override exiting properties -->
+	<property name="po.maven.profile.list" value="local,bda,quick" />
+	<property name="po.maven.goal.list" value="clean install" />
+
+	<!-- Distribution Structure properties, used to copy files into the distribution 
+		area. Use project.propertie relative dir names becasue they are used by install 
+		also -->
+	<property name="dist.exploded.dir" location="${dist.dir}/exploded" />
+	<property name="po-ear.dist.dir" location="${dist.exploded.dir}/${po-ear.dist.relative.dir}" />
+	<property name="jboss-conf.dist.dir" location="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
+
+	<property name="properties.snapshot" location="${temp.dir}/properties.snapshot" />
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${common.dir}/ant/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<if>
+		<isset property="env.M2_HOME" />
+		<then>
+			<property name="maven.home" value="${env.M2_HOME}" />
+		</then>
+		<elseif>
+			<isset property="env.MAVEN_HOME" />
+			<then>
+				<property name="maven.home" value="${env.MAVEN_HOME}" />
+			</then>
+		</elseif>
+		<elseif>
+			<not>
+				<isset property="maven.home" />
+			</not>
+			<then>
+				<fail message="To build this project you need to specify a M2_HOME or MAVEN_HOME environment variable or a maven.home build property pointing to your maven 2.0.x installation" />
+			</then>
+		</elseif>
+	</if>
+
+	<macrodef name="maven">
+		<attribute name="maven.profile.list" default="" />
+		<attribute name="maven.goal.list" />
+		<attribute name="maven.dir" />
+		<attribute name="maven.home" default="${maven.home}" />
+		<attribute name="resultproperty" default="maven.result" />
+		<attribute name="maven.mem" default="-Xmx1024m" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{maven.dir}" resultproperty="@{resultproperty}">
+				<jvmarg value="-Xmx1024m" />
+				<classpath>
+					<fileset dir="@{maven.home}/boot">
+						<include name="*.jar" />
+					</fileset>
+					<fileset dir="@{maven.home}/lib">
+						<include name="*.jar" />
+					</fileset>
+				</classpath>
+				<sysproperty key="classworlds.conf" value="@{maven.home}/bin/m2.conf" />
+				<sysproperty key="maven.home" value="@{maven.home}" />
+				<arg line="--batch-mode @{maven.profile.list} @{maven.goal.list}" />
+			</java>
+		</sequential>
+	</macrodef>
+
+	<target name="clean" unless="skip.initialization">
+		<delete dir="${target.dir}" failonerror="false" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${target.dir}" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.exploded.dir}" />
+		<mkdir dir="${po-ear.dist.dir}" />
+		<mkdir dir="${temp.dir}" />
+		<mkdir dir="${download.dir}" />
+		<mkdir dir="${jboss-conf.dist.dir}" />
+	</target>
+
+	<!-- First Maven Target -->
+	<target name="build:po" depends="clean,init">
+		<delete>
+			<fileset dir="${po.base.dir}">
+				<include name="**/profiles.xml" />
+			</fileset>
+		</delete>
+
+		<echoproperties destfile="${properties.snapshot}" failonerror="true" />
+		<filter filtersfile="${properties.snapshot}" />
+		<copy todir="${po-client.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
+		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
+		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
+		<copy todir="${po-web.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
+
+		<maven maven.profile.list="-P ${po.maven.profile.list} -Dskip-liquibase" maven.goal.list="${po.maven.goal.list}" maven.dir="${po.base.dir}" />
+		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear" />
+	</target>
+
+	<target name="generate:cli">
+		<copy todir="${jboss-conf.dist.dir}" file="${common.dir}/cli/jboss_conf_batch.cli" filtering="true" overwrite="true" />
+	</target>
+	
+    <target name="generate:full-config">
+	    <copy todir="${jboss-conf.dist.dir}" file="${common.dir}/cli/standalone.xml" filtering="true" overwrite="true" />
+	</target>
+	
+    <target name="generate:baseline-config">
+        <copy tofile="${jboss-conf.dist.dir}/standalone.xml.baseline" file="${common.dir}/cli/standalone.xml.baseline-${tier}" 
+        	filtering="true" overwrite="true" failonerror="false" verbose="true" />
+    </target>	
+
+	<target name="dist" depends="build:po, generate:cli, generate:full-config, generate:baseline-config">
+	</target>
+
+</project>

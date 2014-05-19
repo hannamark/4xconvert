@@ -86,7 +86,7 @@ public class CreateOrganizationTest extends AbstractPoWebTest {
     /**
      * Verifies PO-618, PO-619 via UI
      */
-    public void testVerifyDefaultValidationErrors() throws Exception {
+    public void testVerifyDefaultValidationErrors() throws Exception {        
         loginAsCurator();
 
         openCreateOrganization();
@@ -97,6 +97,7 @@ public class CreateOrganizationTest extends AbstractPoWebTest {
         assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.organization.statusCode"));
         assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.organization.statusCode"));
         assertEquals("United States", selenium.getSelectedLabel("curateEntityForm.organization.postalAddress.country"));
+        assertTrue(selenium.isTextPresent("US, Canadian, and Australian addresses must include zip"));
         verifyDefaultFieldErrorMessages();
 
         selenium.select("curateEntityForm.organization.statusCode", "label=" + SELECT_A_STATUS);
@@ -115,8 +116,6 @@ public class CreateOrganizationTest extends AbstractPoWebTest {
         assertEquals("Organization Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_name']/div"));
         assertEquals("Address Line 1 must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_postalAddress_streetAddressLine']/div"));
         assertEquals("City must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_postalAddress_cityOrMunicipality']/div"));
-        assertEquals("Organization Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_name']/div"));
-        assertEquals("Postal Code must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_postalAddress_postalCode']/div"));
-        assertTrue(selenium.isTextPresent("At least one Email Address must be set"));
+        assertEquals("Organization Name must be set", selenium.getText("//div[@id='wwerr_curateEntityForm_organization_name']/div"));       
     }
 }

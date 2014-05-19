@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.0">
+	<deployment>
+		<dependencies>
+			<module name="javax.api" />
+			<module name="javax.persistence.api" />
+			<module name="javax.transaction.api" />
+			<module name="javax.validation.api" />
+			<module name="javax.mail.api"/>
+             
+			<module name="org.postgresql" export="TRUE" />
+			<module name="javax.wsdl4j.api" export="TRUE" />
+
+			<!-- Next two are producing warnings in JBoss log. -->
+			<module name="org.slf4j.impl" export="TRUE" />
+			<module name="org.jboss.as.web" export="TRUE" />
+		</dependencies>
+		<exclusions>
+			<module name="org.hibernate" />
+			<module name="org.hibernate.validator" />
+			<module name="org.hibernate.commons-annotations" />
+		</exclusions>
+	</deployment>
+	<sub-deployment name="po-web.war" />
+</jboss-deployment-structure>

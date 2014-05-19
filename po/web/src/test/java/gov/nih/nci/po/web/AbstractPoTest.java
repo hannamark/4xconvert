@@ -29,23 +29,23 @@ public abstract class AbstractPoTest {
      * Sets up the test service locator.
      */
     @Before
-    public void initializeTestServiceLocator() {
+    public final void initialize() {
+        initActionContext_getContext();
+        initMockrequest();
         PoRegistry.getInstance().setServiceLocator(new MockServiceLocator());
     }
 
     /**
      * Initialize the mock request.
-     */
-    @Before
-    public void initMockrequest() {
+     */    
+    private final void initMockrequest() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.getSession().setAttribute("abc-123", new Object());
         ServletActionContext.setRequest(request);
     }
-
-    @Before
-    public void initActionContext_getContext() {
+    
+    private final void initActionContext_getContext() {
         ConfigurationManager configurationManager = new ConfigurationManager();
         configurationManager.addContainerProvider(new XWorkConfigurationProvider());
         Configuration config = configurationManager.getConfiguration();

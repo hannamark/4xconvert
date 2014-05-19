@@ -82,11 +82,15 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import org.junit.Test;
+
+
 
 
 
 public class LoginTest extends AbstractPoWebTest {
 
+    @Test
     public void testNew() throws Exception {
         loginAsCurator();
     }

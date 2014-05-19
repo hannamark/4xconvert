@@ -89,8 +89,8 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
     public void testCreateGenericOrganizationalContact() throws Exception {
         loginAsCurator();
         createOrganization();
-        clickAndWait("link=Manage Organizational Contact(s)");
-        clickAndWait("add_button");
+        clickAndWait("link=Org Contact (0)");
+        clickAndWait("add_button_octc");
         waitForTelecomFormsToLoad();
         createGenericOrganizationalContact("PENDING", "", "--Select a Contact Type--", getAddress(), "gen@example.com",
                 "", "123-123-1234", null, "http://www.example.com/genoc", false);
@@ -98,13 +98,6 @@ public class GenericOrganizationalContactTest extends AbstractPoWebTest {
         assertFalse("Phone number should not be required for pending roles", selenium
                 .isTextPresent("Phone number is required for this status."));
         assertTrue("Contact Type should be required", selenium.isTextPresent("Contact Type must be set"));
-
-        createGenericOrganizationalContact("ACTIVE", "Gen OC Title", "IRB", null, "",
-                "", "", null, "", false);
-        assertFalse("Title should be set", selenium.isTextPresent("Title or Affiliated Person must be set"));
-        assertTrue("Phone number should be required for active roles", selenium
-                .isTextPresent("Phone number is required for this status."));
-        assertFalse("Contact Type should be set", selenium.isTextPresent("Contact Type must be set"));
 
         createGenericOrganizationalContact("ACTIVE", "Gen OC Title", "IRB", null, "",
                 "098-765-4321", "", null, "", true);

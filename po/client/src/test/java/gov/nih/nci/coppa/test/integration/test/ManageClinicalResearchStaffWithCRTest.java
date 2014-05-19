@@ -136,43 +136,37 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         openAndWait("po-web/protected/person/curate/start.action?person.id=" + personIdExt);
 
         //Goto Manage CRS Page
-        accessManageClinicalResearchStaffScreen();
+        //accessManageClinicalResearchStaffScreen();
         //add CRS
-        clickAndWait("add_button");
-        assertTrue(selenium.isTextPresent("Clinical Research Staff Role Information"));
+        clickAndWait("add_button_hcf");
+        assertTrue(selenium.isTextPresent("Clinical Research Staff Information"));
         //ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
         
         waitForTelecomFormsToLoad();
-        Thread.sleep(60000);
+        Thread.sleep(5000);
         assertFalse(selenium.isVisible("id=onload_phone_number_required"));
         
         selenium.select("curateRoleForm.role.status", "label=ACTIVE");
         
-        assertTrue(selenium.isVisible("id=onload_phone_number_required"));
-
         //verify validation messages
         clickAndWaitSaveButton();
         assertEquals("ACTIVE", selenium.getSelectedLabel("curateRoleForm.role.status"));
 
         assertTrue(selenium.isTextPresent("Affiliated Organization ID must be set"));
-        assertTrue(selenium.isTextPresent("Phone number is required for this status."));
+        assertFalse(selenium.isTextPresent("Phone number is required for this status."));
         assertFalse(selenium.isTextPresent("Role status not compatible with associated entity's status."));
 
         //select a PENDING Scoper
         selectOrganizationScoper(orgId.getExtension(), ORG_WITH_APOS);
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("Role status not compatible with associated entity's status."));
-        assertTrue(selenium.isTextPresent("Phone number is required for this status."));
+        assertFalse(selenium.isTextPresent("Phone number is required for this status."));
         assertFalse(selenium.isTextPresent("Affiliated Organization ID must be set"));
 
         //select a ACTIVE Scoper
         selectOrganizationScoper(affiliateOldOrgId, AFFILIATE_ORG_FOR_PERSON_CRS_OLD);
-        clickAndWaitSaveButton();
-        assertTrue(selenium.isTextPresent("Phone number is required for this status."));
-        assertFalse(selenium.isTextPresent("Role status not compatible with associated entity's status."));
-        assertFalse(selenium.isTextPresent("Affiliated Organization ID must be set"));
-
+       
         //add Contact Information
         checkContactInformation();
 
@@ -185,10 +179,11 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         assertTrue("PO: Persons and Organizations - Manage Clinical Research Staff(s)".equals(selenium.getTitle()));
         assertTrue(selenium.isTextPresent("Clinical Research Staff was successfully created!"));
 
-        String ocId = selenium.getTable("row.1.0");
+        String ocId = selenium.getTable("crs_row.1.0");
         assertNotEquals("null", ocId.trim());
         selenium.click("link=" + getSortFieldTestColumnName());
-        ocId = selenium.getTable("row.1.0");
+        pause(1000);
+        ocId = selenium.getTable("crs_row.1.0");
         assertNotEquals("null", ocId.trim());
 
         clickAndWait("return_to_button");

@@ -230,6 +230,12 @@ public class NullifiedCorrelationNodeInterceptorTest extends AbstractServiceBean
             this.parameters = arg0;
 
         }
+
+        @Override
+        public Object getTimer() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
 }

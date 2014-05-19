@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
         <artifactId>po</artifactId>
-        <version>3.10.0</version>
+        <version>4.0.0</version>
     </parent>
 
     <artifactId>po-client</artifactId>
@@ -13,22 +13,66 @@
     <url>../../client/target/site</url>
 
     <properties>
-        <test.selenium.server.port>60001</test.selenium.server.port>
-        <test.selenium.server.debug>true</test.selenium.server.debug>
-        <test.selenium.browser>*chrome</test.selenium.browser>
-        <test.selenium.xvfb.skip>false</test.selenium.xvfb.skip>
+        <test.webdriver.class>org.openqa.selenium.firefox.FirefoxDriver</test.webdriver.class>        
+        <test.selenium.xvfb.skip>true</test.selenium.xvfb.skip>
+        <test.phantomjs.binary.path>/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs</test.phantomjs.binary.path>
         <selenium-maven-plugin.version>1.1</selenium-maven-plugin.version>
-        <deployedArtifact>${jboss.home}/server/${jboss.configuration}/deploy/po.ear</deployedArtifact>
+        <deployedArtifact>${jboss.home}/standalone/deployments/po.ear</deployedArtifact>
         <jboss.jmx.username>admin</jboss.jmx.username>
         <jboss.jmx.password>admin</jboss.jmx.password>
         <jboss.system.jars.path>${jboss.home}</jboss.system.jars.path>
+        
+        <version.jboss.as>7.2.0.Final</version.jboss.as>
+        <version.jboss.spec.javaee.6.0>3.0.2.Final</version.jboss.spec.javaee.6.0>
     </properties>
+    
+    <dependencyManagement>
+      <dependencies>
+         <!-- Define the version of JBoss' Java EE 6 APIs we want to use -->
+         <!-- JBoss distributes a complete set of Java EE 6 APIs including
+a Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or
+a collection) of artifacts. We use this here so that we always get the correct
+versions of artifacts. Here we use the jboss-javaee-6.0 stack (you can
+read this as the JBoss stack of the Java EE 6 APIs). You can actually
+use this stack with any version of JBoss AS that implements Java EE 6, not
+just JBoss AS 7! -->
+         <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-javaee-6.0</artifactId>
+            <version>${version.jboss.spec.javaee.6.0}</version>
+            <type>pom</type>
+            <scope>import</scope>
+         </dependency>
+
+         <dependency>
+             <groupId>org.jboss.as</groupId>
+             <artifactId>jboss-as-ejb-client-bom</artifactId>
+             <version>${version.jboss.as}</version>
+             <type>pom</type>
+             <scope>import</scope>
+         </dependency>
+         
+         <dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-jms-client-bom</artifactId>
+            <version>${version.jboss.as}</version>
+            <type>pom</type>
+            <scope>import</scope>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
 
     <dependencies>
         <dependency>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms</artifactId>
+            <version>1.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.8</version>
+            <version>1.2.17</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -38,8 +82,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-exec</artifactId>
+		    <version>1.2</version>
+		    <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate</artifactId>
+            <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
             <scope>test</scope>
             <exclusions>
@@ -53,6 +103,30 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
             <version>${hibernate.annotations.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.validator.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.5.6</version>
+           <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -87,8 +161,8 @@
                     <artifactId>ehcache</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.fiveamsolutions</groupId>
-                    <artifactId>nci-commons-core</artifactId>
+                    <groupId>gov.nih.nci.coppa</groupId>
+                    <artifactId>nci-commons-ctrp-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -96,16 +170,34 @@
 
         <!-- Selenium -->
         <dependency>
-            <groupId>org.seleniumhq.selenium.client-drivers</groupId>
-            <artifactId>selenium-java-client-driver</artifactId>
-            <version>1.0.2</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.39.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>2.39.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>15.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+		  <groupId>com.github.detro.ghostdriver</groupId>
+		  <artifactId>phantomjsdriver</artifactId>
+		  <version>1.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
-            <artifactId>coppa-commons-test</artifactId>
+            <artifactId>coppa-commons</artifactId>
             <version>${coppa-commons.version}</version>
             <scope>test</scope>
+            <classifier>tests</classifier>
         </dependency>
         <dependency>
             <groupId>jetty</groupId>
@@ -122,72 +214,32 @@
 
         <!-- API tests -->
         <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jbossall-client</artifactId>
-            <version>4.0.5</version>
-            <scope>system</scope>
-            <systemPath>${jboss.system.jars.path}/client/jbossall-client.jar</systemPath>
+             <groupId>org.jboss.as</groupId>
+             <artifactId>jboss-as-ejb-client-bom</artifactId>
+             <version>${version.jboss.as}</version>
+            <type>pom</type>
         </dependency>
         <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jboss-ejb3x</artifactId>
-            <version>4.0.5</version>
-            <scope>system</scope>
-            <systemPath>${jboss.system.jars.path}/client/jboss-ejb3x.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jboss-ejb3-client</artifactId>
-            <version>4.0.5</version>
-            <scope>system</scope>
-            <systemPath>${jboss.system.jars.path}/client/jboss-ejb3-client.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jboss-aop-jdk50-client</artifactId>
-            <version>4.0.5</version>
-            <scope>system</scope>
-            <systemPath>${jboss.system.jars.path}/client/jboss-aop-jdk50-client.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>jboss</groupId>
-            <artifactId>jboss-aspect-jdk50-client</artifactId>
-            <version>4.0.5</version>
-            <scope>system</scope>
-            <systemPath>${jboss.system.jars.path}/client/jboss-aspect-jdk50-client.jar</systemPath>
-        </dependency>
+            <groupId>org.jboss.as</groupId>
+            <artifactId>jboss-as-jms-client-bom</artifactId>
+            <version>${version.jboss.as}</version>
+            <type>pom</type>           
+         </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
-                <version>${cargo-maven2-plugin.version}</version>
-                <configuration>
-                    <deployer>
-                        <deployables>
-                            <deployable>
-                                <type>ear</type>
-                                <pingURL>http://${jboss.hostname}:${jboss.port}/po-web/index.jsp</pingURL>
-                                <pingTimeout>90000</pingTimeout>
-                                <location>${pom.basedir}/../ear/target/po.ear</location>
-                            </deployable>
-                        </deployables>
-                    </deployer>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.fiveamsolutions</groupId>
-                <artifactId>nci-commons-maven-plugin</artifactId>
+                <groupId>gov.nih.nci.coppa</groupId>
+                <artifactId>nci-commons-ctrp-maven-plugin</artifactId>
                 <version>${nci-commons.version}</version>
                 <configuration>
                     <srcDirectories>
                         <param>${pom.basedir}/../web/src/main/webapp</param>
                     </srcDirectories>
-                    <deployDirectory>${jboss.home}/server/${jboss.configuration}/tmp/deploy</deployDirectory>
-                    <deployDirectoryPattern>tmp*po.ear-contents</deployDirectoryPattern>
-                    <deploySubDirectory>po-web-exp.war</deploySubDirectory>
+                    <deployDirectory>${jboss.home}/standalone/tmp/vfs/deployment</deployDirectory>
+                    <deployDirectoryPattern>deployment.+</deployDirectoryPattern>
+                    <deploySubDirectory>po-web.war-.*</deploySubDirectory>
                     <deployedArtifact>${deployedArtifact}</deployedArtifact>
                 </configuration>
             </plugin>
@@ -234,7 +286,7 @@
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po.ear"></property>
+                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear"></property>
                                         <delete file="${deployed.po.ear}" verbose="true"></delete>
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
@@ -248,7 +300,7 @@
                                 <phase>post-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po.ear"></property>
+                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear"></property>
                                         <delete file="${deployed.po.ear}" verbose="true"></delete>
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
@@ -263,15 +315,16 @@
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
                         <configuration>
-                            <wait>false</wait>
-                            <deployer>
+                            <wait>false</wait>                            
                                 <deployables>
                                     <deployable>
                                         <pingURL>http://${jboss.hostname}:${jboss.port}/po-web/index.jsp</pingURL>
                                         <location>${pom.basedir}/../ear/target/po.ear</location>
+                                        <properties>
+                                            <name>po.ear</name>
+                                        </properties>
                                     </deployable>
-                                </deployables>
-                            </deployer>
+                                </deployables>                            
                         </configuration>
                         <executions>
                             <execution>
@@ -319,19 +372,6 @@
                                     <skip>${test.selenium.xvfb.skip}</skip>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start-server</goal>
-                                </goals>
-                                <configuration>
-                                    <background>true</background>
-                                    <port>${test.selenium.server.port}</port>
-                                    <debug>${test.selenium.server.debug}</debug>
-                                    <logOutput>true</logOutput>
-                                    <!-- verifyBrowser>${test.selenium.server.verifyBrowser}</verifyBrowser-->
-                                </configuration>
-                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -355,23 +395,7 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>selenium-maven-plugin</artifactId>
-                        <version>${selenium-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop-server</goal>
-                                </goals>
-                                <configuration>
-                                    <background>true</background>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    </plugin>                    
                 </plugins>
                 <testResources>
                     <testResource>
@@ -420,7 +444,7 @@
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po.ear"></property>
+                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear"></property>
                                         <delete file="${deployed.po.ear}" verbose="true"></delete>
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
@@ -434,7 +458,7 @@
                                 <phase>post-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/server/${jboss.configuration}/deploy/po.ear"></property>
+                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear"></property>
                                         <delete file="${deployed.po.ear}" verbose="true"></delete>
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
@@ -449,15 +473,16 @@
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
                         <configuration>
-                            <wait>false</wait>
-                            <deployer>
+                            <wait>false</wait>                           
                                 <deployables>
                                     <deployable>
                                         <pingURL>http://${jboss.hostname}:${jboss.port}/po-web/index.jsp</pingURL>
                                         <location>${pom.basedir}/../ear/target/po.ear</location>
+                                        <properties>
+                                            <name>po.ear</name>
+                                        </properties>
                                     </deployable>
-                                </deployables>
-                            </deployer>
+                                </deployables>                           
                         </configuration>
                         <executions>
                             <execution>
@@ -496,19 +521,7 @@
                                     <skip>${test.selenium.xvfb.skip}</skip>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start-server</goal>
-                                </goals>
-                                <configuration>
-                                    <background>true</background>
-                                    <port>${test.selenium.server.port}</port>
-                                    <debug>${test.selenium.server.debug}</debug>
-                                    <logOutput>true</logOutput>
-                                    <!-- verifyBrowser>${test.selenium.server.verifyBrowser}</verifyBrowser-->
-                                </configuration>
-                            </execution>
+                           
                         </executions>
                     </plugin>
                     <plugin>
@@ -533,22 +546,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>selenium-maven-plugin</artifactId>
-                        <version>${selenium-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop-server</goal>
-                                </goals>
-                                <configuration>
-                                    <background>true</background>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    
                 </plugins>
                 <testResources>
                     <testResource>
@@ -616,19 +614,7 @@
                                     <skip>${test.selenium.xvfb.skip}</skip>
                                 </configuration>
                             </execution>
-                            <execution>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start-server</goal>
-                                </goals>
-                                <configuration>
-                                    <background>true</background>
-                                    <port>${test.selenium.server.port}</port>
-                                    <debug>${test.selenium.server.debug}</debug>
-                                    <logOutput>true</logOutput>
-                                    <!-- verifyBrowser>${test.selenium.server.verifyBrowser}</verifyBrowser-->
-                                </configuration>
-                            </execution>
+                            
                         </executions>
                     </plugin>
                     <plugin>
@@ -653,22 +639,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>selenium-maven-plugin</artifactId>
-                        <version>${selenium-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop-server</goal>
-                                </goals>
-                                <configuration>
-                                    <background>true</background>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    
                 </plugins>
                 <testResources>
                     <testResource>

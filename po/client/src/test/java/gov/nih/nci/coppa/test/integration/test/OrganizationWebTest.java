@@ -106,9 +106,9 @@ public class OrganizationWebTest extends AbstractPoWebTest {
             assertEquals(poId, selenium.getTable("row." + row + ".0"));
             assertEquals(orgName, selenium.getTable("row." + row + ".1"));
             assertEquals("", selenium.getTable("row." + row + ".2"));
-            assertEquals("PENDING", selenium.getTable("row." + row + ".3"));
-            assertEquals("NONE", selenium.getTable("row." + row + ".4"));
-            assertEquals("Curate", selenium.getTable("row." + row + ".5"));
+            assertEquals("PENDING", selenium.getTable("row." + row + ".8"));
+            assertEquals("", selenium.getTable("row." + row + ".5"));
+            assertEquals("Curate", selenium.getTable("row." + row + ".9"));
             if (clear) {
                 clear();
             }
@@ -116,7 +116,7 @@ public class OrganizationWebTest extends AbstractPoWebTest {
     }
 
     protected void searchByName(boolean clear) {
-        selenium.type("searchOrganizationForm_criteria_organization_name", orgName);
+        selenium.type("searchOrganizationForm_criteria_name", orgName);
         clickAndWait("submitSearchOrganizationForm");
         verify(clear);
     }

@@ -135,8 +135,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         validateRelatedOrg(1, "SUBDIVISION");
 
         // Remove the relationship from ct.gov
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[5]//ul//li[1]/a");
-        removeRelationship(1, false);
+        clickAndWait("xpath=//table[@id='row']//tr[2]//td[5]//ul//li[1]/a");        
         removeRelationship(1, true);
 
         // browse through all the organizations again
@@ -151,8 +150,8 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
 
         //Nullify family to remove from view as not to interfere with other tests
         selenium.select("familyEntityForm.family.statusCode", "NULLIFIED");
-        clickAndWait("save_button");
-        selenium.getConfirmation();
+        selenium.chooseOkOnNextConfirmation();
+        clickAndWait("save_button");        
     }
 
     private void addFamilyMember(String famId, String organizationName) {
@@ -160,12 +159,12 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         pause(2000);
         clickAndWait("link=Search");
         selenium.selectFrame("popupFrame");
-        waitForElementById("duplicateOrganizationForm_criteria_organization_name", 10);
-        selenium.type("duplicateOrganizationForm_criteria_organization_name", organizationName);
+        waitForElementById("duplicateOrganizationForm_criteria_name", 10);
+        selenium.type("duplicateOrganizationForm_criteria_name", organizationName);
         clickAndWait("submitDuplicateOrganizationForm");
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[6]/ul/li/a");
 
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         selenium.select("familyOrgRelationship.functionalType", "ORGANIZATIONAL");
         clickAndWait("save_button");
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully created."));
@@ -208,7 +207,7 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         selenium.select("newOrgRelationship.hierarchicalType", relationshipName);
         selenium.click("add_relationship_button");
 
-        selenium.selectFrame("relative=up");
+        driver.switchTo().defaultContent();
         pause(2000);
         waitForElementById("row", 10);
 
@@ -241,9 +240,9 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         selenium.type("newOrgRelationship.startDate", today);
 
         selenium.click("add_relationship_button");
-
-        selenium.selectFrame("relative=up");
-        pause(5000);
+        pause(2000);
+        
+        driver.switchTo().defaultContent();        
         waitForElementById("row", 10);
 
         String info = selenium.getText("xpath=//table[@id='row']//tr[" + row + "]//td[1]");
@@ -257,15 +256,13 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
     private void removeRelationship(int row, boolean accept) {
         if (accept) {
             selenium.chooseOkOnNextConfirmation();
-            clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");
-            selenium.getConfirmation();
+            clickAndWait("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");            
             waitForElementById("row", 10);
             assertTrue(selenium.isTextPresent("Organization relationship successfully removed."));
             clickAndWait("return_to_button");
         } else {
             selenium.chooseCancelOnNextConfirmation();
-            selenium.click("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");
-            selenium.getConfirmation();
+            selenium.click("xpath=//table[@id='row']//tr[" + row + "]//td[1]/a[2]");            
             assertFalse(selenium.isTextPresent("Organization relationship successfully removed."));
         }
     }

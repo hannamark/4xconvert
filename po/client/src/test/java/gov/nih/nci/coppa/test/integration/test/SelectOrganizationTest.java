@@ -107,7 +107,7 @@ public class SelectOrganizationTest extends OrganizationWebTest {
         openSelectOrganization();
 
         //input search results
-        selenium.type("duplicateOrganizationForm_criteria_organization_id", poId);
+        selenium.type("duplicateOrganizationForm_criteria_id", poId);
         clickAndWait("submitDuplicateOrganizationForm");
         //wait for div to load
         waitForElementById("mark_as_dup_" + poId, 5);
@@ -136,7 +136,7 @@ public class SelectOrganizationTest extends OrganizationWebTest {
 
         selenium.click("//a[@id='selector_org_back_to_search_results']/span/span");
         selenium.click("//a[@id='selector_org_back_to_search_form_top']/span/span");
-        verifyEquals(poId, selenium.getValue("duplicateOrganizationForm_criteria_organization_id"));
+        verifyEquals(poId, selenium.getValue("duplicateOrganizationForm_criteria_id"));
 
     }
 

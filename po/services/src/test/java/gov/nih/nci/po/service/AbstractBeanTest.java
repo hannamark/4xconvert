@@ -70,7 +70,7 @@ public abstract class AbstractBeanTest extends AbstractHibernateTestCase {
         this.user = user;
     }
 
-    @Before
+    @Override
     public void loadData() {
         defaultCountry = CountryTestUtil.save(new Country("United States", "840", "US", "USA"));
 

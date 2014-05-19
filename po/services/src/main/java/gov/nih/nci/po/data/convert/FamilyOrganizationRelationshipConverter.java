@@ -86,16 +86,19 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ObjectUtils;
 
 /**
  * Converts between SortedSet of FamilyOrganziationRelatioships and DSet of Iis. 
  * @author moweis
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class FamilyOrganizationRelationshipConverter {
 
     /**
@@ -142,7 +145,14 @@ public class FamilyOrganizationRelationshipConverter {
                 throw new UnsupportedOperationException(returnClass.getName());
             }
             
-            SortedSet<FamilyOrganizationRelationship> relationships = new TreeSet<FamilyOrganizationRelationship>();
+            SortedSet<FamilyOrganizationRelationship> relationships = new TreeSet<FamilyOrganizationRelationship>(
+                    new Comparator<FamilyOrganizationRelationship>() {
+                        @Override
+                        public int compare(FamilyOrganizationRelationship r1,
+                                FamilyOrganizationRelationship r2) {
+                            return ObjectUtils.compare(r1.getId(), r2.getId());
+                        }
+                    });
             if (value == null || value.getItem() == null) {
                 return (TO) relationships;
             }

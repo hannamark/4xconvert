@@ -87,25 +87,26 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
     /**
      * Verifies PO-719 via UI.
      */
+    @SuppressWarnings("deprecation")
     public void testUsePersonsAddressButtonWorks() {
         openCreatePerson();
         createPerson();
         
-        clickAndWait("link=Manage Organizational Contact(s)");
-        clickAndWait("add_button");
+        clickAndWait("link=OC (0)");
+        clickAndWait("add_button_oc");
         addPostalAddress(getAddress());
         waitForTelecomFormsToLoad();
         inputContactInfoForUSAndCan("abc@example.com", new String[]{"123","456","7890"},
                 new String[]{"234","567","8901"}, new String[]{"345","678","9012"}, "http://www.example.com");
         // email, phone, fax, tty, url
-        waitForElementById("email-remove-0", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-0"));
+        waitForElementById("email-remove-1", 5);
+        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-1"));
 
-        waitForElementById("phone-remove-0", 5);
-        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-0"));
+        waitForElementById("phone-remove-1", 5);
+        assertEquals("123-456-7890 | Remove", selenium.getText("id=phone-entry-1"));
 
-        waitForElementById("fax-remove-0", 5);
-        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-0"));
+        waitForElementById("fax-remove-1", 5);
+        assertEquals("234-567-8901 | Remove", selenium.getText("id=fax-entry-1"));
 
         waitForElementById("tty-remove-0", 5);
         assertEquals("345-678-9012 | Remove", selenium.getText("id=tty-entry-0"));
@@ -115,22 +116,22 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
         clickAndWait("return_to_button");
         clickAndWait("return_to_button");
 
-        clickAndWait("link=Manage Health Care Provider(s)");
-        clickAndWait("add_button");
+        clickAndWait("link=HCP (0)");
+        clickAndWait("add_button_ro");
         
         //add postal addresses
         addPostalAddressUsingPopup("456 jik", "suite xyz", "bogota", "n/a", "67890", "Colombia", 1);
         waitForTelecomFormsToLoad();
         inputContactInfo("abc@example.com", "1010 555 6666 7777", "1010 666 777 88888", "1010 777 888 9999", "http://www.example.com");
         // email, phone, fax, tty, url
-        waitForElementById("email-remove-0", 5);
-        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-0"));
+        waitForElementById("email-remove-1", 5);
+        assertEquals("abc@example.com | Remove", selenium.getText("id=email-entry-1"));
 
-        waitForElementById("phone-remove-0", 5);
-        assertEquals("1010 555 6666 7777 | Remove", selenium.getText("id=phone-entry-0"));
+        waitForElementById("phone-remove-1", 5);
+        assertEquals("1010 555 6666 7777 | Remove", selenium.getText("id=phone-entry-1"));
 
-        waitForElementById("fax-remove-0", 5);
-        assertEquals("1010 666 777 88888 | Remove", selenium.getText("id=fax-entry-0"));
+        waitForElementById("fax-remove-1", 5);
+        assertEquals("1010 666 777 88888 | Remove", selenium.getText("id=fax-entry-1"));
 
         waitForElementById("tty-remove-0", 5);
         assertEquals("1010 777 888 9999 | Remove", selenium.getText("id=tty-entry-0"));
@@ -140,21 +141,22 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
         clickAndWait("return_to_button");
         clickAndWait("return_to_button");
 
-        clickAndWait("link=Manage Clinical Research Staff(s)");
-        clickAndWait("add_button");
+        clickAndWait("link=CRS (0)");
+        clickAndWait("add_button_hcf");
         addPostalAddress(getAddress());
         clickAndWait("return_to_button");
         clickAndWait("return_to_button");
     }
 
+    @SuppressWarnings("deprecation")
     private void addPostalAddress(Address address) {
         waitForElementById("add_address", 5);
         clickAndWait("add_address");
 
         selenium.selectFrame("popupFrame");
         clickAndWait("copy_parent_postalAddress");
-        /* wait for results to load */
-        selenium.selectFrame("relative=parent");
+        pause(1000);
+        driver.switchTo().defaultContent();
         waitForElementById("postalAddress0", 30);
 
         assertTrue(selenium.isTextPresent("Address 1"));

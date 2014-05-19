@@ -83,7 +83,6 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 import gov.nih.nci.coppa.test.TstProperties;
-import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -95,20 +94,40 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Callable;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 
 import javax.naming.NamingException;
 
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 
-public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
-    protected static final String DEFAULT_URL = "http://default.example.com";
 
+
+
+
+public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
+    
+    private static final String PHANTOM_JS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
+    protected static final String DEFAULT_URL = "http://default.example.com";
     protected static final String DEFAULT_EMAIL = "default@example.com";
-    private static int PAGE_SIZE = 20;
+    
+    private static int PAGE_SIZE = 20;    
+    
     private static final Logger LOG = Logger.getLogger(AbstractPoWebTest.class);
 
     protected static final String SELECT_A_COUNTRY = "--Select a Country--";
@@ -118,21 +137,114 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected static final String COUNTRY_MUST_BE_SET = "Country must be set";
 
     protected static final String STATUS_MUST_BE_SET = "Status must be set";
-
-    @Override
-    public void setUp() throws Exception {
-        super.setSeleniumPort(TstProperties.getSeleniumServerPort());
-        super.setServerHostname(TstProperties.getServerHostname());
-        super.setServerPort(TstProperties.getServerPort());
-        super.setBrowser(TstProperties.getSeleniumBrowser());
-        super.setUp();
-        selenium.setSpeed("50");
+    
+    static {
+        new Timer(true).schedule(new TimerTask() {
+            @SuppressWarnings("rawtypes")
+            @Override
+            public void run() {
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    return;
+                }
+                System.out
+                        .println("---------------------------------------------------------------------------------");
+                System.out
+                        .println("I am a periodic thread dump logger. Please excuse me for verbose output and ignore for now.");
+                Map allThreads = Thread.getAllStackTraces();
+                Iterator iterator = allThreads.keySet().iterator();
+                StringBuffer stringBuffer = new StringBuffer();
+                while (iterator.hasNext()) {
+                    Thread key = (Thread) iterator.next();
+                    StackTraceElement[] trace = (StackTraceElement[]) allThreads
+                            .get(key);
+                    stringBuffer.append(key + "\r\n");
+                    for (int i = 0; i < trace.length; i++) {
+                        stringBuffer.append(" " + trace[i] + "\r\n");
+                    }
+                    stringBuffer.append("\r\n");
+                }
+                System.out.println(stringBuffer);
+            }
+        }, 120000, 120000);
     }
 
     @Override
-    public void tearDown() throws Exception {
+    public void setUp() throws Exception {
+        super.setServerHostname(TstProperties.getServerHostname());
+        super.setServerPort(TstProperties.getServerPort());
+        super.setDriverClass(TstProperties.getDriverClass());
+        //super.setDriverClass(PHANTOM_JS_DRIVER);
+        System.setProperty("phantomjs.binary.path", TstProperties.getPhantomJsPath());
+        super.setUp();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void tearDown() throws Exception {           
         logoutUser();
+        closeBrowser();
         super.tearDown();
+    }
+    
+    @SuppressWarnings("deprecation")
+    protected void reInitializeWebDriver() throws Exception {
+        closeBrowser();
+        super.tearDown();
+        setUp();
+    }
+
+    /**
+     * @return
+     */
+    private boolean isPhantomJS() {
+        return driver.getClass().getName().equals(PHANTOM_JS_DRIVER);
+    }
+    
+    /**
+     * 
+     */
+    private void open(String url) {
+        if (!isPhantomJS()) {
+            selenium.open(url);
+        } else {
+            openAndHandleStuckPhantomJsDriver(url);
+        }
+    }
+    
+    private void openAndHandleStuckPhantomJsDriver(final String url) {
+        int tries = 0;
+        while (tries < 3) {
+            tries++;
+            Future<Boolean> f = Executors.newSingleThreadExecutor().submit(
+                    new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            selenium.open(url);
+                            return true;
+                        }
+                    });
+            try {
+                if (f.get(30, TimeUnit.SECONDS)) {
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out
+                        .println("PhantomJS stuck in 'get' (an odd issue on Linux); restarting and trying again. Attempt # "
+                                + tries);
+            }
+            f.cancel(true);
+            try {
+                this.reInitializeWebDriver();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    private void closeBrowser() {
+        driver.quit();
     }
 
     private void logoutUser() {
@@ -140,15 +252,15 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
     protected void login(String username, String password) {
         System.out.println("About to call application...");
-        selenium.open("/po-web");
+        open("/po-web");
         assertTrue(selenium.isTextPresent("Login"));
         assertTrue(selenium.isTextPresent("CONTACT US"));
         System.out.println("About to click Login link...");
         clickAndWait("link=Login");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
-        System.out.println("About to click id=enableEnterSubmit...");
-        clickAndWait("id=enableEnterSubmit");
+        selenium.select("id=authenticationServiceURL", "label=Training");        
+        clickAndWait("id=loginButton");
         assertTrue(selenium.isElementPresent("id=Help"));
         assertTrue(selenium.isElementPresent("id=Logout"));
         assertTrue(selenium.isElementPresent("id=accept_disclaimer"));
@@ -167,6 +279,8 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("id=CreateFamily"));
         System.out.println("Completed login().");
     }
+
+   
 
     public void loginAsCurator() {
         login("curator", "Coppa#12345");
@@ -210,7 +324,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void openAndWait(String url) {
-        selenium.open(url);
+        open(url);        
         waitForPageToLoad();
     }
 
@@ -534,7 +648,8 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         selenium.select("address.stateOrProvince", "value=" + address.getStateOrProvince());
         selenium.type("postalAddressForm_address_postalCode", address.getPostalCode());
         clickAndWait("submitPostalAddressForm");
-        selenium.selectFrame("relative=up");
+        pause(3000);
+        driver.switchTo().defaultContent();
     }
 
     protected void inputContactInfo(String email, String phone, String fax, String tty, String url) {
@@ -560,10 +675,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void inputContactInfoForUSAndCan(String email, String[] phone, String[] fax, String[] tty, String url) {
-        inputEmailAndUrl(email, url);
-        inputForTel(phone, "phone");
-        inputForTel(fax, "fax");
-        inputForTel(tty, "tty");
+        inputContactInfo(email, StringUtils.join(phone, "-"), StringUtils.join(fax, "-"), StringUtils.join(tty, "-"), url);
     }
 
     private void inputEmailAndUrl(String email, String url) {
@@ -627,23 +739,23 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     }
 
     protected void accessManageIdentifiedOrganizationScreen() {
-        clickAndWait("link=Manage Identified Organization(s)");
-        assertTrue(selenium.isTextPresent("Identified Organization Information"));
+        clickAndWait("link=Identified Org (0)");        
     }
 
     protected void accessManageOrganizationalContactScreen() {
-        clickAndWait("link=Manage Organizational Contact(s)");
-        assertTrue(selenium.isTextPresent("Organizational Contact Information"));
+        if (selenium.isElementPresent("link=Org Contact (0)")) {
+            clickAndWait("link=Org Contact (0)");
+        } else if (selenium.isElementPresent("link=OC (0)")) {
+            clickAndWait("link=OC (0)");
+        }
     }
 
     protected void accessManageIdentifiedPersonScreen() {
-        clickAndWait("link=Manage Other Person Identifier(s)");
-        assertTrue(selenium.isTextPresent("Other Person Identifier Information"));
+        clickAndWait("link=OPI (0)");        
     }
 
     protected void accessManageResearchOrganizationScreen() {
-        clickAndWait("link=Manage Research Organization(s)");
-        assertTrue(selenium.isTextPresent("Research Organization Information"));
+        clickAndWait("link=RO (0)");        
     }
 
     protected void accessManageHealthCareProviderScreen() {
@@ -659,14 +771,14 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected void selectOrganizationScoper(String orgId, String orgName) {
         clickAndWait("select_scoper");
         selenium.selectFrame("popupFrame");
-        selenium.type("duplicateOrganizationForm_criteria_organization_id", orgId);
+        selenium.type("duplicateOrganizationForm_criteria_id", orgId);
         /* search for dups */
         selenium.click("//a[@id='submitDuplicateOrganizationForm']/span/span");
         /* wait for results to load */
         waitForElementById("mark_as_dup_" + orgId, 10);
         /* select record to use at duplicate */
         clickAndWait("mark_as_dup_" + orgId);
-        selenium.selectFrame("relative=parent");
+        driver.switchTo().defaultContent();
         assertEquals(orgName + " (" + orgId + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id"));
     }
 
@@ -686,22 +798,23 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 selenium.selectFrame("popupFrame");
                 selenium.select("postalAddressForm.address.country", "label="+countryName);
                 //might need to wait for //div[@id=address.div_stateOrProvince] to reload
-                pause(5000);
+                pause(3000);
                 waitForElementById("address.stateOrProvince", 10);
 
                 selenium.type("postalAddressForm_address_streetAddressLine", street1);
                 selenium.type("postalAddressForm_address_deliveryAddressLine", street2);
                 selenium.type("postalAddressForm_address_cityOrMunicipality", city);
-                if (selenium.isElementPresent("css=input[name=address.stateOrProvince]")){
-                    selenium.type("address.stateOrProvince", stateCode);
-                } else if (selenium.isElementPresent("css=select[name=address.stateOrProvince]")) {
+                
+                try {
                     selenium.select("address.stateOrProvince", "value="+stateCode);
-                } else {
-                    fail("Unable to determine the form element.type of address.stateOrProvince");
-                }
+                } catch (Exception e) {
+                    System.out.println("Oops; not a SELECT element.");
+                    selenium.type("address.stateOrProvince", stateCode);
+                }               
+                
                 selenium.type("postalAddressForm_address_postalCode", zip);
                 selenium.click("//a[@id='submitPostalAddressForm']/span/span");
-                selenium.selectFrame("relative=parent");
+                driver.switchTo().defaultContent();
                 totalNumberOfAddressesAfterAdd--;
                 waitForElementById("postalAddress"+totalNumberOfAddressesAfterAdd, 10);
                 selenium.isTextPresent(street1);
@@ -740,7 +853,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
     protected void savePersonAsActive(Ii id) {
         selenium.select("curateEntityForm.person.statusCode", "label=ACTIVE");
         clickAndWaitSaveButton();
-        assertEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Person Details", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='person_id_" + id.getExtension() + "']/span/span"));
     }
 
@@ -749,7 +862,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         clickAndWaitSaveButton();
         assertTrue("Organization was successfully created!", selenium
                 .isTextPresent("Organization was successfully created"));
-        assertEquals("PO: Persons and Organizations - Entity Inbox - Person", selenium.getTitle());
+        assertEquals("PO: Persons and Organizations - Person Details", selenium.getTitle());
         assertFalse(selenium.isElementPresent("//a[@id='organization_id_" + id.getExtension() + "']/span/span"));
     }
 

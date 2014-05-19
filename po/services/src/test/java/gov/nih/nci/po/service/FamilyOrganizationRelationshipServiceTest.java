@@ -172,7 +172,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         long famOrgRelId = familyOrgRelServiceLocal.create(famOrgRel);
         assertEquals(oldDate, familyOrgRelServiceLocal.getActiveStartDate(savedFam.getId(), savedOrg.getId()));
         FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
-                .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
+                .getCurrentSession().get(FamilyOrganizationRelationship.class, famOrgRelId);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         assertNotNull(savedFamOrgRel.getId());
@@ -431,7 +431,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         long famOrgRelId = familyOrgRelServiceLocal.create(famOrgRel);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        return (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
+        return (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession().get(FamilyOrganizationRelationship.class, famOrgRelId);
     }
 
     private Family createFamily(String name, Date startDate, FamilyStatus status) {
@@ -442,7 +442,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         long id = EjbTestHelper.getFamilyServiceBean().create(family);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        return (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        return (Family) PoHibernateUtil.getCurrentSession().get(Family.class, id);
     }
 
     public Family createFamily() {
@@ -463,7 +463,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         PoHibernateUtil.getCurrentSession().clear();
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        Organization savedOrg = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);
+        Organization savedOrg = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
         assertNotNull(savedOrg.getId());
         return savedOrg;
     }

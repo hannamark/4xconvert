@@ -99,17 +99,17 @@ public final class TstProperties {
     public static final String SERVER_PORT_DEFAULT = "8080";
     public static final String SERVER_JNDI_PORT_DEFAULT = "1099";
 
-    public static final String SELENIUM_SERVER_PORT_KEY = "selenium.server.port";
-    public static final String SELENIUM_SERVER_PORT_DEFAULT = "4444";
-
-    public static final String SELENIUM_BROWSER_KEY = "selenium.browser";
-    public static final String SELENIUM_BROWSER_DEFAULT = "*chrome";
+    public static final String WEBDRIVER_CLASS_KEY = "webdriver.class";
+    public static final String WEBDRIVER_CLASS_DEFAULT = "org.openqa.selenium.firefox.FirefoxDriver";
+    public static final String WEBDRIVER_PHANTOMJS_PATH = "phantomjs.binary.path";
+    private static final String WEBDRIVER_PHANTOMJS_PATH_DEFAULT = "/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs";
 
     public static final String JMX_USERNAME_KEY = "jboss.jmx.username";
     public static final String JMS_USERNAME_DEFAULT = "admin";
 
     public static final String JMX_PASSWORD_KEY = "jboss.jmx.password";
     public static final String JMS_PASSWORD_DEFAULT = "admin";
+
 
     public static Properties properties = new Properties();
     static {
@@ -133,13 +133,14 @@ public final class TstProperties {
         return Integer.parseInt(properties.getProperty(SERVER_JNDI_PORT_KEY, SERVER_JNDI_PORT_DEFAULT));
     }
 
-    public static String getSeleniumServerPort() {
-        return properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT);
+    public static String getDriverClass() {
+        return properties.getProperty(WEBDRIVER_CLASS_KEY, WEBDRIVER_CLASS_DEFAULT);
+    }
+    
+    public static String getPhantomJsPath() {
+        return properties.getProperty(WEBDRIVER_PHANTOMJS_PATH, WEBDRIVER_PHANTOMJS_PATH_DEFAULT);
     }
 
-    public static String getSeleniumBrowser() {
-        return properties.getProperty(SELENIUM_BROWSER_KEY, SELENIUM_BROWSER_DEFAULT);
-    }
 
     public static String getJmxUsername() {
         return properties.getProperty(JMX_USERNAME_KEY, JMS_USERNAME_DEFAULT);

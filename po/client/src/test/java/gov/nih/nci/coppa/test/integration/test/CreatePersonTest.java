@@ -82,9 +82,12 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import org.junit.Test;
+
 public class CreatePersonTest extends AbstractPoWebTest {
 
-    public void testPerson() {
+    @Test
+    public void testPerson() throws Exception {        
         loginAsCurator();
         openCreatePerson();
         verifyDefaultValidationErrors();
@@ -99,6 +102,7 @@ public class CreatePersonTest extends AbstractPoWebTest {
         assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
         assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
         assertEquals("United States", selenium.getSelectedLabel("curateEntityForm.person.postalAddress.country"));
+        assertTrue(selenium.isTextPresent("US, Canadian, and Australian addresses must include zip"));
         verifyDefaultFieldErrorsMessages();
 
         selenium.select("curateEntityForm.person.statusCode", "label=" + SELECT_A_STATUS);
@@ -123,9 +127,7 @@ public class CreatePersonTest extends AbstractPoWebTest {
         assertEquals("Address Line 1 must be set", selenium
                 .getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_streetAddressLine']/div"));
         assertEquals("City must be set", selenium
-                .getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_cityOrMunicipality']/div"));
-        assertEquals("Postal Code must be set", selenium
-                .getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_postalCode']/div"));
-        assertTrue(selenium.isTextPresent("At least one Email Address must be set"));
+                .getText("//div[@id='wwerr_curateEntityForm_person_postalAddress_cityOrMunicipality']/div"));       
+        assertTrue(selenium.isTextPresent("Either a phone number or an email address is required"));
     }
 }

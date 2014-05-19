@@ -217,6 +217,12 @@ public class NullifiedRoleInterceptorTest extends AbstractServiceBeanTest {
             this.parameters = arg0;
 
         }
+
+        @Override
+        public Object getTimer() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 
 }

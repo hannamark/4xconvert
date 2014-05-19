@@ -227,7 +227,7 @@ public abstract class CorrelationTestBase<DTO extends CorrelationDto, SERVICE ex
         getCorrelationService().updateCorrelation(dto);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = javax.ejb.EJBException.class)
     public void updateStatusWithWrongIdentifier() throws Exception {
         Cd cd = new Cd();
         cd.setCode("suspended"); // maps to SUSPENDED

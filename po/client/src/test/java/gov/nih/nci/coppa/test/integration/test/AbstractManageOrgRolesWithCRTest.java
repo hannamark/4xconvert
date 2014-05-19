@@ -100,7 +100,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     private String orgRoleUpdateMessage;
     private String orgRoleName;
     private String orgRoleSearchResultsMessage;
-    private String orgRoleSearchResultsRowNumber = "row.1.0";
+    private String orgRoleSearchResultsRowNumber = "hcf_row.1.0";
     private String organizationStatus;
 
     protected abstract String getSortFieldTestColumnName();
@@ -130,10 +130,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
 
     protected void accessOrgRoleScreen() {
         // Goto Manage Org Role Screen
-        clickAndWait(orgRoleLinkText);
-        assertTrue(selenium.isTextPresent(orgRoleTitleText));
-        // check organization status = ACTIVE
-        assertEquals(organizationStatus, selenium.getText("wwctrl_organization.statusCode"));
+        clickAndWait(orgRoleLinkText);       
     }
 
     protected void openOrganizationCuratePage() {
@@ -142,7 +139,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
 
     protected void addUSPostalAddress() {
         addPostalAddressUsingPopup("Address One", "suite xyz", "phoenix", "AZ", "67890", "United States", 1);
-        selenium.selectFrame("relative=parent");
+        driver.switchTo().defaultContent();
         assertEquals("Address One", selenium.getText("wwctrl_address.streetAddressLine1"));
         assertEquals("suite xyz", selenium.getText("wwctrl_address.deliveryAddressLine1"));
         assertEquals("phoenix", selenium.getText("wwctrl_address.cityOrMunicipality1"));
@@ -153,7 +150,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
 
     protected void addNonUSPostalAddress() {
         addPostalAddressUsingPopup("Non US Address", "suite xyz", "City One", "State One", "67890", "Thailand", 1);
-        selenium.selectFrame("relative=parent");
+        driver.switchTo().defaultContent();
         assertEquals("Non US Address", selenium.getText("wwctrl_address.streetAddressLine1"));
         assertEquals("suite xyz", selenium.getText("wwctrl_address.deliveryAddressLine1"));
         assertEquals("City One", selenium.getText("wwctrl_address.cityOrMunicipality1"));
@@ -173,14 +170,18 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     }
 
     protected void checkEmail() throws Exception {
+       checkEmail(1);
+    }
+    
+    protected void checkEmail(int entryID) throws Exception {
         checkEmailOrUrl("email-add",
                 "exact:Email Address must be set",
                 "emailEntry_value",
                 "Some email id",
                 "exact:Email Address is not a well-formed email address",
                 "example1@example.com",
-                "email-entry-0",
-                "email-remove-0");
+                "email-entry-"+entryID,
+                "email-remove-"+entryID);
     }
 
     protected void checkUrl() throws Exception {
@@ -195,42 +196,31 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
     }
 
     protected void checkPhone() {
-        checkTelType("phone", "phone-add", new String[] {"123", "456", "7890"},
-                "phone-entry-0", "123-456-7890", "phone-remove-0");
+        checkPhone(1);
+    }
+    
+    protected void checkPhone(int entryID) {
+        checkTelType("phone", "phone-add", "123-456-7890",
+                "phone-entry-"+entryID, "123-456-7890", "phone-remove-"+entryID);
     }
 
     protected void checkFax() {
-         checkTelType("fax", "fax-add", new String[] {"234", "567", "8901"},
-                 "fax-entry-0", "234-567-8901", "fax-remove-0");
-     }
+        checkFax(1);
+    }
+    
+    protected void checkFax(int entryID) {
+        checkTelType("fax", "fax-add", "234-567-8901",
+                "fax-entry-"+entryID, "234-567-8901", "fax-remove-"+entryID);
+    }
 
     protected void checkTty() {
-        checkTelType("tty", "tty-add", new String[] {"345", "678", "9012"},
+        checkTelType("tty", "tty-add", "345-678-9012",
                 "tty-entry-0", "345-678-9012", "tty-remove-0");
     }
 
-    protected void checkForUSFormattedTel(String type) {
-        checkTelFormat(type, true);
-    }
-
-    protected void checkForNonUSFormattedTel(String type) {
-        checkTelFormat(type, false);
-    }
-
-    private void checkTelFormat(String type, Boolean usFormat) {
-        String usFormatDivId = "id=us_format_" + type;
-        String noFormatDivId = "id=no_format_" + type;
-
-        if (usFormat) {
-            assertTrue(selenium.isVisible(usFormatDivId));
-            assertFalse(selenium.isVisible(noFormatDivId));
-        } else {
-            assertFalse(selenium.isVisible(usFormatDivId));
-            assertTrue(selenium.isVisible(noFormatDivId));
-        }
-    }
-
-    private void checkTelType(String type, String anchorAddId, String value[], String entryId, String entryText, String anchorRemoveId) {
+  
+    @SuppressWarnings("deprecation")
+    private void checkTelType(String type, String anchorAddId, String value, String entryId, String entryText, String anchorRemoveId) {
         /*
          * Commenting out the following code, since isAlertPresent() always returns false, and
          * getAlert() always returns the exception message: There were no alerts.
@@ -241,17 +231,15 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         */
 
         // Add a non US Postal address, check tel format
-        addNonUSPostalAddress();
-        checkForNonUSFormattedTel(type);
-        inputNonUSFormatTel(value[0] + "-" + value[1] + "-" + value[2], type);
+        addNonUSPostalAddress();       
+        inputNonUSFormatTel(value, type);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
         clickAndWaitAjax(anchorRemoveId);
         removePostalAddress();
 
         // Add a US postal address, check tel format, also check Tel entry/removal.
-        addUSPostalAddress();
-        checkForUSFormattedTel(type);
-        inputForTel(value, type);
+        addUSPostalAddress();        
+        inputNonUSFormatTel(value, type);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
         clickAndWaitAjax(anchorRemoveId);
         removePostalAddress();
@@ -285,6 +273,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         assertNotEquals("null", getOrganizationalRoleId());
         assertNotNull(getOrganizationalRoleId());
         selenium.click("link=" + getSortFieldTestColumnName());
+        pause(1000);
         assertNotEquals("null", getOrganizationalRoleId());
         assertNotNull(getOrganizationalRoleId());
 

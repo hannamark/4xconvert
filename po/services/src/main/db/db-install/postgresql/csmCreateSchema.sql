@@ -149,6 +149,31 @@ CREATE TABLE CSM_FILTER_CLAUSE (
 	PRIMARY KEY(FILTER_CLAUSE_ID)	
 );
 
+CREATE TABLE csm_remote_group
+(
+  group_id bigint NOT NULL,
+  application_id bigint NOT NULL,
+  grid_grouper_url character varying(255) NOT NULL,
+  grid_grouper_group_name character varying(255) NOT NULL,
+  CONSTRAINT csm_remote_group_pkey PRIMARY KEY (group_id)
+);
+
+
+CREATE TABLE csm_remote_group_sync_record
+(
+  record_id bigint NOT NULL,
+  group_id bigint NOT NULL,
+  result character varying(10) NOT NULL,
+  message character varying(1000),
+  sync_date timestamp without time zone NOT NULL,
+  CONSTRAINT csm_remote_group_sync_record_pkey PRIMARY KEY (record_id),
+  CONSTRAINT fk2a8a7cfedb129989 FOREIGN KEY (group_id)
+      REFERENCES csm_remote_group (group_id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+CREATE SEQUENCE csm_remote_group_sync_record_id_seq;
+
 ALTER TABLE CSM_APPLICATION ADD CONSTRAINT UQ_APPLICATION_NAME UNIQUE (APPLICATION_NAME);
 
 CREATE INDEX idx_APPLICATION_ID ON CSM_GROUP USING btree (APPLICATION_ID);

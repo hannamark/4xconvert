@@ -6,11 +6,36 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <display-name>PO</display-name>
+    
+    <listener>
+        <listener-class>liquibase.integration.servlet.LiquibaseServletListener</listener-class>
+    </listener>
+    
+    <listener>
+        <listener-class>gov.nih.nci.coppa.web.SyncGTSListener</listener-class>
+    </listener>
 
     <!-- This servlet handles the syncing of GridGrouper groups to CSM.  -->
     <listener>
         <listener-class>gov.nih.nci.coppa.web.CSMSyncListener</listener-class>
     </listener>
+    
+    <!-- Liquibase Parameters -->
+    <context-param>
+        <param-name>liquibase.changelog</param-name>
+        <param-value>/db/db-changelog.xml</param-value>
+    </context-param>
+
+	<context-param>
+	    <param-name>liquibase.datasource</param-name>
+	    <param-value>java:jboss/datasources/po-xa-ds</param-value>
+	</context-param>
+	
+	<context-param>
+	    <param-name>liquibase.onerror.fail</param-name>
+	    <param-value>true</param-value>
+	</context-param>
+	
 
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>

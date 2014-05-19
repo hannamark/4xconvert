@@ -203,6 +203,13 @@ public class EjbInterceptorHandler implements InvocationHandler {
                 throw new RuntimeException(t);
             }
         }
+
+
+
+        @Override
+        public Object getTimer() {            
+            return null;
+        }
     }
 
     private static final Comparator<Method> INTERCEPTOR_METHOD_COMPARATOR = new Comparator<Method>() {

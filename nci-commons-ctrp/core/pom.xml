@@ -4,12 +4,12 @@
     <parent>
         <groupId>gov.nih.nci.coppa</groupId>
         <artifactId>nci-commons-ctrp</artifactId>
-        <version>1.4.10-SNAPSHOT</version>
+        <version>1.4.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>nci-commons-ctrp-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.10-SNAPSHOT</version>
+    <version>1.4.10.1-SNAPSHOT</version>
     <name>nci-commons-ctrp-core</name>
     <url>../../core/target/site/</url>
 
@@ -39,6 +39,8 @@
                             <exclude>com/fiveamsolutions/nci/commons/authentication/CommonsLDAPLoginModule.class</exclude>
                             <exclude>com/fiveamsolutions/nci/commons/ejb/*</exclude>
                             <exclude>com/fiveamsolutions/nci/commons/web/filter/OpenSessionInViewFilter.class</exclude>
+                            <exclude>com/fiveamsolutions/nci/commons/web/filter/OpenSessionInViewFilter.class</exclude>
+                            <exclude>com/fiveamsolutions/nci/commons/kmplot/**</exclude>
                         </excludes>
                     </instrumentation>
                     <check>
@@ -81,6 +83,7 @@
                             <exclude>com/fiveamsolutions/nci/commons/authentication/CommonsLDAPLoginModule.class</exclude>
                             <exclude>com/fiveamsolutions/nci/commons/ejb/*</exclude>
                             <exclude>com/fiveamsolutions/nci/commons/web/filter/OpenSessionInViewFilter.class</exclude>
+                            <exclude>com/fiveamsolutions/nci/commons/kmplot/KMPlotServiceTest.class</exclude>
                         </excludes>
                     </instrumentation>
                 </configuration>
