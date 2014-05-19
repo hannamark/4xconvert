@@ -121,7 +121,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
     </target>
 
-    <target name="install:po-ear-jboss:validation:pre-install" description="Runs pre-install validation checks bda-utils">
+    <target name="install:po-ear-jboss:validation:pre-install" description="Runs pre-install validation checks bda-utils" unless="exclude.po-ear">
     	<condition property="jboss6.installed">
     	      <available file="${jboss6.home}/bin" type="dir"/>
     	</condition>
