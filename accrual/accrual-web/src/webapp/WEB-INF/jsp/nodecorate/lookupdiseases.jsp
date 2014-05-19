@@ -61,7 +61,7 @@
                             <fmt:message key="disease.name"/>
                         </s:else>
                         </label>
-                        <div class="col-xs-2">
+                        <div class="col-xs-4">
                         <s:textfield id="searchName" name="searchName" cssClass="form-control" /></div>
       
                         <label for="searchCode" class="col-xs-1 control-label">
@@ -72,7 +72,7 @@
 	                            <fmt:message key="disease.code"/>
 	                        </s:else>
                         </label>
-                        <div class="col-xs-2"><s:textfield id="searchCode" name="searchCode"  cssClass="form-control" /></div>
+                        <div class="col-xs-4"><s:textfield id="searchCode" name="searchCode"  cssClass="form-control" /></div>
           </div>
                      <div class="form-group"><label for="includeSDC" class="col-xs-3 control-label">
 	                        <s:if test="%{siteLookUp}">
@@ -81,13 +81,13 @@
 	                        <s:else>
 	                            <fmt:message key="disease.codeSystem"/>
 	                        </s:else>    
-                        </label><div class="col-xs-2">
+                        </label><div class="col-xs-4">
                             <s:select id ="searchCodeSystem" name="searchCodeSystem" list="listOfDiseaseCodeSystems"  cssClass="form-control"/>
                        </div>
           </div>
           </div>
                 <div class="form-group">
-        <div class="col-xs-4 col-xs-offset-3 mt20">
+        <div class="col-xs-4 col-xs-offset-4 mt20">
                                 <button type="button" class="btn btn-icon btn-default" onclick="loadDiv()"><i class="fa-search"></i>Search</button>
                                 <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin();"><i class="fa-times"></i>Cancel</button>                           
                 </div>
