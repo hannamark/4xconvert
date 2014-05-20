@@ -14,7 +14,7 @@
                          </s:fielderror>
                      </span>
                    </div>
-                     <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter the name of the clinical trial as it appears in the protocol document."  data-placement="top" data-trigger="hover"></i>
+                     <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.title"/>"  data-placement="top" data-trigger="hover"></i>
            </div>
             <%@ include file="/WEB-INF/jsp/nodecorate/phasePurpose.jsp" %>
         </div>

@@ -394,7 +394,7 @@
 	              <label for="organization-type" class="col-xs-4 control-label left-align">XML Required, Enable "Upload from NCI CTRP" in <a data-placement="top" rel="tooltip" data-original-title="Open in new window" href="http://www.clinicaltrials.gov/" target="_new">ClinicalTrials.gov</a>?</label>                    
 	              <div class="col-xs-4">
 	                  <s:radio cssClass="radio-inline" name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="hidePrimaryCompletionDate(), toggledisplayDivs(this);"/>
-	                  <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Indicate whether you need an XML file to submit/update your trial to ClinicalTrials.gov." data-placement="top" data-trigger="hover"></i>
+	                  <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.ct_gov_xml"/>" data-placement="top" data-trigger="hover"></i>
 	              </div>                    
 	          </div>
 	          <button type="button" class="expandcollapse btn btn-icon btn-sm btn-default" state="0"><i class="fa-minus-circle"></i> Collapse All</button>
@@ -427,7 +427,7 @@
 				                    </span>
 				                  </div>
 				                </div>                                
-				                <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter or select the date of the current trial status."  data-placement="top" data-trigger="hover"></i></div>
+				                <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.current_trial_status_date"/>"  data-placement="top" data-trigger="hover"></i></div>
 				             </div>
                           </div>
                       </div>
@@ -465,10 +465,10 @@
                           <table class="table table-bordered">
                               <thead>
                                   <tr>
-                                      <th><label for="fundingMechanismCode"><fmt:message key="submit.trial.fundingMechanism"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the NIH funding mechanism unique identifier, a 3-character code used to identify areas of extramural research activity applied to funding mechanisms."  data-placement="top" data-trigger="hover"></i></label></th>
-                                      <th><label for="nihInstitutionCode"><fmt:message key="submit.trial.instituteCode"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the two-letter code identifying the first major-level subdivision, the organization that supports an NIH grant, contract, or inter-agency agreement. The support may be financial or administrative."  data-placement="top" data-trigger="hover"></i></label></th>
-                                      <th><label for="serialNumber"><fmt:message key="submit.trial.serialNumber"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter the number generally assigned sequentially to a series within an Institute, Center, or Division."  data-placement="top" data-trigger="hover"></i></label></th>
-                                      <th><label for="nciDivisionProgramCode"> <fmt:message key="submit.trial.divProgram"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the NCI organizational unit that provides funding for the study."  data-placement="top" data-trigger="hover"></i></label></th>
+                                      <th><label for="fundingMechanismCode"><fmt:message key="submit.trial.fundingMechanism"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.funding_mechanism" />"  data-placement="top" data-trigger="hover"></i></label></th>
+                                      <th><label for="nihInstitutionCode"><fmt:message key="submit.trial.instituteCode"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.institution_code" />"  data-placement="top" data-trigger="hover"></i></label></th>
+                                      <th><label for="serialNumber"><fmt:message key="submit.trial.serialNumber"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.serial_number"/>"  data-placement="top" data-trigger="hover"></i></label></th>
+                                      <th><label for="nciDivisionProgramCode"> <fmt:message key="submit.trial.divProgram"/><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.nci_division_program_code"/>"  data-placement="top" data-trigger="hover"></i></label></th>
                                       <th style="display:none">
                                           <label for="fundingPercent"><fmt:message key="submit.trial.fundingPercent"/></label>
                                       </th>

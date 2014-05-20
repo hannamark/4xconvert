@@ -1,4 +1,4 @@
-<i data-trigger="hover" data-placement="right" data-content="Please provide professional contact information only. Contact information required for internal administrative use only; not revealed to public." rel="popover" id="popover" name="popover" class="fa-info-circle help-text" data-original-title="" title=""></i>
+<i data-trigger="hover" data-placement="right" data-content="<fmt:message key="tooltip.contact_details"/>" rel="popover" id="popover" name="popover" class="fa-info-circle help-text" data-original-title="" title=""></i>
  <div class="form-group">
    <label for="registryUserWebDTO.emailAddress" class="col-xs-4 control-label"><fmt:message key="register.user.emailAddress"/> <span class="required">*</span></label>
    <div class="col-xs-7">

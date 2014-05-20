@@ -13,7 +13,7 @@
              	 	</s:fielderror>
              	 </span>
              </div>
-             <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter the unique identification used to identify, name, or characterize the protocol document, exactly the same as it appears in the protocol document. For Inter-Group trials, enter the Lead Group's trial number. For multi-site trials that have no assigned single center, use the protocol ID."  data-placement="top" data-trigger="hover"></i></div>
+             <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.trial_id" />"  data-placement="top" data-trigger="hover"></i></div>
          </div>
          <div class="form-group">
             <label for="trialDTO.nctIdentifier" class="col-xs-4 control-label"><fmt:message key="submit.trial.nctNumber"/></label>
@@ -25,7 +25,7 @@
                     </s:fielderror>
                 </span>
             </div>
-            <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="If the trial has been submitted to ClinicalTrials.gov previously, enter the number assigned to the trial by PRS (ClinicalTrials.gov)."  data-placement="top" data-trigger="hover"></i> </div>
+            <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.nct_number" />"  data-placement="top" data-trigger="hover"></i> </div>
          </div>
      </div>
  </div>

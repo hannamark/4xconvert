@@ -12,7 +12,7 @@
       </s:if>
       <s:else>
         <s:file id="irbApproval" name="irbApproval" />
-        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload the IRB approval document."  data-placement="top" data-trigger="hover"></i>
+        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.irb_approval"/>"  data-placement="top" data-trigger="hover"></i>
         <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.irbApprovalFileName</s:param>
@@ -32,7 +32,7 @@
     </s:if>
     <s:else>
       <s:file id="informedConsentDocument" name="informedConsentDocument" />
-      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="If the informed consent is not included in the protocol document, click Browse to locate and upload the Informed Consent document."  data-placement="top" data-trigger="hover"></i>
+      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.informed_consent_document" />"  data-placement="top" data-trigger="hover"></i>
         <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.informedConsentDocumentFileName</s:param>
@@ -67,7 +67,7 @@
   <label for="submitProprietaryTrial_otherDocument_${varStatus.index}" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherDocument"/></label>
   <div class="col-xs-4">
       <input id="submitProprietaryTrial_otherDocument_${varStatus.index}" type="file" style="width:270px" value="" name="otherDocument">
-      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload  any other trial-related document(s)."  data-placement="top" data-trigger="hover"></i>
+      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.other"/>"  data-placement="top" data-trigger="hover"></i>
       <span class="alert-danger">
         <s:fielderror>
           <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>

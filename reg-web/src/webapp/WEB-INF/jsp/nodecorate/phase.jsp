@@ -11,7 +11,7 @@
              </s:fielderror>
          </span>
       </div>
-      <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the phase of the investigation, as defined by the US FDA for trials involving investigational new drugs." data-placement="top" data-trigger="hover"></i></div>
+      <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.phase"/>" data-placement="top" data-trigger="hover"></i></div>
  </div>
  <div class="form-group" id ="phaseOtherDiv" style="display:'none'">
      <label for="trialDTO.phaseAdditionalQualifier" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherPhaseText"/></label>

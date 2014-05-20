@@ -20,7 +20,7 @@
 	    <label for="submitTrial_otherDocument_${varStatus.index}" class="col-xs-4 control-label"><fmt:message key="submit.trial.otherDocument"/></label>
 	    <div class="col-xs-4">
 	      <input id="submitTrial_otherDocument_${varStatus.index}" name="otherDocument" type="file" />
-	      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload any other trial-related document(s)."  data-placement="top" data-trigger="hover"></i>
+	      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_other_doc" />"  data-placement="top" data-trigger="hover"></i>
 	        <span class="alert-danger">
 	          <s:fielderror>
 	            <s:param>trialDTO.otherDocumentFileName[${varStatus.index}]</s:param>

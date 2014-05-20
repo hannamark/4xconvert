@@ -188,12 +188,12 @@
                                 </s:fielderror>
                             </span>
                         </div>
-                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Enter the unique identification used to identify, name, or characterize the protocol document, exactly the same as it appears in the protocol document. For Inter-Group trials, enter the Lead Group's trial number. For multi-site trials that have no assigned single center, use the protocol ID.'  data-placement="top" data-trigger="hover"></i>
+                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.trial_id" />'  data-placement="top" data-trigger="hover"></i>
                     </div>
 	                <div class="form-group">
                         <label for="trialDTO.siteOrganizationName" class="col-xs-4 control-label"><fmt:message key="submit.proprietary.trial.siteOrganization"/><span class="required">*</span></label>
                         <div class="col-xs-6"><%@ include file="/WEB-INF/jsp/nodecorate/trialSiteOrganization.jsp" %>
-                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='=Click  Look Up Org , and select the name of the grantee and/or site supplying data to CTRP  from the list of search results.'  data-placement="top" data-trigger="hover"></i></div>
+                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.submitting_organization_name" />'  data-placement="top" data-trigger="hover"></i></div>
                     </div>
 	               <div class="form-group">
                         <label for="trialDTO.localSiteIdentifier" class="col-xs-4 control-label"><fmt:message key="submit.proprietary.trial.siteidentifier"/><span class="required">*</span></label>
@@ -205,7 +205,7 @@
                                 </s:fielderror>
                             </span>
                         </div>
-                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Enter the unique identifier assigned to the trial by the submitting organization.'  data-placement="top" data-trigger="hover"></i>
+                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.submitting_organization_local_trial_identifier"/>'  data-placement="top" data-trigger="hover"></i>
                     </div>  
 	                   
 	               <div class="form-group">
@@ -218,7 +218,7 @@
                                 </s:fielderror>
                             </span>
                         </div>
-                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='If the trial has been submitted to ClinicalTrials.gov previously, enter the number assigned to the trial by PRS (ClinicalTrials.gov).'  data-placement="top" data-trigger="hover"></i>
+                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.nct_number" />'  data-placement="top" data-trigger="hover"></i>
                     </div>  
 	             </div>
                  </div>
@@ -237,7 +237,7 @@
                                 </s:fielderror>
                             </span>
                         </div>
-                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Enter the name of the clinical trial as it appears in the protocol document.'  data-placement="top" data-trigger="hover"></i>
+                        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.title" />'  data-placement="top" data-trigger="hover"></i>
                     </div>  
  
                     <div class="form-group">
@@ -304,7 +304,7 @@
 	                               </s:fielderror>
 	                         </span>
 	                   </div>
-	                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Trial category you selected for trial submission.'  data-placement="top" data-trigger="hover"></i>
+	                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.summary_4_funding_sponsor_type" />'  data-placement="top" data-trigger="hover"></i>
 	                 </div>
                     
                     <div class="form-group">
@@ -340,7 +340,7 @@
                             </s:fielderror>
                         </span>
                          </div>
-                         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Enter the site's Program Code that includes the study.'  data-placement="top" data-trigger="hover"></i>
+                         <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.summary_4_site_program_code"/>'  data-placement="top" data-trigger="hover"></i>
                     </div>
                 </div>
                 </div>
@@ -361,7 +361,7 @@
                                 </s:fielderror>
                             </span>
                        </div>
-                       <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Select the current stage or state of a clinical trial or study relative to other stages and its ability to enroll participants/patients.'  data-placement="top" data-trigger="hover"></i>
+                       <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.current_trial_status" />'  data-placement="top" data-trigger="hover"></i>
                     </div>                            
                     <div class="form-group">
                         <label for="trialDTO.siteStatusDate" class="col-xs-4 control-label"><fmt:message key="submit.trial.siteRecruitmentStatusDate"/><span class="required">*</span></label>
@@ -376,7 +376,7 @@
                             </span>
                             </div>
                        </div>
-                        <div class="col-xs-4"><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Select or enter the date of the recruitment status.'  data-placement="top" data-trigger="hover"></i></div>
+                        <div class="col-xs-4"><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.site_recruitment_status_date" />'  data-placement="top" data-trigger="hover"></i></div>
                     </div>
 
                     <div class="form-group">
@@ -392,7 +392,7 @@
                             </span>
                           </div>
                        </div>
-                       <div class="col-xs-4"><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Select or enter the date the trial was open for accrual.'  data-placement="top" data-trigger="hover"></i></div>
+                       <div class="col-xs-4"><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.date_opened_for_accrual" />'  data-placement="top" data-trigger="hover"></i></div>
                     </div>
 
                     <div class="form-group">
@@ -409,7 +409,7 @@
                             </span>
                          </div>
                        </div>
-                       <div class="col-xs-4"><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='Select or enter the date the trial was closed for accrual.'  data-placement="top" data-trigger="hover"></i></div>
+                       <div class="col-xs-4"><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.date_closed_for_accrual" />'  data-placement="top" data-trigger="hover"></i></div>
                     </div>
                 </div>
                 </div>

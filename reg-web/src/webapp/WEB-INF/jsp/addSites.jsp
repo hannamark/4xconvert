@@ -381,7 +381,7 @@
 				<div class="col-md-1"></div>
 				<div class="col-md-11">
 					<div data-toggle="popover" data-placement="left"
-						data-content="If you change your mind about entering a particular site, simply leave the row empty and it will be ignored."
+						data-content="<fmt:message key="tooltip.empty_site" />"
 						class="container-fluid" id="trial_${trial.studyProtocolId}_info">
 						<table class="table no-border">
 							<tr class="bottom-border-only">

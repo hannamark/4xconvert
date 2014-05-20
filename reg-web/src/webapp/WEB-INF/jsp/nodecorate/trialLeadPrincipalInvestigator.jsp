@@ -9,5 +9,5 @@
 </div>
 <div class="col-xs-4">
     <button type="button" class="btn btn-icon btn-default" onclick="lookup4loadleadpers();" title="Opens a popup form to select Principal Investigator"><i class="fa-user"></i>Look Up Person</button>
-    <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter the name of the individual who is responsible for all aspects of the conduct of the study."  data-placement="top" data-trigger="hover"></i>
+    <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.pi" />"  data-placement="top" data-trigger="hover"></i>
 </div>

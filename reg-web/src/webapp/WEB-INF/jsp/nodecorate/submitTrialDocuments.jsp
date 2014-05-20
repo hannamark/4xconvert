@@ -10,7 +10,7 @@
       </s:if>
       <s:else>
         <s:file id="protocolDoc" name="protocolDoc" value="true" />
-        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload the protocol document."  data-placement="top" data-trigger="hover"></i>
+        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.protocol_document" />"  data-placement="top" data-trigger="hover"></i>
         <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.protocolDocFileName</s:param>
@@ -28,7 +28,7 @@
          </s:if>
       <s:else>
         <s:file id="irbApproval" name="irbApproval" />
-        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload the IRB approval document."  data-placement="top" data-trigger="hover"></i>
+        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.irb_approval" />"  data-placement="top" data-trigger="hover"></i>
         <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.irbApprovalFileName</s:param>
@@ -46,7 +46,7 @@
         </s:if>
       <s:else>
         <s:file id="participatingSites" name="participatingSites" />
-        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Click Browse to locate and upload the Participating Sites document. This document includes site recruitment status and date, target accrual, and site principal investigators."  data-placement="top" data-trigger="hover"></i> 
+        <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.list_of_participating_sites"/>"  data-placement="top" data-trigger="hover"></i> 
       	<span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.participatingSitesFileName</s:param>
@@ -64,7 +64,7 @@
       </s:if>
     <s:else>
       <s:file id="informedConsentDocument" name="informedConsentDocument" />
-      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="If the informed consent is not included in the protocol document, click Browse to locate and upload the Informed Consent document."  data-placement="top" data-trigger="hover"></i>
+      <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.informed_consent_document" />"  data-placement="top" data-trigger="hover"></i>
         <span class="alert-danger">
           <s:fielderror>
             <s:param>trialDTO.informedConsentDocumentFileName</s:param>

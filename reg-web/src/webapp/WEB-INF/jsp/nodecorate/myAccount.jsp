@@ -41,7 +41,7 @@
 	                  <input type="radio" name="options" id="option3">
 	                  Dark </label>
 	              </div>
-	              <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Select a color scheme to change the colors on all pages of the application" data-placement="top" data-trigger="hover"></i> </div>
+	              <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_color_scheme"/>" data-placement="top" data-trigger="hover"></i> </div>
 	          </div> 
                <div class="modal-footer">
                	<button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" onClick="handleRegisterUserAction();"><i class="fa-floppy-o"></i>Save</button>

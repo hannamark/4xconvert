@@ -113,7 +113,7 @@
          <s:hidden name="checked" id="checked"/>
          <s:token/>
          <h3 class="heading"><span><fmt:message key="managetrialownership.users.header"><fmt:param><c:out value="${siteName}"/></fmt:param></fmt:message></h3>
-         <p><strong>Select one or more username:</strong><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Select one or more users affiliated with this site to assign/un-assign trial ownership." data-placement="top" data-trigger="hover"></i></p>
+         <p><strong>Select one or more username:</strong><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_users" />" data-placement="top" data-trigger="hover"></i></p>
          <div style="width: 45%">
               <div class="trial-ownership-container">
                 <s:set name="orgMembers" value="registryUsers" scope="request"/>
@@ -134,13 +134,13 @@
             <br/>
             <div class="clearfix"></div>
             <h3 class="heading"><span>Trials where this site is the <strong><s:if test="%{#attr.topicValue == 'manageownership'}">Lead Organization</s:if><s:else>Participating Site</s:else></strong></span></h3>
-            <p class="mb20"><em>A record owner of a trial listed below can amend or update that trial in CTRP</em><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="The list(s) below includes only trials that are National, Externally Peer Reviewed or Institutional" data-placement="top" data-trigger="hover"></i></p>
+            <p class="mb20"><em>A record owner of a trial listed below can amend or update that trial in CTRP</em><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.trial_list" />" data-placement="top" data-trigger="hover"></i></p>
 	            <table width="100%"  class="trialOwnershipAssignUnassign">
 	              <tbody>
 	                <tr>
-	                  <td width="45%" nowrap="nowrap" align="center"><h3 class="notAssigned">Trials<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="Click on any trial below to select or deselect. Click the checkbox below to select/deselect all." data-placement="top" data-trigger="hover"></i></h3></td>
+	                  <td width="45%" nowrap="nowrap" align="center"><h3 class="notAssigned">Trials<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_trial" />" data-placement="top" data-trigger="hover"></i></h3></td>
 	                  <td></td>
-	                  <td width="45%" nowrap="nowrap" align="center"><h3 class="assigned">Trial Owner Assignments<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="Click on any trial below to select or deselect. Click the checkbox below to select/deselect all." data-placement="top" data-trigger="hover"></i></h3></td>
+	                  <td width="45%" nowrap="nowrap" align="center"><h3 class="assigned">Trial Owner Assignments<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_trial" />" data-placement="top" data-trigger="hover"></i></h3></td>
 	                </tr>
 	                <tr>
 	                  <td>

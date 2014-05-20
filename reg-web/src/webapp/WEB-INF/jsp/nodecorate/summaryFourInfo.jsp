@@ -27,7 +27,7 @@
                    </span>
                 </div>
                 <div class="col-xs-4">
-                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Trial category you selected for trial submission."  data-placement="top" data-trigger="hover"></i>
+                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_funding_sponsor_type"/>"  data-placement="top" data-trigger="hover"></i>
                 </div>
             </div>
             <div class="form-group">
@@ -46,7 +46,7 @@
                         </s:fielderror>
                     </span>
                 </div>
-                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter the Program Code that includes the study."  data-placement="top" data-trigger="hover"></i>
+                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.summary_4_program_code"/>"  data-placement="top" data-trigger="hover"></i>
             </div>
         </div>
     </div>

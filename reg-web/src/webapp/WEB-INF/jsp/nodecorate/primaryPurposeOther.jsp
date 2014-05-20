@@ -16,7 +16,7 @@
             </s:fielderror>
         </span>
     </div>
-    <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the phase of the investigation, as defined by the US FDA for trials involving investigational new drugs." data-placement="top" data-trigger="hover"></i> </div>
+    <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.primary_purpose"/>" data-placement="top" data-trigger="hover"></i> </div>
 </div>
 <div class="form-group" id="purposeOtherTextDiv" style="display:'none'">
     <label class="col-xs-4 control-label" for="trialDTO.primaryPurposeOtherText"><fmt:message key="submit.trial.otherPurposeText"/></label>

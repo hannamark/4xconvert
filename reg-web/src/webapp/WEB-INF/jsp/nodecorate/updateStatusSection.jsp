@@ -16,7 +16,7 @@
                         </s:fielderror>
                     </span>
                 </div>
-                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Select the current stage or state of a clinical trial or study relative to other stages and its ability to enroll participants/patients."  data-placement="top" data-trigger="hover"></i>
+                <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.current_trial_status" />"  data-placement="top" data-trigger="hover"></i>
             </div>
             <div class="form-group">
             	  <label class="col-xs-4 control-label">&nbsp;</label>
@@ -35,7 +35,7 @@
                       </s:fielderror> 
                   </span>
                   <span>
-                  <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="If the trial is Administratively Complete, Withdrawn, or Temporarily Closed, enter the reason that the study stopped."  data-placement="top" data-trigger="hover"></i>
+                  <i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.why_study_stopped" />"  data-placement="top" data-trigger="hover"></i>
                   </span>
                </div>
             </div>
@@ -53,7 +53,7 @@
                     </span>
                   </div>
                 </div>                                
-                <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="Enter or select the date of the current trial status."  data-placement="top" data-trigger="hover"></i></div>
+                <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.current_trial_status_date" />"  data-placement="top" data-trigger="hover"></i></div>
              </div>
              <div class="form-group">
                 <label for="trialDTO_startDate" class="col-xs-4 control-label"><fmt:message key="update.trial.trialStartDate"/><span class="required">*</span></label>
@@ -71,7 +71,7 @@
                 </div>
                 <div class="col-xs-5">
                   <s:radio cssClass="radio-inline" id="trialDTO_startDateType" name="trialDTO.startDateType" list="#dateTypeList" />                 
-                  <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial starts, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i>
+                  <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.trial_start_date"/>"  data-placement="top" data-trigger="hover"></i>
             	  <span class="alert-danger">
                       <s:fielderror>
                           <s:param>trialDTO.startDateType</s:param>
@@ -100,7 +100,7 @@
                </div>               
                <div class="col-xs-5">
                    <s:radio cssClass="radio-inline" id="trialDTO_primaryCompletionDateType" name="trialDTO.primaryCompletionDateType" list="#dateTypeList" />                   
-                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial reaches/reached its primary completion date, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i> 
+                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.primary_completion_date"/>"  data-placement="top" data-trigger="hover"></i> 
           	 		<span class="alert-danger">
                        <s:fielderror>
                            <s:param>trialDTO.primaryCompletionDateType</s:param>
@@ -123,7 +123,7 @@
               </div>
               <div class="col-xs-5">
                   <s:radio  cssClass="radio-inline" id="trialDTO_completionDateType" name="trialDTO.completionDateType" list="#dateTypeList" />
-                  <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Enter or select the date on which the trial reaches/reached its completion date, and then indicate whether the date is actual or some time in the future."  data-placement="top" data-trigger="hover"></i>
+                  <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.completion_date" />"  data-placement="top" data-trigger="hover"></i>
                   <span class="alert-danger">
                      <s:fielderror>
                          <s:param>trialDTO.completionDateType</s:param>
