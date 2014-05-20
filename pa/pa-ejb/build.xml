@@ -244,7 +244,7 @@
     <target name="ci-exclude-tests" if="ci.server">
         <property name="ci.exclude.pattern1" value="**/StudySiteAccrualAccessServiceTest.java"/>
         <property name="ci.exclude.pattern2" value="**/PDQXmlGeneratorServiceTest.java"/>
-        <!-- property name="ci.exclude.pattern3" value="**/PdqXmlGenHelperTest.java"/ -->
+        <property name="ci.exclude.pattern3" value="**/TSRReportGeneratorServiceTest.java"/>
         <property name="coverage.line" value="${pa-ejb.coverage.line.ci}"/>
         <property name="coverage.branch" value="${pa-ejb.coverage.branch.ci}"/>
     </target>
@@ -281,7 +281,7 @@
                     <include name="**/*Test.java"/>
                     <exclude name="${ci.exclude.pattern1}"/>
                     <exclude name="${ci.exclude.pattern2}"/>
-                    <!-- exclude name="${ci.exclude.pattern3}"/ -->
+                    <exclude name="${ci.exclude.pattern3}"/>
                 </fileset>
             </batchtest>
         </junit>
