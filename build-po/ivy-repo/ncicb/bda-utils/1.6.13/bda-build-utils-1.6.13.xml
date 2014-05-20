@@ -7808,11 +7808,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/automation/branches/automation-1.6.1
 		<attribute name="jar-signing.keystore.cert.c" default="${jar-signing.keystore.cert.c}"/>
 		<attribute name="jar-signing.execution.time" default="${jar-signing.execution.time}"/>
 		<sequential>
-			<validate-environment
+			<!--<validate-environment
 				ant.check.version="@{ant.check.version}"
 				java.check.version.major="@{java.check.version.major}"
 				java.check.version.minor="@{java.check.version.minor}"
-				/>
+				/> -->
 			<propertyvalidator keyFile="@{property.template.file}"
 				compareFile="@{envpropertyfile}"
 				readInMemory="true"
