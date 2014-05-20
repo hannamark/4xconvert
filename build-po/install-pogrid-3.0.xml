@@ -377,6 +377,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
               <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
                   <filterset>
                       <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
+                      <filter token="jboss.server.hostname" value="${jboss.server.hostname}"/>
                       <filter token="pogrid-3.0.jndi.principal" value="${pogrid-3.0.jndi.principal}"/>
                       <filter token="pogrid-3.0.jndi.credentials" value="${pogrid-3.0.jndi.credentials}"/>
                   </filterset>

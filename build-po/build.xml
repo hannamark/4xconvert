@@ -325,7 +325,7 @@
             <property name="jboss.dir" value="target" />
             <property name="jboss.serverinstance.name" value="${po-grid-3.2-jboss.server.name}" />
             <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}" />
-            <property name="java.naming.provider.url.host" value="localhost" />
+            <property name="java.naming.provider.url.host" value="%%jboss.server.hostname%%" />
             <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%" />
             <property name="java.naming.security.principal" value="%%pogrid.jndi.principal%%" />
             <property name="java.naming.security.credentials" value="%%pogrid.jndi.credentials%%" />
@@ -348,7 +348,7 @@
             <property name="jboss.dir" value="target" />
             <property name="jboss.serverinstance.name" value="${po-grid-3.0-jboss.server.name}" />
             <property name="env.GLOBUS_LOCATION" value="${env.GLOBUS_LOCATION}" />
-            <property name="java.naming.provider.url.host" value="localhost" />
+        	<property name="java.naming.provider.url.host" value="%%jboss.server.hostname%%" />
             <property name="java.naming.provider.url.port" value="%%jboss.server.jndi.port%%" />
             <property name="java.naming.security.principal" value="%%pogrid-3.0.jndi.principal%%" />
             <property name="java.naming.security.credentials" value="%%pogrid-3.0.jndi.credentials%%" />
