@@ -12,6 +12,7 @@ Database
 1. Install Postgres 9.2. Create a superuser and database to be used by CTRP-PA.
 2. Use pg_dump to pull data from existing 8.4 database.
 3. Use pg_restore to load data into new 9.2 database.
+4. Update the file name for all rows in databasechangelog to "<base dir>/pa/target/db-upgrade.xml" (e.g. "C:/Users/ctrp/code/pa/target/db-upgrade.xml")
 
 Application Server
 1. Install JBoss EAP 6.2.0 GA.
