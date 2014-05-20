@@ -12,14 +12,14 @@ Database
 1. Install Postgres 9.2. Create a superuser and database to be used by CTRP-PA.
 2. Use pg_dump to pull data from existing 8.4 database.
 3. Use pg_restore to load data into new 9.2 database.
-4. Update the file name for all rows in databasechangelog to "<base dir>/pa/target/db-upgrade.xml" (e.g. "C:/Users/ctrp/code/pa/target/db-upgrade.xml")
+4. Run the following SQL on the database: update databasechangelog set md5sum = null, filename='/tmp/pa/db-upgrade.xml'
 
 Application Server
 1. Install JBoss EAP 6.2.0 GA.
 2. Extract the file build-pa/server-config/ctrp-pa-modules.zip to the folder <jboss home>/modules. Add jars listed
    in the two module.xml file. Use https://drive.google.com/file/d/0B_R06zcO1q_mWkNfNWRxMERhUzQ/edit?usp=sharing 
    to avoid the need for this second step.
-3. Copy build-pa/standalone.xml to the folder <jboss home>/standalone/configuration.
+3. Copy build-pa/server-config/standalone.xml to the folder <jboss home>/standalone/configuration.
 4. Search for "java:/pa-ds and edit" the datasource with appropriate database name, port, user.
 5. Search for the pa and accrual security domains and update database information. 
 6. Set JAVA_OPTS environment variable with -Xms1024m -Xmx2048m -XX:MaxPermSize=2048m
@@ -29,7 +29,7 @@ Application Server
 
 Build
 1. Rename file build-pa/tier-properties/build-lite-LOCAL.properties.example to build-lite-LOCAL.properties.
-2. Edit as appropriate for local configuration.
+2. Edit as appropriate for local configuration.	
 3. Build applications with command build-pa/ant -f build-lite.xml dist
 4. Check that the folders target/pa/dist and target/accrual/dist each contain an EAR and a tooltip file.
 5. Test the applications with the command build-pa/ant -f build-lite.xml test

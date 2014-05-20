@@ -20,7 +20,7 @@
     <dependency conf="build->master" org="com.sun.xml.bind" name="jaxb-impl" rev="2.1.10"/>
     <dependency conf="build->master" org="com.sun.xml.bind" name="jaxb-xjc" rev="2.1.10"/>
     <dependency conf="build->master" org="org.apache.maven" name="maven-ant-tasks" rev="2.1.3"/>
-    <dependency conf="build->master" org="org.liquibase" name="liquibase-core" rev="1.9.3"/>
+    <dependency conf="build->master" org="org.liquibase" name="liquibase-core" rev="3.0.8"/>
 
     <dependency conf="compile->master" org="asm" name="asm" rev="3.3"/>
     <dependency conf="compile->master" org="axis" name="axis-wsdl4j" rev="1.2"/>
