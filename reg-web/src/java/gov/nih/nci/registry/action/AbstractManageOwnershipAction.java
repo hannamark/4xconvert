@@ -363,7 +363,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                 }
                 for (Long userId : selectedUserIds) {
                     for (Long tId : selectedTrialIds) {
-                        updateOwnership(userId, tId, true, isEmailNotificationsEnabled(tId));
+                        updateOwnership(userId, tId, true, true);
                     }
                 }
                 ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
