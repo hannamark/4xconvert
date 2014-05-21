@@ -100,11 +100,6 @@
   <classpathentry kind="lib" path="lib/globus_wsrf_servicegroup_stubs.jar" />
   <classpathentry kind="lib" path="lib/jaxen-1.1.jar" />
   <classpathentry kind="lib" path="lib/jaxmejs-0.5.2.jar" />
-  <classpathentry kind="lib" path="lib/jboss-aop-jdk50-client-4.0.5.jar" />
-  <classpathentry kind="lib" path="lib/jboss-aspect-jdk50-client-4.0.5.jar" />
-  <classpathentry kind="lib" path="lib/jboss-ejb3-client-4.0.5.jar" />
-  <classpathentry kind="lib" path="lib/jboss-ejb3x.jar" />
-  <classpathentry kind="lib" path="lib/jbossall-client-4.0.5.jar" />
   <classpathentry kind="lib" path="lib/jdom-1.0.jar" />
   <classpathentry kind="lib" path="lib/relaxngDatatype.jar" />
   <classpathentry kind="lib" path="lib/xsom14.jar" />

@@ -22,11 +22,11 @@
     <property name="build.dir" location="build" />
     <property name="test.build.lib.dir" value="${build.dir}/test/lib" />
 
-    <property name="java.naming.factory.initial" value="org.jboss.security.jndi.JndiLoginInitialContextFactory" />
+    <property name="java.naming.factory.initial" value="org.jboss.naming.remote.client.InitialContextFactory" />
     <property name="java.naming.provider.url.host" value="localhost" />
-    <property name="java.naming.provider.url.port" value="31499" />
-    <property name="java.naming.provider.url" value="jnp://${java.naming.provider.url.host}:${java.naming.provider.url.port}" />
-    <property name="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces" />
+    <property name="java.naming.provider.url.port" value="4447" />
+    <property name="java.naming.provider.url" value="remote://${java.naming.provider.url.host}:${java.naming.provider.url.port}" />
+
     <property name="java.naming.security.principal" value="Gr1DU5er" />
     <property name="java.naming.security.credentials" value="Pa44Wurd" />
     <property name="cobertura.dir" value="tools/cobertura" />
@@ -204,7 +204,7 @@
 
     <target name="compile-quick" depends="compileStubs-quick, init">
         <runtarget target="preCompile" />
-        <javac srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
+        <javac source="1.6" target="1.6" srcdir="${src.dir}" classpathref="service.build.classpath" includes="**" destdir="${build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
 
         <!-- Copy the source code, wsdd, properties, etc to the build dir for include in the jar -->
         <copy toDir="${build.dest}">
@@ -216,7 +216,7 @@
     </target>
     <target name="compileStubs-quick" depends="init">
         <runtarget target="preCompileStubs" />
-        <javac srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
+        <javac source="1.6" target="1.6" srcdir="${stubs.src}" destdir="${stubs.dest}" debug="${java.debug}" classpathref="base.classpath">
             <include name="**/*.java" />
         </javac>
         <runtarget target="postCompileStubs" />
@@ -320,7 +320,7 @@
     <!-- Compile the test implementation classes (service, resource, etc.) -->
     <target name="compileTests-quick" depends="compile-quick">
         <runtarget target="preCompileTests" />
-        <javac srcdir="${test.src.dir}" classpathref="test.build.classpath" destdir="${test.build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
+        <javac source="1.6" target="1.6" srcdir="${test.src.dir}" classpathref="test.build.classpath" destdir="${test.build.dest}" debug="${java.debug}" deprecation="${deprecation}" />
         <runtarget target="postCompileTests" />
     </target>
 

@@ -172,7 +172,9 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public SubjectAccrualServiceRemote getSubjectAccrualService() throws NamingException {
-        return (SubjectAccrualServiceRemote) lookup("/accrual/SubjectAccrualServiceBean/remote");
+    public SubjectAccrualServiceRemote getSubjectAccrualService()
+            throws NamingException {
+        return (SubjectAccrualServiceRemote) lookup("accrual/accrual-services/SubjectAccrualServiceBean"
+                + "!gov.nih.nci.accrual.service.SubjectAccrualServiceRemote");
     }
 }

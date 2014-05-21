@@ -249,69 +249,84 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public ArmServiceRemote getArmService() throws NamingException {
-        ArmServiceRemote result = (ArmServiceRemote) lookup("pa/ArmServiceBean/remote");
+        ArmServiceRemote result = (ArmServiceRemote) lookup("pa/pa-ejb/ArmServiceBean"
+                + "!gov.nih.nci.pa.service.ArmServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyProtocolServiceRemote getStudyProtocolService() throws NamingException {
-        StudyProtocolServiceRemote result = (StudyProtocolServiceRemote) lookup("pa/StudyProtocolServiceBean/remote");
+    public StudyProtocolServiceRemote getStudyProtocolService()
+            throws NamingException {
+        StudyProtocolServiceRemote result = (StudyProtocolServiceRemote) lookup("pa/pa-ejb/StudyProtocolServiceBean"
+                + "!gov.nih.nci.pa.service.StudyProtocolServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyResourcingServiceRemote getStudyResourcingService() throws NamingException {
-        StudyResourcingServiceRemote result =
-            (StudyResourcingServiceRemote) lookup("pa/StudyResourcingServiceBean/remote");
+    public StudyResourcingServiceRemote getStudyResourcingService()
+            throws NamingException {
+        StudyResourcingServiceRemote result = (StudyResourcingServiceRemote) 
+                lookup("pa/pa-ejb/StudyResourcingServiceBean"
+                + "!gov.nih.nci.pa.service.StudyResourcingServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService() throws NamingException {
-        StudyRegulatoryAuthorityServiceRemote result =
-            (StudyRegulatoryAuthorityServiceRemote) lookup("pa/StudyRegulatoryAuthorityServiceBean/remote");
+    public StudyRegulatoryAuthorityServiceRemote getStudyRegulatoryAuthorityService()
+            throws NamingException {
+        StudyRegulatoryAuthorityServiceRemote result = (StudyRegulatoryAuthorityServiceRemote) 
+                lookup("pa/pa-ejb/StudyRegulatoryAuthorityServiceBean"
+                + "!gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService() throws NamingException {
-        StudyRecruitmentStatusServiceRemote result =
-            (StudyRecruitmentStatusServiceRemote) lookup("pa/StudyRecruitmentStatusServiceBean/remote");
+    public StudyRecruitmentStatusServiceRemote getStudyRecruitmentStatusService()
+            throws NamingException {
+        StudyRecruitmentStatusServiceRemote result = 
+                (StudyRecruitmentStatusServiceRemote) lookup("pa/pa-ejb/StudyRecruitmentStatusServiceBean"
+                + "!gov.nih.nci.pa.service.StudyRecruitmentStatusServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService() throws NamingException {
-        StudySiteAccrualStatusServiceRemote result =
-            (StudySiteAccrualStatusServiceRemote) lookup("pa/StudySiteAccrualStatusServiceBean/remote");
+    public StudySiteAccrualStatusServiceRemote getStudySiteAccrualStatusService()
+            throws NamingException {
+        StudySiteAccrualStatusServiceRemote result = 
+                (StudySiteAccrualStatusServiceRemote) lookup("pa/pa-ejb/StudySiteAccrualStatusServiceBean"
+                + "!gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudySiteContactServiceRemote getStudySiteContactService() throws NamingException {
-        StudySiteContactServiceRemote result =
-            (StudySiteContactServiceRemote) lookup("pa/StudySiteContactServiceBean/remote");
+    public StudySiteContactServiceRemote getStudySiteContactService()
+            throws NamingException {
+        StudySiteContactServiceRemote result = 
+                (StudySiteContactServiceRemote) lookup("pa/pa-ejb/StudySiteContactServiceBean"
+                + "!gov.nih.nci.pa.service.StudySiteContactServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService() throws NamingException {
-        StudyOutcomeMeasureServiceRemote result =
-            (StudyOutcomeMeasureServiceRemote) lookup("pa/StudyOutcomeMeasureServiceBean/remote");
+    public StudyOutcomeMeasureServiceRemote getStudyOutcomeMeasureService()
+            throws NamingException {
+        StudyOutcomeMeasureServiceRemote result = 
+                (StudyOutcomeMeasureServiceRemote) lookup("pa/pa-ejb/StudyOutcomeMeasureServiceBean"
+                + "!gov.nih.nci.pa.service.StudyOutcomeMeasureServiceRemote");
         return result;
     }
 
@@ -319,57 +334,70 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudySiteServiceRemote getStudySiteService() throws NamingException {
-        StudySiteServiceRemote result = (StudySiteServiceRemote) lookup("pa/StudySiteServiceBean/remote");
+        StudySiteServiceRemote result = (StudySiteServiceRemote) lookup("pa/pa-ejb/StudySiteServiceBean"
+                + "!gov.nih.nci.pa.service.StudySiteServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyOverallStatusServiceRemote getStudyOverallStatusService() throws NamingException {
-        StudyOverallStatusServiceRemote result =
-            (StudyOverallStatusServiceRemote) lookup("pa/StudyOverallStatusServiceBean/remote");
+    public StudyOverallStatusServiceRemote getStudyOverallStatusService()
+            throws NamingException {
+        StudyOverallStatusServiceRemote result = 
+                (StudyOverallStatusServiceRemote) lookup("pa/pa-ejb/StudyOverallStatusServiceBean"
+                + "!gov.nih.nci.pa.service.StudyOverallStatusServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyDiseaseServiceRemote getStudyDiseaseService() throws NamingException {
-        StudyDiseaseServiceRemote result = (StudyDiseaseServiceRemote) lookup("pa/StudyDiseaseServiceBean/remote");
+    public StudyDiseaseServiceRemote getStudyDiseaseService()
+            throws NamingException {
+        StudyDiseaseServiceRemote result = (StudyDiseaseServiceRemote) lookup("pa/pa-ejb/StudyDiseaseServiceBean"
+                + "!gov.nih.nci.pa.service.StudyDiseaseServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyOnholdServiceRemote getStudyOnholdService() throws NamingException {
-        StudyOnholdServiceRemote result = (StudyOnholdServiceRemote) lookup("pa/StudyOnholdServiceBean/remote");
+    public StudyOnholdServiceRemote getStudyOnholdService()
+            throws NamingException {
+        StudyOnholdServiceRemote result = (StudyOnholdServiceRemote) lookup("pa/pa-ejb/StudyOnholdServiceBean"
+                + "!gov.nih.nci.pa.service.StudyOnholdServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyContactServiceRemote getStudyContactService() throws NamingException {
-        StudyContactServiceRemote result = (StudyContactServiceRemote) lookup("pa/StudyContactServiceBean/remote");
+    public StudyContactServiceRemote getStudyContactService()
+            throws NamingException {
+        StudyContactServiceRemote result = (StudyContactServiceRemote) lookup("pa/pa-ejb/StudyContactServiceBean"
+                + "!gov.nih.nci.pa.service.StudyContactServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyIndldeServiceRemote getStudyIndldeService() throws NamingException {
-        StudyIndldeServiceRemote result = (StudyIndldeServiceRemote) lookup("pa/StudyIndldeServiceBean/remote");
+    public StudyIndldeServiceRemote getStudyIndldeService()
+            throws NamingException {
+        StudyIndldeServiceRemote result = (StudyIndldeServiceRemote) lookup("pa/pa-ejb/StudyIndldeServiceBean"
+                + "!gov.nih.nci.pa.service.StudyIndldeServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudyRelationshipServiceRemote getStudyRelationshipService() throws NamingException {
-        StudyRelationshipServiceRemote result =
-            (StudyRelationshipServiceRemote) lookup("pa/StudyRelationshipServiceBean/remote");
+    public StudyRelationshipServiceRemote getStudyRelationshipService()
+            throws NamingException {
+        StudyRelationshipServiceRemote result = 
+                (StudyRelationshipServiceRemote) lookup("pa/pa-ejb/StudyRelationshipServiceBean"
+                + "!gov.nih.nci.pa.service.StudyRelationshipServiceRemote");
         return result;
     }
 
@@ -377,44 +405,51 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public DocumentServiceRemote getDocumentService() throws NamingException {
-        DocumentServiceRemote result = (DocumentServiceRemote) lookup("pa/DocumentServiceBean/remote");
+        DocumentServiceRemote result = (DocumentServiceRemote) lookup("pa/pa-ejb/DocumentServiceBean"
+                + "!gov.nih.nci.pa.service.DocumentServiceRemote");
         return result;
     }
 
     /**
      * {@inheritDoc}
      */
-    public PlannedActivityServiceRemote getPlannedActivityService() throws NamingException {
-        PlannedActivityServiceRemote result =
-            (PlannedActivityServiceRemote) lookup("pa/PlannedActivityServiceBean/remote");
+    public PlannedActivityServiceRemote getPlannedActivityService()
+            throws NamingException {
+        PlannedActivityServiceRemote result = 
+                (PlannedActivityServiceRemote) lookup("pa/pa-ejb/PlannedActivityServiceBean"
+                + "!gov.nih.nci.pa.service.PlannedActivityServiceRemote");
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
-    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService() throws NamingException {
-        DocumentWorkflowStatusServiceRemote result =
-            (DocumentWorkflowStatusServiceRemote) lookup("pa/DocumentWorkflowStatusServiceBean/remote");
+    public DocumentWorkflowStatusServiceRemote getDocumentWorkflowStatusService()
+            throws NamingException {
+        DocumentWorkflowStatusServiceRemote result = 
+                (DocumentWorkflowStatusServiceRemote) lookup("pa/pa-ejb/DocumentWorkflowStatusServiceBean"
+                + "!gov.nih.nci.pa.service.DocumentWorkflowStatusServiceRemote");
         return result;
     }
-    
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public <Z extends BaseDTO> BasePaService<Z> getBasePaService(Class<Z> type) throws NamingException {
+    public <Z extends BaseDTO> BasePaService<Z> getBasePaService(Class<Z> type)
+            throws NamingException {
         Method serviceMethod = values.get(type);
         BasePaService<Z> service = null;
         try {
             service = (BasePaService<Z>) serviceMethod.invoke(this);
         } catch (Exception e) {
 
-            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
+            throw new InvokeCoppaServiceException("Unable to invoke method "
+                    + serviceMethod.getName(), e);
         }
         if (service == null) {
-            throw new IllegalArgumentException("Unable to locate service for type, " + type);
+            throw new IllegalArgumentException(
+                    "Unable to locate service for type, " + type);
         }
         return service;
     }
@@ -423,16 +458,19 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public <S extends StudyDTO> StudyPaService<S> getStudyPaService(Class<S> type) throws NamingException {
+    public <S extends StudyDTO> StudyPaService<S> getStudyPaService(
+            Class<S> type) throws NamingException {
         Method serviceMethod = values.get(type);
         StudyPaService<S> service = null;
         try {
             service = (StudyPaService<S>) serviceMethod.invoke(this);
         } catch (Exception e) {
-            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
+            throw new InvokeCoppaServiceException("Unable to invoke method "
+                    + serviceMethod.getName(), e);
         }
         if (service == null) {
-            throw new IllegalArgumentException("Unable to locate service for type, " + type);
+            throw new IllegalArgumentException(
+                    "Unable to locate service for type, " + type);
         }
         return service;
     }
@@ -441,16 +479,19 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public <S extends StudyDTO> StudyCurrentPaService getStudyCurrentPaService(Class<S> type) throws NamingException {
+    public <S extends StudyDTO> StudyCurrentPaService getStudyCurrentPaService(
+            Class<S> type) throws NamingException {
         Method serviceMethod = values.get(type);
         StudyCurrentPaService<S> service = null;
         try {
             service = (StudyCurrentPaService<S>) serviceMethod.invoke(this);
         } catch (Exception e) {
-            throw new InvokeCoppaServiceException("Unable to invoke method " + serviceMethod.getName(), e);
+            throw new InvokeCoppaServiceException("Unable to invoke method "
+                    + serviceMethod.getName(), e);
         }
         if (service == null) {
-            throw new IllegalArgumentException("Unable to locate service for type, " + type);
+            throw new IllegalArgumentException(
+                    "Unable to locate service for type, " + type);
         }
         return service;
     }
@@ -458,59 +499,76 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public TrialRegistrationServiceRemote getTrialRegistrationService() throws NamingException {
-        return (TrialRegistrationServiceRemote) lookup("/pa/TrialRegistrationServiceBean/remote");
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public RegistryUserServiceRemote getRegistryUserService() throws NamingException {
-        return (RegistryUserServiceRemote) lookup("/pa/RegistryUserServiceBean/remote");
-    }
-    
-
-    /**
-     * {@inheritDoc}
-     */
-    public PDQDiseaseServiceRemote getPdqDiseaseService() throws NamingException {
-        return (PDQDiseaseServiceRemote) lookup("/pa/PDQDiseaseServiceBean/remote");
+    public TrialRegistrationServiceRemote getTrialRegistrationService()
+            throws NamingException {
+        return (TrialRegistrationServiceRemote) lookup("pa/pa-ejb/TrialRegistrationServiceBean"
+                + "!gov.nih.nci.pa.service.TrialRegistrationServiceRemote");
     }
 
     /**
      * {@inheritDoc}
      */
-    public InterventionServiceRemote getInterventionService() throws NamingException {
-        return (InterventionServiceRemote) lookup("/pa/InterventionServiceBean/remote");
+    public RegistryUserServiceRemote getRegistryUserService()
+            throws NamingException {
+        return (RegistryUserServiceRemote) lookup("pa/pa-ejb/RegistryUserServiceBean"
+                + "!gov.nih.nci.pa.service.util.RegistryUserServiceRemote");
     }
 
     /**
      * {@inheritDoc}
      */
-    public RegulatoryAuthorityServiceRemote getRegulatoryAuthorityService() throws NamingException {
-        return (RegulatoryAuthorityServiceRemote) lookup("/pa/RegulatoryAuthorityServiceBean/remote");
+    public PDQDiseaseServiceRemote getPdqDiseaseService()
+            throws NamingException {
+        return (PDQDiseaseServiceRemote) lookup("pa/pa-ejb/PDQDiseaseServiceBean"
+                + "!gov.nih.nci.pa.service.PDQDiseaseServiceRemote");
     }
 
     /**
      * {@inheritDoc}
      */
-    public ParticipatingSiteServiceRemote getParticipatingSiteService() throws NamingException {
-        return (ParticipatingSiteServiceRemote) lookup("/pa/ParticipatingSiteServiceBean/remote");
+    public InterventionServiceRemote getInterventionService()
+            throws NamingException {
+        return (InterventionServiceRemote) lookup("pa/pa-ejb/InterventionServiceBean"
+                + "!gov.nih.nci.pa.service.InterventionServiceRemote");
     }
 
     /**
      * {@inheritDoc}
      */
-    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws NamingException {
-        return (CTGovXmlGeneratorServiceRemote) lookup("/pa/CTGovXmlGeneratorServiceBean/remote");
+    public RegulatoryAuthorityServiceRemote getRegulatoryAuthorityService()
+            throws NamingException {
+        return (RegulatoryAuthorityServiceRemote) lookup("pa/pa-ejb/RegulatoryAuthorityServiceBean"
+                + "!gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote");
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.coppa.services.pa.grid.remote.ServiceLocator#getProprietaryTrialManagementService()
+    /**
+     * {@inheritDoc}
+     */
+    public ParticipatingSiteServiceRemote getParticipatingSiteService()
+            throws NamingException {
+        return (ParticipatingSiteServiceRemote) lookup("pa/pa-ejb/ParticipatingSiteServiceBean"
+                + "!gov.nih.nci.pa.service.ParticipatingSiteServiceRemote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService()
+            throws NamingException {
+        return (CTGovXmlGeneratorServiceRemote) lookup("pa/pa-ejb/CTGovXmlGeneratorServiceBean"
+                + "!gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote");
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see gov.nih.nci.coppa.services.pa.grid.remote.ServiceLocator#
+     * getProprietaryTrialManagementService()
      */
     @Override
     public ProprietaryTrialManagementServiceRemote getProprietaryTrialManagementService()
             throws NamingException {
-        return (ProprietaryTrialManagementServiceRemote) lookup("/pa/ProprietaryTrialManagementBean/remote");
+        return (ProprietaryTrialManagementServiceRemote) lookup("pa/pa-ejb/ProprietaryTrialManagementBean"
+                + "!gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal");
     }
 }
