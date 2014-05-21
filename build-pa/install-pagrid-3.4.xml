@@ -344,7 +344,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
   </target>
 
   <target name="install:pa-grid-3.4-jboss:stop" unless="exclude.pa-grid-3.4">
-    <jboss-stop-jboss jboss.server.jndi.port="${pa-grid-3.4-jboss.server.jndi.port}" jboss.server.name="${pa-grid-3.4-jboss.server.name}" sleep.time="15"/>
+    <jboss-stop-jboss jboss.server.hostname="${pa-grid-3.4-jboss.server.hostname}" jboss.server.jndi.port="${pa-grid-3.4-jboss.server.jndi.port}" jboss.server.name="${pa-grid-3.4-jboss.server.name}" sleep.time="15"/>
   </target>
 
     <target name="install:pa-grid-3.4-jboss:start" unless="exclude.pa-grid-3.4">
@@ -453,6 +453,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
               <replace file="${temp.dir}/${relative.dir}/${file.name}" token="%%" value="@"/>
               <copy todir="${temp.dir}" file="${temp.dir}/${relative.dir}/${file.name}" filtering="true" overwrite="true">
                   <filterset>
+                  	  <filter token="jboss.server.hostname" value="${jboss.server.hostname}"/>
                       <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}"/>
                       <filter token="grid.security.jndi.principal" value="${grid.security.jndi.principal}"/>
                       <filter token="grid.security.jndi.credentials" value="${grid.security.jndi.credentials}"/>
