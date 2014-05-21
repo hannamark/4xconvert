@@ -266,7 +266,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
 
   <!-- Calls to bda macros for basic functionality -->
   <target name="install:po-grid-3.0-jboss:stop" unless="exclude.po-grid-3.0">
-    <jboss-stop-jboss jboss.server.jndi.port="${po-grid-3.0-jboss.server.jndi.port}" jboss.server.name="${po-grid-3.0-jboss.server.name}"/>
+    <jboss-stop-jboss jboss.server.hostname="${po-grid-3.0-jboss.server.hostname}" jboss.server.jndi.port="${po-grid-3.0-jboss.server.jndi.port}" jboss.server.name="${po-grid-3.0-jboss.server.name}"/>
   </target>
 
     <target name="install:po-grid-3.0-jboss:start" unless="exclude.po-grid-3.0">
