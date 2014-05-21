@@ -48,6 +48,11 @@
                     <properties path="application-roles.properties" relative-to="jboss.server.config.dir"/>
                 </authorization>
             </security-realm>
+            <security-realm name="pa">
+                <authentication>
+                    <jaas name="pa"/>
+                </authentication>
+            </security-realm>
         </security-realms>
         <audit-log>
             <formatters>
@@ -192,6 +197,7 @@
                     <keepalive-time time="100" unit="milliseconds"/>
                 </thread-pool>
             </thread-pools>
+            <default-security-domain value="other"/>
             <default-missing-method-permissions-deny-access value="true"/>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:infinispan:1.4">
@@ -257,7 +263,7 @@
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:pojo:1.0"/>
         <subsystem xmlns="urn:jboss:domain:remoting:1.1">
-            <connector name="remoting-connector" socket-binding="remoting" security-realm="ApplicationRealm"/>
+            <connector name="remoting-connector" socket-binding="remoting" security-realm="pa"/>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:resource-adapters:1.1"/>
         <subsystem xmlns="urn:jboss:domain:sar:1.0"/>
@@ -265,15 +271,15 @@
             <security-domains>
                 <security-domain name="accrual" cache-type="default">
                     <authentication>
-                        <login-module code="gov.nih.nci.coppa.util.NullPasswordStackingLoginModule" flag="optional">
+                        <login-module code="gov.nih.nci.coppa.util.NullPasswordStackingLoginModule" flag="optional" module="deployment.accrual.ear">
                             <module-option name="password-stacking" value="useFirstPass"/>
                         </login-module>
-                        <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" flag="optional">
+                        <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" flag="optional" module="deployment.accrual.ear">
                             <module-option name="gridServicePrincipal" value="Gr1DU5er"/>
                             <module-option name="gridServiceCredential" value=""/>
                             <module-option name="gridServicePrincipalSeparator" value="||"/>
                         </login-module>
-                        <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional">
+                        <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional" module="deployment.accrual.ear">
                             <module-option name="driver" value="org.postgresql.Driver"/>
                             <module-option name="url" value="jdbc:postgresql://localhost:5432/pa_dev"/>
                             <module-option name="user" value="pauser"/>
@@ -290,15 +296,15 @@
                 </security-domain>
                 <security-domain name="pa" cache-type="default">
                     <authentication>
-                        <login-module code="gov.nih.nci.coppa.util.NullPasswordStackingLoginModule" flag="optional">
+                        <login-module code="gov.nih.nci.coppa.util.NullPasswordStackingLoginModule" flag="optional"  module="deployment.pa.ear">
                             <module-option name="password-stacking" value="useFirstPass"/>
                         </login-module>
-                        <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" flag="optional">
+                        <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" flag="optional"  module="deployment.pa.ear">
                             <module-option name="gridServicePrincipal" value="Gr1DU5er"/>
                             <module-option name="gridServiceCredential" value=""/>
                             <module-option name="gridServicePrincipalSeparator" value="||"/>
                         </login-module>
-                        <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional">
+                        <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional"  module="deployment.pa.ear">
                             <module-option name="driver" value="org.postgresql.Driver"/>
                             <module-option name="url" value="jdbc:postgresql://localhost:5432/pa_dev"/>
                             <module-option name="user" value="pauser"/>
