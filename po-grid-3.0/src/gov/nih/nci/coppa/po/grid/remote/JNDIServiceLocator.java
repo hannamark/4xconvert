@@ -25,9 +25,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -47,11 +45,6 @@ public final class JNDIServiceLocator implements ServiceLocator {
     private static JNDIServiceLocator instance = new JNDIServiceLocator();
     private InitialContext context;
     private static Map<Class<?>, Method> values = new HashMap<Class<?>, Method>();
-    
-    /**
-     * CTX_HOLDER.
-     */
-    public static final ThreadLocal<List<InitialContext>> CTX_HOLDER = new ThreadLocal<List<InitialContext>>();
 
     static {
         try {
@@ -87,20 +80,10 @@ public final class JNDIServiceLocator implements ServiceLocator {
                     .put("jboss.naming.client.connect.options.org.xnio.Options.SASL_POLICY_NOPLAINTEXT",
                             "false");
             context = new InitialContext(props);
-            addToContextHolder(context);
         } catch (Exception e) {
             LOG.error("Unable to load jndi properties.", e);
             throw new RuntimeException("Unable to load jndi properties.", e);
         }
-    }
-    
-    private void addToContextHolder(InitialContext ctx) {
-        List<InitialContext> list = CTX_HOLDER.get();
-        if (list == null) {
-            list = new ArrayList<InitialContext>();
-            CTX_HOLDER.set(list);
-        }
-        list.add(ctx);
     }
 
     /**

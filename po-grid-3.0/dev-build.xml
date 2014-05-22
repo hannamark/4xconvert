@@ -343,7 +343,6 @@
             <fileset dir="${build.dest}">
                 <include name="**/dto/**/*.class" />
                 <exclude name="**/*Test.class" />
-            	<exclude name="**/InterceptingFilter.class" />
 		<include name="**/InvokeCorrelationService.class" />
             </fileset>
         </cobertura-instrument>
