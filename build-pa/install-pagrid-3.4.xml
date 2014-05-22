@@ -209,6 +209,32 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
             grid.application.name="${pa-grid-3.4.introduce.skeleton.service.name}"
             />
         <configure-grid-log4j log.level="${app.log.level}" log.level.default="${app.log.level.default}" config.dir="${pa-grid-3.4-jboss.home}/server/${pa-grid-3.4-jboss.server.name}/conf"/>
+    	
+    	<replace file="${pa-grid-3.4-jboss.home}/server/${pa-grid-3.4-jboss.server.name}/deploy/${pa-grid-3.4.dir.target}/WEB-INF/web.xml" summary="true">
+    	             <replacetoken><![CDATA[<servlet>]]></replacetoken>
+    	             <replacevalue><![CDATA[
+    	                
+    	                <filter>
+    	                    <filter-name>
+    	                      filter
+    	                    </filter-name>
+    	                    <filter-class>
+    	             	gov.nih.nci.coppa.services.pa.grid.remote.InterceptingFilter
+    	                    </filter-class>
+    	                  </filter>
+
+    	                  <filter-mapping>
+    	                    <filter-name>
+    	                        filter
+    	                    </filter-name>
+    	                    <url-pattern>
+    	                      /*
+    	                    </url-pattern>
+    	                  </filter-mapping>
+    	                
+    	                <servlet>]]></replacevalue>         
+    	        </replace>    	
+    	
     </target>
 
   <target name="install:pa-grid-3.4-jboss:configure" unless="exclude.pa-grid-3.4">
