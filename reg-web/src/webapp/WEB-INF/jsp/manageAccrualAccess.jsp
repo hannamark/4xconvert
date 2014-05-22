@@ -73,12 +73,15 @@
     	alert('<fmt:message key="manage.accrual.access.unselectableTrialError"/>');
     	return stopEventPropagation(evt);
     }
-    
-    function showCommentsBox() {    	
-    	// retrieve required dimensions 
-        var eltDims     = $('comments-dialog').getDimensions();
+
+    var eltDims = null;
+    function showCommentsBox() {
+        // retrieve required dimensions
+        if (eltDims == null) {
+            eltDims = $('comments-dialog').getDimensions();
+        }
         var browserDims = $(document).viewport.getDimensions();
-         
+
         // calculate the center of the page using the browser and element dimensions
         var y  = (browserDims.height - eltDims.height) / 2;
         var x = (browserDims.width - eltDims.width) / 2;    
