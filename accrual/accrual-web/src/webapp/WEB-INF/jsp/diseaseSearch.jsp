@@ -10,6 +10,7 @@
 			searchName : $('#searchName').val(),
 			searchCode : $('#searchCode').val(),
 			page : "searchMenu",
+			genericSearch : "true",
 			searchCodeSystem : $('#searchCodeSystem').val()
 		};
 		$('#getDiseases').load(url, params);

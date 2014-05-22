@@ -102,6 +102,7 @@ public class PopUpAction extends AbstractAccrualAction {
     private String searchCode;
     private String searchCodeSystem;
     private String page;
+    private boolean genericSearch;
     private boolean siteLookUp = false;
     private boolean selectedSite = false;
     private List<String> listOfDiseaseCodeSystems = null;
@@ -151,7 +152,7 @@ public class PopUpAction extends AbstractAccrualAction {
         criteria.setDiseaseCode(searchCode);
         criteria.setCodeSystem(searchCodeSystem);
         List<AccrualDisease> diseaseList = getDiseaseSvc().search(criteria);
-        if (siteLookUp && searchCodeSystem != null
+        if (!genericSearch && siteLookUp && searchCodeSystem != null
                 && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase(ICD_O_3_CODESYSTEM)) {
             // this is to remove the histology codes and show Site codes
             List<AccrualDisease> siteDiseaseList = new ArrayList<AccrualDisease>();
@@ -162,7 +163,7 @@ public class PopUpAction extends AbstractAccrualAction {
                     diseaseList.add(disease);
                 }
             }
-        } else if (!siteLookUp && searchCodeSystem != null
+        } else if (!genericSearch && !siteLookUp && searchCodeSystem != null
                 && !searchCodeSystem.isEmpty() && searchCodeSystem.equalsIgnoreCase(ICD_O_3_CODESYSTEM)) {
             // this is to remove the site codes and just show histology codes
             List<AccrualDisease> histologyDiseaseList = new ArrayList<AccrualDisease>();
@@ -319,5 +320,19 @@ public class PopUpAction extends AbstractAccrualAction {
      */
     public void setSelectedSite(boolean selectedSite) {
         this.selectedSite = selectedSite;
+    }
+
+    /**
+     * @return the genericSearch
+     */
+    public boolean isGenericSearch() {
+        return genericSearch;
+    }
+
+    /**
+     * @param genericSearch the genericSearch to set
+     */
+    public void setGenericSearch(boolean genericSearch) {
+        this.genericSearch = genericSearch;
     }
 }
