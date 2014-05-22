@@ -1853,3 +1853,29 @@ table td {
 .glyphicon-large {
 	font-size: 32px;
 }
+
+.accrual_trial_selected {
+    background-color: #0099FF;
+    color: white;
+    cursor: pointer;    
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.accrual_trial_unselected {
+    cursor: pointer;    
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.accrual_trial_unselectable {
+    color:#D0D0D0;
+}
+
