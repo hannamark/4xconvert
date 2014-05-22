@@ -432,7 +432,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                 }
             }
             if (!hasProtocolDoc) {
-                errorMsg.append("Provide either NCT Number or Protocol Trial Template ");
+                errorMsg.append("Provide either ClinicalTrials.gov Identifier or Protocol Trial Template ");
             }
         }
         if (nctIdentifier != null && StringUtils.isNotEmpty(nctIdentifier.getValue())) {

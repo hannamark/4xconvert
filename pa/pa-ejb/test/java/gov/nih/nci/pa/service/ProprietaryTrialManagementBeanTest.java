@@ -631,7 +631,7 @@ public class ProprietaryTrialManagementBeanTest extends
             e.printStackTrace();
             String msg = e.getMessage();
             Assert.assertTrue(msg
-                    .contains("Provide either NCT Number or Protocol Trial Template"));
+                    .contains("Provide either ClinicalTrials.gov Identifier or Protocol Trial Template"));
             Assert.assertTrue(msg
                     .contains("Study site identifier not found for"));
             Assert.assertTrue(msg

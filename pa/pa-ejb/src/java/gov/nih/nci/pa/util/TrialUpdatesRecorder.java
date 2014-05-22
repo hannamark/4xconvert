@@ -257,7 +257,8 @@ public final class TrialUpdatesRecorder {
     public static void isNctUpdated(String existingNCT, String newNCT) {
         if (!StringUtils.equals(StringUtils.trim(existingNCT), // NOPMD
                 StringUtils.trim(newNCT))) { // NOPMD
-            add(StringUtils.isEmpty(existingNCT) ? "NCT Number was added." : "NCT Number was changed.");
+            add(StringUtils.isEmpty(existingNCT) ? "ClinicalTrials.gov Identifier"
+                  + " was added." : "ClinicalTrials.gov Identifier was changed.");
         }
     }
 

@@ -354,8 +354,8 @@ public class StudyInboxServiceBean // NOPMD
                     "Lead Organization Trial Identifier was changed." + SEPARATOR, comments);
             recordChange(originalDTO.getNctNumber(),
                     updatedDTO.getNctNumber(),
-                    StringUtils.isEmpty(originalDTO.getNctNumber()) ? "NCT Number was added." 
-                            : "NCT Number was changed." + SEPARATOR, comments);
+                    StringUtils.isEmpty(originalDTO.getNctNumber()) ? "ClinicalTrials.gov Identifier was added." 
+                            : "ClinicalTrials.gov Identifier was changed." + SEPARATOR, comments);
             recordChange(originalDTO.getOfficialTitle(),
                     updatedDTO.getOfficialTitle(),
                     "Title was changed." + SEPARATOR, comments);           
