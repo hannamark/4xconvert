@@ -88,7 +88,9 @@ import gov.nih.nci.cagrid.introduce.servicetools.security.SecurityUtils;
 import gov.nih.nci.coppa.services.pa.service.PAServicesConfiguration;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -102,7 +104,14 @@ import org.apache.log4j.Logger;
 /**
  * Service locator that uses JNDI to look up services using Grid Security.
  */
-public class GridSecurityJNDIServiceLocator implements ServiceLocator {
+public final class GridSecurityJNDIServiceLocator implements ServiceLocator {
+    
+    /**
+     * CTX_HOLDER.
+     */
+    public static final ThreadLocal<List<InitialContext>> CTX_HOLDER = 
+            gov.nih.nci.coppa.services.pa.grid.remote.GridSecurityJNDIServiceLocator.CTX_HOLDER;
+    
 
     private static final Logger LOG = LogManager.getLogger(GridSecurityJNDIServiceLocator.class);
     private static final int MAX_RETRIES = 2;
@@ -123,7 +132,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      *
      * @param userIdentity user identity of the grid user
      */
-    public GridSecurityJNDIServiceLocator(String userIdentity) {
+    private GridSecurityJNDIServiceLocator(String userIdentity) {
 
         try {
             /*
@@ -147,10 +156,20 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
 
             LOG.debug("Properties " + props.toString());
             context = new InitialContext(props);
+            addToContextHolder(context);
         } catch (Exception e) {
             LOG.error("Unable to load jndi properties.", e);
             throw new RuntimeException("Unable to load jndi properties.", e);
         }
+    }
+    
+    private void addToContextHolder(InitialContext ctx) {
+        List<InitialContext> list = CTX_HOLDER.get();
+        if (list == null) {
+            list = new ArrayList<InitialContext>();
+            CTX_HOLDER.set(list);
+        }
+        list.add(ctx);
     }
 
     private Object lookup(String name) throws NamingException {

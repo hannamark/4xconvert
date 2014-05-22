@@ -69,6 +69,7 @@
   <classpathentry kind="lib" path="build/lib/iso-datatypes-extensions-2.0.jar" sourcepath="C:/Projects/ISO_21090/ISO21090-2.0" />
   <classpathentry kind="lib" path="build/test/lib/iso-datatypes-extensions-2.0-tests.jar" sourcepath="C:/Projects/ISO_21090/ISO21090-2.0" />
   <classpathentry kind="lib" path="build/lib/antlr-2.7.6.jar" />
+  <classpathentry kind="lib" path="build/lib/servlet-api-2.3.jar"/>
   <classpathentry kind="lib" path="build/lib/jaxen-1.1.jar" />
   <classpathentry kind="lib" path="build/lib/relaxngDatatype-20020414.jar" />
   <classpathentry kind="lib" path="build/lib/jdom-1.0.jar" />
