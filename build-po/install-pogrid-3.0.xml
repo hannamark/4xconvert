@@ -201,32 +201,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/po-ear/trunk/software/install.xml $
         grid.application.name="${po-grid-3.0.introduce.skeleton.service.name}"
         />
         <configure-grid-log4j log.level="${app.log.level.default}" config.dir="${po-grid-3.0-jboss.home}/server/${po-grid-3.0-jboss.server.name}/conf"/>
-    	
-    	 <replace file="${po-grid-3.0-jboss.home}/server/${po-grid-3.0-jboss.server.name}/deploy/${po-grid-3.0.dir.target}/WEB-INF/web.xml" summary="true">
-    	             <replacetoken><![CDATA[<servlet>]]></replacetoken>
-    	             <replacevalue><![CDATA[
-    	                
-    	                <filter>
-    	                    <filter-name>
-    	                      filter
-    	                    </filter-name>
-    	                    <filter-class>
-    	                      gov.nih.nci.coppa.po.grid.remote.InterceptingFilter
-    	                    </filter-class>
-    	                  </filter>
-
-    	                  <filter-mapping>
-    	                    <filter-name>
-    	                        filter
-    	                    </filter-name>
-    	                    <url-pattern>
-    	                      /*
-    	                    </url-pattern>
-    	                  </filter-mapping>
-    	                
-    	                <servlet>]]></replacevalue>         
-    	        </replace>
-    	
     </target>
 
   <target name="install:po-grid-3.0-jboss:configure" unless="exclude.po-grid-3.0">
