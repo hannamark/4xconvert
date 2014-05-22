@@ -112,7 +112,9 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -126,13 +128,18 @@ import org.apache.log4j.Logger;
 /**
  * Service locator that uses JNDI to look up services using Grid Security.
  */
-public class GridSecurityJNDIServiceLocator implements ServiceLocator {
+public final class GridSecurityJNDIServiceLocator implements ServiceLocator {
 
     private static final Logger LOG = LogManager.getLogger(GridSecurityJNDIServiceLocator.class);
     private static final int MAX_RETRIES = 2;
     private InitialContext context;
     private static Map<Class<?>, Method> values = new HashMap<Class<?>, Method>();
     private static final String JNDI_PRINCIPAL = "java.naming.security.principal";
+    
+    /**
+     * CTX_HOLDER.
+     */
+    public static final ThreadLocal<List<InitialContext>> CTX_HOLDER = new ThreadLocal<List<InitialContext>>();
     
     /**
      * @return a ServiceLocator with the caller's identity
@@ -147,7 +154,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      * 
      * @param userIdentity user identity of the grid user
      */
-    public GridSecurityJNDIServiceLocator(String userIdentity) {
+    private GridSecurityJNDIServiceLocator(String userIdentity) {
     
         try {
             /*
@@ -189,6 +196,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             LOG.debug("Properties " + props.toString());
             
             context = new InitialContext(props);
+            addToContextHolder(context);
             
         } catch (Exception e) {
             LOG.error("Unable to load jndi properties.", e);
@@ -196,6 +204,15 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
         }
     }
 
+
+    private void addToContextHolder(InitialContext ctx) {
+        List<InitialContext> list = CTX_HOLDER.get();
+        if (list == null) {
+            list = new ArrayList<InitialContext>();
+            CTX_HOLDER.set(list);
+        }
+        list.add(ctx);
+    }
 
     private Object lookup(String name) throws NamingException {
         Object object = null;

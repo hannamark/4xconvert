@@ -343,6 +343,7 @@
             	<include name="**/services/*.class" />
                 <include name="**/InvokeCorrelationService.class" />
                 <exclude name="**/*Test.class" />
+            	<exclude name="**/InterceptingFilter.class" />
             </fileset>
         </cobertura-instrument>
 
