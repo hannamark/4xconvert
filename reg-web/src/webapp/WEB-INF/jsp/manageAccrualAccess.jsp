@@ -234,7 +234,7 @@
 		        <label for="assignmentType" class="col-xs-3 control-label"><fmt:message
 	                           key="manage.accrual.access.selectAssignmentType" /></label>
 		        <div class="col-xs-9">
-			        <s:radio label="Assignment Type" id="assignmentType" name="assignmentType" onclick="onAssignmentTypeChange()" list="#{'specificTrial':'Specific trial(s)','allTrialsSite':'All trials (this site)', 'allTrialsOrg':'All trials (in organization family)'}" value="model.assignmentType" />
+			        <s:radio style="margin: 10px 10px 10px 50px" label="Assignment Type" id="assignmentType" name="assignmentType" onclick="onAssignmentTypeChange()" list="#{'specificTrial':'Specific trial(s)','allTrialsSite':'All trials (this site)', 'allTrialsOrg':'All trials (in organization family)'}" value="model.assignmentType" />
 		            <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
                             key="manage.accrual.access.selectAssignmentType.help"><fmt:param><c:out value="${organization.name}"/></fmt:param><fmt:param><c:out value="${families}"/></fmt:param></fmt:message>' data-placement="top" data-trigger="hover"></i>
 	       	 	</div>
@@ -247,14 +247,16 @@
                             onchange="change(this);"
                             list="model.users" 
                             listKey="id"  
-                            listValue="%{siteAccrualSubmitter == true ? lastName + ', ' +  firstName + '(site submitter)' : lastName + ', ' +  firstName}"                                      
+                            listValue="%{lastName + ', ' +  firstName + (siteAccrualSubmitter == true ? ' (site submitter)' : '')
+                                                                      + (familyAccrualSubmitter == true ? ' (org family submitter)' : '')}"
                             headerKey="" headerValue=" " value="model.user.id" />
                             
                    <s:select name="ofUserId" id="ofUserId" cssClass="form-control"
                              onchange="change(this);"
                              list="model.ofUsers" 
                              listKey="id"  
-                             listValue="%{familyAccrualSubmitter == true ? lastName + ', ' +  firstName + '(org family submitter)' : lastName + ', ' +  firstName}"                                      
+                             listValue="%{lastName + ', ' +  firstName + (siteAccrualSubmitter == true ? ' (site submitter)' : '')
+                                                                       + (familyAccrualSubmitter == true ? ' (org family submitter)' : '')}"
                              headerKey="" headerValue=" " value="ofUserId" />
 				</div>
 				<i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
