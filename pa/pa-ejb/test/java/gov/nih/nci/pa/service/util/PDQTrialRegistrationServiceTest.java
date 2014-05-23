@@ -324,6 +324,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(paSvcLoc.getStudySiteContactService()).thenReturn(new StudySiteContactServiceBean());
         when(paSvcLoc.getOutcomeMeasureService()).thenReturn(new StudyOutcomeMeasureBeanLocal());
         when(paSvcLoc.getTSRReportGeneratorService()).thenReturn(new TSRReportGeneratorServiceBean());
+        when(paSvcLoc.getTSRReportGeneratorServiceLocal()).thenReturn(new TSRReportGeneratorServiceBean());
         when(paSvcLoc.getDocumentService()).thenReturn(new DocumentServiceBean());
         when(paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
 
