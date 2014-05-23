@@ -213,8 +213,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         }
         
         try {
-            StudyProtocolQueryCriteria[] criteria =  buildCriteriaByUserRole()
-                    .toArray(new StudyProtocolQueryCriteria[0]);
+            StudyProtocolQueryCriteria criteria = buildCriteria();
             return search(criteria);
         } catch (PAException e) {
             LOG.error(e, e);
@@ -230,22 +229,14 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
      */
     private String search(StudyProtocolQueryCriteria... criteriaList) {
         try {
-            TreeSet<StudyProtocolQueryDTO> set = new TreeSet<StudyProtocolQueryDTO>(
-                    new Comparator<StudyProtocolQueryDTO>() {
-                        @Override
-                        public int compare(StudyProtocolQueryDTO dto1,
-                                StudyProtocolQueryDTO dto2) {
-                            return dto1.getStudyProtocolId().compareTo(
-                                    dto2.getStudyProtocolId());
-                        }
-                    });
+            List<StudyProtocolQueryDTO> results = new ArrayList<StudyProtocolQueryDTO>();
             for (StudyProtocolQueryCriteria criteria : criteriaList) {
                 List<StudyProtocolQueryDTO> currentResults = protocolQueryService
                         .getStudyProtocolByCriteria(criteria);
                 protocolQueryService.populateMilestoneHistory(currentResults);
-                set.addAll(currentResults);
+                results.addAll(currentResults);
             }
-            List<StudyProtocolQueryDTO> results = new ArrayList<StudyProtocolQueryDTO>(set);
+            eliminateDupes(results);
             request.getSession()
                     .setAttribute(DASHBOARD_SEARCH_RESULTS, results);
             toggleResultsTab();
@@ -255,6 +246,21 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
                     e.getLocalizedMessage());
         }
         return determineLandingPage();
+    }
+
+    private void eliminateDupes(List<StudyProtocolQueryDTO> trials) {
+        TreeSet<StudyProtocolQueryDTO> set = new TreeSet<StudyProtocolQueryDTO>(
+                new Comparator<StudyProtocolQueryDTO>() {
+                    @Override
+                    public int compare(StudyProtocolQueryDTO dto1,
+                            StudyProtocolQueryDTO dto2) {
+                        return dto1.getStudyProtocolId().compareTo(
+                                dto2.getStudyProtocolId());
+                    }
+                });
+        set.addAll(trials);
+        trials.clear();
+        trials.addAll(set);
     }
 
     /**
