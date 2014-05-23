@@ -79,35 +79,47 @@ public class FilterOrganizationUtil {
             
             list.add(getSpacerItem());
             
-            if (org != null) {
-                try {
-                    final List<Long> siblings = FamilyHelper.getAllRelatedOrgs(Long.parseLong(org.getIdentifier()));
-                    final List<Organization> orgList = new ArrayList<Organization>();
-                    for (long orgId : siblings) {
+            getRelatedOrgs(org, list);
+        }
+        
+        return list;
+    }
+    
+    /**
+     * List related orgs.
+     * @param org the organization whose relatives need to be added
+     * @param list the list that the orgs get added to.
+     */
+    private static void getRelatedOrgs(Organization org, List<OrgItem> list) {
+        if (org != null) {
+            try {
+                final long id = Long.parseLong(org.getIdentifier());
+                final List<Long> siblings = FamilyHelper.getAllRelatedOrgs(id);
+                final List<Organization> orgList = new ArrayList<Organization>();
+                for (long orgId : siblings) {
+                    if (id != orgId) {
                         final Organization tempOrg = getOrganizationByPoID(orgId);
                         if (tempOrg != null) {
                             orgList.add(tempOrg);
                         }
                     }
-                    Collections.sort(orgList, new Comparator<Organization>() {
-                        @Override
-                        public int compare(Organization o1, Organization o2) {
-                            return o1.getName().compareTo(o2.getName());
-                        }
-                    });
-                    for (Organization orgItem : orgList) {
-                        list.add(new OrgItem(orgItem));
-                    }
-                } catch (Exception e) {
-                    //Deliberately add an error to the list in case of error...
-                    list.add(new OrgItem(OrgItem.ERROR_TYPE));
-                    
-                    LOG.error("An error occured while fetching releated organizations.", e);
                 }
+                Collections.sort(orgList, new Comparator<Organization>() {
+                    @Override
+                    public int compare(Organization o1, Organization o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                });
+                for (Organization orgItem : orgList) {
+                    list.add(new OrgItem(orgItem));
+                }
+            } catch (Exception e) {
+                //Deliberately add an error to the list in case of error...
+                list.add(new OrgItem(OrgItem.ERROR_TYPE));
+                
+                LOG.error("An error occured while fetching releated organizations.", e);
             }
         }
-        
-        return list;
     }
     
     /**
@@ -148,32 +160,7 @@ public class FilterOrganizationUtil {
         
         list.add(getSpacerItem());
         
-        if (org != null) {
-            try {
-                final List<Long> siblings = FamilyHelper.getAllRelatedOrgs(Long.parseLong(org.getIdentifier()));
-                final List<Organization> orgList = new ArrayList<Organization>();
-                for (long orgId : siblings) {
-                    final Organization tempOrg = getOrganizationByPoID(orgId);
-                    if (tempOrg != null) {
-                        orgList.add(tempOrg);
-                    }
-                }
-                Collections.sort(orgList, new Comparator<Organization>() {
-                    @Override
-                    public int compare(Organization o1, Organization o2) {
-                        return o1.getName().compareTo(o2.getName());
-                    }
-                });
-                for (Organization orgItem : orgList) {
-                    list.add(new OrgItem(orgItem));
-                }
-            } catch (Exception e) {
-                //Deliberately add an error to the list in case of error...
-                list.add(new OrgItem(OrgItem.ERROR_TYPE));
-                
-                LOG.error("An error occured while fetching releated organizations.", e);
-            }
-        }
+        getRelatedOrgs(org, list);
         
         return list;
     }

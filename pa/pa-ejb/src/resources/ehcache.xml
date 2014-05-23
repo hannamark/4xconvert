@@ -86,11 +86,12 @@
          timeToLiveSeconds="120"
          overflowToDisk="false"
     />
-    
-     <!--  a relativly large and long -lived cache that maps PO ID to CTEP ID. -->
+
+    <!--  a relativly large and long -lived cache that maps PO ID to CTEP ID. -->
     <cache
          name="CTEP_ORGANIZATIONS_CACHE"
          maxElementsInMemory="200"
+
          eternal="false"         
          timeToIdleSeconds="43200"
          timeToLiveSeconds="160000"

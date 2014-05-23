@@ -385,8 +385,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                                 filter.getMilestonesToExclude());
                     }
                     
-                    whereClause.append(String.format(" and sms.id = "
-                            + "(select max(id) from %s.studyMilestones "
+                    whereClause.append(String.format(" and sms.milestoneDate = "
+                            + "(select max(milestoneDate) from %s.studyMilestones "
                             + "where milestoneCode not in (:%s)))",
                             SearchableUtils.ROOT_OBJ_ALIAS,
                             INACTIVE_MILESTONES_PARAM));

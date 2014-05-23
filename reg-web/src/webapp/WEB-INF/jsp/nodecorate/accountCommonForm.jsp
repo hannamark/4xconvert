@@ -132,7 +132,7 @@
    	 <s:hidden name="registryUserWebDTO.affiliateOrg" id="registryUserWebDTO.affiliateOrg"/>
 <div class="collapse navbar-collapse organization-dropdown">
         <div class="nav navbar-nav" style="width: 100%;">
-          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="registryUserWebDTO.affiliateOrgField">Please Select the Sponsor Organization. <b class="caret"></b></a>  
+          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="registryUserWebDTO.affiliateOrgField">Please Select an Organization Affiliation. <b class="caret"></b></a>  
             <table class="dropdown-menu" id="dropdown-affiliateOrganization">
             	<tr><th>PO ID</th><th>CTEP ID</th><th>Name</th></tr>
             	<s:iterator var="orgItem" value="#accountOrgs">
