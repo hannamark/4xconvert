@@ -23,8 +23,11 @@ $(function()
 
  <div class="container">
     <h1 class="heading"><span><fmt:message key="accrual.counts.title"/></span></h1>
+    
+  <c:set var="requestURI" value="accrualCountsloopback.action" scope="request" />
   <display:table class="table table-striped sortable" summary="This table contains list of counts.  Please use column headers to sort results"
-                  sort="list" pagesize="10" id="row" name="displayTagList" requestURI="accrualCounts.action" export="true">                                             
+                  defaultsort="1"
+                  sort="list" pagesize="10" uid="row" name="${accrualCountsSession}" requestURI="${requestURI}" export="true">                                             
        <display:setProperty name="export.xml" value="false"/>
        <display:setProperty name="export.excel.filename" value="resultsAccrualCounts.xls"/>
        <display:setProperty name="export.excel.include_header" value="true"/>
