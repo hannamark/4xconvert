@@ -119,6 +119,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.jboss.ejb3.annotation.SecurityDomain;
+import org.jboss.security.SecurityContext;
+import org.jboss.security.SecurityContextAssociation;
 
 /**
  * @author merenkoi
@@ -148,14 +150,17 @@ public class PDQTrialUploadBean implements PDQTrialUploadService {
      */
     private class PDQUploadThreadManager implements Runnable {
         private final PDQTrialUploadHelper helper;
+        private final SecurityContext sc;
         
-        public PDQUploadThreadManager(PDQTrialUploadHelper pdqhelper) {
+        public PDQUploadThreadManager(PDQTrialUploadHelper pdqhelper, SecurityContext sc) {
             this.helper = pdqhelper;
+            this.sc = sc;
         }
         
         @Override
         public void run() {
             try {
+                SecurityContextAssociation.setSecurityContext(sc);
                 Map<File, List<String>> reportMap = new HashMap<File, List<String>>();
                 process(reportMap, helper.getUploadFile(), helper.getUsername());
 
@@ -176,6 +181,8 @@ public class PDQTrialUploadBean implements PDQTrialUploadService {
                 }
             } catch (Exception e) {
                 LOG.error("Exception while processing PDQ upload" + e.getMessage());
+            } finally {
+                SecurityContextAssociation.setSecurityContext(null);
             }
         }
     }
@@ -211,7 +218,8 @@ public class PDQTrialUploadBean implements PDQTrialUploadService {
      */
     @Override
     public void pdqUploadProcess(PDQTrialUploadHelper helper) {
-        Thread batchThread = new Thread(new PDQUploadThreadManager(helper));
+        Thread batchThread = new Thread(new PDQUploadThreadManager(helper,
+                SecurityContextAssociation.getSecurityContext()));
         batchThread.start();
     }
 

@@ -15,7 +15,7 @@
 	<classpathentry kind="src" path="pa-web/test/java"/>
 	<classpathentry kind="src" path="pa-web/test/resources"/>
 	<classpathentry kind="src" path="pa-web/test-integration/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java7">
 		<accessrules>
 			<accessrule kind="accessible" pattern="com/sun/net/httpserver/**"/>
 		</accessrules>
@@ -75,6 +75,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/struts2-json-plugin-2.3.16.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/struts2-spring-plugin-2.3.16.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/xwork-core-2.3.16.3.jar"/>
+	<classpathentry kind="var" path="PA_LIB/compile/picketbox-spi-bare-4.0.19.SP2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/csmapi-4.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/log4j-jboss-logmanager-1.0.2.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>

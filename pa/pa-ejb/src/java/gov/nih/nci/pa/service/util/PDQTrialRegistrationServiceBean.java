@@ -264,7 +264,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
 
         //Generate the tsr report to attach to newly created trial.
         ByteArrayOutputStream tsrReport =
-            PaRegistry.getTSRReportGeneratorService().generateRtfTsrReport(spDTO.getIdentifier());
+            PaRegistry.getTSRReportGeneratorServiceLocal().generateRtfTsrReport(spDTO.getIdentifier());
         DocumentDTO tsrDoc = getDocument(DocumentTypeCode.TSR, "tsrreport.rtf", tsrReport.toByteArray());
         List<DocumentDTO> allDocuments = getDocumentDtos(parser.getUrl());
         allDocuments.add(tsrDoc);
