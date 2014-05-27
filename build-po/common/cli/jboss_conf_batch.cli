@@ -3,7 +3,7 @@ connect
 /subsystem=transactions:write-attribute(name=default-timeout,value=600)
 
 /subsystem=web/virtual-server=default-host/access-log=configuration:add
-/subsystem=web/virtual-server=default-host/access-log=configuration:write-attribute(name="pattern",value="%h %l %u %t \\"%r\\" %q %s %B %S %T")
+/subsystem=web/virtual-server=default-host/access-log=configuration:write-attribute(name="pattern",value="%h %l %u %t \"%r\" %q %s %B %S %T")
 /subsystem=web/virtual-server=default-host/access-log=configuration/directory=configuration:add
 /subsystem=web/virtual-server=default-host/access-log=configuration/directory=configuration:write-attribute(name="path",value="./")
 /subsystem=web/virtual-server=default-host/access-log=configuration/directory=configuration:write-attribute(name="relative-to",value="jboss.server.log.dir")
