@@ -33,7 +33,7 @@ import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
-import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -116,7 +116,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyProtocolStageServiceLocal studyProtocolStageService;
     private CTGovSyncServiceLocal ctGovSyncService;    
-    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    private TSRReportGeneratorServiceLocal tsrReportGeneratorService;
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService; 
     private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
     private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
@@ -148,7 +148,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
         studyProtocolService = PaRegistry.getStudyProtocolService();
         studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
         ctGovSyncService = PaRegistry.getCTGovSyncService();        
-        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorServiceLocal();
         ctGovXmlGeneratorService = PaRegistry.getCTGovXmlGeneratorService(); 
         accrualDiseaseTerminologyService = PaRegistry.getAccrualDiseaseTerminologyService();
     }
@@ -1109,7 +1109,7 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
     /**
      * @param tsrReportGeneratorService the tsrReportGeneratorService to set
      */
-    public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+    public void setTsrReportGeneratorService(TSRReportGeneratorServiceLocal tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
     }
     
