@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.CacheUtils;
@@ -138,7 +139,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private static final Logger LOG = Logger.getLogger(StudyProtocolQueryAction.class);
     
     private ProtocolQueryServiceLocal protocolQueryService;
-    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    private TSRReportGeneratorServiceLocal tsrReportGeneratorService;
     private StudyProtocolService studyProtocolService;
     private PlannedMarkerServiceLocal plannedMarkerService;
     private List<StudyProtocolQueryDTO> records;
@@ -163,7 +164,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     public void prepare() {
         protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         setStudyCheckoutService(PaRegistry.getStudyCheckoutService());
-        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorServiceLocal();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
         if (httpServletRequest.getServletPath().contains(BARE)) {
