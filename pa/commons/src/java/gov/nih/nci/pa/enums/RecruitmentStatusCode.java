@@ -119,12 +119,16 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     /** Completed. */
     COMPLETED("Completed", true);
 
+    /** List of all statuses which are not eligible for accrual. */
+    public static final Set<RecruitmentStatusCode> NOT_ELIGIBLE_FOR_ACCRUAL_STATUSES =
+            EnumSet.of(RecruitmentStatusCode.IN_REVIEW);
+
     private String code;
     private boolean eligibleForAccrual;
 
     private static final Set<RecruitmentStatusCode> RECRUITING_STATUSES = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION);
-    private static final Set<RecruitmentStatusCode> NON_RECRUITING_STATUSES = 
-        EnumSet.of(RecruitmentStatusCode.WITHDRAWN, RecruitmentStatusCode.IN_REVIEW, RecruitmentStatusCode.APPROVED);
+    private static final Set<RecruitmentStatusCode> NON_RECRUITING_STATUSES = EnumSet.of(
+            RecruitmentStatusCode.WITHDRAWN, RecruitmentStatusCode.IN_REVIEW, RecruitmentStatusCode.APPROVED);
 
     /**
      * 

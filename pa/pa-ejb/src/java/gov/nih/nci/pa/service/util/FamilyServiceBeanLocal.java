@@ -6,6 +6,7 @@ import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -131,6 +132,23 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
             + "  AND ss.functionalCode = :siteCode "
             + "  AND org.identifier IN (:orgIds) ";
 
+    static final String HQL_ABBR_STATUS = "SELECT sp.id "
+            + "FROM StudyProtocol sp "
+            + "INNER JOIN sp.studyResourcings sr "
+            + "INNER JOIN sp.studySites ss  "
+            + "INNER JOIN ss.healthCareFacility hf "
+            + "INNER JOIN hf.organization org  "
+            + "INNER JOIN ss.studySiteAccrualStatuses ssas "
+            + "WHERE sp.statusCode = :statusCode "
+            + "  AND sp.proprietaryTrialIndicator = true "
+            + "  AND sr.summary4ReportedResourceIndicator = true "
+            + "  AND sr.typeCode != :excludeType "
+            + "  AND ss.functionalCode = :siteCode "
+            + "  AND org.identifier IN (:orgIds) "
+            + "  AND ssas.id IN "
+            + "     (SELECT MAX(id) FROM StudySiteAccrualStatus GROUP BY studySite)"
+            + "  AND ssas.statusCode NOT IN (:excludeStatus) ";
+
     private static final String HQL_LEAD_ORG = "SELECT org.identifier "
             + "FROM StudyProtocol sp "
             + "INNER JOIN sp.studyResourcings sr "
@@ -190,11 +208,12 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
             for (Long trialId : queryList) {
                 result.add(trialId);
             }
-            query = session.createQuery(HQL_ABBR);
+            query = session.createQuery(HQL_ABBR_STATUS);
             query.setParameter("statusCode", ActStatusCode.ACTIVE);
             query.setParameter("excludeType", SummaryFourFundingCategoryCode.NATIONAL);
             query.setParameter("siteCode", StudySiteFunctionalCode.TREATING_SITE);
             query.setParameterList(ORG_IDS, convertPoOrgIdsToStrings(poOrgIds));
+            query.setParameterList("excludeStatus", RecruitmentStatusCode.NOT_ELIGIBLE_FOR_ACCRUAL_STATUSES);
             queryList = query.list();
             for (Long trialId : queryList) {
                 result.add(trialId);

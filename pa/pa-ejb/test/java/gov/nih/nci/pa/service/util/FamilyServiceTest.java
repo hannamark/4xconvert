@@ -15,10 +15,12 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.AssignmentActionCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -38,8 +40,10 @@ import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -183,6 +187,32 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         assertEquals(1, ejb.getSiteAccrualTrials(ru.getAffiliatedOrganizationId()).size());
         convertToAbbreviateTrial();
         assertEquals(1, ejb.getSiteAccrualTrials(ru.getAffiliatedOrganizationId()).size());
+    }
+
+    @Test
+    public void getSiteAccrualTrialsTest() throws Exception {
+        Long spId = TestSchema.studyProtocolIds.get(0);
+        List<Long> orgIds = new ArrayList<Long>();
+        orgIds.add(getCompleteTrialLeadOrgId());
+  
+        // complete
+        assertTrue(ejb.getSiteAccrualTrials(orgIds).contains(spId));
+        // abbr
+        convertToAbbreviateTrial();
+        assertTrue(ejb.getSiteAccrualTrials(orgIds).contains(spId));
+        // current status not eligible
+        assertTrue(RecruitmentStatusCode.NOT_ELIGIBLE_FOR_ACCRUAL_STATUSES.contains(RecruitmentStatusCode.IN_REVIEW));
+        StudyProtocol sp = (StudyProtocol) sess.get(StudyProtocol.class, spId);
+        for (StudySite ss : sp.getStudySites()) {
+            if (ss.getFunctionalCode().equals(StudySiteFunctionalCode.TREATING_SITE)) {
+                StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+                ssas.setStatusCode(RecruitmentStatusCode.IN_REVIEW);
+                ssas.setStatusDate(new Timestamp((new Date()).getTime()));
+                ssas.setStudySite(ss);
+                sess.save(ssas);
+            }
+        }
+        assertFalse(ejb.getSiteAccrualTrials(orgIds).contains(spId));
     }
 
     @Test
