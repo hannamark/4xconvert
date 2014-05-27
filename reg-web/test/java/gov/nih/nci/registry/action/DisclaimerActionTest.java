@@ -13,6 +13,8 @@ import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.mockrunner.mock.web.MockHttpServletRequest;
+
 /**
  * Test Class.
  */
@@ -25,6 +27,9 @@ public class DisclaimerActionTest extends AbstractRegWebTest {
         action = new DisclaimerAction();
         CSMUserService.getInstance();
         CSMUserService.setInstance(new MockCSMUserService());
+        
+        MockHttpServletRequest request  = (MockHttpServletRequest) ServletActionContext.getRequest();
+        request.setRemoteUser("firstName");
     }
 
     @Test
