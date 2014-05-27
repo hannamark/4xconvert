@@ -29,6 +29,7 @@
        <display:column titleKey="accrual.list.trials.trialStatus" property="studyStatusCode" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.trials.trialType" property="trialType" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.trials.diseaseCodeSystem" sortable="true" headerClass="sortable" headerScope="col">
+           <!-- <c:out value="${row.diseaseCodeSystem.value}"/> -->
            <s:if test="%{#attr.row.canChangeDiseaseCodeSystem.value}">
                 <s:select id="disCodeSystem_%{#attr.row.studyProtocolIdentifier.extension}" 
                           name="disCodeSystem_%{#attr.row.studyProtocolIdentifier.extension}"
