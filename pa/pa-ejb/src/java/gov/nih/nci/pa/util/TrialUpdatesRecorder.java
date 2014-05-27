@@ -3,6 +3,10 @@
  */
 package gov.nih.nci.pa.util;
 
+import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang.StringUtils.trim;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -221,11 +225,10 @@ public final class TrialUpdatesRecorder {
             for (StudySiteDTO newDTO : studySiteDTOs) {
                 StudySiteDTO existentDTO = PaRegistry.getStudySiteService()
                         .get(newDTO.getIdentifier());
-                if (!StringUtils
-                        .defaultString(
+                if (!defaultString(
                                 StConverter.convertToString(newDTO
                                         .getProgramCodeText())).equals(
-                                StringUtils.defaultString(StConverter
+                                defaultString(StConverter
                                         .convertToString(existentDTO
                                                 .getProgramCodeText())))) {
                     add(msg);
@@ -255,9 +258,9 @@ public final class TrialUpdatesRecorder {
      * @param newNCT newNCT
      */
     public static void isNctUpdated(String existingNCT, String newNCT) {
-        if (!StringUtils.equals(StringUtils.trim(existingNCT), // NOPMD
-                StringUtils.trim(newNCT))) { // NOPMD
-            add(StringUtils.isEmpty(existingNCT) ? "ClinicalTrials.gov Identifier"
+        if (!StringUtils.equals(trim(defaultString(existingNCT)), // NOPMD
+                trim(defaultString(newNCT)))) { // NOPMD
+            add(isEmpty(existingNCT) ? "ClinicalTrials.gov Identifier"
                   + " was added." : "ClinicalTrials.gov Identifier was changed.");
         }
     }
@@ -268,7 +271,7 @@ public final class TrialUpdatesRecorder {
      * @return All updates together as a single contatenated {@link String}.
      */
     public static String getRecordedUpdates() {
-        return StringUtils.join(holder.get(), SEPARATOR);
+        return join(holder.get(), SEPARATOR);
     }
 
 }
