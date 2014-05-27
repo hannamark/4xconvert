@@ -74,6 +74,9 @@
 	<c:if test="${auditTrail != null}">
 		<display:table class="data" id="row" name="auditTrail" export="true" sort="list"  pagesize="20" requestURI="trialHistoryview.action?activeTab=auditTrail" 
 			decorator="gov.nih.nci.pa.decorator.AuditTrailTagDecorator">
+			<display:setProperty name="export.excel.filename" value="trialHistoryview.xls"/>
+			<display:setProperty name="export.csv.filename" value="trialHistoryview.csv"/>
+			<display:setProperty name="export.xml.filename" value="trialHistoryview.xml"/>
 			<pa:displayTagProperties/>
 			<display:column property="changeDate" escapeXml="true" titleKey="auditTrail.changeDate" sortable="true" headerClass="sortable" group="1" />
 			<display:column property="userName" escapeXml="true" titleKey="auditTrail.userName" sortable="true" headerClass="sortable" group="2" />
