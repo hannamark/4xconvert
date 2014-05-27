@@ -44,6 +44,7 @@
             	    
                 var form = document.forms[0];
                 form.action = (assignOwnership) ? "${actionName}assignOwnership.action" : "${actionName}unassignOwnership.action";
+                displayWaitPanel();
                 form.submit();
             }
             
@@ -55,7 +56,7 @@
                     $("yes_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny "
                     $("no_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny active"
                 }
-                var  url = '/registry/siteadmin/${actionName}updateEmailPref.action';
+                var  url = '${pageContext.request.contextPath}/siteadmin/${actionName}updateEmailPref.action';
                 var params = {
                     selected: selected,
                     trialId: trialId,
@@ -66,12 +67,13 @@
             }
             
             function setEmailPrefAll(selected) {    
-                var  url = '/registry/siteadmin/${actionName}updateEmailPref.action';
+                var  url = '${pageContext.request.contextPath}/siteadmin/${actionName}updateEmailPref.action';
                 var params = {
                     selected: selected,
                     siteName: '${siteName}'
                 };
-                var aj = callAjaxPost(null, url, params);
+                displayWaitPanel();
+                jQuery.get(url,params,null);
                 submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageTrialOwnershipsearch.action');
                 return true;
             }
