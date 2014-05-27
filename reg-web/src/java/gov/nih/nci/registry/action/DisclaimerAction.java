@@ -78,6 +78,12 @@
  */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaRegistry;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -91,10 +97,20 @@ public class DisclaimerAction extends ActionSupport {
 
     /**
      * @return string
+     * @throws PAException
+     *             PAException
      */
-    public String accept() {
-        ServletActionContext.getRequest().getSession().setAttribute("disclaimerAccepted", true);
-        return "redirect_to";
+    public String accept() throws PAException {
+        HttpServletRequest request = ServletActionContext.getRequest();
+        request.getSession().setAttribute("disclaimerAccepted", true);
+
+        RegistryUser registryUser = PaRegistry.getRegistryUserService()
+                .getUser(request.getRemoteUser());
+        if (registryUser == null) {
+            return "missing_account";
+        } else {
+            return "redirect_to";
+        }
     }
 
 }

@@ -168,6 +168,7 @@
         <action name="disClaimerAction*" class="gov.nih.nci.registry.action.DisclaimerAction" method="{1}">
             <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>    
+            <result name="missing_account">/WEB-INF/jsp/nodecorate/missingAccount.jsp</result>
             <result name="redirect_to" type="redirectAction">
                 <param name="actionName">searchTrial.action</param>
                 <param name="parse">true</param>
