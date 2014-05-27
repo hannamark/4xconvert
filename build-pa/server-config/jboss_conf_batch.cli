@@ -1,5 +1,7 @@
 connect
 
+/subsystem=transactions:write-attribute(name=default-timeout,value=600)
+
 /subsystem=security/security-domain=pa/authentication=classic:remove() {allow-resource-service-restart=true}
 /subsystem=security/security-domain=pa/authentication=classic:add( \
     login-modules=[ \   
