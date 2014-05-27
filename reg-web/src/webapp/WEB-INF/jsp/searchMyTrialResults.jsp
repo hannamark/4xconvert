@@ -186,6 +186,13 @@ jQuery(function() {
 						</div>  
 					</s:if>              		                    	                    
                  </display:column>  
+                 <display:column title="Accruals Disease Terminology" sortable="false" headerClass="sortable">
+                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
+                <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
+                <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
+                list="#accrualDiseaseValues" onchange="saveDiseaseCode('%{#attr.row.studyProtocolId}',this.value)" value="accrualDiseaseCode" cssClass="form-control" />
+                </s:if>
+                </display:column>
                 <display:column title="Participating Sites" media="html">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
                    	<a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
@@ -206,13 +213,7 @@ jQuery(function() {
                 <display:column title="Last Amender Name" property="lastUpdatedUserDisplayName" />     
                 <display:column title="On-Hold Reason" property="onHoldReasons" escapeXml="true"/>
                 
-                <display:column title="Accruals Disease Terminology" sortable="false" headerClass="sortable">
-                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
-                <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
-                <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
-                list="#accrualDiseaseValues" onchange="saveDiseaseCode('%{#attr.row.studyProtocolId}',this.value)" value="accrualDiseaseCode" cssClass="form-control" />
-                </s:if>
-                </display:column>
+                
                 
             </display:table>
             </div>
