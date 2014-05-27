@@ -7,6 +7,8 @@ connect
 /subsystem=web/virtual-server=default-host/access-log=configuration/directory=configuration:add
 /subsystem=web/virtual-server=default-host/access-log=configuration/directory=configuration:write-attribute(name="path",value="./")
 /subsystem=web/virtual-server=default-host/access-log=configuration/directory=configuration:write-attribute(name="relative-to",value="jboss.server.log.dir")
+
+/system-property=org.apache.tomcat.util.http.Parameters.MAX_COUNT:add(value="-1")
         
 
 /subsystem=security/security-domain=po/authentication=classic:remove() {allow-resource-service-restart=true}
