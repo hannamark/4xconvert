@@ -20,7 +20,7 @@ public class BatchHelperTest {
     private BatchHelper helper;
     @Test
     public void testProperty() {
-        helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","");
+        helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","", null);
         assertNotNull(helper.getTrialDataFileName());
         assertNotNull(helper.getUploadLoc());
         assertNotNull(helper.getUnzipLoc());
@@ -36,18 +36,18 @@ public class BatchHelperTest {
     }
     @Test
     public void testProcessExcel() {
-        helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","");
+        helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","", null);
         try {
             helper.processExcel("fileName");
         } catch (Exception e) {
          fail();
         }
         try {
-        helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","ctep");
+        helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","ctep", null);
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource("batchUploadTest.xls");
         File f = new File(fileUrl.toURI());
         assertNotNull(helper.processExcel(f.getAbsolutePath()));
-        helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","DCP");
+        helper = new BatchHelper("uploadLoc","dataFileName","unzipLoc","userName","DCP", null);
         fileUrl = ClassLoader.getSystemClassLoader().getResource("batchUploadTest.xls");
         f = new File(fileUrl.toURI());
         assertNotNull(helper.processExcel(f.getAbsolutePath()));
@@ -58,7 +58,7 @@ public class BatchHelperTest {
 
     @Test
     public void testRun() {
-        helper = new BatchHelper("uploadLoc", "dataFileName", "unzipLoc", "userName", "");
+        helper = new BatchHelper("uploadLoc", "dataFileName", "unzipLoc", "userName", "", null);
         try {
             helper.run();
         } catch (Exception e) {

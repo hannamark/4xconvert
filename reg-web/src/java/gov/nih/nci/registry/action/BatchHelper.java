@@ -104,6 +104,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import org.jboss.security.SecurityContext;
+import org.jboss.security.SecurityContextAssociation;
 
 /**
  *
@@ -119,6 +121,7 @@ public class BatchHelper implements Runnable {
     private String unzipLoc = null;
     private String userName = null;
     private String orgName = null;
+    private final SecurityContext sc;
 
     /**
      *
@@ -127,14 +130,17 @@ public class BatchHelper implements Runnable {
      * @param unzipLoc loc
      * @param userName name
      * @param orgName orgName
+     * @param sc SecurityContext
      */
-    public BatchHelper(String uploadLoc, String trialDataFileName, String unzipLoc, String userName, String orgName) {
+    public BatchHelper(String uploadLoc, String trialDataFileName, // NOPMD
+            String unzipLoc, String userName, String orgName, SecurityContext sc) {
         super();
         this.uploadLoc = uploadLoc;
         this.trialDataFileName = trialDataFileName;
         this.unzipLoc = unzipLoc;
         this.userName = userName;
         this.orgName = orgName;
+        this.sc = sc;
     }
 
     /**
@@ -164,6 +170,7 @@ public class BatchHelper implements Runnable {
     @Override
     public void run() {
         try {
+            SecurityContextAssociation.setSecurityContext(sc);
             //Set Username for proper tracking.
             UsernameHolder.setUserCaseSensitive(userName);
             // open a new Hibernate session and bind to the context
@@ -189,6 +196,7 @@ public class BatchHelper implements Runnable {
             // generate the email
             RegistryUtil.generateMail(Constants.ERROR_PROCESSING, userName, "", "", "", "", e.getMessage());
         } finally {
+            SecurityContextAssociation.setSecurityContext(null);
             // unbind the Hibernate session
             PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }

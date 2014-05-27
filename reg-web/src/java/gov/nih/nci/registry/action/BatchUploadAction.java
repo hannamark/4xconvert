@@ -106,6 +106,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.jboss.security.SecurityContextAssociation;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -270,7 +271,7 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
             // helper to unzip the zip files
             Thread batchProcessor =
                     new Thread(new BatchHelper(uploadedLoc, trialDataFileName, unzipLoc, ServletActionContext
-                            .getRequest().getRemoteUser(), orgName));
+                            .getRequest().getRemoteUser(), orgName, SecurityContextAssociation.getSecurityContext()));
             batchProcessor.start();
 
         } catch (PAException e) {
