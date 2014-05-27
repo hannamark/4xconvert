@@ -192,6 +192,9 @@ jQuery(function() {
                 <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
                 list="#accrualDiseaseValues" onchange="saveDiseaseCode('%{#attr.row.studyProtocolId}',this.value)" value="accrualDiseaseCode" cssClass="form-control" />
                 </s:if>
+                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == false}">
+                <c:out value="${row.accrualDiseaseCode}"/>
+                </s:if>
                 </display:column>
                 <display:column title="Participating Sites" media="html">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
