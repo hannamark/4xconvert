@@ -28,6 +28,10 @@
         <extension module="org.jboss.as.messaging"/>
     </extensions>
 
+    <system-properties>
+        <property name="org.apache.tomcat.util.http.Parameters.MAX_COUNT" value="-1"/>
+    </system-properties>
+
 
     <management>
         <security-realms>
