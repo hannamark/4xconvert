@@ -1757,6 +1757,18 @@ table td {
 	background: #F5F5F5;
 	color: #444;
 }
+.btn-group .dropdown-menu a {
+    text-shadow: none;
+    color: #3981A8;
+    font-size:13px;
+    display:block;
+    padding:3px 20px;
+    line-height:1.42857;
+}
+.btn-group .dropdown-menu a:hover {
+    background: #F5F5F5;
+    color: #444;
+}
 .trial-ownership-container .table > thead.sortable > tr > th > div> .wrap {
 	line-height: 1;
 	padding: 3px 24px 4px 8px;
