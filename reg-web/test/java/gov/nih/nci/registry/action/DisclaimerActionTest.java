@@ -5,6 +5,7 @@ package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
 
@@ -27,7 +28,7 @@ public class DisclaimerActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void acceptTest(){
+    public void acceptTest() throws PAException{
         assertEquals("redirect_to", action.accept());
         assertTrue((Boolean)ServletActionContext.getRequest().getSession().
                 getAttribute("disclaimerAccepted"));
