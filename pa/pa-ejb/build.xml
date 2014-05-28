@@ -241,15 +241,7 @@
         </junit>
     </target>
 
-    <target name="ci-exclude-tests" if="ci.server">
-        <property name="ci.exclude.pattern1" value="**/StudySiteAccrualAccessServiceTest.java"/>
-        <property name="ci.exclude.pattern2" value="**/PDQXmlGeneratorServiceTest.java"/>
-        <property name="ci.exclude.pattern3" value="**/TSRReportGeneratorServiceTest.java"/>
-        <property name="coverage.line" value="${pa-ejb.coverage.line.ci}"/>
-        <property name="coverage.branch" value="${pa-ejb.coverage.branch.ci}"/>
-    </target>
-
-    <target name="test-cobertura" depends="compile-tests,ci-exclude-tests">
+    <target name="test-cobertura" depends="compile-tests">
         <property name="coverage.line" value="${pa-ejb.coverage.line}"/>
         <property name="coverage.branch" value="${pa-ejb.coverage.branch}"/>
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
@@ -278,10 +270,7 @@
             <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
             <batchtest todir="${pa-ejb.test.reports}" unless="test">
                 <fileset dir="${pa-ejb.build.testDir.0}">
-                    <include name="**/*Test.java"/>
-                    <exclude name="${ci.exclude.pattern1}"/>
-                    <exclude name="${ci.exclude.pattern2}"/>
-                    <exclude name="${ci.exclude.pattern3}"/>
+                    <include name="**/*Test.java"/>                 
                 </fileset>
             </batchtest>
         </junit>
