@@ -476,6 +476,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     
     @Test
     public void testTrialActionProperty(){
+        trialAction.setTrialAction(null);
         assertNull(trialAction.getTrialAction());
         trialAction.setTrialAction("trialAction");
         assertNotNull(trialAction.getTrialAction());
