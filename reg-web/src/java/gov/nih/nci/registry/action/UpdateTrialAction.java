@@ -145,14 +145,12 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         studySiteAccrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
         studySiteService = PaRegistry.getStudySiteService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = 
+                PaRegistry.getAccrualDiseaseTerminologyService();
+        setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
         if (studyProtocolId != null) {
-            AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = 
-                    PaRegistry.getAccrualDiseaseTerminologyService();
             setAccrualDiseaseTerminologyEditable(accrualDiseaseTerminologyService.canChangeCodeSystem(
                     Long.valueOf(studyProtocolId)));
-            if (getAccrualDiseaseTerminologyEditable()) {
-                setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
-            }
         }
         if (trialDTO != null) {
             trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil

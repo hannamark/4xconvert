@@ -156,16 +156,15 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
         AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = 
                 PaRegistry.getAccrualDiseaseTerminologyService();
+        setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
         if (studyProtocolId != null) {
             setAccrualDiseaseTerminologyEditable(accrualDiseaseTerminologyService.canChangeCodeSystem(studyProtocolId));
-            if (getAccrualDiseaseTerminologyEditable()) {
-                setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
-            }
         }
         if (getTrialDTO() != null) {
             getTrialDTO().setPrimaryPurposeAdditionalQualifierCode(PAUtil
                 .lookupPrimaryPurposeAdditionalQualifierCode(getTrialDTO().getPrimaryPurposeCode()));
         }
+        setTrialAction("amend");
     }
 
     /**
@@ -390,7 +389,6 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             setDocumentsInSession(trialDTO);
             return ERROR;
         }
-        setTrialAction("amend");
         return "redirect_to_search";
     }
 

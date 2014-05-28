@@ -83,12 +83,13 @@
 </c:if>
 </s:if>
 
+<s:hidden name="accrualDiseaseTerminologyEditable" id="accrualDiseaseTerminologyEditable"/>
 <s:if test="accrualDiseaseTerminologyEditable">
 <div class="form-group">
-    <label class="col-xs-4 control-label" for="trialDTO.accrualDiseaseCodeSystem"><fmt:message key="submit.trial.accrual.disease.term"/><span class="required">*</span></label>
+    <label class="col-xs-4 control-label" for="trialDTO.accrualDiseaseCodeSystem"><fmt:message key="submit.trial.accrual.disease.term"/></label>
     <div class="col-xs-4">
         <s:select id ="trialDTO.accrualDiseaseCodeSystem" name="trialDTO.accrualDiseaseCodeSystem"
-            cssClass="form-control" headerKey="" headerValue="--Select--" list="accrualDiseaseTerminologyList"
+            cssClass="form-control" list="accrualDiseaseTerminologyList"
             value="trialDTO.accrualDiseaseCodeSystem"/>
     </div>
 </div>

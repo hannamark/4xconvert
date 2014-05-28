@@ -52,13 +52,31 @@
         </span>
     </div>
 </div>
+
+<s:hidden name="accrualDiseaseTerminologyEditable" id="accrualDiseaseTerminologyEditable"/>
 <s:if test="accrualDiseaseTerminologyEditable">
 <div class="form-group">
-    <label class="col-xs-4 control-label" for="trialDTO.accrualDiseaseCodeSystem"><fmt:message key="submit.trial.accrual.disease.term"/><span class="required">*</span></label>
+    <s:if test="%{trialAction == 'amend'}">
+        <label class="col-xs-4 control-label" for="trialDTO.accrualDiseaseCodeSystem">
+            <fmt:message key="submit.trial.accrual.disease.term"/>
+        </label>
+    </s:if>
+    <s:else>
+        <label class="col-xs-4 control-label" for="trialDTO.accrualDiseaseCodeSystem">
+            <fmt:message key="submit.trial.accrual.disease.term"/><span class="required">*</span>
+        </label>
+    </s:else>
     <div class="col-xs-4">
-        <s:select id ="trialDTO.accrualDiseaseCodeSystem" name="trialDTO.accrualDiseaseCodeSystem"
-            cssClass="form-control" headerKey="" headerValue="--Select--" list="accrualDiseaseTerminologyList"
-            value="trialDTO.accrualDiseaseCodeSystem"/>
+        <s:if test="%{trialAction == 'amend'}">
+            <s:select id ="trialDTO.accrualDiseaseCodeSystem" name="trialDTO.accrualDiseaseCodeSystem"
+                      cssClass="form-control" list="accrualDiseaseTerminologyList"
+                      value="trialDTO.accrualDiseaseCodeSystem"/>
+        </s:if>
+        <s:else>
+            <s:select id ="trialDTO.accrualDiseaseCodeSystem" name="trialDTO.accrualDiseaseCodeSystem"
+                      cssClass="form-control" headerKey="" headerValue="--Select--" list="accrualDiseaseTerminologyList"
+                      value="trialDTO.accrualDiseaseCodeSystem"/>
+        </s:else>
         <span class="alert-danger"> 
             <s:fielderror>
                 <s:param>trialDTO.accrualDiseaseCodeSystem</s:param>
@@ -70,6 +88,7 @@
 <s:else>
     <s:hidden name="trialDTO.accrualDiseaseCodeSystem"/>
 </s:else>
+
 <div class="form-group non-interventional">
     <label class="col-xs-4 control-label" for="trialDTO.studyModelCode"><fmt:message key="submit.trial.studyModelCode"/><span class="required">*</span></label>
     <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudyModelCode@getDisplayNames()" />
