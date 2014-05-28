@@ -177,6 +177,9 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         Set<User> users = new HashSet<User>();
         users.add(user);
         StudySiteAccrualAccessServiceBean.setSubmitterList(users);
+        
+        CSMUserService.setInstance(new MockCSMUserService());
+        
         this.bean = bean;
      }
 
@@ -188,8 +191,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         dto.setStudySiteIdentifier(IiConverter.convertToIi(ssId));
         dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
         dto.setSource(CdConverter.convertToCd(AccrualAccessSourceCode.PA_SITE_REQUEST));
-        assertNull(dto.getIdentifier());
-        CSMUserService.setInstance(new MockCSMUserService());
+        assertNull(dto.getIdentifier());      
         StudySiteAccrualAccessDTO r = bean.create(dto);
         assertNotNull(r);
         identifier = r.getIdentifier();
