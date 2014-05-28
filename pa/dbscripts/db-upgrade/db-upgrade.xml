@@ -924,6 +924,7 @@
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-5015.sql"/>
      </changeSet>
      <changeSet id="PO-5006" author="guthikondak">
+        <validCheckSum>ANY</validCheckSum>
         <comment>Updating ICD9_Disease records.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.8/PO-5006.sql"/>
      </changeSet>
