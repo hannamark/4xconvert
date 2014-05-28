@@ -89,6 +89,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
@@ -102,6 +103,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.MockCSMUserService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -111,8 +113,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author mshestopalov
@@ -126,6 +131,13 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     public PDQXmlGeneratorServiceBean getBean() {
         return pdqBean;
     }
+    
+    @Before
+    public void init() throws Exception {
+        CSMUserService.setInstance(new MockCSMUserService());
+        UsernameHolder.setUserCaseSensitive("user1@mail.nih.gov");
+    }
+    
 
 //    @Test
     public void testXsdValidation() throws Exception {
@@ -221,7 +233,9 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     @Test
     public void testExpAccIndFalse() throws PAException {
         studySiteIndIdeDto.setExpandedAccessIndicator(BlConverter.convertToBl(false));
-        assertTrue(getBean().generateCTGovXml(spId).contains("<expanded_access_status>No longer available</expanded_access_status>"));
+        final String xml = getBean().generateCTGovXml(spId);
+        assertTrue(xml.contains("<expanded_access_status>No longer available</expanded_access_status>"));        
+        studySiteIndIdeDto.setExpandedAccessIndicator(BlConverter.convertToBl(true));
     }
 
     @Test
@@ -232,6 +246,8 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
 
     @Test
     public void testOrgTelEmpty() throws PAException {
+        DSet<Tel> bkp = orgDto.getTelecomAddress();
+        
         orgDto.setTelecomAddress(new DSet<Tel>());
         String results = getBean().generateCTGovXml(spId);
         assertTrue(results.contains("<lead_org>" + NEWLINE));
@@ -246,12 +262,16 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         assertTrue(results.contains("<country>United States</country>" + NEWLINE));
         assertTrue(results.contains("</address>" + NEWLINE));
         assertTrue(results.contains("</lead_org>"));
+        
+        orgDto.setTelecomAddress(bkp);
     }
 
     @Test
     public void testOrgNameNull() throws PAException {
+        EnOn backup = orgDto.getName();
         orgDto.setName(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<lead_sponsor>"));
+        orgDto.setName(backup);
     }
 
     @Test
@@ -307,5 +327,6 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         assertFalse(getBean().generateCTGovXml(spId).contains("</middle_initial>"));
         person.setMiddleName("Test");
         assertTrue(getBean().generateCTGovXml(spId).contains("<middle_initial>T</middle_initial>"));
+        person.setMiddleName(null);
     }
 }
