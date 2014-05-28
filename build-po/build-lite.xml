@@ -5,7 +5,7 @@
 	</description>
 
 	<property environment="env" />
-	<property file="common/properties/${tier}.properties" />
+	<property file="tier-properties/${tier}.properties" />
 	<property file="local.properties" />
 	<property file="project.properties" />
 	<property file="install.properties" />
@@ -131,15 +131,15 @@
 	</target>
 
 	<target name="generate:cli">
-		<copy todir="${jboss-conf.dist.dir}" file="${common.dir}/cli/jboss_conf_batch.cli" filtering="true" overwrite="true" />
+		<copy todir="${jboss-conf.dist.dir}" file="server-config/jboss_conf_batch.cli" filtering="true" overwrite="true" />
 	</target>
 	
     <target name="generate:full-config">
-	    <copy todir="${jboss-conf.dist.dir}" file="${common.dir}/cli/standalone.xml" filtering="true" overwrite="true" />
+	    <copy todir="${jboss-conf.dist.dir}" file="server-config/standalone.xml" filtering="true" overwrite="true" />
 	</target>
 	
     <target name="generate:baseline-config">
-        <copy tofile="${jboss-conf.dist.dir}/standalone.xml.baseline" file="${common.dir}/cli/standalone.xml.baseline-${tier}" 
+        <copy tofile="${jboss-conf.dist.dir}/standalone.xml.baseline" file="server-config/standalone.xml.baseline-${tier}" 
         	filtering="true" overwrite="true" failonerror="false" verbose="true" />
     </target>	
 
