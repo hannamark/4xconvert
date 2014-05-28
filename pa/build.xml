@@ -18,6 +18,7 @@
     <property name="ear.target" value="${basedir}/pa-ear/target"/>
     <property name="ear.dir" value="${ear.target}/pa"/>
     <property name="jboss.deploy.directory" value="${application.base.path}/standalone/deployments"/>
+	<property name="jboss.bin.directory" value="${application.base.path}/bin"/>
     
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -93,6 +94,11 @@
     <target name="runTest" description="Runs the pa-ejb test you specify on the command line with -Dtest=">
         <ant target="runTest" dir="pa-ejb" inheritAll="true"/>
     </target>
+	
+    <target name="jar-test">
+        <ant target="jar-test" dir="pa-ejb" inheritAll="true"/>
+    </target>
+
 
     <!-- ====================================================================== -->
     <!-- Package target                                                         -->
@@ -201,49 +207,42 @@
         </ant>
     </target>
 
-    <target name="start-selenium-server" description="Starts the selenium server">
-        <ant target="start-selenium-server" dir="pa-web" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
+   
+    <target name="test-integration" description="Runs integration tests against the automatically deploy application."
+    	   depends="database.install,database.update,populate-test-db,deploy-notest,start-jboss-server,jar-test,run-selenium-tests,stop-jboss-server">       
     </target>
+	
+    <target name="stop-jboss-server">	    
+	     <exec executable="cmd" osfamily="windows" timeout="30000">
+	        <arg value="/c"/>
+	        <arg value="${jboss.bin.directory}/jboss-cli.bat"/>     
+	        <arg value="--connect"/>
+	        <arg value="shutdown"/>
+	        <env key="NOPAUSE" value="true"/>
+	        <env key="JBOSS_HOME" value="${application.base.path}"/>
+	      </exec>
+	    
+	    <exec executable="${jboss.bin.directory}/jboss-cli.sh" osfamily="unix" timeout="30000">
+	      <arg value="--connect"/>
+	      <arg value="shutdown"/>
+	      <env key="NOPAUSE" value="true"/>
+	      <env key="JBOSS_HOME" value="${application.base.path}"/>
+	    </exec>
+	</target>	
+	
+    <target name="start-jboss-server">            
+        <exec executable="nohup" osfamily="unix" dir="${jboss.bin.directory}" spawn="true">
+            <env key="NOPAUSE" value="true" />
+            <env key="JBOSS_HOME" value=""/>
+            <arg line="./standalone.sh" />
+        </exec>
 
-    <target name="stop-selenium-server" description="Stops the selenium server">
-        <ant target="stop-selenium-server" dir="pa-web" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
-    </target>
-
-    <target name="test-integration" depends="clean" description="Runs integration tests against the automatically deploy application.">
-        <ant target="init-test-db" dir="pa-web" inheritAll="false"/>
-        <ant target="populate-test-db" dir="pa-web" inheritAll="false"/>
-        <ant target="deploy"/>
-        <ant target="start-jboss-server" dir="pa-ear" inheritAll="false"/>
-        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false"/>        
-        <ant target="stop-jboss-server" dir="pa-ear" inheritAll="false"/>
-        <ant target="init-test-db" dir="pa-web" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
-        <ant target="populate-test-db" dir="pa-web" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
-        <ant target="deploy">
-            <property name="tier" value="${tier}"/>
-        </ant>
-        <ant target="start-jboss-server" dir="pa-ear" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
-        <ant target="start-selenium-server" dir="pa-web" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
-        <ant target="run-selenium-tests" dir="pa-web" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
-        <ant target="stop-selenium-server" dir="pa-web" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
-        <ant target="stop-jboss-server" dir="pa-ear" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
+        <exec osfamily="windows" executable="psexec.exe" dir="${jboss.bin.directory}" spawn="true" >
+            <env key="NOPAUSE" value="true" />
+            <env key="JBOSS_HOME" value=""/>
+            <arg line="-d -i -w ${jboss.bin.directory} ${jboss.bin.directory}/standalone.bat" />
+        </exec>
+        <sleep seconds="60" />    
     </target>
 
     <!-- ====================================================================== -->

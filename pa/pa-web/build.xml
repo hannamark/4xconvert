@@ -327,7 +327,7 @@
     <!-- ====================================================================== -->
     <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
         <mkdir dir="${pa-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir=".">
             <jvmarg value="-XX:-UseSplitVerifier"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
@@ -335,6 +335,8 @@
                 <path location="${pa-web.build.testOutputDir}"/>
                 <path refid="selenium.classpath"/>
                 <path refid="common.package.classpath"/>
+            	<path refid="test-junit.classpath"/>
+            	<path refid="test.classpath"/>
             </classpath>
             <batchtest todir="${pa-web.test.reports}">
                 <fileset dir="${pa-web.build.integrationTestDir.0}">
