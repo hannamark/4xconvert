@@ -540,6 +540,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     
     @Test
     public void testGetDeleteReasonsList() throws Exception {
+        action.getDeleteReasons();
         assertEquals(5, action.getReasonsList().size());
     }
     
