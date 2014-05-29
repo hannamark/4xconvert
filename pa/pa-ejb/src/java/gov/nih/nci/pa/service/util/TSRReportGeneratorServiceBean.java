@@ -112,6 +112,7 @@ import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -198,6 +199,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -482,7 +484,13 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceL
         gtd.setType(interventionalType ? TYPE_INTERVENTIONAL : TYPE_NON_INTERVENTIONAL);        
         gtd.setOfficialTitle(getValue(studyProtocolDto.getOfficialTitle(), INFORMATION_NOT_PROVIDED));
         setNonInterventionalInfo(studyProtocolDto, gtd);
-        
+        Set<StudyAlternateTitleDTO> alternativeTitles = studyProtocolDto.getStudyAlternateTitles();
+        if (alternativeTitles != null) {
+           for (StudyAlternateTitleDTO dto : alternativeTitles) {
+               gtd.getStudyAlternateTitle().add(StConverter.convertToString(dto.getAlternateTitle())
+                    + " (Category: " + StConverter.convertToString(dto.getCategory()) + ")");
+           }
+        }
         gtd.setBriefTitle(getValue(studyProtocolDto.getPublicTitle(), INFORMATION_NOT_PROVIDED));
         gtd.setAcronym(getValue(studyProtocolDto.getAcronym(), INFORMATION_NOT_PROVIDED));
         gtd.setBriefSummary(getValue(studyProtocolDto.getPublicDescription(), INFORMATION_NOT_PROVIDED));

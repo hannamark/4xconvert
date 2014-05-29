@@ -444,6 +444,13 @@ public abstract class AbstractTsrReportGenerator {
             
             addTableRow(table, TSRReportLabelText.TYPE, getGeneralTrialDetails().getType());
             addTableRow(table, TSRReportLabelText.GTD_OFFICIAL_TITLE, getGeneralTrialDetails().getOfficialTitle());
+            if (!getGeneralTrialDetails().getStudyAlternateTitle().isEmpty()) {
+                List<String> altTitleList = getGeneralTrialDetails().getStudyAlternateTitle();
+                for (int i = 1; i <= altTitleList.size(); i++) {
+                    addTableRow(table, TSRReportLabelText.GTD_ALTERNATE_TITLE 
+                           + " " + i, getGeneralTrialDetails().getStudyAlternateTitle().get(i - 1));
+                }
+            }
             addTableRow(table, TSRReportLabelText.GTD_BRIEF_TITLE, getGeneralTrialDetails().getBriefTitle());
             addTableRow(table, TSRReportLabelText.GTD_ACRONYM, getGeneralTrialDetails().getAcronym());
             addTableRow(table, TSRReportLabelText.GTD_BRIEF_SUMMARY, getGeneralTrialDetails().getBriefSummary(), 2);

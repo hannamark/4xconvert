@@ -209,6 +209,10 @@ public class TSRReportLabelText { //NOPMD
      */
     public static final String GTD_OFFICIAL_TITLE = "Official Title";
     /**
+     * Alternate Title.
+     */
+    public static final String GTD_ALTERNATE_TITLE = "Alternate Title";
+    /**
      * Brief title.
      */
     public static final String GTD_BRIEF_TITLE = "Brief Title";

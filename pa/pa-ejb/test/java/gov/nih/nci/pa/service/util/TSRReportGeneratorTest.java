@@ -322,6 +322,18 @@ public class TSRReportGeneratorTest {
         result = matcher.group(2).trim();
         assertTrue(result.contains("NPT for 5AM_NCI_1_2_3"));
         
+        regexp = Pattern.compile("(Alternate Title 1\n\t\t\t\t\t</sp)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("Alternate Title 1"));
+        
+        regexp = Pattern.compile("(Alternate Title 2\n\t\t\t\t\t</sp)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
+        matcher = regexp.matcher(value);
+        matcher.find();
+        result = matcher.group(2).trim();
+        assertTrue(result.contains("Alternate Title 2"));
+        
         regexp = Pattern.compile("(Responsible Party)+.*?<span.*?>(.*?)</span>.*?",Pattern.DOTALL);
         matcher = regexp.matcher(value);
         matcher.find();
@@ -706,6 +718,8 @@ public class TSRReportGeneratorTest {
         TSRReportGeneralTrialDetails generalTrialDetails = new TSRReportGeneralTrialDetails();
         generalTrialDetails.setOfficialTitle("NPT for 5AM_NCI_1_2_3. lets seee if this spans correctly . bcos this can be (line break) \none or two paragraphs.");
         generalTrialDetails.setBriefTitle("A very brief title for the abstraction validation title.");
+        generalTrialDetails.getStudyAlternateTitle().add("Alternate Title 1");
+        generalTrialDetails.getStudyAlternateTitle().add("Alternate Title 2");
         generalTrialDetails.setAcronym("No Data Available");
         generalTrialDetails.setBriefSummary("This is the summary of abstraction validation brief summary.");
         generalTrialDetails.setDetailedDescription("Detailed description. This should be detailed!");

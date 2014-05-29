@@ -83,6 +83,9 @@
 
 package gov.nih.nci.pa.service.util.report;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * General Trial Details.
@@ -110,7 +113,7 @@ public class TSRReportGeneralTrialDetails {
     private String phase;
     private String phaseAdditonalQualifier;
     private String subType;
-
+    private final List<String> studyAlternateTitle = new ArrayList<String>();
     /**
      * Default Constructor.
      */
@@ -398,5 +401,13 @@ public class TSRReportGeneralTrialDetails {
     public void setSubType(String subType) {
         this.subType = subType;
     }
+    /**
+     * 
+     * @return studyAlternateTitle studyAlternateTitle
+     */
+    public List<String> getStudyAlternateTitle() {
+        return studyAlternateTitle;
+    }
+
 
 }
