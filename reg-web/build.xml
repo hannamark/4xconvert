@@ -229,7 +229,7 @@
     <!-- ====================================================================== -->
     <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
         <mkdir dir="${reg-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="yes">
             <jvmarg value="-XX:-UseSplitVerifier"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
