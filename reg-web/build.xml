@@ -249,7 +249,7 @@
     </target>
 	
 	<target name="test-integration" description="Runs integration tests against the automatically deploy application."
-	           depends="database.install,database.update,populate-test-db,deploy-notest,start-jboss-server,jar-test,run-selenium-tests,stop-jboss-server">       
+	           depends="database.install,database.update,populate-test-db,pa-deploy-notest,deploy-notest,start-jboss-server,jar-test,run-selenium-tests,stop-jboss-server">       
 	</target>
 	
 	<target name="database.install">
@@ -268,6 +268,12 @@
 	        <ant target="populate-test-db" dir="../pa" inheritAll="false">
 	            <property name="tier" value="${tier}"/>
 	        </ant>
+	</target>
+	
+	<target name="pa-deploy-notest">
+            <ant target="deploy-notest" dir="../pa" inheritAll="false">
+                <property name="tier" value="${tier}"/>
+            </ant>
 	</target>
 	
 	<target name="jar-test">
