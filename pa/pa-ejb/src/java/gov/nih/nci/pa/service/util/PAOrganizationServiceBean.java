@@ -94,6 +94,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -131,6 +132,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
      * @throws PAException pa exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @PermitAll
     public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(String organizationType)
     throws PAException {
         return createOrganizationDTO(generateDistinctOrganizationQuery(organizationType));
@@ -144,6 +146,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
      * @throws PAException pa exception
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @PermitAll
     public List<PaOrganizationDTO> getOrganizationsWithTypeAndNameAssociatedWithStudyProtocol(
             String organizationType, String organizationTerm)
             throws PAException {
@@ -158,6 +161,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
      * @throws PAException PAException
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @PermitAll
     public Organization getOrganizationByIndetifers(Organization organization) throws PAException {
         if (organization.getId() == null && organization.getIdentifier() == null) {
             throw new PAException("ID or poIdentifier should not be null");
@@ -190,6 +194,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @SuppressWarnings("unchecked")
+    @PermitAll
     public List<Long> getOrganizationIdsByNames(List<String> names) throws PAException {
         String hql = "select o.id from Organization o where o.name in (:names)";
         Session session = PaHibernateUtil.getCurrentSession();
@@ -292,6 +297,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
 
     @SuppressWarnings("unchecked")
     @Override
+    @PermitAll
     public List<Organization> getOrganizationsWithUserAffiliations()
             throws PAException {
         return (List<Organization>) PaHibernateUtil
