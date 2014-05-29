@@ -11,7 +11,7 @@
     <s:set var="sum4SponsorOrgs" value="@gov.nih.nci.registry.util.FilterOrganizationUtil@getSponsorOrganization()" />
     <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.add_sponsor" />"  data-placement="top" data-trigger="hover"></i>
 </div>
-</div>
+
 <c:forEach items="${sessionScope.trialDTO.summaryFourOrgIdentifiers}" var="summaryFourOrgIdentifiers" varStatus="stat">
 <div class="col-xs-12">
 	<div class="col-xs-6">
