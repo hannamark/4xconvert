@@ -229,7 +229,7 @@
     <!-- ====================================================================== -->
     <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
         <mkdir dir="${reg-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="yes">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="yes">
             <jvmarg value="-XX:-UseSplitVerifier"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
@@ -247,6 +247,41 @@
             </batchtest>
          </junit>
     </target>
+	
+	<target name="test-integration" description="Runs integration tests against the automatically deploy application."
+	           depends="database.install,database.update,populate-test-db,deploy-notest,start-jboss-server,run-selenium-tests,stop-jboss-server">       
+	</target>
+	
+	<target name="database.install">
+        <ant target="database.install" dir="../pa" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+	</target>
+	
+    <target name="database.update">
+        <ant target="database.update" dir="../pa" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+    </target>
+	
+	<target name="populate-test-db">
+	        <ant target="populate-test-db" dir="../pa" inheritAll="false">
+	            <property name="tier" value="${tier}"/>
+	        </ant>
+	</target>
+	
+    <target name="start-jboss-server">
+        <ant target="start-jboss-server" dir="../pa" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+    </target>
+	
+	<target name="stop-jboss-server">
+	        <ant target="stop-jboss-server" dir="../pa" inheritAll="false">
+	            <property name="tier" value="${tier}"/>
+	        </ant>
+	</target>
+
 
     <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
