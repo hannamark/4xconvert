@@ -518,11 +518,11 @@ function markClick(e) {
     winX=e.screenX;
     winY=e.screenY;
 
-    document.routeEvent(e);
+    if (document.routeEvent) document.routeEvent(e);
   }
 
   if (isN4 || isN6) { 
-    document.routeEvent(e); 
+	  if (document.routeEvent) document.routeEvent(e); 
   } 
   else { 
     event.cancelBubble=false; 
