@@ -132,6 +132,8 @@
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxb-provider-2.3.7.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxrs-2.3.7.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/cglib-2.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/test-selenium/postgresql-9.2-1003-jdbc4.jar"/>
+	<classpathentry kind="var" path="PA_LIB/test-selenium/phantomjsdriver-1.1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/bcpkix-jdk15on-1.48.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/bcprov-jdk15on-1.48.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/cglib-nodep-2.1_3.jar"/>

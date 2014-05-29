@@ -80,9 +80,13 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.service.util; // NOPMD
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SCIENTIFIC_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUPER_ABSTRACTOR_ROLE;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
@@ -125,7 +129,8 @@ import javax.ejb.EJB;
  * @author mshestopalov
  *
  */
-@RolesAllowed(SUBMITTER_ROLE)
+@RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE, ABSTRACTOR_ROLE,
+    SCIENTIFIC_ABSTRACTOR_ROLE, SUPER_ABSTRACTOR_ROLE })
 @SuppressWarnings("PMD.TooManyFields")
 public class AbstractCTGovXmlGeneratorServiceBean {
     @EJB

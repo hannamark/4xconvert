@@ -77,9 +77,13 @@
 *
 */
 
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service; // NOPMD
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SCIENTIFIC_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUPER_ABSTRACTOR_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.MappingIdentifier;
@@ -111,7 +115,8 @@ import org.hibernate.Session;
  * @param <BO> domain object
  * @param <CONVERTER> converter class
  */
-@RolesAllowed(SUBMITTER_ROLE)
+@RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE, ABSTRACTOR_ROLE,
+    SCIENTIFIC_ABSTRACTOR_ROLE, SUPER_ABSTRACTOR_ROLE })
 public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends AbstractEntity,
                                         CONVERTER extends AbstractConverter<DTO, BO>>
         extends AbstractBaseIsoService<DTO, BO, CONVERTER> implements StudyPaService<DTO> {

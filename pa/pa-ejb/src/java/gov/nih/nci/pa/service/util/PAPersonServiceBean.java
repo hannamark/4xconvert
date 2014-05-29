@@ -78,8 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SECURITY_DOMAIN;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.*;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -111,7 +110,8 @@ import org.jboss.ejb3.annotation.SecurityDomain;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SecurityDomain(SECURITY_DOMAIN)
-@RolesAllowed(SUBMITTER_ROLE)
+@RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE, ABSTRACTOR_ROLE,
+        SCIENTIFIC_ABSTRACTOR_ROLE, SUPER_ABSTRACTOR_ROLE })
 public class PAPersonServiceBean implements PAPersonServiceRemote {
 
     /**

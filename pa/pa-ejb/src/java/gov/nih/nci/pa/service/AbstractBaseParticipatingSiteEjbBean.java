@@ -80,9 +80,13 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service; // NOPMD
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SCIENTIFIC_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUPER_ABSTRACTOR_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -121,7 +125,8 @@ import org.apache.commons.collections.CollectionUtils;
  * @author mshestopalov
  *
  */
-@RolesAllowed(SUBMITTER_ROLE)
+@RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE, ABSTRACTOR_ROLE,
+    SCIENTIFIC_ABSTRACTOR_ROLE, SUPER_ABSTRACTOR_ROLE })
 public class AbstractBaseParticipatingSiteEjbBean {
     private CorrelationUtils corrUtils = new CorrelationUtils();
     @EJB

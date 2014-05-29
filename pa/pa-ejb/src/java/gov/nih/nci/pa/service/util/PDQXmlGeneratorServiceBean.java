@@ -80,10 +80,14 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.service.util; // NOPMD
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SCIENTIFIC_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.SECURITY_DOMAIN;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUPER_ABSTRACTOR_ROLE;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
@@ -147,7 +151,8 @@ import org.xml.sax.SAXException;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SecurityDomain(SECURITY_DOMAIN)
-@RolesAllowed(SUBMITTER_ROLE)
+@RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE, ABSTRACTOR_ROLE,
+    SCIENTIFIC_ABSTRACTOR_ROLE, SUPER_ABSTRACTOR_ROLE })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implements PDQXmlGeneratorServiceRemote {
 
