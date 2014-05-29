@@ -47,7 +47,9 @@
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
 
-    <property name="selenium.delay" value="10"/>
+	<property name="selenium.delay" value="50"/>
+	<property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
+	<property name="phantomjs.binary.path" value="/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -182,7 +184,13 @@
     <target name="configure-tests">
         <copy file="${pa.resourceDir}/test.properties.reg-web" tofile="${reg-web.build.testResourceDir.0}/test.properties"
             overwrite="true">
-            <filterset>
+            <filterset>                
+                <filter token="webdriver.class" value="${webdriver.class}" />
+                <filter token="phantomjs.binary.path" value="${phantomjs.binary.path}" />
+                <filter token="jdbc.driver" value="${jdbc.driver}"/>
+                <filter token="jdbc.url" value="${jdbc.url}"/>
+                <filter token="db.username" value="${db.username}"/>
+                <filter token="db.password" value="${db.password}"/>              	
                 <filter token="pa.server.name" value="${pa.server.name}"/>
                 <filter token="jboss.port" value="${jboss.port}" />
                 <filter token="selenium.server.port" value="${selenium.server.port}"/>
@@ -226,9 +234,11 @@
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath>
+            	<path refid="test-junit.classpath"/>
                 <path location="${reg-web.build.testOutputDir}"/>
                 <path refid="selenium.classpath"/>
                 <path refid="common.package.classpath"/>
+            	<path refid="test.classpath"/>   
             </classpath>
             <batchtest todir="${reg-web.test.reports}">
                 <fileset dir="${reg-web.build.integrationTestDir.0}">
