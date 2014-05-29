@@ -242,7 +242,7 @@
             <env key="JBOSS_HOME" value=""/>
             <arg line="-d -i -w ${jboss.bin.directory} ${jboss.bin.directory}/standalone.bat" />
         </exec>
-        <sleep seconds="60" />    
+        <sleep seconds="120" />    
     </target>
 
     <!-- ====================================================================== -->

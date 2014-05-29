@@ -327,7 +327,7 @@
     <!-- ====================================================================== -->
     <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
         <mkdir dir="${pa-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="false" dir="." showoutput="yes">
             <jvmarg value="-XX:-UseSplitVerifier"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
