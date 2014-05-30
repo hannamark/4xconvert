@@ -19,6 +19,7 @@
     <property name="ear.dir" value="${ear.target}/pa"/>
     <property name="jboss.deploy.directory" value="${application.base.path}/standalone/deployments"/>
 	<property name="jboss.bin.directory" value="${application.base.path}/bin"/>
+	<property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
     
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -204,6 +205,7 @@
     <target name="run-selenium-tests" description="Runs integration tests against an already deployed application">
         <ant target="run-selenium-tests" dir="pa-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
+        	<property name="webdriver.class" value="${webdriver.class}"/>
         </ant>
     </target>
 
