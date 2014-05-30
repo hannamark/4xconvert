@@ -430,7 +430,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                     ids = trialOwners[i].split("_");
                     tId = Long.parseLong(ids[0]);
                     userId = Long.parseLong(ids[1]);
-                    if(tId != 0 && userId != 0){
+                    if (tId != 0 && userId != 0) {
                         updateOwnership(userId, tId, false, false);
                     }
                 }

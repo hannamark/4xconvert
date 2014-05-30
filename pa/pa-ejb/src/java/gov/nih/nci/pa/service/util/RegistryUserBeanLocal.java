@@ -362,8 +362,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
                 .append("' and otherid.root = '")
                 .append(IiConverter.STUDY_PROTOCOL_ROOT)
-                .append("' and sowner.id IS NOT NULL ")
-                .append("and sowner.affiliatedOrganizationId = " + affiliatedOrgId);
+                .append("' and sowner.id IS NOT NULL and sowner.affiliatedOrganizationId = ")
+                .append(affiliatedOrgId);
 
         String criteriaClause = getTrialOwnershipInformationSearchCriteria(trialOwnershipInfo);
         if (StringUtils.isNotEmpty(criteriaClause)) {
@@ -423,8 +423,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                         + "as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) ")
                 .append("and sps.functionalCode = '").append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
                 .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT).append("' ")
-                .append("and sps.statusCode <> 'NULLIFIED' ")
-                .append("and sowner.affiliatedOrganizationId = " + participatingSiteId);
+                .append("and sps.statusCode <> 'NULLIFIED' and sowner.affiliatedOrganizationId = ")
+                .append(participatingSiteId);
                 
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());
