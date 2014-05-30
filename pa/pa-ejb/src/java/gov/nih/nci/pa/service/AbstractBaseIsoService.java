@@ -79,11 +79,6 @@
 
 package gov.nih.nci.pa.service; // NOPMD
 
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SCIENTIFIC_ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUPER_ABSTRACTOR_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
@@ -100,8 +95,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -120,8 +113,6 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @param <BO> domain object
  * @param <CONVERTER> converter class
  */
-@RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE, ABSTRACTOR_ROLE,
-    SCIENTIFIC_ABSTRACTOR_ROLE, SUPER_ABSTRACTOR_ROLE })
 public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends AbstractEntity,
     CONVERTER extends AbstractConverter<DTO, BO>> extends AbstractBaseSearchBean<BO> implements BasePaService<DTO> {
 

@@ -79,19 +79,12 @@
 
 package gov.nih.nci.pa.service; // NOPMD
 
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SCIENTIFIC_ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUPER_ABSTRACTOR_ROLE;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 
 import java.util.List;
-
-import javax.annotation.security.RolesAllowed;
 
 /**
  * 
@@ -101,8 +94,6 @@ import javax.annotation.security.RolesAllowed;
  * @param <BO> bo
  * @param <CONVERTER> converter
  */
-@RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE, ABSTRACTOR_ROLE,
-    SCIENTIFIC_ABSTRACTOR_ROLE, SUPER_ABSTRACTOR_ROLE })
 public class AbstractCurrentStudyIsoService <DTO extends StudyDTO, BO extends AbstractEntity, 
     CONVERTER extends AbstractConverter<DTO, BO>>  extends AbstractStudyIsoService <DTO, BO, CONVERTER> {
     
