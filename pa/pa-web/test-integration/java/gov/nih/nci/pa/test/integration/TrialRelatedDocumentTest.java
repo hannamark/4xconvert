@@ -115,6 +115,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("FileName must be Entered"));
 
         String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        System.out.println("trialDocPath: "+trialDocPath);
         selenium.select("id=typeCode", "label=Protocol Highlighted Document");
         selenium.type("id=fileUpload", trialDocPath);
         clickAndWait("link=Save");
@@ -133,6 +134,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Trial Related Documents");
         
         String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        System.out.println("trialDocPath: "+trialDocPath);
         addProtocolHighlighDocument();
 
         clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[5]/a");        
@@ -168,6 +170,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isElementPresent("link=Add"));
         clickAndWait("link=Add");
         String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        System.out.println("trialDocPath: "+trialDocPath);
         selenium.select("id=typeCode", "label=Protocol Highlighted Document");
         selenium.type("id=fileUpload", trialDocPath);
         clickAndWait("link=Save");
