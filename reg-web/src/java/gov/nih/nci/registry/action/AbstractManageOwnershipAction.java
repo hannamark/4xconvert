@@ -361,6 +361,10 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                 for (int i = 0; i < regUserIds.length; i++) {
                     selectedUserIds.add(Long.parseLong(regUserIds[i]));
                 }
+                List<Long> toBeRemoved = new ArrayList<Long>();
+                toBeRemoved.add(Long.valueOf(0));
+                selectedTrialIds.removeAll(toBeRemoved);
+                selectedUserIds.removeAll(toBeRemoved);
                 for (Long userId : selectedUserIds) {
                     for (Long tId : selectedTrialIds) {
                         updateOwnership(userId, tId, true, true);
@@ -380,7 +384,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                     e.getMessage());
             throw new PAException(e);
         }
-        return view();
+        return search();
     }
 
     @SuppressWarnings("unchecked")
@@ -426,7 +430,9 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                     ids = trialOwners[i].split("_");
                     tId = Long.parseLong(ids[0]);
                     userId = Long.parseLong(ids[1]);
-                    updateOwnership(userId, tId, false, false);
+                    if(tId != 0 && userId != 0){
+                        updateOwnership(userId, tId, false, false);
+                    }
                 }
                 ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
                         unassignSuccessMsg());
@@ -443,7 +449,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
             throw new PAException(e);
         }
 
-        return view();
+        return search();
     }
 
     /**

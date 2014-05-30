@@ -362,7 +362,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
                 .append("' and otherid.root = '")
                 .append(IiConverter.STUDY_PROTOCOL_ROOT)
-                .append("' and sowner.id IS NOT NULL ");
+                .append("' and sowner.id IS NOT NULL ")
+                .append("and sowner.affiliatedOrganizationId = " + affiliatedOrgId);
 
         String criteriaClause = getTrialOwnershipInformationSearchCriteria(trialOwnershipInfo);
         if (StringUtils.isNotEmpty(criteriaClause)) {
@@ -411,7 +412,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 + "from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
                 + "join sp.studySites as sps "
                 + "join sps.healthCareFacility as hcf left join hcf.organization as org "
-                + "join sps.studySiteOwners as sowner left outer join sp.otherIdentifiers otherid where '")
+                + "join sps.studySiteOwners as sowner "
+                + "left outer join sp.otherIdentifiers otherid where '")
                 .append(participatingSiteId.toString()).append("' ")
                 .append("in (select healthCareFacility.organization.identifier from StudySite where functionalCode ='")
                 .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
@@ -421,7 +423,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                         + "as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) ")
                 .append("and sps.functionalCode = '").append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
                 .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT).append("' ")
-                .append("and sps.statusCode <> 'NULLIFIED'");
+                .append("and sps.statusCode <> 'NULLIFIED' ")
+                .append("and sowner.affiliatedOrganizationId = " + participatingSiteId);
                 
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());

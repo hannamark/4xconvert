@@ -146,8 +146,8 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
         if (assign) {
             if (!isOwner) {
                 PaRegistry.getRegistryUserService().assignOwnership(userId, tId);
+                PaRegistry.getRegistryUserService().setEmailNotificationsPreference(userId, tId, enableEmails);
             }
-            PaRegistry.getRegistryUserService().setEmailNotificationsPreference(userId, tId, enableEmails);
         }
 
         if (!assign && isOwner) {

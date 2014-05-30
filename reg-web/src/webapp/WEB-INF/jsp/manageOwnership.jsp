@@ -7,6 +7,12 @@
     <head>
         <title><fmt:message key="${pageTitleKey}"/></title>
         <s:head/>
+
+        <link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+		<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
+		<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+		<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
+        
         <style type="text/css">     
 		 #hideAll
 		 {
@@ -16,13 +22,46 @@
 		   top: 0px; 
 		   bottom: 0px; 
 		   background-color: white;
-		   z-index: 99; /* Higher than anything else in the document */
+		   z-index: 9999; /* Higher than anything else in the document */
 		
 		 }
 		 </style>   
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js?534785924'/>"></script>
     
         <script type="text/javascript" language="javascript">
+           var tableConf = {
+                "paging":false,    
+                "scrollY": 300,
+                "scrollX": true,
+                "bAutoWidth": false,
+                "aoColumnDefs" : [ {
+                    'bSortable' : false,
+                    'aTargets' : [ "no-sort" ]
+                } ]
+            }  
+           
+          
+           jQuery(function() {
+               jQuery('#conttbl').css("width",(window.innerWidth - 50));
+               jQuery('#regUserRowDiv').css("width",(window.innerWidth/2.5));
+               
+           });
+            jQuery(function() {
+                jQuery('#regUserRow').dataTable(tableConf);
+                jQuery('#regUserRow').css("width","100%");
+            });
+            
+            jQuery(function() {
+                jQuery('#studyProtocolRow').dataTable(tableConf);
+                jQuery('#studyProtocolRow').css("width","100%");
+            });
+            
+            jQuery(function() {
+                jQuery('#trialOwenership').dataTable(tableConf);
+                jQuery('#trialOwenership').css("width","100%");
+            }); 
+
+            
 	        function selectAll(field, chkd){
 	            if(field){
 	                if(typeof field.length == 'undefined'){
@@ -35,13 +74,6 @@
 	       }
             
            function updateOwnership(assignOwnership) {
-            	if($('regUserIds'))
-            		$('regUserIds').checked = false
-                if($('trialIds'))
-                    $('trialIds').checked = false
-                if($('trialOwners'))
-            	    $('trialOwners').checked = false
-            	    
                 var form = document.forms[0];
                 form.action = (assignOwnership) ? "${actionName}assignOwnership.action" : "${actionName}unassignOwnership.action";
                 displayWaitPanel();
@@ -73,9 +105,14 @@
                     siteName: '${siteName}'
                 };
                 displayWaitPanel();
-                jQuery.get(url,params,null);
-                submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageTrialOwnershipsearch.action');
-                return true;
+                jQuery.ajax({
+                    url: url ,
+                    data : params,
+                    success: null,
+                    async: false, 
+               });          
+               submitXsrfForm('${pageContext.request.contextPath}/siteadmin/manageTrialOwnershipsearch.action');
+               return true;
             }
             
             
@@ -91,7 +128,7 @@
         </script>
     </head>
     <body>
-        <!-- for hiding the page contents while loading -->
+        <!-- for hiding the page contents while loading-->
         <div style="display: block" id="hideAll"><img src="${pageContext.request.contextPath}/images/loading.gif"/></div>
         <script type="text/javascript">
          document.getElementById("hideAll").style.display = "block";
@@ -105,93 +142,95 @@
 	      <p><strong>Manage trial record ownership for:</strong> (select one)</p>
 	      <div class="radio">
 	          <label><input type="radio" name="siteOpts" id="optionsOrg" value="org" onchange="siteOptsChange()" <s:if test="%{#attr.topicValue == 'manageownership'}">checked</s:if>>
-	          Trials where this site is the <strong>Lead Organization</strong></label>
+	          Trials where this site is the <strong>Lead Organization</strong> (includes only Complete trials)</label>
 	      </div>
 	      <div class="radio">
 	          <label><input type="radio" name="siteOpts" id="optionsSite" value="site"  onchange="siteOptsChange()" <s:if test="%{#attr.topicValue== 'managesiteownership'}">checked</s:if>>
-	          Trials where this site is a <strong>Participating Site</strong> </label>
+	          Trials where this site is listed as a <strong>Participating Site</strong> (includes only Abbreviated trials) </label>
 	      </div>
-	      <br/>
+	      <br/><br/><br/>
          <s:hidden name="checked" id="checked"/>
          <s:token/>
-         <h3 class="heading"><span><fmt:message key="managetrialownership.users.header"><fmt:param><c:out value="${siteName}"/></fmt:param></fmt:message></h3>
+         <h3 class="heading"><span><fmt:message key="managetrialownership.users.header"><fmt:param><c:out value="${siteName}"/></fmt:param></fmt:message></span></h3>
          <p><strong>Select one or more username:</strong><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_users" />" data-placement="top" data-trigger="hover"></i></p>
-         <div style="width: 45%">
-              <div class="trial-ownership-container">
+         
+              <div class="trial-ownership-container" id="regUserRowDiv" >
                 <s:set name="orgMembers" value="registryUsers" scope="request"/>
-                <display:table class="data table trialOwnership table-hover sortable" summary="This table contains your search results." 
+                <display:table class="table trialOwnership " summary="This table contains your search results." 
                                decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="regUserRow"
                                name="orgMembers" requestURI="${actionName}view.action" export="false">
-                    <display:column title="<input type='checkbox' name='regUserIds' id='regUserIds' onclick='selectAll(document.formManageTrialOwnership.regUserIds, this.checked)' />">
+                    <display:column headerClass="no-sort" title="<input type='checkbox' name='regUserIds' id='regUserIds'  value='0' onclick='selectAll(document.formManageTrialOwnership.regUserIds, this.checked)' />">
 	                    <label for="${regUserRow.registryUser.id}" style="display:none"><fmt:message key="managetrialownership.users.allow"/></label>
 	                    <input type="checkbox" name="regUserIds" value="${regUserRow.registryUser.id}" id="${regUserRow.registryUser.id}"/>
                     </display:column>
-                    <display:column escapeXml="true" titleKey="managetrialownership.users.name" sortable="true" headerClass="sortable" headerScope="col">
+                    <display:column escapeXml="true" titleKey="managetrialownership.users.name" headerScope="col">
                         <c:out value="${regUserRow.registryUser.lastName}"/>,<c:out value="${regUserRow.registryUser.firstName}"/>
                     </display:column>
-                    <display:column escapeXml="true" titleKey="managetrialownership.users.email" property="registryUser.emailAddress" sortable="true" headerClass="sortable" headerScope="col"/>
+                    <display:column escapeXml="true" titleKey="managetrialownership.users.email" property="registryUser.emailAddress" headerScope="col"/>
                 </display:table>
               </div>
-            </div>
             <br/>
             <div class="clearfix"></div>
             <h3 class="heading"><span>Trials where this site is the <strong><s:if test="%{#attr.topicValue == 'manageownership'}">Lead Organization</s:if><s:else>Participating Site</s:else></strong></span></h3>
-            <p class="mb20"><em>A record owner of a trial listed below can amend or update that trial in CTRP</em><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.trial_list" />" data-placement="top" data-trigger="hover"></i></p>
-	            <table width="100%"  class="trialOwnershipAssignUnassign">
-	              <tbody>
-	                <tr>
-	                  <td width="45%" nowrap="nowrap" align="center"><h3 class="notAssigned">Trials<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_trial" />" data-placement="top" data-trigger="hover"></i></h3></td>
-	                  <td></td>
-	                  <td width="45%" nowrap="nowrap" align="center"><h3 class="assigned">Trial Owner Assignments<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_trial" />" data-placement="top" data-trigger="hover"></i></h3></td>
-	                </tr>
-	                <tr>
-	                  <td>
-	                      <div class="trial-ownership-container">
-	    	                 <s:set name="orgTrials" value="studyProtocols" scope="request"/>
-		                     <display:table class="data table trialOwnership table-hover sortable" summary="This table contains trials assigned to the site"
-		                                    decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="studyProtocolRow"
-		                                    name="orgTrials" requestURI="${actionName}view.action" export="false">
-		                         <display:column title="<input type='checkbox' name='trialIds'  id='trialIds' onclick='selectAll(document.formManageTrialOwnership.trialIds, this.checked)' />">
+            <p class="mb20"><em><s:if test="%{#attr.topicValue == 'manageownership'}"><fmt:message key="managetrialownership.trials.instruction" /></s:if>
+            <s:else><fmt:message key="managesiteownership.trials.instruction" /></s:else>
+            </em><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<s:if test="%{#attr.topicValue == 'manageownership'}"><fmt:message key="tooltip.managetrialowner.trial_list" /></s:if>
+            <s:else><fmt:message key="tooltip.managesiteowner.trial_list" /></s:else>" data-placement="top" data-trigger="hover"></i></p>
+             <table id="conttbl" >
+                  <tbody>
+                    <tr width="100%">
+                      <td width="45%" nowrap="nowrap" align="center"><h3 class="notAssigned"><s:if test="%{#attr.topicValue == 'manageownership'}">All Available Trials</s:if><s:else>All Available Abbreviated Trials</s:else><i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_trial" />" data-placement="top" data-trigger="hover"></i></h3></td>
+                      <td width="10%"></td>
+                      <td width="45%" nowrap="nowrap" align="center"><h3 class="assigned"><s:if test="%{#attr.topicValue == 'manageownership'}">Trial</s:if><s:else>Site</s:else> Owner Assignments<i class="fa-question-circle help-text left" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_trial" />" data-placement="top" data-trigger="hover"></i></h3></td>
+                    </tr>
+                    <tr>
+                      <td width="45%">
+                          <div class="trial-ownership-container">
+                             <s:set name="orgTrials" value="studyProtocols" scope="request"/>
+                             <display:table class="table-striped  table trialOwnership " summary="This table contains trials assigned to the site"
+                                            decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="studyProtocolRow"
+                                            name="orgTrials" requestURI="${actionName}view.action" export="false">
+                                 <display:column headerClass="no-sort" title="<input type='checkbox' name='trialIds'  id='trialIdsAll' value='0' onclick='selectAll(document.formManageTrialOwnership.trialIds, this.checked)' />">
                                    <label for="${studyProtocolRow.studyProtocol.id}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
                                    <input type="checkbox" name="trialIds" value="${studyProtocolRow.studyProtocol.id}" id="${studyProtocolRow.studyProtocol.id}" />
                                  </display:column>
-		                         <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
-		                         <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" sortable="true" headerClass="sortable" headerScope="col"/>
-		                     </display:table>
+                                 <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" headerScope="col"/>
+                                 <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" headerScope="col"/>
+                             </display:table>
                           </div>
                      </td>
-                   <td valign="middle" nowrap="nowrap" align="center" class="accrual_btn_column"><div> <b>Assign</b> </div>
-	                   <div>
-	                      <button type="button" onkeypress="updateOwnership(true);" onclick="updateOwnership(true);"  class="btn btn-light" data-placement="left" rel="tooltip" data-original-title="Assign selected"><i class="fa-angle-right"></i></button>
-	                   </div>
-	                   <br>
-	                   <br><div> <b>Unassign</b> </div>
-	                   <div>
-	                     <button type="button" onkeypress="updateOwnership(false);" onclick="updateOwnership(false);"  class="btn btn-default" data-placement="right" rel="tooltip" data-original-title="Unassign selected"><i class="fa-angle-left"></i></button>
-	                   </div>
+                   <td width="10%" valign="middle" nowrap="nowrap" align="center" class="accrual_btn_column"><div> <b>Assign</b> </div>
+                       <div>
+                          <button type="button" onkeypress="updateOwnership(true);" onclick="updateOwnership(true);"  class="btn btn-light" data-placement="left" rel="tooltip" data-original-title="Assign selected"><i class="fa-angle-right"></i></button>
+                       </div>
+                       <br/><br/>
+                       <div> <b>Unassign</b> </div>
+                       <div>
+                           <button type="button" onkeypress="updateOwnership(false);" onclick="updateOwnership(false);"  class="btn btn-default" data-placement="right" rel="tooltip" data-original-title="Unassign selected"><i class="fa-angle-left"></i></button>
+                       </div>
                    </td>
-                   <td>
+                   <td width="45%">
                      <div class="trial-ownership-container">
                        <s:set name="trialOwenership" value="trialOwnershipInfo" scope="request"/>
-                       <display:table class="table trialOwnership table-hover sortable" 
+                       <display:table class="table trialOwnership table-striped  " 
                                      decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" id="trialOwenership"
                                      name="trialOwenership" requestURI="${actionName}view.action" export="false">
-                            <display:column sortable="false" title="<input type='checkbox' value='0' name='trialOwners' id='trialOwners' onclick='selectAll(document.formManageTrialOwnership.trialOwners, this.checked)' />">
+                           <display:column headerClass="no-sort" title="<input type='checkbox' value='0_0' name='trialOwners' id='trialOwners'  onclick='selectAll(document.formManageTrialOwnership.trialOwners, this.checked)' />">
                              <c:set var="trialOwnersId" value="${trialOwenership.trialId}_${trialOwenership.userId}" />
                                 <label for="${trialOwnersId}" style="display:none"><fmt:message key="managetrialownership.trials.allow"/></label>
                                 <input type="checkbox" name="trialOwners" value="${trialOwnersId}" id="${trialOwnersId}"/>
                            </display:column>
-                           <display:column escapeXml="true" titleKey="managetrialownership.users.name" maxLength="200" sortable="true" headerClass="sortable" headerScope="col">
+                           <display:column escapeXml="true" titleKey="managetrialownership.users.name" maxLength="200" headerScope="col">
                                 <c:out value="${trialOwenership.lastName}"/>,<c:out value="${trialOwenership.firstName}"/>
                            </display:column>
-                           <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier"  sortable="true" headerClass="sortable" headerScope="col"/>
-                           <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId"  sortable="true" headerClass="sortable" headerScope="col"/>
+                           <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" headerScope="col"/>
+                           <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" headerScope="col"/>
                            <s:if test="%{#attr.topicValue == 'manageownership'}">
-                           <display:column title='<div><span class="wrap">Email <br/>
+                           <display:column headerClass="no-sort" title='<div><span class="wrap">Email <br/>
                                   Notification?
-                                  <div class="btn-group" align="left">
+                                  <div class="btn-group">
                                     <button data-toggle="dropdown" class="btn btn-default dropdown-toggle btn-tiny" type="button">All <span class="caret"></span></button>
-                                    <ul role="menu" class="dropdown-menu">
+                                    <ul id="emailMenu" role="menu" class="dropdown-menu">
                                       <li><a href="#" onclick="setEmailPrefAll(true)">Select <strong>Yes</strong> for all</a></li>
                                       <li><a href="#" onclick="setEmailPrefAll(false)">Select <strong>No</strong> for all</a></li>
                                     </ul>
@@ -205,15 +244,15 @@
                                    <input type="radio" name="options">
                                    No </label>
                                </div>
-			           </display:column>  
-			           </s:if>
+                           </display:column>  
+                           </s:if>
                        </display:table>
                      </div>
                    </td>
-		        </tr>
-		      </tbody>
-		    </table>			 
-         <div class="line"></div>
+                </tr>
+              </tbody>
+            </table>             
+            <div class="line"></div>
          </s:form>
          <script type="text/javascript">
          document.getElementById("hideAll").style.display = "none";

@@ -1698,9 +1698,9 @@ table td {
 	margin:0;
 }
 .trial-ownership-container {
-	height: 200px;
-	overflow-y: auto;
+	height: 450px;
 }
+
 .trialOwnershipAssignUnassign .trial-ownership-container {
 	height: 300px;
 }
@@ -1741,9 +1741,9 @@ table td {
 	margin-left: 5px;
 	padding: 6px;
 }
-.table .sortable .header .btn-group .dropdown-menu {
-	left: auto;
-	right:0;
+.btn-group .dropdown-menu {
+	left: -145px;
+	top: -45px;
 }
 .table .sortable .header .btn-group .dropdown-menu a {
 	text-shadow: none;
