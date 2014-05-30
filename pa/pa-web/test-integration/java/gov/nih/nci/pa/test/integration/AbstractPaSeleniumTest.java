@@ -93,6 +93,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -126,6 +130,37 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     private static final String PHANTOM_JS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
     private static Logger LOG = Logger.getLogger(AbstractPaSeleniumTest.class.getName());    
     protected Connection connection;
+    
+    static {
+        new Timer(true).schedule(new TimerTask() {
+            @SuppressWarnings("rawtypes")
+            @Override
+            public void run() {
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    return;
+                }
+                System.out
+                        .println("---------------------------------------------------------------------------------");
+                System.out
+                        .println("I am a periodic thread dump logger. Please excuse me for verbose output and ignore for now.");
+                Map allThreads = Thread.getAllStackTraces();
+                Iterator iterator = allThreads.keySet().iterator();
+                StringBuffer stringBuffer = new StringBuffer();
+                while (iterator.hasNext()) {
+                    Thread key = (Thread) iterator.next();
+                    StackTraceElement[] trace = (StackTraceElement[]) allThreads
+                            .get(key);
+                    stringBuffer.append(key + "\r\n");
+                    for (int i = 0; i < trace.length; i++) {
+                        stringBuffer.append(" " + trace[i] + "\r\n");
+                    }
+                    stringBuffer.append("\r\n");
+                }
+                System.out.println(stringBuffer);
+            }
+        }, 120000, 120000);
+    }
+
 
 
     @Override
