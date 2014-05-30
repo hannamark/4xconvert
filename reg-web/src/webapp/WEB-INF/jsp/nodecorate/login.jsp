@@ -33,16 +33,16 @@
         <p>This site enables you to register a trial with NCI&apos;s Clinical Trials Reporting Program. You can:</p>
         <ul>
           <li>Register clinical trials</li>
-          <li>Register multiple trials at one time using a <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources/" target="_blank">batch upload template</a></li>
+          <li>Register multiple trials at one time using a <a href="https://wiki.nci.nih.gov/display/CTRP/CTRP+Trial+Registration+Batch+File+Templates" target="_blank">batch upload template</a></li>
           <li>Search registered trials by Title, Phase, Trial Identifiers and Organizations</li>
 		</ul>
-		<p>Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main/" target="_blank">NCI Clinical Trials Reporting Program</a> website. You can also email NCICB Application Support at <a href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if you have questions or need assistance.</p>
+		<p>Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main/" target="_blank">NCI Clinical Trials Reporting Program</a> website. You can also email CBIIT Application Support at <a href="mailto:cbiit@mail.nih.gov">cbiit@mail.nih.gov</a> if you have questions or need assistance.</p>
       </div>
       <div class="col-xs-6">
         <ul class="nav nav-tabs">
           <li class="active"><a href="<s:url action='protected/disClaimerAction.action?actionName=searchTrial.action' />" ><i class="fa-sign-in"></i>Sign In</a></li>
           <li><a href="<s:url action='registerUser.action' />" ><i class="fa-pencil-square-o"></i>Sign Up</a></li>
-          <li><a href="#forgot-password" data-toggle="tab"><i class="fa-key"></i>Forgot Password</a></li>
+          <li><a href="#forgot-password" data-toggle="tab"><i class="fa-key"></i>Forgot Your Password</a></li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane fade in active" id="sign-in">
@@ -105,7 +105,7 @@
               <h4 class="heading"><span>Resetting Your Password</span></h4>
               <p>If you forgot your password, please visit the NCI Password Station at <a href="http://password.nci.nih.gov" target="_blank">http://password.nci.nih.gov</a> and follow the instructions there.</p>
               <p>If you need additional assistance or have questions, you can email NCI CBIIT Application Support at <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a>,
-                or call <strong>240-276-5541</strong> or toll free <strong>888-478-4423</strong>.</p>
+                or call <strong>240-276-5541</strong> or toll free: <strong>888-478-4423</strong>.</p>
             </div>
           </div>
         </div>

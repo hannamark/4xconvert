@@ -1891,3 +1891,9 @@ table td {
     color:#D0D0D0;
 }
 
+/* To fix the spacing after radio button and the label for it */
+.radio-inline {
+	margin-left: 2px;
+	margin-right: 10px;
+	padding-left: 2px;
+}

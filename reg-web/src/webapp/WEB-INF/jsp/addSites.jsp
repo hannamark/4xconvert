@@ -265,9 +265,8 @@
 			</h3>
 			<div class="row">
 				<div class="col-md-10 col-md-offset-1">
-					<p class="mb20">NOTE: Only eligible Abbreviated Trials, on
-						which your affiliated organization or its family members are not
-						participating sites yet, are searched using this option.</p>
+					<p class="mb20">NOTE: Search results include only those eligible Abbreviated Trials with
+						which your affiliated organization or its family members are not yet participating</p>
 				</div>
 
 			</div>
@@ -322,10 +321,10 @@
 							Here are the trials to which you can add sites. You can sort by
 							trial identifier or title by clicking on the corresponding column
 							header (note: sorting becomes disabled once you start entering
-							sites). You can begin entering sites for a trial by clicking on
-							the <b>Plus</b> sign. Once you are done entering site
-							information, click the <b>Save</b> button at the bottom of the
-							page to save all changes at once.
+							sites). To add sites to a trial, click the <b>Plus</b> sign and
+							enter the site information in the fields provided. After adding
+							your sites to each of the trials, scroll to the bottom of the 
+							page and click <b>Save.</b>
 						</p>
 					</div>
 

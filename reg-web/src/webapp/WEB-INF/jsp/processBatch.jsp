@@ -20,10 +20,10 @@ function handleBatchUploadAction(){
         <p> Register multiple trials in the NCI Clinical Trials Reporting Program by uploading the Trial Data file and the Zip file that contains trial documents.
           Note the following requirements:</p>
         <ol>
-          <li>This form can only be used for submitting complete trials.</li>
-          <li>Trial data file attached must conform to the specifications in the CTRP Registry Complete Batch Upload Template that is valid for the current release, found here.</li>
-          <li>Zip file containing trial documents is mandatory for a Trial data file consisting of new submissions and amendments.</li>
-          <li>Zip file containing trial documents is optional for a Trial data file consisting of only trial updates.</li>
+          <li>Use this form to submit complete trials only</li>
+          <li>The trial data file must conform to the specifications in the CTRP Registry Complete Batch Upload Template, available on the <a href="https://wiki.nci.nih.gov/display/CTRP/CTRP+Trial+Registration+Batch+File+Templates" target="_blank">CTRP Trial Registration Batch File Templates</a> page</li>
+          <li>You must submit a Zip file that contains trial documents for each new and amended trial</li>
+          <li>You do not have to submit a Zip file that contains trial documents for updates to registered trials</li>
         </ol>
         <form id="batchUploadForm" name="batchUploadForm" role="form" class="form-horizontal" method="POST" enctype="multipart/form-data">
         	<s:token/>

@@ -322,7 +322,7 @@
         <label for="organizationName" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
         <s:hidden name="criteria.organizationId" id="organizationId"/>
 		<div class="col-xs-4">                    
-			<s:textfield id="organizationName" name="criteria.organizationName" cssClass="form-control orgautocomplete"/>
+			<s:textfield id="organizationName" name="criteria.organizationName" cssClass="form-control orgautocomplete" placeholder="Please select an organization type, if not already selected"/>
              <span class="alert-danger">
                  <s:fielderror>
                  <s:param>criteria.organizationId</s:param>
@@ -389,9 +389,9 @@
             <div class="btn-group">
               <button id="runSearchBtn" type="button" class="btn btn-icon btn-primary dropdown-toggle" data-toggle="dropdown"> <i class="fa-search"></i>Search <span class="caret"></span> </button>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="javascript:void(0)" onclick="handleMyAction()" id="searchMyTrialsBtn">My Trials</a></li>
-                <li><a href="javascript:void(0)"  onclick="handleAction()" id="searchAllTrialsBtn">All Trials</a></li>
-                <li><a href="javascript:void(0)" cssClass="btn" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn">Saved Drafts</a></li>
+                <li><a href="javascript:void(0)" onclick="handleMyAction()" id="searchMyTrialsBtn">My Trials<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Search only for trials submitted by you"  data-placement="top" data-trigger="hover"></i></a></li>
+                <li><a href="javascript:void(0)"  onclick="handleAction()" id="searchAllTrialsBtn">All Trials<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Search for all trials"  data-placement="top" data-trigger="hover"></i></a></li>
+                <li><a href="javascript:void(0)" cssClass="btn" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn">Saved Drafts<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Search only for trials saved as drafts"  data-placement="top" data-trigger="hover"></i></a></li>
               </ul>
             </div>
             <button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false" id="resetSearchBtn"><i class="fa-repeat"></i>Reset</button>

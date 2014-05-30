@@ -31,7 +31,6 @@
 	          	<a href="#" data-toggle="dropdown" class="dropdown-toggle nav-user"><c:out value="${CsmHelper.firstName}"/> <c:out value="${CsmHelper.lastName}"/></a>
 	            <ul class="dropdown-menu">
 	              <li><a href="javascript:void(0);" class="account" onclick="displayMyAccount();">My Account</a></li>
-	              <li><a id="helpMenuOption" href="javascript:void(0)" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a></li>
 	              <li class="divider"></li>
 	              <li class="sign-out">
 	                <button type="button" class="btn btn-default btn-sm" href="javascript:void(0)" onclick="submitXsrfForm('/registry/logout.action')">Sign Out</button>

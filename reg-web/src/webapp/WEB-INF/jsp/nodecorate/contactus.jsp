@@ -7,7 +7,8 @@
       </div>
       <div class="modal-body">
         <h5>Thank you for using the NCI's Clinical Trials Reporting Program.</h5>
-        <p> If you are experiencing problems with the application, please contact NCI CBIIT Applications Support at <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a> or by phone at <strong>888.478.4423</strong> (for Toll Free) or <strong>301.451.4384</strong> (for local calls). </p>
+        <p>If you need additional assistance or have questions, you can email NCI CBIIT Application Support at <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a>,
+                or call <strong>240-276-5541</strong> or toll free: <strong>888-478-4423</strong>.</p>
         <p> Alternatively, you can submit a request for help at the following URL: </p>
         <p> <a target="_blank" href="http://cbiit.nci.nih.gov/support"><font size="3">http://cbiit.nci.nih.gov/support</font></a> </p>
         <p class="disclaimer"><em>NCI CBIIT Application Support is available Mon-Fri 8am-8pm EST, excluding Federal Government Holidays. </em></p>
