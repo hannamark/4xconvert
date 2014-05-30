@@ -95,7 +95,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -137,6 +145,37 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
     protected String today = MONTH_DAY_YEAR_FMT.format(new Date());
     protected String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
     protected String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(new Date(), 1));
+    
+    static {
+        new Timer(true).schedule(new TimerTask() {
+            @SuppressWarnings("rawtypes")
+            @Override
+            public void run() {
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    return;
+                }
+                System.out
+                        .println("---------------------------------------------------------------------------------");
+                System.out
+                        .println("I am a periodic thread dump logger. Please excuse me for verbose output and ignore for now.");
+                Map allThreads = Thread.getAllStackTraces();
+                Iterator iterator = allThreads.keySet().iterator();
+                StringBuffer stringBuffer = new StringBuffer();
+                while (iterator.hasNext()) {
+                    Thread key = (Thread) iterator.next();
+                    StackTraceElement[] trace = (StackTraceElement[]) allThreads
+                            .get(key);
+                    stringBuffer.append(key + "\r\n");
+                    for (int i = 0; i < trace.length; i++) {
+                        stringBuffer.append(" " + trace[i] + "\r\n");
+                    }
+                    stringBuffer.append("\r\n");
+                }
+                System.out.println(stringBuffer);
+            }
+        }, 120000, 120000);
+    }
+
 
     @Override
     public void setUp() throws Exception {        
@@ -205,6 +244,19 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
         openAndWait("/registry/login/logout.action");
     }
 
+    @SuppressWarnings("deprecation")
+    protected void reInitializeWebDriver() throws Exception {
+        closeBrowser();
+        super.tearDown();
+        setUp();
+    }
+
+    /**
+     * @return
+     */
+    private boolean isPhantomJS() {
+        return driver.getClass().getName().equals(PHANTOM_JS_DRIVER);
+    }
     protected void login(String username, String password) {
         openAndWait("/registry");
         verifyLoginPage();
@@ -270,9 +322,46 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
     }
 
     protected void openAndWait(String url) {
-        selenium.open(url);
+        if (!isPhantomJS()) {
+            selenium.open(url);
+        } else {
+            openAndHandleStuckPhantomJsDriver(url);
+        }
         waitForPageToLoad();
     }
+    
+    private void openAndHandleStuckPhantomJsDriver(final String url) {
+        int tries = 0;
+        while (tries < 3) {
+            tries++;
+            Future<Boolean> f = Executors.newSingleThreadExecutor().submit(
+                    new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() throws Exception {
+                            selenium.open(url);
+                            return true;
+                        }
+                    });
+            try {
+                if (f.get(30, TimeUnit.SECONDS)) {
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out
+                        .println("PhantomJS stuck in 'get' (an odd issue on Linux); restarting and trying again. Attempt # "
+                                + tries);
+            }
+            f.cancel(true);
+            try {
+                this.reInitializeWebDriver();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+    
 
     protected void registerTrial(String trialName, String leadOrgTrialId) throws URISyntaxException, SQLException {
         deactivateTrialByLeadOrgId(leadOrgTrialId);
