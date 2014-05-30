@@ -82,11 +82,6 @@
  */
 package gov.nih.nci.pa.service; // NOPMD
 
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SCIENTIFIC_ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUPER_ABSTRACTOR_ROLE;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -112,15 +107,11 @@ import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * Helper for ParticipatingSiteBeanLocal.
  * @author mshestopalov
  *
  */
-@RolesAllowed({ SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE, ABSTRACTOR_ROLE,
-    SCIENTIFIC_ABSTRACTOR_ROLE, SUPER_ABSTRACTOR_ROLE })
 public abstract class AbstractParticipatingSitesBean
     extends AbstractBaseParticipatingSiteBean {
 
