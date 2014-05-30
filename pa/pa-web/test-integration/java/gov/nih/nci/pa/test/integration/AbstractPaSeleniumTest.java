@@ -236,7 +236,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     /**
      * @return
      */
-    private boolean isPhantomJS() {
+    protected boolean isPhantomJS() {
         return driver.getClass().getName().equals(PHANTOM_JS_DRIVER);
     }
 

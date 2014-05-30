@@ -82,9 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
-
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 
@@ -100,7 +99,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
 
     
     @Test
-    public void testAddDocument() throws URISyntaxException, SQLException {
+    public void testAddDocument() throws URISyntaxException, SQLException, MalformedURLException {
         TrialInfo trial = createAcceptedTrial();
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.title);
@@ -114,10 +113,12 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Document Type Code must be Entered"));
         assertTrue(selenium.isTextPresent("FileName must be Entered"));
 
-        String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        final File file = new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI());
+        String trialDocPath = file.toString();
         System.out.println("trialDocPath: "+trialDocPath);
-        selenium.select("id=typeCode", "label=Protocol Highlighted Document");
-        selenium.type("id=fileUpload", trialDocPath);
+        selenium.select("id=typeCode", "label=Protocol Highlighted Document");       
+        //selenium.type("id=fileUpload", trialDocPath);
+        selenium.attachFile("id=fileUpload", file.toURL().toString());
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Created"));
         
@@ -126,26 +127,28 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
     }
 
     @Test
-    public void testEditDocument() throws URISyntaxException, SQLException {
+    public void testEditDocument() throws URISyntaxException, SQLException, MalformedURLException {
         TrialInfo trial = createAcceptedTrial();
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.title);
 
         clickAndWait("link=Trial Related Documents");
         
-        String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        final File file = new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI());
+        String trialDocPath = (file.toString());
         System.out.println("trialDocPath: "+trialDocPath);
         addProtocolHighlighDocument();
 
         clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[5]/a");        
-        selenium.type("id=fileUpload", trialDocPath);
+        //selenium.type("id=fileUpload", trialDocPath);
+        selenium.attachFile("id=fileUpload", file.toURL().toString());
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium.isTextPresent("One item found"));
     }
 
     @Test
-    public void testDeleteDocument() throws SQLException, URISyntaxException {
+    public void testDeleteDocument() throws SQLException, URISyntaxException, MalformedURLException {
         TrialInfo trial = createAcceptedTrial();
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.title);
@@ -165,14 +168,17 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
 
     /**
      * @throws URISyntaxException
+     * @throws MalformedURLException 
      */
-    private void addProtocolHighlighDocument() throws URISyntaxException {
+    private void addProtocolHighlighDocument() throws URISyntaxException, MalformedURLException {
         assertTrue(selenium.isElementPresent("link=Add"));
         clickAndWait("link=Add");
-        String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        final File file = new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI());
+        String trialDocPath = (file.toString());
         System.out.println("trialDocPath: "+trialDocPath);
         selenium.select("id=typeCode", "label=Protocol Highlighted Document");
-        selenium.type("id=fileUpload", trialDocPath);
+        //selenium.type("id=fileUpload", trialDocPath);
+        selenium.attachFile("id=fileUpload", file.toURL().toString());
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Created"));
         assertTrue(selenium.isTextPresent("One item found"));
