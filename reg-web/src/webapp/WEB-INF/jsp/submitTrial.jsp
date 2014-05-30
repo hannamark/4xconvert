@@ -120,9 +120,7 @@
           </div>
           <button type="button" class="expandcollapse btn btn-icon btn-sm btn-default" state="0"><i class="fa-minus-circle"></i> Collapse All</button>
           <div class="accordion-group">
-          	<!-- section 1 trial identifiers -->
               <%@ include file="/WEB-INF/jsp/nodecorate/trialIdentifiers.jsp" %>
-              <!-- section 2 other identifiers -->
               <div class="accordion">
                   <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section2"><fmt:message key="submit.trial.otherIdentifiers"/></a></div>
                       <div id="section2" class="accordion-body in">
@@ -146,8 +144,7 @@
                       </div>
                   </div>
                   <div class="accordion">
-                   <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section3"><fmt:message key="submit.trial.trialDetails"/><span class="required">*</span></a>
-                   </div>
+                   <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section3"><fmt:message key="submit.trial.trialDetails"/><span class="required">*</span></a></div>
                        <div id="section3" class="accordion-body in">
                            <div class="container">
                                <div class="form-group">
@@ -167,8 +164,7 @@
                    </div>
                </div>
                <div class="accordion">
-                  <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section4"><fmt:message key="submit.trial.leadOrgInvestigator"/><span class="required">*</span></a>
-                  </div>
+                  <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section4"><fmt:message key="submit.trial.leadOrgInvestigator"/><span class="required">*</span></a></div>
                   <div id="section4" class="accordion-body in">
                       <div class="container">
                       <div class="form-group">                                
@@ -186,19 +182,14 @@
                   </div>
               </div>
               </div>
-              <s:if test="%{trialDTO.xmlRequired == true}">
-                  <div id="sponsorDiv" style="display:''">
+              <s:if test="%{trialDTO.xmlRequired == true}"><div id="sponsorDiv" style="display:''">
                       <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
-                  </div>
-              </s:if>
-              <s:else>
-                  <div id="sponsorDiv" style="display:none">
+                  </div></s:if>
+              <s:else><div id="sponsorDiv" style="display:none">
                       <%@ include file="/WEB-INF/jsp/nodecorate/trialResponsibleParty.jsp" %>
-                  </div>
-              </s:else>
+                  </div></s:else>
               <div class="accordion">
-                  <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section6"><fmt:message key="update.proprietary.trial.summary4Info"/><span class="required">*</span></a>
-                  </div>
+                  <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section6"><fmt:message key="update.proprietary.trial.summary4Info"/><span class="required">*</span></a></div>
                   <div id="section6" class="accordion-body in">
                       <div class="container">
                           <div class="form-group">
@@ -311,7 +302,6 @@
                    </div>
               </div>
           </div>
-           <!-- Status section -->
           <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
           <div class="accordion">
           	<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section9"><fmt:message key="submit.trial.indInfo"/></a></div>
@@ -326,20 +316,14 @@
             </div>
           </div>
         </div>
-        
-        <s:if test="%{trialDTO.xmlRequired == true}">
-             <div id="regDiv" style="display:''">
+        <s:if test="%{trialDTO.xmlRequired == true}"><div id="regDiv" style="display:''">
                  <!-- Regulatory page -->
                  <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
-             </div>
-         </s:if>
-         <s:else>
-             <div id="regDiv" style="display:none">
+             </div></s:if>
+         <s:else><div id="regDiv" style="display:none">
                  <!-- Regulatory page -->
                  <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
-             </div>
-         </s:else>
-              
+             </div></s:else>
           <div id="uploadDocDiv">
               <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>
           </div>

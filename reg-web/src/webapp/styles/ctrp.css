@@ -962,7 +962,7 @@ h1.heading {
 	margin-bottom: 0;
 }
 .accordion-group .accordion + .accordion {
-	margin-top: 5px;
+	margin-top: 0px;
 }
 .accordion-default {
 	border-color: #DDDDDD;

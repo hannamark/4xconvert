@@ -2,8 +2,7 @@
 <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
 <div class="accordion">
-    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section5"><fmt:message key="submit.trial.sponsorResParty"/><span class="required">*</span></a>
-    </div>
+    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section5"><fmt:message key="submit.trial.sponsorResParty"/><span class="required">*</span></a></div>
         <div id="section5" class="accordion-body in">
             <div class="container"> 
                 <div class="form-group">
