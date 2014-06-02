@@ -52,8 +52,10 @@
                     $('trialDTO.siteOrganizationNameField').innerHTML = 'Please Select Submitting Organization';
                     $("trialDTO.siteOrganizationIdentifier").value = '';
                     $('trialDTO.siteOrganizationName').value = '';
-                } else if(selection == -1) {
-                    showPopup("${lookupOrgUrl}",loadLeadOrgDiv, 'Select Submitting Organization');
+                } else if (selection == -1) {
+                    showPopup("${lookupOrgUrl}", function() {
+                    	lookup4loadSiteOrg(orgid, chosenname);
+                    }, 'Select Submitting Organization');
                 } else if(selection > 0) {
                     $('trialDTO.siteOrganizationNameField').innerHTML = name;
                     $('trialDTO.siteOrganizationName').value = name;
