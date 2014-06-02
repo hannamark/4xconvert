@@ -60,11 +60,11 @@ function formReset(){
 <hr>
 <div class="container">
 <div class="form-group">
-    <label for="orgPOIdSearch" class="col-xs-3 control-label">PO ID (Exact Match)</label>
+    <label for="orgPOIdSearch" class="col-xs-3 control-label">PO ID (Exact Match):</label>
     <div class="col-xs-3">
         <s:textfield id="orgPOIdSearch" name="orgSearchCriteria.id" maxlength="10" size="100" cssClass="form-control" />
     </div>
-   	<label for="orgCtepIdSearch" class="col-xs-3 control-label">CTEP ID</label>
+   	<label for="orgCtepIdSearch" class="col-xs-3 control-label">CTEP ID:</label>
     <div class="col-xs-3">
         <s:textfield id="orgCtepIdSearch" name="orgSearchCriteria.ctepId" maxlength="200" size="100" cssClass="form-control" />
     </div>

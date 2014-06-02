@@ -3,12 +3,14 @@
 <div class="form-group">
     <label for="" class="col-xs-4 control-label"><fmt:message key="submit.trial.type"/><span class="required">*</span></label>
     <div class="col-xs-4">
-      <input type="radio" name="trialDTO.trialType" value="Interventional" id="trialDTO.trialType.Interventional"
+      <input  class="radio-inline" type="radio" name="trialDTO.trialType" value="Interventional" id="trialDTO.trialType.Interventional"
             ${trialDTO.trialType!='NonInterventional'?'checked=checked':''}        
-            onclick="hidePrimaryCompletionDate(), setDisplayBasedOnTrialType();"> <label for = "trialDTO.trialType.Interventional">Interventional</label>
-        <input type="radio" name="trialDTO.trialType" value="NonInterventional" id="trialDTO.trialType.Noninterventional"
+            onclick="hidePrimaryCompletionDate(), setDisplayBasedOnTrialType();">
+      <label  class="radio-inline" for = "trialDTO.trialType.Interventional">Interventional</label>
+        <input  class="radio-inline" type="radio" name="trialDTO.trialType" value="NonInterventional" id="trialDTO.trialType.Noninterventional"
             ${trialDTO.trialType=='NonInterventional'?'checked=checked':''}
-            onclick="hidePrimaryCompletionDate(), setDisplayBasedOnTrialType();"><label for = "trialDTO.trialType.Noninterventional">Non-interventional</label>
+            onclick="hidePrimaryCompletionDate(), setDisplayBasedOnTrialType();">
+        <label  class="radio-inline" for = "trialDTO.trialType.Noninterventional">Non-interventional</label>
         <span class="alert-danger">
             <s:fielderror>
                 <s:param>trialDTO.trialType</s:param>

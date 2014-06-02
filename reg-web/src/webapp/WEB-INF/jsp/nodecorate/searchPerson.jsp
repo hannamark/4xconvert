@@ -33,38 +33,38 @@ function formClose() {
 
 <div class="container">
 <div class="form-group">
-    <label for="firstName" class="col-xs-3 control-label">First Name</label>
+    <label for="firstName" class="col-xs-3 control-label">First Name:</label>
     <div class="col-xs-3">
         <s:textfield name="personDTO.firstName" id="firstName" maxlength="200"  cssClass="form-control" />
     </div>
-   	<label for="lastName" class="col-xs-3 control-label">Last Name</label>
+   	<label for="lastName" class="col-xs-3 control-label">Last Name:</label>
     <div class="col-xs-3">
         <s:textfield name="personDTO.lastName"  id="lastName" maxlength="200"  cssClass="form-control" />
     </div>
 </div>
 <div class="form-group">
-    <label for="email" class="col-xs-3 control-label">Email</label>
+    <label for="email" class="col-xs-3 control-label">Email:</label>
     <div class="col-xs-3">
         <s:textfield name="personDTO.email" id="email" maxlength="200" cssClass="form-control" />
     </div>
 </div>
 <div class="form-group">
-    <label for="city" class="col-xs-3 control-label">City</label>
+    <label for="city" class="col-xs-3 control-label">City:</label>
     <div class="col-xs-3">
         <s:textfield name="personDTO.city"  id="city" maxlength="200" cssClass="form-control" />
     </div>
-    <label for="state" class="col-xs-3 control-label">State</label>
+    <label for="state" class="col-xs-3 control-label">State:</label>
     <div class="col-xs-3">
         <s:textfield name="personDTO.state"  id="state" maxlength="200" cssClass="form-control" />
         <span class="info">please enter two letter identifier for US states<br> for ex: 'MD' for Maryland</span>
     </div>
 </div>
 <div class="form-group">
-    <label for="zip" class="col-xs-3 control-label">Zip</label>
+    <label for="zip" class="col-xs-3 control-label">Zip:</label>
     <div class="col-xs-3">
         <s:textfield name="personDTO.zip"  id="zip" maxlength="200" cssClass="form-control" />
     </div>
-    <label for="country" class="col-xs-3 control-label">Country</label>
+    <label for="country" class="col-xs-3 control-label">Country:</label>
     <div class="col-xs-3">
         <s:select
                 name="personDTO.country"
@@ -77,11 +77,11 @@ function formClose() {
 <hr>
 <div class="container">
 <div class="form-group">
-    <label for="perPOIdSearch" class="col-xs-3 control-label">PO ID (Exact Match)</label>
+    <label for="perPOIdSearch" class="col-xs-3 control-label">PO ID (Exact Match):</label>
     <div class="col-xs-3">
         <s:textfield id="perPOIdSearch" name="perPOIdSearch" maxlength="10"  cssClass="form-control" />
     </div>
-   	<label for="perCtepIdSearch" class="col-xs-3 control-label">CTEP Identifier</label>
+   	<label for="perCtepIdSearch" class="col-xs-3 control-label">CTEP Identifier:</label>
     <div class="col-xs-3">
         <s:textfield name="perCtepIdSearch" id="perCtepIdSearch" maxlength="200" cssClass="form-control" />
     </div>

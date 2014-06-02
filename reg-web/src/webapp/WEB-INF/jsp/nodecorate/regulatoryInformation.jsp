@@ -44,7 +44,7 @@
      	</div>
       </div>
      <!--   Section 801 Indicator-->
-     <div class="form-group">
+     <div class="form-group" id="sec801row">
         <label for="trialDTO.section801Indicator"  class="col-xs-4 control-label"><fmt:message key="regulatory.section801.ind"/><span class="required">*</span></label>
         <div class="col-xs-4">
             <s:radio cssClass="radio-inline" id="trialDTO.section801Indicator" name="trialDTO.section801Indicator" list="#{'No':'No', 'Yes':'Yes'}" onchange="checkSection108DropDown();" value="trialDTO.section801Indicator"/>
@@ -54,7 +54,7 @@
      </div>
 
      <!--   Delayed Posting Indicator-->
-     <div class="form-group">
+     <div class="form-group" id="delpostindrow">
           <label for="trialDTO.delayedPostingIndicator"  class="col-xs-4 control-label"> <fmt:message key="regulatory.delayed.posting.ind"/><span class="required">*</span></label>
           <div class="col-xs-4">
             <s:radio cssClass="radio-inline" id="trialDTO.delayedPostingIndicator" name="trialDTO.delayedPostingIndicator" list="#{'No':'No', 'Yes':'Yes'}" value="trialDTO.delayedPostingIndicator" />

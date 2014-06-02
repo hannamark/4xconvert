@@ -292,15 +292,18 @@
             }
             
             function checkFDADropDown() {
-                if ($('trialDTO.fdaRegulatoryInformationIndicator').value == '' | $('trialDTO.fdaRegulatoryInformationIndicator').value == 'No') {
+                if ($('trialDTO.fdaRegulatoryInformationIndicatorNo').checked) {
                     input_box = confirm("Section 801 and Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
                     if (input_box == true) {
-                        $('trialDTO.section801Indicator').value = '';
-                        $('trialDTO.delayedPostingIndicator').value = '';
+                        $('trialDTO.section801IndicatorNo').checked = false;
+                        $('trialDTO.section801IndicatorYes').checked = false;
+                        $('trialDTO.delayedPostingIndicatorNo').checked = false;
+                        $('trialDTO.delayedPostingIndicatorYes').checked = false;
                         hideRow($('sec801row'));
                         hideRow($('delpostindrow'));
                     } else {
-                        $('trialDTO.fdaRegulatoryInformationIndicator').value = 'Yes';
+                  	  $('trialDTO.fdaRegulatoryInformationIndicatorNo').checked = false;
+                  	  $('trialDTO.fdaRegulatoryInformationIndicatorYes').checked = true;
                     }
                 } else {
                     showRow($('sec801row'));
@@ -309,13 +312,15 @@
             }
         
             function checkSection108DropDown() {
-                if ($('trialDTO.section801Indicator').value == '' | $('trialDTO.section801Indicator').value == 'No') {
+                if ($('trialDTO.section801IndicatorNo').checked) {
                     input_box = confirm("Delayed Posting Indicator will be NULLIFIED? \nPlease Click OK to continue or Cancel");
                     if (input_box == true) {
                         hideRow($('delpostindrow'));
-                        $('trialDTO.delayedPostingIndicator').value = '';
+                        $('trialDTO.delayedPostingIndicatorNo').checked = false;
+                        $('trialDTO.delayedPostingIndicatorYes').checked = false;
                     } else {
-                        $('trialDTO.section801Indicator').value = 'Yes';
+                  	  $('trialDTO.fdaRegulatoryInformationIndicatorNo').checked = false;
+                  	  $('trialDTO.fdaRegulatoryInformationIndicatorYes').checked = true;
                     }
                 } else {
                     showRow($('delpostindrow'));
