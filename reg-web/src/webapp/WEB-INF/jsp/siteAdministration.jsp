@@ -7,8 +7,12 @@
     <head>
         <title><fmt:message key="siteadministration.page.title"/></title>
         <s:head/>
+        
+        <link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+        
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js?534785924'/>"></script>
-    
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+        
         <script type="text/javascript" language="javascript">
             function submitForm() {
                 var form = document.forms[0];
@@ -38,6 +42,23 @@
                 var aj = callAjaxPost(null, url, params);
                 return false;
             }
+            
+            jQuery(function() {
+                jQuery('#row').dataTable( {
+                	"bPaginate" : false,
+                    "bLengthChange" : false,
+                    "bFilter" : false,
+                    "bSort" : true,
+                    "bInfo" : false,
+                    "bAutoWidth" : false,
+                    "order": [[ 1, "asc" ]],
+                    "aoColumnDefs" : [ {
+                        'bSortable' : false,
+                        'aTargets' : [ 3 ]
+                    } ]
+                });
+            });
+            
         </script>
     </head>
     <body>
