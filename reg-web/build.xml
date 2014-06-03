@@ -229,7 +229,7 @@
     <!-- ====================================================================== -->
     <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
         <mkdir dir="${reg-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="yes">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="yes" failureproperty="junit.failure">
             <jvmarg value="-XX:-UseSplitVerifier"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
@@ -246,6 +246,7 @@
                 </fileset>
             </batchtest>
          </junit>
+    	 <fail if="junit.failure" message="Selenium test(s) failed.  See reports in ${reg-web.test.reports}."/>
     </target>
 	
 	<target name="test-integration" description="Runs integration tests against the automatically deploy application."

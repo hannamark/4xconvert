@@ -30,12 +30,12 @@ public class DisplayTrialOwnershipTest extends AbstractRegistrySeleniumTest {
         selenium.type("id=nciIdentifier", trial.nciID);
         driver.findElement(By.className("fa-search")).click();
 
-        assertTrue(selenium.isTextPresent("One item found."));
+        assertTrue(selenium.isTextPresent("Showing 1 to 1 of 1"));
         assertTrue(selenium.isTextPresent(trial.leadOrgID));
 
         selenium.type("id=nciIdentifier", trial.nciID.substring(3));
         driver.findElement(By.className("fa-search")).click();
-        assertTrue(selenium.isTextPresent("One item found."));
+        assertTrue(selenium.isTextPresent("Showing 1 to 1 of 1"));
         assertTrue(selenium.isTextPresent(trial.leadOrgID));
 
     }
