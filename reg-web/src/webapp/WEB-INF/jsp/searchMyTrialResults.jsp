@@ -193,7 +193,7 @@ jQuery(function() {
 						</div>  
 					</s:if>              		                    	                    
                  </display:column>  
-                 <display:column title="Accruals Disease Terminology" sortable="false" headerClass="sortable">
+                 <display:column title="Accrual Disease Terminology" sortable="false" headerClass="sortable">
                 <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
                 <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
                 <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
