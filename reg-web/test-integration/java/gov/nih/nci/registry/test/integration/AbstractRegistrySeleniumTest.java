@@ -934,6 +934,32 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSelenese2Test
         runner.update(connection, sql);
     }
     
+    protected void assignTrialOwner(String loginName, Long trialID)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        Number regUserID = (Number) runner
+                .query(connection,
+                        "select identifier from registry_user ru inner join csm_user cu on ru.csm_user_id=cu.user_id where cu.login_name like '%"
+                                + loginName + "%'", new ArrayHandler())[0];
+
+        String sql = "INSERT INTO study_owner (study_id,user_id,enable_emails) VALUES ("
+                + trialID + "," + regUserID + ",false)";
+        runner.update(connection, sql);
+    }
+    
+    protected void changeRegUserAffiliation(String loginName, int orgPoId,
+            String orgName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "update registry_user set affiliate_org='"
+                + orgName
+                + "', affiliated_org_id="
+                + orgPoId
+                + " where csm_user_id=(select user_id from csm_user where csm_user.login_name like '%"
+                + loginName + "%')";
+        runner.update(connection, sql);
+
+    }
+
     protected void deactivateTrialByNctId(String nctID) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "update study_protocol set status_code='INACTIVE' where exists"

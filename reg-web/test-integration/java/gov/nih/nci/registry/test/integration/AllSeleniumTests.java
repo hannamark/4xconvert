@@ -94,14 +94,32 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = { LoginTest.class, AddSitesTest.class,
-        RegisterAbbreviatedTrialTest.class /*
-                                            * , SearchUserTest.class ,
-                                            * MyAccountTest.class ,
-                                            * RegisterTrialTest .class,
-                                            * TrialSearchTest .class,
-                                            * SetupPaTrialData .class,
-                                            * ViewTrialTest .class
-                                            */})
+        RegisterAbbreviatedTrialTest.class, DisplayTrialOwnershipTest.class /*
+                                                                             * ,
+                                                                             * SearchUserTest
+                                                                             * .
+                                                                             * class
+                                                                             * ,
+                                                                             * MyAccountTest
+                                                                             * .
+                                                                             * class
+                                                                             * ,
+                                                                             * RegisterTrialTest
+                                                                             * .
+                                                                             * class
+                                                                             * ,
+                                                                             * TrialSearchTest
+                                                                             * .
+                                                                             * class
+                                                                             * ,
+                                                                             * SetupPaTrialData
+                                                                             * .
+                                                                             * class
+                                                                             * ,
+                                                                             * ViewTrialTest
+                                                                             * .
+                                                                             * class
+                                                                             */})
 public class AllSeleniumTests {
 
 }

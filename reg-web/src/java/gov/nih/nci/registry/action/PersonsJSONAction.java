@@ -5,7 +5,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
