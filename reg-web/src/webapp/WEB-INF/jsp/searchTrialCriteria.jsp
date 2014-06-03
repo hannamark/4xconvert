@@ -402,21 +402,21 @@
  <s:if test="records != null">
 	    <div class="tab-pane fade in active" id="search-results">
 	        <div class="tab-inside">
-	          <div class="mb20 control-bar">
-	    		<s:if test="criteria.myTrialsOnly">
-	      			<jsp:include page="/WEB-INF/jsp/searchMyTrialResults.jsp"/>
-	    		</s:if>
-	    		<s:else>
-	    			<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
-	    		</s:else>
-			</div>
+		          <div class="mb20 control-bar">
+			    		<s:if test="criteria.myTrialsOnly">
+			      			<jsp:include page="/WEB-INF/jsp/searchMyTrialResults.jsp"/>
+			    		</s:if>
+			    		<s:else>
+			    			<jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
+			    		</s:else>
+				  </div>
+				  <c:if test="${studyAlternateTitlesPresent}">
+                    <div class="form-group">
+                        <label class="col-xs-4 control-label">(*) <fmt:message key="studyAlternateTitles.text"/></label>
+                    </div>
+                 </c:if>				  
 			</div>			
 		</div>
-		<c:if test="${studyAlternateTitlesPresent}">
-		    <div class="form-group">
-		        <label class="col-xs-4 control-label">(*) <fmt:message key="studyAlternateTitles.text"/></label>
-		    </div>
-		</c:if>
 	</s:if>
 	</div>
 </div>
