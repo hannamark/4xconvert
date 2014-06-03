@@ -6,11 +6,6 @@
     <head>
         <title><fmt:message key="review.trial.page.title"/></title>
         <s:head/>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js?534785924'/>"></script>
-        <script type="text/javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
         <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="amendProtocol"/>
         <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="submitProtocol"/>
         <script type="text/javascript" language="javascript">
