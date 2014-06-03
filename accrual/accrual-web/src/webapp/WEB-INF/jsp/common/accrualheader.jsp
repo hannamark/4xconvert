@@ -24,7 +24,6 @@
                 <div class="dropdown pull-right"> <a href="#" data-toggle="dropdown" class="dropdown-toggle nav-user">${CsmHelper.firstName} ${CsmHelper.lastName}</a>
 		            <ul class="dropdown-menu">
 		              <li><a href="#" class="account" data-toggle="modal" data-target="#myAccount">My Account</a></li>
-		              <li><a href="#" class="help" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a></li>
 		              <li class="divider"></li>
 		              <li class="sign-out">
 		                <button type="button" class="btn btn-default btn-sm" onClick="logout();">Sign Out</button>

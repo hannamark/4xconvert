@@ -20,7 +20,7 @@
           </li>
           <li><a href="#" data-toggle="modal" data-target="#contactUs">Contact Us</a></li>
         </ul>
-        <div class="pull-right text-sizer"><a href="#" id="incfont">A+</a><a href="#" id="decfont">A-</a></div>
+        <div class="pull-right text-sizer"><a href="#" class="help" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a></div>
       </div>
       <!--/.nav-collapse --> 
     </div>

@@ -28,8 +28,8 @@
 				<p>
 					Want to learn more about the Reporting Program? Visit the <a
 						href="#">NCI Clinical Trials Reporting Program</a> website. You
-					can also email NCICB Application Support at <a
-						href="mailto:ncicb@pop.nci.nih.gov">ncicb@pop.nci.nih.gov</a> if
+					can email NCI CBIIT Application Support at <a
+						href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a> if
 					you have questions or need assistance.
 				</p>
 			</div>
@@ -131,7 +131,7 @@
 								If you need additional assistance or have questions, you can
 								email NCI CBIIT Application Support at <a
 									href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a>,
-								or call <strong>240-276-5541</strong> or toll free <strong>888-478-4423</strong>.
+								or call <strong>240-276-5541</strong> or toll free: <strong>888-478-4423</strong>.
 							</p>
 						</div>
 					</div>
