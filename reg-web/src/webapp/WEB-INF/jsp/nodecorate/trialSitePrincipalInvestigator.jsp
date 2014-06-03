@@ -8,6 +8,6 @@
 </span>
 </div>
 <div class="col-xs-4">
-    <button type="button" class="btn btn-icon btn-default" onclick="lookup4loadSitePerson();" title="Opens a popup form to select Principal Investigator"><i class="fa-user"></i>Look Up Person</button>
+    <button id="lookup4loadSitePersonBtn" type="button" class="btn btn-icon btn-default" onclick="lookup4loadSitePerson();" title="Opens a popup form to select Principal Investigator"><i class="fa-user"></i>Look Up Person</button>
     <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content='<fmt:message key="tooltip.site_pi" />'  data-placement="top" data-trigger="hover"></i>
 </div>

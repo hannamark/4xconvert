@@ -217,7 +217,7 @@
                     <c:if test="${requestScope.protocolId == null}">
 	                    <div class="bottom">
 	                        <button type="button" class="btn btn-icon btn-primary" onclick="editTrial()"> <i class="fa-edit"></i>Edit </button>
-	                        <button type="button" class="btn btn-icon btn-primary" onclick="submitTrial();"><i class="fa-save"></i>Submit</button>
+	                        <button id="submitTrialBtn" type="button" class="btn btn-icon btn-primary" onclick="submitTrial();"><i class="fa-save"></i>Submit</button>
 	                        <button type="button" class="btn btn-icon btn-primary" onclick="printProtocol();"><i class="fa-print"></i>Print</button>
 	                    </div>
                     </c:if>

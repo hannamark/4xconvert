@@ -261,7 +261,7 @@
                         </div>
                     </div>  
                  
-                    <div class="form-group">
+                    <div class="form-group non-interventional">
                         <label for="trialDTO.studySubtypeCode" class="col-xs-4 control-label"><fmt:message key="submit.trial.studySubtypeCode"/><span class="required">*</span></label>
                         <div class="col-xs-4">
 	                        <s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.StudySubtypeCode@getDisplayNames()" />
@@ -428,7 +428,7 @@
                 </p>
                 <div class="align-center button-row">
                   <button type="button" class="btn btn-icon btn-primary" onclick="partialSave()"><i class="fa-floppy-o"></i>Save as Draft</button>
-                  <button type="button" class="btn btn-icon btn-primary" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
+                  <button id="reviewTrialBtn" type="button" class="btn btn-icon btn-primary" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
                   <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
                 </div>
                 <s:hidden name="uuidhidden"/>

@@ -82,26 +82,92 @@
  */
 package gov.nih.nci.registry.test.integration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.UUID;
+
+import org.junit.Test;
+import org.openqa.selenium.By;
 
 /**
+ * Tests the trial registration process.
  * 
- * Class to control the order that selenium tests are run in.
- * 
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * @author Denis G. Krylov
  */
-@RunWith(Suite.class)
-@SuiteClasses(value = { LoginTest.class, AddSitesTest.class,
-        RegisterAbbreviatedTrialTest.class /*
-                                            * , SearchUserTest.class ,
-                                            * MyAccountTest.class ,
-                                            * RegisterTrialTest .class,
-                                            * TrialSearchTest .class,
-                                            * SetupPaTrialData .class,
-                                            * ViewTrialTest .class
-                                            */})
-public class AllSeleniumTests {
+public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
+
+    private final String LEAD_ORG_TRIAL_ID = UUID.randomUUID().toString();
+    private final String UUID_2 = UUID.randomUUID().toString();
+
+    /**
+     * Tests registering a trial.
+     * 
+     * @throws Exception
+     *             on error
+     */
+    @Test
+    public void testRegisterTrial() throws Exception {
+        loginAndAcceptDisclaimer();
+        openAndWait("/registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial");
+        selenium.click("id=trialDTO.leadOrganizationNameField");
+        selenium.click("//table[@id='dropdown-leadOrganization']/tbody/tr[2]/td[3]/a");
+        selenium.type("id=trialDTO.leadOrgTrialIdentifier", LEAD_ORG_TRIAL_ID);
+        selenium.click("id=trialDTO.siteOrganizationNameField");
+        selenium.click("//table[@id='dropdown-siteOrganization']/tbody/tr[2]/td[3]/a");
+        selenium.type("id=trialDTO.localSiteIdentifier", LEAD_ORG_TRIAL_ID);
+        selenium.type("id=trialDTO.officialTitle", LEAD_ORG_TRIAL_ID);
+
+        checkInterventionalNonInterventionalFields_PO7457();
+
+        selenium.click("id=trialDTO.trialType.Interventional");
+        selenium.select("id=trialDTO.primaryPurposeCode", "Treatment");
+        selenium.select("id=trialDTO.phaseCode", "0");
+
+        // Site Principal Investigator
+        clickAndWaitAjax("id=lookup4loadSitePersonBtn");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_person_btn", 30);
+        clickAndWaitAjax("id=search_person_btn");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/button");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+
+        selenium.click("id=trialDTO.summaryFourOrgName");
+        selenium.click("//table[@id='dropdown-sum4Organization']/tbody/tr[2]/td[3]/a");
+        selenium.select("id=trialDTO.siteStatusCode", "In Review");
+        selenium.type("id=trialDTO.siteStatusDate", "06/02/2014");
+        selenium.click("id=reviewTrialBtn");
+        waitForPageToLoad();
+        selenium.click("id=submitTrialBtn");
+        waitForPageToLoad();
+        selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier");
+
+    }
+
+    private void checkInterventionalNonInterventionalFields_PO7457() {
+
+        selenium.click("id=trialDTO.trialType.Noninterventional");
+        assertTrue(selenium.isElementPresent("id=trialDTO.studySubtypeCode"));
+        assertTrue(selenium.isElementPresent("id=trialDTO.studyModelCode"));
+        assertTrue(selenium.isElementPresent("id=trialDTO.timePerspectiveCode"));
+        assertTrue(selenium.isElementPresent("id=trialDTO.studyModelCode"));
+        assertTrue(selenium.isElementPresent("id=trialDTO.studyModelCode"));
+        assertFalse(driver.findElement(By.id("trialDTO.secondaryPurposes"))
+                .isDisplayed());
+
+        selenium.click("id=trialDTO.trialType.Interventional");
+        assertFalse(driver.findElement(By.id("trialDTO.studySubtypeCode"))
+                .isDisplayed());
+        assertFalse(driver.findElement(By.id("trialDTO.studyModelCode"))
+                .isDisplayed());
+        assertFalse(driver.findElement(By.id("trialDTO.timePerspectiveCode"))
+                .isDisplayed());
+        assertFalse(driver.findElement(By.id("trialDTO.studyModelCode"))
+                .isDisplayed());
+        assertFalse(driver.findElement(By.id("trialDTO.studyModelCode"))
+                .isDisplayed());
+        assertTrue(selenium.isElementPresent("id=trialDTO.secondaryPurposes"));
+
+    }
 
 }
