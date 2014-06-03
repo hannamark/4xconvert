@@ -31,6 +31,18 @@ jQuery(function() {
     z-index:100;
     position:relative;
 }
+/*To not wrap header*/
+thead th { 
+	white-space: nowrap; 
+}
+/*Increase column chooser items width*/
+ul.ColVis_collection {
+	width:250px;
+}
+/*Reduce Column chooser button height*/
+button.ColVis_Button {
+	height : 25px;
+}
 </style>
 </head>
 <s:set name="records" value="records" scope="request"/>
