@@ -1013,9 +1013,9 @@ h1.heading {
 	width: 128px;
 }
 .charcounter, label em {
-	font-style: italic;
+	/*font-style: italic;
 	font-size: 11px;
-	color: #999;
+	color: #999;*/
 	vertical-align: -7px;
 	display:inline-block;
 	line-height:15px;
