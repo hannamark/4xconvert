@@ -494,7 +494,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private String addCriteria(String criteriaName, String criteriaValue) {
         StringBuffer retVal = new StringBuffer();
         if (StringUtils.isNotEmpty(criteriaValue)) {
-            retVal.append(" and (lower(").append(criteriaName).append(") like lower('").append(criteriaValue)
+            retVal.append(" and (lower(").append(criteriaName).append(") like lower('%").append(criteriaValue)
                 .append("%')) ");
         }
         return retVal.toString();
