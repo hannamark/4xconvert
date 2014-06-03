@@ -14,7 +14,7 @@
      <s:param name="submissionNumber" value="%{#attr.row.submissionNumber}"/>
      </s:url>">${row.submissionNumber}</a>
     </display:column>  
-    <display:column escapeXml="true" property="submissionDateAsString" sortable="true" title="Date" />    
+    <display:column property="submissionDate" sortable="true" title="Date" format="{0,date,MM/dd/yyyy}" />    
     <display:column escapeXml="false" sortable="true" title="Type">
         <c:out value="${row.type}"></c:out>
         <c:if test="${row.type == 'Amendment'}">
