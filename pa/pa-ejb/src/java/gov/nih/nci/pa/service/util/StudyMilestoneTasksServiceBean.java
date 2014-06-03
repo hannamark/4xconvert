@@ -134,6 +134,8 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     @EJB
     private StudyMilestoneTasksServiceLocal studyMilestoneTasksService;
     
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    
     /**
      * Perform task. if we run into more problems, we should look into making the query protocol-focused, rather than
      * milestone-focused, which may simplify the code a bit (at the cost of a more complex query)
@@ -201,8 +203,8 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         for (StudyMilestone milestone : milestones) {
             String trialNciId = StringUtils.EMPTY;
             try {
-                Long studyProtocolId = milestone.getStudyProtocol().getId();
-                trialNciId = new PAServiceUtils().getTrialNciId(studyProtocolId);
+                Long studyProtocolId = milestone.getStudyProtocol().getId();               
+                trialNciId = paServiceUtils.getTrialNciId(studyProtocolId);
                 LOG.info("Creating a new milestone with code - initial abstraction verify for study protocol "
                         + studyProtocolId);
                 StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
@@ -302,6 +304,13 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
             Long studyId1 = milestone1.getStudyProtocol().getId();
             return new CompareToBuilder().append(studyId0, studyId1).toComparison();
         }
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
     }
 
 }

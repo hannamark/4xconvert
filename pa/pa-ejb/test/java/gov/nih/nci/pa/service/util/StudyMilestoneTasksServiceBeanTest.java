@@ -82,6 +82,10 @@ public class StudyMilestoneTasksServiceBeanTest {
         service.setMailManagerService(mailManagerService);
         service.setStudyMilestoneService(studyMilestoneService);
         service.setStudyMilestoneTasksService(studyMilestoneTasksService);
+        
+        final PAServiceUtils mock = mock(PAServiceUtils.class);
+        when(mock.getTrialNciId(any(Long.class))).thenReturn("NCI-2001-1111111111");
+        service.setPaServiceUtils(mock);
     }
 
     /**
@@ -162,7 +166,7 @@ public class StudyMilestoneTasksServiceBeanTest {
 
         assertFalse("Error collection should not be empty", errors.isEmpty());
         String expectedBody = "An error occurred while running the Abstraction Verified No Response Script.\n"
-                + "The trial ID is 1 and the error is PAException\n";
+                + "The trial ID is 1 and the error is NCI-2001-1111111111: PAException\n";
         assertEquals("Wrong error message body", expectedBody, errors.getSummary());
 
         ArgumentCaptor<StudyMilestoneDTO> captor = ArgumentCaptor.forClass(StudyMilestoneDTO.class);
