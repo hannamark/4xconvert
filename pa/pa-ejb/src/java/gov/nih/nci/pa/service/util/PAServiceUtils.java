@@ -1413,12 +1413,12 @@ public class PAServiceUtils {
                     ? "Site recruitment Status Date should be a valid date. " : "");
             if (!ISOUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
                     && null == RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode())) {
-                errorMsg.append("Please enter valid RecruitmentStatusCode.");
+                errorMsg.append("Please enter valid RecruitmentStatusCode. ");
             }
             if (!ISOUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())) {
             errorMsg.append(PAUtil.isDateCurrentOrPast(TsConverter.convertToTimestamp(
                     studySiteAccrualStatusDTO.getStatusDate()))
-                    ? " Site recruitment Status Date cannot be in the future, " : "");
+                    ? "Site recruitment Status Date cannot be in the future. " : "");
             }
         }
         if (studySiteAccrualStatusDTO != null && studySiteDTO != null) {
@@ -1426,19 +1426,19 @@ public class PAServiceUtils {
               Timestamp dateClosedForAccrual = IvlConverter.convertTs().convertHigh(studySiteDTO.getAccrualDateRange());
               if (dateOpenedForAccrual != null) {
                   errorMsg.append(PAUtil.isDateCurrentOrPast(dateOpenedForAccrual)
-                  ? "Date Opened for Accrual cannot be in the future , " : "");
+                  ? "Date Opened for Accrual cannot be in the future. " : "");
               }
               if (dateClosedForAccrual != null) {
                   errorMsg.append(PAUtil.isDateCurrentOrPast(dateClosedForAccrual)
-                          ? " Date Closed For Accrual cannot be in the future, " : "");
+                          ? "Date Closed For Accrual cannot be in the future. " : "");
               }
               if (dateClosedForAccrual != null && dateOpenedForAccrual == null) {
-                  errorMsg.append("Opened for Accrual Date is  mandatory if Closed for Accrual Date is provided.");
+                  errorMsg.append("Opened for Accrual Date is  mandatory if Closed for Accrual Date is provided. ");
               }
               if (dateClosedForAccrual != null  && dateOpenedForAccrual != null
                       && dateClosedForAccrual.before(dateOpenedForAccrual)) {
                  errorMsg.append("Date Closed for Accrual must be same or bigger "
-                         + " than Date Opened for Accrual.");
+                         + " than Date Opened for Accrual. ");
               }
               if (!ISOUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())) {
                   RecruitmentStatusCode recruitmentStatus =
@@ -1447,15 +1447,21 @@ public class PAServiceUtils {
                       String recStatus = CdConverter.convertCdToString(studySiteAccrualStatusDTO.getStatusCode());
                       if (recruitmentStatus.isNonRecruiting()) {
                           if (dateOpenedForAccrual != null) {
-                              errorMsg.append("Date Opened for Accrual must be null for ").append(recStatus);
+                            errorMsg.append(
+                                    "Date Opened for Accrual must be null for ")
+                                    .append(recStatus).append(". ");
                           }
                       } else if (dateOpenedForAccrual == null) {
-                          errorMsg.append("Date Opened for Accrual must be a valid date for ").append(recStatus);
+                        errorMsg.append(
+                                "Date Opened for Accrual must be a valid date for ")
+                                .append(recStatus).append(". ");
                       }
                       if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equalsIgnoreCase(recStatus)
                               || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus))
                               && dateClosedForAccrual == null) {
-                             errorMsg.append("Date Closed for Accrual must be a valid date for ").append(recStatus);
+                        errorMsg.append(
+                                "Date Closed for Accrual must be a valid date for ")
+                                .append(recStatus).append(". ");
                       }
                  }
               }
