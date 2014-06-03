@@ -181,8 +181,8 @@
                  jQuery.getJSON(url,null,function(data){
                         responseFn(jQuery.map(data.organizationDtos, function (value, key) { 
                              return {
-                                 label: value,
-                                 value: key
+                                 label: key,
+                                 value: value
                              };
                         }));
                  });
@@ -206,8 +206,8 @@
                jQuery.getJSON(url,null,function(data){
                       responseFn(jQuery.map(data.paPersonDTOs, function (value, key) { 
                            return {
-                               label: value,
-                               value: key
+                               label: key,
+                               value: value
                            };
                       }));
                });
@@ -391,7 +391,7 @@
               <ul class="dropdown-menu" role="menu">
                 <li><a href="javascript:void(0)" onclick="handleMyAction()" id="searchMyTrialsBtn">My Trials<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Search the trials registered in the CTRP that I own"  data-placement="top" data-trigger="hover"></i></a></li>
                 <li><a href="javascript:void(0)"  onclick="handleAction()" id="searchAllTrialsBtn">All Trials<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Search the trials registered in the CTRP that I own as well as those registered by others"  data-placement="top" data-trigger="hover"></i></a></li>
-                <li><a href="javascript:void(0)" class="btn" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn">Saved Drafts<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Search my saved drafts"  data-placement="top" data-trigger="hover"></i></a></li>
+                <li><a href="javascript:void(0)" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn">Saved Drafts<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Search my saved drafts"  data-placement="top" data-trigger="hover"></i></a></li>
               </ul>
             </div>
             <button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false" id="resetSearchBtn"><i class="fa-repeat"></i>Reset</button>

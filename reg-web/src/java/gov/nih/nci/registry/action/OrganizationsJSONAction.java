@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -36,6 +37,7 @@ public class OrganizationsJSONAction extends ActionSupport {
                 || StringUtils.isEmpty(organizationTerm)) {
             return SUCCESS;
         }
+        organizationTerm = StringEscapeUtils.escapeSql(organizationTerm);
         List<PaOrganizationDTO> orgDtos;
         try {
             if ("Both".equalsIgnoreCase(organizationType)) {
@@ -64,7 +66,7 @@ public class OrganizationsJSONAction extends ActionSupport {
         }
 
         for (PaOrganizationDTO orgDto : orgDtos) {
-            getOrganizationDtos().put(orgDto.getId(), orgDto.getName());
+            getOrganizationDtos().put(orgDto.getName(), orgDto.getId());
         }
         return SUCCESS;
     }

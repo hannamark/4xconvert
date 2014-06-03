@@ -5,6 +5,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -40,8 +41,7 @@ public class PersonsJSONAction extends ActionSupport {
         }
 
         for (PaPersonDTO personDto : personDtos) {
-            getPaPersonDTOs().put(String.valueOf(personDto.getId()),
-                    personDto.getFullName());
+            getPaPersonDTOs().put(personDto.getFullName(), String.valueOf(personDto.getId()));
         }
         return SUCCESS;
     }

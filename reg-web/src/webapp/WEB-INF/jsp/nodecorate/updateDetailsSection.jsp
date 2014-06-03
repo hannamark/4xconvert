@@ -105,8 +105,8 @@
        </label>
    <div class="col-xs-4">
        <s:property value="trialDTO.studySubtypeCode"/>
-   </td>
    </div>
+</div>
 <div class="form-group">
 	<label class="col-xs-4 control-label">
            <fmt:message key="submit.trial.studyModelCode"/>

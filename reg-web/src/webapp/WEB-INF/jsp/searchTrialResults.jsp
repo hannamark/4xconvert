@@ -9,8 +9,19 @@ jQuery(function() {
 	jQuery('#row').dataTable( {
 		"sDom": 'pCrfltip',
 		"pagingType": "full_numbers",
+		 "order": [[ 0, "desc" ]],
         "oColVis": {
             "buttonText": "Choose columns"
+        },
+        "oLanguage": {
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_",
+            "sLengthMenu": "Show _MENU_",
+            "oPaginate": {
+                "sFirst": "<<",
+                "sPrevious": "<",
+                "sNext": ">",
+                "sLast": ">>"
+              }
         }
 	});
 });
@@ -69,10 +80,6 @@ jQuery(function() {
                     <s:a href="%{deleteUrl}" onclick="return deletePartialProtocol();">Delete</s:a>
                 </display:column>
             </display:table>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
             </div>
             </div>
         </c:when>

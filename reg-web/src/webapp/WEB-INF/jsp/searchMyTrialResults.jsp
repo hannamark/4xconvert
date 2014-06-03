@@ -9,8 +9,19 @@ jQuery(function() {
 	jQuery('#row').dataTable( {
 		"sDom": 'pCrfltip',
 		"pagingType": "full_numbers",
+		 "order": [[ 0, "desc" ]],
         "oColVis": {
             "buttonText": "Choose columns"
+        },
+        "oLanguage": {
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_",
+            "sLengthMenu": "Show _MENU_",
+            "oPaginate": {
+                "sFirst": "<<",
+                "sPrevious": "<",
+                "sNext": ">",
+                "sLast": ">>"
+              }
         }
 	});
 });
@@ -68,10 +79,6 @@ jQuery(function() {
                     <s:a href="%{deleteUrl}"><button type="button" class="btn btn-icon btn-primary" onclick="return deletePartialProtocol()"> <i class="fa-trash-o"></i>Delete</button></s:a>
                 </display:column>
             </display:table>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
-            <p>&nbsp;</p>
             </div>
             </div>
         </c:when>
@@ -215,8 +222,6 @@ jQuery(function() {
                 <display:column title="Last Amendment Submitted" property="amendmentDate" format="{0,date,MM/dd/yyyy}" />                               
                 <display:column title="Last Amender Name" property="lastUpdatedUserDisplayName" />     
                 <display:column title="On-Hold Reason" property="onHoldReasons" escapeXml="true"/>
-                
-                
                 
             </display:table>
             </div>
