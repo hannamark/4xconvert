@@ -104,6 +104,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -198,8 +199,10 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     StudyMilestoneTaskMessageCollection createMilestones(Set<StudyMilestone> milestones) {
         StudyMilestoneTaskMessageCollection errors = new StudyMilestoneTaskMessageCollection();
         for (StudyMilestone milestone : milestones) {
+            String trialNciId = StringUtils.EMPTY;
             try {
                 Long studyProtocolId = milestone.getStudyProtocol().getId();
+                trialNciId = new PAServiceUtils().getTrialNciId(studyProtocolId);
                 LOG.info("Creating a new milestone with code - initial abstraction verify for study protocol "
                         + studyProtocolId);
                 StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
@@ -209,13 +212,17 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                 newDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
                 studyMilestoneTasksService.createMilestone(newDTO);
             } catch (Exception e) {
-                // swallowing the exception in order to continue processing the rest of the records
+                // swallowing the exception in order to continue processing the
+                // rest of the records
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Exception auto-creating the milestone: ", e);
+                    LOG.debug(trialNciId
+                            + ": Exception auto-creating the milestone: ", e);
                 } else {
-                    LOG.error("Exception auto-creating the milestone: " + e.getMessage());
+                    LOG.error(trialNciId
+                            + ": Exception auto-creating the milestone: "
+                            + e.getMessage());
                 }
-                errors.add(milestone, e.getMessage());
+                errors.add(milestone, trialNciId + ": " + e.getMessage());
             }
             // We test for interruption to provide a smoother server shutdown if it happens during this background task
             // The next execution will pick the ones that are not processed anyway
