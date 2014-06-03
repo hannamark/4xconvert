@@ -107,6 +107,38 @@ public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
     public void testRegisterTrial() throws Exception {
         loginAndAcceptDisclaimer();
         openAndWait("/registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial");
+        populateBaseData();
+        selenium.click("id=reviewTrialBtn");
+        waitForPageToLoad();
+        selenium.click("id=submitTrialBtn");
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+
+    }
+
+    @Test
+    public void testPO7459_CorrectErrorMessageSpacing() throws Exception {
+        loginAndAcceptDisclaimer();
+        openAndWait("/registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial");
+        populateBaseData();
+
+        selenium.select("id=trialDTO.siteStatusCode",
+                "Administratively Complete");
+        selenium.type("id=trialDTO.siteStatusDate", "03/03/2014");
+
+        selenium.click("id=reviewTrialBtn");
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("Date Opened for Accrual must be a valid date for Administratively Complete. "
+                        + "Date Closed for Accrual must be a valid date for Administratively Complete."));
+
+    }
+
+    /**
+     * 
+     */
+    private void populateBaseData() {
         selenium.click("id=trialDTO.leadOrganizationNameField");
         selenium.click("//table[@id='dropdown-leadOrganization']/tbody/tr[2]/td[3]/a");
         selenium.type("id=trialDTO.leadOrgTrialIdentifier", LEAD_ORG_TRIAL_ID);
@@ -136,12 +168,6 @@ public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
         selenium.click("//table[@id='dropdown-sum4Organization']/tbody/tr[2]/td[3]/a");
         selenium.select("id=trialDTO.siteStatusCode", "In Review");
         selenium.type("id=trialDTO.siteStatusDate", "06/02/2014");
-        selenium.click("id=reviewTrialBtn");
-        waitForPageToLoad();
-        selenium.click("id=submitTrialBtn");
-        waitForPageToLoad();
-        selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier");
-
     }
 
     private void checkInterventionalNonInterventionalFields_PO7457() {

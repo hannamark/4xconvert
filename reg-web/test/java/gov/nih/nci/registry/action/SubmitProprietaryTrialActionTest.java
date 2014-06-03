@@ -176,7 +176,7 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         action.setTrialDTO(getMockProprietaryTrialDTO());
         action.getTrialDTO().setSiteStatusCode("Active");
         assertEquals("error", action.review());
-        assertTrue(action.getActionErrors().contains("Date Opened for Accrual must be a valid date for Active"));
+        assertTrue(action.getActionErrors().contains("Date Opened for Accrual must be a valid date for Active. "));
         action.setTrialDTO(getMockProprietaryTrialDTO());
         action.getTrialDTO().setSiteStatusCode("Active");
         action.getTrialDTO().setDateOpenedforAccrual("12/09/2009");
@@ -191,7 +191,7 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
         action.getTrialDTO().setDateOpenedforAccrual("11/09/2009");
         action.getTrialDTO().setDateClosedforAccrual("10/09/2009");
         assertEquals("error", action.review());
-        assertTrue(action.getActionErrors().contains("Date Closed for Accrual must be same or bigger  than Date Opened for Accrual."));
+        assertTrue(action.getActionErrors().contains("Date Closed for Accrual must be same or bigger  than Date Opened for Accrual. "));
     }
     
     @Test
