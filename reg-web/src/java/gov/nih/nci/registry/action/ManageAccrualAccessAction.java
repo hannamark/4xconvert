@@ -40,6 +40,7 @@ import java.util.TreeMap;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
@@ -394,6 +395,11 @@ public class ManageAccrualAccessAction extends ActionSupport implements
             throws PAException {
         List<Long> trialIDs = studySiteAccrualAccessService
                 .getActiveTrialLevelAccrualAccess(model.getUser());
+        Collections.sort(list, new Comparator<StudyProtocolQueryDTO>() {
+            public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
+                return ObjectUtils.compare(o2.getNciIdentifier(), o1.getNciIdentifier());
+            }
+        });
         for (StudyProtocolQueryDTO trial : list) {
             if (trialIDs.contains(trial.getStudyProtocolId())) {
                 addToAssigned(model.getAssignedTrials(), trial);
