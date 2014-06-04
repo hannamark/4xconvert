@@ -24,40 +24,25 @@ function resetSearch() {
     document.getElementById("lastName").value="";
     document.getElementById("emailAddress").value="";
     document.getElementById("nciIdentifier").value="";
-    submitForm();
 }
 
-function setEmailNotificationsPreference(userId, trialId, enableEmails) {
-    $('ajaxIndicator').show();
-    $('prefSaveConfirmation').hide(); 
-    $('prefSaveError').hide(); 
-
-    var ajaxReq = new Ajax.Request('displayTrialOwnershipsaveEmailPreference.action', {
-        method: 'post',
-        parameters: 'userId='+userId+'&enableEmails='+enableEmails+'&trialId='+trialId,
-        onSuccess: function(transport) {
-            $('ajaxIndicator').hide();
-            $('prefSaveConfirmation').show();
-        },
-        onFailure: function(transport) {
-            $('ajaxIndicator').hide();   
-            $('prefSaveError').show();
-        },
-        onException: function(requesterObj, exceptionObj) {
-            ajaxReq.options.onFailure(null);
-        },
-        on0: function(transport) {
-            ajaxReq.options.onFailure(transport);
-        }
-    });
-    
-    $(document.formDisplayTrialOwnership).getElements().each(function(el) {
-    	if (el.name=='enableEmailNotifications_'+userId+'_'+trialId) {
-    		el.setValue(enableEmails);
-    	}    	
-    });
-   
-}  
+function setEmailPref(trialId, uid, selected) {
+    if(selected){
+        $("yes_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny active"
+        $("no_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny"
+    }else{
+        $("yes_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny "
+        $("no_"+trialId+"_"+uid).className  = "btn btn-default btn-tiny active"
+    }
+    var  url = '${pageContext.request.contextPath}/siteadmin/manageTrialOwnershipupdateEmailPref.action';
+    var params = {
+        selected: selected,
+        trialId: trialId,
+        regUserId: uid
+    };
+    var aj = callAjaxPost(null, url, params);
+    return false
+}
 
 jQuery(function() {
     jQuery('#row').dataTable( {
@@ -86,6 +71,12 @@ jQuery(function() {
 
 </SCRIPT>
 <body>
+<!-- for hiding the page contents while loading-->
+<div style="display: block" id="hideAll"><img src="${pageContext.request.contextPath}/images/loading.gif"/></div>
+<script type="text/javascript">
+ document.getElementById("hideAll").style.display = "block";
+</script>
+ 
 <!-- main content begins-->
  <div class="container">
     
@@ -149,23 +140,33 @@ jQuery(function() {
             <display:column titleKey="displaytrialownership.results.nciidentifier" property="nciIdentifier"  sortable="false" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.leadOrgId" property="leadOrgId"  sortable="false" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="displaytrialownership.results.emails" headerScope="col">
-                <label for="enableEmailNotifications_${row.userId}_${row.trialId}" class="hidden-label"><fmt:message key="displaytrialownership.results.emails"/></label>
-                <s:select id="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" name="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" 
+               <!-- <label for="enableEmailNotifications_${row.userId}_${row.trialId}" class="hidden-label"><fmt:message key="displaytrialownership.results.emails"/></label>
+                 <s:select id="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" name="enableEmailNotifications_%{#attr.row.userId}_%{#attr.row.trialId}" 
                     onchange="setEmailNotificationsPreference(%{#attr.row.userId}, %{#attr.row.trialId}, $F(this));"
-                    list="#{'true':'Yes','false':'No'}"  value="%{#attr.row.emailsEnabled}"/>
+                    list="#{'true':'Yes','false':'No'}"  value="%{#attr.row.emailsEnabled}"/> -->
+                    
+                <div class="btn-group" data-toggle="buttons">
+                   <label id="yes_${row.trialId}_${row.userId}" name="emailYes" onclick="setEmailPref('${row.trialId}','${row.userId}', true)" class="btn btn-default btn-tiny <s:if test='%{#attr.row.emailsEnabled}'>active</s:if> ">
+                     <input type="radio" name="options">
+                     Yes </label>
+                   <label id="no_${row.trialId}_${row.userId}" name="emailNo" onclick="setEmailPref('${row.trialId}','${row.userId}', false)" class="btn btn-default btn-tiny <s:if test='%{!#attr.row.emailsEnabled}'>active</s:if>" >
+                     <input type="radio" name="options">
+                     No </label>
+                 </div>    
             </display:column>
             <display:column titleKey="displaytrialownership.results.action">
                 <c:url var="removeUrl" value="displayTrialOwnershipremoveOwnership.action">
                     <c:param name="userId" value="${row.userId}" />
                     <c:param name="trialId" value="${row.trialId}" />
                 </c:url>
-                <a href="<c:out value="${removeUrl}"/>" class="btn" >
-                    <span class="btn_img"><span class="delete"><fmt:message key="displaytrialownership.buttons.remove"/></span></span>
-                </a>
+                <a href="<c:out value="${removeUrl}"/>"><button type="button" class="btn btn-icon btn-primary" onclick="resetSearch();"><i class="fa-minus"></i><fmt:message key="displaytrialownership.buttons.remove"/></button></a>
             </display:column>
         </display:table>
         </div>        
     </s:form>
 </div>
+<script type="text/javascript">
+document.getElementById("hideAll").style.display = "none";
+</script> 
 </body>
 </html>
