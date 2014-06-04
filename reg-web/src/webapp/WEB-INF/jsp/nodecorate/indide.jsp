@@ -209,8 +209,7 @@
 <s:set name="phaseCodeValuesNCI" value="@gov.nih.nci.pa.enums.NciDivisionProgramCode@getDisplayNames()" />
 <s:set name="expandedAccessStatusCodeValues" value="@gov.nih.nci.pa.enums.ExpandedAccessStatusCode@getDisplayNames()" />
 
-<div class="table-wrapper">
-   <div class="table-responsive">
+<div class="table-header-wrap">
      <table class="table table-bordered">
        <thead>
         <tr>
@@ -273,5 +272,4 @@
         </tr>
       </tbody>
     </table>
-  </div>
 </div>

@@ -6,7 +6,7 @@
         <div id="section5" class="accordion-body in">
             <div class="container"> 
                 <div class="form-group">
-                    <label for="trialDTO.sponsorName" class="col-xs-4 control-label">Sponsor <span class="required">*</span></label>
+                    <label for="trialDTO.sponsorName" class="col-xs-4 control-label">Sponsor: <span class="required">*</span></label>
                     <div id="loadSponsorField">
                         <%@ include file="/WEB-INF/jsp/nodecorate/trialSponsor.jsp"%>
                     </div>                

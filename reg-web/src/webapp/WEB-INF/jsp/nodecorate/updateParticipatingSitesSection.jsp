@@ -4,7 +4,7 @@
 <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section11">Participating Sites<span class="required">*</span></a></div>
 <div id="section11" class="accordion-body in">
 <div class="container">
-<div class="form-group">
+<div class="table-header-wrap">
 	<table class="table table-striped table-bordered">
         <tr> 
             <td class="space">

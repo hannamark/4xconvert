@@ -467,6 +467,7 @@
                                   <s:radio cssClass="radio-inline" name="trialDTO.nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" />
                               </div>
                           </div> 
+                          <div class="table-header-wrap">
                           <table class="table table-bordered">
                               <thead>
                                   <tr>
@@ -517,7 +518,9 @@
                                   </tr>
                               </tbody>
                           </table>
-                          <div class="form-group" id="grantdiv">
+                          </div>
+                          <p/>
+                          <div class="table-header-wrap" id="grantdiv">
                               <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
                           </div>
                           <span class="alert-danger">
@@ -538,7 +541,8 @@
 		            		<div class="container">
 		              			<p><fmt:message key="submit.trial.indInstructionalText"/></p>
 		              			<%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
-				              <div id="indidediv">
+		              			<p/>
+				              <div id="indidediv" class="table-header-wrap">
 				                  <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
 				              </div>
 		          			  <div class="mt10 align-center scrollable"><i class="fa-angle-left"></i> Scroll left/right to view full table <i class="fa-angle-right"></i></div>
@@ -564,8 +568,9 @@
                     <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section15">Existing Trial Related Documents</a></div>
                         <div id="section15" class="accordion-body in">
                             <div class="container">
-		                <p></p>
-		                <jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
+				                <div class="table-header-wrap">
+				                	<jsp:include page="/WEB-INF/jsp/searchTrialViewDocs.jsp"/>
+				                </div>
 		                </div>
 	                </div>
 	              </div>

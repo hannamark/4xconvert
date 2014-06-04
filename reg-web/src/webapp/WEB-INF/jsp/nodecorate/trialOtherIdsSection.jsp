@@ -27,7 +27,7 @@
 	      		</div>
       		</div>
       		<br/><br/>
-      		<div id="otherIdentifierdiv" class="col-xs-8">
+      		<div id="otherIdentifierdiv" class="table-header-wrap">
       			<%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiersForUpdate.jsp" %>
       		</div>
       	</div>

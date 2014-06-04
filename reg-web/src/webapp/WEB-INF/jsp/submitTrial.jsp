@@ -135,10 +135,8 @@
                                       <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.other_identifier"/>"  data-placement="top" data-trigger="hover"></i> 
                                   </div>
                               </div>
-                              <div class="form-group">
-                                  <div class="col-xs-8 align-center" id="otherIdentifierdiv">
+                              <div class="table-header-wrap" id="otherIdentifierdiv">
                                       <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIdentifiers.jsp" %>
-                                  </div>
                               </div>
                           </div>
                       </div>
@@ -241,6 +239,7 @@
                                   <s:radio cssClass="radio-inline" name="trialDTO.nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" />
                               </div>
                           </div> 
+                          <div class="table-header-wrap">
                           <table class="table table-bordered">
                               <thead>
                                   <tr>
@@ -291,7 +290,9 @@
                                   </tr>
                               </tbody>
                           </table>
-                          <div class="form-group" id="grantdiv">
+                          </div>
+                          <p/>
+                          <div class="table-header-wrap" id="grantdiv">
                               <%@ include file="/WEB-INF/jsp/nodecorate/displayTrialViewGrant.jsp" %>
                           </div>
                           <span class="alert-danger">
@@ -309,7 +310,8 @@
             		<div class="container">
               			<p><fmt:message key="submit.trial.indInstructionalText"/></p>
               			<%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
-		              <div id="indidediv">
+              			<p/>
+		              <div id="indidediv" class="table-header-wrap">
 		                  <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
 		              </div>
           			  <div class="mt10 align-center scrollable"><i class="fa-angle-left"></i> Scroll left/right to view full table <i class="fa-angle-right"></i></div>

@@ -8,8 +8,6 @@
     <head>
         <title><fmt:message key="update.trial.page.title"/></title>
         <s:head/>
-
-
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
         <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
