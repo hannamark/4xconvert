@@ -85,6 +85,8 @@ package gov.nih.nci.pa.util;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Class for querying/displaying trial ownership information.
  * @author kkanchinadam
@@ -226,6 +228,15 @@ public class DisplayTrialOwnershipInformation implements Serializable {
      */
     public void setEmailsEnabled(boolean emailsEnabled) {
         this.emailsEnabled = emailsEnabled;
+    }
+    
+    /**
+     * @return LastFirstName
+     */   
+    public String getLastFirstName() {
+        return (StringUtils.defaultString(getLastName()) + ", " + StringUtils
+                .defaultString(getFirstName())).trim().replaceFirst(
+                "(^\\s*,\\s+)|(,\\s+$)", "");
     }
 
 }

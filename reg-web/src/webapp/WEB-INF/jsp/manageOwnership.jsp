@@ -164,7 +164,7 @@
 	                    <input type="checkbox" name="regUserIds" value="${regUserRow.registryUser.id}" id="${regUserRow.registryUser.id}"/>
                     </display:column>
                     <display:column escapeXml="true" titleKey="managetrialownership.users.name" headerScope="col">
-                        <c:out value="${regUserRow.registryUser.lastName}"/>,<c:out value="${regUserRow.registryUser.firstName}"/>
+                        <c:out value="${regUserRow.registryUser.lastFirstName}"/>
                     </display:column>
                     <display:column escapeXml="true" titleKey="managetrialownership.users.email" property="registryUser.emailAddress" headerScope="col"/>
                 </display:table>
@@ -221,7 +221,7 @@
                                 <input type="checkbox" name="trialOwners" value="${trialOwnersId}" id="${trialOwnersId}"/>
                            </display:column>
                            <display:column escapeXml="true" titleKey="managetrialownership.users.name" maxLength="200" headerScope="col">
-                                <c:out value="${trialOwenership.lastName}"/>,<c:out value="${trialOwenership.firstName}"/>
+                                <c:out value="${trialOwenership.lastFirstName}"/>
                            </display:column>
                            <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" headerScope="col"/>
                            

@@ -435,6 +435,16 @@ public class RegistryUser extends AbstractEntity implements Auditable {
         return (StringUtils.defaultString(getFirstName()) + " " + StringUtils
                 .defaultString(getLastName())).trim();
     }
+    
+    /**
+     * @return LastFirstName
+     */
+    @Transient
+    public String getLastFirstName() {
+        return (StringUtils.defaultString(getLastName()) + ", " + StringUtils
+                .defaultString(getFirstName())).trim().replaceFirst(
+                "(^\\s*,\\s+)|(,\\s+$)", "");
+    }
 
     /**
      * @return the enableEmails
