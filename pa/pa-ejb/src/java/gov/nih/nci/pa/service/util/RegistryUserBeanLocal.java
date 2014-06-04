@@ -414,16 +414,18 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 + "join sps.healthCareFacility as hcf left join hcf.organization as org "
                 + "join sps.studySiteOwners as sowner "
                 + "left outer join sp.otherIdentifiers otherid where '")
-                .append(participatingSiteId.toString()).append("' ")
-                .append("in (select healthCareFacility.organization.identifier from StudySite where functionalCode ='")
+                .append(participatingSiteId.toString())
+                .append("' in (select healthCareFacility.organization.identifier from StudySite"
+                        + " where functionalCode ='")
                 .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
-                .append("and studyProtocol.id = sp.id) ")
-                .append("and dws.statusCode  <> '").append(DocumentWorkflowStatusCode.REJECTED).append("' ")
+                .append("and studyProtocol.id = sp.id) and dws.statusCode  <> '")
+                .append(DocumentWorkflowStatusCode.REJECTED).append("' ")
                 .append("and (dws.id in (select max(id) from DocumentWorkflowStatus "
-                        + "as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) ")
-                .append("and sps.functionalCode = '").append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
-                .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT).append("' ")
-                .append("and sps.statusCode <> 'NULLIFIED' and sowner.affiliatedOrganizationId = ")
+                        + "as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) "
+                        + "and sps.functionalCode = '")
+                .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
+                .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT)
+                .append("' and sps.statusCode <> 'NULLIFIED' and sowner.affiliatedOrganizationId = ")
                 .append(participatingSiteId);
                 
         Session session = PaHibernateUtil.getCurrentSession();
@@ -822,11 +824,35 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
     }
 
+    @Override
+    public List<StudyProtocol> getTrialsByParticipatingSite(Long participatingSiteId) throws PAException {
+        StringBuffer hql = new StringBuffer();
+        hql.append("select sp from StudyProtocol as sp "
+                + "join sp.studySites as sps "
+                + "left outer join sp.documentWorkflowStatuses as dws "
+                + "left outer join sp.otherIdentifiers otherid "
+                + "where sps.statusCode <> 'NULLIFIED' and "
+                + "sps.healthCareFacility.organization.identifier = '")
+                .append(participatingSiteId.toString())
+                .append("' and sps.functionalCode='")
+                .append(StudySiteFunctionalCode.TREATING_SITE).append("'")
+                .append(" and sp.proprietaryTrialIndicator= true")
+                .append(" and dws.statusCode  <> '").append(DocumentWorkflowStatusCode.REJECTED).append("' ")
+                .append("and (dws.id in (select max(id) from DocumentWorkflowStatus "
+                        + "as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) ")
+                .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT).append("' ");
+        
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(hql.toString());
+        return  query.list();
+    }
+    
     /**
      * @param mailManagerService the mailManagerService to set
      */
     public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
         this.mailManagerService = mailManagerService;
     }
+    
 
 }

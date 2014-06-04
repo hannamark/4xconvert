@@ -5,6 +5,7 @@ package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -218,76 +219,82 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
     public void activateAccount(String email, String username) throws PAException {
     }
 
-    
+
     public void assignSiteOwnership(Long userId, Long studySiteId)
-            throws PAException {        
+            throws PAException {
     }
 
-    
+
     public void removeSiteOwnership(Long userId, Long studySiteId)
             throws PAException {
-        
+
     }
-    
-    public Long getUserId(String loginName) throws PAException {       
+
+    public Long getUserId(String loginName) throws PAException {
         return 0L;
     }
 
-    
-    public RegistryUser getPartialUserById(Long userId) throws PAException {       
+
+    public RegistryUser getPartialUserById(Long userId) throws PAException {
         return getUserById(userId);
     }
 
-    
+
     public boolean isEmailNotificationsEnabled(Long userId, Long trialId)
-            throws PAException {    
+            throws PAException {
         return false;
     }
 
-    
+
     public void setEmailNotificationsPreference(Long userId, Long trialId,
             boolean enableEmails) throws PAException {
         // TODO Auto-generated method stub
-        
+
     }
 
-   
+
     public boolean isEmailNotificationsEnabledOnTrialLevel(Long userId,
             Long trialId) throws PAException {
-   
+
         return false;
     }
 
-    
+
     public List<RegistryUser> findByAffiliatedOrg(Long orgId)
             throws PAException {
         return new ArrayList<RegistryUser>();
     }
 
-   
+
     public List<RegistryUser> findByAffiliatedOrgs(Collection<Long> orgIds)
             throws PAException {
         return new ArrayList<RegistryUser>();
     }
 
-   
+
     public List<RegistryUser> searchByCsmUsers(Collection<User> uSet)
             throws PAException {
         return new ArrayList<RegistryUser>();
     }
 
-   
+
     public void changeUserOrgType(Long userID, UserOrgType userOrgType, String rejectReason)
             throws PAException {
-   
-        
+
+
     }
 
-    
+
     public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
             Long participatingSiteId) throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+	public List<StudyProtocol> getTrialsByParticipatingSite(
+	            Long participatingSiteId) throws PAException {
+	        return  null;
     }
 
 }

@@ -4,6 +4,7 @@
 package gov.nih.nci.service;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -283,5 +284,13 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
             Long participatingSiteId) throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+   
+    
+    @Override
+    public List<StudyProtocol> getTrialsByParticipatingSite(
+            Long participatingSiteId) throws PAException {
+        return new ArrayList<StudyProtocol>();
     }
 }

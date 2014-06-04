@@ -3,8 +3,13 @@
  */
 package gov.nih.nci.registry.service;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
@@ -330,5 +335,35 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
             Long participatingSiteId) throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /**
+     * @param spDto
+     * @return
+     */
+    private StudyProtocol createStudyProtocol() {
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(1L);
+        Set<Ii> others = new HashSet<Ii>();
+        Ii nciid = IiConverter.convertToAssignedIdentifierIi("NCI-2000-11212");
+        others.add(nciid);
+        sp.setOtherIdentifiers(others);
+        sp.setOfficialTitle("Official title");
+        sp.setProprietaryTrialIndicator(true);
+        sp.setCtgovXmlRequiredIndicator(false);
+        sp.setUserLastCreated(null);
+        StudySite ss = new StudySite();
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setLocalStudyProtocolIdentifier("LEAD-ID");
+        sp.getStudySites().add(ss);
+        return sp;
+    }
+    
+    @Override
+    public List<StudyProtocol> getTrialsByParticipatingSite(
+            Long participatingSiteId) throws PAException {
+        List<StudyProtocol> protocols = new ArrayList<StudyProtocol>();
+        protocols.add(createStudyProtocol());
+        return  protocols;
     }
 }

@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
@@ -350,5 +351,13 @@ public interface RegistryUserService {
      * @throws PAException PAException
      */
     void changeUserOrgType(Long userID, UserOrgType userOrgType, String rejectReason) throws PAException;
+    
+    /**
+     * Get list of trials with active assignment to the specified site
+     * @param participatingSiteId  participating site id
+     * @return List<StudyProtocol> 
+     * @throws PAException PAException
+     */
+    List<StudyProtocol> getTrialsByParticipatingSite(Long participatingSiteId) throws PAException;
 
 }

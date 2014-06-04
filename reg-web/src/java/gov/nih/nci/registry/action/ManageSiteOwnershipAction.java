@@ -87,7 +87,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -115,34 +114,25 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
     private static final long serialVersionUID = -4528129349215413128L;
 
     /**
-     * @param affiliatedOrgId
-     *            affiliatedOrgId
+     * @param participatingSiteId
+     *            participatingSiteId
      * @return List<StudyProtocol>
      * @throws PAException
      *             PAException
      */
     @Override
-    public List<StudyProtocol> getStudyProtocols(Long affiliatedOrgId)
+    public List<StudyProtocol> getStudyProtocols(Long participatingSiteId)
             throws PAException {
         
         Organization org = new Organization();
-        org.setIdentifier(affiliatedOrgId.toString());
+        org.setIdentifier(participatingSiteId.toString());
         org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(org);
         
         if (org == null) {
             throw new PAException(
                     "We are unable to determine your affiliation with an organization.");
         }        
-        
-        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
-        queryCriteria.getParticipatingSiteIds().add(org.getId());
-        queryCriteria
-                .setOrganizationType(gov.nih.nci.registry.util.Constants.PARTICIPATING_SITE);
-        queryCriteria.setExcludeRejectProtocol(Boolean.TRUE);
-        queryCriteria.setTrialCategory("p");
-        List<StudyProtocol> trials = PaRegistry.getProtocolQueryService()
-                .getStudyProtocolQueryResultList(queryCriteria);
-        return trials;
+        return PaRegistry.getRegistryUserService().getTrialsByParticipatingSite(participatingSiteId);
     }
 
   

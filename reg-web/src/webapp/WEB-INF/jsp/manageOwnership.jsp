@@ -224,8 +224,9 @@
                                 <c:out value="${trialOwenership.lastName}"/>,<c:out value="${trialOwenership.firstName}"/>
                            </display:column>
                            <display:column titleKey="managetrialownership.trials.nciidentifier" property="nciIdentifier" headerScope="col"/>
-                           <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" headerScope="col"/>
+                           
                            <s:if test="%{#attr.topicValue == 'manageownership'}">
+                           <display:column titleKey="managetrialownership.trials.leadOrgId" property="leadOrgId" headerScope="col"/>
                            <display:column headerClass="no-sort" title='<div><span class="wrap">Email <br/>
                                   Notification?
                                   <div class="btn-group">
@@ -246,6 +247,9 @@
                                </div>
                            </display:column>  
                            </s:if>
+                           <s:else>
+                           <display:column titleKey="managetrialownership.trials.siteId" property="leadOrgId" headerScope="col"/>
+                           </s:else>
                        </display:table>
                      </div>
                    </td>
