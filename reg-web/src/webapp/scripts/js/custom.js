@@ -120,11 +120,11 @@ jQuery(function() {
     });
   });
 
-jQuery(function() {
-    jQuery('.datetimepicker').on('changeDate', function(ev){
-    	jQuery(this).datetimepicker('hide');
-    });
-  });
+//jQuery(function() {
+//    jQuery('.datetimepicker').on('changeDate', function(ev){
+//    	jQuery(this).datetimepicker('hide');
+//    });
+//  });
 
 
 
