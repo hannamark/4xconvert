@@ -144,7 +144,7 @@ public class TrialUtil extends TrialConvertUtils {
      * @param spDTO study protocol DTO
      * @param trialDTO trial DTO
      */
-    private void copyStudyAlternateTitles(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
+    private void copyStudyAlternateTitles(StudyProtocolDTO spDTO, BaseTrialDTO trialDTO) {
         Set<StudyAlternateTitleDTO> studyAlternateTitles = spDTO.getStudyAlternateTitles();
         if (CollectionUtils.isNotEmpty(studyAlternateTitles)) {
             Set<StudyAlternateTitleDTO> studyAlternateTitleDTOs = new TreeSet<StudyAlternateTitleDTO>(
@@ -889,6 +889,7 @@ public class TrialUtil extends TrialConvertUtils {
         if (spDTO.getSecondaryPurposes() != null) {
             trialDTO.setSecondaryPurposes(DSetConverter.convertDSetStToList(spDTO.getSecondaryPurposes()));            
         }   
+        copyStudyAlternateTitles(spDTO, trialDTO);
         trialDTO.setSecondaryPurposeOtherText(spDTO.getSecondaryPurposeOtherText().getValue());
         trialDTO.setNciGrant(BlConverter.convertToBoolean(spDTO.getNciGrant()));
         copyNonInterventionalTrialFields(spDTO, trialDTO);

@@ -137,11 +137,16 @@
 			     <div id="section2" class="accordion-body in">
 			     <div class="container">
                   <reg-web:valueRowDiv labelFor="trialDTO.officialTitle" labelKey="submit.trial.title">
-                        <s:property value="trialDTO.officialTitle"/>
+                        <s:property value="trialDTO.officialTitle"/> 
+                            <c:if test="${not empty trialDTO.studyAlternateTitles}">
+                                <a href="javascript:void(0)" onclick="displayStudyAlternateTitles('${trialDTO.identifier}')">(*)</a>                                                   
+                           </c:if>
                     </reg-web:valueRowDiv>
                     <reg-web:valueRowDiv labelFor="trialType" labelKey="submit.trial.type">
                         <c:out value="${trialDTO.trialType!='NonInterventional'?'Interventional':'Non-interventional'}"></c:out>
                     </reg-web:valueRowDiv>
+                    
+                   
                     
                     <c:if test="${trialDTO.trialType=='NonInterventional'}">
 						<reg-web:valueRowDiv labelFor="trialDTO.studySubtypeCode" labelKey="submit.trial.studySubtypeCode">

@@ -7,12 +7,10 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
-import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotEmpty;
@@ -93,7 +91,7 @@ public class TrialDTO extends BaseTrialDTO {
     private List<Ii> secondaryIdentifierList;
     private List<Ii> secondaryIdentifierAddList;
     private String assignedIdentifier;
-    private Set<StudyAlternateTitleDTO> studyAlternateTitles; 
+     
 
     /**
      * Constructor.
@@ -873,18 +871,5 @@ public class TrialDTO extends BaseTrialDTO {
         this.responsiblePersonAffiliationOrgId = responsiblePersonAffiliationOrgId;
     }
     
-    /**
-     * @return study alternate titles
-     */
-    public Set<StudyAlternateTitleDTO> getStudyAlternateTitles() {
-        return studyAlternateTitles;
-    }
-
-    /**
-     * @param studyAlternateTitles study alternate titles to set
-     */
-    public void setStudyAlternateTitles(
-            Set<StudyAlternateTitleDTO> studyAlternateTitles) {
-        this.studyAlternateTitles = studyAlternateTitles;
-    }
+   
 }

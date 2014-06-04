@@ -4,11 +4,13 @@
 package gov.nih.nci.registry.dto;
 
 import gov.nih.nci.pa.enums.StudySourceCode;
+import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.NotEmpty;
@@ -53,6 +55,7 @@ public class BaseTrialDTO implements Serializable { // NOPMD
     private String consortiaTrialCategoryCode;
     private Boolean nciGrant;
     private String accrualDiseaseCodeSystem;
+    private Set<StudyAlternateTitleDTO> studyAlternateTitles;
 
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
 
@@ -493,6 +496,21 @@ public class BaseTrialDTO implements Serializable { // NOPMD
      */
     public void setAccrualDiseaseCodeSystem(String accrualDiseaseCodeSystem) {
         this.accrualDiseaseCodeSystem = accrualDiseaseCodeSystem;
+    }
+    
+    /**
+     * @return study alternate titles
+     */
+    public Set<StudyAlternateTitleDTO> getStudyAlternateTitles() {
+        return studyAlternateTitles;
+    }
+
+    /**
+     * @param studyAlternateTitles study alternate titles to set
+     */
+    public void setStudyAlternateTitles(
+            Set<StudyAlternateTitleDTO> studyAlternateTitles) {
+        this.studyAlternateTitles = studyAlternateTitles;
     }
 
 }
