@@ -231,13 +231,29 @@
             <s:hidden name="families"/>
             <s:hidden name="organization.name"/>
 			<div class="form-group">
-		        <label for="assignmentType" class="col-xs-3 control-label"><fmt:message
-	                           key="manage.accrual.access.selectAssignmentType" /></label>
-		        <div class="col-xs-9">
-			        <s:radio style="margin: 10px 10px 10px 50px" label="Assignment Type" id="assignmentType" name="assignmentType" onclick="onAssignmentTypeChange()" list="#{'specificTrial':'Specific trial(s)','allTrialsSite':'All trials (this site)', 'allTrialsOrg':'All trials (in organization family)'}" value="model.assignmentType" />
-		            <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
-                            key="manage.accrual.access.selectAssignmentType.help"><fmt:param><c:out value="${organization.name}"/></fmt:param><fmt:param><c:out value="${families}"/></fmt:param></fmt:message>' data-placement="top" data-trigger="hover"></i>
-	       	 	</div>
+			  <table>
+			    <tr>
+		        <td><s:label for="assignmentType" class="col-xs-3 control-label" value="Select Assignment Type"/></td>
+			    <td style="padding-left: 50px">
+			        <s:radio id="assignmentType" name="assignmentType" title="label1" list="#{'specificTrial':''}" onclick="onAssignmentTypeChange()"/>
+                    <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                            key="manage.accrual.access.selectAssignmentType.individual.help"></fmt:message>' data-placement="top" data-trigger="hover"></i>
+                    <s:label for="assignmentType" class="col-xs-3 control-label" value="Assign user access to individual trials"/>
+                </td>
+                <td style="padding-left: 50px">
+                    <s:radio id="assignmentType" name="assignmentType" title="label2" list="#{'allTrialsSite':''}" onclick="onAssignmentTypeChange()"/>
+                    <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                            key="manage.accrual.access.selectAssignmentType.site.help"><fmt:param><c:out value="${organization.name}"/></fmt:param></fmt:message>' data-placement="top" data-trigger="hover"></i>
+                    <s:label for="assignmentType" class="col-xs-3 control-label" value="Make user a Site Submitter"/>
+                </td>
+                <td style="padding-left: 50px">
+                    <s:radio id="assignmentType" name="assignmentType" title="label3" list="#{'allTrialsOrg':''}" onclick="onAssignmentTypeChange()"/>  
+                    <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                            key="manage.accrual.access.selectAssignmentType.family.help"><fmt:param><c:out value="${families}"/></fmt:param></fmt:message>' data-placement="top" data-trigger="hover"></i>
+                    <s:label for="assignmentType" class="col-xs-3 control-label" value="Make user an Org Family Submitter"/>
+	       	 	</td>
+	       	 	</tr>
+	       	  </table>
 	       	</div>
 			<div class="form-group">
           		<label for="userId" class="col-xs-3 control-label"> <fmt:message
