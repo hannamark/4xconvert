@@ -10,9 +10,9 @@
 <meta name="author" content="">
 <title><decorator:title default="NCI CTRP Accrual Site" /></title>
 <%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>
+<%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
 <decorator:head />
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery-1.10.2.min.js'/>"></script>
 </head>
 <body>
 	<div id="wrap">
@@ -24,6 +24,5 @@
 			<decorator:body />	
 	</div>
 	<jsp:include page="/WEB-INF/jsp/common/footer.jsp" />
-<%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 </body>
 </html>
