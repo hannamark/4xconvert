@@ -3,8 +3,11 @@
     <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
 
     <path id="bda-utils.classpath">
-        <fileset dir="${bda-utils}">
-            <include name="**/*.jar" />
+        <fileset dir="./lib">
+            <include name="*.jar" />
+        </fileset>
+        <fileset dir="../../build-pa/common">
+            <include name="*.jar" />
         </fileset>
     </path>
 
