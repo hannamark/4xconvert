@@ -1698,11 +1698,11 @@ table td {
 	margin:0;
 }
 .trial-ownership-container {
-	height: 450px;
+	max-height:450px;
 }
 
 .trialOwnershipAssignUnassign .trial-ownership-container {
-	height: 300px;
+	height: 450px;
 }
 .trialOwnershipAssignUnassign .trial-ownership {
 	-moz-border-radius:0 0 5px 5px;
@@ -1896,4 +1896,15 @@ table td {
 	margin-left: 2px;
 	margin-right: 10px;
 	padding-left: 2px;
+}
+#hideAll
+{
+  position: fixed;
+  left: 0px; 
+  right: 0px; 
+  top: 0px; 
+  bottom: 0px; 
+  background-color: white;
+  z-index: 9999; /* Higher than anything else in the document */
+
 }

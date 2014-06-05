@@ -12,26 +12,13 @@
 		<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
 		<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
 		<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
-        
-        <style type="text/css">     
-		 #hideAll
-		 {
-		   position: fixed;
-		   left: 0px; 
-		   right: 0px; 
-		   top: 0px; 
-		   bottom: 0px; 
-		   background-color: white;
-		   z-index: 9999; /* Higher than anything else in the document */
-		
-		 }
-		 </style>   
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js?534785924'/>"></script>
     
         <script type="text/javascript" language="javascript">
            var tableConf = {
                 "paging":false,    
                 "scrollY": 300,
+                "scrollCollapse": true,
                 "scrollX": true,
                 "bAutoWidth": false,
                 "aoColumnDefs" : [ {
