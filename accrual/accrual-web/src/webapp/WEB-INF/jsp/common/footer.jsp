@@ -44,7 +44,7 @@
 			<div class="footerLinks">
 				<a href="#">Home</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#"
 					data-toggle="modal" data-target="#contactUs">Contact Us</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
-					href="#">Site Map</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
+					href="viewTrials.action">Site Map</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
 					href="http://www.cancer.gov/global/web/policies" target="_blank">Policies</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
 					href="http://www.cancer.gov/global/web/policies/accessibility"
 					target="_blank">Accessibility</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a
