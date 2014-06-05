@@ -23,6 +23,10 @@
 	<div class="col-xs-6">
 	    <button onclick="deleteSummary4SponsorRow('${summaryFourOrgIdentifiers.rowId}');" title="Remove this Summary4 Sponsor" type="button" class="btn btn-icon btn-default"><i class="fa-minus"></i>Delete Sponsor</button>
 	</div> 
-
+	<div>
+    <br>
+    <br>
+    <br>
+    </div>
 </div>
 </c:forEach>
