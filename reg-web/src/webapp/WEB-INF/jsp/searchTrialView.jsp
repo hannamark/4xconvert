@@ -58,17 +58,17 @@
                </c:if>
             
                 <c:if test="${param.trialAction == 'submit'}">
-                    <div class="confirm_msg">
+                    <div class="alert alert-success">
                         <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.trialDTO.assignedIdentifier}</strong>
                     </div>
                 </c:if>
                 <c:if test="${param.trialAction == 'amend'}">
-                    <div class="confirm_msg">
+                    <div class="alert alert-success">
                         <strong>The amendment to trial with the NCI Identifier ${requestScope.trialDTO.assignedIdentifier} was successfully submitted.</strong>
                     </div>
                 </c:if>
                 <c:if test="${param.trialAction == 'update'}">
-                    <div class="confirm_msg">
+                    <div class="alert alert-success">
                         <strong>
                             The trial update with the NCI Identifier
                             <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
