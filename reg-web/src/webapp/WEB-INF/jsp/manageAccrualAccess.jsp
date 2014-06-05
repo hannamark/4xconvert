@@ -235,22 +235,22 @@
 			    <tr>
 		        <td><s:label for="assignmentType" class="col-xs-3 control-label" value="Select Assignment Type"/></td>
 			    <td style="padding-left: 50px">
-			        <s:radio id="assignmentType" name="assignmentType" title="label1" list="#{'specificTrial':''}" onclick="onAssignmentTypeChange()"/>
-                    <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+			        <s:radio id="assignmentType" name="assignmentType" cssClass="radio-inline" title="Assign user access to individual trials"
+			                 list="#{'specificTrial':'Assign user access to individual trials'}" onclick="onAssignmentTypeChange()"/>
+                    <i class="fa-question-circle help-text" style="margin-left: 4px" id="popover" rel="popover" data-content='<fmt:message
                             key="manage.accrual.access.selectAssignmentType.individual.help"></fmt:message>' data-placement="top" data-trigger="hover"></i>
-                    <s:label for="assignmentType" class="col-xs-3 control-label" value="Assign user access to individual trials"/>
                 </td>
                 <td style="padding-left: 50px">
-                    <s:radio id="assignmentType" name="assignmentType" title="label2" list="#{'allTrialsSite':''}" onclick="onAssignmentTypeChange()"/>
-                    <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                    <s:radio id="assignmentType" name="assignmentType" cssClass="radio-inline" title="Make user a Site Submitter"
+                             list="#{'allTrialsSite':'Make user a Site Submitter'}" onclick="onAssignmentTypeChange()"/>
+                    <i class="fa-question-circle help-text" style="margin-left: 4px" id="popover" rel="popover" data-content='<fmt:message
                             key="manage.accrual.access.selectAssignmentType.site.help"><fmt:param><c:out value="${organization.name}"/></fmt:param></fmt:message>' data-placement="top" data-trigger="hover"></i>
-                    <s:label for="assignmentType" class="col-xs-3 control-label" value="Make user a Site Submitter"/>
                 </td>
                 <td style="padding-left: 50px">
-                    <s:radio id="assignmentType" name="assignmentType" title="label3" list="#{'allTrialsOrg':''}" onclick="onAssignmentTypeChange()"/>  
-                    <i class="fa-question-circle help-text" id="popover" rel="popover" data-content='<fmt:message
+                    <s:radio id="assignmentType" name="assignmentType" cssClass="radio-inline" title="Make user an Org Family Submitter"
+                             list="#{'allTrialsOrg':'Make user an Org Family Submitter'}" onclick="onAssignmentTypeChange()"/>  
+                    <i class="fa-question-circle help-text" style="margin-left: 4px" id="popover" rel="popover" data-content='<fmt:message
                             key="manage.accrual.access.selectAssignmentType.family.help"><fmt:param><c:out value="${families}"/></fmt:param></fmt:message>' data-placement="top" data-trigger="hover"></i>
-                    <s:label for="assignmentType" class="col-xs-3 control-label" value="Make user an Org Family Submitter"/>
 	       	 	</td>
 	       	 	</tr>
 	       	  </table>
