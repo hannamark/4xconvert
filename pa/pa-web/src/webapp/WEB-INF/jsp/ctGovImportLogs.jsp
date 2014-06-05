@@ -252,7 +252,7 @@
 							<display:column title="Action" sortable="true" media="csv excel" property="action"/>
 							<display:column escapeXml="true" title="Auto/User"
 								property="userCreated" sortable="true" />
-							<display:column  title="Date/Time" format="{0,date,MM/dd/yyyy hh:mm aaa}"
+							<display:column  title="Last Import Date/Time" format="{0,date,MM/dd/yyyy hh:mm aaa}"
 								property="dateCreated" sortable="true" />
 							<display:column escapeXml="true" title="Import Status"
 								property="importStatus" sortable="true" />								
