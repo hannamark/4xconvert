@@ -20,8 +20,13 @@
             <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxaccess'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/manageSiteAdmins.action" id="manageSiteAdminsMenuOption" labelKey="pamenu.abstraction.manageSiteAdmins" selected="${requestScope.topic == 'siteadmins'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'biomarkers'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/importCtGovexecute.action" id="importCtGovMenuOption" labelKey="pamenu.importCtGov" selected="${requestScope.topic == 'importctgov'}"/>
-            <pa:menuLink href="${pageContext.request.contextPath}/protected/ctGovImportLogexecute.action" id="ctGovImportLogMenuOption" labelKey="pamenu.ctGovImportLogs" selected="${requestScope.topic == 'ctgovimportlogs'}"/>
+            <li><a href="javascript:void(0);" class="fakelink"><fmt:message key="pamenu.ctgov"/></a></li>
+            <li class="stdsub">
+                <ul>
+                    <pa:menuLink href="${pageContext.request.contextPath}/protected/importCtGovexecute.action" id="importCtGovMenuOption" labelKey="pamenu.importCtGov" selected="${requestScope.topic == 'ctimport'}"/>
+                    <pa:menuLink href="${pageContext.request.contextPath}/protected/ctGovImportLogexecute.action" id="ctGovImportLogMenuOption" labelKey="pamenu.ctGovImportLogs" selected="${requestScope.topic == 'ctimportlog'}"/>
+                </ul>            
+            </li>            
             <pa:menuLink href="${pageContext.request.contextPath}/protected/pendingAccrualsexecute.action" id="pendingAccrualsMenuOption" labelKey="pamenu.pendingAccruals" selected="${requestScope.topic == 'pendingaccruals'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/outOfScopeAccruals.action" id="outOfScopeAccrualsMenuOption" labelKey="pamenu.outOfScopeAccruals" selected="${requestScope.topic == 'outofscopeaccruals'}"/>            
             <pa:menuLink href="${pageContext.request.contextPath}/../registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial" id="submitProprietaryTrialMenuOption" labelKey="pamenu.submitProprietaryTrial" newWindow="${true}"/>
