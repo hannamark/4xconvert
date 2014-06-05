@@ -68,7 +68,7 @@ button.ColVis_Button {
                 <display:column class="title" title="Temp Trial Identifier" headerScope="col" scope="row" media="html">
                     <a href="javascript:void(0)" onclick="viewPartialProtocol('${row.studyProtocolId}');"><c:out value="${row.studyProtocolId}"/></a>
                 </display:column>
-                <display:column class="title" title="Temp Trial Identifier"headerScope="col" scope="row" media="excel csv xml">
+                <display:column class="title" title="Temp Trial Identifier" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.studyProtocolId}"/>
                  </display:column>
                 <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength= "200" headerScope="col"/>

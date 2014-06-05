@@ -236,6 +236,7 @@
 				<div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section4">Participating Sites<span class="required">*</span></a></div>
 				<div id="section4" class="accordion-body in">
 				<div class="container">
+					<div class="table-header-wrap">
                   <table class="table table-striped table-bordered sortable">
                         <thead>
                             <tr>
@@ -291,6 +292,7 @@
                             </s:iterator >
                         </tbody>
                     </table>
+                    </div>
                 </div>
                 </div>
                 </div>

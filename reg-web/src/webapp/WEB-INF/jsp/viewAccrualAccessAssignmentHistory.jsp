@@ -7,18 +7,58 @@
 <head>
 <title><fmt:message key="manage.accrual.access.page.title" /></title>
 <s:head />
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
+<script type="text/javascript" language="javascript">
+jQuery(function() {
+	jQuery('#row').dataTable( {
+		"sDom": 'pCrltip',
+		"pagingType": "full_numbers",
+		 "order": [[ 0, "desc" ]],
+        "oColVis": {
+            "buttonText": "Choose columns"
+        },
+        "oLanguage": {
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_",
+            "sLengthMenu": "Show _MENU_",
+            "oPaginate": {
+                "sFirst": "<<",
+                "sPrevious": "<",
+                "sNext": ">",
+                "sLast": ">>"
+              }
+        }
+	});
+});
+</script>
+<style type="text/css">
+/*To not wrap header*/
+thead th { 
+	white-space: nowrap; 
+}
+/*Increase column chooser items width*/
+ul.ColVis_collection {
+	width:200px;
+}
+/*Reduce Column chooser button height*/
+button.ColVis_Button {
+	height : 25px;
+}
+</style>
 </head>
 <body>
     <!-- main content begins-->
 	<c:set var="topic" scope="request" value="assignmentHistory" />
 	<div class="container">
 	    <h1 class="heading"><span><fmt:message key="manage.accrual.access.history.header" /></span></h1>
-	    <div class="form-group" id="filters">
+	    <div class="table-header-wrap" id="filters">
         <reg-web:failureMessage />
         <reg-web:sucessMessage />
         <s:form name="manageAccrualAccess" 
             action="manageAccrualAccesshistoryPaging.action">
-            <table class="form">
+            <table class="form" width="100%">
                 <c:if test="${empty model.history}">
                     <tr height="200">
                         <td align="center" class="info">
@@ -28,21 +68,15 @@
                 </c:if>
                 <tr>
                     <td>
-                        <display:table class="data table table-striped table-bordered sortable" sort="list" pagesize="20" 
+                        <display:table class="data table table-striped table-bordered" 
                             uid="row" name="model.history" export="false" requestURI="manageAccrualAccesshistoryPaging.action">
                             <display:setProperty name="basic.msg.empty_list" value="" />                 
-                            <display:column escapeXml="true" title="Date" property="date" 
-                                headerClass="sortable" sortable="true" />
-                            <display:column escapeXml="true" title="Assignee" property="assignee" 
-                                headerClass="sortable nowrap" sortable="true" />
-                            <display:column escapeXml="true" title="Trial ID" property="trialNciId" 
-                                headerClass="sortable nowrap" sortable="true" />
-                            <display:column escapeXml="true" title="Assignment Action" property="action" 
-                                sortable="true" />                          
-                            <display:column escapeXml="true" title="Comments" property="comments"
-                                sortable="true" />
-                            <display:column escapeXml="true" title="Assigner" property="assigner" 
-                                sortable="true" />
+                            <display:column escapeXml="true" title="Date" property="date"  />
+                            <display:column escapeXml="true" title="Assignee" property="assignee"  />
+                            <display:column escapeXml="true" title="Trial ID" property="trialNciId" />
+                            <display:column escapeXml="true" title="Assignment Action" property="action" />                          
+                            <display:column escapeXml="true" title="Comments" property="comments"/>
+                            <display:column escapeXml="true" title="Assigner" property="assigner" />
                        </display:table>
                    </td>
                 </tr>
