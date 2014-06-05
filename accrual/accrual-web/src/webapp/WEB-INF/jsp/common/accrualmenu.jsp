@@ -15,7 +15,6 @@
               <li><a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources" target="new1">Useful Templates and Documentation</a></li>
               <li><a href="http://www.cancer.gov/" target="new2">National Cancer Institute (NCI)</a></li>
               <li><a href="http://cbiit.nci.nih.gov/" target="new3">NCI Center for Biomedical Informatics and Information Technology (CBIIT)</a></li>
-              <li><a href="https://cabig.nci.nih.gov/" target="new4">caBIG&#0153; - Cancer Biomedical Informatics Grid&#0153; </a></li>
             </ul>
           </li>
           <li><a href="#" data-toggle="modal" data-target="#contactUs">Contact Us</a></li>
