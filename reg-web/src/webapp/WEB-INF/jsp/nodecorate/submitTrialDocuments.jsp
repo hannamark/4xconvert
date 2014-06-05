@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-    <p class="info"><fmt:message key="submit.trial.docInstructionalText"/></p>
-  	<p class="mb20"><a href="javascript:void(0)" onclick="Help.popHelp('pdfconversion');">Tips for creating CTRP compatible PDF documents</a></p>
+    <p><fmt:message key="submit.trial.docInstructionalText"/></p>
+  	
   	<div class="form-group">
         <label for="protocolDoc" class="col-xs-4 control-label"><fmt:message key="submit.trial.protocolDocument"/><span class="required">*</span></label>
       <div class="col-xs-4">
