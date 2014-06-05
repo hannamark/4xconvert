@@ -29,6 +29,7 @@
 <c:set scope="request" var="sciAbs" value="${sessionScope.isScientificAbstractor==true || suAbs}"></c:set>
 
 <script type="text/javascript" language="javascript">
+    
 	function handleAction(action) {
 		document.forms[0].action = "dashboard" + action + ".action";
 		document.forms[0].submit();
@@ -100,23 +101,89 @@
 	}
 
 	Event.observe(window, 'load', function() {
-
+		
 		addCalendar("Cal1", "Select Date", "submittedOnOrAfter",
 				"dashboardForm");
 		addCalendar("Cal2", "Select Date", "submittedOnOrBefore",
 				"dashboardForm");
 		setWidth(90, 1, 15, 1);
 		setFormat("mm/dd/yyyy");
-
 		var tabs = new Control.Tabs($('maintabs'));
 		<c:if test="${toggleResultsTab==true}">
 		tabs.setActiveTab('results');
+		updateHelpTopic('results');
 		</c:if>
 		<c:if test="${toggleDetailsTab==true}">
 		tabs.setActiveTab('details');
+		updateHelpTopic('details');
 		</c:if>
-
+	    Event.observe(document.getElementById('resultsid'), "click", function() {
+	             updateHelpTopic('results');
+	       });
+	    if(document.getElementById('#detailsid') !=null) {
+	    	 Event.observe(document.getElementById('detailsid'), "click", function() {
+	             updateHelpTopic('details');
+	         });
+	    }
+	     Event.observe(document.getElementById('searchid'), "click", function() {
+	             updateHelpTopic('search');
+	      }); 
 	});
+	
+	function updateHelpTopic(tabType) {
+		if(tabType =='results') {
+		       if("${sessionScope.isAdminAbstractor}" == "true") {
+		    	   document.getElementById('pageHelpid').onclick = function() {
+                       Help.popHelp('dashboardadmin');
+                   } 
+	            }
+	              if("${sessionScope.isScientificAbstractor}"  == "true") {
+	                    document.getElementById('pageHelpid').onclick = function() {
+	                        Help.popHelp('dashboardsci');
+	                    }
+	                }
+	              if("${sessionScope.isAdminAbstractor}"  == "true" && "${sessionScope.isScientificAbstractor}" == "true") {
+	                    document.getElementById('pageHelpid').onclick = function() {
+	                        Help.popHelp('dashboardadmin-sci');
+	                    }
+	                }
+	              if("${sessionScope.isSuAbstractor}" == "true") {
+	                    document.getElementById('pageHelpid').onclick = function() {
+	                        Help.popHelp('dashboardresults');
+	                    }
+	                }
+		} 
+		if(tabType =='search') {
+			if("${sessionScope.isSuAbstractor}" == "true") {
+                document.getElementById('pageHelpid').onclick = function() {
+                    Help.popHelp('dashboardsuper');
+                }
+            }
+		}
+		if (tabType =='details') {
+		     if("${sessionScope.isAdminAbstractor}" == "true") {
+		            document.getElementById('pageHelpid').onclick = function() {
+		                Help.popHelp('admindetails');
+		            }
+		        }
+		          if("${sessionScope.isScientificAbstractor}" == "true") {
+		                document.getElementById('pageHelpid').onclick = function() {
+		                    Help.popHelp('scidetails');
+		                }
+		            }
+		          if("${sessionScope.isAdminAbstractor}"  == "true"&& "${sessionScope.isScientificAbstractor}" == "true") {
+		                document.getElementById('pageHelpid').onclick = function() {
+		                    Help.popHelp('sciadmindetails');
+		                }
+		            }
+		          if("${sessionScope.isSuAbstractor}" == "true") {
+		                document.getElementById('pageHelpid').onclick = function() {
+		                    Help.popHelp('dashboarddetails');
+		                }
+		            }
+		}
+		return true;
+	}
 </script>
 </head>
 <body>
@@ -158,13 +225,13 @@
 					<td>
 						<ul id="maintabs" class="tabs">
 						    <c:if test="${suAbs}">
-							     <li><a href="#search">Search Criteria</a></li>
+							     <li><a id="searchid" href="#search">Search Criteria</a></li>
 							</c:if>
 							<c:if test="${dashboardSearchResults!=null}">
-								<li><a href="#results">${suAbs?'Results':'Trial List'}</a></li>
+								<li><a id="resultsid" href="#results" >${suAbs?'Results':'Trial List'}</a></li>
 							</c:if>
 							<c:if test="${queryDTO!=null}">
-								<li><a href="#details">Details</a></li>
+								<li><a id="detailsid" href="#details">Details</a></li>
 							</c:if>
 						</ul>
 						<div id="tabboxwrapper">

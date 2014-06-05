@@ -33,7 +33,7 @@
             <div id="main">
                 <div id="contentwrapper">
                     <div id="content">
-                       <a href="javascript:void(0)" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
+                       <a href="javascript:void(0)" id="pageHelpid" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
                         <decorator:body/>
                     </div>
                     <div class="clear"></div>

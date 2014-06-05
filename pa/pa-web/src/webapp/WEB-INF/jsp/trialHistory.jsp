@@ -55,11 +55,42 @@
             	acknowledgeUpdate(id, 'Scientific');
             }
 
+            Event.observe(window, 'load', function() {
+            	updateHelpTopic('submission');
+            	Event.observe(document.getElementById('submissionsId'), "click", function() {
+                    updateHelpTopic('submission');
+                });
+               Event.observe(document.getElementById('updatesId'), "click", function() {
+                updateHelpTopic('update');
+               });   
+               Event.observe(document.getElementById('auditId'), "click", function() {
+                    updateHelpTopic('audit');
+               }); 
+           });
+            
+            function updateHelpTopic(tabType) {
+                if(tabType =='submission') {
+                   document.getElementById('pageHelpid').onclick = function() {
+                        Help.popHelp('historysubmissions');
+                   } 
+                } 
+                if(tabType =='update') {
+                   document.getElementById('pageHelpid').onclick = function() {
+                        Help.popHelp('historyupdates');
+                   }
+                }
+                if (tabType =='audit') {
+                   document.getElementById('pageHelpid').onclick = function() {
+                       Help.popHelp('historyaudit');
+                   }
+                }
+                return true;
+            }
         </script>
     </head>
     <body>
+        <c:set var="topic" scope="request" value="trialhistory" />
         <h1><fmt:message key="trialHistory.title"/></h1>
-        <c:set var="topic" scope="request" value="trialhistory"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <div class="box">
             <pa:sucessMessage />
@@ -72,9 +103,9 @@
                     <tr>
                         <td colspan="3">
                             <ul id="maintabs" class="tabs">
-                                <li><a href="#submissions">Submissions</a></li>
-                                <li><a href="#updates">Updates</a></li>
-                                <li><a href="#auditTrail">Audit Trail</a></li>
+                                <li><a id="submissionsId" href="#submissions">Submissions</a></li>
+                                <li><a id="updatesId" href="#updates">Updates</a></li>
+                                <li><a id="auditId" href="#auditTrail">Audit Trail</a></li>
                             </ul>
                             <!--/Tabs -->
                             <!--
