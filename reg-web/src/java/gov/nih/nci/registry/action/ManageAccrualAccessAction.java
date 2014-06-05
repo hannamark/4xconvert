@@ -585,10 +585,10 @@ public class ManageAccrualAccessAction extends ActionSupport implements
         private RegistryUser user = new RegistryUser();
 
         private Map<String, List<StudyProtocolQueryDTO>> assignedTrials = 
-                new LinkedHashMap<String, List<StudyProtocolQueryDTO>>();
+                new TreeMap<String, List<StudyProtocolQueryDTO>>();
 
         private Map<String, List<StudyProtocolHolder>> unassignedTrials = 
-                new LinkedHashMap<String, List<StudyProtocolHolder>>();
+                new TreeMap<String, List<StudyProtocolHolder>>();
         
         private List<AccrualAccessAssignmentHistoryDTO> history = new ArrayList<AccrualAccessAssignmentHistoryDTO>();
         
