@@ -3,9 +3,9 @@
         <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="${displayTableUID}"
             name="records" requestURI="${requestURI}" export="${empty isBare}">                           
             <display:setProperty name="export.xml" value="false"/>
-            <display:setProperty name="export.excel.filename" value="resultsSavedDraftSearch.xls"/>
+            <display:setProperty name="export.excel.filename" value="SearchTrialResults.xls"/>
             <display:setProperty name="export.excel.include_header" value="true"/>
-            <display:setProperty name="export.csv.filename" value="resultsSavedDraftSearch.csv"/>
+            <display:setProperty name="export.csv.filename" value="SearchTrialResults.csv"/>
             <display:setProperty name="export.csv.include_header" value="true"/>
                 
             <c:set scope="page" var="row" value="${pageScope[displayTableUID]}"/>
