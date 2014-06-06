@@ -8,6 +8,49 @@
     <s:head/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
+<script type="text/javascript" language="javascript">
+jQuery(function() {
+	jQuery('#row').dataTable( {
+		"sDom": 'prfltip',
+		"pagingType": "full_numbers",
+		 "order": [[ 0, "asc" ]],
+        "oColVis": {
+            "buttonText": "Choose columns"
+        },
+        "oLanguage": {
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_",
+            "sLengthMenu": "Show _MENU_",
+            "oPaginate": {
+                "sFirst": "<<",
+                "sPrevious": "<",
+                "sNext": ">",
+                "sLast": ">>"
+              }
+        }
+	});
+});
+</script>
+<style type="text/css">
+
+/*To not wrap header*/
+thead th { 
+	white-space: nowrap; 
+}
+/*Increase column chooser items width*/
+ul.ColVis_collection {
+	width:250px;
+}
+/*Reduce Column chooser button height*/
+button.ColVis_Button {
+	height : 25px;
+}
+</style>
+
 <script LANGUAGE="JavaScript">
 var urlParameters = '<%=StringEscapeUtils.escapeJavaScript(urlParams)%>';
 function handleSearch(){
@@ -107,17 +150,16 @@ $(function() {
 <h3 class="heading mt20"><span><fmt:message key="patient.list.header"/></span></h3>
    <accrual:sucessMessage />
    <s:if test="hasActionErrors()"><div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong><s:actionerror />.</div></s:if>
-   
-   <display:table class="table table-striped sortable" summary="This table contains your Study Subject search results.  Please use column headers to sort results"
+   <div class="table-header=wrap">
+   <display:table class="table table-striped" summary="This table contains your Study Subject search results.  Please use column headers to sort results"
                   decorator="gov.nih.nci.accrual.accweb.decorator.SearchPatientDecorator"
-                  sort="list" pagesize="10" id="row" name="displayTagList" requestURI="patients.action" export="false">
-       <display:column titleKey="patient.assignedIdentifier"
-         sortable="true" sortProperty="assignedIdentifier" headerClass="sortable" headerScope="col">
+                  id="row" name="displayTagList" requestURI="patients.action" export="false">
+       <display:column titleKey="patient.assignedIdentifier" headerScope="col">
             <s:a href="#" onclick="handleRetrieve(%{#attr.row.identifier})"><c:out value="${row.assignedIdentifier}"/></s:a>
        </display:column>
-       <display:column titleKey="patient.registrationDate" property="registrationDate" sortable="true" headerClass="sortable" headerScope="col"/>
-       <display:column escapeXml="true" titleKey="patient.organizationName" property="organizationName" sortable="true" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="patient.lastUpdateDateTime" property="dateLastUpdated" headerClass="sortable" headerScope="col" />
+       <display:column titleKey="patient.registrationDate" property="registrationDate" headerScope="col"/>
+       <display:column escapeXml="true" titleKey="patient.organizationName" property="organizationName" headerScope="col"/>
+       <display:column titleKey="patient.lastUpdateDateTime" property="dateLastUpdated" headerScope="col" />
        <s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
 	       <display:column title="Actions" headerClass="align-center" class="actions">
 	            <s:a href="#" data-placement="top" rel="tooltip" data-original-title="Delete" data-toggle="modal" data-target="#delete" onclick="handleDelete(%{#attr.row.identifier})"><i class="fa-trash-o"></i></s:a>
@@ -125,5 +167,6 @@ $(function() {
 	       </display:column>
        </s:if>
    </display:table>
+   </div>
    </div>
 </body>

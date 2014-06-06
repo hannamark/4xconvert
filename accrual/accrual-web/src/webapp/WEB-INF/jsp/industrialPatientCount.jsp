@@ -1,4 +1,47 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<head>
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
+<script type="text/javascript" language="javascript">
+jQuery(function() {
+	jQuery('#row').dataTable( {
+		"sDom": 'prfltip',
+		"pagingType": "full_numbers",
+		 "order": [[ 0, "asc" ]],
+        "oColVis": {
+            "buttonText": "Choose columns"
+        },
+        "oLanguage": {
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_",
+            "sLengthMenu": "Show _MENU_",
+            "oPaginate": {
+                "sFirst": "<<",
+                "sPrevious": "<",
+                "sNext": ">",
+                "sLast": ">>"
+              }
+        }
+	});
+});
+</script>
+<style type="text/css">
+
+/*To not wrap header*/
+thead th { 
+	white-space: nowrap; 
+}
+/*Increase column chooser items width*/
+ul.ColVis_collection {
+	width:250px;
+}
+/*Reduce Column chooser button height*/
+button.ColVis_Button {
+	height : 25px;
+}
+</style>
+</head>
 <script language="javascript">
 function handleUpdate(rowId) {
 	document.countform.selectedRowIdentifier.value = rowId;
@@ -53,17 +96,15 @@ $('#viewTrials').addClass("active");
 		<s:token />
 		<s:hidden name="selectedRowIdentifier" />
 		<s:hidden name="submittedCounts" />
-		<display:table class="table table-striped" sort="list" pagesize="10"
+		<div class="table-header-wrap">
+		<display:table class="table table-striped"
 			uid="row" name="studySiteCounts" export="false"
 			decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator"
 			requestURI="industrialPatients.action">
-			<display:column titleKey="participatingsite.accrual.count.siteid"
-				headerClass="sortable" headerScope="col" property="siteId" />
-			<display:column titleKey="participatingsite.accrual.count.sitename"
-				headerClass="sortable" headerScope="col" property="siteName" />
+			<display:column titleKey="participatingsite.accrual.count.siteid" headerScope="col" property="siteId" />
+			<display:column titleKey="participatingsite.accrual.count.sitename" headerScope="col" property="siteName" />
 			<display:column
-				titleKey="participatingsite.accrual.count.numOfSubjectEnrolled"
-				headerClass="sortable" headerScope="col">
+				titleKey="participatingsite.accrual.count.numOfSubjectEnrolled" headerScope="col">
 				<s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
 					<s:textfield id="submittedCounts[%{#attr.row.studySite.id}]"
 						value="%{#attr.row.accrualCount}" cssClass="form-control"
@@ -87,7 +128,7 @@ $('#viewTrials').addClass("active");
 			</display:column>
 			<display:column
 				titleKey="participatingsite.accrual.count.dateLastUpdated"
-				headerClass="sortable" property="dateLastUpdated" headerScope="col" />
+				property="dateLastUpdated" headerScope="col" />
 			<display:column title="Actions" headerClass="align-center"
 				class="actions">
 				<s:if test="%{#session['notCtepDcpTrial'] || #session['superAbs']}">
@@ -107,6 +148,7 @@ $('#viewTrials').addClass("active");
 				</s:if>
 			</display:column>
 		</display:table>
+		</div>
 		<div class="align-center mb20">
 			<button class="btn btn-icon btn-default" type="button"
 				onclick="document.countform.reset();return false">
