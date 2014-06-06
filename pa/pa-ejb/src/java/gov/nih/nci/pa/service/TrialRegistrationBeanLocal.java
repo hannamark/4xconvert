@@ -2133,10 +2133,13 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         validator.validateUpdate(spDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs, 
                 studySiteAccrualStatusDTOs);
         spDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
-        spDTO.setAccrualDiseaseCodeSystem(ISOUtil.isStNull(studyProtocolDTO
+        St newAccrualDiseaseCodeSystem = ISOUtil.isStNull(studyProtocolDTO
                 .getAccrualDiseaseCodeSystem()) ? spDTO
                 .getAccrualDiseaseCodeSystem() : studyProtocolDTO
-                .getAccrualDiseaseCodeSystem());
+                .getAccrualDiseaseCodeSystem();
+        TrialUpdatesRecorder.recordUpdate(spDTO.getAccrualDiseaseCodeSystem(), newAccrualDiseaseCodeSystem,
+                TrialUpdatesRecorder.ACCRUAL_DISEASE_TERMINOLOGY_UPDATED);
+        spDTO.setAccrualDiseaseCodeSystem(newAccrualDiseaseCodeSystem);
 
         updateStudyProtocol(spDTO);
         

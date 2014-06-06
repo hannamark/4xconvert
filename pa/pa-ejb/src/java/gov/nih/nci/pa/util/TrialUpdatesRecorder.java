@@ -7,6 +7,7 @@ import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.apache.commons.lang.StringUtils.trim;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -96,6 +97,9 @@ public final class TrialUpdatesRecorder {
      */
     public static final String PARTICIPATING_SITES_UPDATED = "Participating site's Program Code was updated.";
     
+    /** Accrual disease terminology system message. */
+    public static final String ACCRUAL_DISEASE_TERMINOLOGY_UPDATED = "Accrual Disease Terminology was updated.";
+
     private TrialUpdatesRecorder() {
     }
 
@@ -148,6 +152,19 @@ public final class TrialUpdatesRecorder {
         Date d2 = TsConverter.convertToTimestamp(date2);
         if ((d1 == null && d2 != null) || (d1 != null && d2 == null)
                 || (d1 != null && d2 != null && !DateUtils.isSameDay(d1, d2))) {
+            add(msg);
+        }
+    }
+
+    /**
+     * @param st1 first iso string
+     * @param st2 second iso string
+     * @param msg message
+     */
+    public static void recordUpdate(St st1, St st2, String msg) {
+        String str1 = StConverter.convertToString(st1);
+        String str2 = StConverter.convertToString(st2);
+        if (!StringUtils.equals(str1, str2)) {
             add(msg);
         }
     }
