@@ -31,10 +31,10 @@
                <s:hidden name="page" />
                    <%@include file="accountCommonForm.jsp" %>
               <div class="form-group">
-	            <label for="notifications" class="col-xs-4 control-label">Color Scheme</label>
+	            <label for="option1" class="col-xs-4 control-label">Color Scheme</label>
 	            <div class="col-xs-7">
 	              <div class="btn-group" data-toggle="buttons">
-	                <label class="btn btn-default active" onClick="changeActiveStyle(window, 'default'); return false;">
+	                <label class="btn btn-default" onClick="changeActiveStyle(window, 'default'); return false;">
 	                  <input type="radio" name="options" id="option1">
 	                  Light </label>
 	                <label class="btn btn-default" onClick="changeActiveStyle(window,'alternate 1'); return false;">
