@@ -4,6 +4,53 @@
 <head>
     <title><fmt:message key="priorSubmissions.title"/></title>
     <s:head/>
+    <link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/styles/jquery-datatables/css/dataTables.colVis.min.css" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/dataTables.colVis.min.js'/>"></script>
+<script type="text/javascript" language="javascript">
+jQuery(function() {
+	setDataTable("#row");
+});
+
+function setDataTable(tableid) {
+	jQuery(tableid).dataTable( {
+		"sDom": 'prltip',
+		"pagingType": "full_numbers",
+		 "order": [[ 0, "desc" ]],
+        "oColVis": {
+            "buttonText": "Choose columns"
+        },
+        "oLanguage": {
+            "sInfo": "Showing _START_ to _END_ of _TOTAL_",
+            "sLengthMenu": "Show _MENU_",
+            "oPaginate": {
+                "sFirst": "<<",
+                "sPrevious": "<",
+                "sNext": ">",
+                "sLast": ">>"
+              }
+        }
+	});	
+}
+</script>
+
+<style type="text/css">
+
+/*To not wrap header*/
+thead th { 
+	white-space: nowrap; 
+}
+/*Increase column chooser items width*/
+ul.ColVis_collection {
+	width:250px;
+}
+/*Reduce Column chooser button height*/
+button.ColVis_Button {
+	height : 25px;
+}
+</style> 
+
     <script type="text/javascript" language="javascript">
       function handleSearch(){
         document.forms[0].action="priorSubmissions.action";
@@ -66,15 +113,15 @@ $(function() {
   </s:form>
   <s:if test="hasActionErrors()"><div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong><s:actionerror />.</div></s:if>
 <h3 class="heading mt20"><span>Search Results</span></h3>
-  <display:table class="table table-striped sortable" summary="This table contains list of submissions.  Please use column headers to sort results"
-                  sort="list" pagesize="10" id="row" name="displayTagList" requestURI="priorSubmissions.action" export="true">                                             
+  <display:table class="table table-striped" summary="This table contains list of submissions.  Please use column headers to sort results"
+                  id="row" name="displayTagList" requestURI="priorSubmissions.action" export="true">                                             
        <display:setProperty name="export.xml" value="false"/>
        <display:setProperty name="export.excel.filename" value="resultsPriorSubmissions.xls"/>
        <display:setProperty name="export.excel.include_header" value="true"/>
        <display:setProperty name="export.csv.filename" value="resultsPriorSubmissions.csv"/>
        <display:setProperty name="export.csv.include_header" value="true"/>
-       <display:column titleKey="priorSubmissions.list.nciNumber" property="nciNumber" sortable="true" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="priorSubmissions.list.file" sortable="false" headerClass="sortable" headerScope="col" media="html">
+       <display:column titleKey="priorSubmissions.list.nciNumber" property="nciNumber" headerScope="col"/>
+       <display:column titleKey="priorSubmissions.list.file" headerScope="col" media="html">
         <s:if test="%{#attr.row.batchFileIdentifier != null}">
 	        <s:url id="viewDocUrl" action="priorSubmissionsviewDoc">
 	            <s:param name="batchFileId" value="%{#attr.row.batchFileIdentifier}" />
@@ -95,7 +142,7 @@ $(function() {
             <s:a href="%{abbreviatedTrialUrl}">Trial counts</s:a>
 		</s:elseif>
        </display:column>
-       <display:column titleKey="priorSubmissions.list.file" sortable="false" headerClass="sortable" headerScope="col" media="excel csv">
+       <display:column titleKey="priorSubmissions.list.file" headerScope="col" media="excel csv">
         <s:if test="%{#attr.row.batchFileIdentifier != null}">
             <s:property value="%{#attr.row.fileName}" />
         </s:if>
@@ -106,10 +153,10 @@ $(function() {
             Trial counts
         </s:elseif>
        </display:column>
-       <display:column titleKey="priorSubmissions.list.submissionType" property="submissionType.code" sortable="true" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="priorSubmissions.list.date" property="date" format="{0,date,yyyy-MM-dd HH.mm.ss}" sortable="true" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="priorSubmissions.list.user" property="username" sortable="true" headerClass="sortable" headerScope="col"/>
-       <display:column titleKey="priorSubmissions.list.result" property="result" sortable="true" headerClass="sortable" headerScope="col"/>
+       <display:column titleKey="priorSubmissions.list.submissionType" property="submissionType.code" headerScope="col"/>
+       <display:column titleKey="priorSubmissions.list.date" property="date" format="{0,date,yyyy-MM-dd HH.mm.ss}" headerScope="col"/>
+       <display:column titleKey="priorSubmissions.list.user" property="username" headerScope="col"/>
+       <display:column titleKey="priorSubmissions.list.result" property="result" headerScope="col"/>
    </display:table>
    </div> 
 </body>

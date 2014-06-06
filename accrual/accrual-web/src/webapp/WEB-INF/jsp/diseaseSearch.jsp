@@ -66,7 +66,7 @@
 				</div>
 			</div>
 
-			<div id="getDiseases" align="center">
+			<div id="getDiseases" class="table-header-wrap">
 				<jsp:include
 					page="/WEB-INF/jsp/nodecorate/lookupdiseasesdisplayList.jsp" />
 			</div>
