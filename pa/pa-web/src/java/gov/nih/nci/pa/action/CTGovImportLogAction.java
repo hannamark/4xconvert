@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.pa.decorator.CTGovImportLogDecorator;
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.service.PAException;
@@ -13,9 +14,9 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,7 +43,7 @@ Preparable {
     private HttpServletRequest request;
     private boolean searchPerformed;
     
-    private List<CTGovImportLog> allCtGovImportLogs = new ArrayList<CTGovImportLog>();
+    private List<CTGovImportLogDecorator> allCtGovImportLogs = new ArrayList<CTGovImportLogDecorator>();
     private List<CTGovImportLog> nctCtGovImportLogs = new ArrayList<CTGovImportLog>();
     private CTGovSyncServiceLocal ctGovSyncService;
     private String nctId;
@@ -84,14 +85,9 @@ Preparable {
             searchCriteria.setOnOrAfter(onOrAfter);
             searchCriteria.setOnOrBefore(onOrBefore);
             List<CTGovImportLog> importLogs = ctGovSyncService.getLogEntries(searchCriteria);
-            //get the latest entry for each trial.
-            Set<String> uniqueTrials = new HashSet<String>();
-            for (CTGovImportLog importLog : importLogs) {
-                if (!uniqueTrials.contains(importLog.getNctID())) {
-                    getAllCtGovImportLogs().add(importLog);
-                    uniqueTrials.add(importLog.getNctID());
-                }
-            }            
+            
+            processAndDecorate(importLogs);    
+            
             setSearchPerformed(true);
             return SUCCESS;
         } catch (PAException e) {
@@ -100,6 +96,26 @@ Preparable {
             LOG.error(e, e);
         }
         return ERROR;
+    }
+
+    /**
+     * @param importLogs
+     */
+    private void processAndDecorate(List<CTGovImportLog> importLogs) {
+
+        Map<String, CTGovImportLogDecorator> map = new HashMap<String, CTGovImportLogDecorator>();
+
+        for (CTGovImportLog importLog : importLogs) {
+            CTGovImportLogDecorator decor = map.get(importLog.getNctID());
+            if (decor == null) {
+                decor = new CTGovImportLogDecorator(importLog);
+                map.put(importLog.getNctID(), decor);
+                getAllCtGovImportLogs().add(decor);
+            } else {
+                decor.addLogEntry(importLog);
+            }
+
+        }
     }
     
     /**
@@ -209,14 +225,14 @@ Preparable {
     /**
      * @return the allCtGovImportLogs
      */
-    public List<CTGovImportLog> getAllCtGovImportLogs() {
+    public List<CTGovImportLogDecorator> getAllCtGovImportLogs() {
         return allCtGovImportLogs;
     }
 
     /**
      * @param allCtGovImportLogs the allCtGovImportLogs to set
      */
-    public void setAllCtGovImportLogs(List<CTGovImportLog> allCtGovImportLogs) {
+    public void setAllCtGovImportLogs(List<CTGovImportLogDecorator> allCtGovImportLogs) {
         this.allCtGovImportLogs = allCtGovImportLogs;
     }
 
