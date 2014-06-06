@@ -40,7 +40,7 @@
                 $("studyProtocolType").value = "";
                 $("InterventionalStudyProtocol_studySubtypeCode").value = "";
                 $("NonInterventionalStudyProtocol_studySubtypeCode").value = "";
-                
+                $("studySourceType").value="";
                 studyProtocolTypeChanged();
                 
             }
