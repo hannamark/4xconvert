@@ -132,8 +132,9 @@
    	 <s:hidden name="registryUserWebDTO.affiliateOrg" id="registryUserWebDTO.affiliateOrg"/>
 <div class="collapse navbar-collapse organization-dropdown">
         <div class="nav navbar-nav" style="width: 100%;">
-          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="registryUserWebDTO.affiliateOrgField">Please Select an Organization Affiliation. <b class="caret"></b></a>  
-            <table class="dropdown-menu" id="dropdown-affiliateOrganization">
+          <div class="active dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" id="registryUserWebDTO.affiliateOrgField">Please Select an Organization Affiliation. <b class="caret"></b></a>
+          <div  id="dropdown-affiliateOrganization" class="dropdown-menu" style="height: 200px !important; overflow-y:auto;">    
+            <table>
             	<tr><th>PO ID</th><th>CTEP ID</th><th>Name</th></tr>
             	<s:iterator var="orgItem" value="#accountOrgs">
             	<s:if test="%{#orgItem.getType() < 0}">
@@ -147,6 +148,7 @@
         		</s:iterator>
         		<tr><td colspan="3"><a href="javascript:void(0)" onclick="lookup4AffiliateOrg(-1, '')">Search...</a></td></tr>
             </table>
+            </div>
           </div>
       </div>
 </div>
