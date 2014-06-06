@@ -13,6 +13,7 @@
             <ul class="dropdown-menu external-links">
               <li><a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main" target="new0">Clinical Trials Reporting Program (CTRP)</a></li>
               <li><a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources" target="new1">Useful Templates and Documentation</a></li>
+              <li><a target="_blank" href="/registry/home.action"> NCI CTRP Registration Application</a></li>
               <li><a href="http://www.cancer.gov/" target="new2">National Cancer Institute (NCI)</a></li>
               <li><a href="http://cbiit.nci.nih.gov/" target="new3">NCI Center for Biomedical Informatics and Information Technology (CBIIT)</a></li>
             </ul>

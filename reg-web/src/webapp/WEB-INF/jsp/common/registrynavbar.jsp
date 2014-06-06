@@ -48,6 +48,7 @@
             <ul class="dropdown-menu external-links">
               <li><a target="_blank" href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main">Clinical Trials Reporting Program (CTRP)</a></li>
               <li><a target="_blank" href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources">Useful Templates and Documentation</a></li>
+              <li><a target="_blank" href="/accrual/home.action">NCI CTRP Accrual Application</a></li>
               <li><a target="_blank" href="http://www.cancer.gov/">National Cancer Institute (NCI)</a></li>
               <li><a target="_blank" href="http://cbiit.nci.nih.gov/">NCI Center for Biomedical Informatics and Information Technology (CBIIT)</a></li>
             </ul>
