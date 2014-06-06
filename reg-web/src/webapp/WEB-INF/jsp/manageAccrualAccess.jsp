@@ -14,17 +14,40 @@
     var studiesToAssignRowsSelected = new Array();
     
     var studiesToUnassign = new Array();
-    var studiesToUnassignRowsSelected = new Array();    
+    var studiesToUnassignRowsSelected = new Array();
+    
+    function endsWith(str, suffix) {
+    	return str.indexOf(suffix, this.length - suffix.length) !== -1;
+    }
+    
+    function updateButton(name) {
+    	if(name == null || name=='') {
+    		$('manage.accrual.access.assignUnAssign').innerHTML = "Assign/Unassign";
+    	} else if(($('assignmentTypeallTrialsOrg').checked  && endsWith(name, '(org family submitter)')) 
+    			|| ($('assignmentTypeallTrialsSite').checked && endsWith(name, '(site submitter)'))
+    			||  (endsWith(name, '(site submitter) (org family submitter)') ) {
+        	$('manage.accrual.access.assignUnAssign').innerHTML = "Unassign";
+        } else {
+        	$('manage.accrual.access.assignUnAssign').innerHTML = "Assign";
+        }
+    }
     
     function change(el) {
+    	var name = '';
         if(el.value) {
+        	name = el.options[el.selectedIndex].text;
             if(el.id=='userId'){
                 el.form.ofUserId.value = null;
+                updateButton(name);
             }
             if(el.id=='ofUserId'){
                 el.form.userId.value = null;
+                updateButton(name);
             }
+        } else {
+        	$('manage.accrual.access.assignUnAssign').innerHTML = "Assign/Unassign";
         }
+        
         el.form.action='manageAccrualAccesschange.action';
         displayWaitPanel();
         el.form.submit();
@@ -197,11 +220,15 @@
     		$('assignSpecificTrial').hide()
     		$('assignAll').show()
         	$('ofUserId').hide()
+        	var el = $('userId');
+        	updateButton(el.options[el.selectedIndex].text);
     	}else if ($('assignmentTypeallTrialsOrg').checked ){	
     		$('userId').hide()
     		$('assignSpecificTrial').hide()
     		$('assignAll').show()
         	$('ofUserId').show()
+        	var el = $('ofUserId');
+        	updateButton(el.options[el.selectedIndex].text);
     	}else{
     		$('userId').show()
     		$('assignSpecificTrial').hide()
@@ -282,7 +309,7 @@
             <div class="form-group"  id="assignAll" ${model.assignmentType!='specificTrial'?'style="display:none"':''}>
 		        <label for="" class="col-xs-3 control-label"></label>
 		        <div class="col-xs-3">
-		          <button type="button" class="btn btn-primary" value="Assign" onclick="assingAllSiteOrg(this)"><fmt:message
+		          <button id="manage.accrual.access.assignUnAssign" type="button" class="btn btn-primary" value="Assign" onclick="assingAllSiteOrg(this)"><fmt:message
 	                           key="manage.accrual.access.assignUnAssign" /></button>
 		        </div>
       		</div>

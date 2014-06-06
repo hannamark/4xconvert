@@ -27,7 +27,7 @@
 					CTRP).</p>
 				<p>
 					Want to learn more about the Reporting Program? Visit the <a
-						href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main" target="_blank">NCI Clinical Trials Reporting Program</a> website. You
+						href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main/" target="_blank">NCI Clinical Trials Reporting Program</a> website. You
 					can email NCI CBIIT Application Support at <a
 						href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a> if
 					you have questions or need assistance.

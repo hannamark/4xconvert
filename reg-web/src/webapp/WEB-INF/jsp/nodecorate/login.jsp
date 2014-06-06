@@ -17,9 +17,17 @@
 		document.onkeypress = runEnterScript;
 		function runEnterScript(e) {
 			var KeyID = (window.event) ? event.keyCode : e.keyCode;
+			
 			if (KeyID == 13) {
-				document.loginForm.submit();
-				return false;
+				var fieldID = document.activeElement.id;
+				if(fieldID == 'j_password') {
+					document.loginForm.submit();
+					return false;
+				}
+				if(fieldID == 'j_username') {
+					$('j_password').focus();
+					return false;
+				}
 			}
 		}
 		
@@ -33,7 +41,7 @@
         <p>This site enables you to register a trial with NCI&apos;s Clinical Trials Reporting Program. You can:</p>
         <ul>
           <li>Register clinical trials</li>
-          <li>Register multiple trials at one time using a <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources" target="_blank">batch upload template</a></li>
+          <li>Register multiple trials at one time using a <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources/" target="_blank">batch upload template</a></li>
           <li>Search registered trials by Title, Phase, Trial Identifiers and Organizations</li>
 		</ul>
 		<p>Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main/" target="_blank">NCI Clinical Trials Reporting Program</a> website. You can also email CBIIT Application Support at <a href="mailto:ncicbiit@mail.nih.gov">ncicbiit@mail.nih.gov</a> if you have questions or need assistance.</p>
