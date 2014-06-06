@@ -14,7 +14,7 @@
 <script type="text/javascript" language="javascript">
 jQuery(function() {
 	jQuery('#row').dataTable( {
-		"sDom": 'pCrltip',
+		"sDom": 'pCrfltip',
 		"pagingType": "full_numbers",
 		 "order": [[ 0, "desc" ]],
         "oColVis": {
@@ -69,7 +69,12 @@ button.ColVis_Button {
                 <tr>
                     <td>
                         <display:table class="data table table-striped table-bordered" 
-                            uid="row" name="model.history" export="false" requestURI="manageAccrualAccesshistoryPaging.action">
+                            uid="row" name="model.history" export="true" requestURI="manageAccrualAccesshistoryPaging.action">
+                             <display:setProperty name="export.xml" value="false"/>
+						     <display:setProperty name="export.excel.filename" value="accrualAccessHistory.xls"/>
+						     <display:setProperty name="export.excel.include_header" value="true"/>
+						     <display:setProperty name="export.csv.filename" value="accrualAccessHistory.csv"/>
+						     <display:setProperty name="export.csv.include_header" value="true"/>
                             <display:setProperty name="basic.msg.empty_list" value="" />                 
                             <display:column escapeXml="true" title="Date" property="date"  />
                             <display:column escapeXml="true" title="Assignee" property="assignee"  />

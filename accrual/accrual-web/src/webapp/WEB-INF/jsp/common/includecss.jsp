@@ -10,6 +10,9 @@
 <!-- Custom styles for this template -->
 <link href="<%=request.getContextPath()%>/styles/ctrp.css" rel="stylesheet" >
 <link href="<%=request.getContextPath()%>/styles/ctrp-dark.css" rel="alternate stylesheet" title="alternate 1" >
+<link href="${pageContext.request.contextPath}/styles/skin1.css" rel="alternate stylesheet" title="alternate 2" >
+<link href="${pageContext.request.contextPath}/styles/skin2.css" rel="alternate stylesheet" title="alternate 3" >
+<link href="${pageContext.request.contextPath}/styles/skin3.css" rel="alternate stylesheet" title="alternate 4" >
 
 <!-- Font Awesome icons -->
 <link href="<%=request.getContextPath()%>/styles/font-awesome.min.css" rel="stylesheet">

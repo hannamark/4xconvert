@@ -96,7 +96,7 @@ button.ColVis_Button {
             </div>
         </c:when>
         <c:otherwise>
-            <h2 id="search_results">Submitted Clinical Trials Search Results</h2>
+            <h2 id="search_results">Clinical Trials Search Results</h2>
 			<div class="table-wrapper">
             <div class="table-responsive">
             <display:table class="table table-striped table-bordered" summary="This table contains your trial search results. Please use column headers to sort results"
@@ -130,7 +130,7 @@ button.ColVis_Button {
                 <display:column escapeXml="true" titleKey="search.trial.piFullName" property="piFullName"  headerScope="col"/>
                 <display:column titleKey="search.trial.nctNumber" property="nctIdentifier" />
                 <display:column title="Other Identifiers"  property="otherIdentifiersAsString" />
-                <display:column title="Participating Sites" media="html">
+                <display:column title="Sites" media="html">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
                    	<a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
                </display:column>                                              

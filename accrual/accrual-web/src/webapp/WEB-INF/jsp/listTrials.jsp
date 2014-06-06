@@ -50,7 +50,12 @@ button.ColVis_Button {
     <s:set name="accrualDiseaseValues" value="@gov.nih.nci.pa.util.PaRegistry@getAccrualDiseaseTerminologyService().getValidCodeSystems()" />
     <display:table class="table table-striped" summary="This table contains your trial search results.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.accweb.decorator.SearchTrialResultDecorator"
-       id="row" name="displayTagList" requestURI="viewTrials.action" export="false">
+       id="row" name="displayTagList" requestURI="viewTrials.action" export="true">
+       <display:setProperty name="export.xml" value="false"/>
+       <display:setProperty name="export.excel.filename" value="accrualTrialResults.xls"/>
+       <display:setProperty name="export.excel.include_header" value="true"/>
+       <display:setProperty name="export.csv.filename" value="accrualTrialResults.csv"/>
+       <display:setProperty name="export.csv.include_header" value="true"/>
        <display:column titleKey="accrual.list.trials.protocolNumber" headerScope="col">
            <!-- <s:property value="%{#attr.row.assignedIdentifier.value}" /> -->
            <s:if test="%{#attr.row.industrial.value && #attr.row.trialType.value == 'Interventional'}">

@@ -68,8 +68,13 @@ button.ColVis_Button {
 	                </div>
 	                <div class=table-header-wrap">
 	                <display:table class="data table table-striped b1px mb40"
-                            uid="${entry.key.code}" name="${entry.value}" export="false"
+                            uid="${entry.key.code}" name="${entry.value}" export="true"
                             requestURI="manageAccrualAccessbyTrialPaging.action">
+                             <display:setProperty name="export.xml" value="false"/>
+						     <display:setProperty name="export.excel.filename" value="accrualAccessView.xls"/>
+						     <display:setProperty name="export.excel.include_header" value="true"/>
+						     <display:setProperty name="export.csv.filename" value="accrualAccessView.csv"/>
+						     <display:setProperty name="export.csv.include_header" value="true"/>                            
                             <display:setProperty name="basic.msg.empty_list"
                                 value="No Accrual Access Assignment records available." />   
                             <c:set scope="page" var="row" value="${pageScope[entry.key.code]}"/>                

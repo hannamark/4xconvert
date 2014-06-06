@@ -42,13 +42,13 @@
 	                  Dark </label>
 	                <label class="btn btn-default" onClick="changeActiveStyle(window,'alternate 2'); return false;">
 	                  <input type="radio" name="options" id="option3">
-	                  Skin1</label>
+	                  Scheme1</label>
 	                <label class="btn btn-default" onClick="changeActiveStyle(window,'alternate 3'); return false;">
 	                  <input type="radio" name="options" id="option4">
-	                  Skin2 </label> 
+	                  Scheme2 </label> 
 	                <label class="btn btn-default" onClick="changeActiveStyle(window,'alternate 4'); return false;">
 	                  <input type="radio" name="options" id="option5">
-	                  Skin3 </label> 
+	                  Scheme3 </label> 
 	              </div>
 	              <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_color_scheme"/>" data-placement="top" data-trigger="hover"></i> </div>
 	          </div> 

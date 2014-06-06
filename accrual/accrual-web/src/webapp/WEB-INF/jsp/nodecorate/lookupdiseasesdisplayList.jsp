@@ -11,7 +11,7 @@ jQuery(function() {
 
 function setDataTable(tableid) {
 	jQuery(tableid).dataTable( {
-		"sDom": 'prltip',
+		"sDom": 'prfltip',
 		"pagingType": "full_numbers",
 		 "order": [[ 0, "desc" ]],
         "oColVis": {

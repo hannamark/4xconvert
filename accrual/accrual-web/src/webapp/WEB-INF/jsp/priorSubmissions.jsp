@@ -15,7 +15,7 @@ jQuery(function() {
 
 function setDataTable(tableid) {
 	jQuery(tableid).dataTable( {
-		"sDom": 'prltip',
+		"sDom": 'prfltip',
 		"pagingType": "full_numbers",
 		 "order": [[ 0, "desc" ]],
         "oColVis": {
@@ -114,7 +114,7 @@ $(function() {
   <s:if test="hasActionErrors()"><div class="alert alert-danger"> <i class="fa-exclamation-circle"></i><strong>Error:</strong><s:actionerror />.</div></s:if>
 <h3 class="heading mt20"><span>Search Results</span></h3>
   <display:table class="table table-striped" summary="This table contains list of submissions.  Please use column headers to sort results"
-                  id="row" name="displayTagList" requestURI="priorSubmissions.action" export="true">                                             
+                  id="row" name="displayTagList" requestURI="priorSubmissions.action" export="true"> 
        <display:setProperty name="export.xml" value="false"/>
        <display:setProperty name="export.excel.filename" value="resultsPriorSubmissions.xls"/>
        <display:setProperty name="export.excel.include_header" value="true"/>

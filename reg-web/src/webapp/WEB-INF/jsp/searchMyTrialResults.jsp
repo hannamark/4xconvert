@@ -95,7 +95,7 @@ button.ColVis_Button {
             </div>
         </c:when>
         <c:otherwise>
-            <h2 id="search_results">Submitted Clinical Trials Search Results</h2>
+            <h2 id="search_results">Clinical Trials Search Results</h2>
             <div class="table-wrapper">
             <div class="table-responsive">
             <s:set name="accrualDiseaseValues" value="@gov.nih.nci.pa.util.PaRegistry@getAccrualDiseaseTerminologyService().getValidCodeSystems()" />
@@ -205,7 +205,7 @@ button.ColVis_Button {
 						</div>  
 					</s:if>              		                    	                    
                  </display:column>  
-                 <display:column title="Accrual Disease Terminology" sortable="false" headerClass="sortable">
+                 <display:column title="Accrual Disease Terminology" >
                 <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
                 <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
                 <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
@@ -215,7 +215,7 @@ button.ColVis_Button {
                 <c:out value="${row.accrualDiseaseCode}"/>
                 </s:if>
                 </display:column>
-                <display:column title="Participating Sites" media="html">
+                <display:column title="Sites" media="html">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
                    	<a href="javascript:void(0)" onclick="showPopup('${viewParticipatingSites}', '', 'View Participating Sites');">View</a>
                 </display:column> 

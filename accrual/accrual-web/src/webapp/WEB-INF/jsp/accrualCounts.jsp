@@ -15,7 +15,7 @@ jQuery(function() {
 
 function setDataTable(tableid) {
 	jQuery(tableid).dataTable( {
-		"sDom": 'prltip',
+		"sDom": 'prfltip',
 		"pagingType": "full_numbers",
 		 "order": [[ 0, "desc" ]],
         "oColVis": {
@@ -71,6 +71,8 @@ $(function()
     <h1 class="heading"><span><fmt:message key="accrual.counts.title"/></span></h1>
     
   <c:set var="requestURI" value="accrualCountsloopback.action" scope="request" />
+  <div class="table-wrapper">
+  <div class="table-responsive">
   <display:table class="table table-striped" summary="This table contains list of counts.  Please use column headers to sort results"
                   uid="row" name="${accrualCountsSession}" requestURI="${requestURI}" export="true">                                             
        <display:setProperty name="export.xml" value="false"/>
@@ -86,5 +88,7 @@ $(function()
        <display:column titleKey="accrual.counts.trials" property="trialCount" headerScope="col"/>
        <display:column titleKey="accrual.counts.date" property="date" format="{0,date,yyyy-MM-dd HH.mm.ss}" headerScope="col"/>
    </display:table> 
+   </div>
+   </div>
    </div>  
 </body>

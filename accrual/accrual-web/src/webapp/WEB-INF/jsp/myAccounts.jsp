@@ -152,6 +152,15 @@
 									onClick="setActiveStyleSheet('alternate 1'); return false;">
 									<input type="radio" name="options" id="option3"> Dark
 								</label>
+								<label class="btn btn-default" onClick="setActiveStyleSheet('alternate 2'); return false;">
+				                  <input type="radio" name="options" id="option3">
+				                  Scheme 1</label>
+				                <label class="btn btn-default" onClick="setActiveStyleSheet('alternate 3'); return false;">
+				                  <input type="radio" name="options" id="option4">
+				                  Scheme 2 </label> 
+				                <label class="btn btn-default" onClick="setActiveStyleSheet('alternate 4'); return false;">
+				                  <input type="radio" name="options" id="option5">
+				                  Scheme 3 </label>
 							</div>
 							<i class="fa-question-circle help-text inside" id="popover"
 								rel="popover"
