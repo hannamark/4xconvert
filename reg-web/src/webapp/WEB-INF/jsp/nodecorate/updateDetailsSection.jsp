@@ -29,7 +29,7 @@
     </div>
 </div>
 <div class="form-group">
-	<label class="col-xs-4 control-label">
+	<label class="col-xs-4 control-label ro-field-label">
 	<fmt:message key="submit.trial.phase"/><span class="required">*</span></label>
 	<div class="col-xs-4">
         <s:property value="trialDTO.phaseCode"/>
@@ -37,20 +37,20 @@
 </div>
 <s:if test="trialDTO.phaseCode == 'NA'">
     <div class="form-group">
-		<label class="col-xs-4 control-label"><fmt:message key="submit.trial.otherPhaseText"/></label>
+		<label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.otherPhaseText"/></label>
 		<div class="col-xs-4">
 			<c:out value="${trialDTO.phaseAdditionalQualifier=='Pilot'?'Yes':'No'}"/>
 		</div>
     </div>
 </s:if>
 <div class="form-group">
-	<label class="col-xs-4 control-label"><fmt:message key="submit.trial.type"/><span class="required">*</span></label>
+	<label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.type"/><span class="required">*</span></label>
 	<div class="col-xs-4">
          <s:property value="trialDTO.trialType"/>
     </div>
 </div>
 <div class="form-group">
-	<label class="col-xs-4 control-label"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
+	<label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
 	<div class="col-xs-4">
     	<s:property value="trialDTO.primaryPurposeCode"/>
     </div>
@@ -67,13 +67,13 @@
 </s:if>
 <s:if test="trialDTO.trialType == 'InterventionalStudyProtocol' || trialDTO.trialType == 'Interventional'">
 <div class="form-group">
-		<label class="col-xs-4 control-label"><fmt:message key="view.trial.secondaryPurpose"/></label>
+		<label class="col-xs-4 control-label ro-field-label"><fmt:message key="view.trial.secondaryPurpose"/></label>
         <div class="col-xs-4"><s:property value="trialDTO.secondaryPurposeAsReadableString"/></div>
 </div>
 
 <c:if test="${trialDTO.secondaryPurposeAsReadableString=='Other'}">
 	<div class="form-group">
-		<label class="col-xs-4 control-label">
+		<label class="col-xs-4 control-label ro-field-label">
 	            <fmt:message key="view.trial.secOtherPurposeText"/>
 	        </label>
 	   <div class="col-xs-4">
@@ -100,7 +100,7 @@
 
 <s:if test="trialDTO.trialType != 'InterventionalStudyProtocol' && trialDTO.trialType != 'Interventional'">
 <div class="form-group">
-   <label class="col-xs-4 control-label">
+   <label class="col-xs-4 control-label ro-field-label">
            <fmt:message key="submit.trial.studySubtypeCode"/>
        </label>
    <div class="col-xs-4">
@@ -108,7 +108,7 @@
    </div>
 </div>
 <div class="form-group">
-	<label class="col-xs-4 control-label">
+	<label class="col-xs-4 control-label ro-field-label">
            <fmt:message key="submit.trial.studyModelCode"/>
        </label>
     <div class="col-xs-4">
@@ -118,7 +118,7 @@
 
 <s:if test="trialDTO.studyModelCode == 'Other'">
 	<div class="form-group">
-		<label class="col-xs-4 control-label"><fmt:message key="submit.trial.studyModelOtherText"/>
+		<label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.studyModelOtherText"/>
 	        </label>
 	    <div class="col-xs-4">
 	        <s:property value="trialDTO.studyModelOtherText"/>
@@ -126,7 +126,7 @@
 	</div>
 </s:if>
 <div class="form-group">
-	<label class="col-xs-4 control-label"><fmt:message key="submit.trial.timePerspectiveCode"/>
+	<label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.timePerspectiveCode"/>
        </label>
     <div class="col-xs-4">
        <s:property value="trialDTO.timePerspectiveCode"/>
@@ -135,7 +135,7 @@
 
 <s:if test="trialDTO.timePerspectiveCode == 'Other'">
    	<div class="form-group">
-	<label class="col-xs-4 control-label"><fmt:message key="submit.trial.timePerspectiveOtherText"/>
+	<label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.timePerspectiveOtherText"/>
            </label>
         <div class="col-xs-4">
            <s:property value="trialDTO.timePerspectiveOtherText"/>

@@ -9,19 +9,19 @@
 	<div id="section1" class="accordion-body in">
 	<div class="container">
 	<div class="form-group">
-       <label class="col-xs-4 control-label"> <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span></label>
+       <label class="col-xs-4 control-label ro-field-label"> <fmt:message key="submit.trial.leadOrgidentifier"/><span class="required">*</span></label>
        <div class="col-xs-4">
        	<s:property value="trialDTO.leadOrgTrialIdentifier"/>
        </div>
     </div>
     <div class="form-group">
-		<label class="col-xs-4 control-label"><fmt:message key="submit.trial.nctNumber"/></label>
+		<label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.nctNumber"/></label>
 		<div class="col-xs-4">
         	<%@ include file="/WEB-INF/jsp/nodecorate/addNctIdentifier.jsp" %>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-4 control-label"><fmt:message key="view.trial.identifier"/></label>
+        <label class="col-xs-4 control-label ro-field-label"><fmt:message key="view.trial.identifier"/></label>
 		<div class="col-xs-4">
         	<s:property value="trialDTO.assignedIdentifier"/>
 		</div>
@@ -29,7 +29,7 @@
     
 	<c:if test="${trialDTO.ctepIdentifier != null }">
 	    <div class="form-group">
-	        <label class="col-xs-4 control-label"><fmt:message key="submit.trial.ctepIdentifier"/></label>
+	        <label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.ctepIdentifier"/></label>
 			<div class="col-xs-4">
 	            <s:property value="trialDTO.ctepIdentifier"/>
 	        </div>
@@ -37,7 +37,7 @@
 	</c:if>
 	<c:if test="${trialDTO.dcpIdentifier!= null}">
      	<div class="form-group">
-	        <label class="col-xs-4 control-label"><fmt:message key="submit.trial.dcpIdentifier"/></label>
+	        <label class="col-xs-4 control-label ro-field-label"><fmt:message key="submit.trial.dcpIdentifier"/></label>
 			<div class="col-xs-4">
             	<s:property value="trialDTO.dcpIdentifier"/>
             </div>

@@ -15,7 +15,7 @@
 	<div class="container">
 		
 		<div class="form-group">
-			<label class="col-xs-4 control-label"> 
+			<label class="col-xs-4 control-label ro-field-label"> 
 		        <fmt:message key="view.trial.sponsor"/><span class="required">*</span>
 		    </label>
 		    <div class="col-xs-4">
@@ -23,7 +23,7 @@
 		    </div>
 		</div>
 		<div class="form-group">
-			<label class="col-xs-4 control-label"> 
+			<label class="col-xs-4 control-label ro-field-label"> 
 		        <fmt:message key="view.trial.respParty"/><span class="required">*</span>
 		    </label>
 		    <div class="col-xs-4">
@@ -32,7 +32,7 @@
 		</div>
 		 <c:if test="${fn:trim(trialDTO.responsiblePersonName) != ''}">
           <div class="form-group">
-			<label class="col-xs-4 control-label"> 
+			<label class="col-xs-4 control-label ro-field-label"> 
 		        <fmt:message key="view.trial.respParty.investigator"/><span class="required">*</span>
 		    </label>
 		    <div class="col-xs-4">
@@ -42,7 +42,7 @@
       </c:if> 
       <c:if test="${fn:trim(trialDTO.responsiblePersonTitle) != ''}">
           <div class="form-group">
-			<label class="col-xs-4 control-label"> 
+			<label class="col-xs-4 control-label ro-field-label"> 
 		        <fmt:message key="view.trial.respParty.investigatorTitle"/><span class="required">*</span>
 		    </label>
 		    <div class="col-xs-4">
@@ -52,7 +52,7 @@
       </c:if>
       <c:if test="${fn:trim(trialDTO.responsiblePersonAffiliationOrgName) != ''}">
           <div class="form-group">
-			<label class="col-xs-4 control-label"> 
+			<label class="col-xs-4 control-label ro-field-label"> 
 		        <fmt:message key="view.trial.respParty.investigatorAff"/><span class="required">*</span>
 		    </label>
 		    <div class="col-xs-4">

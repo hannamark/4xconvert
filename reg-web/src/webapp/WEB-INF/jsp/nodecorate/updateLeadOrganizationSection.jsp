@@ -8,7 +8,7 @@
 <div id="section4" class="accordion-body in">
 <div class="container">
 <div class="form-group">
-	<label class="col-xs-4 control-label"> 
+	<label class="col-xs-4 control-label ro-field-label"> 
         <fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span>
     </label>
     <div class="col-xs-4">
@@ -16,7 +16,7 @@
     </div>
 </div>
 <div class="form-group">
-	<label class="col-xs-4 control-label">
+	<label class="col-xs-4 control-label ro-field-label">
         <fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
     <div class="col-xs-4">
         <s:property value="trialDTO.piName"/>

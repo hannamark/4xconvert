@@ -6,13 +6,13 @@
 <div id="section6" class="accordion-body in">
 <div class="container">
 <div class="form-group">
-	<label class="col-xs-4 control-label">Summary 4 Funding Sponsor Type:<span class="required">*</span></label>
+	<label class="col-xs-4 control-label ro-field-label">Summary 4 Funding Sponsor Type:<span class="required">*</span></label>
 	<div class="col-xs-4">
         <s:property value="trialDTO.summaryFourFundingCategoryCode"/>
     </div>
 </div>
 <div class="form-group">
-    <label class="col-xs-4 control-label">Summary 4 Funding Sponsor: <span class="required">*</span></label>
+    <label class="col-xs-4 control-label ro-field-label">Summary 4 Funding Sponsor: <span class="required">*</span></label>
     <div class="col-xs-4">    
 	    <s:iterator value="trialDTO.summaryFourOrgIdentifiers" id="trialDTO.summaryFourOrgIdentifiers" status="stat">
 	        <s:property value="%{orgName}"/><br/>
@@ -22,7 +22,7 @@
 	</div>
 </div>
 <div class="form-group">
-    <label class="col-xs-4 control-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
+    <label class="col-xs-4 control-label ro-field-label"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
     <div class="col-xs-4"><s:property value="trialDTO.programCodeText"/></div></div>
 </div>
 </div>

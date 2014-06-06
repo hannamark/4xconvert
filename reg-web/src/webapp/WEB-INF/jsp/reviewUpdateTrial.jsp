@@ -70,7 +70,18 @@
                         </div>
                         <%@ include file="/WEB-INF/jsp/nodecorate/displayOtherIds.jsp" %>
                         <reg-web:titleRowDiv titleKey="view.trial.trialDetails"/>
-                        <div class="row form-horizontal details">                  
+                        <div class="row form-horizontal details">
+                            
+                        <reg-web:valueRowDiv labelKey="view.trial.title" noLabelTag="true">
+                            <c:out value="${trialDTO.officialTitle}"/>
+                        </reg-web:valueRowDiv>
+                        <reg-web:valueRowDiv labelKey="view.trial.phase" noLabelTag="true">
+                            <c:out value="${trialDTO.phaseCode}"/>
+                        </reg-web:valueRowDiv>
+                        <reg-web:valueRowDiv labelKey="view.trial.type" noLabelTag="true">
+                            <c:out value="${trialDTO.trialType}"/>
+                        </reg-web:valueRowDiv>
+                                      
                         <reg-web:valueRowDiv labelKey="view.trial.primaryPurpose" noLabelTag="true">
                             <c:out value="${trialDTO.primaryPurposeCode}"/>
                         </reg-web:valueRowDiv>
