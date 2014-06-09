@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters
 ({
     @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(
