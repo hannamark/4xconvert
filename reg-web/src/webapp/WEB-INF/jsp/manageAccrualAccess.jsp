@@ -23,9 +23,9 @@
     function updateButton(name) {
     	if(name == null || name=='') {
     		$('manage.accrual.access.assignUnAssign').innerHTML = "Assign/Unassign";
-    	} else if(($('assignmentTypeallTrialsOrg').checked  && endsWith(name, '(org family submitter)')) 
+    	} else if(($('assignmentTypeallTrialsOrg').checked  && endsWith(name, '(org family submitter)') )
     			|| ($('assignmentTypeallTrialsSite').checked && endsWith(name, '(site submitter)'))
-    			||  (endsWith(name, '(site submitter) (org family submitter)') ) {
+    			||  (endsWith(name, '(site submitter) (org family submitter)')) ) {
         	$('manage.accrual.access.assignUnAssign').innerHTML = "Unassign";
         } else {
         	$('manage.accrual.access.assignUnAssign').innerHTML = "Assign";
