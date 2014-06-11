@@ -614,6 +614,95 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     }
     
+    protected Number createStudyInbox(TrialInfo trial) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_inbox (identifier,comments,open_date,close_date,study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,user_last_updated_id,type_code,admin,scientific,admin_close_date,scientific_close_date,admin_ack_user_id,scientific_ack_user_id)"
+                + " VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'Trial has been updated from ClinicalTrials.gov',"
+                + millenium()
+                + ", null, "
+                + trial.id
+                + ","
+                + millenium()
+                + ","
+                + millenium()
+                + ","
+                + trial.csmUserID
+                + ","
+                + trial.csmUserID
+                + ","
+                + "'UPDATE',null,null,null,null,null,null)";
+        runner.update(connection, sql);
+        return (Number) runner
+                .query(connection,
+                        "select identifier from study_inbox order by identifier desc limit 1",
+                        new ArrayHandler())[0];
+    }
+    
+    protected void makeAdminPerformed(Number studyInboxID, Number csmUserID)
+            throws SQLException {
+        new QueryRunner().update(connection,
+                "update study_inbox set admin=true, admin_close_date="
+                        + pastMillenium() + ", admin_ack_user_id=" + csmUserID
+                        + " where identifier=" + studyInboxID);
+    }
+    
+    protected void makeScientificPerformed(Number studyInboxID, Number csmUserID)
+            throws SQLException {
+        new QueryRunner().update(connection,
+                "update study_inbox set scientific=true, scientific_close_date="
+                        + pastMillenium() + ", scientific_ack_user_id=" + csmUserID
+                        + " where identifier=" + studyInboxID);
+    }
+    
+    protected void makeAdminPending(Number studyInboxID, Number ctgovEntryID)
+            throws SQLException {
+        new QueryRunner().update(connection,
+                "update study_inbox set admin=true where identifier="
+                        + studyInboxID);
+        new QueryRunner().update(connection,
+                "update ctgovimport_log set admin=true, review_required=true where identifier="
+                        + ctgovEntryID);
+    }
+    
+    protected void makeScientificPending(Number studyInboxID, Number ctgovEntryID)
+            throws SQLException {
+        new QueryRunner().update(connection,
+                "update study_inbox set scientific=true where identifier="
+                        + studyInboxID);
+        new QueryRunner().update(connection,
+                "update ctgovimport_log set scientific=true, review_required=true where identifier="
+                        + ctgovEntryID);
+    }
+    
+    protected Number createCtGovImportLogEntry(TrialInfo trial,
+            Number studyInboxID) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO ctgovimport_log (identifier,nci_id,nct_id,trial_title,action_performed,import_status,"
+                + "user_created,date_created,review_required,admin,scientific,study_inbox_id) VALUES "
+                + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE'))"
+                + " ,'"
+                + trial.nciID
+                + "'"
+                + " ,'"
+                + trial.nciID
+                + "'"
+                + " ,'"
+                + trial.title
+                + "',"
+                + "'Update',"
+                + "'Success',"
+                + "'ClinicalTrials.gov Import',"
+                + millenium()
+                + ","
+                + "false,"
+                + "false," + "false," + "" + studyInboxID + ")";
+        runner.update(connection, sql);
+        return (Number) runner
+                .query(connection,
+                        "select identifier from ctgovimport_log order by identifier desc limit 1",
+                        new ArrayHandler())[0];
+    }
+    
     protected TrialInfo createAcceptedTrial() throws SQLException {
         TrialInfo info = createSubmittedTrial();
         addDWS(info, "ACCEPTED");
@@ -638,6 +727,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     private String today() {
         return String.format("{ts '%s'}", new Timestamp(System.currentTimeMillis()).toString());       
+    }
+    
+    private String millenium() {
+        return "{ts '2000-01-01 00:00:00.000'}";       
+    }
+    
+    private String pastMillenium() {
+        return "{ts '2000-01-02 00:00:00.000'}";       
     }
 
     private void addMilestone(TrialInfo info, String code) throws SQLException {
