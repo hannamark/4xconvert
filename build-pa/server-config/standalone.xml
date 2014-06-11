@@ -142,14 +142,31 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:/pa-ds" pool-name="paDS" enabled="true">
-                    <connection-url>jdbc:postgresql://localhost:5432/pa_dev</connection-url>
+                <xa-datasource jndi-name="java:/pa-ds" pool-name="paDS" enabled="true" use-ccm="false">
+                    <xa-datasource-property name="ServerName">
+                        localhost
+                    </xa-datasource-property>
+                    <xa-datasource-property name="PortNumber">
+                        5433
+                    </xa-datasource-property>
+                    <xa-datasource-property name="DatabaseName">
+                        pa_dev
+                    </xa-datasource-property>
+                    <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>
                     <driver>postgresql</driver>
+                    <new-connection-sql>select current_timestamp</new-connection-sql>
+                    <xa-pool>
+                        <max-pool-size>30</max-pool-size>
+                    </xa-pool>
                     <security>
                         <user-name>pauser</user-name>
                         <password>pauser</password>
                     </security>
-                </datasource>
+                    <validation>
+                        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker"/>
+                        <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter"/>
+                    </validation>
+                </xa-datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
@@ -283,7 +300,7 @@
                         </login-module>
                         <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional" module="deployment.accrual.ear">
                             <module-option name="driver" value="org.postgresql.Driver"/>
-                            <module-option name="url" value="jdbc:postgresql://localhost:5432/pa_dev"/>
+                            <module-option name="url" value="jdbc:postgresql://localhost:5433/pa_dev"/>
                             <module-option name="user" value="pauser"/>
                             <module-option name="passwd" value="pauser"/>
                             <module-option name="query" value="SELECT * FROM csm_user WHERE login_name=? and password=?"/>
@@ -308,7 +325,7 @@
                         </login-module>
                         <login-module code="com.fiveamsolutions.nci.commons.authentication.CommonsDBLoginModule" flag="optional"  module="deployment.pa.ear">
                             <module-option name="driver" value="org.postgresql.Driver"/>
-                            <module-option name="url" value="jdbc:postgresql://localhost:5432/pa_dev"/>
+                            <module-option name="url" value="jdbc:postgresql://localhost:5433/pa_dev"/>
                             <module-option name="user" value="pauser"/>
                             <module-option name="passwd" value="pauser"/>
                             <module-option name="query" value="SELECT * FROM csm_user WHERE login_name=? and password=?"/>

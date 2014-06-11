@@ -105,14 +105,25 @@ connect
 reload
 
 data-source remove --name=paDS
-data-source add --name=paDS \
-    --jndi-name=java:/pa-ds \
-    --driver-name=postgresql \
-    --connection-url=@jdbc.url@ \
-    --user-name=@db.username@ \ 
-    --password=@db.password@
-data-source enable --name=paDS
-    
+
+xa-data-source add \
+     --name=paDS \
+     --driver-name=postgresql \
+     --jndi-name=java:/pa-ds \
+     --user-name=@db.username@ \
+     --password=@db.password@ \    
+     --use-ccm=false \
+     --max-pool-size=30 \     
+	 --exception-sorter-class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter" \     
+	 --valid-connection-checker-class-name="org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker" \     
+	 --xa-datasource-class="org.postgresql.xa.PGXADataSource" \     
+     --new-connection-sql="select current_timestamp"
+/subsystem=datasources/xa-data-source=paDS/xa-datasource-properties=ServerName:add(value=@db.server@)
+/subsystem=datasources/xa-data-source=paDS/xa-datasource-properties=PortNumber:add(value=@db.port@)
+/subsystem=datasources/xa-data-source=paDS/xa-datasource-properties=DatabaseName:add(value=@db.name@)
+
+xa-data-source enable --name=paDS
+
 /subsystem=logging/logger=stdout:remove
     
 /subsystem=logging/logger=stdout:add(level=@log.level@)

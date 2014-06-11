@@ -43,6 +43,9 @@
                 <filter token="grid.security.jndi.principal" value="${grid.security.jndi.principal}"/>
                 <filter token="grid.security.jndi.credentials" value="${grid.security.jndi.credentials}"/>
                 <filter token="jdbc.url" value="${jdbc.url}"/>
+                <filter token="db.server" value="${db.server}"/>
+                <filter token="db.port" value="${db.port}"/>
+                <filter token="db.name" value="${db.name}"/>
                 <filter token="db.username" value="${db.username}"/>
                 <filter token="db.password" value="${db.password}"/>
                 <filter token="log.level" value="${log.level}"/>
