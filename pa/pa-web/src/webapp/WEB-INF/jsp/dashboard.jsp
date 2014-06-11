@@ -117,17 +117,24 @@
 		tabs.setActiveTab('details');
 		updateHelpTopic('details');
 		</c:if>
-	    Event.observe(document.getElementById('resultsid'), "click", function() {
-	             updateHelpTopic('results');
-	       });
-	    if(document.getElementById('#detailsid') !=null) {
-	    	 Event.observe(document.getElementById('detailsid'), "click", function() {
+		
+		if ($('resultsid')!=null) {
+		    Event.observe($('resultsid'), "click", function() {
+		             updateHelpTopic('results');
+		    });
+		}
+	    
+	    if($('detailsid') !=null) {
+	    	 Event.observe($('detailsid'), "click", function() {
 	             updateHelpTopic('details');
 	         });
 	    }
-	     Event.observe(document.getElementById('searchid'), "click", function() {
-	             updateHelpTopic('search');
-	      }); 
+	    
+	    if ($('searchid')!=null) {
+		    Event.observe($('searchid'), "click", function() {
+		             updateHelpTopic('search');
+		    }); 
+	    }
 	});
 	
 	function updateHelpTopic(tabType) {
