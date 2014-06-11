@@ -5,10 +5,15 @@ package gov.nih.nci.pa.decorator;
 
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.StudyInbox;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Denis G. Krylov
@@ -18,22 +23,17 @@ import java.util.Set;
 public final class CTGovImportLogDecorator {
 
     private final CTGovImportLog log;
-    private final Set<CTGovImportLog> logEntriesPerTrial = new HashSet<CTGovImportLog>();
+    private final CTGovSyncServiceLocal ctGovSyncServiceLocal;
+    private final Collection<CTGovImportLog> logEntriesPerTrial = new HashSet<CTGovImportLog>();
 
     /**
      * @param log
      *            log
      */
-    public CTGovImportLogDecorator(CTGovImportLog log) {
+    public CTGovImportLogDecorator(CTGovImportLog log,
+            CTGovSyncServiceLocal ctGovSyncServiceLocal) {
         this.log = log;
-        logEntriesPerTrial.add(log);
-    }
-
-    /**
-     * @param log
-     */
-    public void addLogEntry(CTGovImportLog log) {
-        logEntriesPerTrial.add(log);
+        this.ctGovSyncServiceLocal = ctGovSyncServiceLocal;
     }
 
     /**
@@ -142,13 +142,15 @@ public final class CTGovImportLogDecorator {
 
     /**
      * @return
+     * @throws PAException
+     *             PAException
      * @see gov.nih.nci.pa.domain.CTGovImportLog#getAckPending()
      */
-    public String getAckPending() {
+    public String getAckPending() throws PAException {
         boolean admin = false;
         boolean sci = false;
 
-        for (CTGovImportLog log : logEntriesPerTrial) {
+        for (CTGovImportLog log : getLogEntriesPerTrial()) {
             switch (log.getAckPending()) {
             case CTGovImportLog.ADMIN_ACKNOWLEDGMENT:
                 admin = true;
@@ -178,13 +180,15 @@ public final class CTGovImportLogDecorator {
 
     /**
      * @return
+     * @throws PAException
+     *             PAException
      * @see gov.nih.nci.pa.domain.CTGovImportLog#getAckPerformed()
      */
-    public String getAckPerformed() {
+    public String getAckPerformed() throws PAException {
         boolean admin = false;
         boolean sci = false;
 
-        for (CTGovImportLog log : logEntriesPerTrial) {
+        for (CTGovImportLog log : getLogEntriesPerTrial()) {
             switch (log.getAckPerformed()) {
             case CTGovImportLog.ADMIN_ACKNOWLEDGMENT:
                 admin = true;
@@ -211,6 +215,21 @@ public final class CTGovImportLogDecorator {
             return CTGovImportLog.NO_ACKNOWLEDGEMENT;
         }
 
+    }
+
+    private Collection<CTGovImportLog> getLogEntriesPerTrial()
+            throws PAException {
+        if (logEntriesPerTrial.isEmpty()) {
+            CTGovImportLogSearchCriteria searchCriteria = new CTGovImportLogSearchCriteria();
+            if (StringUtils.isNotBlank(log.getNciID())) {
+                searchCriteria.setNciIdentifier(log.getNciID());
+            } else {
+                searchCriteria.setNctIdentifier(log.getNctID());
+            }
+            logEntriesPerTrial.addAll(ctGovSyncServiceLocal
+                    .getLogEntries(searchCriteria));
+        }
+        return logEntriesPerTrial;
     }
 
 }

@@ -10,7 +10,7 @@
 <c:url value="/protected/trialHistory.action" var="trialHistoryUrl"/>
 <script type="text/javascript" language="javascript">
     function displayCTGovImportLogDetails(nctId) {
-        var width = 800;
+        var width = 850;
         var height = 500;
         if (Prototype.Browser.IE) {
             width = 670;
@@ -42,10 +42,10 @@
 		$("action").value = "";
 		$("importStatus").value = "";
 		$("userCreated").value = "";
-		$("pendingAdminAcknowledgment").value = "";
-		$("pendingScientificAcknowledgment").value = "";
-		$("performedAdminAcknowledgment").value = "";
-		$("performedScientificAcknowledgment").value = "";
+		$("pendingAdminAcknowledgment").checked = false;
+		$("pendingScientificAcknowledgment").checked = false;
+		$("performedAdminAcknowledgment").checked = false;
+		$("performedScientificAcknowledgment").checked = false;
 		$("ctGovImportLogsDiv").hide();
 	}
 
@@ -243,18 +243,18 @@
 							<display:column title="ClinicalTrials.gov Identifier" sortable="true" media="csv excel" property="nctID"/>
 							<display:column escapeXml="true" title="Title" property="title"
 								sortable="true" />
-							<display:column escapeXml="false" title="Action" sortable="true" media="html">
+							<display:column escapeXml="false" title="Last Action" sortable="true" media="html">
 							    <!-- <c:out value="${row.action}"/> -->
 							    <a href="javascript:void(0);" onclick="displayCTGovImportLogDetails('${row.nctID}');">
 							        <c:out value="${row.action}"/>
 							    </a>							    						    
 							</display:column>
 							<display:column title="Action" sortable="true" media="csv excel" property="action"/>
-							<display:column escapeXml="true" title="Auto/User"
+							<display:column escapeXml="true" title="Last Action User"
 								property="userCreated" sortable="true" />
 							<display:column  title="Last Import Date/Time" format="{0,date,MM/dd/yyyy hh:mm aaa}"
 								property="dateCreated" sortable="true" />
-							<display:column escapeXml="true" title="Import Status"
+							<display:column escapeXml="true" title="Last Import Status"
 								property="importStatus" sortable="true" />								
 							<display:column escapeXml="true" title="Ack. Pending?" property="ackPending" sortable="true"/>
 							<display:column escapeXml="true" title="Ack. Performed?" property="ackPerformed" sortable="true"/>	

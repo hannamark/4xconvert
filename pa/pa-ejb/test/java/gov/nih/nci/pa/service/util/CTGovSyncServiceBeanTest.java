@@ -1765,48 +1765,48 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         searchCriteria.setPendingAdminAcknowledgment(true);
         searchCriteria.setPendingScientificAcknowledgment(false);
         entries = serviceBean.getLogEntries(searchCriteria);
-        assertEquals(1, entries.size());
-        assertEquals("NCI4", entries.get(0).getNciID());        
+        assertEquals(6, entries.size());
+             
         
         //exercise pending sci ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPendingAdminAcknowledgment(false);
         searchCriteria.setPendingScientificAcknowledgment(true);
         entries = serviceBean.getLogEntries(searchCriteria);
-        assertEquals(1, entries.size());
-        assertEquals("NCI5", entries.get(0).getNciID());
+        assertEquals(6, entries.size());
+       
         
         //exercise pending admin and sci ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPendingAdminAcknowledgment(true);
         searchCriteria.setPendingScientificAcknowledgment(true);
         entries = serviceBean.getLogEntries(searchCriteria);
-        assertEquals(1, entries.size());
-        assertEquals("NCI6", entries.get(0).getNciID());
+        assertEquals(6, entries.size());
+        
         
         //exercise performed admin ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPerformedAdminAcknowledgment(true);
         searchCriteria.setPerformedScientificAcknowledgment(false);
         entries = serviceBean.getLogEntries(searchCriteria);
-        assertEquals(1, entries.size());
-        assertEquals("NCI7", entries.get(0).getNciID());
+        assertEquals(6, entries.size());
+        
         
         //exercise performed sci ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPerformedAdminAcknowledgment(false);
         searchCriteria.setPerformedScientificAcknowledgment(true);        
         entries = serviceBean.getLogEntries(searchCriteria);
-        assertEquals(1, entries.size());
-        assertEquals("NCI8", entries.get(0).getNciID());
+        assertEquals(6, entries.size());
+        
         
         //exercise performed admin and sci ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPerformedAdminAcknowledgment(true);
         searchCriteria.setPerformedScientificAcknowledgment(true);
         entries = serviceBean.getLogEntries(searchCriteria);
-        assertEquals(1, entries.size());
-        assertEquals("NCI9", entries.get(0).getNciID());
+        assertEquals(6, entries.size());
+       
     }
     
     @Test

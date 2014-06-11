@@ -1,8 +1,12 @@
 package gov.nih.nci.pa.action;
 
+import static gov.nih.nci.pa.domain.CTGovImportLog.ADMIN_ACKNOWLEDGMENT;
+import static gov.nih.nci.pa.domain.CTGovImportLog.ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT;
+import static gov.nih.nci.pa.domain.CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT;
 import gov.nih.nci.pa.decorator.CTGovImportLogDecorator;
 import gov.nih.nci.pa.domain.CTGovImportLog;
 import gov.nih.nci.pa.domain.StudyInbox;
+import gov.nih.nci.pa.dto.CTGovTrialWorkflowHistoryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
@@ -11,7 +15,6 @@ import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,19 +35,20 @@ import com.opensymphony.xwork2.Preparable;
  * @author Monish
  *
  */
-@SuppressWarnings("PMD.TooManyFields")
+@SuppressWarnings({ "PMD.TooManyFields", "PMD.TooManyMethods" })
 public class CTGovImportLogAction extends ActionSupport implements
 Preparable {
 
     private static final String DETAILS = "details";
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(CTGovImportLogAction.class);
+    private static final String ACKNOWLEDGMENT = "Acknowledgment";
     
     private HttpServletRequest request;
     private boolean searchPerformed;
     
     private List<CTGovImportLogDecorator> allCtGovImportLogs = new ArrayList<CTGovImportLogDecorator>();
-    private List<CTGovImportLog> nctCtGovImportLogs = new ArrayList<CTGovImportLog>();
+    private List<CTGovTrialWorkflowHistoryDTO> nctCtGovImportLogs = new ArrayList<CTGovTrialWorkflowHistoryDTO>();
     private CTGovSyncServiceLocal ctGovSyncService;
     private String nctId;
     private String logsOnOrAfter;
@@ -104,17 +108,13 @@ Preparable {
     private void processAndDecorate(List<CTGovImportLog> importLogs) {
 
         Map<String, CTGovImportLogDecorator> map = new HashMap<String, CTGovImportLogDecorator>();
-
         for (CTGovImportLog importLog : importLogs) {
             CTGovImportLogDecorator decor = map.get(importLog.getNctID());
             if (decor == null) {
-                decor = new CTGovImportLogDecorator(importLog);
+                decor = new CTGovImportLogDecorator(importLog, ctGovSyncService);
                 map.put(importLog.getNctID(), decor);
                 getAllCtGovImportLogs().add(decor);
-            } else {
-                decor.addLogEntry(importLog);
             }
-
         }
     }
     
@@ -128,62 +128,19 @@ Preparable {
         try {
             //get the all the log entries for the specified NCT ID.
             searchCriteria.setNctIdentifier(getNctId());
+            request.setAttribute("nctID", getNctId());
             List<CTGovImportLog> logEntries = ctGovSyncService.getLogEntries(searchCriteria);
-            for (CTGovImportLog existingEntry : logEntries) {
-                StudyInbox si = existingEntry.getStudyInbox();
-                //if there is a performed admin/scientific acknowledgment 
-                //then the log information needs to be split to show  
-                //two entries : first entry to show close date and acknowledged user
-                //and second entry to show pending information.
-                if (existingEntry.getAckPerformed().equals(CTGovImportLog.ADMIN_ACKNOWLEDGMENT)) {
-                    CTGovImportLog newEntry = new CTGovImportLog();
-                    newEntry.setDateCreated(si.getAdminCloseDate());
-                    newEntry.setUserCreated(CsmUserUtil.getDisplayUsername(
-                            si.getAdminAcknowledgedUser()));
-                    newEntry.setAckPerformed(CTGovImportLog.ADMIN_ACKNOWLEDGMENT);
-                    existingEntry.setStudyInbox(null);
-                    existingEntry.setAckPending(CTGovImportLog.ADMIN_ACKNOWLEDGMENT);
-                    existingEntry.setAckPerformed("");
-                    nctCtGovImportLogs.add(newEntry);
-                } else if (existingEntry.getAckPerformed().equals(CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT)) {
-                    CTGovImportLog newEntry = new CTGovImportLog();
-                    newEntry.setDateCreated(si.getScientificCloseDate());
-                    newEntry.setUserCreated(CsmUserUtil.getDisplayUsername(
-                            si.getScientificAcknowledgedUser()));
-                    newEntry.setAckPerformed(CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT);
-                    existingEntry.setStudyInbox(null);
-                    existingEntry.setAckPending(CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT);
-                    existingEntry.setAckPerformed("");
-                    nctCtGovImportLogs.add(newEntry);
-                } else if (existingEntry.getAckPerformed().equals(
-                        CTGovImportLog.ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT)) {
-                    CTGovImportLog newEntry1 = new CTGovImportLog();
-                    newEntry1.setDateCreated(si.getAdminCloseDate());
-                    newEntry1.setUserCreated(CsmUserUtil.getDisplayUsername(
-                            si.getAdminAcknowledgedUser()));
-                    newEntry1.setAckPerformed(CTGovImportLog.ADMIN_ACKNOWLEDGMENT);
-                    CTGovImportLog newEntry2 = new CTGovImportLog();
-                    newEntry2.setDateCreated(si.getScientificCloseDate());
-                    newEntry2.setUserCreated(CsmUserUtil.getDisplayUsername(
-                            si.getScientificAcknowledgedUser()));
-                    newEntry2.setAckPerformed(CTGovImportLog.SCIENTIFIC_ACKNOWLEDGEMENT);
-                    //in case of admin and sci ack compare the close dates to
-                    //display the entries in date order.
-                    Timestamp adminCloseDate = si.getAdminCloseDate();
-                    Timestamp sciCloseDate = si.getScientificCloseDate();
-                    int moreRecent = adminCloseDate.compareTo(sciCloseDate);
-                    if (moreRecent >= 0) {
-                        nctCtGovImportLogs.add(newEntry1);
-                        nctCtGovImportLogs.add(newEntry2);
-                    } else {
-                        nctCtGovImportLogs.add(newEntry2);
-                        nctCtGovImportLogs.add(newEntry1);
-                    }
-                    existingEntry.setStudyInbox(null);
-                    existingEntry.setAckPending(CTGovImportLog.ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT);
-                    existingEntry.setAckPerformed("");
-                }
-                nctCtGovImportLogs.add(existingEntry);
+            for (CTGovImportLog existingEntry : logEntries) {                
+                request.setAttribute(
+                        "nciID",
+                        StringUtils.isNotEmpty(existingEntry.getNciID()) ? existingEntry
+                                .getNciID() : request.getAttribute("nciID"));
+                request.setAttribute(
+                        "title",
+                        StringUtils.isNotEmpty(existingEntry.getTitle()) ? existingEntry
+                                .getTitle() : request.getAttribute("title"));
+                
+                extractDetailsFromLogEntry(existingEntry);                
             }
             return DETAILS;
         } catch (PAException pae) {
@@ -193,6 +150,64 @@ Preparable {
         return ERROR;
     }
     
+    private void extractDetailsFromLogEntry(CTGovImportLog log) {
+        nctCtGovImportLogs.add(exrtactCtGovImportEventDTO(log));
+
+        StudyInbox si = log.getStudyInbox();
+        // if there is a performed admin/scientific acknowledgment
+        // then the log information needs to be split to show
+        // two entries : first entry to show close date and acknowledged user
+        // and second entry to show pending information.
+        if (log.getAckPerformed().equals(ADMIN_ACKNOWLEDGMENT)) {
+            nctCtGovImportLogs.add(extractAdminAckDTO(si));
+        } else if (log.getAckPerformed().equals(SCIENTIFIC_ACKNOWLEDGEMENT)) {
+            nctCtGovImportLogs.add(extractSciAckDTO(si));
+        } else if (log.getAckPerformed().equals(
+                ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT)) {
+            nctCtGovImportLogs.add(extractAdminAckDTO(si));
+            nctCtGovImportLogs.add(extractSciAckDTO(si));
+        }
+
+    }
+
+    /**
+     * @param si
+     * @return
+     */
+    private CTGovTrialWorkflowHistoryDTO extractSciAckDTO(StudyInbox si) {
+        CTGovTrialWorkflowHistoryDTO newEntry = new CTGovTrialWorkflowHistoryDTO();
+        newEntry.setAction(ACKNOWLEDGMENT);
+        newEntry.setDateCreated(si.getScientificCloseDate());
+        newEntry.setUserCreated(CsmUserUtil.getDisplayUsername(
+                si.getScientificAcknowledgedUser()));
+        newEntry.setAckPerformed(SCIENTIFIC_ACKNOWLEDGEMENT);
+        return newEntry;
+    }
+
+    /**
+     * @param si
+     * @return
+     */
+    private CTGovTrialWorkflowHistoryDTO extractAdminAckDTO(StudyInbox si) {
+        CTGovTrialWorkflowHistoryDTO newEntry = new CTGovTrialWorkflowHistoryDTO();
+        newEntry.setAction(ACKNOWLEDGMENT);
+        newEntry.setDateCreated(si.getAdminCloseDate());
+        newEntry.setUserCreated(CsmUserUtil.getDisplayUsername(
+                si.getAdminAcknowledgedUser()));
+        newEntry.setAckPerformed(ADMIN_ACKNOWLEDGMENT);
+        return newEntry;
+    }
+
+    private CTGovTrialWorkflowHistoryDTO exrtactCtGovImportEventDTO(CTGovImportLog log) {
+        CTGovTrialWorkflowHistoryDTO dto = new CTGovTrialWorkflowHistoryDTO();
+        dto.setAction(log.getAction());
+        dto.setUserCreated(log.getUserCreated());
+        dto.setDateCreated(log.getDateCreated());
+        dto.setImportStatus(log.getImportStatus());
+        dto.setAckPending(log.getAckPendingAtTimeOfImport());
+        return dto;
+    }
+
     /**
      * Validates start and end date
      * @param onOrAfter start date
@@ -246,14 +261,14 @@ Preparable {
     /**
      * @return nctCtGovImportLogs
      */
-    public List<CTGovImportLog> getNctCtGovImportLogs() {
+    public List<CTGovTrialWorkflowHistoryDTO> getNctCtGovImportLogs() {
         return nctCtGovImportLogs;
     }
 
     /**
      * @param nctCtGovImportLogs nctCtGovImportLogs to set
      */
-    public void setNctCtGovImportLogs(List<CTGovImportLog> nctCtGovImportLogs) {
+    public void setNctCtGovImportLogs(List<CTGovTrialWorkflowHistoryDTO> nctCtGovImportLogs) {
         this.nctCtGovImportLogs = nctCtGovImportLogs;
     }
 

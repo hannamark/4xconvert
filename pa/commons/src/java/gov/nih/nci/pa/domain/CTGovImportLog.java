@@ -311,6 +311,27 @@ public class CTGovImportLog implements PersistentObject {
         }
         return ackPending;
     }
+    
+    /**
+     * @return AckPendingAtTimeOfImport
+     */
+    @Transient
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public String getAckPendingAtTimeOfImport() {
+        if (Boolean.TRUE.equals(getAdmin())
+                && !Boolean.TRUE.equals(getScientific())) {
+            return ADMIN_ACKNOWLEDGMENT;
+        } else if (!Boolean.TRUE.equals(getAdmin())
+                && Boolean.TRUE.equals(getScientific())) {
+            return SCIENTIFIC_ACKNOWLEDGEMENT;
+        } else if (Boolean.TRUE.equals(getAdmin())
+                && Boolean.TRUE.equals(getScientific())) {
+            return ADMIN_AND_SCIENTIFIC_ACKNOWLEDGEMENT;
+        } else {
+            return NO_ACKNOWLEDGEMENT;
+        }
+
+    }
 
     /**
      * @return the performed acknowledgment

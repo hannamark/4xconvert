@@ -152,10 +152,14 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.ConnectionReleaseMode;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.engine.SessionFactoryImplementor;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -1890,14 +1894,12 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         }
     }
 
-    @Override        
-    @SuppressWarnings("PMD.ExcessiveParameterList")
-    // CHECKSTYLE:OFF More than 7 Parameters
-    public List<CTGovImportLog> getLogEntries(CTGovImportLogSearchCriteria searchCriteria)
+    @Override
+    public List<CTGovImportLog> getLogEntries(CTGovImportLogSearchCriteria searchCriteria) // NOPMD
             throws PAException {
-        // CHECKSTYLE:ON
         Session session = PaHibernateUtil.getCurrentSession();
-        Criteria criteria = session.createCriteria(CTGovImportLog.class);        
+        Criteria criteria = session.createCriteria(CTGovImportLog.class, "log");    
+        criteria.setFetchMode("studyInbox", FetchMode.JOIN);
         criteria.setMaxResults(L_10000);
         if (StringUtils.isNotEmpty(searchCriteria.getNciIdentifier())) {
             criteria.add(Restrictions.like("nciID", "%" + searchCriteria.getNciIdentifier() + "%"));
@@ -1919,7 +1921,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         }
         //start date is specified but end date is not specified
         if (searchCriteria.getOnOrAfter() != null && searchCriteria.getOnOrBefore() == null) {
-            criteria.add(Restrictions.ge("dateCreated", searchCriteria.getOnOrAfter()));
+            criteria.add(Restrictions.ge("dateCreated", searchCriteria.getOnOrAfter())); // NOPMD
         } else if (searchCriteria.getOnOrBefore() != null && searchCriteria.getOnOrAfter() == null) {                
             //end date is specified but start date is not specified
             criteria.add(Restrictions.le("dateCreated", searchCriteria.getOnOrBefore()));
@@ -1927,36 +1929,29 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
             //both start and end dates are specified
             criteria.add(Restrictions.between("dateCreated", searchCriteria.getOnOrAfter(), 
                     searchCriteria.getOnOrBefore()));
-        }          
+        }     
+        
         if (Boolean.TRUE.equals(searchCriteria.getPendingAdminAcknowledgment()) 
                 || Boolean.TRUE.equals(searchCriteria.getPendingScientificAcknowledgment()) 
                 || Boolean.TRUE.equals(searchCriteria.getPerformedAdminAcknowledgment()) 
                 || Boolean.TRUE.equals(searchCriteria.getPerformedScientificAcknowledgment())) {
-            criteria.createAlias("studyInbox", "si");
+            criteria.createAlias("studyInbox", "inbox");
         }
-        if (Boolean.TRUE.equals(searchCriteria.getPendingAdminAcknowledgment()) 
-                && Boolean.FALSE.equals(searchCriteria.getPendingScientificAcknowledgment())) {
+       
+        if (Boolean.TRUE.equals(searchCriteria.getPendingAdminAcknowledgment())) {
             addPendingAdminAckCondition(criteria);
         }
-        if (Boolean.TRUE.equals(searchCriteria.getPendingScientificAcknowledgment()) 
-                && Boolean.FALSE.equals(searchCriteria.getPendingAdminAcknowledgment())) {
+        if (Boolean.TRUE.equals(searchCriteria
+                .getPendingScientificAcknowledgment())) {
             addPendingScientificAckCondition(criteria);
-        }
-        if (Boolean.TRUE.equals(searchCriteria.getPendingAdminAcknowledgment()) 
-                && Boolean.TRUE.equals(searchCriteria.getPendingScientificAcknowledgment())) {
-            addPendingAdminAndScientificAckCondition(criteria);
-        }
-        if (Boolean.TRUE.equals(searchCriteria.getPerformedAdminAcknowledgment()) 
-                && Boolean.FALSE.equals(searchCriteria.getPerformedScientificAcknowledgment())) {
+        }       
+        if (Boolean.TRUE.equals(searchCriteria
+                .getPerformedAdminAcknowledgment())) {
             addPerformedAdminAckCondition(criteria);
         }
-        if (Boolean.TRUE.equals(searchCriteria.getPerformedScientificAcknowledgment()) 
-                && Boolean.FALSE.equals(searchCriteria.getPerformedAdminAcknowledgment())) {
+        if (Boolean.TRUE.equals(searchCriteria
+                .getPerformedScientificAcknowledgment())) {
             addPerformedSciAckCondition(criteria);
-        }
-        if (Boolean.TRUE.equals(searchCriteria.getPerformedAdminAcknowledgment()) 
-                && Boolean.TRUE.equals(searchCriteria.getPerformedScientificAcknowledgment())) {
-            addPerformedAdminSciAckCondition(criteria);
         }
         criteria.addOrder(Order.desc("dateCreated"));
         return criteria.list();
@@ -1967,48 +1962,40 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
      * @param criteria Criteria object.
      */
     private void addPendingAdminAckCondition(Criteria criteria) {
-        Criterion sciCri = Restrictions.ne("si.scientific", Boolean.TRUE);                 
-        Criterion adminCri = Restrictions.and(
-                Restrictions.eq("si.admin", Boolean.TRUE), 
-                Restrictions.isNull("si.adminCloseDate"));
-        criteria.add(Restrictions.and(adminCri, sciCri));
+        criteria.add(Subqueries.exists(DetachedCriteria
+                .forClass(StudyInbox.class, "si")
+                .add(Property.forName("si.studyProtocol.id").eqProperty("inbox.studyProtocol.id")) // NOPMD
+                .add(Restrictions.and(
+                        Restrictions.eq("si.admin", Boolean.TRUE),
+                        Restrictions.isNull("si.adminCloseDate")))
+                .setProjection(Projections.property("si.id")))); // NOPMD
+
     }
-    
+
     /**
      * Adds sql condition for study inbox entries with pending scientific acknowledgment.
      * @param criteria Criteria object.
      */
     private void addPendingScientificAckCondition(Criteria criteria) {
-        Criterion adminCri = Restrictions.ne("si.admin", Boolean.TRUE);
-        Criterion sciCri = Restrictions.and(
-                Restrictions.eq("si.scientific", Boolean.TRUE), 
-                Restrictions.isNull("si.scientificCloseDate"));
-        criteria.add(Restrictions.and(adminCri, sciCri));
-    }
-    
-    /**
-     * Adds sql condition for study inbox entries with pending admin/scientific 
-     * acknowledgment.
-     * @param criteria Criteria object.
-     */
-    private void addPendingAdminAndScientificAckCondition(Criteria criteria) {
-        Criterion adminCri = Restrictions.and(
-                Restrictions.eq("si.admin", Boolean.TRUE), 
-                Restrictions.isNull("si.adminCloseDate"));
-        Criterion sciCri = Restrictions.and(
-                Restrictions.eq("si.scientific", Boolean.TRUE), 
-                Restrictions.isNull("si.scientificCloseDate"));
-        criteria.add(Restrictions.and(adminCri, sciCri));
-    }
+        criteria.add(Subqueries.exists(DetachedCriteria
+                .forClass(StudyInbox.class, "si")
+                .add(Property.forName("si.studyProtocol.id").eqProperty("inbox.studyProtocol.id"))
+                .add(Restrictions.and(
+                        Restrictions.eq("si.scientific", Boolean.TRUE),
+                        Restrictions.isNull("si.scientificCloseDate")))
+                .setProjection(Projections.property("si.id"))));
+    }   
     
     /**
      * Adds sql condition for study inbox entries with performed admin acknowledgment.
      * @param criteria
      */
     private void addPerformedAdminAckCondition(Criteria criteria) {
-        criteria.add(Restrictions.and(
-                Restrictions.isNotNull("si.adminCloseDate"), 
-                Restrictions.isNull("si.scientificCloseDate")));
+        criteria.add(Subqueries.exists(DetachedCriteria
+                .forClass(StudyInbox.class, "si")
+                .add(Property.forName("si.studyProtocol.id").eqProperty("inbox.studyProtocol.id"))
+                .add(Restrictions.isNotNull("si.adminCloseDate"))
+                .setProjection(Projections.property("si.id"))));
     }
     
     /**
@@ -2016,16 +2003,16 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
      * @param criteria
      */
     private void addPerformedSciAckCondition(Criteria criteria) {
-        criteria.add(Restrictions.and(
-                Restrictions.isNotNull("si.scientificCloseDate"), 
-                Restrictions.isNull("si.adminCloseDate")));
+
+        criteria.add(Subqueries.exists(DetachedCriteria
+                .forClass(StudyInbox.class, "si")
+                .add(Property.forName("si.studyProtocol.id").eqProperty("inbox.studyProtocol.id"))
+                .add(Restrictions.isNotNull("si.scientificCloseDate"))
+                .setProjection(Projections.property("si.id"))));
+
     }
     
-    private void addPerformedAdminSciAckCondition(Criteria criteria) {
-        criteria.add(Restrictions.and(
-                Restrictions.isNotNull("si.adminCloseDate"), 
-                Restrictions.isNotNull("si.scientificCloseDate")));
-    }
+  
     
     /**
      * @param regulatoryAuthorityService
