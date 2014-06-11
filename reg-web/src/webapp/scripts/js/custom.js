@@ -113,19 +113,26 @@ jQuery(function() {
     });
 	
 // Date Picker
-jQuery(function() {
-    jQuery('.datetimepicker').datetimepicker({
-      pickTime: false,
-      startView:2
-    });
-  });
+	jQuery(function() {
+	    jQuery('.datetimepicker').datetimepicker({
+	      pickTime:false
+	    });
+	});
+//Add close button to calendar
+	jQuery(function(jQuery) {
+	    jQuery('.datepicker')
+	    	.prepend('<button type="button" class="close" onClick="closeDP();">&times;</button>');
+	  });
+	
+	function closeDP() {
+		jQuery(document).trigger('mousedown');
+	}
 
 //jQuery(function() {
 //    jQuery('.datetimepicker').on('changeDate', function(ev){
 //    	jQuery(this).datetimepicker('hide');
 //    });
 //  });
-
 
 
 jQuery(function (jQuery) {
