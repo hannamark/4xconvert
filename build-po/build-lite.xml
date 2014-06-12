@@ -29,6 +29,7 @@
 	<property name="po-ear.base.dir" location="${software.dir}/po/ear" />
 	<property name="po-services.base.dir" location="${software.dir}/po/services" />
 	<property name="po-web.base.dir" location="${software.dir}/po/web" />
+	<property name="po-webservices.base.dir" location="${software.dir}/po/webservices" />
 
 	<!-- Maven comamnd line arguments, bda profile is inside profiles.xml that 
 		gets copied to ear folder before build to override exiting properties -->
@@ -125,6 +126,7 @@
 		<copy todir="${po-ear.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
 		<copy todir="${po-services.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
 		<copy todir="${po-web.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
+		<copy todir="${po-webservices.base.dir}" file="${common.dir}/maven/profiles.xml" filtering="true" overwrite="true" />
 
 		<maven maven.profile.list="-P ${po.maven.profile.list} -Dskip-liquibase" maven.goal.list="${po.maven.goal.list}" maven.dir="${po.base.dir}" />
 		<copy todir="${po-ear.dist.dir}" file="${po-ear.base.dir}/target/po.ear" />
