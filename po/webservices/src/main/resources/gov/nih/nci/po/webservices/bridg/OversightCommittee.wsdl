@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:tns="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee"
+ xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+ xmlns:ns0="http://po.coppa.nci.nih.gov"
+ xmlns:ns19="http://common.coppa.nci.nih.gov"
+ xmlns:ns2="http://iso21090.nci.nih.gov"
+ xmlns:ns11="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types"
+ name="OversightCommittee" targetNamespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee">
+
+    <jaxws:bindings>
+        <jaxws:package name="gov.nih.nci.po.webservices.service.bridg.soap.oversightcommittee"/>
+    </jaxws:bindings>
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee"
+            elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+        <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+        <import namespace="http://po.coppa.nci.nih.gov" schemaLocation="CoppaPO.xsd"/>
+        <import namespace="http://common.coppa.nci.nih.gov" schemaLocation="CoppaCommons.xsd"/>
+        <import namespace="http://iso21090.nci.nih.gov" schemaLocation="ISO_extensions.xsd"/>
+        <import namespace="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/types" schemaLocation="./OversightCommitteeTypes.xsd" />
+
+        <element name="CreateRequest">
+        <complexType>
+          <sequence>
+            <element name="oversightCommittee">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="CreateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByIdRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByIdResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByIdsRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Id" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByIdsResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateRequest">
+        <complexType>
+          <sequence>
+            <element name="oversightCommittee">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="UpdateStatusRequest">
+        <complexType>
+          <sequence>
+            <element name="targetId">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="statusCode">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Cd" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateStatusResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="ValidateRequest">
+        <complexType>
+          <sequence>
+            <element name="oversightCommittee">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ValidateResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StringMap" minOccurs="1" maxOccurs="1" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="QueryRequest">
+        <complexType>
+          <sequence>
+            <element name="oversightCommittee">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="limitOffset">
+              <complexType>
+                <sequence>
+                  <element ref="ns19:LimitOffset" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="QueryResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByPlayerIdsRequest">
+        <complexType>
+          <sequence>
+            <element name="id">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Id" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GetByPlayerIdsResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:OversightCommittee" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="OversightCommitteeResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="CreateRequest">
+    <part name="parameters" element="tns:CreateRequest" />
+  </message>
+  <message name="CreateResponse">
+    <part name="parameters" element="tns:CreateResponse" />
+  </message>
+  <message name="GetByIdRequest">
+    <part name="parameters" element="tns:GetByIdRequest" />
+  </message>
+  <message name="GetByIdResponse">
+    <part name="parameters" element="tns:GetByIdResponse" />
+  </message>
+  <message name="GetByIdsRequest">
+    <part name="parameters" element="tns:GetByIdsRequest" />
+  </message>
+  <message name="GetByIdsResponse">
+    <part name="parameters" element="tns:GetByIdsResponse" />
+  </message>
+  <message name="UpdateRequest">
+    <part name="parameters" element="tns:UpdateRequest" />
+  </message>
+  <message name="UpdateResponse">
+    <part name="parameters" element="tns:UpdateResponse" />
+  </message>
+  <message name="UpdateStatusRequest">
+    <part name="parameters" element="tns:UpdateStatusRequest" />
+  </message>
+  <message name="UpdateStatusResponse">
+    <part name="parameters" element="tns:UpdateStatusResponse" />
+  </message>
+  <message name="ValidateRequest">
+    <part name="parameters" element="tns:ValidateRequest" />
+  </message>
+  <message name="ValidateResponse">
+    <part name="parameters" element="tns:ValidateResponse" />
+  </message>
+  <message name="QueryRequest">
+    <part name="parameters" element="tns:QueryRequest" />
+  </message>
+  <message name="QueryResponse">
+    <part name="parameters" element="tns:QueryResponse" />
+  </message>
+  <message name="GetByPlayerIdsRequest">
+    <part name="parameters" element="tns:GetByPlayerIdsRequest" />
+  </message>
+  <message name="GetByPlayerIdsResponse">
+    <part name="parameters" element="tns:GetByPlayerIdsResponse" />
+  </message>
+  <message name="EntityValidationFaultFaultMessage">
+    <part name="fault" element="ns11:EntityValidationFault" />
+  </message>
+  <message name="NullifiedRoleFaultFaultMessage">
+    <part name="fault" element="ns11:NullifiedRoleFault" />
+  </message>
+  <message name="TooManyResultsFaultFaultMessage">
+    <part name="fault" element="ns11:TooManyResultsFault" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="OversightCommitteePortType">
+    <operation name="create">
+      <input message="tns:CreateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/CreateRequest" />
+      <output message="tns:CreateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/CreateResponse" />
+      <fault name="EntityValidationFault" message="tns:EntityValidationFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/EntityValidationFaultFaultMessage" />
+    </operation>
+    <operation name="getById">
+      <input message="tns:GetByIdRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByIdRequest" />
+      <output message="tns:GetByIdResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByIdResponse" />
+      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/NullifiedRoleFaultFaultMessage" />
+    </operation>
+    <operation name="getByIds">
+      <input message="tns:GetByIdsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByIdsRequest" />
+      <output message="tns:GetByIdsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByIdsResponse" />
+      <fault name="NullifiedRoleFault" message="tns:NullifiedRoleFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/NullifiedRoleFaultFaultMessage" />
+    </operation>
+    <operation name="update">
+      <input message="tns:UpdateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/UpdateRequest" />
+      <output message="tns:UpdateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/UpdateResponse" />
+      <fault name="EntityValidationFault" message="tns:EntityValidationFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/EntityValidationFaultFaultMessage" />
+    </operation>
+    <operation name="updateStatus">
+      <input message="tns:UpdateStatusRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/UpdateStatusRequest" />
+      <output message="tns:UpdateStatusResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/UpdateStatusResponse" />
+      <fault name="EntityValidationFault" message="tns:EntityValidationFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/EntityValidationFaultFaultMessage" />
+    </operation>
+    <operation name="validate">
+      <input message="tns:ValidateRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/ValidateRequest" />
+      <output message="tns:ValidateResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/ValidateResponse" />
+    </operation>
+    <operation name="query">
+      <input message="tns:QueryRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/QueryRequest" />
+      <output message="tns:QueryResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/QueryResponse" />
+      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/TooManyResultsFaultFaultMessage" />
+    </operation>
+    <operation name="getByPlayerIds">
+      <input message="tns:GetByPlayerIdsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByPlayerIdsRequest" />
+      <output message="tns:GetByPlayerIdsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByPlayerIdsResponse" />
+    </operation>
+  </portType>
+    <binding name="OversightCommitteePortTypeSOAPBinding" type="tns:OversightCommitteePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="create">
+            <soap:operation soapAction="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/CreateRequest"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="EntityValidationFault">
+                <soap:fault name="EntityValidationFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="getById">
+            <soap:operation soapAction="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByIdRequest"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="NullifiedRoleFault">
+                <soap:fault name="NullifiedRoleFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="getByIds">
+            <soap:operation soapAction="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByIdsRequest"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="NullifiedRoleFault">
+                <soap:fault name="NullifiedRoleFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="update">
+            <soap:operation soapAction="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/UpdateRequest"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="EntityValidationFault">
+                <soap:fault name="EntityValidationFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="updateStatus">
+            <soap:operation soapAction="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/UpdateStatusRequest"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="EntityValidationFault">
+                <soap:fault name="EntityValidationFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="validate">
+            <soap:operation soapAction="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/ValidateRequest"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="query">
+            <soap:operation soapAction="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/QueryRequest"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="TooManyResultsFault">
+                <soap:fault name="TooManyResultsFault" use="literal"/>
+            </fault>
+        </operation>
+        <operation name="getByPlayerIds">
+            <soap:operation soapAction="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee/GetByPlayerIdsRequest"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="OversightCommitteeService">
+        <port name="OversightCommitteePortTypePort" binding="tns:OversightCommitteePortTypeSOAPBinding">
+            <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#UsernameToken"/>
+            <soap:address location="REPLACE_WITH_ACTUAL_URL"/>
+        </port>
+    </service>
+    <wsp:Policy wsu:Id="UsernameToken"
+                xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+        <sp:SupportingTokens>
+            <wsp:Policy>
+                <sp:UsernameToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient"/>
+            </wsp:Policy>
+        </sp:SupportingTokens>
+    </wsp:Policy>
+</definitions>
+

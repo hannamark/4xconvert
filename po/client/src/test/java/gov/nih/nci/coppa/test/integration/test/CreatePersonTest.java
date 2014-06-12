@@ -90,8 +90,10 @@ public class CreatePersonTest extends AbstractPoWebTest {
     public void testPerson() throws Exception {        
         loginAsCurator();
         openCreatePerson();
+        assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present
         verifyDefaultValidationErrors();
         createPerson();
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present now        
     }
 
     /**
@@ -102,7 +104,7 @@ public class CreatePersonTest extends AbstractPoWebTest {
         assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.person.statusCode"));
         assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.person.statusCode"));
         assertEquals("United States", selenium.getSelectedLabel("curateEntityForm.person.postalAddress.country"));
-        assertTrue(selenium.isTextPresent("US, Canadian, and Australian addresses must include zip"));
+        assertTrue(selenium.isTextPresent("US, Canadian, and Australian addresses must include zip"));        
         verifyDefaultFieldErrorsMessages();
 
         selenium.select("curateEntityForm.person.statusCode", "label=" + SELECT_A_STATUS);

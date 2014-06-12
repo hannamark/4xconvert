@@ -86,6 +86,7 @@ import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
 
 import javax.ejb.Local;
+import javax.jms.JMSException;
 
 /**
  * Interface for health care facilities.
@@ -99,4 +100,12 @@ public interface HealthCareFacilityServiceLocal extends GenericStructrualRoleSer
      * @return the count of roles that need attention.
      */
     int getHotRoleCount(Organization org);
+    
+    /**
+     * This method is used by the WebService to update an Organizational Role.
+     * @param healthCareFacility the healthCareFacility to curate.
+     * @param ctepId ctepId to be updated
+     * @throws JMSException if problem occurred publishing the announcement message for updates.
+     */
+    void curate(HealthCareFacility healthCareFacility, String ctepId) throws JMSException;
 }

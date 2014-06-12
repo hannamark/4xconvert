@@ -136,6 +136,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         // click on item to curate
         clickLinkInTable("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
 
         String tempName = firstName.concat(firstName);
         selenium.type("curateEntityForm_person_firstName", tempName);

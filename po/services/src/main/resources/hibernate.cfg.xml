@@ -25,6 +25,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.po.data.bo.Country" />
         <mapping class="gov.nih.nci.po.data.bo.Comment" />
         <mapping class="gov.nih.nci.po.data.bo.Email"/>
+        <mapping class="gov.nih.nci.po.data.bo.Alias"/>
         <mapping class="gov.nih.nci.po.data.bo.Family"/>
         <mapping class="gov.nih.nci.po.data.bo.FamilyOrganizationRelationship"/>
         <mapping class="gov.nih.nci.po.data.bo.FamilyP30"/>

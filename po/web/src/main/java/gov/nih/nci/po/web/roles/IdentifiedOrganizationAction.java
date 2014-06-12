@@ -92,6 +92,7 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -208,6 +209,7 @@ public class IdentifiedOrganizationAction
 
     /**
      * {@inheritDoc}
+     * @throws CSException CSException
      */
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
@@ -220,7 +222,7 @@ public class IdentifiedOrganizationAction
                         message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
     @Override
-    public String add() throws JMSException {
+    public String add() throws JMSException, CSException {
         return super.add();
     }
 

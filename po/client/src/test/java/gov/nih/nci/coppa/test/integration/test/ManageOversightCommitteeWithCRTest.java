@@ -133,6 +133,7 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         // Test update.
         openOrgRoleScreen(false);
         waitForElementById("curateRoleForm_role_typeCode", 10);
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
         assertEquals(TYPE_EC, selenium.getSelectedLabel("id=curateRoleForm_role_typeCode"));
         // Update Type to TYPE_REB, and save.
         selenium.select("curateRoleForm_role_typeCode", TYPE_REB);
@@ -192,7 +193,7 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
 
     private void createOversightCommittee(String oversightCommitteeType, String roleStatus)  {
         openOrgRoleScreen(true);
-
+        assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present
         selenium.select("curateRoleForm_role_typeCode", oversightCommitteeType);
         selenium.select("curateRoleForm.role.status", roleStatus);
         saveOrganizationalRole();

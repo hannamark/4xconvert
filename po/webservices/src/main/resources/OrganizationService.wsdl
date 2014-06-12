@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+	xmlns:tns="http://soap.simple.service.webservices.po.nci.nih.gov/organization/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	name="OrganizationService" targetNamespace="http://soap.simple.service.webservices.po.nci.nih.gov/organization/"
+	xmlns:o="gov.nih.nci.po.webservices.types">
+	<jaxws:bindings>
+		<jaxws:package name="gov.nih.nci.po.webservices.service.simple.soap.organization"></jaxws:package>
+	</jaxws:bindings>
+	<wsdl:types>
+		<xsd:schema
+			targetNamespace="http://soap.simple.service.webservices.po.nci.nih.gov/organization/">
+			<xsd:import namespace="gov.nih.nci.po.webservices.types"
+				schemaLocation="po.xsd"></xsd:import>
+
+			<xsd:simpleType name="roleType">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="ResearchOrganization" />
+					<xsd:enumeration value="OversightCommittee" />
+					<xsd:enumeration value="HealthCareFacility" />
+				</xsd:restriction>
+			</xsd:simpleType>
+
+			<xsd:element name="createOrganizationRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organization" type="o:Organization"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="createOrganizationResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organization" type="o:Organization"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updateOrganizationRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organization" type="o:Organization"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updateOrganizationResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organization" type="o:Organization"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="changeOrganizationStatusRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationID" type="xsd:long"></xsd:element>
+						<xsd:element name="status" type="o:EntityStatus"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="changeOrganizationStatusResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organization" type="o:Organization"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getOrganizationRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationID" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getOrganizationResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organization" type="o:Organization"
+							minOccurs="0"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="searchOrganizationsRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationSearchCriteria" type="o:OrganizationSearchCriteria"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="searchOrganizationsResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationSearchResultList" type="o:OrganizationSearchResult"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="createOrganizationRoleRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationRole" type="o:OrganizationRole"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="createOrganizationRoleResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationRole" type="o:OrganizationRole"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updateOrganizationRoleRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationRole" type="o:OrganizationRole"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updateOrganizationRoleResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationRole" type="o:OrganizationRole"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getOrganizationRolesByOrgIdRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationID" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getOrganizationRolesByOrgIdResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationRoleList" type="o:OrganizationRole"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getOrganizationRolesByCtepIdRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ctepID" type="xsd:string"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getOrganizationRolesByCtepIdResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationRoleList" type="o:OrganizationRole"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getOrganizationRoleByIdRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="roleType" type="tns:roleType"></xsd:element>
+						<xsd:element name="organizationRoleID" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getOrganizationRoleByIdResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationRole" type="o:OrganizationRole"
+							minOccurs="0" maxOccurs="1"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="changeOrganizationRoleStatusRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="roleType" type="tns:roleType"></xsd:element>
+						<xsd:element name="organizationRoleID" type="xsd:long"></xsd:element>
+						<xsd:element name="status" type="o:EntityStatus"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="changeOrganizationRoleStatusResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationRole" type="o:OrganizationRole"
+							minOccurs="0" maxOccurs="1"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="createOrganizationRequest">
+		<wsdl:part name="parameters" element="tns:createOrganizationRequest" />
+	</wsdl:message>
+	<wsdl:message name="createOrganizationResponse">
+		<wsdl:part name="parameters" element="tns:createOrganizationResponse" />
+	</wsdl:message>
+
+	<wsdl:message name="updateOrganizationRequest">
+		<wsdl:part name="parameters" element="tns:updateOrganizationRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updateOrganizationResponse">
+		<wsdl:part name="parameters" element="tns:updateOrganizationResponse"></wsdl:part>
+	</wsdl:message>
+
+	<wsdl:message name="changeOrganizationStatusRequest">
+		<wsdl:part name="parameters" element="tns:changeOrganizationStatusRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="changeOrganizationStatusResponse">
+		<wsdl:part name="parameters" element="tns:changeOrganizationStatusResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getOrganizationRequest">
+		<wsdl:part name="parameters" element="tns:getOrganizationRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getOrganizationResponse">
+		<wsdl:part name="parameters" element="tns:getOrganizationResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="createOrganizationRoleRequest">
+		<wsdl:part name="parameters" element="tns:createOrganizationRoleRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="createOrganizationRoleResponse">
+		<wsdl:part name="parameters" element="tns:createOrganizationRoleResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updateOrganizationRoleRequest">
+		<wsdl:part name="parameters" element="tns:updateOrganizationRoleRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updateOrganizationRoleResponse">
+		<wsdl:part name="parameters" element="tns:updateOrganizationRoleResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getOrganizationRolesByOrgIdRequest">
+		<wsdl:part name="parameters" element="tns:getOrganizationRolesByOrgIdRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getOrganizationRolesByOrgIdResponse">
+		<wsdl:part name="parameters" element="tns:getOrganizationRolesByOrgIdResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getOrganizationRolesByCtepIdRequest">
+		<wsdl:part name="parameters" element="tns:getOrganizationRolesByCtepIdRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getOrganizationRolesByCtepIdResponse">
+		<wsdl:part name="parameters" element="tns:getOrganizationRolesByCtepIdResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="changeOrganizationRoleStatusRequest">
+		<wsdl:part name="parameters" element="tns:changeOrganizationRoleStatusRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="changeOrganizationRoleStatusResponse">
+		<wsdl:part name="parameters" element="tns:changeOrganizationRoleStatusResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getOrganizationRoleByIdRequest">
+		<wsdl:part name="parameters" element="tns:getOrganizationRoleByIdRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getOrganizationRoleByIdResponse">
+		<wsdl:part name="parameters" element="tns:getOrganizationRoleByIdResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="searchOrganizationsRequest">
+		<wsdl:part name="parameters" element="tns:searchOrganizationsRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="searchOrganizationsResponse">
+		<wsdl:part name="parameters" element="tns:searchOrganizationsResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="OrganizationService">
+		<wsdl:operation name="createOrganization">
+			<wsdl:input message="tns:createOrganizationRequest" />
+			<wsdl:output message="tns:createOrganizationResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="updateOrganization">
+			<wsdl:input message="tns:updateOrganizationRequest"></wsdl:input>
+			<wsdl:output message="tns:updateOrganizationResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="changeOrganizationStatus">
+			<wsdl:input message="tns:changeOrganizationStatusRequest"></wsdl:input>
+			<wsdl:output message="tns:changeOrganizationStatusResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getOrganization">
+			<wsdl:input message="tns:getOrganizationRequest"></wsdl:input>
+			<wsdl:output message="tns:getOrganizationResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="searchOrganizations">
+			<wsdl:input message="tns:searchOrganizationsRequest"></wsdl:input>
+			<wsdl:output message="tns:searchOrganizationsResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createOrganizationRole">
+			<wsdl:input message="tns:createOrganizationRoleRequest"></wsdl:input>
+			<wsdl:output message="tns:createOrganizationRoleResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateOrganizationRole">
+			<wsdl:input message="tns:updateOrganizationRoleRequest"></wsdl:input>
+			<wsdl:output message="tns:updateOrganizationRoleResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getOrganizationRolesByOrgId">
+			<wsdl:input message="tns:getOrganizationRolesByOrgIdRequest"></wsdl:input>
+			<wsdl:output message="tns:getOrganizationRolesByOrgIdResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getOrganizationRolesByCtepId">
+			<wsdl:input message="tns:getOrganizationRolesByCtepIdRequest"></wsdl:input>
+			<wsdl:output message="tns:getOrganizationRolesByCtepIdResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="changeOrganizationRoleStatus">
+			<wsdl:input message="tns:changeOrganizationRoleStatusRequest"></wsdl:input>
+			<wsdl:output message="tns:changeOrganizationRoleStatusResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getOrganizationRoleById">
+			<wsdl:input message="tns:getOrganizationRoleByIdRequest"></wsdl:input>
+			<wsdl:output message="tns:getOrganizationRoleByIdResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="OrganizationServiceSoapBinding" type="tns:OrganizationService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="createOrganization">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateOrganization">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="changeOrganizationStatus">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getOrganization">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="searchOrganizations">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createOrganizationRole">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updateOrganizationRole">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getOrganizationRolesByOrgId">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getOrganizationRolesByCtepId">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getOrganizationRoleById">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="changeOrganizationRoleStatus">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="OrganizationService">
+		<wsdl:port name="OrganizationServicePort" binding="tns:OrganizationServiceSoapBinding">
+            <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#UsernameToken"/>
+			<soap:address location="REPLACE_WITH_ACTUAL_URL" />
+		</wsdl:port>
+	</wsdl:service>
+
+    <wsp:Policy wsu:Id="UsernameToken"
+                xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+        <sp:SupportingTokens>
+            <wsp:Policy>
+                <sp:UsernameToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient"/>
+            </wsp:Policy>
+        </sp:SupportingTokens>
+    </wsp:Policy>
+</wsdl:definitions>

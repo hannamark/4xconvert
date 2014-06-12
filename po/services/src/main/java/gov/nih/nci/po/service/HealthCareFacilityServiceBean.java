@@ -96,7 +96,7 @@ import javax.jms.JMSException;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class HealthCareFacilityServiceBean extends AbstractCuratableServiceBean<HealthCareFacility>
+public class HealthCareFacilityServiceBean extends EnhancedOrganizationRoleServiceBean<HealthCareFacility>
     implements HealthCareFacilityServiceLocal {
 
     /**

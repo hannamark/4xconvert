@@ -123,6 +123,11 @@
             <version>1.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+        </dependency>
 
         <!-- Jars required -->
         <dependency>
@@ -141,7 +146,7 @@
             <groupId>gov.nih.nci.iso21090</groupId>
             <artifactId>iso-datatypes</artifactId>
             <version>${iso-datatypes.version}</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
@@ -215,7 +220,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.8.4</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -331,6 +336,56 @@
                         </excludes>
                     </instrumentation>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- CPD violations necessary to maintain compatibility with CTEP services. -->
+                        <exclude>**/AbstractEnhancedOrganizationRole.java</exclude>
+                        <exclude>**/AbstractOversightCommittee.java</exclude>
+                        <exclude>**/EmailLogger.java</exclude>
+                        <exclude>**/MockTextMessage.java</exclude>
+                        <exclude>**/OrganizationCR.java</exclude>
+                        <exclude>**/ClinicalResearchStaffCR.java</exclude>
+                        <exclude>**/HealthCareFacilityCR.java</exclude>
+                        <exclude>**/HealthCareProviderCR.java</exclude>
+                        <exclude>**/OrganizationalContactCR.java</exclude>
+                        <exclude>**/ResearchOrganizationCR.java</exclude>
+                        
+                        <!-- CPD violations -->
+                        <exclude>**/IdentifiedOrganization.java</exclude>
+                        <exclude>**/IdentifiedPerson.java</exclude>
+                        <exclude>**/HealthCareProvider.java</exclude>
+                        <exclude>**/OrganizationalContact.java</exclude>
+                        <exclude>**/HealthCareFacility.java</exclude>
+                        <exclude>**/ResearchOrganization.java</exclude>
+                        <exclude>**/ClinicalResearchStaff.java</exclude>
+                        <exclude>**/HealthCareFacility.java</exclude>
+                    </excludes>
+                    <excludeRoots>
+                        <excludeRoot>target/generated-sources/xsnapshot/</excludeRoot>
+                    </excludeRoots>
+                    <minimumTokens>125</minimumTokens>
+                </configuration>
+                <version>${maven-pmd-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
+                        <phase>process-test-classes</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>gov.nih.nci.coppa</groupId>
+                        <artifactId>nci-commons-ctrp-core</artifactId>
+                        <version>${nci-commons.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

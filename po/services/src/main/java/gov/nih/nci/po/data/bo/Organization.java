@@ -83,6 +83,8 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.FamilyOrganizationRelationshipFamilyComparator;
+import gov.nih.nci.po.util.PoServiceUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,6 +95,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
@@ -125,7 +128,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @javax.persistence.Entity
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class Organization extends AbstractOrganization
-        implements Auditable, CuratableEntity<Organization, OrganizationCR>, Entity {
+        implements Overridable, Auditable, CuratableEntity<Organization, OrganizationCR>, Entity {
     private static final long serialVersionUID = 1L;
     private static final String NOT_NULLIFIED_CLAUSE = "status <> 'NULLIFIED'";
     private static final String PLAYER_MAPPING = "player";
@@ -147,7 +150,9 @@ public class Organization extends AbstractOrganization
     private SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships =
         new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipFamilyComparator());
     private List<Comment> comments = new ArrayList<Comment>();
-    
+    private User createdBy;
+    private User overriddenBy;    
+
     /**
      * Create a new, empty org.
      */
@@ -261,6 +266,26 @@ public class Organization extends AbstractOrganization
     @Searchable(nested = true)
     public List<PhoneNumber> getTty() {
         return super.getTty();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @OneToMany(fetch = FetchType.EAGER)
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "organization_alias",
+            joinColumns = @JoinColumn(name = JOIN_COLUMN),
+            inverseJoinColumns = @JoinColumn(name = "alias_id")
+    )
+    @IndexColumn(name = INDEX_NAME)
+    @ForeignKey(name = "ORG_ALIAS_FK", inverseName = "ALIAS_ORG_FK")    
+    @Override
+    @Searchable(nested = true)    
+    public List<Alias> getAlias() {
+        return super.getAlias();
     }
 
     /**
@@ -527,5 +552,57 @@ public class Organization extends AbstractOrganization
      */
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+    
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "created_by_id", nullable = true)
+    @ForeignKey(name = "org_createdby_user_fk")
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * @param user
+     *            the user to set
+     */
+    public void setCreatedBy(User user) {
+        this.createdBy = user;
+    }
+    
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getCreatedByUserName() {
+        return PoServiceUtil.getUserName(createdBy);
+    }
+    
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "overridden_by_id", nullable = true)
+    @ForeignKey(name = "org_overriddenby_user_fk")
+    public User getOverriddenBy() {
+        return overriddenBy;
+    }
+
+    /**
+     * @param overriddenBy
+     *            the overriddenBy user to set
+     */
+    public void setOverriddenBy(User overriddenBy) {
+        this.overriddenBy = overriddenBy;
+    }
+    
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getOverriddenByUserName() {
+        return PoServiceUtil.getUserName(overriddenBy);
     }
 }

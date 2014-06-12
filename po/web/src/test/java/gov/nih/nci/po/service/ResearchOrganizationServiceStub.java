@@ -60,4 +60,10 @@ public class ResearchOrganizationServiceStub implements ResearchOrganizationServ
         return null;
     }
 
+    @Override
+    public void curate(ResearchOrganization researchOrganization, String ctepId)
+            throws JMSException {
+        
+    }
+
 }

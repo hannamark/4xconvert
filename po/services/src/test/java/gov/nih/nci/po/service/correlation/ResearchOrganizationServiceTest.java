@@ -83,16 +83,22 @@
 package gov.nih.nci.po.service.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
+import gov.nih.nci.po.data.bo.Alias;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoServiceUtil;
 
 import java.util.HashSet;
 import java.util.List;
@@ -129,6 +135,11 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         ro.setPlayer(basicOrganization);
         ro.setTypeCode(sampleType);
         ro.setFundingMechanism(fm);
+        
+        Alias alias = new Alias("ro alias 1");
+        Alias alias2 = new Alias("ro alias 2");
+        ro.getAlias().add(alias);
+        ro.getAlias().add(alias2);
 
         try {
             // re-gen new Player Org
@@ -148,6 +159,46 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         assertEquals(expected.getFundingMechanism().getCode(), actual.getFundingMechanism().getCode());
     }
 
+    @Test
+    public void testCurateROAlias() throws Exception {
+        // create RO first        
+        ResearchOrganizationServiceLocal svc = (ResearchOrganizationServiceLocal) getService();
+        ResearchOrganization ro = getSampleStructuralRole();        
+        long id= svc.create(ro);
+        
+        // get the created RO from the DB
+        ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().load(ResearchOrganization.class, id);
+        assertTrue(ro.getAlias().size() == 2);
+        assertEquals("ro alias 1", ro.getAlias().get(0).getValue());
+        assertEquals("ro alias 2", ro.getAlias().get(1).getValue()); 
+        
+        String name = "updated RO";
+        ro.setName(name);
+        ro.setStatus(RoleStatus.ACTIVE);
+        String ctepId ="12345";
+        
+        // clear existing & add a new Alias
+        ro.getAlias().clear();
+        ro.getAlias().add(new Alias("test updated ro alias"));
+
+        svc.curate(ro, ctepId);
+        assertEquals(ctepId, PoServiceUtil.getOrgRoleBoCtepId(ro));
+        assertEquals(name, ro.getName()); 
+        
+        // get the updated RO
+        ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().load(ResearchOrganization.class, id);
+        assertTrue(ro.getAlias().size() == 1);
+        assertEquals("test updated ro alias", ro.getAlias().get(0).getValue());
+        
+        // add another Alias to the existing one
+        ro.getAlias().add(new Alias("test alias 2"));
+        svc.curate(ro);        
+        ro = (ResearchOrganization) PoHibernateUtil.getCurrentSession().load(ResearchOrganization.class, id);
+        assertTrue(ro.getAlias().size() == 2);
+        assertEquals("test updated ro alias", ro.getAlias().get(0).getValue());
+        assertEquals("test alias 2", ro.getAlias().get(1).getValue());          
+    }
+    
     @Test
     public void testUnique() throws Exception {
         ResearchOrganization ro1 = super.createSample();

@@ -87,11 +87,13 @@ import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.PhoneOrEmailRequiredValidator;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.util.RequiredOrganizationalContactTitleOrPerson;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniqueOrganizationalContactPlayerScoperType;
 import gov.nih.nci.po.util.UniqueOrganizationalContactTitleScoperType;
 import gov.nih.nci.po.util.ValidIi;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.HashSet;
 import java.util.List;
@@ -107,6 +109,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
@@ -383,4 +386,40 @@ public class OrganizationalContact extends AbstractOrganizationalContact impleme
         return super.getOtherIdentifiers();
     }
 
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "created_by_id", nullable = true)
+    @ForeignKey(name = "perrole_createdby_user_fk")
+    public User getCreatedBy() {
+        return super.getCreatedBy();
+    }    
+    
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getCreatedByUserName() {
+        return PoServiceUtil.getUserName(super.getCreatedBy());
+    }
+    
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "overridden_by_id", nullable = true)
+    @ForeignKey(name = "perrole_overriddenby_user_fk")
+    public User getOverriddenBy() {
+        return super.getOverriddenBy();
+    }
+
+    
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getOverriddenByUserName() {
+        return PoServiceUtil.getUserName(super.getOverriddenBy());
+    }
 }

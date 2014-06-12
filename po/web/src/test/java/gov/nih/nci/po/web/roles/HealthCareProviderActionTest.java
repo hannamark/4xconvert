@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -19,6 +22,8 @@ import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.util.PrivateAccessor;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +36,8 @@ import javax.jms.JMSException;
 import org.displaytag.properties.SortOrderEnum;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.opensymphony.xwork2.Action;
@@ -51,16 +58,17 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
         action.setRole(null);
         action.prepare();
         assertFalse(action.isUsOrCanadaFormat());
-        Address addr1 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
-                new Country("United States", "840", "US", "USA"));
+        Address addr1 = new Address("defaultStreetAddress",
+                "cityOrMunicipality", "defaultState", "12345", new Country(
+                        "United States", "840", "US", "USA"));
         action.getRole().getPostalAddresses().add(addr1);
         assertTrue(action.isUsOrCanadaFormat());
-        Address addr2 = new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345",
-                new Country("Tazmania", "999", "TZ", "TAZ"));
+        Address addr2 = new Address("defaultStreetAddress",
+                "cityOrMunicipality", "defaultState", "12345", new Country(
+                        "Tazmania", "999", "TZ", "TAZ"));
         action.getRole().getPostalAddresses().add(addr2);
         assertFalse(action.isUsOrCanadaFormat());
     }
-
 
     @Test
     public void testPrepareNoPersonId() throws Exception {
@@ -68,12 +76,14 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
         action.prepare();
         assertSame(action.getPerson(), action.getRole().getPlayer());
 
-        // calling again exercises the path where the object already has the player set
+        // calling again exercises the path where the object already has the
+        // player set
         Person o = action.getPerson();
         action.setPerson(null);
         action.prepare();
         assertSame(o, action.getRole().getPlayer());
     }
+
     @Test
     public void testPrepareNoRootKey() throws Exception {
         HealthCareProvider initial = action.getRole();
@@ -84,12 +94,13 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
     @Test
     public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
         // can only set root key to the key of an object in the session,
-        // so after setting the root key, we have to clear out the session manually to test this case
+        // so after setting the root key, we have to clear out the session
+        // manually to test this case
         action.setRootKey("abc-123");
         getSession().clearAttributes();
 
         action.prepare();
-        //assertNull(action.getRole());
+        // assertNull(action.getRole());
         assertNotNull(action.getRole());
     }
 
@@ -131,11 +142,14 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
         assertNotNull(action.getResults());
         assertEquals(0, action.getResults().getFullListSize());
         assertNotNull(action.getResults().getList());
-        assertEquals(PoRegistry.DEFAULT_RECORDS_PER_PAGE, action.getResults().getObjectsPerPage());
+        assertEquals(PoRegistry.DEFAULT_RECORDS_PER_PAGE, action.getResults()
+                .getObjectsPerPage());
         assertEquals(1, action.getResults().getPageNumber());
         assertEquals(null, action.getResults().getSearchId());
-        assertEquals(ResearchOrganizationSortCriterion.ID.name(), action.getResults().getSortCriterion());
-        assertEquals(SortOrderEnum.ASCENDING, action.getResults().getSortDirection());
+        assertEquals(ResearchOrganizationSortCriterion.ID.name(), action
+                .getResults().getSortCriterion());
+        assertEquals(SortOrderEnum.ASCENDING, action.getResults()
+                .getSortDirection());
     }
 
     @Test
@@ -144,7 +158,20 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testAdd() throws JMSException {
+    public void testAdd() throws JMSException, CSException {
+
+        HealthCareProviderAction action = mock(HealthCareProviderAction.class);
+        doAnswer(new Answer<Object>() {
+            public Object answer(InvocationOnMock invocation) {
+                User user = mock(User.class);
+                return user;
+            }
+        }).when(action).getCreatedBy();
+
+        doCallRealMethod().when(action).getBaseRole();
+        doCallRealMethod().when(action).getRoleService();
+        doCallRealMethod().when(action).add();
+
         assertEquals(Action.SUCCESS, action.add());
     }
 
@@ -189,10 +216,13 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
 
     private void verifyAvailStatusForEditForm(RoleStatus roleStatus) {
         action.getRole().setId(1L);
-        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractRole.class, "setPriorAsString",
+        PrivateAccessor.invokePrivateMethod(action.getRole(),
+                AbstractRole.class, "setPriorAsString",
                 new Object[] { roleStatus.name() });
-        assertTrue(roleStatus.getAllowedTransitions().containsAll(action.getAvailableStatus()));
-        assertTrue(action.getAvailableStatus().containsAll(roleStatus.getAllowedTransitions()));
+        assertTrue(roleStatus.getAllowedTransitions().containsAll(
+                action.getAvailableStatus()));
+        assertTrue(action.getAvailableStatus().containsAll(
+                roleStatus.getAllowedTransitions()));
     }
 
     @Test
@@ -214,7 +244,8 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
             protected HealthCareProviderServiceLocal getRoleService() {
                 return new HealthCareProviderServiceStub() {
                     @Override
-                    public List<HealthCareProvider> search(SearchCriteria<HealthCareProvider> criteria) {
+                    public List<HealthCareProvider> search(
+                            SearchCriteria<HealthCareProvider> criteria) {
                         List<HealthCareProvider> results = new ArrayList<HealthCareProvider>();
                         results.add(create(playerId, 1L));
                         results.add(create(playerId, 2L));
@@ -236,7 +267,8 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
         };
         action.getRole().setId(5L);
         action.getPerson().setId(1L);
-        Iterator<HealthCareProvider> iterator = action.getAvailableDuplicateOfs().iterator();
+        Iterator<HealthCareProvider> iterator = action
+                .getAvailableDuplicateOfs().iterator();
         assertEquals(1L, iterator.next().getId().longValue());
         assertEquals(2L, iterator.next().getId().longValue());
         assertEquals(3L, iterator.next().getId().longValue());
@@ -246,12 +278,12 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
 
     @Test
     public void changeCurrentChangeRequest() {
-        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
-                .changeCurrentChangeRequest());
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT,
+                action.changeCurrentChangeRequest());
 
         action.getCr().setId(1L);
-        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT, action
-                .changeCurrentChangeRequest());
+        assertEquals(AbstractRoleAction.CHANGE_CURRENT_CHANGE_REQUEST_RESULT,
+                action.changeCurrentChangeRequest());
     }
 
     @Test
@@ -274,7 +306,8 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
         HealthCareProviderCR cr2 = new HealthCareProviderCR();
         cr2.setId(2L);
         action.getRole().getChangeRequests().add(cr2);
-        Map<String, String> selectChangeRequests = action.getSelectChangeRequests();
+        Map<String, String> selectChangeRequests = action
+                .getSelectChangeRequests();
         assertEquals(2, selectChangeRequests.size());
         selectChangeRequests.values();
         int i = 1;

@@ -142,6 +142,7 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
     public void testFamilyOrgPerspective(){
         loginAsCurator();
         createNewFamily();
+        createNewFamily();
         addOrgMember("ClinicalTrials");
         openSearchOrganization();
         selenium.type("searchOrganizationForm_criteria_name", "National");
@@ -197,9 +198,11 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         String familyId = getFamilyId();
         assertTrue(selenium.isElementPresent("select_family_" + familyId));
         clickAndWait("select_family_" + familyId);
+        pause(1000);
         driver.switchTo().defaultContent();
         selenium.select("familyOrgRelationship.functionalType", FUNCTIONAL_TYPE);
         clickAndWait("save_button");
+        pause(2000);
     }
 
     @SuppressWarnings("deprecation")

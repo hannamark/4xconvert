@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * @author Denis G. Krylov
- *
+ * 
  */
 public class BaseSearchResultDTO implements Serializable {
 
@@ -22,6 +22,7 @@ public class BaseSearchResultDTO implements Serializable {
     private String city;
     private String state;
     private String country;
+    private String countryCode;
     private String zipCode;
     private String comments;
     private String emailAddresses;
@@ -131,6 +132,21 @@ public class BaseSearchResultDTO implements Serializable {
      */
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    /**
+     * @return the country code(alpha 3)
+     */
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    /**
+     * @param countryCode
+     *            the countryCode(alpha 3) to set
+     */
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 
     /**

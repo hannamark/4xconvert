@@ -83,14 +83,23 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.ServiceLocator;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.jms.JMSException;
@@ -101,6 +110,7 @@ import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 public class PersonServiceBeanTest extends AbstractServiceBeanTest {
 
@@ -169,6 +179,76 @@ public class PersonServiceBeanTest extends AbstractServiceBeanTest {
         verifyEquals(person, savedPerson);
         PoHibernateUtil.getCurrentSession().flush();        
     }
+    
+    
+    
+    @Test
+    public void createPersonWithCtepId() throws EntityValidationException, JMSException {   
+        setupMockData();
+        String ctepId="123456";
+        Person person = getBasicPerson();
+        person.setStatusCode(EntityStatus.ACTIVE);        
+        long id = personServiceBean.create(person, ctepId);        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        Person savedPerson = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+        
+        verifyEquals(person, savedPerson);
+        PoHibernateUtil.getCurrentSession().flush();        
+    }
+
+    @Test
+    public void updatePersonWithCtepId() throws EntityValidationException, JMSException {   
+        setupMockData();
+        String ctepId="123456";
+        Person person = getBasicPerson();
+        person.setStatusCode(EntityStatus.ACTIVE);        
+        long id = personServiceBean.create(person);        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();        
+        
+        // now update the person
+        person.setFirstName("update fname");
+        personServiceBean.curate(person, ctepId);        
+        Person savedPerson = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+        
+        verifyEquals(person, savedPerson);        
+        PoHibernateUtil.getCurrentSession().flush();        
+    }
+    
+    private void setupMockData() throws EntityValidationException, JMSException{
+        ServiceLocator serviceLocator = null;
+        serviceLocator = mock(ServiceLocator.class);
+        PoRegistry.getInstance().setServiceLocator(serviceLocator);
+        // Mock setup for getting Organization
+        OrganizationServiceLocal orgSerLocal = mock(OrganizationServiceLocal.class);
+        when(serviceLocator.getOrganizationService()).thenReturn(
+                orgSerLocal);
+        when(
+                orgSerLocal.search(isA(OrganizationSearchCriteria.class),
+                        isA(PageSortParams.class))).thenReturn(
+                getOrgSearchDtoList());
+        
+        // Mock setup for getting IdentifiedPerson
+        IdentifiedPersonServiceLocal ipSerLocal = mock(IdentifiedPersonServiceLocal.class);
+        personServiceBean.setIdenPerServ(ipSerLocal);
+        when(serviceLocator.getIdentifiedPersonService()).thenReturn(
+                ipSerLocal);
+        when(ipSerLocal.create(isA(IdentifiedPerson.class))).thenReturn(1l);
+        doNothing().when(ipSerLocal).curate(isA(IdentifiedPerson.class));       
+    }
+    
+    private List<OrganizationSearchDTO> getOrgSearchDtoList() {
+        List<OrganizationSearchDTO> orgSearchDtoList = new ArrayList<OrganizationSearchDTO>();
+        OrganizationSearchDTO dto = new OrganizationSearchDTO();
+        dto.setId(1l);
+        dto.setName("Cancer Therapy Evaluation Program");
+        dto.setStatusCode("ACTIVE");
+        dto.setStatusDate(new Date());
+        orgSearchDtoList.add(dto);
+        return orgSearchDtoList;
+    }    
+       
 
     public long createPerson() throws EntityValidationException, JMSException {
         return createPerson(getBasicPerson());

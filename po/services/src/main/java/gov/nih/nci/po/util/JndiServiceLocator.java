@@ -82,32 +82,49 @@
  */
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
+import gov.nih.nci.po.data.bo.HealthCareProviderCR;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
+import gov.nih.nci.po.data.bo.OrganizationalContactCR;
+import gov.nih.nci.po.data.bo.OversightCommitteeCR;
+import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
+import gov.nih.nci.po.service.ClinicalResearchStaffCRServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
+import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
+import gov.nih.nci.po.service.HealthCareFacilityCRServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
+import gov.nih.nci.po.service.HealthCareProviderCRServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.service.IdentifiedOrganizationCrServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
+import gov.nih.nci.po.service.IdentifiedPersonCrServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.service.OrganizationalContactCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
+import gov.nih.nci.po.service.OversightCommitteeCRServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PatientServiceLocal;
+import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationCRServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
-
-import com.fiveamsolutions.nci.commons.util.JndiUtils;
 
 /**
  * @author Scott Miller
- *
  */
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public class JndiServiceLocator implements ServiceLocator {
 
     /**
@@ -136,6 +153,11 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public PersonServiceLocal getPersonService() {
         return (PersonServiceLocal) JndiUtils.lookup("java:app/po-services/PersonServiceBean");
+    }
+
+    @Override
+    public PersonCRServiceLocal getPersonCRService() {
+        return (PersonCRServiceLocal) JndiUtils.lookup("java:app/po-services/PersonCRServiceBean");
     }
 
     /**
@@ -231,6 +253,64 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public OrganizationCRServiceLocal getOrganizationCRService() {
         return (OrganizationCRServiceLocal) JndiUtils.lookup("java:app/po-services/OrganizationCRServiceBean");
+    }
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<ClinicalResearchStaffCR> getClinicalResearchStaffCRService() {
+        return (ClinicalResearchStaffCRServiceLocal) JndiUtils
+                .lookup("java:app/po-services/ClinicalResearchStaffCRServiceBean");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<HealthCareFacilityCR> getHealthCareFacilityCRService() {
+
+        return (HealthCareFacilityCRServiceLocal) JndiUtils
+                .lookup("java:app/po-services/HealthCareFacilityCRServiceBean");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<HealthCareProviderCR> getHealthCareProviderCRService() {
+        return (HealthCareProviderCRServiceLocal) JndiUtils
+                .lookup("java:app/po-services/HealthCareProviderCRServiceBean");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<IdentifiedOrganizationCR> getIdentifiedOrganizationCRService() {
+        return (IdentifiedOrganizationCrServiceLocal) JndiUtils
+                .lookup("java:app/po-services/IdentifiedOrganizationCrServiceBean");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<IdentifiedPersonCR> getIdentifiedPersonCRService() {
+        return (IdentifiedPersonCrServiceLocal) JndiUtils
+                .lookup("java:app/po-services/IdentifiedPersonCrServiceBean");
+    }
+
+    @Override
+    public GenericStructrualRoleCRServiceLocal<OrganizationalContactCR> getOrganizationalContactCRService() {
+        return (OrganizationalContactCRServiceLocal) JndiUtils
+                .lookup("java:app/po-services/OrganizationalContactCRServiceBean");
+    }
+
+    @Override
+    public GenericStructrualRoleCRServiceLocal<OversightCommitteeCR> getOversightCommitteeCRService() {
+        return (OversightCommitteeCRServiceLocal) JndiUtils
+                .lookup("java:app/po-services/OversightCommitteeCRServiceBean");
+    }
+
+    @Override
+    public GenericStructrualRoleCRServiceLocal<ResearchOrganizationCR> getResearchOrganizationCRService() {
+        return (ResearchOrganizationCRServiceLocal) JndiUtils
+                .lookup("java:app/po-services/ResearchOrganizationCRServiceBean");
     }
 
     /**

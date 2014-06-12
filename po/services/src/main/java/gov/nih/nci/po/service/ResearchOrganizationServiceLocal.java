@@ -108,4 +108,11 @@ public interface ResearchOrganizationServiceLocal extends GenericStructrualRoleS
      */
     int getHotRoleCount(Organization org);
 
+    /**
+     * This method is used by the WebService to update an Organizational Role.
+     * @param researchOrganization the researchOrganization to curate.
+     * @param ctepId ctepId to be updated
+     * @throws JMSException if problem occurred publishing the announcement message for updates.
+     */
+    void curate(ResearchOrganization researchOrganization, String ctepId) throws JMSException;
 }

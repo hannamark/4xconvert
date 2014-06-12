@@ -82,11 +82,21 @@
  */
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
+import gov.nih.nci.po.data.bo.HealthCareProviderCR;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
+import gov.nih.nci.po.data.bo.OrganizationalContactCR;
+import gov.nih.nci.po.data.bo.OversightCommitteeCR;
+import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
+import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
@@ -97,10 +107,10 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.PatientServiceLocal;
+import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
-import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 
 /**
  * @author Scott Miller
@@ -137,6 +147,12 @@ public interface ServiceLocator {
      * @return the person service
      */
     PersonServiceLocal getPersonService();
+
+    /**
+     *
+     * @return the PersonCR service.
+     */
+    PersonCRServiceLocal getPersonCRService();
 
     /**
      * @return the PO country service
@@ -199,8 +215,55 @@ public interface ServiceLocator {
     CtepImportService getCtepImportService();
 
     /**
-     * @return the organiation change request service.
+     * @return the organization change request service.
      */
     OrganizationCRServiceLocal getOrganizationCRService();
 
+    /**
+     *
+     * @return The clinical research staff change request service.
+     */
+    GenericStructrualRoleCRServiceLocal<ClinicalResearchStaffCR> getClinicalResearchStaffCRService();
+
+    /**
+     *
+     * @return The health care facility change request service.
+     */
+    GenericStructrualRoleCRServiceLocal<HealthCareFacilityCR> getHealthCareFacilityCRService();
+
+    /**
+     *
+     * @return The health care provider change request service.
+     */
+    GenericStructrualRoleCRServiceLocal<HealthCareProviderCR> getHealthCareProviderCRService();
+
+    /**
+     *
+     * @return The identified organization change request service.
+     */
+    GenericStructrualRoleCRServiceLocal<IdentifiedOrganizationCR> getIdentifiedOrganizationCRService();
+
+    /**
+     *
+     * @return The identified person change request service.
+     */
+    GenericStructrualRoleCRServiceLocal<IdentifiedPersonCR> getIdentifiedPersonCRService();
+
+    /**
+     *
+     * @return The organizational contact change request service.
+     */
+    GenericStructrualRoleCRServiceLocal<OrganizationalContactCR> getOrganizationalContactCRService();
+
+    /**
+     *
+     * @return The oversight committee change request service.
+     */
+    GenericStructrualRoleCRServiceLocal<OversightCommitteeCR> getOversightCommitteeCRService();
+
+    /**
+     *
+     * @return The research organization change request service.
+     */
+    GenericStructrualRoleCRServiceLocal<ResearchOrganizationCR> getResearchOrganizationCRService();
 }

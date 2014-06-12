@@ -87,6 +87,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -95,6 +96,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoServiceUtil;
 
 import java.util.HashSet;
 import java.util.List;
@@ -115,6 +117,10 @@ public class HealthCareFacilityServiceTest extends AbstractOrganizationalRoleSer
     HealthCareFacility getSampleStructuralRole() {
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setPlayer(basicOrganization);
+        Alias alias = new Alias("hcf alias 1");
+        Alias alias2 = new Alias("hcf alias 2");
+        hcf.getAlias().add(alias);
+        hcf.getAlias().add(alias2);
         try {
             // re-gen new Player Org
             setUpData();
@@ -129,6 +135,64 @@ public class HealthCareFacilityServiceTest extends AbstractOrganizationalRoleSer
         assertEquals(expected.getId(), actual.getId());
     }
 
+    @Test
+    public void testCurateHCFWithCtepId() throws Exception {
+        // create HCF first
+        HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
+        HealthCareFacility hcf = getSampleStructuralRole();        
+        long id= svc.create(hcf);
+        
+        // get the created HCF from the DB
+        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().load(HealthCareFacility.class, id);
+        assertTrue(hcf.getAlias().size() == 2);
+        assertEquals("hcf alias 1", hcf.getAlias().get(0).getValue());
+        assertEquals("hcf alias 2", hcf.getAlias().get(1).getValue()); 
+        
+        String name = "updated HCF";
+        hcf.setName(name);
+        hcf.setStatus(RoleStatus.ACTIVE);
+        String ctepId ="12345";
+        
+        // clear existing & add a new Alias
+        hcf.getAlias().clear();
+        hcf.getAlias().add(new Alias("test updated hcf alias"));
+
+        svc.curate(hcf, ctepId);
+        assertEquals(ctepId, PoServiceUtil.getOrgRoleBoCtepId(hcf));
+        assertEquals(name, hcf.getName()); 
+        
+        // get the updated hcf
+        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().load(HealthCareFacility.class, id);
+        assertTrue(hcf.getAlias().size() == 1);
+        assertEquals("test updated hcf alias", hcf.getAlias().get(0).getValue());
+        
+        // add another Alias to the existing one
+        hcf.getAlias().add(new Alias("test alias 2"));
+        svc.curate(hcf);        
+        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().load(HealthCareFacility.class, id);
+        assertTrue(hcf.getAlias().size() == 2);
+        assertEquals("test updated hcf alias", hcf.getAlias().get(0).getValue());
+        assertEquals("test alias 2", hcf.getAlias().get(1).getValue());               
+    }
+    
+    @Test
+    public void testCurateHCFWithBlankCtepId() throws Exception {
+        // create HCF first
+        HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();
+        HealthCareFacility hcf = getSampleStructuralRole();        
+        long id= svc.create(hcf);
+        
+        // get the created HCF from the DB
+        hcf = (HealthCareFacility) PoHibernateUtil.getCurrentSession().load(HealthCareFacility.class, id);
+        String name = "updated HCF";
+        hcf.setName(name);
+        hcf.setStatus(RoleStatus.ACTIVE);
+        String ctepId =""; // blank CtepId
+
+       svc.curate(hcf, ctepId);
+       assertEquals(name, hcf.getName());
+    }
+    
     @Test
     public void testSearch() throws Exception {
         HealthCareFacilityServiceLocal svc = (HealthCareFacilityServiceLocal) getService();

@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.service.external.CtepImportService;
 import gov.nih.nci.po.service.external.CtepImportServiceBean;
 import gov.nih.nci.po.util.EjbInterceptorHandler;
@@ -118,8 +121,6 @@ import javax.jms.JMSException;
 import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * @author Scott Miller
@@ -276,7 +277,7 @@ public class EjbTestHelper {
         return bean;
     }
 
-    public static ResearchOrganizationCRServiceBean getResearchOrganizationRCServiceBean() {
+    public static ResearchOrganizationCRServiceBean getResearchOrganizationCRServiceBean() {
         ResearchOrganizationCRServiceBean ocService = new ResearchOrganizationCRServiceBean();
         return ocService;
     }
@@ -284,7 +285,7 @@ public class EjbTestHelper {
     public static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationServiceRemote() {
         ResearchOrganizationCorrelationServiceBean ocService = new ResearchOrganizationCorrelationServiceBean();
         ocService.setRoService(EjbTestHelper.getResearchOrganizationServiceBean());
-        ocService.setRoCRService(getResearchOrganizationRCServiceBean());
+        ocService.setRoCRService(getResearchOrganizationCRServiceBean());
         return (ResearchOrganizationCorrelationServiceRemote) wrapWithProxies(ocService);
     }
 
@@ -496,5 +497,13 @@ public class EjbTestHelper {
      */
     public static FamilyServiceBean getFamilyServiceBean() {
         return new FamilyServiceBean();
+    }
+
+    public static GenericStructrualRoleCRServiceLocal<IdentifiedOrganizationCR> getIdentifiedOrganizationCrServiceBean() {
+        return new IdentifiedOrganizationCrServiceBean();
+    }
+
+    public static GenericStructrualRoleCRServiceLocal<IdentifiedPersonCR> getIdentifiedPersonCRServiceBean() {
+        return new IdentifiedPersonCrServiceBean();
     }
 }

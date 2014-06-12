@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:jaxws="http://java.sun.com/xml/ns/jaxws" xmlns:tns="http://soap.simple.service.webservices.po.nci.nih.gov/family/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	name="FamilyService" targetNamespace="http://soap.simple.service.webservices.po.nci.nih.gov/family/"
+	xmlns:f="gov.nih.nci.po.webservices.types">
+	<jaxws:bindings>
+		<jaxws:package name="gov.nih.nci.po.webservices.service.simple.soap.family"></jaxws:package>
+	</jaxws:bindings>
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://soap.simple.service.webservices.po.nci.nih.gov/family/">
+			<xsd:import namespace="gov.nih.nci.po.webservices.types"
+				schemaLocation="po.xsd"></xsd:import>
+
+			<xsd:element name="searchFamiliesByNameRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="name" type="xsd:string"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="searchFamiliesByNameResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="familyList" type="f:Family"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="searchFamiliesByOrgIdRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="organizationId" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="searchFamiliesByOrgIdResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="familyList" type="f:Family"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getFamilyMemberRelationshipsByFamilyIdRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="familyId" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getFamilyMemberRelationshipsByFamilyIdResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="familyMemberRelationshipList" type="f:FamilyMemberRelationship"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="searchFamiliesByNameRequest">
+		<wsdl:part name="parameters" element="tns:searchFamiliesByNameRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="searchFamiliesByNameResponse">
+		<wsdl:part name="parameters" element="tns:searchFamiliesByNameResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="searchFamiliesByOrgIdRequest">
+		<wsdl:part name="parameters" element="tns:searchFamiliesByOrgIdRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="searchFamiliesByOrgIdResponse">
+		<wsdl:part name="parameters" element="tns:searchFamiliesByOrgIdResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getFamilyMemberRelationshipsByFamilyIdRequest">
+		<wsdl:part name="parameters"
+			element="tns:getFamilyMemberRelationshipsByFamilyIdRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getFamilyMemberRelationshipsByFamilyIdResponse">
+		<wsdl:part name="parameters"
+			element="tns:getFamilyMemberRelationshipsByFamilyIdResponse"></wsdl:part>
+	</wsdl:message>
+
+	<wsdl:portType name="FamilyService">
+		<wsdl:operation name="searchFamiliesByName">
+			<wsdl:documentation>This method is used to get all the Families
+				matching the given family name(case-insensitive LIKE search). The
+				search starts from Index 0 and max limit is 500.
+			</wsdl:documentation>
+			<wsdl:input message="tns:searchFamiliesByNameRequest"></wsdl:input>
+			<wsdl:output message="tns:searchFamiliesByNameResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="searchFamiliesByOrgId">
+			<wsdl:documentation>This method is used to get all the Families to
+				which the given Organization belongs. The search starts from Index 0
+				and max limit is 500.
+			</wsdl:documentation>
+			<wsdl:input message="tns:searchFamiliesByOrgIdRequest"></wsdl:input>
+			<wsdl:output message="tns:searchFamiliesByOrgIdResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getFamilyMemberRelationshipsByFamilyId">
+			<wsdl:input message="tns:getFamilyMemberRelationshipsByFamilyIdRequest"></wsdl:input>
+			<wsdl:output message="tns:getFamilyMemberRelationshipsByFamilyIdResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="FamilyServiceSoapBinding" type="tns:FamilyService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="searchFamiliesByName">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="searchFamiliesByOrgId">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getFamilyMemberRelationshipsByFamilyId">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="FamilyService">
+		<wsdl:port name="FamilyServicePort" binding="tns:FamilyServiceSoapBinding">
+            <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#UsernameToken"/>
+			<soap:address location="REPLACE_WITH_ACTUAL_URL" />
+		</wsdl:port>
+	</wsdl:service>
+
+    <wsp:Policy wsu:Id="UsernameToken"
+                xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+        <sp:SupportingTokens>
+            <wsp:Policy>
+                <sp:UsernameToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient"/>
+            </wsp:Policy>
+        </sp:SupportingTokens>
+    </wsp:Policy>
+</wsdl:definitions>

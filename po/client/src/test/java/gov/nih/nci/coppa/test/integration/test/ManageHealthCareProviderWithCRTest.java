@@ -177,6 +177,7 @@ public class ManageHealthCareProviderWithCRTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("exact:Edit Health Care Provider - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
         // scoper
         assertEquals(AFFILIATE_ORG_FOR_PERSON + " (" + activeOrgId.trim() + ")", selenium
                 .getText("wwctrl_curateRoleForm_role_scoper_id"));

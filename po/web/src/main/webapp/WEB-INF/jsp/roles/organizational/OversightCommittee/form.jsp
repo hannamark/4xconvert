@@ -99,6 +99,9 @@
                         ${otherId.identifierName}: ${otherId.extension}<br/>
                     </c:forEach>
                 </c:if>
+                <s:if test="isNotCreate">                        
+                    <po:createdBy createdByUserName="${role.createdByUserName}"/>               
+                </s:if>
             </div>
         </div>
         

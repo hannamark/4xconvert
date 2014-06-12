@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="http://faults.po.coppa.nci.nih.gov"
+        xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+	    targetNamespace="http://faults.po.coppa.nci.nih.gov"
+        xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
+        elementFormDefault="qualified"
+	    attributeFormDefault="unqualified">
+
+    <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="wsa.xsd"/>
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd">
+        <xs:annotation>
+            <xs:documentation>
+                Get access to the xml: attribute groups for xml:lang as declared on 'schema'
+                and 'documentation' below
+            </xs:documentation>
+            <xs:appinfo>
+                <jaxb:schemaBindings>
+                    <jaxb:package name="gov.nih.nci.coppa.po.faults"/>
+                </jaxb:schemaBindings>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:import>
+
+    <xs:complexType name="StringMapType">
+		<xs:sequence>
+			<xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="key" type="xs:string" nillable="false"
+							minOccurs="0" />
+						<xs:element name="value" type="xs:string" minOccurs="0"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+    
+    <xs:complexType name="SimpleIIMapType"> 
+        <xs:sequence>
+            <xs:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" type="xs:string" nillable="false" minOccurs="0" />
+                        <xs:element name="value" type="xs:string" minOccurs="0" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    
+	<complexType name="EntityValidationFault">
+		<complexContent>
+			<extension base="tns:BaseFaultType">
+				<sequence>
+					<element name="errors" type="tns:StringMapType" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+    
+	<complexType name="NullifiedDataFault" abstract="true">
+		<complexContent>
+			<extension base="tns:BaseFaultType">
+				<sequence>
+					<element name="nullifiedEntries" type="tns:SimpleIIMapType" />
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+    
+	<complexType name="NullifiedEntityFault">
+		<complexContent>
+			<extension base="tns:NullifiedDataFault" />
+		</complexContent>
+	</complexType>
+    
+	<complexType name="NullifiedRoleFault">
+		<complexContent>
+			<extension base="tns:NullifiedDataFault" />
+		</complexContent>
+	</complexType>
+    
+    <xs:complexType name="TooManyResultsFault">
+        <xs:complexContent>
+            <xs:extension base="tns:BaseFaultType">
+                <xs:sequence>
+                    <xs:element name="maxResults" type="xs:int" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="BaseFaultType">
+        <xs:sequence>
+            <xs:element name="Timestamp" type="xs:dateTime"
+                         minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Originator" type="wsa:EndpointReferenceType"
+                         minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ErrorCode"
+                         minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:complexContent mixed="true">
+                        <xs:extension base="xs:anyType">
+                            <xs:attribute name="dialect" type="xs:anyURI"
+                                           use="required"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="Description"
+                         minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute ref="xml:lang" use="optional"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="FaultCause" type="tns:BaseFaultType"
+                         minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+</schema>

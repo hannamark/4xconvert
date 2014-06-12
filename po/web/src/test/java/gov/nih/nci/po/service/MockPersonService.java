@@ -88,6 +88,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.jms.JMSException;
+
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
@@ -171,6 +173,20 @@ public class MockPersonService implements PersonServiceLocal {
     public int countInboxPersons() {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public long create(Person person, String ctepId)
+            throws EntityValidationException, JMSException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public void curate(Person curatedPerson, String ctepId)
+            throws EntityValidationException, JMSException {
+        // TODO Auto-generated method stub
+        
     }
 
 }

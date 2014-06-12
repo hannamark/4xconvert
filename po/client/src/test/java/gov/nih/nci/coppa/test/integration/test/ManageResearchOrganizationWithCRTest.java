@@ -116,6 +116,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         accessManageResearchOrganizationScreen();
         clickAndWait("add_button_ro");        
         assertTrue(selenium.isTextPresent("Research Organization Role Information"));
+        assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
 
@@ -132,6 +133,10 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         addUSPostalAddress();
         waitForTelecomFormsToLoad();
         addContactInformation();
+        
+        waitForAliasFormsToLoad();
+        verifyAlias();
+        inputAlias();
 
         clickAndWaitSaveButton();
 
@@ -156,6 +161,7 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         assertTrue(selenium.isTextPresent("exact:Edit Research Organization - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
 
         // verify that the type code required indicator is not present. Verifies PO-1155 via UI.
         verifyPresenceOfRequiredIndicator(false, "curateRoleForm_role_typeCode");

@@ -80,6 +80,10 @@
                     </po:field>
                 </c:if>
                 </div>
+                <s:if test="isNotCreate">                        
+                    <po:createdBy createdByUserName="${role.createdByUserName}"/>               
+                </s:if>
+                
                 <fieldset>
                     <legend><s:text name="identifiedOrganization.assignedIdentifier"/></legend>
                     <s:fielderror><s:param>role.assignedIdentifier</s:param></s:fielderror>

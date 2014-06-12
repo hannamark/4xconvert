@@ -16,6 +16,8 @@
         <test.webdriver.class>org.openqa.selenium.firefox.FirefoxDriver</test.webdriver.class>        
         <test.selenium.xvfb.skip>true</test.selenium.xvfb.skip>
         <test.phantomjs.binary.path>/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs</test.phantomjs.binary.path>
+        <webservice.client.username>jdoe01</webservice.client.username>
+        <webservice.client.password>Aa_1111111</webservice.client.password>
         <selenium-maven-plugin.version>1.1</selenium-maven-plugin.version>
         <deployedArtifact>${jboss.home}/standalone/deployments/po.ear</deployedArtifact>
         <jboss.jmx.username>admin</jboss.jmx.username>
@@ -64,6 +66,30 @@ just JBoss AS 7! -->
 
     <dependencies>
         <dependency>
+            <groupId>xml-security</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-xc</artifactId>
+            <version>${jackson.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>javax.jms</groupId>
             <artifactId>jms</artifactId>
             <version>1.1</version>
@@ -82,10 +108,47 @@ just JBoss AS 7! -->
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-exec</artifactId>
 		    <version>1.2</version>
 		    <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.2.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+	        <groupId>commons-dbutils</groupId>
+	        <artifactId>commons-dbutils</artifactId>
+	        <version>1.5</version>
+	        <scope>test</scope>
+	    </dependency>	 
+	    <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.1.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -129,6 +192,24 @@ just JBoss AS 7! -->
             <version>1.5.6</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>gov.nih.nci.iso21090</groupId>
+            <artifactId>iso-datatypes-extensions</artifactId>
+            <version>${iso-datatypes.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>po-services</artifactId>
@@ -229,6 +310,7 @@ just JBoss AS 7! -->
 
     <build>
         <plugins>
+             <!-- usage of jax-ws maven plugin -->
             <plugin>
                 <groupId>gov.nih.nci.coppa</groupId>
                 <artifactId>nci-commons-ctrp-maven-plugin</artifactId>
@@ -242,6 +324,97 @@ just JBoss AS 7! -->
                     <deploySubDirectory>po-web.war-.*</deploySubDirectory>
                     <deployedArtifact>${deployedArtifact}</deployedArtifact>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <id>wsimport-from-jdk</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>      
+                    <target>2.1</target>              
+                    <wsdlDirectory>${basedir}/../webservices/src/main/resources</wsdlDirectory>                    
+                    <wsdlFiles>
+                        <wsdlFile>PersonService.wsdl</wsdlFile>
+                        <wsdlFile>OrganizationService.wsdl</wsdlFile>
+                        <wsdlFile>FamilyService.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/ClinicalResearchStaff.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/Person.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/Organization.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/HealthCareFacility.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/HealthCareProvider.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/IdentifiedOrganization.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/IdentifiedPerson.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/OrganizationalContact.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/OversightCommittee.wsdl</wsdlFile>
+                        <wsdlFile>gov/nih/nci/po/webservices/bridg/ResearchOrganization.wsdl</wsdlFile>
+                    </wsdlFiles>
+                    <xjcArgs>
+	                    <xjcArg>-Xannotate</xjcArg>
+	                </xjcArgs>               
+                    <keep>true</keep><!-- Keep generated files -->                    
+                    <sourceDestDir>${project.build.directory}/generated-sources</sourceDestDir> <!-- generated source files destination -->                    
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics</artifactId>
+                        <version>0.6.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics-annotate</artifactId>
+                        <version>0.6.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.jackson</groupId>
+                        <artifactId>jackson-core-asl</artifactId>
+                        <version>${jackson.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+             <!-- adding generated source directory to the project-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>compile-generated-source</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -395,7 +568,7 @@ just JBoss AS 7! -->
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>                    
+                    </plugin>
                 </plugins>
                 <testResources>
                     <testResource>
@@ -639,7 +812,107 @@ just JBoss AS 7! -->
                             </execution>
                         </executions>
                     </plugin>
-                    
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>selenium-maven-plugin</artifactId>
+                        <version>${selenium-maven-plugin.version}</version>
+                        <executions>
+                            
+                        </executions>
+                    </plugin>
+                </plugins>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
+            </build>
+        </profile>
+        <profile>
+            <id>dev-integration</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-integration-tests</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>filter-integration-test-resources</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>testResources</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- Skip the normal tests, we'll run them in the integration-test phase -->
+                            <skip>true</skip>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>**/AllTests.java</include>
+                                    </includes>
+                                    <skip>false</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>selenium-maven-plugin</artifactId>
+                        <version>${selenium-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop-server</goal>
+                                </goals>
+                                <configuration>
+                                    <background>true</background>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
                 <testResources>
                     <testResource>

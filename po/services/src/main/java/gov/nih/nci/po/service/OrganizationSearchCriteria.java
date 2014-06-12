@@ -32,6 +32,8 @@ public final class OrganizationSearchCriteria implements Serializable {
     private Boolean hasChangeRequests;
     private Boolean hasPendingHcfRoles;
     private Boolean hasPendingRoRoles;
+    private Boolean searchAliases;    
+
     private Organization organization = new Organization();
     
     /**
@@ -163,7 +165,21 @@ public final class OrganizationSearchCriteria implements Serializable {
         this.hasPendingRoRoles = hasPendingRoRoles;
     }
 
-    
+    /**
+     * 
+     * @return searchAliases flag
+     */
+    public Boolean getSearchAliases() {
+        return searchAliases;
+    }
+
+    /**
+     * 
+     * @param searchAliases flag for searchAliases
+     */
+    public void setSearchAliases(Boolean searchAliases) {
+        this.searchAliases = searchAliases;
+    }
     
     /**
      * Is criteria empty.

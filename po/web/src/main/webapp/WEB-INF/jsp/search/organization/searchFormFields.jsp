@@ -29,6 +29,7 @@
                     </po:inputRowElement>
                     </po:inputRow>
                         <s:textfield label="%{getText('organization.name')}" name="criteria.name" size="70"/>
+                        <s:checkbox label="%{getText('organization.searchAliases')}" name="criteria.searchAliases" labelposition="right"/>
                         <s:textfield label="%{getText('family.name')}" name="criteria.familyName" size="70"/>
                         <s:checkbox label="%{getText('organization.hasChangeRequests')}" name="criteria.hasChangeRequests" labelposition="right" />
                         <s:checkbox label="%{getText('organization.hasPendingHcfRoles')}" name="criteria.hasPendingHcfRoles" labelposition="right" />

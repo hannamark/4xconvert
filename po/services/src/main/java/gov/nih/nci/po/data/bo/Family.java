@@ -249,6 +249,7 @@ public class Family implements Auditable {
     @Where(clause = "endDate is null")
     @Sort(type = SortType.COMPARATOR, 
             comparator = FamilyOrganizationRelationshipOrgComparator.class)
+    @Searchable(nested = true)
     public SortedSet<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
         return familyOrganizationRelationships;
     }

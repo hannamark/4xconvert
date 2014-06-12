@@ -96,7 +96,7 @@ import javax.jms.JMSException;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class ResearchOrganizationServiceBean extends AbstractCuratableServiceBean<ResearchOrganization>
+public class ResearchOrganizationServiceBean extends EnhancedOrganizationRoleServiceBean<ResearchOrganization>
         implements ResearchOrganizationServiceLocal {
 
     /**

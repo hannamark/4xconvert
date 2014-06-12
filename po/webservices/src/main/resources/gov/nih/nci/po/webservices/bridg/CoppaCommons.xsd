@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:common="http://common.coppa.nci.nih.gov"
+	targetNamespace="http://common.coppa.nci.nih.gov"
+	elementFormDefault="qualified">
+	<xs:element name="LimitOffset">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="common:LimitOffsetType" />
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="LimitOffsetType">
+		<xs:sequence>
+			<xs:element name="limit" type="xs:int" />
+			<xs:element name="offset" type="xs:int" />
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

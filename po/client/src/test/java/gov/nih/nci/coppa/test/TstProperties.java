@@ -109,7 +109,8 @@ public final class TstProperties {
 
     public static final String JMX_PASSWORD_KEY = "jboss.jmx.password";
     public static final String JMS_PASSWORD_DEFAULT = "admin";
-
+    public static final String WS_CLIENT_USERNAME = "webservice.client.username";
+    public static final String WS_CLIENT_PASSWORD = "webservice.client.password";
 
     public static Properties properties = new Properties();
     static {
@@ -148,5 +149,49 @@ public final class TstProperties {
 
     public static String getJmxPassword() {
         return properties.getProperty(JMX_PASSWORD_KEY, JMS_PASSWORD_DEFAULT);
+    }
+    
+    public static String getPersonServiceURL() {
+        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
+                + properties.getProperty(SERVER_PORT_KEY)
+                + "/po-webservices/services/PersonService?wsdl";
+    }
+
+    public static String getPersonRESTServiceURL() {
+        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
+                + properties.getProperty(SERVER_PORT_KEY)
+                + "/po-webservices/services/person-rest-service";
+    }
+
+    public static String getOrgServiceURL() {
+        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
+                + properties.getProperty(SERVER_PORT_KEY)
+                + "/po-webservices/services/OrganizationService?wsdl";
+    }
+    
+    public static String getOrgRESTServiceURL() {
+        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
+                + properties.getProperty(SERVER_PORT_KEY)
+                + "/po-webservices/services/organization-rest-service";
+    }
+
+    public static String getFamilyServiceURL() {
+        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
+                + properties.getProperty(SERVER_PORT_KEY)
+                + "/po-webservices/services/FamilyService?wsdl";
+    }
+    
+    public static String getFamilyRESTServiceURL() {
+        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
+                + properties.getProperty(SERVER_PORT_KEY)
+                + "/po-webservices/services/family-rest-service";
+    }
+
+    public static String getWebserviceUsername() {
+        return properties.getProperty(WS_CLIENT_USERNAME);
+    }
+
+    public static String getWebservicePassword() {
+        return properties.getProperty(WS_CLIENT_PASSWORD);
     }
 }

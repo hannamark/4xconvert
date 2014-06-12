@@ -281,6 +281,12 @@
             <result name="input">/WEB-INF/jsp/contactable/url.jsp</result>
             <result name="success" >/WEB-INF/jsp/contactable/url.jsp</result>
         </action>
+        
+        <action name="**alias/*" class="gov.nih.nci.po.web.alias.EditAliasListAction" method="{2}">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/alias/alias.jsp</result>
+            <result name="success">/WEB-INF/jsp/alias/alias.jsp</result>
+        </action>
 
         <action name="**mailable/*" class="gov.nih.nci.po.web.mailable.ManageMailableAction" method="{2}">
             <interceptor-ref name="poPerMethodValidationStack" />
@@ -291,7 +297,7 @@
             <interceptor-ref name="poPerMethodValidationStack" />
             <result name="input">/WEB-INF/jsp/mailable/address.jsp</result>
             <result name="success">/WEB-INF/jsp/mailable/addresses.jsp</result>
-        </action>
+        </action>       
     </package>
 
     <package name="protected" namespace="/protected" extends="common">

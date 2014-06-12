@@ -24,10 +24,18 @@
     (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join organization_comment oc on oc.comment_id=c.id where oc.organization_id=o.id) as comments,
     (select array_to_string(array_agg(e.value), '; ') from email e inner join organization_email oe on oe.email_id=e.id and oe.organization_id=o.id) as emailAddresses,
     (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join organization_phone oe on oe.phone_id=e.id and oe.organization_id=o.id) as phones,   
-    dup_org.id as duplicateOf
+    dup_org.id as duplicateOf, c.alpha3 as countrycode
     from organization o inner join address a on o.postal_address_id=a.id inner join country c on a.country_id=c.id left join organization dup_org on dup_org.id=o.duplicate_of
     ]]>
 	</sql-query>
+	
+	<sql-query
+        name="gov.nih.nci.po.service.OrganizationServiceBean.search.alias"
+        read-only="true">
+        <![CDATA[
+        SELECT o.id, a."value" FROM alias a, organization o, organization_alias oa WHERE o.id = oa.organization_id AND oa.alias_id = a.id AND
+        o.id IN (:ids) ]]>
+    </sql-query>
 
 	<sql-query
 		name="gov.nih.nci.po.service.OrganizationServiceBean.getInboxOrgs"
@@ -51,7 +59,7 @@
     (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join organization_comment oc on oc.comment_id=c.id where oc.organization_id=o.id) as comments,
     (select array_to_string(array_agg(e.value), '; ') from email e inner join organization_email oe on oe.email_id=e.id and oe.organization_id=o.id) as emailAddresses,
     (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join organization_phone oe on oe.phone_id=e.id and oe.organization_id=o.id) as phones,   
-    dup_org.id as duplicateOf
+    dup_org.id as duplicateOf, c.alpha3 as countrycode
     from organization o inner join address a on o.postal_address_id=a.id inner join country c on a.country_id=c.id left join organization dup_org on dup_org.id=o.duplicate_of
     
     where
@@ -92,7 +100,7 @@
      c.name as country, a.postalcode as zipCode,
      (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join person_comment oc on oc.comment_id=c.id where oc.person_id=p.id) as comments,
      (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join person_phone oe on oe.phone_id=e.id and oe.person_id=p.id) as phones,
-     dup_person.id as duplicateOf
+     dup_person.id as duplicateOf, c.alpha3 as countrycode
      
     from person p inner join address a on p.postal_address_id=a.id inner join country c on a.country_id=c.id left join person dup_person on dup_person.id=p.duplicate_of
     ]]>
@@ -118,7 +126,7 @@
      c.name as country, a.postalcode as zipCode,
     (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join person_comment oc on oc.comment_id=c.id where oc.person_id=p.id) as comments,
      (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join person_phone oe on oe.phone_id=e.id and oe.person_id=p.id) as phones,
-     dup_person.id as duplicateOf
+     dup_person.id as duplicateOf, c.alpha3 as countrycode
      
     from person p inner join address a on p.postal_address_id=a.id inner join country c on a.country_id=c.id left join person dup_person on dup_person.id=p.duplicate_of
     

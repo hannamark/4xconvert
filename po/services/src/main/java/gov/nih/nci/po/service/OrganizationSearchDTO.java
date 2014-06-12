@@ -3,7 +3,9 @@
  */
 package gov.nih.nci.po.service;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Denis G. Krylov
@@ -30,6 +32,8 @@ public class OrganizationSearchDTO extends BaseSearchResultDTO {
     private int totalIdOrgs;
     private int totalOversightCommitees;
     private int totalOrgContacts;
+    private List<AliasDTO> aliasDto;
+
     /**
      * @return the name
      */
@@ -223,6 +227,59 @@ public class OrganizationSearchDTO extends BaseSearchResultDTO {
      */
     public void setTotalOrgContacts(int totalOrgContacts) {
         this.totalOrgContacts = totalOrgContacts;
+    }
+
+    /**
+     * 
+     * @return AliasDto list
+     */
+    public List<AliasDTO> getAliasDto() {
+        return aliasDto;
+    }
+
+    /**
+     * 
+     * @param aliasDto
+     *            List<AliasDTO>
+     */
+    public void setAliasDto(List<AliasDTO> aliasDto) {
+        this.aliasDto = aliasDto;
+    }
+
+    /**
+     * 
+     * @author Rohit Gupta
+     * 
+     */
+    public static class AliasDTO implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        private String value;
+
+        /**
+         * @param value
+         *            value
+         */
+        public AliasDTO(String value) {
+            this.value = value;
+        }
+
+        /**
+         * @return the value
+         */
+        public String getValue() {
+            return value;
+        }
+
+        /**
+         * @param value
+         *            the value to set
+         */
+        public void setValue(String value) {
+            this.value = value;
+        }
+
     }
 
 }

@@ -177,7 +177,7 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         //save CRS
         clickAndWaitSaveButton();
         assertTrue("PO: Persons and Organizations - Manage Clinical Research Staff(s)".equals(selenium.getTitle()));
-        assertTrue(selenium.isTextPresent("Clinical Research Staff was successfully created!"));
+        assertTrue(selenium.isTextPresent("Clinical Research Staff was successfully created!"));        
 
         String ocId = selenium.getTable("crs_row.1.0");
         assertNotEquals("null", ocId.trim());
@@ -197,6 +197,8 @@ public class ManageClinicalResearchStaffWithCRTest extends AbstractManageOrgRole
         openAndWait("/po-web/protected/roles/person/ClinicalResearchStaff/start.action?person=" + personIdExt);
         clickAndWait("edit_clinicalResearchStaff_id_" + ocId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Clinical Research Staff - Comparison"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
+        
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
 

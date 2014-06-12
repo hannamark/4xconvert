@@ -154,10 +154,13 @@ public class CreateResearchOrganizationTest extends OrganizationWebTest {
         // click on item to curate
         clickAndWait("org_id_" + poId);
         waitForTelecomFormsToLoad();
+        waitForAliasFormsToLoad();
         assertEquals(orgName, selenium.getValue("curateEntityForm_organization_name"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present 
 
         openAndWait("po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + poId);
         clickAndWait("//a[@id='add_button']/span/span");
+        assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present
 
         // verify that the type code required indicator is not present. Verifies PO-1155 via UI.
         verifyPresenceOfRequiredIndicator(false, "curateRoleForm_role_typeCode");

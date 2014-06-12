@@ -86,9 +86,11 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniquePlayerScoperIdentifier;
 import gov.nih.nci.po.util.ValidIi;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -102,6 +104,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Columns;
@@ -181,9 +184,10 @@ public class IdentifiedOrganization extends AbstractIdentifiedOrganization imple
         return super.getId();
     }
 
+    
     /**
      * {@inheritDoc}
-     */
+     */    
     @Override
     @CollectionOfElements
     @JoinTable(
@@ -207,6 +211,44 @@ public class IdentifiedOrganization extends AbstractIdentifiedOrganization imple
     @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_EXACT)
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
+    }
+    
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "created_by_id", nullable = true)
+    @ForeignKey(name = "identifiedentity_createdby_user_fk")
+    public User getCreatedBy() {
+        return super.getCreatedBy();
+    }
+    
+    /**
+     * @return user name
+     */    
+    @Transient
+    public String getCreatedByUserName() {
+        return PoServiceUtil.getUserName(super.getCreatedBy());
+    }    
+    
+    
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "overridden_by_id", nullable = true)
+    @ForeignKey(name = "identifiedentity_overriddenby_user_fk")
+    public User getOverriddenBy() {
+        return super.getOverriddenBy();
+    }
+
+    
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getOverriddenByUserName() {
+        return PoServiceUtil.getUserName(super.getOverriddenBy());
     }
 
 }

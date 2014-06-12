@@ -162,6 +162,7 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("exact:Edit Identified Organization - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
         // scoper
         assertEquals(AFFILIATE_ORG_FOR_IO + " (" + ioAffOrgId.trim() + ")", selenium
                 .getText("wwctrl_curateRoleForm_role_scoper_id"));

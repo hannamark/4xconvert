@@ -134,6 +134,9 @@ public abstract class AbstractOrganization implements PersistentObject, UsOrCanE
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
     private List<URL> url = new ArrayList<URL>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
+    
+    private List<Alias> alias = new ArrayList<Alias>();
+    
     private EntityStatus statusCode;
     private EntityStatus priorEntityStatus;
 
@@ -283,6 +286,22 @@ public abstract class AbstractOrganization implements PersistentObject, UsOrCanE
     @Transient
     public List<PhoneNumber> getTty() {
         return tty;
+    }
+    
+    /**
+     * @param alias new alias list
+     */
+    protected void setAlias(List<Alias> alias) {
+        this.alias = alias;
+    }
+
+   /**
+     * Get the Organization's alias property.
+     * @return alias list
+     */
+    @Transient
+    public List<Alias> getAlias() {
+        return alias;
     }
 
     /**

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="gov.nih.nci.po.webservices.service.simple" />
+
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<import resource="classpath:META-INF/cxf/cxf.xml" />	
+	
+	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" >
+        <property name="schemaHandler" ref="schemaHolder"/>
+    </bean>
+        
+    <bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>      
+    
+    <bean id="schemaHolder" class="org.apache.cxf.jaxrs.utils.schemas.SchemaHandler">
+        <property name="schemas" ref="theSchemas"/>
+    </bean>
+   
+	<util:list id="theSchemas">
+	  <value>classpath:po.xsd</value>
+	</util:list>
+
+    <!-- Person SOAP Service Configurations -->
+	<bean id="personServiceImpl"
+		class="gov.nih.nci.po.webservices.service.simple.soap.PersonServiceImpl" />
+	<jaxws:endpoint id="personService" implementor="#personServiceImpl"
+		address="/PersonService">
+		<jaxws:properties>
+			<entry key="schema-validation-enabled" value="true" />
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<!-- Person REST Service Configurations -->
+	<bean id="personRESTServiceImpl" class="gov.nih.nci.po.webservices.service.simple.rest.PersonRESTService" />
+    <jaxrs:server id="personRESTService" address="/person-rest-service">
+        <jaxrs:serviceBeans>
+            <ref bean="personRESTServiceImpl" />
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jaxbProvider" />
+            <ref bean='jsonProvider' />
+        </jaxrs:providers>
+    </jaxrs:server>
+
+    <!-- Exception Handler for PersonServiceImpl-->
+	<bean id="perServImpl" class="gov.nih.nci.po.webservices.service.simple.PersonServiceImpl" />
+	<bean id="exceptionAdvice" class="gov.nih.nci.po.webservices.aop.ExceptionHandlerAdvice" />
+	<bean id="personServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="proxyInterfaces"
+			value="gov.nih.nci.po.webservices.service.simple.PersonService" />
+		<property name="interceptorNames">
+			<list>
+				<value>exceptionAdvice</value>
+			</list>
+		</property>
+		<property name="target">
+			<ref bean="perServImpl" />
+		</property>
+	</bean>
+
+    <!-- Organization SOAP Service Configurations -->
+	<bean id="organizationServiceImpl"
+		class="gov.nih.nci.po.webservices.service.simple.soap.OrganizationServiceImpl" />
+	<jaxws:endpoint id="organizationService" implementor="#organizationServiceImpl"
+		address="/OrganizationService">
+		<jaxws:properties>
+			<entry key="schema-validation-enabled" value="true" />
+		</jaxws:properties>
+	</jaxws:endpoint>
+	
+	<!-- Organization REST Service Configurations -->
+    <bean id="organizationRESTServiceImpl" class="gov.nih.nci.po.webservices.service.simple.rest.OrganizationRESTService" />
+    <jaxrs:server id="organizationRESTService" address="/organization-rest-service">
+        <jaxrs:serviceBeans>
+            <ref bean="organizationRESTServiceImpl" />
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jaxbProvider" />
+            <ref bean='jsonProvider' />
+        </jaxrs:providers>
+    </jaxrs:server>
+	
+	<!-- Exception Handler for OrganizationServiceImpl-->
+	<bean id="orgServImpl" class="gov.nih.nci.po.webservices.service.simple.OrganizationServiceImpl" />
+    <bean id="orgServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces"
+            value="gov.nih.nci.po.webservices.service.simple.OrganizationService" />
+        <property name="interceptorNames">
+            <list>
+                <value>exceptionAdvice</value>
+            </list>
+        </property>
+        <property name="target">
+            <ref bean="orgServImpl" />
+        </property>
+    </bean>
+    
+    <!-- Family SOAP Service Configurations -->    
+    <bean id="familyServiceImpl"
+        class="gov.nih.nci.po.webservices.service.simple.soap.FamilyServiceImpl" />
+    <jaxws:endpoint id="familyService" implementor="#familyServiceImpl"
+        address="/FamilyService">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="true" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+    
+    <!-- Family REST Service Configurations -->
+    <bean id="familyRESTServiceImpl" class="gov.nih.nci.po.webservices.service.simple.rest.FamilyRESTService" />
+    <jaxrs:server id="familyRESTService" address="/family-rest-service">
+        <jaxrs:serviceBeans>
+            <ref bean="familyRESTServiceImpl" />
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jaxbProvider" />
+            <ref bean='jsonProvider' />
+        </jaxrs:providers>
+    </jaxrs:server>
+    
+    <!-- Exception Handler for FamilyServiceImpl-->
+    <bean id="famServImpl" class="gov.nih.nci.po.webservices.service.simple.FamilyServiceImpl" />
+    <bean id="familyServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces"
+            value="gov.nih.nci.po.webservices.service.simple.FamilyService" />
+        <property name="interceptorNames">
+            <list>
+                <value>exceptionAdvice</value>
+            </list>
+        </property>
+        <property name="target">
+            <ref bean="famServImpl" />
+        </property>
+    </bean>
+
+
+    <!-- Bridg Service Endpoints -->
+    <import resource="bridg-services.xml"/>
+</beans>

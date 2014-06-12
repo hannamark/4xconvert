@@ -124,6 +124,25 @@ public class OrganizationWebTest extends AbstractPoWebTest {
     protected void searchByName() {
         searchByName(true);
     }
+    
+    protected void searchByOrgAlias() {               
+        // search by alias name
+        selenium.type("searchOrganizationForm_criteria_name", ALIAS_STRING);
+        clickAndWait("submitSearchOrganizationForm");
+       
+        int secondColumn = 1;
+        int row = getRow(orgName, secondColumn);
+        if (row == -1) {
+            fail("Did not find organization for alias " + ALIAS_STRING);
+        } else {
+            setPoId(row);
+            assertEquals(poId, selenium.getTable("row." + row + ".0"));
+            assertEquals(orgName, selenium.getTable("row." + row + ".1"));
+            assertEquals("PENDING", selenium.getTable("row." + row + ".8"));            
+            assertEquals("Curate", selenium.getTable("row." + row + ".9"));            
+            clear();            
+        }
+    }
 
     protected void addOrganization() {
         selenium.select("curateEntityForm.organization.statusCode", "label=PENDING");
@@ -135,6 +154,8 @@ public class OrganizationWebTest extends AbstractPoWebTest {
         waitForElementById("organization.postalAddress.stateOrProvince", 10);
         selenium.type("curateEntityForm_organization_postalAddress_cityOrMunicipality", "Atlanta");
         selenium.select("organization.postalAddress.stateOrProvince", "label=GA (GEORGIA)");
+        
+        inputAlias(); // add Alias
 
         selenium.type("emailEntry_value", "emailAddress@example.com");
         selenium.click("email-add");

@@ -92,6 +92,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
@@ -344,6 +345,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         org.setPostalAddress(a);
         org.setName("Some Org Name");
         org.getEmail().add(new Email("abc@example.com"));
+        org.getAlias().add(new Alias("test org alias"));
         return orgServiceBean.create(org);
     }
 }

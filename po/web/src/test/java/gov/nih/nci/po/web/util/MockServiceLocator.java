@@ -82,6 +82,14 @@
  */
 package gov.nih.nci.po.web.util;
 
+import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
+import gov.nih.nci.po.data.bo.HealthCareProviderCR;
+import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
+import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
+import gov.nih.nci.po.data.bo.OrganizationalContactCR;
+import gov.nih.nci.po.data.bo.OversightCommitteeCR;
+import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceStub;
 import gov.nih.nci.po.service.CountryServiceLocal;
@@ -91,6 +99,7 @@ import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.GenericServiceStub;
+import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceStub;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
@@ -114,6 +123,7 @@ import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceStub;
 import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PatientServiceStub;
+import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
@@ -166,6 +176,11 @@ public class MockServiceLocator implements ServiceLocator {
      */
     public PersonServiceLocal getPersonService() {
         return personService;
+    }
+
+    @Override
+    public PersonCRServiceLocal getPersonCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /**
@@ -263,7 +278,67 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public OrganizationCRServiceLocal getOrganizationCRService() {
-        return null;
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<ClinicalResearchStaffCR> getClinicalResearchStaffCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<HealthCareFacilityCR> getHealthCareFacilityCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<HealthCareProviderCR> getHealthCareProviderCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<IdentifiedOrganizationCR> getIdentifiedOrganizationCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<IdentifiedPersonCR> getIdentifiedPersonCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<OrganizationalContactCR> getOrganizationalContactCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<OversightCommitteeCR> getOversightCommitteeCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GenericStructrualRoleCRServiceLocal<ResearchOrganizationCR> getResearchOrganizationCRService() {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /**

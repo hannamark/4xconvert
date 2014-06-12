@@ -143,4 +143,10 @@ public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceL
     public List<HealthCareFacility> getByPlayerIds(Long[] pids) {
         return null;
     }
+
+    @Override
+    public void curate(HealthCareFacility healthCareFacility, String ctepId)
+            throws JMSException {
+        
+    }
 }

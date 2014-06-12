@@ -92,6 +92,7 @@ import gov.nih.nci.po.service.ClinicalResearchStaffSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
 
@@ -301,6 +302,7 @@ public class ClinicalResearchStaffAction extends
 
     /**
      * {@inheritDoc}
+     * @throws CSException  CSException
      */
     @Validations(
         customValidators = { @CustomValidator(type = "hibernate", fieldName = "role" ,
@@ -313,7 +315,7 @@ public class ClinicalResearchStaffAction extends
                         message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
     @Override
-    public String add() throws JMSException {
+    public String add() throws JMSException, CSException {
         return super.add();
     }
 

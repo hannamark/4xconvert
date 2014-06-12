@@ -196,4 +196,16 @@
        <comment>In case of new install, inserts csm_remote_group records poiniting to Training. Won't do anything for existing databases.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/4.0/PO-6437-1.sql"/>
     </changeSet>
+    <changeSet id="PO-7385" author="Rohit">
+       <comment>Added 'Aliases' related tables.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/4.1/PO-7385.sql"/>
+    </changeSet>
+    <changeSet id="PO-7582" author="Rohit">
+       <comment>Changes to capture 'createdBy' when creating the entity(Org, OrgRole, Person, PersonRole)</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/4.1/PO-7582.sql"/>
+    </changeSet>
+    <changeSet id="PO-7624" author="Rohit">
+       <comment>Changes to capture 'overriddenBy' when overriding the entity(Org and OrgRole)</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/4.1/PO-7624.sql"/>
+    </changeSet>
 </databaseChangeLog>

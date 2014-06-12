@@ -102,12 +102,13 @@ public class SearchOrganizationTest extends OrganizationWebTest {
         addOrganization();
         openSearchOrganization();
         verifySearchForm();
-        searchByName();
+        searchByName();        
         searchByAddress();
         searchByPoId();
         noRowsReturnedTest();
         nothingSelectedTest();
-
+        
+        searchByOrgAlias();
       }
 
     private void verifyRequiredIndicators(boolean expectedValue) {

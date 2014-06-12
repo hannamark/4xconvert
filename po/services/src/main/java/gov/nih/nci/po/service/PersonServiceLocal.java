@@ -97,6 +97,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 /**
  *
  * @author lpower
+ * @author Rohit Gupta
  */
 @Local
 public interface PersonServiceLocal extends GenericSearchService<Person, SearchCriteria<Person>> {
@@ -108,6 +109,16 @@ public interface PersonServiceLocal extends GenericSearchService<Person, SearchC
      * @throws JMSException if JMS fails
      */
     long create(Person person) throws EntityValidationException, JMSException;
+    
+    /**
+     * This method is used by the WebService to create a new person.
+     * @param person new Person
+     * @param ctepId ctepId to be set
+     * @return id create person Id
+     * @throws EntityValidationException if validation fails
+     * @throws JMSException if JMS fails  
+     */
+    long create(Person person, String ctepId) throws EntityValidationException, JMSException;
 
     /**
      * @param id db id to get
@@ -127,6 +138,15 @@ public interface PersonServiceLocal extends GenericSearchService<Person, SearchC
      * @throws JMSException if problem occurred publishing the announcement message for updates.
      */
     void curate(Person curatedPerson) throws JMSException;
+    
+    /**
+     * @param curatedPerson method to curate/accept Person w/ EntityStatus.NEW and transition to
+     *            EntityStatus.ACTIVE
+     * @param ctepId ctepId to be set     
+     * @throws EntityValidationException if validation fails     
+     * @throws JMSException if problem occurred publishing the announcement message for updates.
+     */
+    void curate(Person curatedPerson, String ctepId) throws EntityValidationException, JMSException;
 
     /**
      * @param criteria PersonSearchCriteria

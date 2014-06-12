@@ -54,7 +54,7 @@
             <h2><s:text name="healthCareFacility"/> Role Information</h2>
             <div class="box_white">
                 <s:actionerror/>
-                <s:form action="%{formAction}" theme="%{formTheme}" id="curateRoleForm" onsubmit="return isTelecomFieldsBlank() && confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
+                <s:form action="%{formAction}" theme="%{formTheme}" id="curateRoleForm" onsubmit="return isTelecomFieldsBlank() && isAliasFieldBlank() && confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
                 <s:token/>
                 <s:hidden key="cr"/>
                 <s:hidden key="organization"/>
@@ -100,8 +100,20 @@
                         ${otherId.identifierName}: ${otherId.extension}<br/>
                     </c:forEach>
                 </c:if>
+                <s:if test="isNotCreate">                        
+                    <po:createdBy createdByUserName="${role.createdByUserName}"/>               
+                </s:if>
             </div>
         </div>
+        
+        <div class="boxouter">
+        <h2>Aliases</h2>
+            <div class="box_white">                
+                <div class="clear"></div>                
+                <po:aliases aliasKeyBase="organization" readonly="${role.ctepOwned}"/>
+            </div>
+        </div>
+        
        <div class="boxouter">
        <h2>Address Information</h2>
             <po:addresses readonly="${role.ctepOwned}" usOrCanadaFormatForValidationOnly="true"/>
@@ -144,7 +156,7 @@
     <%@include file="../../defineMapToShowConfirm.jsp" %>
     <po:buttonRow>
        <s:if test="!#isReadonly">
-       <po:button id="save_button" href="javascript://noop/" onclick="return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm'):false);" style="save" text="Save"/>
+       <po:button id="save_button" href="javascript://noop/" onclick="return ((isTelecomFieldsBlank()==true && isAliasFieldBlank()==true) ? confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm'):false);" style="save" text="Save"/>
        </s:if>
        <c:url var="managePage" value="/protected/roles/organizational/HealthCareFacility/start.action">
            <c:param name="organization" value="${organization.id}"/>

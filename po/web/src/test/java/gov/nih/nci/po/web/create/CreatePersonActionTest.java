@@ -4,22 +4,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.security.exceptions.CSException;
+import gov.nih.nci.po.web.util.POUtils;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.jms.JMSException;
-
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.Action;
-
 
 public class CreatePersonActionTest extends AbstractPoTest {
 
@@ -41,7 +44,8 @@ public class CreatePersonActionTest extends AbstractPoTest {
     @Test
     public void testPrepareWithRootKeyButNoObjectInSession() throws Exception {
         // can only set root key to the key of an object in the session,
-        // so after setting the root key, we have to clear out the session manually to test this case
+        // so after setting the root key, we have to clear out the session
+        // manually to test this case
         action.setRootKey("abc-123");
         getSession().clearAttributes();
 
@@ -79,10 +83,32 @@ public class CreatePersonActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void create() throws JMSException, CSException {
+    public void create() throws Exception {
+
+        CreatePersonAction action = mock(CreatePersonAction.class);
+        doAnswer(new Answer<Object>() {
+            public Object answer(InvocationOnMock invocation) {
+                User user = mock(User.class);
+                return user;
+            }
+        }).when(action).getCreatedBy();
+
+        doAnswer(new Answer<Object>() {
+            public Object answer(InvocationOnMock invocation) {
+                Person person = new Person();
+                person.setFirstName("Rohit");
+                person.setMiddleName("L");
+                person.setLastName("Gupta");
+                gov.nih.nci.po.data.bo.Comment comment1 = new gov.nih.nci.po.data.bo.Comment();
+                comment1.setValue("test");
+                person.getComments().add(comment1);
+                return person;
+            }
+        }).when(action).getPerson();
+        doCallRealMethod().when(action).create();
+
         assertEquals(Action.SUCCESS, action.create());
         assertEquals(1, ActionHelper.getMessages().size());
-        assertEquals("person.create.success", ActionHelper.getMessages().get(0));
     }
 
     @Test

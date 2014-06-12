@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -120,7 +121,8 @@ public abstract class AbstractRole implements PersistentObject {
     private RoleStatus status;
     private RoleStatus priorStatus;
     private Date statusDate;
-    private Set<Ii> otherIdentifiers = new HashSet<Ii>();
+    private Set<Ii> otherIdentifiers = new HashSet<Ii>();    
+    private User createdBy;
 
     /**
      * @return the id
@@ -223,5 +225,20 @@ public abstract class AbstractRole implements PersistentObject {
     @Transient
     protected boolean isUsOrCanadaAddresses(Set<Address> addrs) {
         return UsOrCanadaAddressHelper.isUsOrCanadaAddresses(addrs);
+    }
+
+    /**
+     * @return the user
+     */
+    @Transient
+    public User getCreatedBy() {
+        return createdBy;
+    }
+    /**
+     * @param user
+     *            the user to set
+     */
+    public void setCreatedBy(User user) {
+        this.createdBy = user;
     }
 }

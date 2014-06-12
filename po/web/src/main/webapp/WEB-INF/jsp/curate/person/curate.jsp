@@ -135,6 +135,9 @@
                 <s:textfield key="person.lastName" required="true" cssClass="required" size="50"/>
                 <s:textfield key="person.suffix" size="10"/>
                 <div class="clear"></div>
+                <s:if test="isNotCreate">                        
+                    <po:createdBy createdByUserName="${person.createdByUserName}"/>               
+                </s:if>
             </div>
         </div>
 

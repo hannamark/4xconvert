@@ -99,6 +99,14 @@
         />
         
     <cache 
+    name="gov.nih.nci.po.data.bo.Alias" 
+    maxElementsInMemory="300" 
+    eternal="true" 
+    overflowToDisk="false" 
+    memoryStoreEvictionPolicy="LFU" 
+    />
+        
+    <cache 
         name="gov.nih.nci.po.data.bo.FundingMechanism" 
         maxElementsInMemory="300" 
         eternal="true" 

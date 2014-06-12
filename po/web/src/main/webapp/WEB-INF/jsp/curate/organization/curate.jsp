@@ -59,7 +59,7 @@
        <s:set name="formAction" value="'organization/curate/curate.action'"/>
     </s:else>
     <c:url value="/protected/organization/curate/removeCR.action" var="removeCrUrl" scope="request"/>
-    <s:form action="%{formAction}" id="curateEntityForm" onsubmit="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return isTelecomFieldsBlank() && confirmThenSubmit('curateEntityForm.organization.statusCode',document.forms.curateEntityForm);">
+    <s:form action="%{formAction}" id="curateEntityForm" onsubmit="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return isTelecomFieldsBlank() && isAliasFieldBlank() && confirmThenSubmit('curateEntityForm.organization.statusCode',document.forms.curateEntityForm);">
         <s:token/>
         <input id="enableEnterSubmit" type="submit"/>
         <s:hidden key="rootKey"/>
@@ -157,6 +157,17 @@
             </s:else>
                 <s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
                 <div class="clear"></div>
+                <s:if test="isNotCreate">                  	 
+                    <po:createdBy createdByUserName="${organization.createdByUserName}"/>               
+                </s:if>
+            </div>
+        </div>
+        
+        <div class="boxouter">
+        <h2>Aliases</h2>
+            <div class="box_white">                
+                <div class="clear"></div>                
+                <po:aliases aliasKeyBase="organization"/>
             </div>
         </div>
 
@@ -346,7 +357,7 @@
 
 <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
-        <po:button id="save_button" href="javascript://noop/" onclick="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return ((isTelecomFieldsBlank()==true) ? confirmThenSubmit('curateEntityForm.organization.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
+        <po:button id="save_button" href="javascript://noop/" onclick="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return ((isTelecomFieldsBlank()==true && isAliasFieldBlank()==true) ? confirmThenSubmit('curateEntityForm.organization.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
         <c:set var="querystring" value="${pageContext.request.queryString}"/>
         <c:choose>
           <c:when test="${fn:contains(querystring, 'organization.id')}">

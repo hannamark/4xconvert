@@ -43,6 +43,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>gov.nih.nci.iso21090</groupId>
+            <artifactId>iso-datatypes</artifactId>
+            <version>${iso-datatypes.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.7.0</version>
@@ -286,7 +292,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.8.4</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -341,6 +347,36 @@
                         </excludes>
                     </instrumentation>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <!-- CPD violations -->
+                        <exclude>**/SearchOrganizationAction.java</exclude>
+                        <exclude>**/SearchPersonAction.java</exclude>      
+                        <exclude>**/ResearchOrganizationAction.java</exclude>                                          
+                    </excludes>                    
+                    <minimumTokens>125</minimumTokens>
+                </configuration>
+                <version>${maven-pmd-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
+                        <phase>process-test-classes</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>gov.nih.nci.coppa</groupId>
+                        <artifactId>nci-commons-ctrp-core</artifactId>
+                        <version>${nci-commons.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
         <resources>

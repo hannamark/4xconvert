@@ -218,7 +218,7 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
                 "tty-entry-0", "345-678-9012", "tty-remove-0");
     }
 
-  
+
     @SuppressWarnings("deprecation")
     private void checkTelType(String type, String anchorAddId, String value, String entryId, String entryText, String anchorRemoveId) {
         /*
@@ -231,14 +231,14 @@ public abstract class AbstractManageOrgRolesWithCRTest extends AbstractPoWebTest
         */
 
         // Add a non US Postal address, check tel format
-        addNonUSPostalAddress();       
+        addNonUSPostalAddress();
         inputNonUSFormatTel(value, type);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
         clickAndWaitAjax(anchorRemoveId);
         removePostalAddress();
 
         // Add a US postal address, check tel format, also check Tel entry/removal.
-        addUSPostalAddress();        
+        addUSPostalAddress();
         inputNonUSFormatTel(value, type);
         assertEquals(entryText + " | Remove", selenium.getText("id=" + entryId));
         clickAndWaitAjax(anchorRemoveId);

@@ -38,6 +38,8 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
     private List<PhoneNumber> phone = new ArrayList<PhoneNumber>(1);
     private List<PhoneNumber> tty = new ArrayList<PhoneNumber>(1);
     private List<URL> url = new ArrayList<URL>(1);
+    
+    private List<Alias> alias = new ArrayList<Alias>();
 
     /**
      * @return the name
@@ -152,6 +154,21 @@ public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizat
      */
     public void setUrl(List<URL> url) {
         this.url = url;
+    }
+    
+    /**
+     * @return the alias
+     */
+    @Transient
+    public List<Alias> getAlias() {
+        return this.alias;
+    }
+
+    /**
+     * @param alias the alias to set
+     */
+    public void setAlias(List<Alias> alias) {
+        this.alias = alias;
     }
 
     /**

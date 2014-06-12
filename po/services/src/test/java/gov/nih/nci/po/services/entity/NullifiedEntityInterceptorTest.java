@@ -351,6 +351,20 @@ public class NullifiedEntityInterceptorTest  extends AbstractServiceBeanTest {
             // TODO Auto-generated method stub
             return 0;
         }
+
+        @Override
+        public long create(Person person, String ctepId)
+                throws EntityValidationException, JMSException {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void curate(Person curatedPerson, String ctepId)
+                throws EntityValidationException, JMSException {
+            // TODO Auto-generated method stub
+            
+        }
     }
 
     public static class OSvcBean implements OrganizationServiceLocal {

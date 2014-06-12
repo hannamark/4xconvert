@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
@@ -15,42 +16,50 @@
     <properties>
         <gridServicePrincipal>Gr1DU5er</gridServicePrincipal>
         <gridServiceCredential>ltHZmZ1rqYq8j2uyHEABIQ==</gridServiceCredential>
-        <log.level.default>WARN</log.level.default>       
+        <log.level.default>WARN</log.level.default>
         <jbdc.type.mapping>PostgreSQL 8.0</jbdc.type.mapping>
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.8</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
             <version>1.6.1</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>antlr</groupId>
             <artifactId>antlr</artifactId>
             <version>2.7.7</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
             <artifactId>po-web</artifactId>
+            <version>${project.parent.version}</version>
+            <type>war</type>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>po-webservices</artifactId>
             <version>${project.parent.version}</version>
             <type>war</type>
         </dependency>
@@ -61,6 +70,37 @@
             <version>${project.parent.version}</version>
             <type>ejb</type>
         </dependency>
+
+        <dependency>
+            <groupId>gov.nih.nci.iso21090</groupId>
+            <artifactId>iso-datatypes</artifactId>
+            <version>${iso-datatypes.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>gov.nih.nci.iso21090</groupId>
+            <artifactId>iso-datatypes-extensions</artifactId>
+            <version>${iso-datatypes.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <dependency>
             <groupId>csmapi</groupId>
             <artifactId>csmapi</artifactId>
@@ -70,52 +110,52 @@
 
         <!-- Grid Grouper Remote Sync Dependencies -->
         <dependency>
-           <groupId>gov.nih.nci.security</groupId>
-           <artifactId>clm</artifactId>
-           <version>3.2</version>
-           <scope>provided</scope>
+            <groupId>gov.nih.nci.security</groupId>
+            <artifactId>clm</artifactId>
+            <version>3.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-           <groupId>gov.nih.nci</groupId>
-           <artifactId>security</artifactId>
-           <version>4.2</version>
-           <scope>provided</scope>
+            <groupId>gov.nih.nci</groupId>
+            <artifactId>security</artifactId>
+            <version>4.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-           <groupId>gov.nih.nci.csm</groupId>
-           <artifactId>csm-common</artifactId>
-           <version>1.3</version>
-           <scope>provided</scope>
+            <groupId>gov.nih.nci.csm</groupId>
+            <artifactId>csm-common</artifactId>
+            <version>1.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-           <groupId>gov.nih.nci.csm</groupId>
-           <artifactId>csm-stubs</artifactId>
-           <version>1.3</version>
-           <scope>provided</scope>
+            <groupId>gov.nih.nci.csm</groupId>
+            <artifactId>csm-stubs</artifactId>
+            <version>1.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-           <groupId>gov.nih.nci.csm</groupId>
-           <artifactId>csm-client</artifactId>
-           <version>1.3</version>
-           <scope>provided</scope>
+            <groupId>gov.nih.nci.csm</groupId>
+            <artifactId>csm-client</artifactId>
+            <version>1.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-           <groupId>gov.nih.nci.csm</groupId>
-           <artifactId>csm-service</artifactId>
-           <version>1.3</version>
-           <scope>provided</scope>
+            <groupId>gov.nih.nci.csm</groupId>
+            <artifactId>csm-service</artifactId>
+            <version>1.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-           <groupId>globus</groupId>
-           <artifactId>ws-core-client</artifactId>
-           <version>4.0.3</version>
-           <scope>provided</scope>
+            <groupId>globus</groupId>
+            <artifactId>ws-core-client</artifactId>
+            <version>4.0.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-           <groupId>globus</groupId>
-           <artifactId>axis</artifactId>
-           <version>1.2RC2</version>
-           <scope>provided</scope>
+            <groupId>globus</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.2RC2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>cagrid</groupId>
@@ -153,7 +193,7 @@
             <version>1.3</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>caGrid-ServiceSecurityProvider-client</artifactId>
@@ -204,16 +244,16 @@
             <version>1.3</version>
         </dependency>
         <dependency>
-             <groupId>cagrid</groupId>
-             <artifactId>cagrid-gts-common</artifactId>
+            <groupId>cagrid</groupId>
+            <artifactId>cagrid-gts-common</artifactId>
             <version>1.3</version>
         </dependency>
         <dependency>
-             <groupId>cagrid</groupId>
-             <artifactId>cagrid-gts-stubs</artifactId>
-             <version>1.3</version>
+            <groupId>cagrid</groupId>
+            <artifactId>cagrid-gts-stubs</artifactId>
+            <version>1.3</version>
         </dependency>
-        
+
         <dependency>
             <groupId>globus</groupId>
             <artifactId>ws-addressing</artifactId>
@@ -279,82 +319,82 @@
             <artifactId>grouper-parent</artifactId>
             <version>2.0.0</version>
             <scope>provided</scope>
-            <type>pom</type>            
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>edu.internet2.middleware.grouper</groupId>
             <artifactId>subject</artifactId>
             <version>2.0.0</version>
             <scope>provided</scope>
-            <type>jar</type>            
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>caGrid-authentication-service-client</artifactId>
-            <version>1.4</version>    
-            <scope>provided</scope>        
+            <version>1.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>caGrid-authentication-service-common</artifactId>
-            <version>1.4</version>  
-            <scope>provided</scope>          
+            <version>1.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>caGrid-authentication-service-stubs</artifactId>
-            <version>1.4</version>  
-            <scope>provided</scope>          
+            <version>1.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>caGrid-dorian-client</artifactId>
-            <version>1.3</version>    
-             <scope>provided</scope>          
+            <version>1.3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>caGrid-dorian-common</artifactId>
-            <version>1.3</version>    
-             <scope>provided</scope>          
-        </dependency>        
+            <version>1.3</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>caGrid-dorian-service</artifactId>
             <version>1.3</version>
-             <scope>provided</scope>              
-        </dependency>        
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>caGrid-dorian-stubs</artifactId>
-            <version>1.3</version>  
-             <scope>provided</scope>            
-        </dependency>   
+            <version>1.3</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>caGrid</groupId>
             <artifactId>opensaml</artifactId>
-            <version>1.3</version>  
-             <scope>provided</scope>            
-        </dependency>  
+            <version>1.3</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>cagrid</groupId>
             <artifactId>cagrid-gaards-core</artifactId>
-            <version>1.3nci</version>  
-            <scope>provided</scope>             
-        </dependency> 
+            <version>1.3nci</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>xml-security</groupId>
             <artifactId>xmlsec</artifactId>
-            <version>1.2.1</version>  
-            <scope>provided</scope>             
-        </dependency> 
+            <version>1.2.1</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
-            <version>2.6.0</version>  
-            <scope>provided</scope>             
+            <version>2.6.0</version>
+            <scope>provided</scope>
         </dependency>
-        
+
         <!-- Hibernate dependencies -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -379,7 +419,7 @@
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate.validator.version}</version>
             <scope>provided</scope>
-        </dependency>        
+        </dependency>
     </dependencies>
     <build>
         <finalName>po</finalName>
@@ -388,21 +428,21 @@
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
                 <version>${cargo-maven2-plugin.version}</version>
-                <configuration>   
-                    <skip>false</skip> 
-                    <wait>false</wait>                   
-                        <deployables>
-                            <deployable>     
-                                <type>ear</type>                                                                
-                                <location>${pom.basedir}/../ear/target/po.ear</location>
-                                <properties>
-                                    <name>po.ear</name>
-                                </properties>
-                            </deployable>
-                        </deployables>                    
+                <configuration>
+                    <skip>false</skip>
+                    <wait>false</wait>
+                    <deployables>
+                        <deployable>
+                            <type>ear</type>
+                            <location>${pom.basedir}/../ear/target/po.ear</location>
+                            <properties>
+                                <name>po.ear</name>
+                            </properties>
+                        </deployable>
+                    </deployables>
                 </configuration>
-            </plugin>        
-            <plugin> 
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
                 <version>${maven-ear-plugin.version}</version>
@@ -435,87 +475,84 @@
                             <groupId>commons-beanutils</groupId>
                             <artifactId>commons-beanutils-bean-collections</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
                         </jarModule>
                         <jarModule>
                             <groupId>commons-beanutils</groupId>
                             <artifactId>commons-beanutils-core</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
                         </jarModule>
                         <jarModule>
                             <groupId>commons-collections</groupId>
                             <artifactId>commons-collections</artifactId>
-                           <includeInApplicationXml>false</includeInApplicationXml>
-                            
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
                             <groupId>commons-configuration</groupId>
                             <artifactId>commons-configuration</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
                         </jarModule>
                         <jarModule>
                             <groupId>commons-digester</groupId>
                             <artifactId>commons-digester</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
                         </jarModule>
                         <jarModule>
                             <groupId>commons-lang</groupId>
                             <artifactId>commons-lang</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
                         </jarModule>
-                         <jarModule>
+                        <jarModule>
                             <groupId>commons-discovery</groupId>
                             <artifactId>commons-discovery</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
                         </jarModule>
                         <jarModule>
                             <groupId>gov.nih.nci.iso21090</groupId>
                             <artifactId>iso-datatypes</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
+
+                        </jarModule>
+                        <jarModule>
+                            <groupId>gov.nih.nci.iso21090</groupId>
+                            <artifactId>iso-datatypes-extensions</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
                             <groupId>gov.nih.nci.coppa</groupId>
                             <artifactId>coppa-commons</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
+
                         </jarModule>
                         <jarModule>
                             <groupId>gov.nih.nci.coppa</groupId>
                             <artifactId>nci-commons-ctrp-core</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
+
                         </jarModule>
                         <jarModule>
                             <groupId>net.sf.xsnapshot</groupId>
                             <artifactId>xsnapshot</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
+
                         </jarModule>
                         <jarModule>
                             <groupId>gov.nih.nci.coppa</groupId>
                             <artifactId>ctep-services</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
+
                         </jarModule>
                         <jarModule>
                             <groupId>net.sf.ehcache</groupId>
                             <artifactId>ehcache</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
+
                         </jarModule>
                         <jarModule>
                             <groupId>weblogic</groupId>
                             <artifactId>wlthint3client-trimmed</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                            
-                        </jarModule>
 
+                        </jarModule>
                         <ejbModule>
                             <groupId>${project.parent.groupId}</groupId>
                             <artifactId>po-services</artifactId>
@@ -528,21 +565,29 @@
                             <bundleFileName>po-web.war</bundleFileName>
                         </webModule>
 
+                        <webModule>
+                            <groupId>${project.parent.groupId}</groupId>
+                            <artifactId>po-webservices</artifactId>
+                            <contextRoot>/po-webservices</contextRoot>
+                            <bundleFileName>po-webservices.war</bundleFileName>
+                        </webModule>
+
+
                         <!--  Start of jars needed for grid grouper sync. -->
                         <jarModule>
-                             <groupId>gov.nih.nci.security</groupId>
-                             <artifactId>clm</artifactId>
-                             <includeInApplicationXml>false</includeInApplicationXml>
+                            <groupId>gov.nih.nci.security</groupId>
+                            <artifactId>clm</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
-                             <groupId>gov.nih.nci</groupId>
-                             <artifactId>security</artifactId>
-                             <includeInApplicationXml>false</includeInApplicationXml>
+                            <groupId>gov.nih.nci</groupId>
+                            <artifactId>security</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
-                             <groupId>gov.nih.nci.csm</groupId>
-                             <artifactId>csm-common</artifactId>
-                             <includeInApplicationXml>false</includeInApplicationXml>
+                            <groupId>gov.nih.nci.csm</groupId>
+                            <artifactId>csm-common</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
                             <groupId>gov.nih.nci.csm</groupId>
@@ -654,7 +699,7 @@
                             <artifactId>subject</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
-                        
+
                         <jarModule>
                             <groupId>caGrid</groupId>
                             <artifactId>caGrid-authentication-service-client</artifactId>
@@ -670,7 +715,7 @@
                             <artifactId>caGrid-authentication-service-stubs</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
-                        
+
                         <jarModule>
                             <groupId>caGrid</groupId>
                             <artifactId>caGrid-ServiceSecurityProvider-client</artifactId>
@@ -691,8 +736,8 @@
                             <artifactId>caGrid-ServiceSecurityProvider-stubs</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
-                        
-                        
+
+
                         <jarModule>
                             <groupId>caGrid</groupId>
                             <artifactId>caGrid-dorian-stubs</artifactId>
@@ -727,7 +772,7 @@
                             <groupId>xml-security</groupId>
                             <artifactId>xmlsec</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-                        </jarModule>                        
+                        </jarModule>
                         <jarModule>
                             <groupId>xalan</groupId>
                             <artifactId>xalan</artifactId>
@@ -772,98 +817,84 @@
                             <groupId>globus</groupId>
                             <artifactId>cog-jglobus</artifactId>
                             <excluded>true</excluded>
-                        </jarModule>                        
+                        </jarModule>
                         <!--  End of jars needed for grid grouper sync. -->
-                        
+
                         <!-- Jars to exclude -->
                         <jarModule>
-                           <groupId>axis</groupId>
-                           <artifactId>axis</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>axis</groupId>
+                            <artifactId>axis</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
                         <jarModule>
-                           <groupId>commons-beanutils</groupId>
-                           <artifactId>commons-beanutils-bean-collections</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>commons-beanutils</groupId>
+                            <artifactId>commons-beanutils-bean-collections</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
                         <jarModule>
-                           <groupId>commons-beanutils</groupId>
-                           <artifactId>commons-beanutils-core</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>commons-beanutils</groupId>
+                            <artifactId>commons-beanutils-core</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
                         <jarModule>
-                           <groupId>org.apache.ant</groupId>
-                           <artifactId>ant</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
                         <jarModule>
-                           <groupId>org.apache.ant</groupId>
-                           <artifactId>ant-launcher</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>org.apache.ant</groupId>
+                            <artifactId>ant-launcher</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
                         <jarModule>
                             <groupId>commons-logging</groupId>
                             <artifactId>commons-logging</artifactId>
                             <excluded>true</excluded>
-                        </jarModule>                                               
-                        <jarModule>
-                           <groupId>javax.servlet</groupId>
-                           <artifactId>servlet-api</artifactId>
-                           <excluded>true</excluded>
                         </jarModule>
                         <jarModule>
-                           <groupId>xerces</groupId>
-                           <artifactId>xercesImpl</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>javax.servlet</groupId>
+                            <artifactId>servlet-api</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
                         <jarModule>
-                           <groupId>xml-apis</groupId>
-                           <artifactId>xml-apis</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>xerces</groupId>
+                            <artifactId>xercesImpl</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
                         <jarModule>
-                           <groupId>com.sun.xml.bind</groupId>
-                           <artifactId>jaxb-impl</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>xml-apis</groupId>
+                            <artifactId>xml-apis</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
+
                         <jarModule>
-                           <groupId>javax.xml.bind</groupId>
-                           <artifactId>jaxb-api</artifactId>
-                           <excluded>true</excluded>
+                            <groupId>javax.xml</groupId>
+                            <artifactId>jaxrpc-api</artifactId>
+                            <excluded>true</excluded>
                         </jarModule>
-                        <jarModule>
-                           <groupId>javax.xml</groupId>
-                           <artifactId>jaxrpc-api</artifactId>
-                           <excluded>true</excluded>
-                        </jarModule>
-                        <jarModule>
-                           <groupId>javax.xml.stream</groupId>
-                           <artifactId>stax-api</artifactId>
-                           <excluded>true</excluded>
-                        </jarModule>
-                        
+
                         <!-- Hibernate modules -->
                         <jarModule>
-                           <groupId>org.hibernate</groupId>
-                           <artifactId>hibernate-core</artifactId>
-                           <includeInApplicationXml>false</includeInApplicationXml>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-core</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
-                           <groupId>org.hibernate</groupId>
-                           <artifactId>hibernate-annotations</artifactId>
-                           <includeInApplicationXml>false</includeInApplicationXml>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-annotations</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
-                           <groupId>org.hibernate</groupId>
-                           <artifactId>hibernate-commons-annotations</artifactId>
-                           <includeInApplicationXml>false</includeInApplicationXml>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-commons-annotations</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
-                           <groupId>org.hibernate</groupId>
-                           <artifactId>hibernate-validator</artifactId>
-                           <includeInApplicationXml>false</includeInApplicationXml>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-validator</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
-                        
+
                     </modules>
                     <security>
                         <security-role id="client">

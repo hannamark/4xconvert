@@ -117,6 +117,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         accessManageOrganizationalContactScreen();
         // add OC
         clickAndWait("add_button_octc");
+        assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present
         assertTrue(selenium.isTextPresent("Organizational Contact Role Information"));
         // ensure the player is ACTIVE
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
@@ -152,6 +153,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         assertTrue(selenium.isTextPresent("exact:Edit Organizational Contact - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));        
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
         // old values
         assertEquals("original OC title", selenium.getValue("curateRoleForm_role_title").trim());
         assertEquals("1", selenium.getValue("curateRoleForm.role.type").trim());
@@ -252,6 +254,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         assertTrue(selenium.isTextPresent("exact:Edit Organizational Contact - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
         
         // old values
         assertEquals(AFFILIATE_ORG_FOR_PERSON_OC_OLD + " (" + activeOrgId.trim() + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id").trim());

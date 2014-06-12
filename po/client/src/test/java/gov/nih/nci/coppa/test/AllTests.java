@@ -83,16 +83,18 @@
 package gov.nih.nci.coppa.test;
 
 import gov.nih.nci.coppa.test.integration.TopicIntegrationTest;
-import gov.nih.nci.coppa.test.integration.test.AllSeleniumTests;
+import gov.nih.nci.po.webservices.service.simple.rest.AllRestTests;
+import gov.nih.nci.po.webservices.service.simple.soap.AllSoapTests;
 import gov.nih.nci.coppa.test.remoteapi.AllApiTests;
+import gov.nih.nci.po.webservices.service.bridg.soap.AllBridgTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses(value = { AllApiTests.class, DataGeneratorUtilTest.class,
-        TopicIntegrationTest.class, AllSeleniumTests.class })
+@SuiteClasses(value = { AllApiTests.class, DataGeneratorUtilTest.class, TopicIntegrationTest.class, AllSoapTests.class,
+        AllRestTests.class, AllBridgTests.class })
 public class AllTests {
 
 }

@@ -86,11 +86,13 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.OnlyCtepOwnedMayBeActive;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.util.ResearchOrganizationTypeCodeValidator;
 import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniqueResearchOrganization;
 import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
 import gov.nih.nci.po.util.ValidIi;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.HashSet;
 import java.util.List;
@@ -98,6 +100,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -105,6 +108,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
@@ -322,6 +326,27 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
      * {@inheritDoc}
      */
     @Override
+    @OneToMany(fetch = FetchType.EAGER)
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+                      org.hibernate.annotations.CascadeType.DELETE_ORPHAN }
+    )
+    @JoinTable(
+            name = "ro_alias",
+            joinColumns = @JoinColumn(name = RO_ID),
+            inverseJoinColumns = @JoinColumn(name = "alias_id")
+    )
+    @IndexColumn(name = IDX)
+    @ForeignKey(name = "RO_Alias_FK", inverseName = "Alias_RO_FK")
+    @Valid
+    @Searchable(nested = true)
+    public List<Alias> getAlias() {
+        return super.getAlias();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @CollectionOfElements
     @JoinTable(
             name = "ro_otheridentifier",
@@ -344,6 +369,43 @@ public class ResearchOrganization extends AbstractResearchOrganization implement
     @Searchable(fields = { "extension", "root" }, matchMode = Searchable.MATCH_MODE_EXACT)
     public Set<Ii> getOtherIdentifiers() {
         return super.getOtherIdentifiers();
+    }
+    
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "created_by_id", nullable = true)
+    @ForeignKey(name = "orgrole_createdby_user_fk")
+    public User getCreatedBy() {
+        return super.getCreatedBy();
+    }
+    
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getCreatedByUserName() {
+        return PoServiceUtil.getUserName(super.getCreatedBy());
+    }
+    
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "overridden_by_id", nullable = true)
+    @ForeignKey(name = "orgrole_overriddenby_user_fk")
+    public User getOverriddenBy() {
+        return super.getOverriddenBy();
+    }
+
+    
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getOverriddenByUserName() {
+        return PoServiceUtil.getUserName(super.getOverriddenBy());
     }
 }
 

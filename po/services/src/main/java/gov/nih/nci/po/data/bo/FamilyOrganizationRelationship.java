@@ -172,6 +172,7 @@ public class FamilyOrganizationRelationship implements Auditable {
      */
     @ManyToOne
     @NotNull
+    @Searchable(nested = true)
     public Organization getOrganization() {
         return organization;
     }

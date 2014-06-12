@@ -83,12 +83,14 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -104,8 +106,11 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="2L"
  */
 @MappedSuperclass
-public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedEntity<Organization> {
+public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedEntity<Organization> 
+    implements Overridable {
+    
     private static final long serialVersionUID = 2L;
+    private User overriddenBy;
 
     /**
      * {@inheritDoc}
@@ -140,5 +145,21 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
     @SuppressWarnings("PMD.UselessOverridingMethod") // setter needed for xsnapshot
     public void setPlayer(Organization player) {
         super.setPlayer(player);
+    }
+    
+    /**
+     * @return the user
+     */
+    @Transient
+    public User getOverriddenBy() {
+        return overriddenBy;
+    }
+
+    /**
+     * @param overriddenBy
+     *            the overriddenBy user to set
+     */
+    public void setOverriddenBy(User overriddenBy) {
+        this.overriddenBy = overriddenBy;
     }
 }

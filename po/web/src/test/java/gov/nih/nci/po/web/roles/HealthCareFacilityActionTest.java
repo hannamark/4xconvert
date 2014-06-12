@@ -88,6 +88,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -100,6 +103,8 @@ import gov.nih.nci.po.service.HealthCareFacilityServiceStub;
 import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PrivateAccessor;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -112,12 +117,15 @@ import javax.jms.JMSException;
 import org.displaytag.properties.SortOrderEnum;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.opensymphony.xwork2.Action;
 
 /**
  * @author Scott Miller
+ * @author Rohit Gupta
  *
  */
 public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
@@ -246,7 +254,19 @@ public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
     }
 
     @Test
-    public void testAdd() throws JMSException {
+    public void testAdd() throws JMSException, CSException {
+        HealthCareFacilityAction action = mock(HealthCareFacilityAction.class);
+        doAnswer(new Answer<Object>() {
+            public Object answer(InvocationOnMock invocation) {
+                User user = mock(User.class);
+                return user;
+            }
+        }).when(action).getCreatedBy();
+
+        doCallRealMethod().when(action).getBaseRole();
+        doCallRealMethod().when(action).getRoleService();
+        doCallRealMethod().when(action).add();
+        
         assertEquals(Action.SUCCESS, action.add());
     }
 

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="gov.nih.nci.po.service.OrganizationServiceBean.search"
+		read-only="true">
+ <![CDATA[
+        select o.id, o.name, 
+    (select fam.name from family fam inner join familyorganizationrelationship rel on rel.family_id=fam.id and rel.organization_id=o.id where rel.enddate is null and fam.statuscode='ACTIVE' order by fam.name, fam.id limit 1) as familyName,
+    (select ro_oi.extension from ro_otheridentifier ro_oi inner join researchorganization ro on ro_oi.ro_id=ro.id and ro.player_id=o.id and ro.status <> 'NULLIFIED' and ro_oi.root='2.16.840.1.113883.3.26.6.2' limit 1) as roCtepId,
+    (select hcf_oi.extension from hcf_otheridentifier hcf_oi inner join healthcarefacility hcf on hcf_oi.hcf_id=hcf.id and hcf.player_id=o.id and hcf.status <> 'NULLIFIED' and hcf_oi.root='2.16.840.1.113883.3.26.6.2' limit 1) as hcfCtepId,
+    (select count(id) from organizationcr ocr where ocr.target=o.id and ocr.processed=false) as changeRequests,
+    (select count(id) from researchorganization ro where ro.player_id=o.id and ro.status='PENDING') as pendingROs,
+    (select count(id) from healthcarefacility ro where ro.player_id=o.id and ro.status='PENDING') as pendingHCFs,
+    o.status as statusCode, o.statusdate as statusDate,
+    (select count(id) from researchorganization ro where ro.player_id=o.id and ro.status <> 'NULLIFIED') as totalROs,
+    (select count(id) from healthcarefacility ro where ro.player_id=o.id and ro.status <> 'NULLIFIED') as totalHCFs,
+    (select count(id) from identifiedorganization ro where ro.player_id=o.id and ro.status <> 'NULLIFIED') as totalIdOrgs,
+    (select count(id) from oversightcommittee ro where ro.player_id=o.id and ro.status <> 'NULLIFIED') as totalOversightCommitees,
+    (select count(id) from organizationalcontact ro where ro.organization_id=o.id and ro.status <> 'NULLIFIED') as totalOrgContacts,
+    a.streetaddressline as address1, a.deliveryaddressline as address2, a.cityormunicipality as city, a.stateorprovince as state,
+    c.name as country, a.postalcode as zipCode, 
+    (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join organization_comment oc on oc.comment_id=c.id where oc.organization_id=o.id) as comments,
+    (select array_to_string(array_agg(e.value), '; ') from email e inner join organization_email oe on oe.email_id=e.id and oe.organization_id=o.id) as emailAddresses,
+    (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join organization_phone oe on oe.phone_id=e.id and oe.organization_id=o.id) as phones,   
+    dup_org.id as duplicateOf, c.alpha3 as countrycode
+    from organization o inner join address a on o.postal_address_id=a.id inner join country c on a.country_id=c.id left join organization dup_org on dup_org.id=o.duplicate_of
+    ]]>
+	</sql-query>
+
+	<sql-query
+		name="gov.nih.nci.po.service.OrganizationServiceBean.getInboxOrgs"
+		read-only="true">
+ <![CDATA[
+     select o.id, o.name, 
+    (select fam.name from family fam inner join familyorganizationrelationship rel on rel.family_id=fam.id and rel.organization_id=o.id where rel.enddate is null and fam.statuscode='ACTIVE' order by fam.name, fam.id limit 1) as familyName,
+    (select ro_oi.extension from ro_otheridentifier ro_oi inner join researchorganization ro on ro_oi.ro_id=ro.id and ro.player_id=o.id and ro.status <> 'NULLIFIED' and ro_oi.root='2.16.840.1.113883.3.26.6.2' limit 1) as roCtepId,
+    (select hcf_oi.extension from hcf_otheridentifier hcf_oi inner join healthcarefacility hcf on hcf_oi.hcf_id=hcf.id and hcf.player_id=o.id and hcf.status <> 'NULLIFIED' and hcf_oi.root='2.16.840.1.113883.3.26.6.2' limit 1) as hcfCtepId,
+    (select count(id) from organizationcr ocr where ocr.target=o.id and ocr.processed=false) as changeRequests,
+    (select count(id) from researchorganization ro where ro.player_id=o.id and ro.status='PENDING') as pendingROs,
+    (select count(id) from healthcarefacility ro where ro.player_id=o.id and ro.status='PENDING') as pendingHCFs,
+    o.status as statusCode, o.statusdate as statusDate,
+    (select count(id) from researchorganization ro where ro.player_id=o.id and ro.status <> 'NULLIFIED') as totalROs,
+    (select count(id) from healthcarefacility ro where ro.player_id=o.id and ro.status <> 'NULLIFIED') as totalHCFs,
+    (select count(id) from identifiedorganization ro where ro.player_id=o.id and ro.status <> 'NULLIFIED') as totalIdOrgs,
+    (select count(id) from oversightcommittee ro where ro.player_id=o.id and ro.status <> 'NULLIFIED') as totalOversightCommitees,
+    (select count(id) from organizationalcontact ro where ro.organization_id=o.id and ro.status <> 'NULLIFIED') as totalOrgContacts,
+    a.streetaddressline as address1, a.deliveryaddressline as address2, a.cityormunicipality as city, a.stateorprovince as state,
+    c.name as country, a.postalcode as zipCode, 
+    (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join organization_comment oc on oc.comment_id=c.id where oc.organization_id=o.id) as comments,
+    (select array_to_string(array_agg(e.value), '; ') from email e inner join organization_email oe on oe.email_id=e.id and oe.organization_id=o.id) as emailAddresses,
+    (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join organization_phone oe on oe.phone_id=e.id and oe.organization_id=o.id) as phones,   
+    dup_org.id as duplicateOf, c.alpha3 as countrycode
+    from organization o inner join address a on o.postal_address_id=a.id inner join country c on a.country_id=c.id left join organization dup_org on dup_org.id=o.duplicate_of
+    
+    where
+        (o.status <> 'NULLIFIED') AND  (
+            o.status = 'PENDING' OR
+            (select count(id) from organizationcr ocr where ocr.target=o.id and ocr.processed=false) > 0 OR
+            (select count(id) from researchorganization ro where ro.player_id=o.id and ro.status='PENDING') > 0 OR 
+            (select count(ro.id) from researchorganization ro inner join researchorganizationcr rocr on rocr.target=ro.id and rocr.processed=false and ro.player_id=o.id and ro.status <> 'NULLIFIED') > 0 OR 
+            (select count(id) from oversightcommittee ro where ro.player_id=o.id and ro.status ='PENDING') > 0 OR
+            (select count(ro.id) from oversightcommittee ro inner join oversightcommitteecr rocr on rocr.target=ro.id and rocr.processed=false and ro.player_id=o.id and ro.status <> 'NULLIFIED') > 0 OR
+            (select count(id) from healthcarefacility ro where ro.player_id=o.id and ro.status='PENDING') > 0 OR 
+            (select count(ro.id) from healthcarefacility ro inner join healthcarefacilitycr rocr on rocr.target=ro.id and rocr.processed=false and ro.player_id=o.id and ro.status <> 'NULLIFIED') > 0 OR
+            (select count(id) from identifiedorganization ro where ro.player_id=o.id and ro.status ='PENDING') > 0 OR
+            (select count(ro.id) from identifiedorganization ro inner join identifiedorganizationcr rocr on rocr.target=ro.id and rocr.processed=false and ro.player_id=o.id and ro.status <> 'NULLIFIED') > 0 
+        )
+    
+    ]]>
+	</sql-query>
+
+	<sql-query name="gov.nih.nci.po.service.PersonServiceBean.search"
+		read-only="true">
+ <![CDATA[
+        select p.id, p.status,
+    (select ip.assigned_identifier_extension from identifiedperson ip where ip.player_id=p.id and ip.assigned_identifier_root='2.16.840.1.113883.3.26.6.1' and ip.status <> 'NULLIFIED' LIMIT 1) as ctepID,
+    p.firstname, p.middlename, p.lastname,
+    (select array_to_string(array_agg(e.value), '; ') from email e inner join person_email oe on oe.email_id=e.id and oe.person_id=p.id) as emailAddresses, 
+    (select count(id) from clinicalresearchstaff ro where ro.person_id=p.id and ro.status <> 'NULLIFIED') as totalCrs,
+    (select count(id) from healthcareprovider ro where ro.person_id=p.id and ro.status <> 'NULLIFIED') as totalHcp,
+    (select count(id) from organizationalcontact ro where ro.person_id=p.id and ro.status <> 'NULLIFIED') as totalOc,
+    (select count(id) from identifiedperson ro where ro.player_id=p.id and ro.status <> 'NULLIFIED') as totalOpi,
+    
+    (select count(id) from clinicalresearchstaff ro where ro.person_id=p.id and ro.status='PENDING') as pendingCrs,
+    (select count(id) from healthcareprovider ro where ro.person_id=p.id and ro.status='PENDING') as pendingHcp,
+    (select count(id) from organizationalcontact ro where ro.person_id=p.id and ro.status='PENDING') as pendingOc,
+    (select count(id) from identifiedperson ro where ro.player_id=p.id and ro.status='PENDING') as pendingOpi,  
+
+    a.streetaddressline as address1, a.deliveryaddressline as address2, a.cityormunicipality as city, a.stateorprovince as state,
+     c.name as country, a.postalcode as zipCode,
+     (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join person_comment oc on oc.comment_id=c.id where oc.person_id=p.id) as comments,
+     (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join person_phone oe on oe.phone_id=e.id and oe.person_id=p.id) as phones,
+     dup_person.id as duplicateOf, c.alpha3 as countrycode
+     
+    from person p inner join address a on p.postal_address_id=a.id inner join country c on a.country_id=c.id left join person dup_person on dup_person.id=p.duplicate_of
+    ]]>
+	</sql-query>
+	<sql-query name="gov.nih.nci.po.service.PersonServiceBean.getInboxPersons"
+		read-only="true">
+ <![CDATA[
+                select p.id, p.status,
+    (select ip.assigned_identifier_extension from identifiedperson ip where ip.player_id=p.id and ip.assigned_identifier_root='2.16.840.1.113883.3.26.6.1' and ip.status <> 'NULLIFIED' LIMIT 1) as ctepID,
+    p.firstname, p.middlename, p.lastname,
+    (select array_to_string(array_agg(e.value), '; ') from email e inner join person_email oe on oe.email_id=e.id and oe.person_id=p.id) as emailAddresses, 
+    (select count(id) from clinicalresearchstaff ro where ro.person_id=p.id and ro.status <> 'NULLIFIED') as totalCrs,
+    (select count(id) from healthcareprovider ro where ro.person_id=p.id and ro.status <> 'NULLIFIED') as totalHcp,
+    (select count(id) from organizationalcontact ro where ro.person_id=p.id and ro.status <> 'NULLIFIED') as totalOc,
+    (select count(id) from identifiedperson ro where ro.player_id=p.id and ro.status <> 'NULLIFIED') as totalOpi,
+    
+    (select count(id) from clinicalresearchstaff ro where ro.person_id=p.id and ro.status='PENDING') as pendingCrs,
+    (select count(id) from healthcareprovider ro where ro.person_id=p.id and ro.status='PENDING') as pendingHcp,
+    (select count(id) from organizationalcontact ro where ro.person_id=p.id and ro.status='PENDING') as pendingOc,
+    (select count(id) from identifiedperson ro where ro.player_id=p.id and ro.status='PENDING') as pendingOpi,  
+
+    a.streetaddressline as address1, a.deliveryaddressline as address2, a.cityormunicipality as city, a.stateorprovince as state,
+     c.name as country, a.postalcode as zipCode,
+    (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join person_comment oc on oc.comment_id=c.id where oc.person_id=p.id) as comments,
+     (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join person_phone oe on oe.phone_id=e.id and oe.person_id=p.id) as phones,
+     dup_person.id as duplicateOf, c.alpha3 as countrycode
+     
+    from person p inner join address a on p.postal_address_id=a.id inner join country c on a.country_id=c.id left join person dup_person on dup_person.id=p.duplicate_of
+    
+    where (p.status <> 'NULLIFIED') AND (
+            p.status = 'PENDING' OR
+             (select count(id) from personCR ocr where ocr.target=p.id and ocr.processed=false) > 0 OR
+             (select count(id) from organizationalcontact ro where ro.person_id=p.id and ro.status='PENDING') > 0 OR
+             (select count(ro.id) from organizationalcontact ro inner join organizationalcontactcr rocr on rocr.target=ro.id and rocr.processed=false and ro.person_id=p.id and ro.status <> 'NULLIFIED') > 0 OR
+             (select count(id) from clinicalresearchstaff ro where ro.person_id=p.id and ro.status='PENDING') > 0 OR
+             (select count(ro.id) from clinicalresearchstaff ro inner join clinicalresearchstaffcr rocr on rocr.target=ro.id and rocr.processed=false and ro.person_id=p.id and ro.status <> 'NULLIFIED') > 0 OR
+             (select count(id) from healthcareprovider ro where ro.person_id=p.id and ro.status='PENDING') > 0 OR 
+             (select count(ro.id) from healthcareprovider ro inner join healthcareprovidercr rocr on rocr.target=ro.id and rocr.processed=false and ro.person_id=p.id and ro.status <> 'NULLIFIED') > 0 OR
+             (select count(id) from identifiedperson ro where ro.player_id=p.id and ro.status='PENDING') > 0 OR
+             (select count(ro.id) from identifiedperson ro inner join identifiedpersoncr rocr on rocr.target=ro.id and rocr.processed=false and ro.player_id=p.id and ro.status <> 'NULLIFIED') > 0          
+    )
+    ]]>
+	</sql-query>
+	<sql-query
+		name="gov.nih.nci.po.service.PersonServiceBean.search.affiliation"
+		read-only="true">
+        <![CDATA[
+        select p.id, crs.status as crs_status, crs_o.name as crs_org, hcp.status as hcp_status, hcp_o.name as hcp_org, oc.status as oc_status, oc_o.name as oc_org, ip.status as ip_status, ip_o.name as ip_org from person p  
+     left join clinicalresearchstaff crs ON crs.person_id=p.id AND crs.status <> 'NULLIFIED' LEFT JOIN organization crs_o on crs_o.id=crs.organization_id
+    left join healthcareprovider hcp ON hcp.person_id=p.id AND hcp.status <> 'NULLIFIED' LEFT JOIN organization hcp_o on hcp_o.id=hcp.organization_id
+    left join organizationalcontact oc ON oc.person_id=p.id AND oc.status <> 'NULLIFIED' LEFT JOIN organization oc_o on oc_o.id=oc.organization_id
+    left join identifiedperson ip ON ip.player_id=p.id AND ip.status <> 'NULLIFIED' LEFT JOIN organization ip_o on ip_o.id=ip.scoper_id
+    WHERE p.id IN (:ids) ]]>
+	</sql-query>
+</hibernate-mapping>

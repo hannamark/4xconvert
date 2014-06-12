@@ -175,6 +175,7 @@ public class ManageIdentifiedPersonWithCRTest extends AbstractManageOrgRolesWith
         assertTrue(selenium.isTextPresent("exact:Edit Other Person Identifier - Comparison"));
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_person.statusCode"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
 
         // old values
         assertEquals(AFFILIATE_ORG_FOR_PERSON_IP_OLD + " (" + activeOrgId.trim() + ")", selenium.getText("wwctrl_curateRoleForm_role_scoper_id").trim());

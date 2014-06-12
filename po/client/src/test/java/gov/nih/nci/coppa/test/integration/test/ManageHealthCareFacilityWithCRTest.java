@@ -145,6 +145,12 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         selenium.select("curateRoleForm.role.status", "label=PENDING");
         addUSPostalAddress();
         waitForTelecomFormsToLoad();
+        assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present
+        
+        waitForAliasFormsToLoad();
+        verifyAlias();
+        inputAlias();
+        
         addContactInformation();
         saveOrganizationalRole();
     }
@@ -169,6 +175,10 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         selenium.select("curateRoleForm.role.status", "label=PENDING");
         addUSPostalAddress();
         waitForTelecomFormsToLoad();
+        
+        waitForAliasFormsToLoad();  
+        verifyExistingAlias();        
+        
         addContactInformation();
         updateOrganizationalRole();
     }
@@ -215,6 +225,8 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
 
         // Check Status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
+        
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
 
         // Check address, email, phone, fax, tty and url info.
         checkOrgRoleContactInfomation();

@@ -93,11 +93,13 @@ public class CreateOrganizationTest extends AbstractPoWebTest {
         assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.organization.statusCode"));
         assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.organization.statusCode"));
         assertEquals("United States", selenium.getSelectedLabel("curateEntityForm.organization.postalAddress.country"));
+        assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present        
         clickAndWaitSaveButton();
         assertEquals("PENDING", selenium.getSelectedValue("curateEntityForm.organization.statusCode"));
         assertEquals("PENDING", selenium.getSelectedLabel("curateEntityForm.organization.statusCode"));
         assertEquals("United States", selenium.getSelectedLabel("curateEntityForm.organization.postalAddress.country"));
         assertTrue(selenium.isTextPresent("US, Canadian, and Australian addresses must include zip"));
+        assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present
         verifyDefaultFieldErrorMessages();
 
         selenium.select("curateEntityForm.organization.statusCode", "label=" + SELECT_A_STATUS);

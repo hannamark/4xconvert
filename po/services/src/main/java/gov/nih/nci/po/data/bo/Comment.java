@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.po.util.CsmUserUtil;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Date;
@@ -100,7 +100,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.ForeignKey;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
@@ -194,14 +193,7 @@ public class Comment implements PersistentObject {
      */
     @Transient
     public String getUserName() {
-        String name = "";
-        if (user != null) {
-            name = StringUtils
-                    .isBlank(user.getLastName() + user.getFirstName()) ? CsmUserUtil
-                    .getGridIdentityUsername(user.getLoginName()) : (user
-                    .getFirstName() + " " + user.getLastName());
-        }
-        return name;
+        return PoServiceUtil.getUserName(user);
     }
 
 }

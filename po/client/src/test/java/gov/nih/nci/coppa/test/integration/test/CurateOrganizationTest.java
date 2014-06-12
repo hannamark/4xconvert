@@ -152,7 +152,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         // click on item to curate
         clickAndWait("org_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
+        waitForAliasFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
 
         String tempName = name.concat(name);
         selenium.type("curateEntityForm_organization_name", tempName);
@@ -160,7 +162,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         clickAndWait("reset_button");
         
         waitForTelecomFormsToLoad();
+        waitForAliasFormsToLoad();
         assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
 
         // verify the presence of required indicator in create screen.
         verifyRequiredIndicators(true);
@@ -168,6 +172,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyPostalAddress(ENTITYTYPE.organization);
 
         verifyTelecom();
+        
+        verifyAlias();
 
         saveAsActive(id);
     }
@@ -222,6 +228,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyPostalAddress(ENTITYTYPE.organization);
 
         verifyTelecom();
+        
+        verifyAlias();
 
         saveAsActive(id);
     }
@@ -309,6 +317,8 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         verifyPostalAddress(ENTITYTYPE.organization);
 
         verifyTelecom();
+        
+        verifyAlias();
 
         saveAsActive(id);
         return id;
@@ -335,6 +345,9 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         verifyTelecom();
         
+        
+        verifyAlias();
+
         return id;
     }
 

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.security.authorization.domainobjects.User;
+
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -97,7 +99,7 @@ import javax.persistence.Transient;
  *                           serial-version-uid="3L"
  */
 @MappedSuperclass
-public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
+public abstract class AbstractOrganizationalContact extends AbstractPersonRole  implements Overridable {
 
     private static final long serialVersionUID = 3L;
 
@@ -108,6 +110,7 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
 
     private OrganizationalContactType type;
     private String title;
+    private User overriddenBy;
 
 
     /**
@@ -147,5 +150,21 @@ public abstract class AbstractOrganizationalContact extends AbstractPersonRole {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    /**
+     * @return the user
+     */
+    @Transient
+    public User getOverriddenBy() {
+        return overriddenBy;
+    }
+
+    /**
+     * @param overriddenBy
+     *            the overriddenBy user to set
+     */
+    public void setOverriddenBy(User overriddenBy) {
+        this.overriddenBy = overriddenBy;
     }
 }

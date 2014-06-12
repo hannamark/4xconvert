@@ -108,6 +108,7 @@ import gov.nih.nci.po.data.bo.PlayedRole;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.ScopedRole;
+import gov.nih.nci.po.service.OrganizationSearchDTO.AliasDTO;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.MergeOrganizationHelper;
 import gov.nih.nci.po.util.MergeOrganizationHelperImpl;
@@ -116,6 +117,10 @@ import gov.nih.nci.po.util.RoleStatusChangeHelper;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
 
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -135,6 +140,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
@@ -153,6 +159,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     private static final String ORDER_BY = " ORDER BY ";
     private static final String UNCHECKED = "unchecked";
     private MergeOrganizationHelper mergeOrganizationHelper;
+    private static final Logger LOG = Logger.getLogger(OrganizationServiceBean.class);
 
     @EJB
     private FamilyOrganizationRelationshipServiceLocal familyOrganizationRelationshipService;
@@ -417,7 +424,66 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         for (Object[] row : (List<Object[]>) query.list()) {
             results.add(convert(row));
         }
+        loadOrgAliases(results);
         return results;
+    }
+    
+    private void loadOrgAliases(List<OrganizationSearchDTO> results) {
+        if (CollectionUtils.isNotEmpty(results)) {
+            List<Long> ids = new ArrayList<Long>();
+            Map<Long, OrganizationSearchDTO> resultsMap = new HashMap<Long, OrganizationSearchDTO>();
+            for (OrganizationSearchDTO dto : results) {
+                final Long id = Long.valueOf(dto.getId());
+                ids.add(id);
+                resultsMap.put(id, dto);
+            }
+
+            Session s = PoHibernateUtil.getCurrentSession();
+            String sql = s
+                    .getNamedQuery(
+                            "gov.nih.nci.po.service.OrganizationServiceBean.search.alias")
+                    .getQueryString();
+
+            Connection c = s.connection();
+            PreparedStatement st = null;
+            ResultSet rs = null;
+            try {
+                st = c.prepareStatement(sql.replace(":ids",
+                        StringUtils.join(ids, ',')));
+                rs = st.executeQuery();
+                while (rs.next()) {
+                    Object[] row = new Object[2];
+                    for (int i = 0; i < row.length; i++) {
+                        row[i] = rs.getObject(i + 1);
+                    }
+                    processOrgAlias(row, resultsMap);
+                }
+            } catch (SQLException e) {
+                LOG.error(e, e);
+                throw new RuntimeException(e); // NOPMD
+            } finally {
+                try {
+                    st.close();
+                } catch (Exception e) { // NOPMD
+                    LOG.error(e, e);
+                }
+            }
+        }        
+    }
+    
+    private void processOrgAlias(Object[] row,
+            Map<Long, OrganizationSearchDTO> resultsMap) {
+        final long pid = ((Number) row[0]).longValue();
+        OrganizationSearchDTO dto = resultsMap.get(pid);
+        if (dto.getAliasDto() == null) {
+            dto.setAliasDto(new ArrayList<AliasDTO>());
+        }
+        
+        List<AliasDTO> aliasDtos = dto.getAliasDto();
+        if (row[1] != null) {
+            aliasDtos.add(new AliasDTO(row[1].toString()));
+        }
+        
     }
 
     // CHECKSTYLE:OFF
@@ -448,6 +514,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         dto.setEmailAddresses((String) row[22]);
         dto.setPhones((String) row[23]);
         dto.setDuplicateOf(((BigInteger) row[24]));
+        dto.setCountryCode((String) row[25]);
         return dto;
     }
     // CHECKSTYLE:ON
@@ -523,7 +590,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             appendCtepIdClause(sql, criteria);
             appendOrgIdClause(sql, criteria);
             appendStatusClause(sql, criteria);
-            appendOrgNameClause(sql, criteria);
+            appendOrgNameAndAliasClause(sql, criteria);            
             appendFamilyClause(sql, criteria);
             appendCrOrPendingRolesClause(sql, criteria);
             appendCountryClause(sql, criteria);
@@ -673,14 +740,19 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
      * @param sql
      * @param criteria
      */
-    private void appendOrgNameClause(StringBuilder sql,
+    private void appendOrgNameAndAliasClause(StringBuilder sql,
             OrganizationSearchCriteria criteria) {
         if (StringUtils.isNotBlank(criteria.getName())) {
-            sql.append(String.format(
-                    " AND lower(o.name) like '%s' ",
-                    "%"
-                            + StringEscapeUtils.escapeSql(criteria.getName().trim()
-                                    .toLowerCase()) + "%"));
+            String name = "%" + StringEscapeUtils.escapeSql(criteria.getName().trim().toLowerCase()) + "%";
+            // further check if "search alias" was "checked"
+            if (Boolean.TRUE.equals(criteria.getSearchAliases())) {
+                sql.append(String.format("AND (lower(o.name) like '%s'  " 
+                        + "OR exists "
+                        + "(select a.value from alias a inner join organization_alias oa on a.id=oa.alias_id "
+                        + "where oa.organization_id=o.id and lower(a.value) like '%s')) ", name, name));
+            } else {
+                sql.append(String.format(" AND lower(o.name) like '%s' ", name));
+            }
         }
     }
 

@@ -144,8 +144,20 @@
                         ${otherId.identifierName}: ${otherId.extension}<br/>
                     </c:forEach>
                 </c:if>
+                <s:if test="isNotCreate">                        
+                    <po:createdBy createdByUserName="${role.createdByUserName}"/>               
+                </s:if>
             </div>
         </div>
+        
+        <div class="boxouter">
+        <h2>Aliases</h2>
+            <div class="box_white">                
+                <div class="clear"></div>                
+                <po:aliases aliasKeyBase="organization" readonly="${role.ctepOwned}"/>
+            </div>
+        </div>
+        
         <div class="boxouter">
             <h2>Address Information</h2>
             <po:addresses readonly="${role.ctepOwned}" usOrCanadaFormatForValidationOnly="true"/>

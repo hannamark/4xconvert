@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:jaxws="http://java.sun.com/xml/ns/jaxws" xmlns:tns="http://soap.simple.service.webservices.po.nci.nih.gov/person/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	name="PersonService" targetNamespace="http://soap.simple.service.webservices.po.nci.nih.gov/person/"
+	xmlns:p="gov.nih.nci.po.webservices.types">
+	<jaxws:bindings>
+		<jaxws:package name="gov.nih.nci.po.webservices.service.simple.soap.person"></jaxws:package>
+	</jaxws:bindings>
+
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://soap.simple.service.webservices.po.nci.nih.gov/person/">
+			<xsd:import namespace="gov.nih.nci.po.webservices.types"
+				schemaLocation="po.xsd"></xsd:import>
+
+			<xsd:simpleType name="roleType">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="HealthCareProvider" />
+					<xsd:enumeration value="OrganizationalContact" />
+					<xsd:enumeration value="ClinicalResearchStaff" />
+				</xsd:restriction>
+			</xsd:simpleType>
+
+			<xsd:element name="createPersonRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="person" type="p:Person"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="createPersonResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="person" type="p:Person"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updatePersonRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="person" type="p:Person"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updatePersonResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="person" type="p:Person"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="changePersonStatusRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personID" type="xsd:long"></xsd:element>
+						<xsd:element name="status" type="p:EntityStatus"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="changePersonStatusResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="person" type="p:Person"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPersonRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personID" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPersonResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="person" type="p:Person" minOccurs="0"
+							maxOccurs="1"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPersonsByCtepIdRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="ctepID" type="xsd:string"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPersonsByCtepIdResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personList" type="p:Person"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="createPersonRoleRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personRole" type="p:PersonRole"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="createPersonRoleResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personRole" type="p:PersonRole"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updatePersonRoleRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personRole" type="p:PersonRole"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="updatePersonRoleResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personRole" type="p:PersonRole"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPersonRolesByPersonIdRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personID" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPersonRolesByPersonIdResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personRoleList" type="p:PersonRole"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPersonRoleByIdRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="roleType" type="tns:roleType"></xsd:element>
+						<xsd:element name="personRoleID" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getPersonRoleByIdResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personRole" type="p:PersonRole"
+							minOccurs="0" maxOccurs="1"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="changePersonRoleStatusRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="roleType" type="tns:roleType"></xsd:element>
+						<xsd:element name="personRoleID" type="xsd:long"></xsd:element>
+						<xsd:element name="status" type="p:EntityStatus"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="changePersonRoleStatusResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personRole" type="p:PersonRole"
+							minOccurs="0" maxOccurs="1"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="searchPersonsRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personSearchCriteria" type="p:PersonSearchCriteria"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="searchPersonsResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="personSearchResultList" type="p:PersonSearchResult"
+							minOccurs="0" maxOccurs="unbounded"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="createPersonRequest">
+		<wsdl:part name="parameters" element="tns:createPersonRequest" />
+	</wsdl:message>
+	<wsdl:message name="createPersonResponse">
+		<wsdl:part name="parameters" element="tns:createPersonResponse" />
+	</wsdl:message>
+	<wsdl:message name="updatePersonRequest">
+		<wsdl:part name="parameters" element="tns:updatePersonRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updatePersonResponse">
+		<wsdl:part name="parameters" element="tns:updatePersonResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="changePersonStatusRequest">
+		<wsdl:part name="parameters" element="tns:changePersonStatusRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="changePersonStatusResponse">
+		<wsdl:part name="parameters" element="tns:changePersonStatusResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getPersonRequest">
+		<wsdl:part name="parameters" element="tns:getPersonRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getPersonResponse">
+		<wsdl:part name="parameters" element="tns:getPersonResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getPersonsByCtepIdRequest">
+		<wsdl:part name="parameters" element="tns:getPersonsByCtepIdRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getPersonsByCtepIdResponse">
+		<wsdl:part name="parameters" element="tns:getPersonsByCtepIdResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="searchPersonsRequest">
+		<wsdl:part name="parameters" element="tns:searchPersonsRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="searchPersonsResponse">
+		<wsdl:part name="parameters" element="tns:searchPersonsResponse"></wsdl:part>
+	</wsdl:message>
+
+	<wsdl:message name="createPersonRoleRequest">
+		<wsdl:part name="parameters" element="tns:createPersonRoleRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="createPersonRoleResponse">
+		<wsdl:part name="parameters" element="tns:createPersonRoleResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updatePersonRoleRequest">
+		<wsdl:part name="parameters" element="tns:updatePersonRoleRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="updatePersonRoleResponse">
+		<wsdl:part name="parameters" element="tns:updatePersonRoleResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getPersonRolesByPersonIdRequest">
+		<wsdl:part name="parameters" element="tns:getPersonRolesByPersonIdRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getPersonRolesByPersonIdResponse">
+		<wsdl:part name="parameters" element="tns:getPersonRolesByPersonIdResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getPersonRoleByIdRequest">
+		<wsdl:part name="parameters" element="tns:getPersonRoleByIdRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getPersonRoleByIdResponse">
+		<wsdl:part name="parameters" element="tns:getPersonRoleByIdResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="changePersonRoleStatusRequest">
+		<wsdl:part name="parameters" element="tns:changePersonRoleStatusRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="changePersonRoleStatusResponse">
+		<wsdl:part name="parameters" element="tns:changePersonRoleStatusResponse"></wsdl:part>
+	</wsdl:message>
+
+	<wsdl:portType name="PersonService">
+		<wsdl:operation name="createPerson">
+			<wsdl:input message="tns:createPersonRequest" />
+			<wsdl:output message="tns:createPersonResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="updatePerson">
+			<wsdl:input message="tns:updatePersonRequest"></wsdl:input>
+			<wsdl:output message="tns:updatePersonResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="changePersonStatus">
+			<wsdl:input message="tns:changePersonStatusRequest"></wsdl:input>
+			<wsdl:output message="tns:changePersonStatusResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPerson">
+			<wsdl:input message="tns:getPersonRequest"></wsdl:input>
+			<wsdl:output message="tns:getPersonResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPersonsByCtepId">
+			<wsdl:input message="tns:getPersonsByCtepIdRequest"></wsdl:input>
+			<wsdl:output message="tns:getPersonsByCtepIdResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="searchPersons">
+			<wsdl:input message="tns:searchPersonsRequest"></wsdl:input>
+			<wsdl:output message="tns:searchPersonsResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createPersonRole">
+			<wsdl:input message="tns:createPersonRoleRequest"></wsdl:input>
+			<wsdl:output message="tns:createPersonRoleResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updatePersonRole">
+			<wsdl:input message="tns:updatePersonRoleRequest"></wsdl:input>
+			<wsdl:output message="tns:updatePersonRoleResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPersonRolesByPersonId">
+			<wsdl:input message="tns:getPersonRolesByPersonIdRequest"></wsdl:input>
+			<wsdl:output message="tns:getPersonRolesByPersonIdResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPersonRoleById">
+			<wsdl:input message="tns:getPersonRoleByIdRequest"></wsdl:input>
+			<wsdl:output message="tns:getPersonRoleByIdResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="changePersonRoleStatus">
+			<wsdl:input message="tns:changePersonRoleStatusRequest"></wsdl:input>
+			<wsdl:output message="tns:changePersonRoleStatusResponse"></wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="PersonServiceSoapBinding" type="tns:PersonService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="createPerson">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updatePerson">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="changePersonStatus">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPerson">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPersonsByCtepId">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="searchPersons">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="createPersonRole">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="updatePersonRole">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPersonRolesByPersonId">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getPersonRoleById">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="changePersonRoleStatus">
+			<soap:operation soapAction="" style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:service name="PersonService">
+		<wsdl:port name="PersonServicePort" binding="tns:PersonServiceSoapBinding">
+            <wsp:PolicyReference xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" URI="#UsernameToken"/>
+			<soap:address location="REPLACE_WITH_ACTUAL_URL" />
+		</wsdl:port>
+	</wsdl:service>
+
+    <wsp:Policy wsu:Id="UsernameToken"
+                xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+                xmlns:sp="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702">
+        <sp:SupportingTokens>
+            <wsp:Policy>
+                <sp:UsernameToken sp:IncludeToken="http://docs.oasis-open.org/ws-sx/ws-securitypolicy/200702/IncludeToken/AlwaysToRecipient"/>
+            </wsp:Policy>
+        </sp:SupportingTokens>
+    </wsp:Policy>
+</wsdl:definitions>

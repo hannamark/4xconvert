@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:faults="http://faults.po.coppa.nci.nih.gov"
+        targetNamespace="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff/types"
+        elementFormDefault="qualified"
+        attributeFormDefault="unqualified">
+
+  <import namespace="http://faults.po.coppa.nci.nih.gov" schemaLocation="CoppaPOFaults.xsd"/>
+
+  <element name="EntityValidationFault" type="faults:EntityValidationFault" />
+  <element name="NullifiedRoleFault" type="faults:NullifiedRoleFault" />
+  <element name="TooManyResultsFault" type="faults:TooManyResultsFault" />
+
+</schema>
+

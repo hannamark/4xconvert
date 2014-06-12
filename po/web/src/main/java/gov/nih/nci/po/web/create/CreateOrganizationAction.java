@@ -5,6 +5,7 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CurateOrganizationAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.Set;
@@ -30,7 +31,8 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
     @Override
     public String start() {
         getOrganization().setPostalAddress(new Address());
-        getOrganization().getPostalAddress().setCountry(PoRegistry.getCountryService().getCountryByAlpha3("USA"));
+        getOrganization().getPostalAddress().setCountry(
+                PoRegistry.getCountryService().getCountryByAlpha3("USA"));
         getOrganization().setStatusCode(EntityStatus.PENDING);
         setRootKey(PoHttpSessionUtil.addAttribute(getOrganization()));
         return INPUT;
@@ -38,11 +40,15 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
 
     /**
      * @return success
-     * @throws JMSException if an error occurred while publishing the announcement
-     * @throws CSException  CSException
+     * @throws JMSException
+     *             if an error occurred while publishing the announcement
+     * @throws CSException
+     *             CSException
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization") })
     public String create() throws JMSException, CSException {
+        User createdBy = getCreatedBy();
+        getOrganization().setCreatedBy(createdBy);
         String result = super.curate();
         ActionHelper.getMessages().clear();
         ActionHelper.saveMessage(getText("organization.create.success"));
@@ -59,5 +65,6 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
         set.add(EntityStatus.ACTIVE);
         return set;
     }
+
 
 }

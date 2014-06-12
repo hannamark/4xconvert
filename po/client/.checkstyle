@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fileset-config file-format-version="1.2.0" simple-config="false">
-    <local-check-config name="5AM Checks" location="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml" type="remote" description="">
+        <fileset name="all" enabled="true" check-config-name="POChecks" local="true">
         <additional-data name="cache-file" value="false"/>
     </local-check-config>
-    <fileset name="all" enabled="true" check-config-name="5AM Checks" local="true">
+    <fileset name="all" enabled="true" check-config-name="POChecks" local="true">
         <file-match-pattern match-pattern="." include-pattern="true"/>
         <file-match-pattern match-pattern=".*target.*" include-pattern="false"/>
     </fileset>

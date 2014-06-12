@@ -30,7 +30,6 @@ import org.apache.struts2.ServletActionContext;
 import org.hibernate.exception.ExceptionUtils;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -39,7 +38,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * Action class to handle curation of Organization entities.
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public class CurateOrganizationAction extends ActionSupport implements Addressable, Preparable {
+public class CurateOrganizationAction extends AbstractPoAction implements Addressable, Preparable {
     private static final long serialVersionUID = 1L;
     /**
      * The action execution was successful. Show result view to the end user.

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+
+    <!-- Bridg Service Endpoints -->
+    <bean id="clinicalResearchStaffBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.ClinicalResearchStaffServiceImpl" />
+    <bean id="clinicalResearchStaffBridgSoapService"
+          class="gov.nih.nci.po.webservices.service.bridg.soap.ClinicalResearchStaffPortTypeImpl" />
+
+    <jaxws:endpoint id="clinicalResearchStaffBridgService"
+                    implementor="#clinicalResearchStaffBridgSoapService"
+                    address="/bridg/ClinicalResearchStaffService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/ClinicalResearchStaff.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/structuralroles/ClinicalResearchStaff"
+                    serviceName="bridg:ClinicalResearchStaffService"
+                    endpointName="bridg:ClinicalResearchStaffPortTypePort"
+            >
+
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+
+    </jaxws:endpoint>
+
+
+    <bean id="personBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.PersonServiceImpl" />
+    <bean id="personBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.PersonPortTypeImpl"/>
+    <jaxws:endpoint id="personBridgEndpoint"
+                    implementor="#personBridgSoapService"
+                    address="/bridg/PersonService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/Person.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/entities/Person"
+                    serviceName="bridg:PersonService"
+                    endpointName="bridg:PersonPortTypePort"
+            >
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+
+    <bean id="organizationBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.OrganizationServiceImpl" />
+    <bean id="organizationBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.OrganizationPortTypeImpl"/>
+    <jaxws:endpoint id="organizationBridgEndpoint"
+                    implementor="#organizationBridgSoapService"
+                    address="/bridg/OrganizationService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/Organization.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/entities/Organization"
+                    serviceName="bridg:OrganizationService"
+                    endpointName="bridg:OrganizationPortTypePort">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+    <bean id="healthCareFacilityBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.HealthCareFacilityServiceImpl" />
+    <bean id="healthCareFacilityBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.HealthCareFacilityPortTypeImpl"/>
+    <jaxws:endpoint id="healthCareFacilityBridgEndpoint"
+                    implementor="#healthCareFacilityBridgSoapService"
+                    address="/bridg/HealthCareFacilityService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/HealthCareFacility.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareFacility"
+                    serviceName="bridg:HealthCareFacilityService"
+                    endpointName="bridg:HealthCareFacilityPortTypePort">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+    <bean id="healthCareProviderBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.HealthCareProviderServiceImpl" />
+    <bean id="healthCareProviderBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.HealthCareProviderPortTypeImpl"/>
+    <jaxws:endpoint id="healthCareProviderBridgEndpoint"
+                    implementor="#healthCareProviderBridgSoapService"
+                    address="/bridg/HealthCareProviderService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/HealthCareProvider.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/structuralroles/HealthCareProvider"
+                    serviceName="bridg:HealthCareProviderService"
+                    endpointName="bridg:HealthCareProviderPortTypePort">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+    <bean id="identifiedOrganizationBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.IdentifiedOrganizationServiceImpl" />
+    <bean id="identifiedOrganizationBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.IdentifiedOrganizationPortTypeImpl"/>
+    <jaxws:endpoint id="identifiedOrganizationBridgEndpoint"
+                    implementor="#identifiedOrganizationBridgSoapService"
+                    address="/bridg/IdentifiedOrganizationService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/IdentifiedOrganization.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedOrganization"
+                    serviceName="bridg:IdentifiedOrganizationService"
+                    endpointName="bridg:IdentifiedOrganizationPortTypePort">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+    <bean id="identifiedPersonBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.IdentifiedPersonServiceImpl" />
+    <bean id="identifiedPersonBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.IdentifiedPersonPortTypeImpl"/>
+    <jaxws:endpoint id="identifiedPersonBridgEndpoint"
+                    implementor="#identifiedPersonBridgSoapService"
+                    address="/bridg/IdentifiedPersonService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/IdentifiedPerson.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/structuralroles/IdentifiedPerson"
+                    serviceName="bridg:IdentifiedPersonService"
+                    endpointName="bridg:IdentifiedPersonPortTypePort">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+    <bean id="organizationalContactBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.OrganizationalContactServiceImpl" />
+    <bean id="organizationalContactBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.OrganizationalContactPortTypeImpl"/>
+    <jaxws:endpoint id="organizationalContactBridgEndpoint"
+                    implementor="#organizationalContactBridgSoapService"
+                    address="/bridg/OrganizationalContactService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/OrganizationalContact.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/structuralroles/OrganizationalContact"
+                    serviceName="bridg:OrganizationalContactService"
+                    endpointName="bridg:OrganizationalContactPortTypePort">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+    <bean id="oversightCommitteeBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.OversightCommitteeServiceImpl" />
+    <bean id="oversightCommitteeBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.OversightCommitteePortTypeImpl"/>
+    <jaxws:endpoint id="oversightCommitteeBridgEndpoint"
+                    implementor="#oversightCommitteeBridgSoapService"
+                    address="/bridg/OversightCommitteeService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/OversightCommittee.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/structuralroles/OversightCommittee"
+                    serviceName="bridg:OversightCommitteeService"
+                    endpointName="bridg:OversightCommitteePortTypePort">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+    <bean id="researchOrganizationBridgServiceImpl"
+          class="gov.nih.nci.po.webservices.service.bridg.ResearchOrganizationServiceImpl" />
+    <bean id="researchOrganizationBridgSoapService" class="gov.nih.nci.po.webservices.service.bridg.soap.ResearchOrganizationPortTypeImpl"/>
+    <jaxws:endpoint id="researchOrganizationBridgEndpoint"
+                    implementor="#researchOrganizationBridgSoapService"
+                    address="/bridg/ResearchOrganizationService"
+                    wsdlLocation="/gov/nih/nci/po/webservices/bridg/ResearchOrganization.wsdl"
+                    xmlns:bridg="http://enterpriseservices.nci.nih.gov/structuralroles/ResearchOrganization"
+                    serviceName="bridg:ResearchOrganizationService"
+                    endpointName="bridg:ResearchOrganizationPortTypePort">
+        <jaxws:properties>
+            <entry key="schema-validation-enabled" value="false" />
+        </jaxws:properties>
+    </jaxws:endpoint>
+
+</beans>

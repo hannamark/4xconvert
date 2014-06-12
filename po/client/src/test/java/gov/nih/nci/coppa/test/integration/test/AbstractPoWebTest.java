@@ -95,14 +95,19 @@ import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -111,10 +116,13 @@ import java.util.concurrent.TimeUnit;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.io.FileUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 
 
 
@@ -138,6 +146,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     protected static final String STATUS_MUST_BE_SET = "Status must be set";
     
+    protected static final String ALIAS_STRING = "test_alias_123";
+
     static {
         new Timer(true).schedule(new TimerTask() {
             @SuppressWarnings("rawtypes")
@@ -180,12 +190,34 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void tearDown() throws Exception {           
+    public void tearDown() throws Exception { 
+        takeScreenShot();
         logoutUser();
         closeBrowser();
         super.tearDown();
     }
     
+    private void takeScreenShot() {
+        try {           
+            final String screenShotFileName = getClass().getSimpleName()
+                    + "_ScreenShot_"
+                    + new Timestamp(System.currentTimeMillis()).toString()
+                            .replaceAll("\\D+", "_") + ".png";
+            File destFile = new File(SystemUtils.JAVA_IO_TMPDIR,
+                    screenShotFileName);
+
+            File scrFile = ((TakesScreenshot) driver)
+                    .getScreenshotAs(OutputType.FILE);
+            FileUtils.copyFile(scrFile, destFile);
+            System.out.println("Saved screen shot: "
+                    + destFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     @SuppressWarnings("deprecation")
     protected void reInitializeWebDriver() throws Exception {
         closeBrowser();
@@ -213,7 +245,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     
     private void openAndHandleStuckPhantomJsDriver(final String url) {
         int tries = 0;
-        while (tries < 3) {
+        while (tries < 5) {
             tries++;
             Future<Boolean> f = Executors.newSingleThreadExecutor().submit(
                     new Callable<Boolean>() {
@@ -294,6 +326,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         goHome();
         clickAndWait("CreateOrganization");
         waitForTelecomFormsToLoad();
+        waitForAliasFormsToLoad();
     }
 
     protected void openOrganizationFamilyList() {
@@ -314,6 +347,10 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         waitForElementById("faxEntry_value", 10);
         waitForElementById("ttyEntry_value", 10);
         waitForElementById("urlEntry_value", 10);
+    }
+    
+    protected void waitForAliasFormsToLoad() {        
+        waitForElementById("alias_value", 10); 
     }
 
     private void goHome() {
@@ -451,6 +488,34 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isTextPresent("Email Address is not a well-formed email address"));
 
         clear("emailEntry_value");
+    }
+    
+    
+    /**
+     * Verify the Alias behave properly at Org & OrgRole level.
+     */
+    protected void verifyAlias() {       
+        waitForElementById("alias_value", 5);      
+        selenium.type("alias_value", ALIAS_STRING);
+        selenium.click("alias-add");
+        waitForElementById("alias-remove-0", 5);
+        assertEquals("test_alias_123 | Remove", selenium.getText("alias-entry-0"));
+
+        waitForElementById("alias_value", 5);
+        selenium.type("alias_value", " ");// left blank
+        selenium.click("alias-add");    
+        pause(1000);
+        assertTrue(selenium.isTextPresent("Alias must be set"));
+
+        clear("alias_value");
+    }
+    
+    /**
+     * Verify an existing Alias at Org & OrgRole level.
+     */
+    protected void verifyExistingAlias() {     
+        waitForElementById("alias-remove-0", 5);
+        assertEquals("test_alias_123 | Remove", selenium.getText("alias-entry-0"));
     }
 
     private void clear(String locator) {
@@ -593,6 +658,9 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
         // add contact info
         inputContactInfo(email, phone, fax, tty, url);
+        
+        // add Alias
+        inputAlias();
 
         // save the organization
         clickAndWaitSaveButton();
@@ -709,6 +777,12 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         selenium.type(type + "Entry_value", tel);
         selenium.click("//div[@id='no_format_"+type+"']//a[@id='" + type + "-add']");
          waitForElementById(type +"-entry-0", 5);
+    }
+    
+    protected void inputAlias() {  
+        selenium.type("alias_value", ALIAS_STRING);
+        selenium.click("alias-add");
+        waitForElementById("alias-entry-0", 5);
     }
 
     public Address getAddress() {

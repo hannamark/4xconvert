@@ -47,6 +47,9 @@
         <hibernate.validator.version>3.1.0.GA</hibernate.validator.version>
         <hibernate.annotations.commons.version>3.1.0.GA</hibernate.annotations.commons.version>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        
+        <mockito.version>1.9.5</mockito.version>        
+        <jackson.version>1.9.13</jackson.version>
 
         <csm.sync.frequency.seconds>240</csm.sync.frequency.seconds>
 
@@ -63,9 +66,9 @@
         <jdbc.artifactId>postgresql</jdbc.artifactId>
         <jdbc.version>8.2-507.jdbc3</jdbc.version>
 
-        <ldap.host.url></ldap.host.url>
-        <ldap.searchable.base></ldap.searchable.base>
-        <ldap.user.id.label></ldap.user.id.label>
+        <ldap.host.url/>
+        <ldap.searchable.base/>
+        <ldap.user.id.label/>
 
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
         <web.auth.method>FORM</web.auth.method>
@@ -142,6 +145,7 @@
         <module>web</module>
         <module>ear</module>
         <module>client</module>
+        <module>webservices</module>
     </modules>
 
     <distributionManagement>
@@ -191,26 +195,7 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <!-- CPD violations necessary to maintain compatibility with CTEP services. -->
-                        <exclude>**/AbstractEnhancedOrganizationRole.java</exclude>
-                        <exclude>**/AbstractOversightCommittee.java</exclude>
-                        <exclude>**/EmailLogger.java</exclude>
-                        <exclude>**/MockTextMessage.java</exclude>
-                        <exclude>**/OrganizationCR.java</exclude>
-                        <exclude>**/ClinicalResearchStaffCR.java</exclude>
-                        <exclude>**/HealthCareFacilityCR.java</exclude>
-                        <exclude>**/HealthCareProviderCR.java</exclude>
-                        <exclude>**/OrganizationalContactCR.java</exclude>
-                        <exclude>**/ResearchOrganizationCR.java</exclude>
-                    </excludes>
-                    <excludeRoots>
-                        <excludeRoot>target/generated-sources/xsnapshot/</excludeRoot>
-                    </excludeRoots>
-                    <minimumTokens>125</minimumTokens>
-                </configuration>
+                <artifactId>maven-pmd-plugin</artifactId>                               
                 <version>${maven-pmd-plugin.version}</version>
                 <executions>
                     <execution>
@@ -398,7 +383,7 @@
                 <configuration>
                     <check>
                         <haltOnFailure>${cobertura.check.haltOnFailure}</haltOnFailure>
-                        <totalBranchRate>70</totalBranchRate>
+                        <totalBranchRate>69</totalBranchRate>
                         <totalLineRate>80</totalLineRate>
                     </check>
                     <formats>
@@ -459,4 +444,38 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>quick</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <struts.devMode>true</struts.devMode>
+                <cobertura.check.haltOnFailure>false</cobertura.check.haltOnFailure>
+                <skipTests>true</skipTests>
+                <!-- maven.test.skip>true</maven.test.skip-->
+                <pmd.skip>true</pmd.skip>
+                <checkstyle.skip>true</checkstyle.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>debug</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug>
+            </properties>
+        </profile>
+
+    </profiles>
+
 </project>

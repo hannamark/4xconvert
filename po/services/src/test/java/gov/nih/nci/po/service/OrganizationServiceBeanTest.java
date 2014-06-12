@@ -91,6 +91,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -188,6 +189,8 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         org.getUrl().add(new URL("http://www.example.com/abc"));
         org.getUrl().add(new URL("http://www.example.com/def"));
+        
+        org.getAlias().add(new Alias("org alias"));
         return org;
     }
 
@@ -221,6 +224,9 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(expected.getFax().size(), found.getFax().size());
         assertEquals(expected.getTty().size(), found.getTty().size());
         assertEquals(expected.getUrl().size(), found.getUrl().size());
+        
+        assertEquals(expected.getAlias().size(), found.getAlias().size());
+        assertEquals(expected.getAlias().get(0).getValue(), found.getAlias().get(0).getValue());
     }
 
     public long createOrganization() throws EntityValidationException, JMSException {
@@ -249,6 +255,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         org.setStatusCode(EntityStatus.PENDING);
         org.getEmail().add(new Email("foo@example.com"));
         org.getUrl().add(new URL("http://example.com"));
+        org.getAlias().add(new Alias("org alias"));
         long orgId = orgServiceBean.create(org);
         return orgId;
     }
@@ -303,6 +310,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         org.setStatusCode(EntityStatus.NULLIFIED);
         org.getEmail().add(new Email("foo@example.com"));
         org.getUrl().add(new URL("http://example.com"));
+        org.getAlias().add(new Alias("test org alias"));
 
         long orgId = orgServiceBean.create(org);
 
@@ -312,12 +320,60 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         Organization retrievedOrg = orgServiceBean.getById(orgId);
         assertEquals(new Long(orgId), retrievedOrg.getId());
         assertEquals(EntityStatus.PENDING, retrievedOrg.getStatusCode());
+        assertTrue(retrievedOrg.getAlias().size() == 1);
+        assertEquals("test org alias", retrievedOrg.getAlias().get(0).getValue());        
 
         List<Organization> orgs = getAllOrganizations();
         assertEquals(1, orgs.size());
         assertEquals(new Long(orgId), orgs.get(0).getId());
 
         MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), true);
+    }
+    
+    @Test
+    public void testCurateOrgAlias() throws EntityValidationException, JMSException {
+        Country country = new Country("testorg", "996", "IJ", "IJI");
+        PoHibernateUtil.getCurrentSession().save(country);
+
+        Organization org = new Organization();
+        // 32 * 5 = 160 chars long
+        org.setName(StringUtils.repeat("testO", 32));
+        Address mailingAddress = new Address("test", "test", "test", "test", country);
+        org.setPostalAddress(mailingAddress);
+        org.setStatusCode(EntityStatus.NULLIFIED);
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
+        org.getAlias().add(new Alias("test org alias"));
+
+        long orgId = orgServiceBean.create(org);
+
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        Organization retrievedOrg = orgServiceBean.getById(orgId);
+        assertEquals(new Long(orgId), retrievedOrg.getId());
+        assertEquals(EntityStatus.PENDING, retrievedOrg.getStatusCode());
+        assertTrue(retrievedOrg.getAlias().size() == 1);
+        assertEquals("test org alias", retrievedOrg.getAlias().get(0).getValue());               
+
+        MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), true);
+        // clear existing & add a new Alias
+        retrievedOrg.getAlias().clear();
+        retrievedOrg.getAlias().add(new Alias("test updated org alias"));
+        orgServiceBean.curate(retrievedOrg);     
+        
+        // get the updated org & have asserts
+        retrievedOrg = orgServiceBean.getById(orgId);
+        assertTrue(retrievedOrg.getAlias().size() == 1);
+        assertEquals("test updated org alias", retrievedOrg.getAlias().get(0).getValue());
+        
+        // add another Alias to the existing one
+        retrievedOrg.getAlias().add(new Alias("test alias 2"));
+        orgServiceBean.curate(retrievedOrg);        
+        retrievedOrg = orgServiceBean.getById(orgId);
+        assertTrue(retrievedOrg.getAlias().size() == 2);
+        assertEquals("test updated org alias", retrievedOrg.getAlias().get(0).getValue());
+        assertEquals("test alias 2", retrievedOrg.getAlias().get(1).getValue());
     }
 
     @Test
@@ -332,6 +388,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         org.setStatusCode(EntityStatus.PENDING);
         org.getEmail().add(new Email("foo@example.com"));
         org.getUrl().add(new URL("http://example.com"));
+        org.getAlias().add(new Alias("test org alias"));
 
         long orgId = orgServiceBean.create(org);
 

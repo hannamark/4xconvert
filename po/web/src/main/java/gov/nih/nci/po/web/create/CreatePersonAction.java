@@ -5,6 +5,7 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CuratePersonAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.Set;
@@ -21,7 +22,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 /**
  * Action class to handle the creation of Person entities.
  */
-public class CreatePersonAction extends CuratePersonAction implements Preparable {
+public class CreatePersonAction extends CuratePersonAction implements
+        Preparable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -30,7 +32,8 @@ public class CreatePersonAction extends CuratePersonAction implements Preparable
     @Override
     public String start() {
         getPerson().setPostalAddress(new Address());
-        getPerson().getPostalAddress().setCountry(PoRegistry.getCountryService().getCountryByAlpha3("USA"));
+        getPerson().getPostalAddress().setCountry(
+                PoRegistry.getCountryService().getCountryByAlpha3("USA"));
         getPerson().setStatusCode(EntityStatus.PENDING);
         setRootKey(PoHttpSessionUtil.addAttribute(getPerson()));
         return INPUT;
@@ -38,11 +41,15 @@ public class CreatePersonAction extends CuratePersonAction implements Preparable
 
     /**
      * @return success
-     * @throws JMSException if an error occurred while publishing the announcement
-     * @throws CSException CSException
+     * @throws JMSException
+     *             if an error occurred while publishing the announcement
+     * @throws CSException
+     *             CSException
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "person") })
     public String create() throws JMSException, CSException {
+        User createdBy = getCreatedBy();
+        getPerson().setCreatedBy(createdBy);
         String result = super.curate();
         ActionHelper.getMessages().clear();
         ActionHelper.saveMessage(getText("person.create.success"));
@@ -62,6 +69,7 @@ public class CreatePersonAction extends CuratePersonAction implements Preparable
 
     /**
      * Method for pulling this value in struts xml.
+     * 
      * @return the person id as a string.
      */
     public String getPersonId() {

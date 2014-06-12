@@ -26,7 +26,6 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.struts2.ServletActionContext;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.validator.annotations.CustomValidator;
 import com.opensymphony.xwork2.validator.annotations.Validations;
@@ -34,7 +33,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 /**
  * Action class to handle curation of Person entities.
  */
-public class CuratePersonAction extends ActionSupport implements Addressable, Preparable {
+public class CuratePersonAction extends AbstractPoAction implements Addressable, Preparable {
     private static final long serialVersionUID = 1L;
     /**
      * The action execution was successful. Show result view to the end user.

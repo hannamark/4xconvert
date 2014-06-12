@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.web.roles;
 
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Correlation;
@@ -90,7 +91,10 @@ import gov.nih.nci.po.data.bo.Mailable;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.web.GenericSearchServiceUtil;
+import gov.nih.nci.po.web.curation.AbstractPoAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,19 +115,20 @@ import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
+
 /**
  * @author smatyas
- *
+ * @author Rohit Gupta
+ * 
  * @param <ROLE>
  * @param <ROLECR>
  * @param <ROLESERVICE>
  */
-@SuppressWarnings("PMD.TooManyMethods")
-public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extends CorrelationChangeRequest<ROLE>,
-                                         ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
-        extends ActionSupport implements Preparable {
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.CyclomaticComplexity" })
+public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extends CorrelationChangeRequest<ROLE>, 
+        ROLESERVICE extends GenericStructrualRoleServiceLocal<ROLE>>
+        extends AbstractPoAction implements Preparable {
 
     private static final long serialVersionUID = 1L;
     private static final String UNCHECKED = "unchecked";
@@ -131,7 +136,8 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
      * The action execution was successful. Show result view to the end user.
      */
     public static final String CHANGE_CURRENT_CHANGE_REQUEST_RESULT = "changeCurrentChangeRequest";
-    private PaginatedList<ROLE> results;
+    private PaginatedList<ROLE> results;   
+
     /**
      * Default Constructor (force subclasses to initialize.
      */
@@ -165,7 +171,8 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
             getBaseRole().setStatus(RoleStatus.PENDING);
         }
         if (!getBaseRole().getChangeRequests().isEmpty()) {
-            setBaseCr((ROLECR) getBaseRole().getChangeRequests().iterator().next());
+            setBaseCr((ROLECR) getBaseRole().getChangeRequests().iterator()
+                    .next());
         }
         return INPUT;
     }
@@ -187,10 +194,12 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     }
 
     /**
-     * Generic method to search and fill the getResults() property using the getSearchCriteria() and getSortCriterion().
+     * Generic method to search and fill the getResults() property using the
+     * getSearchCriteria() and getSortCriterion().
      */
     protected void search() {
-        GenericSearchServiceUtil.search(getRoleService(), getSearchCriteria(), getResults(), getSortCriterion());
+        GenericSearchServiceUtil.search(getRoleService(), getSearchCriteria(),
+                getResults(), getSortCriterion());
     }
 
     /**
@@ -205,13 +214,27 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
 
     /**
      * @return success
-     * @throws JMSException if an error occurred while publishing announcement
+     * @throws JMSException
+     *             if an error occurred while publishing announcement
+     * @throws CSException
+     *             CSException
+     * 
      */
-    public String add() throws JMSException {
+    public String add() throws JMSException, CSException {
+        setCreatedByUserInRole();
         getRoleService().curate(getBaseRole());
         list();
         ActionHelper.saveMessage(getText(getAddSuccessMessageKey()));
         return SUCCESS;
+    }
+
+    private void setCreatedByUserInRole() throws CSException {
+        User createdBy = getCreatedBy();
+        Object role = getBaseRole();
+       
+        if (role instanceof AbstractRole) {
+            ((AbstractRole) role).setCreatedBy(createdBy);
+        } 
     }
 
     /**
@@ -221,7 +244,8 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
 
     /**
      * @return success
-     * @throws JMSException if an error occurred while publishing announcement
+     * @throws JMSException
+     *             if an error occurred while publishing announcement
      */
     public String edit() throws JMSException {
         getRoleService().curate(getBaseRole());
@@ -236,30 +260,36 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     protected abstract String getEditSuccessMessageKey();
 
     /**
-     * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
-     *
+     * Force sub-classes to override so that the PersistentObjectTypeConverter
+     * works properly.
+     * 
      * @return to add/edit/remove
      */
     public abstract ROLE getBaseRole();
 
     /**
-     * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
-     *
-     * @param role to add/edit/remove
+     * Force sub-classes to override so that the PersistentObjectTypeConverter
+     * works properly.
+     * 
+     * @param role
+     *            to add/edit/remove
      */
     public abstract void setBaseRole(ROLE role);
 
     /**
-     * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
-     *
+     * Force sub-classes to override so that the PersistentObjectTypeConverter
+     * works properly.
+     * 
      * @return active change request
      */
     public abstract ROLECR getBaseCr();
 
     /**
-     * Force sub-classes to override so that the PersistentObjectTypeConverter works properly.
-     *
-     * @param cr active change request
+     * Force sub-classes to override so that the PersistentObjectTypeConverter
+     * works properly.
+     * 
+     * @param cr
+     *            active change request
      */
     public abstract void setBaseCr(ROLECR cr);
 
@@ -281,9 +311,11 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     @SuppressWarnings(UNCHECKED)
     public Map<String, String> getSelectChangeRequests() {
         TreeMap<String, String> treeMap = new TreeMap<String, String>();
-        Set<ROLECR> unprocessedChangeRequests = getBaseRole().getChangeRequests();
+        Set<ROLECR> unprocessedChangeRequests = getBaseRole()
+                .getChangeRequests();
         for (ROLECR changeRequest : unprocessedChangeRequests) {
-            treeMap.put(changeRequest.getId().toString(), "CR-ID-" + changeRequest.getId().toString());
+            treeMap.put(changeRequest.getId().toString(), "CR-ID-"
+                    + changeRequest.getId().toString());
         }
         return treeMap;
     }
@@ -309,17 +341,20 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     }
 
     /**
-     * @param results search results
+     * @param results
+     *            search results
      */
     protected void setResults(PaginatedList<ROLE> results) {
         this.results = results;
     }
 
     /**
-     * @return list of available duplicate of entries for the current ResearchOrganization
+     * @return list of available duplicate of entries for the current
+     *         ResearchOrganization
      */
     public List<ROLE> getAvailableDuplicateOfs() {
-        List<ROLE> duplicateOfList = getRoleService().search(getDuplicateCriteria());
+        List<ROLE> duplicateOfList = getRoleService().search(
+                getDuplicateCriteria());
         remove(duplicateOfList, getBaseRole().getId());
         return duplicateOfList;
     }
@@ -331,13 +366,17 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
 
     /**
      * Remove matching PersistentObject(s) from the list.
-     *
-     * @param duplicateOfList list to search
-     * @param id to find
+     * 
+     * @param duplicateOfList
+     *            list to search
+     * @param id
+     *            to find
      */
-    protected void remove(List<? extends PersistentObject> duplicateOfList, Long id) {
+    protected void remove(List<? extends PersistentObject> duplicateOfList,
+            Long id) {
         if (id != null && CollectionUtils.isNotEmpty(duplicateOfList)) {
-            for (Iterator<? extends PersistentObject> itr = duplicateOfList.iterator(); itr.hasNext();) {
+            for (Iterator<? extends PersistentObject> itr = duplicateOfList
+                    .iterator(); itr.hasNext();) {
                 PersistentObject ro = itr.next();
                 if (ro.getId().equals(id)) {
                     itr.remove();
@@ -361,7 +400,8 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     }
 
     /**
-     * @param mailable initialize Mailable
+     * @param mailable
+     *            initialize Mailable
      */
     protected void initialize(Mailable mailable) {
         mailable.getPostalAddresses().size();
@@ -374,7 +414,8 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
 
     /**
      * Convenience method.
-     * @return HttpSession 
+     * 
+     * @return HttpSession
      */
     protected HttpSession getSession() {
         return PoHttpSessionUtil.getSession();

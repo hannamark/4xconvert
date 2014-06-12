@@ -60,6 +60,7 @@ public class SearchOrganizationAction extends ActionSupport implements Preparabl
      * @return success
      */
     public String start() {
+        criteria.setSearchAliases(true); // default to true
         setRootKey(PoHttpSessionUtil.addAttribute(criteria));
         return SUCCESS;
     }

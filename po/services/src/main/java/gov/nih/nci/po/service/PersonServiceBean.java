@@ -95,12 +95,15 @@ import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.PersonSearchDTO.Affiliation;
 import gov.nih.nci.po.service.PersonSearchDTO.Affiliation.RoleGroup;
+import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoServiceUtil;
 
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -116,6 +119,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -130,10 +134,12 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * 
  * @author lpower
+ * @author Rohit Gupta
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -144,6 +150,9 @@ public class PersonServiceBean extends
 
     private static final String ORDER_BY = " ORDER BY ";
     private static final Logger LOG = Logger.getLogger(PersonServiceBean.class);
+    
+    @EJB
+    private IdentifiedPersonServiceLocal idenPerServ;
 
     /**
      * {@inheritDoc}
@@ -310,6 +319,7 @@ public class PersonServiceBean extends
         dto.setEmailAddresses((String) row[6]);
         dto.setPhones((String) row[22]);
         dto.setDuplicateOf(((BigInteger) row[23]));
+        dto.setCountryCode((String) row[24]);
         return dto;
     }
 
@@ -659,4 +669,91 @@ public class PersonServiceBean extends
                 + sql.toString() + ") as cnt");
         return ((Number) query.uniqueResult()).intValue();
     }
+
+    @Override
+    public long create(Person person, String ctepId) throws EntityValidationException, JMSException {
+
+        long createdPersonId = 0;
+        // Step1: create the person
+        createdPersonId = create(person);
+
+        // get the Organization representing "CTEP"
+        Organization ctepOrg = PoServiceUtil.getCtepOrganization();
+
+        // Step2: now create Person-CtepId
+        if (StringUtils.isNotBlank(ctepId)) {
+            IdentifiedPerson idenPerson = getNewIdentifiedPersonObject(ctepId,
+                    person, ctepOrg, true);
+            // IdentifiedPersonServiceBean is setting status PENDING.
+            idenPerServ.create(idenPerson);
+        }
+        return createdPersonId;
+    }
+
+    @Override
+    public void curate(Person person, String ctepId) throws EntityValidationException, JMSException {
+
+        // Step1: curate the person
+        curate(person);
+
+        // Step2: if CtepId is not blank then update it
+        if (StringUtils.isNotBlank(ctepId)) {            
+            // get the Organization representing "CTEP"
+            Organization ctepOrg = PoServiceUtil.getCtepOrganization();
+
+            // populate SearchCriteria to search the existing CtepId Record
+            // don't set CtepId during search
+            IdentifiedPerson idenPerson = getNewIdentifiedPersonObject(ctepId,
+                    person, ctepOrg, false);
+            SearchCriteria<IdentifiedPerson> searchCriteria = new AnnotatedBeanSearchCriteria<IdentifiedPerson>(
+                    idenPerson);
+
+            // search for existing CtepId Record
+            List<IdentifiedPerson> identifiedPeople = idenPerServ.search(searchCriteria);
+
+            // if existing CtepId record found, then update it
+            if (CollectionUtils.isNotEmpty(identifiedPeople)) {
+                idenPerson = identifiedPeople.get(0);
+                idenPerson.getAssignedIdentifier().setExtension(ctepId);
+                idenPerServ.curate(idenPerson);
+            } else {
+                // call the EJB service method to create CtepId
+                idenPerson.getAssignedIdentifier().setExtension(ctepId);
+                idenPerServ.create(idenPerson);
+            }
+        }
+    }
+
+    /**
+     * This method is used to create a new IdentifiedPerson object using the
+     * passed parameters.
+     */
+    private IdentifiedPerson getNewIdentifiedPersonObject(String ctepId,
+            gov.nih.nci.po.data.bo.Person personBo,
+            gov.nih.nci.po.data.bo.Organization organizationBo,
+            boolean setCtepId) {
+        gov.nih.nci.iso21090.Ii assIden = new gov.nih.nci.iso21090.Ii();
+        assIden.setRoot(PoConstants.PERSON_CTEP_ID_ROOT);
+        assIden.setIdentifierName(PoConstants.PERSON_CTEP_ID_IDENTIFIER_NAME);
+        if (setCtepId) {
+            assIden.setExtension(ctepId);
+        }
+        IdentifiedPerson idenPerson = new IdentifiedPerson();
+        idenPerson.setAssignedIdentifier(assIden);
+        idenPerson.setPlayer(personBo);
+        idenPerson.setScoper(organizationBo);
+        // set bi-directional association b/w person & idenPerson
+        personBo.getIdentifiedPersons().add(idenPerson);
+
+        return idenPerson;
+    }
+    
+    /**
+     * Setter for IdentifiedPersonServiceLocal.
+     * @param idenPerServ IdentifiedPersonServiceLocal
+     */
+    public void setIdenPerServ(IdentifiedPersonServiceLocal idenPerServ) {
+        this.idenPerServ = idenPerServ;
+    }
+
 }

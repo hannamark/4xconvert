@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ISO="uri:iso.org:21090"
+    xmlns:COPPA-PO="http://po.coppa.nci.nih.gov"
+    targetNamespace="http://po.coppa.nci.nih.gov"
+    elementFormDefault="qualified"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1">
+    <xs:import schemaLocation="ISO_datatypes_Narrative.xsd"
+        namespace="uri:iso.org:21090" />
+
+    <xs:annotation>
+        <xs:appinfo>
+            <jaxb:schemaBindings>
+                <jaxb:package name="gov.nih.nci.coppa.po"/>
+            </jaxb:schemaBindings>
+        </xs:appinfo>
+    </xs:annotation>
+    <xs:element name="StringMap">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:StringMapType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="StringMapType">
+        <xs:sequence>
+            <xs:element name="entry" minOccurs="0"
+                maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="key" type="xs:string"
+                            nillable="false" minOccurs="0" />
+                        <xs:element name="value" type="xs:string"
+                            minOccurs="0" maxOccurs="unbounded" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--  At some point, we'll move Entities over to DSET_II, too, so we can recombine Entity and Correlation
+          back into one BaseType abstract type -->
+    <xs:complexType name="Entity" abstract="true">
+        <xs:sequence>
+            <xs:element name="identifier" type="ISO:II" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Correlation" abstract="true">
+        <xs:sequence>
+            <xs:element name="identifier" type="ISO:DSET_II" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:element name="Person">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Entity">
+                    <xs:sequence>
+                        <xs:element name="name" type="ISO:EN.PN">
+                        </xs:element>
+                        <xs:element name="postalAddress"
+                            type="ISO:AD">
+                        </xs:element>
+                        <xs:element name="statusCode" type="ISO:CD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL">
+                        </xs:element>
+                        <xs:element name="raceCode" type="ISO:DSET_CD" />
+                        <xs:element name="sexCode" type="ISO:CD" />
+                        <xs:element name="ethnicGroupCode" type="ISO:DSET_CD" />
+                        <xs:element name="birthDate" type="ISO:TS" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Organization">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Entity">
+                    <xs:sequence>
+                        <xs:element name="name" type="ISO:EN.ON">
+                        </xs:element>
+                        <xs:element name="postalAddress"
+                            type="ISO:AD">
+                        </xs:element>
+                        <xs:element name="statusCode" type="ISO:CD">
+                        </xs:element>
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL">
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ClinicalResearchStaff">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A ClinicalResearchStaffDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="scoperIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="status" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="HealthCareFacility">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A HealthCareFacilityDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="status" type="ISO:CD" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="name" type="ISO:EN.ON"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="HealthCareProvider">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A HealthCareProviderDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="scoperIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="status" type="ISO:CD" />
+                        <xs:element name="certificateLicenseText"
+                            type="ISO:ST" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Patient">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A PatientDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="scoperIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="status" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="IdentifiedOrganization">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A IdentifiedOrganizationDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="scoperIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="assignedId" type="ISO:II" />
+                        <xs:element name="status" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="IdentifiedPerson">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A IdentifiedOrganizationDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="scoperIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="assignedId" type="ISO:II" />
+                        <xs:element name="status" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="OrganizationalContact">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A OrganizationalContactDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="scoperIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="status" type="ISO:CD" />
+                        <xs:element name="typeCode" type="ISO:CD" />
+                        <xs:element name="title" type="ISO:ST" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="OversightCommittee">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A OversightCommitteeDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="status" type="ISO:CD" />
+                        <xs:element name="typeCode" type="ISO:CD" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ResearchOrganization">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:Correlation">
+                    <xs:annotation>
+                        <xs:documentation>
+                            A ResearchOrganizationDTO ...
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:sequence>
+                        <xs:element name="playerIdentifier"
+                            type="ISO:II" />
+                        <xs:element name="status" type="ISO:CD" />
+                        <xs:element name="typeCode" type="ISO:CD" />
+                        <xs:element name="fundingMechanism"
+                            type="ISO:CD" />
+                        <xs:element name="postalAddress"
+                            type="ISO:DSET_AD" />
+                        <xs:element name="telecomAddress"
+                            type="ISO:DSET_TEL" />
+                        <xs:element name="name" type="ISO:EN.ON"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+
+     <xs:complexType name="EntityNodeType">
+            <xs:annotation>
+                <xs:documentation>
+                    A EntityNodeDto ...
+                </xs:documentation>
+             </xs:annotation>
+             <xs:sequence>
+               <xs:element name="correlationOverflow"
+                    type="ISO:BL" />
+               <xs:element name="players" type="COPPA-PO:CorrelationType"/>
+               <xs:element name="scopers" type="COPPA-PO:CorrelationType"/>
+               <xs:element name="entity" type="COPPA-PO:EntityType"/>
+
+            </xs:sequence>
+     </xs:complexType>
+
+     <xs:complexType name="EntityType" mixed="true" >
+        <xs:choice>
+            <xs:element ref="COPPA-PO:Person"/>
+            <xs:element ref="COPPA-PO:Organization"/>
+        </xs:choice>
+     </xs:complexType>
+
+     <xs:complexType name="CorrelationType" mixed="true">
+        <xs:choice>
+            <xs:element ref="COPPA-PO:ClinicalResearchStaff"/>
+            <xs:element ref="COPPA-PO:HealthCareFacility"/>
+            <xs:element ref="COPPA-PO:HealthCareProvider"/>
+            <xs:element ref="COPPA-PO:IdentifiedOrganization"/>
+            <xs:element ref="COPPA-PO:IdentifiedPerson"/>
+            <xs:element ref="COPPA-PO:OrganizationalContact"/>
+            <xs:element ref="COPPA-PO:OversightCommittee"/>
+            <xs:element ref="COPPA-PO:ResearchOrganization"/>
+        </xs:choice>
+     </xs:complexType>
+
+     <xs:complexType name="CorrelationNodeType">
+            <xs:annotation>
+                <xs:documentation>
+                    A CorrelationNodeDTO ...
+                </xs:documentation>
+             </xs:annotation>
+             <xs:sequence>
+                <xs:element name="player" type="COPPA-PO:EntityType"/>
+                <xs:element name="scoper" type="COPPA-PO:EntityType"/>
+                <xs:element name="correlation" type="COPPA-PO:CorrelationType"/>
+            </xs:sequence>
+     </xs:complexType>
+
+    <xs:element name="EntityNode">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:EntityNodeType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+     <xs:element name="CorrelationNode">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-PO:CorrelationNodeType" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

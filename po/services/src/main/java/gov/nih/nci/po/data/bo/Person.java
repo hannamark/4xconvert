@@ -83,6 +83,8 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PhoneOrEmailRequiredValidator;
+import gov.nih.nci.po.util.PoServiceUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -96,6 +98,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
@@ -136,6 +139,7 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
     private Set<IdentifiedPerson> identifiedPersons = new HashSet<IdentifiedPerson>();
 
     private List<Comment> comments = new ArrayList<Comment>();
+    private User createdBy;
 
      /**
      * Create a new, empty person.
@@ -416,6 +420,32 @@ public class Person extends AbstractPerson implements Auditable, CuratableEntity
      */
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+    
+    /**
+     * @return the user
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "created_by_id", nullable = true)
+    @ForeignKey(name = "person_createdby_user_fk")
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * @param user
+     *            the user to set
+     */
+    public void setCreatedBy(User user) {
+        this.createdBy = user;
+    }
+    
+    /**
+     * @return user name
+     */
+    @Transient
+    public String getCreatedByUserName() {
+        return PoServiceUtil.getUserName(createdBy);
     }
 
 }
