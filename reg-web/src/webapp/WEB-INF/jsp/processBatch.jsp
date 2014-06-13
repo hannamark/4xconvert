@@ -16,7 +16,12 @@ function handleBatchUploadAction(){
       </div>
       <div class="modal-body">
       	<c:set var="topic" scope="request" value="batchupload"/>
-		<reg-web:failureMessage/>
+		 <s:actionmessage cssClass="alert alert-info"/>
+         <s:if test="hasActionErrors()">
+              <div class="alert alert-danger">
+                  <s:actionerror/>
+              </div>
+          </s:if>
         <p> Register multiple trials in the NCI Clinical Trials Reporting Program by uploading the Trial Data file and the Zip file that contains trial documents.
           Note the following requirements:</p>
         <ol>

@@ -277,11 +277,11 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
         } catch (PAException e) {
             LOG.error("error in Batch" + e.getMessage());
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
+            addActionError(e.getMessage());
             RegistryUtil.generateMail(Constants.ERROR_PROCESSING, ServletActionContext.getRequest().getRemoteUser(),
                     "", "", "", "", e.getMessage());
             return ERROR;
         }
-        ServletActionContext.getRequest().setAttribute("failureMessage", "Success...");
         return "batch_confirm";
     }
 

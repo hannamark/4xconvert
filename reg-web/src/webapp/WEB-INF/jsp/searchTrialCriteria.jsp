@@ -317,12 +317,13 @@
 		<label for="organizationType" class="col-xs-2 control-label">  <fmt:message key="search.trial.organizationType"/></label>
 		<div class="col-xs-4">
         	<s:select id="organizationType" headerKey="" headerValue="--Select--" name="criteria.organizationType"  list="#{'Lead Organization':'Lead Organization','Participating Site':'Participating Site','Both':'Both'}" value="criteria.organizationType" cssClass="form-control" onchange="displayOrg()"/>
+        	<em>Please select an organization type before selecting an organization</em>
         </div>
         <div id="Lead">
         <label for="organizationName" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
         <s:hidden name="criteria.organizationId" id="organizationId"/>
 		<div class="col-xs-4">                    
-			<s:textfield id="organizationName" name="criteria.organizationName" cssClass="form-control orgautocomplete" placeholder="Please select an organization type, if not already selected"/>
+			<s:textfield id="organizationName" name="criteria.organizationName" cssClass="form-control orgautocomplete" placeholder="Enter keyword and select an organization from the list"/>
              <span class="alert-danger">
                  <s:fielderror>
                  <s:param>criteria.organizationId</s:param>
@@ -334,7 +335,7 @@
 		<label for="participatingSiteName" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
 		<s:hidden name="criteria.participatingSiteId" id="participatingSiteId"/>
 		<div class="col-xs-4">
-			<s:textfield id="participatingSiteName" name="criteria.participatingSiteName" cssClass="form-control orgautocomplete"/>
+			<s:textfield id="participatingSiteName" name="criteria.participatingSiteName" cssClass="form-control orgautocomplete" placeholder="Enter keyword and select an organization from the list"/>
             <span class="alert-danger">
                 <s:fielderror>
                 <s:param>criteria.organizationId</s:param>
@@ -346,7 +347,7 @@
         <label for="leadAndParticipatingOrgName" class="col-xs-2 control-label"> <fmt:message key="search.trial.organization"/></label>
         <s:hidden name="criteria.leadAndParticipatingOrgId" id="leadAndParticipatingOrgId"/>
         <div class="col-xs-4">                
-			<s:textfield id="leadAndParticipatingOrgName" name="criteria.leadAndParticipatingOrgName" cssClass="form-control orgautocomplete"/>
+			<s:textfield id="leadAndParticipatingOrgName" name="criteria.leadAndParticipatingOrgName" cssClass="form-control orgautocomplete" placeholder="Enter keyword and select an organization from the list"/>
             <span class="alert-danger">
                 <s:fielderror>
                 <s:param>criteria.organizationId</s:param>
@@ -361,7 +362,7 @@
         <label for="principalInvestigatorId" class="col-xs-2 control-label"> <fmt:message key="search.trial.principalInvestigator"/></label>
         <s:hidden name="criteria.principalInvestigatorId" id="principalInvestigatorId"/>
         <div class="col-xs-4">
-            <s:textfield id="principalInvestigatorName" name="criteria.principalInvestigatorName" cssClass="form-control personautocomplete"/>
+            <s:textfield id="principalInvestigatorName" name="criteria.principalInvestigatorName" cssClass="form-control personautocomplete" placeholder="Enter keyword and select a PI from the list"/>
        </div>
        <label for="trialCategory" class="col-xs-2 control-label"> <fmt:message key="search.trial.trialCategorySearch"/></label>
        <div class="col-xs-4">        
@@ -394,7 +395,7 @@
                 <li><a href="javascript:void(0)" onclick="getMyPartialTrial()" id="searchSavedDraftsBtn">Saved Drafts<i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="Search my saved drafts"  data-placement="top" data-trigger="hover"></i></a></li>
               </ul>
             </div>
-            <button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false" id="resetSearchBtn"><i class="fa-repeat"></i>Reset</button>
+            <button type="button" class="btn btn-icon btn-default" onclick="submitXsrfForm('${pageContext.request.contextPath}/protected/searchTrial.action');" id="resetSearchBtn"><i class="fa-repeat"></i>Reset</button>
           </div>
         
     </s:form>     
