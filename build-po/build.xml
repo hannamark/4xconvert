@@ -629,7 +629,7 @@
 
 
     <!-- Creates upgrader distribution -->
-    <target name="dist:upgrader" depends="build:all, dist:upgrader:prep">
+    <target name="dist:upgrader" depends="exclude-poear, build:all, dist:upgrader:prep">
         <delete file="${dist.dir}/${po-ear.upgrade.zip.file}"/>
         <delete file="${dist.dir}/${po-grid-3.2.upgrade.zip.file}"/>        
         <delete file="${dist.dir}/${po-grid-3.0.upgrade.zip.file}"/>
@@ -653,6 +653,10 @@
         <zip destfile="${dist.dir}/${po-grid-3.2.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.0.dist.relative.dir}/**"/>        
         <zip destfile="${dist.dir}/${po-grid-3.0.upgrade.zip.file}" basedir="${dist.exploded.dir}" excludes="${po-ear.dist.relative.dir}/**,${db.dist.relative.dir}/**,${po-grid-3.2.dist.relative.dir}/**"/>
     </target>
+	
+	<target name="exclude-poear">
+		<property name="exclude.po-ear" value="true"/>
+	</target>
 
 
     <!-- Installs the application locally. Requires a local instance of mysql. Will use the target from install.xml specified in ${install.target} (defaults to install unless passed in on command line).  Calls ant from exec task to ensure properties are do not carry over from current ant runtime and also to emulate a manual install. This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs. It only supports using those properties files for now, so if you want to change install time properites edit these files. -->
