@@ -251,7 +251,8 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                   + " family member org's Institutional, Externally Peer Reviewed, "
                   + "and Industrial trials where the org is a lead organization or a participating site. "
                   + "Please allow time for the assignments to be processed by the CTRP system. "
-                  + "If a large number of trials are being assigned, this operation may take up to 30 minutes to complete.");
+                  + "If a large number of trials are being assigned, this operation may take up to 30 minutes "
+                  + "to complete.");
         }
         populateFamilyDd();
         ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);
