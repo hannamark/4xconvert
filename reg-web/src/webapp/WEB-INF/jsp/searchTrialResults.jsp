@@ -43,6 +43,11 @@ ul.ColVis_collection {
 button.ColVis_Button {
 	height : 25px;
 }
+
+a.last {
+    margin-right: 20px;
+}
+
 </style>
 </head>
 <s:set name="records" value="records" scope="request"/>
