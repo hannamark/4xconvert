@@ -205,15 +205,18 @@ button.ColVis_Button {
 						</div>  
 					</s:if>              		                    	                    
                  </display:column>  
-                 <display:column title="Accrual Disease Terminology" >
-                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
-                <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
-                <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
-                list="#accrualDiseaseValues" onchange="saveDiseaseCode('%{#attr.row.studyProtocolId}',this.value)" value="accrualDiseaseCode" cssClass="form-control" />
-                </s:if>
-                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == false}">
-                <c:out value="${row.accrualDiseaseCode}"/>
-                </s:if>
+                 <display:column title="Accrual Disease Terminology" media="html">
+	                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == true}">
+	                <s:set name="accrualDiseaseCode" value="%{#attr.row.accrualDiseaseCode}"/>
+	                <s:select id="accrualDisease_%{#attr.row.studyProtocolId}" headerKey="" headerValue="--Select--" name="accrualDiseaseTerminology_%{#attr.row.studyProtocolId}" 
+	                list="#accrualDiseaseValues" onchange="saveDiseaseCode('%{#attr.row.studyProtocolId}',this.value)" value="accrualDiseaseCode" cssClass="form-control" />
+	                </s:if>
+	                <s:if test="%{#attr.row.showAccrualOption.booleanValue() == false}">
+	                	<c:out value="${row.accrualDiseaseCode}"/>
+	                </s:if>
+                </display:column>
+                <display:column title="Accrual Disease Terminology" media="csv excel xml">
+                	<c:out value="${row.accrualDiseaseCode}"/>
                 </display:column>
                 <display:column title="Sites" media="html">
                 	<s:url id="viewParticipatingSites" action="participatingSitespopup"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
@@ -224,10 +227,12 @@ button.ColVis_Button {
                 <display:column title="Category" property="trialCategory" />  
                 <display:column title="Trial Start Date" property="startDate" format="{0,date,MM/dd/yyyy}" />                                             
           	    <display:column title="Responsible Party" property="responsiblePartyName" />          	   
-          	    <display:column title="<div style='width:150px;text-align: center;'>Sponsor</div>" property="sponsorName" />
+          	    <display:column title="<div style='width:150px;text-align: center;'>Sponsor</div>" property="sponsorName" media="html"/>
+          	    <display:column title="Sponsor" property="sponsorName" media="csv excel xml"/>
           	    <display:column title="Summary 4 Funding Sponsor Type" property="summary4FundingSponsorType" />
                 <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate" format="{0,date,MM/dd/yyyy}" />
-                <display:column title="<div style='width:150px;text-align: center;'>Submitter</div>" property="lastCreated.userLastDisplayName" />
+                <display:column title="<div style='width:150px;text-align: center;'>Submitter</div>" property="lastCreated.userLastDisplayName" media="html"/>
+                <display:column title="Submitter" property="lastCreated.userLastDisplayName" media="csv excel xml"/>
                 <display:column title="Primary Completion Date" property="primaryCompletionDate" format="{0,date,MM/dd/yyyy}" />                             
                 <display:column title="Last Update Submitted" property="updatedDate" format="{0,date,MM/dd/yyyy}" />
                 <display:column title="Last Updater Name" property="lastUpdaterDisplayName" />

@@ -56,8 +56,7 @@ button.ColVis_Button {
        <display:setProperty name="export.excel.include_header" value="true"/>
        <display:setProperty name="export.csv.filename" value="accrualTrialResults.csv"/>
        <display:setProperty name="export.csv.include_header" value="true"/>
-       <display:column titleKey="accrual.list.trials.protocolNumber" headerScope="col">
-           <!-- <s:property value="%{#attr.row.assignedIdentifier.value}" /> -->
+       <display:column titleKey="accrual.list.trials.protocolNumber" headerScope="col" media="html">
            <s:if test="%{#attr.row.industrial.value && #attr.row.trialType.value == 'Interventional'}">
                 <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
            </s:if>
@@ -72,11 +71,13 @@ button.ColVis_Button {
            </s:elseif>           
            <s:a href="%{url}"><s:property value="%{#attr.row.assignedIdentifier.value}" /></s:a>
        </display:column>
+       <display:column titleKey="accrual.list.trials.protocolNumber" headerScope="col" media="csv excel">
+       				<s:property value="%{#attr.row.assignedIdentifier.value}"/>
+       </display:column>
        <display:column escapeXml="true" titleKey="accrual.list.trials.protocolTitle" property="officialTitle" headerScope="col"/>
        <display:column titleKey="accrual.list.trials.trialStatus" property="studyStatusCode" headerScope="col"/>
        <display:column titleKey="accrual.list.trials.trialType" property="trialType" headerScope="col"/>
-       <display:column titleKey="accrual.list.trials.diseaseCodeSystem" headerScope="col">
-           <!-- <c:out value="${row.diseaseCodeSystem.value}"/> -->
+       <display:column titleKey="accrual.list.trials.diseaseCodeSystem" headerScope="col" media="html">
            <s:if test="%{#attr.row.canChangeDiseaseCodeSystem.value}">
                 <s:select id="disCodeSystem_%{#attr.row.studyProtocolIdentifier.extension}" 
                           name="disCodeSystem_%{#attr.row.studyProtocolIdentifier.extension}"
@@ -88,5 +89,8 @@ button.ColVis_Button {
            <s:else>
                <s:property value="%{#attr.row.diseaseCodeSystem.value}"/>
            </s:else>
+       </display:column>
+       <display:column titleKey="accrual.list.trials.diseaseCodeSystem" headerScope="col" media="csv excel">
+       		<s:property value="%{#attr.row.diseaseCodeSystem.value}"/>
        </display:column>
    </display:table>
