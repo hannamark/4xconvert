@@ -32,7 +32,7 @@
                    <%@include file="accountCommonForm.jsp" %>
               <div class="form-group">
 	            <label for="option1" class="col-xs-4 control-label">Color Scheme</label>
-	            <div class="col-xs-7">
+	            <div class="col-xs-8">
 	              <div class="btn-group" data-toggle="buttons">
 	                <label class="btn btn-default" onClick="changeActiveStyle(window, 'default'); return false;">
 	                  <input type="radio" name="options" id="option1">

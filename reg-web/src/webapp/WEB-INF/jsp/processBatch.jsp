@@ -1,4 +1,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
+	style="min-width: 0px !important;">
+<head>
+<title>My Account</title>
+<%@ include file="/WEB-INF/jsp/common/includecss.jsp"%>
+<%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
 <SCRIPT LANGUAGE="JavaScript">
 function handleBatchUploadAction(){
 	var form = document.batchUploadForm;
@@ -7,13 +13,8 @@ function handleBatchUploadAction(){
     form.submit();
 }
 </SCRIPT>
-<div class="modal fade" id="batchUpload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="myModalLabel">Batch Trial Upload</h4>
-      </div>
+</head>
+<body>
       <div class="modal-body">
       	<c:set var="topic" scope="request" value="batchupload"/>
 		 <s:actionmessage cssClass="alert alert-info"/>
@@ -71,9 +72,7 @@ function handleBatchUploadAction(){
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal" onclick="handleBatchUploadAction();"><i class="fa-upload"></i>Upload Trials</button>
-        <button type="button" class="btn btn-icon btn-default" data-dismiss="modal"><i class="fa-times"></i>Close</button>
+        <button type="button" class="btn btn-icon btn-default" onclick="window.top.hidePopWin(true);" data-dismiss="modal"><i class="fa-times-circle"></i>Close</button>
       </div>
-    </div>
-  </div>
-</div>
-	 
+</body>
+</html>	 

@@ -44,7 +44,6 @@
         <!-- TODO : move this file to no decoreate folder -->
         <jsp:include page="/WEB-INF/jsp/nodecorate/categoryDefinitions.jsp"/>
         <jsp:include page="/WEB-INF/jsp/nodecorate/contactus.jsp"/>
-        <jsp:include page="/WEB-INF/jsp/processBatch.jsp"/>
         <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
         <jsp:include page="/WEB-INF/jsp/common/misc.jsp"/>
         <s:form id="xsrfForm"><s:token/></s:form>

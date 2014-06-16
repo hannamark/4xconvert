@@ -132,7 +132,6 @@
             <result>/WEB-INF/jsp/registerUser.jsp</result>
             <result name="myAccount">/WEB-INF/jsp/nodecorate/myAccount.jsp</result>
             <result name="createAccount">/WEB-INF/jsp/createAccount.jsp</result>
-            <result name="confirmation">/WEB-INF/jsp/emailConfirmation.jsp</result>
             <result name="registerUserError">/WEB-INF/jsp/registerUser.jsp</result>
             <result name="myAccountError">/WEB-INF/jsp/nodecorate/myAccount.jsp</result>
             <result name="confirmation">WEB-INF/jsp/registerUserConfirmation.jsp</result>

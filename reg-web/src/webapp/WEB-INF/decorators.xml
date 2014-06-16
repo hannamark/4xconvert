@@ -14,6 +14,7 @@
         <pattern>*Ajax.action*</pattern>
         <pattern>*myAccount*</pattern>
         <pattern>*updateAccount*</pattern>
+        <pattern>*batchUpload*</pattern>
         <pattern>*ajax*</pattern>
         <pattern>*nodecor*</pattern>
         <pattern>*lookup*</pattern>

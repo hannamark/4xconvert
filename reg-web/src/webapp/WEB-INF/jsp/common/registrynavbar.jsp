@@ -1,4 +1,18 @@
  <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+ <script type="text/javascript" language="javascript">
+	function displayBatchUpload() {
+		var width = 700;
+		var height = 450;
+		if (Prototype.Browser.IE) {
+			width = 720;
+	        height = 470;            		
+		}
+		showPopWin('/registry/admin/batchUpload.action', width, height, donothing, 'Batch Trial Upload');
+	}
+	function donothing() {
+		//does nothing
+	}
+</script>
   <!-- Fixed navbar -->
   <div class="navbar navbar-custom navbar-inverse navbar-static-top" id="nav">
     <div class="container">
@@ -20,7 +34,7 @@
               <li><a href="#" data-toggle="modal" data-target="#myModal">View Category Definitions</a></li>
               <li><a href="${pageContext.request.contextPath}/protected/addSites.action">Add Sites</a></li>
               <li class="batch">
-                <button type="button" class="btn btn-icon btn-sm btn-default" id="popover" rel="popover" data-content="<fmt:message key="tooltip.batch_upload"/>" data-placement="bottom" data-trigger="hover" data-toggle="modal" data-target="#batchUpload"><i class="fa-upload"></i> Batch Upload</button>
+                <button type="button" class="btn btn-icon btn-sm btn-default" onclick="displayBatchUpload();"><i class="fa-upload"></i> Batch Upload</button>
               </li>
             </ul>
           </li>
