@@ -252,7 +252,8 @@ public class ManageAccrualAccessAction extends ActionSupport implements
                   + "and Industrial trials where the org is a lead organization or a participating site. "
                   + "Please allow time for the assignments to be processed by the CTRP system. "
                   + "If a large number of trials are being assigned, this operation may take up to 30 minutes "
-                  + "to complete.");
+                  + "to complete. You can leave this page or exit the application if you want; the operation "
+                  + "will continue in the background");
         }
         populateFamilyDd();
         ServletActionContext.getRequest().setAttribute(SUCCESS_MSG, msg);
