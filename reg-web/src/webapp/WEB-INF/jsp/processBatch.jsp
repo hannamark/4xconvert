@@ -17,6 +17,7 @@ function handleBatchUploadAction(){
 <body>
       <div class="modal-body">
       	<c:set var="topic" scope="request" value="batchupload"/>
+      	<reg-web:failureMessage/>
 		 <s:actionmessage cssClass="alert alert-info"/>
          <s:if test="hasActionErrors()">
               <div class="alert alert-danger">
