@@ -44,13 +44,17 @@
 
     You should have created a database during the build-po install. 
 
-1.3 CI build (WILL DROP AND RE-CREATE YOUR DATABASE!)
+1.3 Full CI build (WILL DROP AND RE-CREATE YOUR DATABASE!)
     Stop JBoss
     mvn clean install
     mvn cargo:deploy
     mvn -Pinit-db sql:execute    
     Start JBoss
     mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test
+	Stop JBoss
+	mvn -Pinit-db sql:execute    
+	Start JBoss
+	mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests integration-test
     mvn site
 
 1.4 Useful, non standard mvn targets
@@ -59,19 +63,22 @@
     mvn -Pinit-db sql:execute - reinit the db by completely dropping and recreating. WILL DROP AND RE-CREATE YOUR DATABASE!
     
 1.5 Power-Maven Usage
-    Deploy and run your integration tests to an already running container
+    Deploy and run your integration tests to an already running container:
 		mvn cargo:deploy
 		mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test
 
-    Run your integration tests against an already running container.
+    Run your integration tests against an already running container:
 		mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test
 	OR:
 		mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test -Dtest=<testclass>
 		
 
-    Run just the Selenium tests
+    Run only the Selenium tests:
 		Start and deploy to JBoss
 		mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.AllSeleniumTests
+	
+	Run a specific Selenium test:
+	    mvn -Pci-nostart-nodeploy -Dtest.selenium.xvfb.skip=true -f client/pom.xml integration-test -Dtest=gov.nih.nci.coppa.test.integration.test.CreatePersonTest
 
 1.6 Peer Review
     We are using NCI Fisheye/Crucible for peer reviews.  Follow the directions on the wiki for setup and use instructions.    
