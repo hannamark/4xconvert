@@ -50,6 +50,7 @@
                 <s:token/> 
                 <s:actionerror/>
                 <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
+                <s:hidden name="trialDTO.studyProtocolId" id="trialDTO.studyProtocolId"/>
                 <s:hidden name="pageFrom" id="pageFrom"/>
                 <div id="contentprint">
                         <reg-web:titleRowDiv titleKey="view.trial.trialIDs"/>

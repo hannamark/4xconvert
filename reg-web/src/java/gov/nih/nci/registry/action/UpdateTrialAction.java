@@ -151,6 +151,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (studyProtocolId != null) {
             setAccrualDiseaseTerminologyEditable(accrualDiseaseTerminologyService.canChangeCodeSystem(
                     Long.valueOf(studyProtocolId)));
+        } else {
+            if (trialDTO != null && trialDTO.getStudyProtocolId() != null) {
+                setAccrualDiseaseTerminologyEditable(accrualDiseaseTerminologyService.canChangeCodeSystem(
+                        Long.valueOf(trialDTO.getStudyProtocolId())));
+            }
         }
         if (trialDTO != null) {
             trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
