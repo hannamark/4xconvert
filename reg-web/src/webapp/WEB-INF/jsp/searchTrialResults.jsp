@@ -121,7 +121,7 @@ a.last {
                     <c:out value="${row.nciIdentifier}"/>
                 </display:column>
                 <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength="200"  headerScope="col" media="excel csv"/>
-                <display:column escapeXml="false" title="<div style='width:350px;text-align: center;'>Title</div>" headerScope="col" media="html">
+                <display:column escapeXml="false" title="<div style='width:350px;text-align: left;'>Title</div>" headerScope="col" media="html">
                     <span style="display:none"><c:out value="${row.officialTitle}"/></span>
                     <fmt:message key="studyAlternateTitles.text" var="title" />
                     <c:if test="${not empty row.studyAlternateTitles}">                    

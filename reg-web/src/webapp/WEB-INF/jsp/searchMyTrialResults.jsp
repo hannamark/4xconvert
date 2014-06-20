@@ -116,7 +116,7 @@ button.ColVis_Button {
                     <c:out value="${row.nciIdentifier}"/>
                 </display:column>
                 <display:column escapeXml="true" titleKey="search.trial.officialTitle" property="officialTitle" maxLength="200" headerScope="col" media="excel csv"/>
-                <display:column escapeXml="false" title="<div style='width:350px;text-align: center;'>Title</div>" headerScope="col" media="html">
+                <display:column escapeXml="false" title="<div style='width:350px;text-align: left;'>Title</div>" headerScope="col" media="html">
                     <span style="display:none"><c:out value="${row.officialTitle}"/></span>
                     <fmt:message key="studyAlternateTitles.text" var="title" />
                     <c:if test="${not empty row.studyAlternateTitles}">                    
@@ -227,11 +227,11 @@ button.ColVis_Button {
                 <display:column title="Category" property="trialCategory" />  
                 <display:column title="Trial Start Date" property="startDate" format="{0,date,MM/dd/yyyy}" />                                             
           	    <display:column title="Responsible Party" property="responsiblePartyName" />          	   
-          	    <display:column title="<div style='width:150px;text-align: center;'>Sponsor</div>" property="sponsorName" media="html"/>
+          	    <display:column title="<div style='width:150px;text-align: left;'>Sponsor</div>" property="sponsorName" media="html"/>
           	    <display:column title="Sponsor" property="sponsorName" media="csv excel xml"/>
           	    <display:column title="Summary 4 Funding Sponsor Type" property="summary4FundingSponsorType" />
                 <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate" format="{0,date,MM/dd/yyyy}" />
-                <display:column title="<div style='width:150px;text-align: center;'>Submitter</div>" property="lastCreated.userLastDisplayName" media="html"/>
+                <display:column title="<div style='width:150px;text-align: left;'>Submitter</div>" property="lastCreated.userLastDisplayName" media="html"/>
                 <display:column title="Submitter" property="lastCreated.userLastDisplayName" media="csv excel xml"/>
                 <display:column title="Primary Completion Date" property="primaryCompletionDate" format="{0,date,MM/dd/yyyy}" />                             
                 <display:column title="Last Update Submitted" property="updatedDate" format="{0,date,MM/dd/yyyy}" />
