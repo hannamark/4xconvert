@@ -36,6 +36,12 @@ function handleMultiDelete(confirmationMessage, submitAction) {
         }
         document.forms[0].action = submitAction;
         document.forms[0].submit();
+    } else {
+    	$(document.forms[0]).getInputs().each(function(el) {
+            if (el.name=='objectsToDelete') {
+            	el.checked = false;
+            }
+        });
     }
     
 }
