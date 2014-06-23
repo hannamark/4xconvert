@@ -46,7 +46,14 @@ public class CreatePersonAction extends CuratePersonAction implements
      * @throws CSException
      *             CSException
      */
-    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "person") })
+    @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "person"),
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.phone",
+                message = "US and Canadian telephone numbers must match ###-###-####(x#*).") ,
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.fax",
+                message = "US and Canadian fax numbers must match ###-###-####(x#*)."),
+            @CustomValidator(type = "usOrCanadaPhone", fieldName = "person.tty",
+                message = "US and Canadian tty numbers must match ###-###-####(x#*).")
+            })
     public String create() throws JMSException, CSException {
         User createdBy = getCreatedBy();
         getPerson().setCreatedBy(createdBy);
