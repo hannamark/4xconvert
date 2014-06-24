@@ -378,23 +378,40 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             criteria.add(Expression.eq("vm.publicID", Long.valueOf(getPublicId())));
             return criteria;
         }
-        if (StringUtils.isNotEmpty(getName())) {
-            String newName = getName();
-            if (newName.contains("-")) {
-                 newName = getName().replaceAll("-", "");
-            }
-           criteria.add(Expression.or(Expression.or(
-                  Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
-                  Expression.ilike("pv.value", getName(), MatchMode.ANYWHERE)), 
-                  Expression.ilike("pv.value", newName, MatchMode.ANYWHERE)));
-           
-            
-        }
-        if (StringUtils.isNotEmpty(getMeaning())) {
-            criteria.add(Expression.ilike("vm.longName", getMeaning(), MatchMode.ANYWHERE));
-        }
-        if (StringUtils.isNotEmpty(getDescription())) {
-            criteria.add(Expression.ilike("vm.description", getDescription(), MatchMode.ANYWHERE));
+        if (StringUtils.equals(TRUE, getCaseType())) {
+             if (StringUtils.isNotEmpty(getName())) {
+                 String newName = getName();
+                 if (newName.contains("-")) {
+                     newName = getName().replaceAll("-", "");
+                 }
+                criteria.add(Expression.or(Expression.or(
+                Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
+                Expression.like(PV_VALUE, getName(), MatchMode.ANYWHERE)), 
+                Expression.like(PV_VALUE, newName, MatchMode.ANYWHERE)));
+             }
+             if (StringUtils.isNotEmpty(getMeaning())) {
+                criteria.add(Expression.like(LONG_NAME, getMeaning(), MatchMode.ANYWHERE));
+             }
+             if (StringUtils.isNotEmpty(getDescription())) {
+                criteria.add(Expression.like(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
+             }
+        } else {
+             if (StringUtils.isNotEmpty(getName())) {
+                String newName = getName();
+                 if (newName.contains("-")) {
+                     newName = getName().replaceAll("-", "");
+                 }
+                 criteria.add(Expression.or(Expression.or(
+                 Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
+                 Expression.ilike(PV_VALUE, getName(), MatchMode.ANYWHERE)), 
+                 Expression.ilike(PV_VALUE, newName, MatchMode.ANYWHERE)));
+             }
+             if (StringUtils.isNotEmpty(getMeaning())) {
+                criteria.add(Expression.ilike(LONG_NAME, getMeaning(), MatchMode.ANYWHERE));
+             }
+             if (StringUtils.isNotEmpty(getDescription())) {
+                criteria.add(Expression.ilike(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
+             }
         }
         return criteria;
     }
