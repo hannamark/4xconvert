@@ -11,10 +11,11 @@
 		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
 		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
-	<context:annotation-config />
+	<context:annotation-config/>
 	<context:component-scan base-package="gov.nih.nci.po.webservices.service.simple" />
+    <context:component-scan base-package="gov.nih.nci.po.webservices.service.bo" />
 
-	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 	<import resource="classpath:META-INF/cxf/cxf.xml" />	
 	
 	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" >
@@ -32,9 +33,7 @@
 	</util:list>
 
     <!-- Person SOAP Service Configurations -->
-	<bean id="personServiceImpl"
-		class="gov.nih.nci.po.webservices.service.simple.soap.PersonServiceImpl" />
-	<jaxws:endpoint id="personService" implementor="#personServiceImpl"
+	<jaxws:endpoint id="personService" implementor="#personServiceSimpleSoapEndpoint"
 		address="/PersonService">
 		<jaxws:properties>
 			<entry key="schema-validation-enabled" value="true" />
@@ -42,10 +41,9 @@
 	</jaxws:endpoint>
 	
 	<!-- Person REST Service Configurations -->
-	<bean id="personRESTServiceImpl" class="gov.nih.nci.po.webservices.service.simple.rest.PersonRESTService" />
     <jaxrs:server id="personRESTService" address="/person-rest-service">
         <jaxrs:serviceBeans>
-            <ref bean="personRESTServiceImpl" />
+            <ref bean="personServiceSimpleRestEndpoint" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="jaxbProvider" />
@@ -54,7 +52,6 @@
     </jaxrs:server>
 
     <!-- Exception Handler for PersonServiceImpl-->
-	<bean id="perServImpl" class="gov.nih.nci.po.webservices.service.simple.PersonServiceImpl" />
 	<bean id="exceptionAdvice" class="gov.nih.nci.po.webservices.aop.ExceptionHandlerAdvice" />
 	<bean id="personServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="proxyInterfaces"
@@ -65,14 +62,12 @@
 			</list>
 		</property>
 		<property name="target">
-			<ref bean="perServImpl" />
+			<ref bean="simplePersonService" />
 		</property>
 	</bean>
 
     <!-- Organization SOAP Service Configurations -->
-	<bean id="organizationServiceImpl"
-		class="gov.nih.nci.po.webservices.service.simple.soap.OrganizationServiceImpl" />
-	<jaxws:endpoint id="organizationService" implementor="#organizationServiceImpl"
+	<jaxws:endpoint id="organizationService" implementor="#organizationServiceSimpleSoapEndpoint"
 		address="/OrganizationService">
 		<jaxws:properties>
 			<entry key="schema-validation-enabled" value="true" />
@@ -80,10 +75,9 @@
 	</jaxws:endpoint>
 	
 	<!-- Organization REST Service Configurations -->
-    <bean id="organizationRESTServiceImpl" class="gov.nih.nci.po.webservices.service.simple.rest.OrganizationRESTService" />
     <jaxrs:server id="organizationRESTService" address="/organization-rest-service">
         <jaxrs:serviceBeans>
-            <ref bean="organizationRESTServiceImpl" />
+            <ref bean="organizationServiceSimpleRestEndpoint" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="jaxbProvider" />
@@ -92,7 +86,6 @@
     </jaxrs:server>
 	
 	<!-- Exception Handler for OrganizationServiceImpl-->
-	<bean id="orgServImpl" class="gov.nih.nci.po.webservices.service.simple.OrganizationServiceImpl" />
     <bean id="orgServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces"
             value="gov.nih.nci.po.webservices.service.simple.OrganizationService" />
@@ -102,14 +95,12 @@
             </list>
         </property>
         <property name="target">
-            <ref bean="orgServImpl" />
+            <ref bean="simpleOrganizationService" />
         </property>
     </bean>
     
-    <!-- Family SOAP Service Configurations -->    
-    <bean id="familyServiceImpl"
-        class="gov.nih.nci.po.webservices.service.simple.soap.FamilyServiceImpl" />
-    <jaxws:endpoint id="familyService" implementor="#familyServiceImpl"
+    <!-- Family SOAP Service Configurations -->
+    <jaxws:endpoint id="familyService" implementor="#familyServiceSimpleSoapEndpoint"
         address="/FamilyService">
         <jaxws:properties>
             <entry key="schema-validation-enabled" value="true" />
@@ -117,10 +108,9 @@
     </jaxws:endpoint>
     
     <!-- Family REST Service Configurations -->
-    <bean id="familyRESTServiceImpl" class="gov.nih.nci.po.webservices.service.simple.rest.FamilyRESTService" />
     <jaxrs:server id="familyRESTService" address="/family-rest-service">
         <jaxrs:serviceBeans>
-            <ref bean="familyRESTServiceImpl" />
+            <ref bean="familyServiceSimpleRestEndpoint" />
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="jaxbProvider" />
@@ -129,7 +119,6 @@
     </jaxrs:server>
     
     <!-- Exception Handler for FamilyServiceImpl-->
-    <bean id="famServImpl" class="gov.nih.nci.po.webservices.service.simple.FamilyServiceImpl" />
     <bean id="familyServiceProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="proxyInterfaces"
             value="gov.nih.nci.po.webservices.service.simple.FamilyService" />
@@ -139,7 +128,7 @@
             </list>
         </property>
         <property name="target">
-            <ref bean="famServImpl" />
+            <ref bean="simpleFamilyService" />
         </property>
     </bean>
 

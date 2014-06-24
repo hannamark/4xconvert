@@ -31,6 +31,7 @@ import gov.nih.nci.po.webservices.types.PersonSearchResult;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.List;
 @WebService(serviceName = "PersonService", portName = "PersonServicePort", wsdlLocation = "/PersonService.wsdl", 
 targetNamespace = "http://soap.simple.service.webservices.po.nci.nih.gov/person/", 
 endpointInterface = "gov.nih.nci.po.webservices.service.simple.soap.person.PersonService")
+@Service("personServiceSimpleSoapEndpoint")
 public class PersonServiceImpl implements PersonService {
 
     @Autowired

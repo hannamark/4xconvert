@@ -820,8 +820,7 @@ public class OrganizationRESTServiceTest extends
         assertEquals(500, getReponseCode(response));
         assertEquals(TXT_PLAIN, getResponseContentType(response));
         assertTrue(getResponseMessage(response)
-                .contains(
-                        "PropertyValueException: not-null property references a null or transient value: gov.nih.nci.po.data.bo.Organization.postalAddress"));
+                .contains("gov.nih.nci.po.service.EntityValidationException The invalid elements are: postalAddress "));
     }
 
     /**
@@ -856,7 +855,7 @@ public class OrganizationRESTServiceTest extends
         assertEquals(TXT_PLAIN, getResponseContentType(response));
         assertTrue(getResponseMessage(response)
                 .contains(
-                        "InvalidStateException: validation failed for: gov.nih.nci.po.data.bo.PhoneNumber"));
+                        "gov.nih.nci.po.service.EntityValidationException The invalid elements are: phone[0].value Phone number 703@35@234 "));
     }
 
     /**
@@ -895,7 +894,7 @@ public class OrganizationRESTServiceTest extends
         assertEquals(TXT_PLAIN, getResponseContentType(response));
         assertTrue(getResponseMessage(response)
                 .contains(
-                        "InvalidStateException: validation failed for: gov.nih.nci.po.data.bo.PhoneNumber"));
+                        "gov.nih.nci.po.service.EntityValidationException The invalid elements are: phone[0].value Phone number 703@35@234 "));
     }
 
     /**
@@ -2335,7 +2334,7 @@ public class OrganizationRESTServiceTest extends
         // now update the HCF details
         hcf.setName("Mayo HCF 111"); // added to alias, name not change
         // update the status
-        hcf.setStatus(EntityStatus.INACTIVE);
+        hcf.setStatus(EntityStatus.NULLIFIED);
         // update the address
         hcf.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2380,7 +2379,7 @@ public class OrganizationRESTServiceTest extends
         // now update the HCF details
         hcf.setName("Mayo HCF 111"); // added to alias, name not change
         // update the status
-        hcf.setStatus(EntityStatus.INACTIVE);
+        hcf.setStatus(EntityStatus.NULLIFIED);
         // update the address
         hcf.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2426,7 +2425,7 @@ public class OrganizationRESTServiceTest extends
 
         // now update the OC details
         // update the status
-        oc.setStatus(EntityStatus.INACTIVE);
+        oc.setStatus(EntityStatus.NULLIFIED);
         // update the address
         oc.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2468,7 +2467,7 @@ public class OrganizationRESTServiceTest extends
 
         // now update the OC details
         // update the status
-        oc.setStatus(EntityStatus.INACTIVE);
+        oc.setStatus(EntityStatus.NULLIFIED);
         // update the address
         oc.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2512,7 +2511,7 @@ public class OrganizationRESTServiceTest extends
 
         // now update the RO details
         ro.setName("Mayo RO 111"); // added to alias, name not change
-        ro.setStatus(EntityStatus.INACTIVE); // update the status
+        ro.setStatus(EntityStatus.NULLIFIED); // update the status
         // update the address
         ro.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2557,7 +2556,7 @@ public class OrganizationRESTServiceTest extends
         // now update the OC details
         ro.setName("Mayo RO 111"); // added to alias, name not change
         // update the status
-        ro.setStatus(EntityStatus.INACTIVE);
+        ro.setStatus(EntityStatus.NULLIFIED);
         // update the address
         ro.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -3395,13 +3394,13 @@ public class OrganizationRESTServiceTest extends
         url = osUrl + "/role/HealthCareFacility/" + orgRole.getId() + "/status";
         HttpPut putReq = new HttpPut(url);
         putReq.addHeader("content-type", TXT_PLAIN);
-        StringEntity orgEntity = new StringEntity("INACTIVE");
+        StringEntity orgEntity = new StringEntity("NULLIFIED");
         putReq.setEntity(orgEntity);
         HttpResponse putResponse = httpClient.execute(putReq);
 
         assertEquals(200, getReponseCode(putResponse));
         assertEquals(TXT_PLAIN, getResponseContentType(putResponse));
-        assertEquals("INACTIVE", getResponseMessage(putResponse));
+        assertEquals("NULLIFIED", getResponseMessage(putResponse));
     }
 
     /**
@@ -3427,13 +3426,13 @@ public class OrganizationRESTServiceTest extends
         url = osUrl + "/role/OversightCommittee/" + orgRole.getId() + "/status";
         HttpPut putReq = new HttpPut(url);
         putReq.addHeader("content-type", TXT_PLAIN);
-        StringEntity orgEntity = new StringEntity("INACTIVE");
+        StringEntity orgEntity = new StringEntity("NULLIFIED");
         putReq.setEntity(orgEntity);
         HttpResponse putResponse = httpClient.execute(putReq);
 
         assertEquals(200, getReponseCode(putResponse));
         assertEquals(TXT_PLAIN, getResponseContentType(putResponse));
-        assertEquals("INACTIVE", getResponseMessage(putResponse));
+        assertEquals("NULLIFIED", getResponseMessage(putResponse));
     }
 
     /**
@@ -3460,13 +3459,13 @@ public class OrganizationRESTServiceTest extends
                 + "/status";
         HttpPut putReq = new HttpPut(url);
         putReq.addHeader("content-type", TXT_PLAIN);
-        StringEntity orgEntity = new StringEntity("INACTIVE");
+        StringEntity orgEntity = new StringEntity("NULLIFIED");
         putReq.setEntity(orgEntity);
         HttpResponse putResponse = httpClient.execute(putReq);
 
         assertEquals(200, getReponseCode(putResponse));
         assertEquals(TXT_PLAIN, getResponseContentType(putResponse));
-        assertEquals("INACTIVE", getResponseMessage(putResponse));
+        assertEquals("NULLIFIED", getResponseMessage(putResponse));
     }
 
     /**

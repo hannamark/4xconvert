@@ -89,7 +89,11 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
+import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.ServiceLocator;
 import gov.nih.nci.services.CorrelationDto;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -98,6 +102,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test NodeTransformHelper
@@ -127,7 +133,16 @@ public class NodeTransformHelperTest {
         public void setStatus(Cd arg0) {
         }
     }
-    
+
+    @Before
+    public void setup() {
+        ServiceLocator serviceLocator = mock(ServiceLocator.class);
+        PoRegistry.getInstance().setServiceLocator(serviceLocator);
+        OversightCommitteeServiceLocal oversightCommitteeServiceLocal = mock(OversightCommitteeServiceLocal.class);
+        when(serviceLocator.getOversightCommitteeService()).thenReturn(oversightCommitteeServiceLocal);
+
+    }
+
     @Test
     public void testToDtoCorrelation() throws DtoTransformException {
         assertNull(NodeTransformHelper.toDtoCorrelation(null));

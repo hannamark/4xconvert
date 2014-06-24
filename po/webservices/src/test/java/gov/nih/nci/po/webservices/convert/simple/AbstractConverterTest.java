@@ -2,7 +2,6 @@ package gov.nih.nci.po.webservices.convert.simple;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-
 import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Contactable;
@@ -36,6 +35,7 @@ import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
+import gov.nih.nci.po.service.IdentifiedPersonCrServiceLocal;
 import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
@@ -43,6 +43,7 @@ import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
+import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonSearchDTO;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
@@ -53,8 +54,15 @@ import gov.nih.nci.po.webservices.types.Address;
 import gov.nih.nci.po.webservices.types.Contact;
 import gov.nih.nci.po.webservices.types.ContactType;
 import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.UserProvisioningManager;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -69,6 +77,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * This is a base class with common code to be used across different testcases.
@@ -76,6 +85,8 @@ import static org.mockito.Mockito.when;
  * @author Rohit Gupta
  * 
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( SecurityServiceProvider.class )
 public abstract class AbstractConverterTest {
 
     protected ServiceLocator serviceLocator = null;
@@ -339,6 +350,34 @@ public abstract class AbstractConverterTest {
             orgRelBoList.add(orgRel);
             when(orgRelSerLocal.search(isA(SearchCriteria.class))).thenReturn(
                     orgRelBoList);
+
+            //mock security
+            UserProvisioningManager userProvisioningManager = mock(UserProvisioningManager.class);
+            when(userProvisioningManager.getUser(isA(String.class)))
+                    .thenAnswer(new Answer<User>() {
+                        @Override
+                        public User answer(InvocationOnMock invocation) throws Throwable {
+                            String username = (String) invocation.getArguments()[0];
+
+                            User user = new User();
+                            user.setLoginName(username);
+
+                            return user;
+                        }
+                    });
+
+            mockStatic(SecurityServiceProvider.class);
+            PowerMockito.when(SecurityServiceProvider.getUserProvisioningManager("po"))
+                    .thenReturn(userProvisioningManager);
+
+            //Mock PersonCRService
+            PersonCRServiceLocal personCRServiceLocal = mock(PersonCRServiceLocal.class);
+            when(serviceLocator.getPersonCRService()).thenReturn(personCRServiceLocal);
+
+            //Mock IdentifiedPersonCRService
+            IdentifiedPersonCrServiceLocal identifiedPersonCrServiceLocal = mock(IdentifiedPersonCrServiceLocal.class);
+            when(serviceLocator.getIdentifiedPersonCRService()).thenReturn(identifiedPersonCrServiceLocal);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

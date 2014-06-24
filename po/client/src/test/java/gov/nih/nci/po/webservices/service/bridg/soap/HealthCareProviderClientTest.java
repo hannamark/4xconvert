@@ -72,7 +72,6 @@ import javax.xml.ws.WebServiceException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -179,19 +178,6 @@ public class HealthCareProviderClientTest {
 
     }
 
-    @After
-    public void cleanup() throws SQLException {
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate healthcareprovider cascade");
-            statement.executeUpdate("truncate healthcareprovidercr cascade");
-            statement.executeUpdate("truncate organization cascade");
-            statement.executeUpdate("truncate person cascade");
-        } finally {
-            jdbcConnection.close();
-        }
-    }
 
     private long createNewPerson() {
 

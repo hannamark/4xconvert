@@ -22,10 +22,12 @@ import gov.nih.nci.enterpriseservices.structuralroles.researchorganization.Updat
 import gov.nih.nci.enterpriseservices.structuralroles.researchorganization.UpdateStatusResponse;
 import gov.nih.nci.enterpriseservices.structuralroles.researchorganization.ValidateRequest;
 import gov.nih.nci.enterpriseservices.structuralroles.researchorganization.ValidateResponse;
+import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.extensions.Cd;
 import gov.nih.nci.iso21090.extensions.Id;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.po.data.bo.Address;
@@ -33,6 +35,7 @@ import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
@@ -51,6 +54,7 @@ import gov.nih.nci.po.webservices.service.bridg.soap.researchorganization.TooMan
 import gov.nih.nci.po.webservices.service.utils.AuthUtils;
 import org.hibernate.Transaction;
 import org.iso._21090.CD;
+import org.iso._21090.DSETAD;
 import org.iso._21090.DSETII;
 import org.iso._21090.II;
 import org.iso._21090.NullFlavor;
@@ -65,7 +69,6 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -159,15 +162,15 @@ public class ResearchOrganizationClientTest {
         Transaction t = PoHibernateUtil.getCurrentSession().beginTransaction();
 
         try {
-            PoHibernateUtil.getCurrentSession().save(defaultType);
+            PoHibernateUtil.getCurrentSession().saveOrUpdate(defaultType);
             t.commit();
         } catch(Exception e) {
             t.rollback();
             throw new RuntimeException(e);
         }
 
-
     }
+
 
     @Before
     public void setup() throws Exception {
@@ -195,32 +198,11 @@ public class ResearchOrganizationClientTest {
 
     }
 
-    @After
-    public void cleanup() throws SQLException {
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate researchorganization cascade");
-            statement.executeUpdate("truncate researchorganizationcr cascade");
-            statement.executeUpdate("truncate organization cascade");
-            statement.executeUpdate("truncate person cascade");
-        } finally {
-            jdbcConnection.close();
-        }
-    }
+
 
     @AfterClass
     public static void cleanupClass() throws SQLException {
         PoRegistry.getInstance().setServiceLocator(oldLocator);
-
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate researchorganizationtype cascade");
-            jdbcConnection.close();
-        } finally {
-            jdbcConnection.close();
-        }
     }
 
     private long createNewPerson() {
@@ -698,9 +680,7 @@ public class ResearchOrganizationClientTest {
         UpdateRequest.ResearchOrganization updatePayloadWrapper = new UpdateRequest.ResearchOrganization();
 
         ResearchOrganization updatePayload = retrieve(response.getId());
-        CD status = new CD();
-        status.setCode("ACTIVE");
-        updatePayload.setStatus(status);
+        updatePayload.getName().getPart().get(0).setValue("NewName");
 
         updatePayloadWrapper.setResearchOrganization(updatePayload);
         updateRequest.setResearchOrganization(updatePayloadWrapper);
@@ -708,12 +688,14 @@ public class ResearchOrganizationClientTest {
         UpdateResponse updateResponse = port.update(updateRequest);
         assertNotNull(updateResponse);
 
+        ResearchOrganization retrieved = retrieve(response.getId());
+        assertEquals("NewName", retrieved.getName().getPart().get(0).getValue());
     }
 
 
 
-    @Test
-    public void testUpdateStatus() throws EntityValidationFaultFaultMessage {
+    @Test(expected = NullifiedRoleFaultFaultMessage.class)
+    public void testUpdateStatus() throws EntityValidationFaultFaultMessage, NullifiedRoleFaultFaultMessage {
         //create an instance in the pending state
         ResearchOrganization payload = generateNewResearchOrganization();
 
@@ -734,11 +716,15 @@ public class ResearchOrganizationClientTest {
 
         UpdateStatusRequest.StatusCode statusCode = new UpdateStatusRequest.StatusCode();
         statusCode.setCd( new Cd() );
-        statusCode.getCd().setCode("ACTIVE");
+        statusCode.getCd().setCode("NULLIFIED");
         updateStatusRequest.setStatusCode(statusCode);
 
         UpdateStatusResponse updateStatusResponse = port.updateStatus(updateStatusRequest);
         assertNotNull(updateStatusResponse);
+
+        retrieve(response.getId());
+
+
     }
 
     @Test
@@ -806,6 +792,16 @@ public class ResearchOrganizationClientTest {
         typeCode.setCode(defaultType.getCode());
         payload.setTypeCode(typeCode);
 
+        Address address = new Address();
+        address.setStreetAddressLine("123 Elm St");
+        address.setCityOrMunicipality("Herndon");
+        address.setStateOrProvince("VA");
+        address.setPostalCode("20171");
+        address.setCountry(USA);
+
+        Ad ad = AddressConverter.SimpleConverter.convertToAd(address);
+        payload.setPostalAddress(new DSETAD());
+        payload.getPostalAddress().getItem().add(ADTransformer.INSTANCE.toXml(ad));
 
         return payload;
     }

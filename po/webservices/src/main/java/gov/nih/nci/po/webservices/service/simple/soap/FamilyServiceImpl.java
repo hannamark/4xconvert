@@ -11,6 +11,7 @@ import gov.nih.nci.po.webservices.types.Family;
 import gov.nih.nci.po.webservices.types.FamilyMemberRelationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
 @WebService(serviceName = "FamilyService", portName = "FamilyServicePort", wsdlLocation = "/FamilyService.wsdl", 
 targetNamespace = "http://soap.simple.service.webservices.po.nci.nih.gov/family/", 
 endpointInterface = "gov.nih.nci.po.webservices.service.simple.soap.family.FamilyService")
+@Service("familyServiceSimpleSoapEndpoint")
 public class FamilyServiceImpl implements FamilyService {
 
     @Autowired

@@ -1,77 +1,70 @@
 package gov.nih.nci.po.webservices.service.bridg;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.extensions.Cd;
 import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
-import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.PersonCR;
-import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.util.PoHibernateUtil;
-import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.po.util.ServiceLocator;
-import gov.nih.nci.po.util.TestServiceLocator;
 import gov.nih.nci.po.webservices.convert.bridg.PersonTransformer;
+import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
+import gov.nih.nci.po.webservices.service.bo.PersonBoService;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
+import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.math.RandomUtils;
-import org.hibernate.criterion.Restrictions;
 import org.iso._21090.CD;
-import org.iso._21090.II;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
+import javax.jms.JMSException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
-public class PersonServiceImplTest {
+public class PersonServiceImplTest extends AbstractEndpointTest {
 
     PersonServiceImpl service;
-    ServiceLocator oldLocator;
-    DbTestUtil dbTestUtil;
+    PersonBoService personBoService;
 
     @Before
-    public void setup() {
-        service = new PersonServiceImpl();
-
-        oldLocator = PoRegistry.getInstance().getServiceLocator();
-        PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
-
-        dbTestUtil = DbTestUtil.getInstance();
-        dbTestUtil.setup();
-
-        PoHibernateUtil.getCurrentSession().save( ModelUtils.getDefaultCountry() );
+    public void setup() throws CSException {
+        setupServiceLocator();
+        personBoService = mock(PersonBoService.class);
+        service = new PersonServiceImpl(personBoService);
     }
 
-    @After
-    public void tearDown() {
-        PoRegistry.getInstance().setServiceLocator(oldLocator);
-        dbTestUtil.tearDown();
-    }
 
     @Test
-    public void testCreate() throws EntityValidationException {
+    public void testCreate() throws EntityValidationException, JMSException {
 
         Person person = getBasicPerson();
 
@@ -79,31 +72,17 @@ public class PersonServiceImplTest {
 
         assertNotNull(createdId);
         assertNotNull(Long.parseLong(createdId.getExtension()));
+
+        verify(personBoService).create(any(gov.nih.nci.po.data.bo.Person.class));
     }
 
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreateWithId() throws EntityValidationException {
-
-        Person person = getBasicPerson();
-
-        II id = new II();
-        id.setRoot(IdConverter.PERSON_ROOT);
-        id.setIdentifierName(IdConverter.PERSON_IDENTIFIER_NAME);
-        id.setExtension("123");
-
-        person.setIdentifier(id);
-
-        service.create(person);
-
-    }
 
     @Test(expected = EntityValidationException.class)
-    public void testCreateInvalidEntity() throws EntityValidationException {
-        //Should not be able to create it with a null name
+    public void testCreateInvalidEntity() throws EntityValidationException, JMSException {
         Person person = getBasicPerson();
-        person.setName(null);
+
+        when(personBoService.create(isA(gov.nih.nci.po.data.bo.Person.class)))
+                .thenThrow(new EntityValidationException(Collections.EMPTY_MAP));
 
         service.create(person);
     }
@@ -120,30 +99,34 @@ public class PersonServiceImplTest {
         List<Person> results = service.query(person, new LimitOffset().withLimit(100).withOffset(10));
         assertTrue(results.isEmpty());
 
+        verify(personBoService).search(any(SearchCriteria.class), any(PageSortParams.class));
+
     }
 
     @Test
     public void testQueryWithNoPagination() throws TooManyResultsException {
 
-        EntityStatus[] nonactive = new EntityStatus[]{EntityStatus.NULLIFIED, EntityStatus.PENDING, EntityStatus.INACTIVE};
+        when(personBoService.search(isA(SearchCriteria.class), isA(PageSortParams.class)))
+                .thenAnswer(
+                        new Answer<Object>() {
+                            @Override
+                            public List<gov.nih.nci.po.data.bo.Person> answer(InvocationOnMock invocation) throws Throwable {
+                                PageSortParams pageSortParams = (PageSortParams) invocation.getArguments()[1];
+                                Validate.isTrue(pageSortParams.getIndex() == 0);
+                                Validate.isTrue(pageSortParams.getPageSize() == Integer.MAX_VALUE);
 
-        //stage 5 active, 5 non-active instances
-        for(int i=0; i<5; i++ ) {
+                                List<gov.nih.nci.po.data.bo.Person> results = new ArrayList<gov.nih.nci.po.data.bo.Person>();
 
-            gov.nih.nci.po.data.bo.Person activeInstance = ModelUtils.getBasicPerson();
-            activeInstance.setStatusCode(EntityStatus.ACTIVE);
-            PoHibernateUtil.getCurrentSession().save(activeInstance);
+                                for (int i = 0; i < 5; i++) {
+                                    results.add(new gov.nih.nci.po.data.bo.Person());
+                                }
 
-            gov.nih.nci.po.data.bo.Person nonActiveInstance = ModelUtils.getBasicPerson();
-            nonActiveInstance.setStatusCode(nonactive[i % nonactive.length]);
-            PoHibernateUtil.getCurrentSession().save(nonActiveInstance);
-
-        }
-
-        PoHibernateUtil.getCurrentSession().flush();
+                                return results;
+                            }
+                        }
+                );
 
         Person person = new Person();
-        person.setStatusCode(new CD().withCode(EntityStatus.ACTIVE.toString()));
 
         List<Person> results = service.query(person, new LimitOffset().withLimit(0).withOffset(0));
         assertEquals(5, results.size());
@@ -155,19 +138,23 @@ public class PersonServiceImplTest {
     @Test(expected = TooManyResultsException.class)
     public void testQueryWithTooManyHits() throws TooManyResultsException {
 
-        //stage 5 active
-        for(int i=0; i<=service.getMaxHitsPerRequest(); i++ ) {
-
-            gov.nih.nci.po.data.bo.Person activeInstance = ModelUtils.getBasicPerson();
-            activeInstance.setStatusCode(EntityStatus.ACTIVE);
-            PoHibernateUtil.getCurrentSession().save(activeInstance);
-
-        }
-
-        PoHibernateUtil.getCurrentSession().flush();
-
         Person person = new Person();
-        person.setStatusCode(new CD().withCode(EntityStatus.ACTIVE.toString()));
+
+        when(personBoService.search(isA(SearchCriteria.class), isA(PageSortParams.class)))
+            .thenAnswer(
+                    new Answer<Object>() {
+                        @Override
+                        public List<gov.nih.nci.po.data.bo.Person> answer(InvocationOnMock invocation) throws Throwable {
+                            List<gov.nih.nci.po.data.bo.Person> results = new ArrayList<gov.nih.nci.po.data.bo.Person>();
+
+                            for (int i=0; i<=service.getMaxHitsPerRequest(); i++) {
+                                results.add(new gov.nih.nci.po.data.bo.Person());
+                            }
+
+                            return results;
+                        }
+                    }
+            );
 
         service.query(person, new LimitOffset().withLimit(0).withOffset(0));
 
@@ -175,33 +162,38 @@ public class PersonServiceImplTest {
 
     @Test
     public void testQueryWithPagination() throws TooManyResultsException {
-
-        EntityStatus[] nonactive = new EntityStatus[]{EntityStatus.NULLIFIED, EntityStatus.PENDING, EntityStatus.INACTIVE};
-
-        for(int i=0; i<5; i++ ) {
-            gov.nih.nci.po.data.bo.Person activeInstance = ModelUtils.getBasicPerson();
-            activeInstance.setStatusCode(EntityStatus.ACTIVE);
-            PoHibernateUtil.getCurrentSession().save(activeInstance);
-
-            gov.nih.nci.po.data.bo.Person nonActiveInstance = ModelUtils.getBasicPerson();
-            nonActiveInstance.setStatusCode(nonactive[i % nonactive.length]);
-            PoHibernateUtil.getCurrentSession().save(nonActiveInstance);
-
+        final List<gov.nih.nci.po.data.bo.Person> entities = new ArrayList<gov.nih.nci.po.data.bo.Person>();
+        for (int i = 0; i < 5; i++) {
+            entities.add(new gov.nih.nci.po.data.bo.Person());
         }
 
-        PoHibernateUtil.getCurrentSession().flush();
+        when(personBoService.search(isA(SearchCriteria.class), isA(PageSortParams.class)))
+                .thenAnswer(
+                        new Answer<Object>() {
+                            @Override
+                            public List<gov.nih.nci.po.data.bo.Person> answer(InvocationOnMock invocation) throws Throwable {
+                                PageSortParams pageSortParams = (PageSortParams) invocation.getArguments()[1];
+
+
+                                int startIndex = pageSortParams.getIndex();
+                                int endIndex = Math.min(entities.size(), startIndex + pageSortParams.getPageSize());
+
+
+                                return entities.subList(startIndex,endIndex);
+                            }
+                        }
+                );
 
         Person person = new Person();
-        person.setStatusCode(new CD().withCode(EntityStatus.ACTIVE.toString()));
 
         List<Person> results = service.query(person, new LimitOffset().withLimit(2).withOffset(0));
-        assertEquals(results.size(), 2);
+        assertEquals(2, results.size());
 
         results = service.query(person, new LimitOffset().withLimit(2).withOffset(2));
-        assertEquals(results.size(), 2);
+        assertEquals(2, results.size());
 
         results = service.query(person, new LimitOffset().withLimit(2).withOffset(4));
-        assertEquals(results.size(), 1);
+        assertEquals(1, results.size());
     }
 
     @Test(expected = ServiceException.class)
@@ -215,92 +207,33 @@ public class PersonServiceImplTest {
 
 
     @Test
-    public void testUpdate() throws DtoTransformException, EntityValidationException {
+    public void testUpdate() throws DtoTransformException, EntityValidationException, JMSException {
         //stage an instance
-        gov.nih.nci.po.data.bo.Person instance = ModelUtils.getBasicPerson();
-        PoHibernateUtil.getCurrentSession().save(instance);
-        PoHibernateUtil.getCurrentSession().flush();
-
-        //update it
-        PersonDTO dto = (PersonDTO) PoXsnapshotHelper.createSnapshot(instance);
-        Person xml = PersonTransformer.INSTANCE.toXml(dto);
-
-        //change the address
-        Address address = ModelUtils.getBasicAddress();
-        address.setStreetAddressLine("12345 " + RandomStringUtils.randomAlphabetic(5) + " Street NE");
-
-        Ad newAddress = AddressConverter.SimpleConverter.convertToAd(address);
-        xml.setPostalAddress(ADTransformer.INSTANCE.toXml(newAddress));
+        Person xml = new Person();
 
         service.update(xml);
 
-        //retrieve it
-        PersonCR cr = (PersonCR) PoHibernateUtil.getCurrentSession().createCriteria(PersonCR.class)
-            .add(Restrictions.eq("target.id", instance.getId())).uniqueResult();
+        verify(personBoService).curate(any(gov.nih.nci.po.data.bo.Person.class));
 
-        //compare it
-        assertEquals(address.getStreetAddressLine(), cr.getPostalAddress().getStreetAddressLine());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testUpdateWithNullId() throws DtoTransformException, EntityValidationException {
-        //stage an instance
-        gov.nih.nci.po.data.bo.Person instance = ModelUtils.getBasicPerson();
-
-        //update it
-        PersonDTO dto = (PersonDTO) PoXsnapshotHelper.createSnapshot(instance);
-        Person xml = PersonTransformer.INSTANCE.toXml(dto);
-
-        //change the address
-        Address address = ModelUtils.getBasicAddress();
-        address.setStreetAddressLine("12345 " + RandomStringUtils.randomAlphabetic(5) + " Street NE");
-
-        Ad newAddress = AddressConverter.SimpleConverter.convertToAd(address);
-        xml.setPostalAddress(ADTransformer.INSTANCE.toXml(newAddress));
-
-        service.update(xml);
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testUpdateStatusImproperly() throws DtoTransformException, EntityValidationException {
-        //stage an instance
-        gov.nih.nci.po.data.bo.Person instance = ModelUtils.getBasicPerson();
-
-        //update it
-        PersonDTO dto = (PersonDTO) PoXsnapshotHelper.createSnapshot(instance);
-        Person xml = PersonTransformer.INSTANCE.toXml(dto);
-
-        //change the status
-        CD newStatusCode = new CD();
-        newStatusCode.setCode(EntityStatus.ACTIVE.toString());
-        xml.setStatusCode(newStatusCode);
-
-        service.update(xml);
-
-    }
 
     @Test
-    public void testUpdateStatus() throws EntityValidationException {
+    public void testUpdateStatus() throws EntityValidationException, JMSException {
         //stage an instance
         gov.nih.nci.po.data.bo.Person instance = ModelUtils.getBasicPerson();
-        instance.setStatusCode(EntityStatus.PENDING);
-        PoHibernateUtil.getCurrentSession().save(instance);
-        PoHibernateUtil.getCurrentSession().flush();
+        instance.setId(1L);
 
         Ii ii = new IdConverter.PersonIdConverter().convertToIi(instance.getId());
 
         Id instanceId = IdTransformer.INSTANCE.toXml(ii);
 
         //update it
+        when(personBoService.getById(1L)).thenReturn(instance);
+
         service.updateStatus(instanceId, new Cd().withCode(EntityStatus.ACTIVE.toString()));
-
-        //retrieve it
-        PersonCR cr = (PersonCR) PoHibernateUtil.getCurrentSession().createCriteria(PersonCR.class)
-                .add(Restrictions.eq("target.id", instance.getId())).uniqueResult();
-
-        //verify
-        assertEquals(EntityStatus.ACTIVE, cr.getStatusCode());
+        verify(personBoService).curate(any(gov.nih.nci.po.data.bo.Person.class));
     }
 
     @Test(expected = NullPointerException.class)
@@ -330,17 +263,28 @@ public class PersonServiceImplTest {
     @Test
     public void testValidateWithErrors() {
         Person person = getBasicPerson();
-        person.getTelecomAddress().getItem().clear();
+
+        when(personBoService.validate(any(gov.nih.nci.po.data.bo.Person.class)))
+                .thenAnswer( new Answer<Map<String, String[]>>() {
+                    @Override
+                    public Map<String, String[]> answer(InvocationOnMock invocation) throws Throwable {
+                        Map<String, String[]> result = new HashMap<String, String[]>();
+                        result.put("foo", new String[]{"bar"});
+                        return result;
+                    }
+                });
+
         StringMap errors = service.validate(person);
-        assertEquals("Expected errors were not detected.", errors.getEntry().size(), 1);
+        assertEquals("Expected errors were not detected.", 1, errors.getEntry().size());
     }
 
 
     @Test
     public void testGetById() throws NullifiedEntityException {
         gov.nih.nci.po.data.bo.Person person = ModelUtils.getBasicPerson();
-        PoHibernateUtil.getCurrentSession().save(person);
-        PoHibernateUtil.getCurrentSession().flush();
+        person.setId(1L);
+
+        when(personBoService.getById(1L)).thenReturn(person);
 
         Ii ii = new IdConverter.PersonIdConverter().convertToIi(person.getId());
         Id instanceId = IdTransformer.INSTANCE.toXml(ii);
@@ -350,12 +294,14 @@ public class PersonServiceImplTest {
 
     @Test (expected = NullifiedEntityException.class)
     public void testGetNullifiedById() throws NullifiedEntityException {
-        gov.nih.nci.po.data.bo.Person activeInstance = ModelUtils.getBasicPerson();
-        activeInstance.setStatusCode(EntityStatus.NULLIFIED);
-        PoHibernateUtil.getCurrentSession().save(activeInstance);
-        PoHibernateUtil.getCurrentSession().flush();
+        gov.nih.nci.po.data.bo.Person nullifiedPerson = ModelUtils.getBasicPerson();
+        nullifiedPerson.setId(1L);
+        nullifiedPerson.setStatusCode(EntityStatus.NULLIFIED);
 
-        Ii ii = new IdConverter.PersonIdConverter().convertToIi(activeInstance.getId());
+        when(personBoService.getById(1L)).thenReturn(nullifiedPerson);
+
+
+        Ii ii = new IdConverter.PersonIdConverter().convertToIi(nullifiedPerson.getId());
         Id instanceId = IdTransformer.INSTANCE.toXml(ii);
         service.getById(instanceId);
     }

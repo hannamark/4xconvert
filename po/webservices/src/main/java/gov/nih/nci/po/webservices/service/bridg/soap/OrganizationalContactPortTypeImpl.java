@@ -35,6 +35,7 @@ import gov.nih.nci.po.webservices.service.bridg.soap.organizationalcontact.TooMa
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -49,9 +50,10 @@ import java.util.List;
         endpointInterface =
                 "gov.nih.nci.po.webservices.service.bridg.soap.organizationalcontact.OrganizationalContactPortType"
 )
+@Service("organizationalContactBridgSoapEndpointImpl")
 public class OrganizationalContactPortTypeImpl implements OrganizationalContactPortType {
     @Autowired
-    @Qualifier("organizationalContactBridgServiceImpl")
+    @Qualifier("organizationalContactBridgService")
     private RoleService<OrganizationalContact> service;
 
     @Override

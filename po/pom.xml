@@ -48,7 +48,9 @@
         <hibernate.annotations.commons.version>3.1.0.GA</hibernate.annotations.commons.version>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
         
-        <mockito.version>1.9.5</mockito.version>        
+        <mockito.version>1.9.5</mockito.version>
+        <powermock.version>1.5.5</powermock.version>
+
         <jackson.version>1.9.13</jackson.version>
 
         <csm.sync.frequency.seconds>240</csm.sync.frequency.seconds>

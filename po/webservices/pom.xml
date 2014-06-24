@@ -26,6 +26,7 @@
         <jboss.jmx.password>admin</jboss.jmx.password>
         <jboss.system.jars.path>${jboss.home}</jboss.system.jars.path>
 
+
         <version.jboss.as>7.2.0.Final</version.jboss.as>
         <version.jboss.spec.javaee.6.0>3.0.2.Final</version.jboss.spec.javaee.6.0>
 	</properties>
@@ -105,7 +106,7 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.transaction</groupId>
@@ -198,10 +199,19 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
             <version>2.0.8</version>
             <scope>compile</scope>
         </dependency>
+
+
+
 
 		<dependency> <!-- added to resolve cxf issue -->
 			<groupId>xerces</groupId>
@@ -265,6 +275,27 @@
         </dependency>
 
         <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-classloading-objenesis</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <version>1.8.0.10</version>
@@ -292,6 +323,7 @@
             <version>${version.jboss.as}</version>
             <scope>provided</scope>
         </dependency>
+
 
 
     </dependencies>
@@ -340,6 +372,8 @@
 							<exclude>gov/nih/nci/po/webservices/service/simple/soap/family/*</exclude> <!-- generated -->
 							<exclude>gov/nih/nci/po/webservices/service/simple/soap/*</exclude> <!-- for SOAP based ServiceImpl -->
 							<exclude>gov/nih/nci/po/webservices/service/simple/rest/*</exclude> <!-- for REST based ServiceImpl -->
+                            <exclude>gov/nih/nci/po/webservices/service/exception/**</exclude>
+                            <exclude>gov/nih/nci/po/webservices/util/PoWSUtil.class</exclude>
 
                             <!-- Ignore SOAP Endpoints and generated sources for Bridg services-->
                             <exclude>gov/nih/nci/po/webservices/service/bridg/soap/**</exclude>
@@ -368,7 +402,8 @@
 						<exclude>gov/nih/nci/po/webservices/service/simple/soap/organization/*.java</exclude><!--generated -->
 						<exclude>gov/nih/nci/po/webservices/service/simple/soap/family/*.java</exclude><!--generated -->
                         <exclude>gov/nih/nci/po/webservices/service/bridg/soap/*.java</exclude>
-                        
+
+
                         <!-- CPD violations -->
                         <exclude>**/PatientTransformer.java</exclude>
                         <exclude>**/AbstractRoleConverter.java</exclude>
@@ -592,6 +627,9 @@
                                     </resource>
                                     <resource>
                                         <directory>${project.basedir}/src/main/resources</directory>
+                                        <excludes>
+                                            <exclude>gridauth.properties</exclude>
+                                        </excludes>
                                     </resource>
                                 </resources>
                             </classpath>

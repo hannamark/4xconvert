@@ -2209,7 +2209,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
 
         // now update the HCP details
         // update the status
-        hcp.setStatus(EntityStatus.INACTIVE);
+        hcp.setStatus(EntityStatus.NULLIFIED);
         // update the address
         hcp.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2234,7 +2234,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertTrue(retPerRol instanceof HealthCareProvider);
 
         // check for update Status
-        checkHCPStatusInDB(retPerRol.getId(), "SUSPENDED");
+        checkHCPStatusInDB(retPerRol.getId(), "NULLIFIED");
         // check for the updated address details
         checkPersonRoleAddressDetails(hcp, retPerRol);
         // check for the updated contact details
@@ -2254,7 +2254,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
 
         // now update the HCP details
         // update the status
-        hcp.setStatus(EntityStatus.INACTIVE);
+        hcp.setStatus(EntityStatus.NULLIFIED);
         // update the address
         hcp.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2280,7 +2280,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertTrue(retPerRol instanceof HealthCareProvider);
 
         // check for update Status
-        checkHCPStatusInDB(retPerRol.getId(), "SUSPENDED");
+        checkHCPStatusInDB(retPerRol.getId(), "NULLIFIED");
         // check for the updated address details
         checkPersonRoleAddressDetails(hcp, retPerRol);
         // check for the updated contact details
@@ -2300,7 +2300,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
 
         // now update the OrgContact details
         // update the status
-        oc.setStatus(EntityStatus.INACTIVE);
+        oc.setStatus(EntityStatus.NULLIFIED);
         // update the address
         oc.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2325,7 +2325,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertTrue(retPerRol instanceof OrganizationalContact);
 
         // check for update Status
-        checkOrgContactStatusInDB(retPerRol.getId(), "SUSPENDED");
+        checkOrgContactStatusInDB(retPerRol.getId(), "NULLIFIED");
         // check for the updated address details
         checkPersonRoleAddressDetails(oc, retPerRol);
         // check for the updated contact details
@@ -2345,7 +2345,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
 
         // now update the OrgContact details
         // update the status
-        oc.setStatus(EntityStatus.INACTIVE);
+        oc.setStatus(EntityStatus.NULLIFIED);
         // update the address
         oc.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2371,7 +2371,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertTrue(retPerRol instanceof OrganizationalContact);
 
         // check for update Status
-        checkOrgContactStatusInDB(retPerRol.getId(), "SUSPENDED");
+        checkOrgContactStatusInDB(retPerRol.getId(), "NULLIFIED");
         // check for the updated address details
         checkPersonRoleAddressDetails(oc, retPerRol);
         // check for the updated contact details
@@ -2391,7 +2391,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
 
         // now update the OrgContact details
         // update the status
-        crs.setStatus(EntityStatus.INACTIVE);
+        crs.setStatus(EntityStatus.NULLIFIED);
         // update the address
         crs.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2416,7 +2416,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertTrue(retPerRol instanceof ClinicalResearchStaff);
 
         // check for update Status
-        checkCRSStatusInDB(retPerRol.getId(), "SUSPENDED");
+        checkCRSStatusInDB(retPerRol.getId(), "NULLIFIED");
         // check for the updated address details
         checkPersonRoleAddressDetails(crs, retPerRol);
         // check for the updated contact details
@@ -2436,7 +2436,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
 
         // now update the OrgContact details
         // update the status
-        crs.setStatus(EntityStatus.INACTIVE);
+        crs.setStatus(EntityStatus.NULLIFIED);
         // update the address
         crs.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -2462,7 +2462,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertTrue(retPerRol instanceof ClinicalResearchStaff);
 
         // check for update Status
-        checkCRSStatusInDB(retPerRol.getId(), "SUSPENDED");
+        checkCRSStatusInDB(retPerRol.getId(), "NULLIFIED");
         // check for the updated address details
         checkPersonRoleAddressDetails(crs, retPerRol);
         // check for the updated contact details
@@ -2995,8 +2995,6 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         // create HCP first
         HealthCareProvider hcp = (HealthCareProvider) createPerRole(getHealthCareProviderObj());
 
-        // now change the status to InActive
-        hcp.setStatus(EntityStatus.INACTIVE);
 
         // get the Role by the DB Id.
         String url = psUrl + "/role/HealthCareProvider/" + hcp.getId()
@@ -3005,13 +3003,13 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         HttpPut putReq = new HttpPut(url);
         putReq.addHeader("content-type", TXT_PLAIN);
         putReq.addHeader("Accept", TXT_PLAIN);
-        StringEntity personEntity = new StringEntity("INACTIVE");
+        StringEntity personEntity = new StringEntity("NULLIFIED");
         putReq.setEntity(personEntity);
         HttpResponse response = httpClient.execute(putReq);
 
         assertEquals(200, getReponseCode(response));
         assertEquals(TXT_PLAIN, getResponseContentType(response));
-        assertEquals("INACTIVE", getResponseMessage(response));
+        assertEquals("NULLIFIED", getResponseMessage(response));
     }
 
     /**
@@ -3022,8 +3020,6 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         // create OC first
         OrganizationalContact oc = (OrganizationalContact) createPerRole(getOrganizationalContactObj());
 
-        // now change the status to InActive
-        oc.setStatus(EntityStatus.INACTIVE);
 
         // get the Role by the DB Id.
         String url = psUrl + "/role/OrganizationalContact/" + oc.getId()
@@ -3032,13 +3028,13 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         HttpPut putReq = new HttpPut(url);
         putReq.addHeader("content-type", TXT_PLAIN);
         putReq.addHeader("Accept", TXT_PLAIN);
-        StringEntity personEntity = new StringEntity("INACTIVE");
+        StringEntity personEntity = new StringEntity("NULLIFIED");
         putReq.setEntity(personEntity);
         HttpResponse response = httpClient.execute(putReq);
 
         assertEquals(200, getReponseCode(response));
         assertEquals(TXT_PLAIN, getResponseContentType(response));
-        assertEquals("INACTIVE", getResponseMessage(response));
+        assertEquals("NULLIFIED", getResponseMessage(response));
     }
 
     /**
@@ -3049,8 +3045,6 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         // create CRS first
         ClinicalResearchStaff crs = (ClinicalResearchStaff) createPerRole(getClinicalResearchStaffObj());
 
-        // now change the status to InActive
-        crs.setStatus(EntityStatus.INACTIVE);
 
         // get the Role by the DB Id.
         String url = psUrl + "/role/ClinicalResearchStaff/" + crs.getId()
@@ -3059,13 +3053,13 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         HttpPut putReq = new HttpPut(url);
         putReq.addHeader("content-type", TXT_PLAIN);
         putReq.addHeader("Accept", TXT_PLAIN);
-        StringEntity personEntity = new StringEntity("INACTIVE");
+        StringEntity personEntity = new StringEntity("NULLIFIED");
         putReq.setEntity(personEntity);
         HttpResponse response = httpClient.execute(putReq);
 
         assertEquals(200, getReponseCode(response));
         assertEquals(TXT_PLAIN, getResponseContentType(response));
-        assertEquals("INACTIVE", getResponseMessage(response));
+        assertEquals("NULLIFIED", getResponseMessage(response));
     }
 
     /**
@@ -3112,14 +3106,14 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         HttpPut putReq = new HttpPut(url);
         putReq.addHeader("content-type", TXT_PLAIN);
         putReq.addHeader("Accept", TXT_PLAIN);
-        StringEntity personEntity = new StringEntity("PENDING");
+        StringEntity personEntity = new StringEntity("INACTIVE");
         putReq.setEntity(personEntity);
         HttpResponse response = httpClient.execute(putReq);
 
         assertEquals(500, getReponseCode(response));
         assertEquals(TXT_PLAIN, getResponseContentType(response));
         assertTrue(getResponseMessage(response).contains(
-                "Illegal curation transition from ACTIVE to PENDING"));
+                "Illegal curation transition from PENDING to SUSPENDED"));
     }
 
     private Person createActivePerson() throws Exception {

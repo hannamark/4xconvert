@@ -51,7 +51,6 @@ import org.iso._21090.CD;
 import org.iso._21090.DSETII;
 import org.iso._21090.II;
 import org.iso._21090.NullFlavor;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -165,13 +164,14 @@ public class IdentifiedOrganizationClientTest {
         );
     }
 
-    @After
+    //@After
     public void cleanup() throws SQLException {
         Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
         try {
             Statement statement = jdbcConnection.createStatement();
             statement.executeUpdate("truncate identifiedorganization cascade");
-            statement.executeUpdate("truncate organization cascade");
+            //statement.executeUpdate("truncate organizationcr cascade");
+            //statement.executeUpdate("delete from organization where id > 4");
             statement.executeUpdate("truncate person cascade");
         } finally {
             jdbcConnection.close();
@@ -272,12 +272,6 @@ public class IdentifiedOrganizationClientTest {
         return Long.parseLong(response.getId().getExtension());
     }
 
-
-
-    @After
-    public void teardown() {
-
-    }
 
     private String getServiceUrlString() {
         return "http://" + TstProperties.getServerHostname() + ":"

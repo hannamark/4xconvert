@@ -76,7 +76,6 @@ import javax.xml.ws.WebServiceException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -193,19 +192,6 @@ public class HealthCareFacilityClientTest {
 
     }
 
-    @After
-    public void cleanup() throws SQLException {
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate healthcarefacility cascade");
-            statement.executeUpdate("truncate healthcarefacilitycr cascade");
-            statement.executeUpdate("truncate organization cascade");
-            statement.executeUpdate("truncate person cascade");
-        } finally {
-            jdbcConnection.close();
-        }
-    }
 
     private long createNewPerson() {
 
@@ -684,9 +670,7 @@ public class HealthCareFacilityClientTest {
         UpdateRequest.HealthCareFacility updatePayloadWrapper = new UpdateRequest.HealthCareFacility();
 
         HealthCareFacility updatePayload = retrieve(response.getId());
-        CD status = new CD();
-        status.setCode("ACTIVE");
-        updatePayload.setStatus(status);
+        updatePayload.getName().getPart().get(0).setValue("NewName");
 
         updatePayloadWrapper.setHealthCareFacility(updatePayload);
         updateRequest.setHealthCareFacility(updatePayloadWrapper);
@@ -694,12 +678,15 @@ public class HealthCareFacilityClientTest {
         UpdateResponse updateResponse = port.update(updateRequest);
         assertNotNull(updateResponse);
 
+        HealthCareFacility retrievedPayload = retrieve(response.getId());
+        assertEquals("NewName", updatePayload.getName().getPart().get(0).getValue());
+
     }
 
 
 
-    @Test
-    public void testUpdateStatus() throws EntityValidationFaultFaultMessage {
+    @Test(expected = NullifiedRoleFaultFaultMessage.class)
+    public void testUpdateStatus() throws EntityValidationFaultFaultMessage, NullifiedRoleFaultFaultMessage {
         //create an instance in the pending state
         HealthCareFacility payload = generateNewHealthCareFacility();
 
@@ -720,11 +707,15 @@ public class HealthCareFacilityClientTest {
 
         UpdateStatusRequest.StatusCode statusCode = new UpdateStatusRequest.StatusCode();
         statusCode.setCd( new Cd() );
-        statusCode.getCd().setCode("ACTIVE");
+        statusCode.getCd().setCode("NULLIFIED");
         updateStatusRequest.setStatusCode(statusCode);
 
         UpdateStatusResponse updateStatusResponse = port.updateStatus(updateStatusRequest);
         assertNotNull(updateStatusResponse);
+
+        retrieve(response.getId());
+
+
     }
 
     @Test

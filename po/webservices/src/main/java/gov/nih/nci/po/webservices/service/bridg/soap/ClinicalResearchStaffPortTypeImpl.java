@@ -36,6 +36,7 @@ import gov.nih.nci.po.webservices.service.bridg.soap.clinicalresearchstaff.TooMa
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -52,10 +53,10 @@ import java.util.List;
         endpointInterface =
                 "gov.nih.nci.po.webservices.service.bridg.soap.clinicalresearchstaff.ClinicalResearchStaffPortType"
 )
+@Service("clinicalResearchStaffBridgSoapEndpointImpl")
 public class ClinicalResearchStaffPortTypeImpl implements ClinicalResearchStaffPortType {
-
     @Autowired
-    @Qualifier("clinicalResearchStaffBridgServiceImpl")
+    @Qualifier("clinicalResearchStaffBridgService")
     private RoleService<ClinicalResearchStaff> service;
 
     @Override

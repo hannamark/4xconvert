@@ -5,32 +5,30 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Person;
 import gov.nih.nci.coppa.po.StringMap;
-import gov.nih.nci.coppa.po.StringMapType;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.extensions.Cd;
 import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
-import gov.nih.nci.po.data.bo.AbstractPerson;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.PersonCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonSortCriterion;
-import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.po.webservices.convert.bridg.PersonTransformer;
+import gov.nih.nci.po.webservices.service.bo.PersonBoService;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
 import org.apache.commons.lang.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -39,12 +37,24 @@ import java.util.Map;
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
+@Service("personBridgService")
 public class PersonServiceImpl implements EntityService<Person> {
 
     private static final int DEFAULT_MAX_HITS = 500;
 
+    private final PersonBoService personBoService;
+
     private int maxHitsPerRequest = DEFAULT_MAX_HITS;
 
+
+    /**
+     * Constructor.
+     * @param boService The BO service to delegate to.
+     */
+    @Autowired
+    public PersonServiceImpl(PersonBoService boService) {
+        this.personBoService = boService;
+    }
 
     @Override
     public Id create(Person definition) throws EntityValidationException {
@@ -55,7 +65,7 @@ public class PersonServiceImpl implements EntityService<Person> {
 
             gov.nih.nci.po.data.bo.Person bo = (gov.nih.nci.po.data.bo.Person) PoXsnapshotHelper.createModel(dto);
 
-            long id = PoRegistry.getPersonService().create(bo);
+            long id = personBoService.create(bo);
 
             Ii ii = new IdConverter.ClinicalResearchStaffIdConverter().convertToIi(id);
 
@@ -99,7 +109,7 @@ public class PersonServiceImpl implements EntityService<Person> {
                     PersonSortCriterion.PERSON_LASTNAME,
                     false);
 
-            List<gov.nih.nci.po.data.bo.Person> boHits = PoRegistry.getPersonService().search(criteria, pageSortParams);
+            List<gov.nih.nci.po.data.bo.Person> boHits = personBoService.search(criteria, pageSortParams);
 
             //convert to bridge service model
             results.addAll(generateList(boHits));
@@ -118,28 +128,14 @@ public class PersonServiceImpl implements EntityService<Person> {
     @Override
     public void update(Person definition) throws EntityValidationException {
         try {
-            Long id = Long.parseLong(definition.getIdentifier().getExtension());
-            Validate.notNull(id, "Can not update entity with null id.");
-
             PersonDTO dto = PersonTransformer.INSTANCE.toDto(definition);
 
-            gov.nih.nci.po.data.bo.Person instance = PoRegistry.getPersonService().getById(id);
+            gov.nih.nci.po.data.bo.Person instance = (gov.nih.nci.po.data.bo.Person) PoXsnapshotHelper.createModel(dto);
 
-
-            PersonCR cr = new PersonCR(instance);
-            dto.setIdentifier(null);
-            PoXsnapshotHelper.copyIntoAbstractModel(dto, cr, AbstractPerson.class);
-
-            if (cr.getStatusCode() != instance.getStatusCode()) {
-                throw new IllegalArgumentException(
-                        "use updateOrganizationStatus() to update the statusCode property");
-            }
-            cr.setStatusCode(instance.getStatusCode());
-
-            cr.setId(null);
-            PoRegistry.getInstance().getServiceLocator().getPersonCRService().create(cr);
-
+            personBoService.curate(instance);
         } catch (DtoTransformException e) {
+            throw new ServiceException(e);
+        } catch (JMSException e) {
             throw new ServiceException(e);
         }
     }
@@ -152,35 +148,32 @@ public class PersonServiceImpl implements EntityService<Person> {
         Validate.notNull(id, "Can not update entity with null id.");
 
         gov.nih.nci.po.data.bo.Person instance
-                = PoRegistry.getPersonService().getById(id);
+                = personBoService.getById(id);
 
         EntityStatus newStatus = EntityStatus.valueOf(statusCode.getCode());
 
-        PersonDTO dto = (PersonDTO) PoXsnapshotHelper.createSnapshot(instance);
+        instance.setStatusCode(newStatus);
 
-        PersonCR cr = new PersonCR(instance);
-        PoXsnapshotHelper.copyIntoAbstractModel(dto, cr, AbstractPerson.class);
-        cr.setId(null);
-        cr.setStatusCode(newStatus);
-        PoRegistry.getInstance().getServiceLocator().getPersonCRService().create(cr);
+        try {
+            personBoService.curate(instance);
+        } catch (JMSException e) {
+            throw new ServiceException(e);
+        }
     }
 
     @Override
+    @SuppressWarnings("CPD-START")
     public StringMap validate(Person definition) {
-        StringMap result = new StringMap();
+        StringMap result = null;
+
         try {
             PersonDTO dto = PersonTransformer.INSTANCE.toDto(definition);
 
             gov.nih.nci.po.data.bo.Person instance = (gov.nih.nci.po.data.bo.Person) PoXsnapshotHelper.createModel(dto);
 
-            Map<String, String[]> errors = PoRegistry.getPersonService().validate(instance);
+            Map<String, String[]> errors = personBoService.validate(instance);
 
-            for (Map.Entry<String, String[]> entry : errors.entrySet()) {
-                StringMapType.Entry errorEntry = new StringMapType.Entry();
-                errorEntry.setKey(entry.getKey());
-                errorEntry.getValue().addAll(Arrays.asList(entry.getValue()));
-                result.getEntry().add(errorEntry);
-            }
+            result = StringMapHelper.toStringMap(errors);
 
         } catch (DtoTransformException e) {
             throw new ServiceException(e);
@@ -193,7 +186,7 @@ public class PersonServiceImpl implements EntityService<Person> {
 
     @Override
     public Person getById(Id id) throws NullifiedEntityException {
-        gov.nih.nci.po.data.bo.Person hit = PoRegistry.getPersonService().getById(Long.parseLong(id.getExtension()));
+        gov.nih.nci.po.data.bo.Person hit = personBoService.getById(Long.parseLong(id.getExtension()));
 
         if (hit != null) {
             validateNotNullified(hit);
@@ -212,6 +205,7 @@ public class PersonServiceImpl implements EntityService<Person> {
 
         return result;
     }
+
 
 
     private void validateNotNullified(gov.nih.nci.po.data.bo.Person item)
@@ -271,6 +265,7 @@ public class PersonServiceImpl implements EntityService<Person> {
     /**
      * @return The maximum number of hits that can be returned by a query.
      */
+    @SuppressWarnings("CPD-END")
     public int getMaxHitsPerRequest() {
         return maxHitsPerRequest;
     }

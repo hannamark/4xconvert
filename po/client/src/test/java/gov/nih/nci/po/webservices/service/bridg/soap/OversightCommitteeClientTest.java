@@ -56,7 +56,6 @@ import org.iso._21090.DSETII;
 import org.iso._21090.II;
 import org.iso._21090.NullFlavor;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -66,7 +65,6 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -192,36 +190,6 @@ public class OversightCommitteeClientTest {
                 TstProperties.getWebserviceUsername(),
                 TstProperties.getWebservicePassword()
         );
-
-    }
-
-    @After
-    public void cleanup() throws SQLException {
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate oversightcommittee cascade");
-            statement.executeUpdate("truncate oversightcommitteecr cascade");
-            statement.executeUpdate("truncate organization cascade");
-            statement.executeUpdate("truncate person cascade");
-        } finally {
-            jdbcConnection.close();
-        }
-    }
-
-    @AfterClass
-    public static void cleanupClass() throws SQLException {
-        PoRegistry.getInstance().setServiceLocator(oldLocator);
-
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate oversightcommitteetype cascade");
-            jdbcConnection.close();
-        } finally {
-            jdbcConnection.close();
-        }
-
 
     }
 
@@ -685,6 +653,18 @@ public class OversightCommitteeClientTest {
 
     @Test
     public void testUpdate() throws EntityValidationFaultFaultMessage, NullifiedRoleFaultFaultMessage {
+
+        Transaction t = PoHibernateUtil.getCurrentSession().beginTransaction();
+        OversightCommitteeType newType = new OversightCommitteeType("NewCommitteeType");
+
+        try {
+            PoHibernateUtil.getCurrentSession().save(newType);
+            t.commit();
+        } catch(Exception e) {
+            t.rollback();
+            throw new RuntimeException(e);
+        }
+
         //create an instace in the pending state
         OversightCommittee payload = generateNewOversightCommittee();
         CreateRequest request = new CreateRequest();
@@ -698,16 +678,21 @@ public class OversightCommitteeClientTest {
         UpdateRequest updateRequest = new UpdateRequest();
         UpdateRequest.OversightCommittee updatePayloadWrapper = new UpdateRequest.OversightCommittee();
 
+
+
+
+
         OversightCommittee updatePayload = retrieve(response.getId());
-        CD status = new CD();
-        status.setCode("ACTIVE");
-        updatePayload.setStatus(status);
+        updatePayload.getTypeCode().setCode(newType.getCode());
 
         updatePayloadWrapper.setOversightCommittee(updatePayload);
         updateRequest.setOversightCommittee(updatePayloadWrapper);
 
         UpdateResponse updateResponse = port.update(updateRequest);
         assertNotNull(updateResponse);
+
+        OversightCommittee retrieved = retrieve(response.getId());
+        assertEquals("NewCommitteeType", retrieved.getTypeCode().getCode());
 
     }
 
@@ -806,6 +791,13 @@ public class OversightCommitteeClientTest {
         CD typeCode = new CD();
         typeCode.setCode(defaultType.getCode());
         payload.setTypeCode(typeCode);
+
+        Address address = new Address();
+        address.setStreetAddressLine("123 Elm St");
+        address.setCityOrMunicipality("Herndon");
+        address.setStateOrProvince("VA");
+        address.setPostalCode("20171");
+        address.setCountry(USA);
 
 
         return payload;

@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -44,6 +45,7 @@ import java.util.List;
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength",
         "PMD.CyclomaticComplexity" })
+@Service("personServiceSimpleRestEndpoint")
 public class PersonRESTService {
 
     private static final QName PERSON_QNAME = new QName(

@@ -65,8 +65,6 @@ import org.iso._21090.DSETTEL;
 import org.iso._21090.II;
 import org.iso._21090.NullFlavor;
 import org.iso._21090.TEL;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -77,7 +75,6 @@ import javax.xml.ws.WebServiceException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -206,35 +203,6 @@ public class OrganizationalContactClientTest {
         );
     }
 
-    @After
-    public void cleanup() throws SQLException {
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate organizationalcontact cascade");
-            statement.executeUpdate("truncate organizationalcontactcr cascade");
-            statement.executeUpdate("truncate organization cascade");
-            statement.executeUpdate("truncate person cascade");
-        } finally {
-            jdbcConnection.close();
-        }
-    }
-
-
-    @AfterClass
-    public static void cleanupClass() throws SQLException {
-
-        PoRegistry.getInstance().setServiceLocator(oldLocator);
-
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate organizationalcontacttype cascade");
-        } finally {
-            jdbcConnection.close();
-        }
-
-    }
 
     private long createNewPerson() {
 
@@ -330,12 +298,6 @@ public class OrganizationalContactClientTest {
         return Long.parseLong(response.getId().getExtension());
     }
 
-
-
-    @After
-    public void teardown() {
-
-    }
 
     private String getServiceUrlString() {
         return "http://" + TstProperties.getServerHostname() + ":"

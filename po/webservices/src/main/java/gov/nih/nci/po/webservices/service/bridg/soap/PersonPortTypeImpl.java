@@ -31,6 +31,7 @@ import gov.nih.nci.po.webservices.service.bridg.soap.person.TooManyResultsFaultF
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -45,10 +46,11 @@ import java.util.List;
         endpointInterface =
                 "gov.nih.nci.po.webservices.service.bridg.soap.person.PersonPortType"
 )
+@Service("personBridgSoapEndpointImpl")
 public class PersonPortTypeImpl implements PersonPortType {
 
    @Autowired
-   @Qualifier("personBridgServiceImpl")
+   @Qualifier("personBridgService")
    private EntityService<Person> service;
 
 

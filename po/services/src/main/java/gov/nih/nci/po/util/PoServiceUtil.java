@@ -1,22 +1,20 @@
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * This is a Utility class for po-service project which has common utility
@@ -100,10 +98,9 @@ public class PoServiceUtil {
     public static String getUserName(User user) {
         String name = "";
         if (user != null) {
-            name = StringUtils
-                    .isBlank(user.getLastName() + user.getFirstName()) ? CsmUserUtil
-                    .getGridIdentityUsername(user.getLoginName()) : (user
-                    .getFirstName() + " " + user.getLastName());
+            name = StringUtils.isBlank(user.getLastName()) && StringUtils.isBlank(user.getFirstName())
+                    ? CsmUserUtil.getGridIdentityUsername(user.getLoginName())
+                        : (user.getFirstName() + " " + user.getLastName());
         }
         return name;
     }
@@ -147,5 +144,7 @@ public class PoServiceUtil {
         // User didn't Overrode/Create the entity, so its not Editable
         return isEditable; 
     }
+
+
 
 }

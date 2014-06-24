@@ -44,7 +44,6 @@ import org.iso._21090.ENPN;
 import org.iso._21090.ENXP;
 import org.iso._21090.EntityNamePartType;
 import org.iso._21090.TELPhone;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,13 +53,13 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -102,19 +101,10 @@ public class PersonClientTest {
                 TstProperties.getWebserviceUsername(),
                 TstProperties.getWebservicePassword()
         );
+
+
     }
 
-    @After
-    public void cleanup() throws SQLException {
-        Connection jdbcConnection = DataGeneratorUtil.getJDBCConnection();
-        try {
-            Statement statement = jdbcConnection.createStatement();
-            statement.executeUpdate("truncate person cascade");
-            statement.executeUpdate("truncate personcr cascade");
-        } finally {
-            jdbcConnection.close();
-        }
-    }
 
     public static String getServiceUrlString() {
         return "http://" + TstProperties.getServerHostname() + ":"
@@ -477,16 +467,27 @@ public class PersonClientTest {
 
         //search for males
         QueryRequest queryRequest = new QueryRequest();
-        Person example = PersonBuilder.newInstance().withGender(PersonSex.MALE).build();
+        Person example = PersonBuilder.newInstance().withFirstName("Jane").withGender(PersonSex.FEMALE).build();
         queryRequest.setPerson(new QueryRequest.Person());
         queryRequest.getPerson().setPerson(example);
 
         QueryResponse queryResponse = port.query(queryRequest);
 
-        assertEquals(2, queryResponse.getPerson().size());
+        assertTrue(2<=queryResponse.getPerson().size());
 
         for (Person retrievedPerson : queryResponse.getPerson()) {
-            assertEquals("male", retrievedPerson.getSexCode().getCode());
+
+            String firstName = null;
+
+            for (ENXP part : retrievedPerson.getName().getPart()) {
+                if (part.getType() == EntityNamePartType.GIV) {
+                    firstName = part.getValue();
+                    break;
+                }
+            }
+
+            assertEquals("Jane", firstName);
+            assertEquals("female", retrievedPerson.getSexCode().getCode());
         }
 
     }

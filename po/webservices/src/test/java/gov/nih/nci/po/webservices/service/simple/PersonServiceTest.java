@@ -1,16 +1,25 @@
 package gov.nih.nci.po.webservices.service.simple;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import gov.nih.nci.po.data.bo.IdentifiedPerson;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.webservices.convert.simple.AbstractConverterTest;
+import gov.nih.nci.po.service.PersonSearchDTO;
+import gov.nih.nci.po.util.PoServiceUtil;
+import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
+import gov.nih.nci.po.webservices.service.bo.PersonBoService;
+import gov.nih.nci.po.webservices.service.bridg.ModelUtils;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
+import gov.nih.nci.po.webservices.types.Address;
 import gov.nih.nci.po.webservices.types.ClinicalResearchStaff;
 import gov.nih.nci.po.webservices.types.Contact;
 import gov.nih.nci.po.webservices.types.ContactType;
+import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
 import gov.nih.nci.po.webservices.types.EntityStatus;
 import gov.nih.nci.po.webservices.types.HealthCareProvider;
 import gov.nih.nci.po.webservices.types.OrganizationalContact;
@@ -22,16 +31,29 @@ import gov.nih.nci.po.webservices.types.PersonSearchResult;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.jms.JMSException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * This is the test class for PersonServiceImpl.
@@ -39,14 +61,29 @@ import static org.mockito.Mockito.when;
  * @author Rohit Gupta
  * 
  */
-public class PersonServiceTest extends AbstractConverterTest {
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(PoServiceUtil.class)
+public class PersonServiceTest extends AbstractEndpointTest {
 
     private gov.nih.nci.po.webservices.types.Person person;
 
     private gov.nih.nci.po.webservices.types.PersonSearchCriteria psCriteria;
 
+    private Organization ctep;
+    private PersonService perService;
+    private PersonBoService personBoService;
+
+
     @Before
     public void setUp() {
+        setupServiceLocator();
+        when(serviceLocator.getCountryService().getCountryByAlpha3("USA")).thenReturn(ModelUtils.getDefaultCountry());
+
+        ctep = ModelUtils.getBasicOrganization();
+        ctep.setId(1L);
+        mockStatic(PoServiceUtil.class);
+        PowerMockito.when(PoServiceUtil.getCtepOrganization()).thenReturn(ctep);
+
         // setting up gov.nih.nci.po.webservices.types.Person
         person = new Person();
         person.setPrefix("Mr.");
@@ -60,20 +97,35 @@ public class PersonServiceTest extends AbstractConverterTest {
         person.setCtepId("25879");
         person.getContact().addAll(getJaxbContactList());
 
-        super.setUpMockObjects();
-
         psCriteria = new PersonSearchCriteria();
         psCriteria.setFirstName("Rohit");
         psCriteria.setOffset(0);
         psCriteria.setLimit(5);
+
+
+        personBoService = mock(PersonBoService.class);
+        perService = new PersonServiceImpl(personBoService);
+
     }
 
     /**
      * Testcase for PersonService-createPerson
      */
     @Test
-    public void testCreatePerson() {
-        PersonService perService = new PersonServiceImpl();
+    public void testCreatePerson() throws JMSException, EntityValidationException {
+        when(personBoService.create(any(gov.nih.nci.po.data.bo.Person.class), anyString()))
+                .thenReturn(1L);
+
+        when(personBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.Person>() {
+            @Override
+            public gov.nih.nci.po.data.bo.Person answer(InvocationOnMock invocation) throws Throwable {
+                gov.nih.nci.po.data.bo.Person result = new gov.nih.nci.po.data.bo.Person();
+                result.setId(1L);
+                result.setStatusCode(gov.nih.nci.po.data.bo.EntityStatus.PENDING);
+                return result;
+            }
+        });
+
         Person retPerson = perService.createPerson(person);
         Assert.assertNotNull(retPerson);
         Assert.assertEquals(1l, retPerson.getId().longValue());
@@ -84,7 +136,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testCreateNullPerson() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.createPerson(null);
     }
 
@@ -97,17 +149,13 @@ public class PersonServiceTest extends AbstractConverterTest {
     @Test(expected = ServiceException.class)
     public void testCreatePersonEntityValidationExceptionScenario()
             throws EntityValidationException, JMSException {
-        PersonServiceLocal personServiceLocal = mock(PersonServiceLocal.class);
-        when(serviceLocator.getPersonService()).thenReturn(personServiceLocal);
-        when(
-                personServiceLocal
-                        .create(isA(gov.nih.nci.po.data.bo.Person.class),isA(String.class)))
+        when(personBoService.create(isA(gov.nih.nci.po.data.bo.Person.class), isA(String.class)))
                 .thenThrow(
                         new EntityValidationException(
                                 "EntityValidationException Occured while creating the person.",
                                 null));
 
-        PersonService perService = new PersonServiceImpl();
+        
         Contact phoneContact = new Contact();
         phoneContact.setType(ContactType.PHONE);
         phoneContact.setValue("703@35@234");
@@ -122,11 +170,7 @@ public class PersonServiceTest extends AbstractConverterTest {
     @Test(expected = ServiceException.class)
     public void testCreatePersonForExceptionScenario()
             throws EntityValidationException, JMSException {
-        PersonService perService = new PersonServiceImpl();
-        PersonServiceLocal personServiceLocal = mock(PersonServiceLocal.class);
-        when(serviceLocator.getPersonService()).thenReturn(personServiceLocal);
-        when(
-                personServiceLocal
+        when(personBoService
                         .create(isA(gov.nih.nci.po.data.bo.Person.class),isA(String.class)))
                 .thenThrow(
                         new ServiceException(
@@ -143,26 +187,30 @@ public class PersonServiceTest extends AbstractConverterTest {
             throws EntityValidationException, JMSException {
 
         // Mock setup for getting Organization
-        OrganizationServiceLocal orgSerLocal = mock(OrganizationServiceLocal.class);
-        when(serviceLocator.getOrganizationService()).thenReturn(orgSerLocal);
-        when(
-                orgSerLocal.search(isA(OrganizationSearchCriteria.class),
-                        isA(PageSortParams.class))).thenReturn(null);
+        PowerMockito.when(PoServiceUtil.getCtepOrganization()).thenReturn(null);
 
-        PersonService perService = new PersonServiceImpl();
         perService.createPerson(person);
     }
+
 
     /**
      * Testcase for PersonService-updatePerson
      */
     @Test
-    public void testUpdatePerson() {
-        PersonService perService = new PersonServiceImpl();
+    public void testUpdatePerson() throws JMSException, EntityValidationException {
+        
         person.setId(1l);
+
+        gov.nih.nci.po.data.bo.Person currentPersonInstance = ModelUtils.getBasicPerson();
+        currentPersonInstance.setId(1L);
+
+        when(personBoService.getById(1L)).thenReturn(currentPersonInstance);
+
+
         Person retPerson = perService.updatePerson(person);
         Assert.assertNotNull(retPerson);
         Assert.assertEquals(1l, retPerson.getId().longValue());
+        verify(personBoService).curate(any(gov.nih.nci.po.data.bo.Person.class), anyString());
     }
 
     /**
@@ -170,7 +218,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testUpdateNullPerson() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.updatePerson(null);
     }
 
@@ -179,7 +227,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testUpdatePersonForNullDBId() {
-        PersonService perService = new PersonServiceImpl();
+        
         person.setId(null);
         perService.updatePerson(person);
     }
@@ -192,18 +240,18 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testUpdatePersonForExceptionScenario() throws JMSException, EntityValidationException {
-        PersonService perService = new PersonServiceImpl();
-        PersonServiceLocal personServiceLocal = mock(PersonServiceLocal.class);
-        when(serviceLocator.getPersonService()).thenReturn(personServiceLocal);
-        doThrow(
+
+         doThrow(
                 new ServiceException(
                         "Exception Occured while updating the Person.")).when(
-                personServiceLocal).curate(
-                isA(gov.nih.nci.po.data.bo.Person.class),isA(String.class));
+                personBoService).curate(isA(gov.nih.nci.po.data.bo.Person.class), anyString());
+
         Person per = new Person();
         per.setId(5l);
         per.setStatus(EntityStatus.ACTIVE);
         per.setCtepId("12345");
+
+        
         perService.updatePerson(per);
     }
 
@@ -221,7 +269,7 @@ public class PersonServiceTest extends AbstractConverterTest {
                 orgSerLocal.search(isA(OrganizationSearchCriteria.class),
                         isA(PageSortParams.class))).thenReturn(null);
 
-        PersonService perService = new PersonServiceImpl();
+        
         perService.updatePerson(person);
     }
 
@@ -229,13 +277,25 @@ public class PersonServiceTest extends AbstractConverterTest {
      * Testcase for PersonService-changePersonStatus
      */
     @Test
-    public void testChangePersonStatus() {
-        PersonService perService = new PersonServiceImpl();
+    public void testChangePersonStatus() throws JMSException, EntityValidationException {
+
+        when(personBoService.getById(1L))
+                .thenAnswer(new Answer<gov.nih.nci.po.data.bo.Person>() {
+                    @Override
+                    public gov.nih.nci.po.data.bo.Person answer(InvocationOnMock invocation) throws Throwable {
+                        gov.nih.nci.po.data.bo.Person result = new gov.nih.nci.po.data.bo.Person();
+                        result.setId(1L);
+                        result.setStatusCode(gov.nih.nci.po.data.bo.EntityStatus.ACTIVE);
+                        return result;
+                    }
+                });
+
         Person retPerson = perService.changePersonStatus(1l,
                 EntityStatus.ACTIVE);
         Assert.assertNotNull(retPerson);
         Assert.assertEquals(1l, retPerson.getId().longValue());
         Assert.assertEquals(EntityStatus.ACTIVE, retPerson.getStatus());
+        verify(personBoService).curate(any(gov.nih.nci.po.data.bo.Person.class));
     }
 
     /**
@@ -243,7 +303,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testChangePersonStatusForPersonNotFoundInDB() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.changePersonStatus(1002l, EntityStatus.ACTIVE);
     }
 
@@ -252,7 +312,18 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testGetPerson() {
-        PersonService perService = new PersonServiceImpl();
+
+        when(personBoService.getById(1L))
+                .thenAnswer(new Answer<gov.nih.nci.po.data.bo.Person>() {
+                    @Override
+                    public gov.nih.nci.po.data.bo.Person answer(InvocationOnMock invocation) throws Throwable {
+                        gov.nih.nci.po.data.bo.Person result = new gov.nih.nci.po.data.bo.Person();
+                        result.setId(1L);
+                        result.setStatusCode(gov.nih.nci.po.data.bo.EntityStatus.ACTIVE);
+                        return result;
+                    }
+                });
+
         Person retPerson = perService.getPerson(1l);
         Assert.assertNotNull(retPerson);
         Assert.assertEquals(1l, retPerson.getId().longValue());
@@ -263,12 +334,27 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testGetPersonsByCtepId() {
-        PersonService perService = new PersonServiceImpl();
+        final List<gov.nih.nci.po.data.bo.IdentifiedPerson> hits = new ArrayList<IdentifiedPerson>();
+        for (int i=0; i<2; i++) {
+            gov.nih.nci.po.data.bo.Person personInstance = ModelUtils.getBasicPerson();
+
+            gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
+
+            gov.nih.nci.po.data.bo.IdentifiedPerson identifiedPerson = new gov.nih.nci.po.data.bo.IdentifiedPerson();
+            identifiedPerson.setPlayer(personInstance);
+            identifiedPerson.setScoper(organization);
+
+            hits.add(identifiedPerson);
+        }
+
+        when(serviceLocator.getIdentifiedPersonService().search(any(SearchCriteria.class))).thenReturn(hits);
+
         Collection<Person> personList = perService.getPersonsByCtepId("12345");
         Assert.assertNotNull(personList);
-        Assert.assertTrue(personList.size() > 0);
+        Assert.assertEquals(2, personList.size());
 
         // Call it again & Mock will return 'null' -- added for code coverage
+        hits.clear();
         personList = perService.getPersonsByCtepId("12345");
         Assert.assertEquals(new ArrayList<Person>(), personList);
     }
@@ -278,10 +364,22 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testSearchPersons() {
-        PersonService perService = new PersonServiceImpl();
+
+        List<PersonSearchDTO> hits = new ArrayList<PersonSearchDTO>();
+        for (int i=0; i<2; i++) {
+            PersonSearchDTO dto = new PersonSearchDTO();
+            dto.setId(Long.valueOf(i));
+            dto.setStatusCode(EntityStatus.ACTIVE.value());
+            hits.add(dto);
+        }
+
+
+        when(personBoService.search(any(gov.nih.nci.po.service.PersonSearchCriteria.class), any(PageSortParams.class)))
+                .thenReturn(hits);
+
         List<PersonSearchResult> psrList = perService.searchPersons(psCriteria);
         Assert.assertNotNull(psrList);
-        Assert.assertTrue(psrList.size() > 0);
+        Assert.assertEquals(2, psrList.size());
     }
 
     /**
@@ -289,7 +387,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testSearchPersonsForNullCriteria() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.searchPersons(null);
     }
 
@@ -299,7 +397,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testSearchPersonsForEmptyCriteria() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.searchPersons(new PersonSearchCriteria());
     }
 
@@ -308,12 +406,10 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testSearchPersonsForNoPersonFound() {
-        PersonService perService = new PersonServiceImpl();
-        List<PersonSearchResult> psrList = perService.searchPersons(psCriteria);
-        Assert.assertTrue(psrList.size() > 0);
 
-        // Call it again & Mock will return 'null' -- added for code coverage
-        psrList = perService.searchPersons(psCriteria);
+        when(personBoService.search(any(gov.nih.nci.po.service.PersonSearchCriteria.class), any(PageSortParams.class)))
+                .thenReturn(Collections.EMPTY_LIST);
+        List<PersonSearchResult> psrList = perService.searchPersons(psCriteria);
         Assert.assertTrue(psrList.size() == 0);
     }
 
@@ -322,7 +418,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testCreateNullPersonRole() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.createPersonRole(null);
     }
 
@@ -332,7 +428,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testCreatePersonRoleIdPresent() {
-        PersonService perService = new PersonServiceImpl();
+        
         HealthCareProvider hcp = getHealthCareProvider();
         hcp.setId(1l);
         perService.createPersonRole(hcp);
@@ -343,9 +439,36 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testCreatePersonRoleHealthCareProvider() {
-        PersonService perService = new PersonServiceImpl();
+        HealthCareProvider healthCareProvider = getHealthCareProvider();
+
+        final gov.nih.nci.po.data.bo.Person personInstance = ModelUtils.getBasicPerson();
+        personInstance.setId(healthCareProvider.getPersonId());
+
+        final gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
+        organization.setId(healthCareProvider.getOrganizationId());
+
+        when(serviceLocator.getPersonService().getById(healthCareProvider.getPersonId()))
+                .thenReturn(personInstance);
+
+        when(serviceLocator.getOrganizationService().getById(healthCareProvider.getOrganizationId()))
+                .thenReturn(organization);
+
+        when(serviceLocator.getHealthCareProviderService().getById(anyLong()))
+                .thenAnswer( new Answer<gov.nih.nci.po.data.bo.HealthCareProvider>() {
+                    @Override
+                    public gov.nih.nci.po.data.bo.HealthCareProvider answer(InvocationOnMock invocation) throws Throwable {
+                        gov.nih.nci.po.data.bo.HealthCareProvider result = new gov.nih.nci.po.data.bo.HealthCareProvider();
+                        result.setPlayer(personInstance);
+                        result.setScoper(organization);
+                        result.setStatus(RoleStatus.PENDING);
+                        result.setId((Long) invocation.getArguments()[0]);
+                        return result;
+                    }
+                });
+
         PersonRole perRole = perService
-                .createPersonRole(getHealthCareProvider());
+                .createPersonRole(healthCareProvider);
+
         Assert.assertTrue(perRole instanceof HealthCareProvider);
         Assert.assertFalse(perRole instanceof ClinicalResearchStaff);
     }
@@ -355,9 +478,36 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testCreatePersonRoleClinicalResearchStaff() {
-        PersonService perService = new PersonServiceImpl();
+
+        ClinicalResearchStaff clinicalResearchStaff = getClinicalResearchStaff();
+
+        final gov.nih.nci.po.data.bo.Person personInstance = ModelUtils.getBasicPerson();
+        personInstance.setId(clinicalResearchStaff.getPersonId());
+
+        final gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
+        organization.setId(clinicalResearchStaff.getOrganizationId());
+
+        when(serviceLocator.getPersonService().getById(clinicalResearchStaff.getPersonId()))
+                .thenReturn(personInstance);
+
+        when(serviceLocator.getOrganizationService().getById(clinicalResearchStaff.getOrganizationId()))
+                .thenReturn(organization);
+
+        when(serviceLocator.getClinicalResearchStaffService().getById(anyLong()))
+                .thenAnswer( new Answer<gov.nih.nci.po.data.bo.ClinicalResearchStaff>() {
+                    @Override
+                    public gov.nih.nci.po.data.bo.ClinicalResearchStaff answer(InvocationOnMock invocation) throws Throwable {
+                        gov.nih.nci.po.data.bo.ClinicalResearchStaff result = new gov.nih.nci.po.data.bo.ClinicalResearchStaff();
+                        result.setPlayer(personInstance);
+                        result.setScoper(organization);
+                        result.setStatus(RoleStatus.PENDING);
+                        result.setId((Long) invocation.getArguments()[0]);
+                        return result;
+                    }
+                });
+
         PersonRole perRole = perService
-                .createPersonRole(getClinicalResearchStaff());
+                .createPersonRole(clinicalResearchStaff);
         Assert.assertTrue(perRole instanceof ClinicalResearchStaff);
     }
 
@@ -366,9 +516,39 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testCreatePersonRoleOrganizationalContact() {
-        PersonService perService = new PersonServiceImpl();
+
+        OrganizationalContact organizationalContact = getOrganizationalContact();
+
+        final gov.nih.nci.po.data.bo.Person personInstance = ModelUtils.getBasicPerson();
+        personInstance.setId(organizationalContact.getPersonId());
+
+        final gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
+        organization.setId(organizationalContact.getOrganizationId());
+
+        when(serviceLocator.getPersonService().getById(organizationalContact.getPersonId()))
+                .thenReturn(personInstance);
+
+        when(serviceLocator.getOrganizationService().getById(organizationalContact.getOrganizationId()))
+                .thenReturn(organization);
+
+        when(serviceLocator.getOrganizationalContactService().getById(anyLong()))
+                .thenAnswer( new Answer<gov.nih.nci.po.data.bo.OrganizationalContact>() {
+                    @Override
+                    public gov.nih.nci.po.data.bo.OrganizationalContact answer(InvocationOnMock invocation) throws Throwable {
+                        gov.nih.nci.po.data.bo.OrganizationalContact result = new gov.nih.nci.po.data.bo.OrganizationalContact();
+                        result.setPlayer(personInstance);
+                        result.setScoper(organization);
+                        result.setStatus(RoleStatus.PENDING);
+                        result.setId((Long) invocation.getArguments()[0]);
+                        result.setType(new gov.nih.nci.po.data.bo.OrganizationalContactType(
+                                OrganizationalContactType.RESPONSIBLE_PARTY.value()
+                        ));
+                        return result;
+                    }
+                });
+
         PersonRole perRole = perService
-                .createPersonRole(getOrganizationalContact());
+                .createPersonRole(organizationalContact);
         Assert.assertTrue(perRole instanceof OrganizationalContact);
     }
 
@@ -388,7 +568,7 @@ public class PersonServiceTest extends AbstractConverterTest {
                 hcplocal).curate(
                 isA(gov.nih.nci.po.data.bo.HealthCareProvider.class));
 
-        PersonService perService = new PersonServiceImpl();
+        
         perService.createPersonRole(getHealthCareProvider());
     }
 
@@ -397,7 +577,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testUpdateNullPersonRole() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.updatePersonRole(null);
     }
 
@@ -408,7 +588,7 @@ public class PersonServiceTest extends AbstractConverterTest {
     public void testUpdatePersonRoleForNullDBId() {
         HealthCareProvider hcp = getHealthCareProvider();
         hcp.setId(null);
-        PersonService perService = new PersonServiceImpl();
+        
         perService.updatePersonRole(hcp);
     }
 
@@ -417,9 +597,33 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testUpdatePersonRoleHealthCareProvider() {
-        PersonService perService = new PersonServiceImpl();
+        
         HealthCareProvider hcp = getHealthCareProvider();
         hcp.setId(1l);
+
+        final gov.nih.nci.po.data.bo.Person player = ModelUtils.getBasicPerson();
+        player.setId(hcp.getPersonId());
+
+        final Organization organization = ModelUtils.getBasicOrganization();
+        organization.setId(hcp.getOrganizationId());
+
+        when(serviceLocator.getPersonService().getById(hcp.getPersonId())).thenReturn(player);
+
+        when(serviceLocator.getHealthCareProviderService().getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.HealthCareProvider>() {
+            @Override
+            public gov.nih.nci.po.data.bo.HealthCareProvider answer(InvocationOnMock invocation) throws Throwable {
+
+
+                gov.nih.nci.po.data.bo.HealthCareProvider result = new gov.nih.nci.po.data.bo.HealthCareProvider();
+                result.setId(1L);
+                result.setStatus(RoleStatus.PENDING);
+                result.setPlayer(player);
+                result.setScoper(organization);
+                return result;
+            }
+        });
+
+
         PersonRole perRole = perService.updatePersonRole(hcp);
         Assert.assertNotNull(perRole);
     }
@@ -429,9 +633,34 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testUpdatePersonRoleClinicalResearchStaff() {
-        PersonService perService = new PersonServiceImpl();
+        
         ClinicalResearchStaff crs = getClinicalResearchStaff();
         crs.setId(123l);
+
+
+        final gov.nih.nci.po.data.bo.Person player = ModelUtils.getBasicPerson();
+        player.setId(crs.getPersonId());
+
+        final Organization organization = ModelUtils.getBasicOrganization();
+        organization.setId(crs.getOrganizationId());
+
+        when(serviceLocator.getPersonService().getById(crs.getPersonId())).thenReturn(player);
+
+        when(serviceLocator.getClinicalResearchStaffService().getById(123L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.ClinicalResearchStaff>() {
+            @Override
+            public gov.nih.nci.po.data.bo.ClinicalResearchStaff answer(InvocationOnMock invocation) throws Throwable {
+
+
+                gov.nih.nci.po.data.bo.ClinicalResearchStaff result = new gov.nih.nci.po.data.bo.ClinicalResearchStaff();
+                result.setId(1L);
+                result.setStatus(RoleStatus.PENDING);
+                result.setPlayer(player);
+                result.setScoper(organization);
+                return result;
+            }
+        });
+
+
         PersonRole perRole = perService.updatePersonRole(crs);
         Assert.assertNotNull(perRole);
         Assert.assertTrue(perRole instanceof ClinicalResearchStaff);
@@ -442,9 +671,37 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testUpdatePersonRoleOrganizationalContact() {
-        PersonService perService = new PersonServiceImpl();
-        OrganizationalContact oc = getOrganizationalContact();
+        
+        final OrganizationalContact oc = getOrganizationalContact();
         oc.setId(5639l);
+
+        final gov.nih.nci.po.data.bo.Person player = ModelUtils.getBasicPerson();
+        player.setId(oc.getPersonId());
+
+        final Organization organization = ModelUtils.getBasicOrganization();
+        organization.setId(oc.getOrganizationId());
+
+        when(serviceLocator.getPersonService().getById(oc.getPersonId())).thenReturn(player);
+
+        when(serviceLocator.getOrganizationalContactService().getById(5639L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.OrganizationalContact>() {
+            @Override
+            public gov.nih.nci.po.data.bo.OrganizationalContact answer(InvocationOnMock invocation) throws Throwable {
+
+
+                gov.nih.nci.po.data.bo.OrganizationalContact result = new gov.nih.nci.po.data.bo.OrganizationalContact();
+                result.setId(1L);
+                result.setStatus(RoleStatus.PENDING);
+                result.setPlayer(player);
+                result.setScoper(organization);
+                result.setType(
+                        new gov.nih.nci.po.data.bo.OrganizationalContactType(
+                                oc.getType().value()
+                        )
+                );
+                return result;
+            }
+        });
+
         PersonRole perRole = perService.updatePersonRole(oc);
         Assert.assertTrue(perRole instanceof OrganizationalContact);
     }
@@ -465,7 +722,7 @@ public class PersonServiceTest extends AbstractConverterTest {
                 hcplocal).curate(
                 isA(gov.nih.nci.po.data.bo.HealthCareProvider.class));
 
-        PersonService perService = new PersonServiceImpl();
+        
         HealthCareProvider hcp = getHealthCareProvider();
         hcp.setId(4546l);
         perService.updatePersonRole(hcp);
@@ -476,9 +733,34 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testGetPersonRolesByPersonId() {
-        PersonService perService = new PersonServiceImpl();
+
+        //mock role services
+        gov.nih.nci.po.data.bo.Person personInstance = ModelUtils.getBasicPerson();
+        personInstance.setId(1L);
+
+        when(personBoService.getById(1L)).thenReturn(personInstance);
+
+        gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
+        organization.setId(2L);
+
+        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(organization);
+
+        gov.nih.nci.po.data.bo.OrganizationalContact organizationalContact = ModelUtils.getBasicOrganizationalContact(
+                new gov.nih.nci.po.data.bo.OrganizationalContactType(
+                        OrganizationalContactType.RESPONSIBLE_PARTY.value()
+                )
+        );
+        organizationalContact.setScoper(organization);
+        organizationalContact.setPlayer(personInstance);
+        personInstance.getOrganizationalContacts().add(organizationalContact);
+
+        gov.nih.nci.po.data.bo.HealthCareProvider healthCareProvider = ModelUtils.getBasicHealthCareProvider();
+        healthCareProvider.setScoper(organization);
+        healthCareProvider.setPlayer(personInstance);
+        personInstance.getHealthCareProviders().add(healthCareProvider);
+
         Collection<PersonRole> perRoleList = perService.getPersonRolesByPersonId(1l);
-        Assert.assertNotNull(perRoleList);
+        assertEquals(2, perRoleList.size());
     }
 
     /**
@@ -486,7 +768,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testGetPersonRolesPersonNotFoundInDB() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.getPersonRolesByPersonId(1002l);
     }
 
@@ -495,7 +777,13 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testGetHCPPersonRole() {
-        PersonService perService = new PersonServiceImpl();
+        gov.nih.nci.po.data.bo.HealthCareProvider instance = ModelUtils.getBasicHealthCareProvider();
+        instance.getScoper().setId(2L);
+        instance.getPlayer().setId(3L);
+
+        when(serviceLocator.getHealthCareProviderService().getById(1L))
+                .thenReturn(instance);
+
         HealthCareProvider hcp = perService.getPersonRoleById(
                 HealthCareProvider.class, 1l);
         Assert.assertNotNull(hcp);
@@ -507,7 +795,14 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testGetCRSPersonRole() {
-        PersonService perService = new PersonServiceImpl();
+
+        gov.nih.nci.po.data.bo.ClinicalResearchStaff instance = ModelUtils.getBasicClinicalResearchStaff();
+        instance.getScoper().setId(2L);
+        instance.getPlayer().setId(3L);
+
+        when(serviceLocator.getClinicalResearchStaffService().getById(1L))
+                .thenReturn(instance);
+
         ClinicalResearchStaff crs = perService.getPersonRoleById(
                 ClinicalResearchStaff.class, 1l);
         Assert.assertNotNull(crs);
@@ -519,7 +814,19 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testGetOrgContactPersonRole() {
-        PersonService perService = new PersonServiceImpl();
+
+
+        gov.nih.nci.po.data.bo.OrganizationalContact instance = ModelUtils.getBasicOrganizationalContact(
+                new gov.nih.nci.po.data.bo.OrganizationalContactType(
+                        OrganizationalContactType.RESPONSIBLE_PARTY.value()
+                )
+        );
+        instance.getScoper().setId(2L);
+        instance.getPlayer().setId(3L);
+
+        when(serviceLocator.getOrganizationalContactService().getById(1L))
+                .thenReturn(instance);
+
         OrganizationalContact oc = perService.getPersonRoleById(
                 OrganizationalContact.class, 1l);
         Assert.assertNotNull(oc);
@@ -531,7 +838,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testGetNullPersonRole() {
-        PersonService perService = new PersonServiceImpl();
+        
         PersonRole hcp = perService.getPersonRoleById(null, 1l);
         Assert.assertNotNull(hcp);
     }
@@ -541,7 +848,13 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testChangeHCPPersonRoleStatus() {
-        PersonService perService = new PersonServiceImpl();
+        gov.nih.nci.po.data.bo.HealthCareProvider instance = ModelUtils.getBasicHealthCareProvider();
+        instance.getScoper().setId(2L);
+        instance.getPlayer().setId(3L);
+
+        when(serviceLocator.getHealthCareProviderService().getById(1L))
+                .thenReturn(instance);
+
         HealthCareProvider hcp = perService.changePersonRoleStatus(
                 HealthCareProvider.class, 1l, EntityStatus.ACTIVE);
         Assert.assertNotNull(hcp);
@@ -554,7 +867,13 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testChangeCRSPersonRoleStatus() {
-        PersonService perService = new PersonServiceImpl();
+        gov.nih.nci.po.data.bo.ClinicalResearchStaff instance = ModelUtils.getBasicClinicalResearchStaff();
+        instance.getScoper().setId(2L);
+        instance.getPlayer().setId(3L);
+
+        when(serviceLocator.getClinicalResearchStaffService().getById(1L))
+                .thenReturn(instance);
+
         ClinicalResearchStaff crs = perService.changePersonRoleStatus(
                 ClinicalResearchStaff.class, 1l, EntityStatus.ACTIVE);
         Assert.assertNotNull(crs);
@@ -567,7 +886,18 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test
     public void testChangeOrgConPersonRoleStatus() {
-        PersonService perService = new PersonServiceImpl();
+
+        gov.nih.nci.po.data.bo.OrganizationalContact instance = ModelUtils.getBasicOrganizationalContact(
+                new gov.nih.nci.po.data.bo.OrganizationalContactType(
+                        OrganizationalContactType.RESPONSIBLE_PARTY.value()
+                )
+        );
+        instance.getScoper().setId(2L);
+        instance.getPlayer().setId(3L);
+
+        when(serviceLocator.getOrganizationalContactService().getById(1L))
+                .thenReturn(instance);
+
         OrganizationalContact oc = perService.changePersonRoleStatus(
                 OrganizationalContact.class, 1l, EntityStatus.ACTIVE);
         Assert.assertNotNull(oc);
@@ -580,7 +910,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testChangePersonRoleStatusForNullPersonRole() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.changePersonRoleStatus(null, 1l, EntityStatus.ACTIVE);
     }
 
@@ -590,7 +920,7 @@ public class PersonServiceTest extends AbstractConverterTest {
      */
     @Test(expected = ServiceException.class)
     public void testChangePersonRoleStatusForPersonRoleNotFoundInDB() {
-        PersonService perService = new PersonServiceImpl();
+        
         perService.changePersonRoleStatus(HealthCareProvider.class, 54672l,
                 EntityStatus.ACTIVE);
     }
@@ -625,5 +955,60 @@ public class PersonServiceTest extends AbstractConverterTest {
         oc.getAddress().add(getJaxbAddressList().get(0));
         oc.getContact().addAll(getJaxbContactList());
         return oc;
+    }
+
+    protected List<gov.nih.nci.po.webservices.types.Address> getJaxbAddressList() {
+        List<gov.nih.nci.po.webservices.types.Address> addressList = new ArrayList<Address>();
+        gov.nih.nci.po.webservices.types.Address address1 = new Address();
+        address1.setLine1("13621 Leagcy Circle");
+        address1.setLine2("Apt G");
+        address1.setCity("Herndon");
+        address1.setStateOrProvince("VA");
+        address1.setCountry(CountryISO31661Alpha3Code.USA);
+        address1.setPostalcode("20171");
+
+        gov.nih.nci.po.webservices.types.Address address2 = new Address();
+        address2.setLine1("200 1st St");
+        address2.setLine2("SW # W4");
+        address2.setCity("Rochester");
+        address2.setStateOrProvince("MN");
+        address2.setCountry(CountryISO31661Alpha3Code.USA);
+        address2.setPostalcode("55901");
+
+        addressList.add(address1);
+        addressList.add(address2);
+
+        return addressList;
+    }
+
+    protected List<gov.nih.nci.po.webservices.types.Contact> getJaxbContactList() {
+        List<gov.nih.nci.po.webservices.types.Contact> contactList = new ArrayList<Contact>();
+
+        Contact emailContact = new Contact();
+        emailContact.setType(ContactType.EMAIL);
+        emailContact.setValue("my.email@mayoclinic.org");
+
+        Contact phoneContact = new Contact();
+        phoneContact.setType(ContactType.PHONE);
+        phoneContact.setValue("571-456-1245");
+
+        Contact faxContact = new Contact();
+        faxContact.setType(ContactType.FAX);
+        faxContact.setValue("571-456-1245");
+
+        Contact ttyContact = new Contact();
+        ttyContact.setType(ContactType.TTY);
+        ttyContact.setValue("571-123-1123");
+
+        Contact urlContact = new Contact();
+        urlContact.setType(ContactType.URL);
+        urlContact.setValue("http://www.mayoclinic.org");
+
+        contactList.add(emailContact);
+        contactList.add(phoneContact);
+        contactList.add(faxContact);
+        contactList.add(ttyContact);
+        contactList.add(urlContact);
+        return contactList;
     }
 }

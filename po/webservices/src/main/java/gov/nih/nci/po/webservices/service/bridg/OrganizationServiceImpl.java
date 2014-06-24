@@ -5,45 +5,55 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.StringMap;
-import gov.nih.nci.coppa.po.StringMapType;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.extensions.Cd;
 import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
-import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationSortCriterion;
-import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.po.webservices.convert.bridg.OrganizationTransformer;
+import gov.nih.nci.po.webservices.service.bo.OrganizationBoService;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import org.apache.commons.lang.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
+ *
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
+@Service("organizationBridgService")
 public class OrganizationServiceImpl implements EntityService<Organization> {
 
     private static final int DEFAULT_MAX_HITS = 500;
 
+    private final OrganizationBoService organizationBoService;
     private int maxHitsPerRequest = DEFAULT_MAX_HITS;
+
+    /**
+     * Constructor.
+     * @param boService The BO service to delegate to.
+     */
+    @Autowired
+    public OrganizationServiceImpl(OrganizationBoService boService) {
+        this.organizationBoService = boService;
+    }
 
     @Override
     public Id create(Organization definition) throws EntityValidationException {
@@ -55,7 +65,7 @@ public class OrganizationServiceImpl implements EntityService<Organization> {
             gov.nih.nci.po.data.bo.Organization bo
                     = (gov.nih.nci.po.data.bo.Organization) PoXsnapshotHelper.createModel(dto);
 
-            long id = PoRegistry.getOrganizationService().create(bo);
+            long id = organizationBoService.create(bo);
 
             Ii ii = new IdConverter.OrgIdConverter().convertToIi(id);
 
@@ -102,7 +112,7 @@ public class OrganizationServiceImpl implements EntityService<Organization> {
                     false);
 
             List<gov.nih.nci.po.data.bo.Organization> boHits
-                    = PoRegistry.getOrganizationService().search(criteria, pageSortParams);
+                    = organizationBoService.search(criteria, pageSortParams);
 
             //convert to bridge service model
             results.addAll(generateList(boHits));
@@ -127,22 +137,14 @@ public class OrganizationServiceImpl implements EntityService<Organization> {
 
             OrganizationDTO dto = OrganizationTransformer.INSTANCE.toDto(definition);
 
-            gov.nih.nci.po.data.bo.Organization instance = PoRegistry.getOrganizationService().getById(id);
+            gov.nih.nci.po.data.bo.Organization instance
+                    = (gov.nih.nci.po.data.bo.Organization) PoXsnapshotHelper.createModel(dto);
 
-            OrganizationCR cr = new OrganizationCR(instance);
-            dto.setIdentifier(null);
-            PoXsnapshotHelper.copyIntoAbstractModel(dto, cr, AbstractOrganization.class);
-            cr.setId(null);
+            organizationBoService.curate(instance);
 
-            if (cr.getStatusCode() != instance.getStatusCode()) {
-                throw new IllegalArgumentException(
-                        "use updateStatus() to update the statusCode property");
-            }
-
-            cr.setStatusCode(instance.getStatusCode());
-
-            PoRegistry.getInstance().getServiceLocator().getOrganizationCRService().create(cr);
         } catch (DtoTransformException e) {
+            throw new ServiceException(e);
+        } catch (JMSException e) {
             throw new ServiceException(e);
         }
     }
@@ -154,39 +156,33 @@ public class OrganizationServiceImpl implements EntityService<Organization> {
         Validate.notNull(id, "Can not update entity with null id.");
 
         gov.nih.nci.po.data.bo.Organization instance
-                = PoRegistry.getOrganizationService().getById(id);
+                = organizationBoService.getById(id);
 
         EntityStatus newStatus = EntityStatus.valueOf(statusCode.getCode());
 
-        OrganizationDTO dto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(instance);
+        instance.setStatusCode(newStatus);
 
-        OrganizationCR cr = new OrganizationCR(instance);
-        PoXsnapshotHelper.copyIntoAbstractModel(dto, cr, AbstractOrganization.class);
-        cr.setId(null);
-        cr.setStatusCode(newStatus);
-
-        PoRegistry.getInstance().getServiceLocator().getOrganizationCRService().create(cr);
+        try {
+            organizationBoService.curate(instance);
+        } catch (JMSException e) {
+            throw new ServiceException(e);
+        }
 
     }
 
     @Override
-    @SuppressWarnings("CPD-END")
     public StringMap validate(Organization definition) {
-        StringMap result = new StringMap();
+        StringMap result = null;
         try {
             OrganizationDTO dto = OrganizationTransformer.INSTANCE.toDto(definition);
 
             gov.nih.nci.po.data.bo.Organization instance
                     = (gov.nih.nci.po.data.bo.Organization) PoXsnapshotHelper.createModel(dto);
 
-            Map<String, String[]> errors = PoRegistry.getOrganizationService().validate(instance);
+            Map<String, String[]> errors = organizationBoService.validate(instance);
 
-            for (Map.Entry<String, String[]> entry : errors.entrySet()) {
-                StringMapType.Entry errorEntry = new StringMapType.Entry();
-                errorEntry.setKey(entry.getKey());
-                errorEntry.getValue().addAll(Arrays.asList(entry.getValue()));
-                result.getEntry().add(errorEntry);
-            }
+            result = StringMapHelper.toStringMap(errors);
+
 
         } catch (DtoTransformException e) {
             throw new ServiceException(e);
@@ -198,7 +194,7 @@ public class OrganizationServiceImpl implements EntityService<Organization> {
     @Override
     public Organization getById(Id id) throws NullifiedEntityException {
         gov.nih.nci.po.data.bo.Organization hit
-                = PoRegistry.getOrganizationService().getById(Long.parseLong(id.getExtension()));
+                = organizationBoService.getById(Long.parseLong(id.getExtension()));
 
         if (hit != null) {
             validateNotNullified(hit);
@@ -221,6 +217,7 @@ public class OrganizationServiceImpl implements EntityService<Organization> {
     /**
      * @return The maximum number of hits that can be returned by a query.
      */
+    @SuppressWarnings("CPD-END")
     public int getMaxHitsPerRequest() {
         return maxHitsPerRequest;
     }

@@ -603,5 +603,38 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>Dev</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.zeroturnaround</groupId>
+                        <artifactId>jrebel-maven-plugin</artifactId>
+                        <configuration>
+                            <generateDefaultElements>false</generateDefaultElements>
+                            <classpath>
+                                <resources>
+                                    <resource>
+                                        <directory>${project.build.directory}/classes</directory>
+                                        <includes>
+                                            <include>**/*.class</include>
+                                        </includes>
+                                    </resource>
+                                </resources>
+                            </classpath>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>generate-rebel-xml</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>

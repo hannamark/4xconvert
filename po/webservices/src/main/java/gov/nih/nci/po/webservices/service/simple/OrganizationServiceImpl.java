@@ -1,5 +1,8 @@
 package gov.nih.nci.po.webservices.service.simple;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
@@ -15,6 +18,7 @@ import gov.nih.nci.po.webservices.convert.simple.OrganizationConverter;
 import gov.nih.nci.po.webservices.convert.simple.OrganizationSearchConverter;
 import gov.nih.nci.po.webservices.convert.simple.OversightCommitteeConverter;
 import gov.nih.nci.po.webservices.convert.simple.ResearchOrganizationConverter;
+import gov.nih.nci.po.webservices.service.bo.OrganizationBoService;
 import gov.nih.nci.po.webservices.service.exception.EntityNotFoundException;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.po.webservices.types.EntityStatus;
@@ -26,21 +30,16 @@ import gov.nih.nci.po.webservices.types.OrganizationSearchResult;
 import gov.nih.nci.po.webservices.types.OversightCommittee;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.jms.JMSException;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import javax.jms.JMSException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * This is the OrganizationService implementation class.
@@ -49,7 +48,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
  * 
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
-@Service("orgServImpl")
+@Service("simpleOrganizationService")
 public class OrganizationServiceImpl implements OrganizationService {
 
     private static final Logger LOG = Logger
@@ -59,6 +58,18 @@ public class OrganizationServiceImpl implements OrganizationService {
     private static final String CLASS_NULL_MSG = " as incoming Class is null.";
     private static final String RAW_TYPES = "rawtypes";
     private static final String UNCHECKED = "unchecked";
+
+    private final OrganizationBoService organizationBoService;
+
+    /**
+     * Constructor.
+     * @param organizationBoService The BO service to delegate to.
+     */
+    @Autowired
+    public OrganizationServiceImpl(OrganizationBoService organizationBoService) {
+        this.organizationBoService = organizationBoService;
+    }
+
 
     @Override
     public Organization createOrganization(Organization organization) {
@@ -78,7 +89,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             orgBo = oConverter.convertFromJaxbToBO(organization);
 
             // call the EJB service method to create the Organization
-            retOrgId = PoRegistry.getOrganizationService().create(orgBo);
+            retOrgId = organizationBoService.create(orgBo);
         } catch (EntityValidationException e) {
             LOG.error("Organization couldn't be created as data is invalid.", e);
             throw new ServiceException(
@@ -98,7 +109,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public Organization updateOrganization(Organization organization) {
         // validate the request data and get the existing org
-        gov.nih.nci.po.data.bo.Organization existOrgBo = validateUpdateOrgReqAndGetExistingOrg(organization);
+        validateUpdateOrgReqAndGetExistingOrg(organization);
 
         gov.nih.nci.po.data.bo.Organization inOrgBo = null;
         try {
@@ -107,11 +118,13 @@ public class OrganizationServiceImpl implements OrganizationService {
                     .get(OrganizationConverter.class);
             inOrgBo = oConverter.convertFromJaxbToBO(organization);
 
-            // handle the Organization Alias
-            handleOrgNameAndAliases(existOrgBo, inOrgBo); // PO-7506
-
             // call the EJB service method to update the Organization
-            PoRegistry.getOrganizationService().curate(inOrgBo);
+            organizationBoService.curate(inOrgBo);
+        } catch (ServiceException e) {
+            LOG.error(
+                    "Exception occured while updating the organization having Id "
+                            + organization.getId() + ".", e);
+            throw e;
         } catch (Exception e) {
             LOG.error(
                     "Exception occured while updating the organization having Id "
@@ -130,8 +143,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             EntityStatus status) {
 
         // get the OrganizationBO for given organizationID
-        gov.nih.nci.po.data.bo.Organization orgBo = PoRegistry
-                .getOrganizationService().getById(organizationID);
+        gov.nih.nci.po.data.bo.Organization orgBo = organizationBoService.getById(organizationID);
         if (orgBo == null) {
             LOG.error("Couldn't update the Organization Status for organizationID "
                     + organizationID + ORG_NOT_FOUND_IN_DB_MSG);
@@ -145,7 +157,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                     .valueOf(status.value()));
 
             // call the EJB service method to update Organization status
-            PoRegistry.getOrganizationService().curate(orgBo);
+            organizationBoService.curate(orgBo);
         } catch (Exception e) {
             LOG.error(
                     "Exception occured while updating the Status for organizationID "
@@ -162,8 +174,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public Organization getOrganization(long organizationID) {
         // get the BO Organization for given organizationID
-        gov.nih.nci.po.data.bo.Organization orgBo = PoRegistry
-                .getOrganizationService().getById(organizationID);
+        gov.nih.nci.po.data.bo.Organization orgBo = organizationBoService.getById(organizationID);
 
         // Convert to get the corresponding JaxB object & then return it
         OrganizationConverter oConverter = Converters
@@ -188,6 +199,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         gov.nih.nci.po.service.OrganizationSearchCriteria osCriteriaBo = osConverter
                 .convertOSCFromJaxbToBO(osCriteria);
 
+
+
         try {
             // check that the search criteria is valid
             osCriteriaBo.isValid();
@@ -205,8 +218,7 @@ public class OrganizationServiceImpl implements OrganizationService {
                 getDynamicSortCriteria());
 
         // call the EJB service method to search the Organizations
-        List<OrganizationSearchDTO> osDtoList = PoRegistry
-                .getOrganizationService().search(osCriteriaBo, pageSortParams);
+        List<OrganizationSearchDTO> osDtoList = organizationBoService.search(osCriteriaBo, pageSortParams);
 
         if (CollectionUtils.isNotEmpty(osDtoList)) {
             // Convert it to JaxB object & add in the list
@@ -240,12 +252,12 @@ public class OrganizationServiceImpl implements OrganizationService {
             // get the corresponding BO (to be passed in 'curate' method)
             gov.nih.nci.po.data.bo.Correlation orgRoleBo = convertJaxbRoleToBO(orgRole);
 
-            // create/curate OrganizationRole by calling EJB service method
+            // create OrganizationRole by calling EJB service method
             GenericStructrualRoleServiceLocal roleSerLocal = getGenericStructrualRoleServiceLocal(clazz);
-            roleSerLocal.curate(orgRoleBo);
+            long id = roleSerLocal.create(orgRoleBo);
 
             // get OrganizationRole BO from DB after creation
-            orgRoleBo = getOrganizationRoleBOByDBId(clazz, orgRoleBo.getId());
+            orgRoleBo = getOrganizationRoleBOByDBId(clazz, id);
 
             // convert from BO to JaxB & return it
             return convertFromBoRoleToJaxB(orgRoleBo);
@@ -292,8 +304,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     public List<OrganizationRole> getOrganizationRolesByOrgId(
             long organizationID) {
         // get the OrganizationBO for given organizationID
-        gov.nih.nci.po.data.bo.Organization orgBo = PoRegistry
-                .getOrganizationService().getById(organizationID);
+        gov.nih.nci.po.data.bo.Organization orgBo = organizationBoService.getById(organizationID);
 
         if (orgBo != null) {
             List<OrganizationRole> orgRoleList = new ArrayList<OrganizationRole>();
@@ -412,8 +423,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
 
         // get the OrganizationBO for given organizationID
-        gov.nih.nci.po.data.bo.Organization existOrgBo = PoRegistry
-                .getOrganizationService().getById(organization.getId());
+        gov.nih.nci.po.data.bo.Organization existOrgBo = organizationBoService.getById(organization.getId());
         if (existOrgBo == null) {
             LOG.error("Couldn't update the Organization for organizationID "
                     + organization.getId() + ORG_NOT_FOUND_IN_DB_MSG);
@@ -425,36 +435,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         return existOrgBo;
     }
 
-    /**
-     * This method is used to handle the Org name & aliases. It will check if
-     * the incoming Org name is same as Existing Org Name or any of the existing
-     * aliases. If not, then it will add the new name to the list of aliases.
-     */
-    private void handleOrgNameAndAliases(
-            gov.nih.nci.po.data.bo.Organization existOrgBo,
-            gov.nih.nci.po.data.bo.Organization inOrgBo) {
 
-        // set the existing aliases as it was ignored during converter
-        inOrgBo.getAlias().addAll(existOrgBo.getAlias());
-
-        // check if existing Org name or aliases has the incoming name
-        if (!(existOrgBo.getName().equalsIgnoreCase(inOrgBo.getName()) || isAliasListContainsName(
-                existOrgBo.getAlias(), inOrgBo.getName()))) {
-            // if not then add it new name to the list of org aliases
-            inOrgBo.getAlias().add(
-                    new gov.nih.nci.po.data.bo.Alias(inOrgBo.getName()));
-        }
-
-        // set name to the existing name as it might have been overwritten
-        // during JAXB-BO converter (set it at the 'end')
-        inOrgBo.setName(existOrgBo.getName());
-
-    }
 
     /**
      * This methos is used to check if the Alias list contains the name(case
      * insensitive).
-     * 
+     *
      * @return true if the name if present in the list.
      */
     private boolean isAliasListContainsName(

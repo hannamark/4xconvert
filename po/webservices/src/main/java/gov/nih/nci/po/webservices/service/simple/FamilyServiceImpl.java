@@ -28,7 +28,7 @@ import java.util.List;
  * @author Rohit Gupta
  * 
  */
-@Service("famServImpl")
+@Service("simpleFamilyService")
 public class FamilyServiceImpl implements FamilyService {
 
     private static final Logger LOG = Logger.getLogger(FamilyServiceImpl.class);

@@ -57,8 +57,8 @@ import javax.xml.ws.WebServiceException;
 import java.net.URL;
 import java.util.List;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * This is an Integration test class for OrganizationService(SOAP).
@@ -236,14 +236,14 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
 
         // now update the created organization
-        UpdateOrganizationRequest upRequest = new UpdateOrganizationRequest();
-        upRequest.setOrganization(createdOrg);
+        UpdateOrganizationRequest updateRequest = new UpdateOrganizationRequest();
+        updateRequest.setOrganization(createdOrg);
         UpdateOrganizationResponse upResponse = orgService
-                .updateOrganization(upRequest);
-        Organization retUpOrg = upResponse.getOrganization();
+                .updateOrganization(updateRequest);
+        Organization updatedOrg = upResponse.getOrganization();
 
         // Assert checks
-        checkOrganizationDetails(org.getName(), createdOrg, retUpOrg,
+        checkOrganizationDetails(org.getName(), createdOrg, updatedOrg,
                 "my.updated.email@mayoclinic.org", "314-213-1245",
                 "314-213-1278", "314-213-1123",
                 "http://www.updatedmayoclinic.org");
@@ -1776,13 +1776,12 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ChangeOrganizationRoleStatusRequest req = new ChangeOrganizationRoleStatusRequest();
         req.setOrganizationRoleID(orgRole.getId());
         req.setRoleType(RoleType.HEALTH_CARE_FACILITY);
-        req.setStatus(EntityStatus.INACTIVE);
+        req.setStatus(EntityStatus.NULLIFIED);
         ChangeOrganizationRoleStatusResponse res = orgService
                 .changeOrganizationRoleStatus(req);
 
-        Assert.assertTrue(EntityStatus.INACTIVE.value().equalsIgnoreCase(
-                res.getOrganizationRole().getStatus().value()));
-        checkHCFStatusInDB(res.getOrganizationRole().getId(), "SUSPENDED");
+        Assert.assertEquals(EntityStatus.NULLIFIED.value(), res.getOrganizationRole().getStatus().value());
+        checkHCFStatusInDB(res.getOrganizationRole().getId(), EntityStatus.NULLIFIED.value());
     }
 
     /**
@@ -1807,13 +1806,13 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ChangeOrganizationRoleStatusRequest req = new ChangeOrganizationRoleStatusRequest();
         req.setOrganizationRoleID(orgRole.getId());
         req.setRoleType(RoleType.OVERSIGHT_COMMITTEE);
-        req.setStatus(EntityStatus.INACTIVE);
+        req.setStatus(EntityStatus.NULLIFIED);
         ChangeOrganizationRoleStatusResponse res = orgService
                 .changeOrganizationRoleStatus(req);
 
-        Assert.assertTrue(EntityStatus.INACTIVE.value().equalsIgnoreCase(
-                res.getOrganizationRole().getStatus().value()));
-        checkOverCommStatusInDB(res.getOrganizationRole().getId(), "SUSPENDED");
+        Assert.assertEquals(EntityStatus.NULLIFIED.value(), res.getOrganizationRole().getStatus().value());
+
+        checkOverCommStatusInDB(res.getOrganizationRole().getId(), EntityStatus.NULLIFIED.value());
     }
 
     /**
@@ -1838,13 +1837,13 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ChangeOrganizationRoleStatusRequest req = new ChangeOrganizationRoleStatusRequest();
         req.setOrganizationRoleID(orgRole.getId());
         req.setRoleType(RoleType.RESEARCH_ORGANIZATION);
-        req.setStatus(EntityStatus.INACTIVE);
+        req.setStatus(EntityStatus.NULLIFIED);
         ChangeOrganizationRoleStatusResponse res = orgService
                 .changeOrganizationRoleStatus(req);
 
-        Assert.assertTrue(EntityStatus.INACTIVE.value().equalsIgnoreCase(
-                res.getOrganizationRole().getStatus().value()));
-        checkROStatusInDB(res.getOrganizationRole().getId(), "SUSPENDED");
+        Assert.assertEquals(EntityStatus.NULLIFIED.value(), res.getOrganizationRole().getStatus().value());
+
+        checkROStatusInDB(res.getOrganizationRole().getId(), EntityStatus.NULLIFIED.value());
     }
 
     /**
@@ -1927,7 +1926,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ChangeOrganizationRoleStatusRequest req = new ChangeOrganizationRoleStatusRequest();
         req.setOrganizationRoleID(orgRole.getId());
         req.setRoleType(RoleType.HEALTH_CARE_FACILITY);
-        req.setStatus(EntityStatus.PENDING);
+        req.setStatus(EntityStatus.INACTIVE);
         try {
             orgService.changeOrganizationRoleStatus(req);
         } catch (Exception e) {
@@ -1935,7 +1934,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         }
 
         Assert.assertTrue(excepMessage
-                .contains("Illegal curation transition from ACTIVE to PENDING"));
+                .contains("Illegal curation transition from PENDING to SUSPENDED"));
     }
 
     @After

@@ -18,6 +18,7 @@ import gov.nih.nci.po.webservices.convert.simple.HealthCareProviderConverter;
 import gov.nih.nci.po.webservices.convert.simple.OrganizationalContactConverter;
 import gov.nih.nci.po.webservices.convert.simple.PersonConverter;
 import gov.nih.nci.po.webservices.convert.simple.PersonSearchConverter;
+import gov.nih.nci.po.webservices.service.bo.PersonBoService;
 import gov.nih.nci.po.webservices.service.exception.EntityNotFoundException;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.po.webservices.types.ClinicalResearchStaff;
@@ -32,6 +33,7 @@ import gov.nih.nci.po.webservices.util.PoWSUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ import java.util.List;
  */
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength",
         "PMD.CyclomaticComplexity" })
-@Service("perServImpl")
+@Service("simplePersonService")
 public class PersonServiceImpl implements PersonService {
 
     private static final Logger LOG = Logger.getLogger(PersonServiceImpl.class);
@@ -54,6 +56,17 @@ public class PersonServiceImpl implements PersonService {
     private static final String NOT_FOUND_IN_DB_MSG = " as it is not found in the DB.";
     private static final String RAW_TYPES = "rawtypes";
     private static final String UNCHECKED = "unchecked";
+
+    private final PersonBoService personBoService;
+
+    /**
+     * Constructor.
+     * @param boService The BO service to delegate to.
+     */
+    @Autowired
+    public PersonServiceImpl(PersonBoService boService) {
+        this.personBoService = boService;
+    }
 
     @Override
     public Person createPerson(Person person) {
@@ -81,7 +94,7 @@ public class PersonServiceImpl implements PersonService {
             personBo = pConverter.convertFromJaxbToBO(person);
 
             // call the EJB service method to create the Person
-            retPersonId = PoRegistry.getPersonService().create(personBo, ctepId);
+            retPersonId = personBoService.create(personBo, ctepId);
         } catch (EntityValidationException e) {
             LOG.error("Person couldn't be created as data is invalid.", e);
             throw new ServiceException("Person couldn't be created as data is invalid.", e);
@@ -119,7 +132,7 @@ public class PersonServiceImpl implements PersonService {
             personBo = pConverter.convertFromJaxbToBO(person);
 
             // call the EJB service method to update the Person
-            PoRegistry.getPersonService().curate(personBo, ctepId);
+            personBoService.curate(personBo, ctepId);
         } catch (Exception e) {
             LOG.error("Exception occured while updating the person having Id " + person.getId() + ".", e);
             throw new ServiceException(
@@ -134,7 +147,7 @@ public class PersonServiceImpl implements PersonService {
     public Person changePersonStatus(long personID, EntityStatus status) {
 
         // get the BO Person for given personID
-        gov.nih.nci.po.data.bo.Person personBo = PoRegistry.getPersonService().getById(personID);
+        gov.nih.nci.po.data.bo.Person personBo = personBoService.getById(personID);
         if (personBo == null) {
             LOG.error("Couldn't update the Person Status for personID " + personID + NOT_FOUND_IN_DB_MSG);
             throw new EntityNotFoundException(
@@ -147,7 +160,7 @@ public class PersonServiceImpl implements PersonService {
                     .valueOf(status.value()));
 
             // call the EJB service method to update Person status
-            PoRegistry.getPersonService().curate(personBo);
+            personBoService.curate(personBo);
         } catch (Exception e) {
             LOG.error("Exception occured while updating the Status for personID " + personID + ".", e);
             throw new ServiceException("Exception occured while updating the Status for personID " + personID + ".", e);
@@ -160,7 +173,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public Person getPerson(long personID) {
         // get the BO Person for given personID
-        gov.nih.nci.po.data.bo.Person personBo = PoRegistry.getPersonService().getById(personID);
+        gov.nih.nci.po.data.bo.Person personBo = personBoService.getById(personID);
 
         // Convert to get the corresponding JaxB object & then return it
         PersonConverter pConverter = Converters.get(PersonConverter.class);
@@ -225,7 +238,7 @@ public class PersonServiceImpl implements PersonService {
                 psCriteria.getLimit(), psCriteria.getOffset(), null, false, getDynamicSortCriteria());
 
         // call the EJB service method to search the Persons
-        List<PersonSearchDTO> psDtoList = PoRegistry.getPersonService().search(psCriteriaBo, pageSortParams);
+        List<PersonSearchDTO> psDtoList = personBoService.search(psCriteriaBo, pageSortParams);
 
         if (CollectionUtils.isNotEmpty(psDtoList)) {
             // Convert it to JaxB object & add in the list
@@ -258,10 +271,10 @@ public class PersonServiceImpl implements PersonService {
 
             // create/curate PersonRole by calling EJB service method
             GenericStructrualRoleServiceLocal roleSerLocal = getGenericStructrualRoleServiceLocal(clazz);
-            roleSerLocal.curate(perRoleBo);
+            long id = roleSerLocal.create(perRoleBo);
 
             // get PersonRole BO from DB after creation
-            perRoleBo = getPersonRoleBOByDBId(clazz, perRoleBo.getId());
+            perRoleBo = getPersonRoleBOByDBId(clazz, id);
 
             // convert from BO to JaxB & return it
             return convertFromBoRoleToJaxB(perRoleBo);
@@ -315,7 +328,7 @@ public class PersonServiceImpl implements PersonService {
     @Override
     public List<PersonRole> getPersonRolesByPersonId(long personID) {
         // get the BO Person for given personID
-        gov.nih.nci.po.data.bo.Person personBo = PoRegistry.getPersonService().getById(personID);
+        gov.nih.nci.po.data.bo.Person personBo = personBoService.getById(personID);
         if (personBo != null) {
             List<PersonRole> personRoleList = new ArrayList<PersonRole>();
 

@@ -31,6 +31,7 @@ import gov.nih.nci.po.webservices.types.OrganizationSearchResult;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -45,6 +46,7 @@ import java.util.List;
 wsdlLocation = "/OrganizationService.wsdl", 
 targetNamespace = "http://soap.simple.service.webservices.po.nci.nih.gov/organization/", 
 endpointInterface = "gov.nih.nci.po.webservices.service.simple.soap.organization.OrganizationService")
+@Service("organizationServiceSimpleSoapEndpoint")
 public class OrganizationServiceImpl implements OrganizationService {
 
     @Autowired

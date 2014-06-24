@@ -5,10 +5,9 @@ import gov.nih.nci.po.service.OrganizationSearchDTO.AliasDTO;
 import gov.nih.nci.po.webservices.types.OrganizationSearchCriteria;
 import gov.nih.nci.po.webservices.types.OrganizationSearchResult;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
 
 /**
  * This is the converter for Organization Search.

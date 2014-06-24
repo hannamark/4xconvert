@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -28,6 +29,7 @@ import java.util.List;
  * 
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity" })
+@Service("familyServiceSimpleRestEndpoint")
 public class FamilyRESTService {
 
     @Autowired

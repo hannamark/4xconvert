@@ -35,6 +35,7 @@ import gov.nih.nci.po.webservices.service.bridg.soap.healthcareprovider.TooManyR
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -49,9 +50,10 @@ import java.util.List;
         endpointInterface =
                 "gov.nih.nci.po.webservices.service.bridg.soap.healthcareprovider.HealthCareProviderPortType"
 )
+@Service("healthCareProviderBridgSoapEndpointImpl")
 public class HealthCareProviderPortTypeImpl implements HealthCareProviderPortType {
     @Autowired
-    @Qualifier("healthCareProviderBridgServiceImpl")
+    @Qualifier("healthCareProviderBridgService")
     private RoleService<HealthCareProvider> service;
 
     @Override

@@ -14,13 +14,11 @@ import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.po.data.bo.Correlation;
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiDsetConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
@@ -136,22 +134,11 @@ public abstract class AbstractRoleService
 
             BO_TYPE instance = (BO_TYPE) PoXsnapshotHelper.createModel(dto);
 
-
-            CorrelationChangeRequest cr = buildChangeRequest(instance);
-            dto.setIdentifier(null);
-            PoXsnapshotHelper.copyIntoAbstractModel(dto, cr, getAbstractModelClass());
-
-            if (cr.getStatus() != instance.getStatus()) {
-                throw new IllegalArgumentException(
-                        "use updateStatus() to update the statusCode property");
-            }
-            cr.setStatus(instance.getStatus());
-
-            cr.setId(null);
-
-            getCrService().create(cr);
+            getEjbService().curate(instance);
 
         } catch (DtoTransformException e) {
+            throw new ServiceException(e);
+        } catch (JMSException e) {
             throw new ServiceException(e);
         }
     }
@@ -161,17 +148,16 @@ public abstract class AbstractRoleService
     @Override
     public void updateStatus(Id targetId, Cd statusCode) throws EntityValidationException {
         BO_TYPE instance = getEjbService().getById(Long.parseLong(targetId.getExtension()));
-        DTO_TYPE dto = (DTO_TYPE) PoXsnapshotHelper.createSnapshot(instance);
 
         RoleStatus newStatus = RoleStatus.valueOf(statusCode.getCode());
 
-        CorrelationChangeRequest cr = buildChangeRequest(instance);
+        instance.setStatus(newStatus);
 
-        PoXsnapshotHelper.copyIntoAbstractModel(dto, cr, getAbstractModelClass());
-        cr.setId(null);
-        cr.setStatus(newStatus);
-
-        getCrService().create(cr);
+        try {
+            getEjbService().curate(instance);
+        } catch (JMSException e) {
+            throw new ServiceException(e);
+        }
     }
 
 
@@ -319,26 +305,6 @@ public abstract class AbstractRoleService
             throw new NullifiedRoleException(nullifiedEntities);
         }
     }
-
-    /**
-     *
-     * @return The base model class (e.g. AbstractPersonRole).
-     */
-    protected abstract Class<?> getAbstractModelClass();
-
-    /**
-     *
-     * @return The CR service to use for updates.
-     */
-    protected abstract GenericStructrualRoleCRServiceLocal getCrService();
-
-    /**
-     * This method should just instantiate the CR and return it.
-     *
-     * @param instance The BO instance
-     * @return An appropriate change request with the instance as the target.
-     */
-    protected abstract CorrelationChangeRequest<BO_TYPE> buildChangeRequest(BO_TYPE instance);
 
     /**
      *
