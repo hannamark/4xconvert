@@ -8,6 +8,7 @@ import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
@@ -101,6 +102,12 @@ public class OrganizationBoService implements OrganizationServiceLocal {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public void override(Overridable overridable, User overriddenBy) {
+        PoRegistry.getOrganizationService().override(overridable, overriddenBy);
     }
 
     private boolean noChangesMade(Organization current, Organization curatedOrg) {
