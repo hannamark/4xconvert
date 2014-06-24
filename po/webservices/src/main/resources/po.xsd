@@ -2,6 +2,7 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="gov.nih.nci.po.webservices.types"
         xmlns:tns="gov.nih.nci.po.webservices.types" elementFormDefault="qualified"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
         xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
         xmlns:annox="http://annox.dev.java.net"
         xmlns:ja="http://annox.dev.java.net/org.codehaus.jackson.annotate"
