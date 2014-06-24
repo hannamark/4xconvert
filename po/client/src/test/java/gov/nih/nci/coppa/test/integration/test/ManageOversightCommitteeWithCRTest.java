@@ -95,6 +95,7 @@ import javax.naming.NamingException;
 
 /**
  * @author kkanchinadam
+ * @author Rohit Gupta
  *
  */
 public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWithCRTest {
@@ -134,11 +135,26 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         openOrgRoleScreen(false);
         waitForElementById("curateRoleForm_role_typeCode", 10);
         assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
+        assertTrue(selenium.isTextPresent("PO Curator"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_overriddenBy']")); // 'overriddenBy' div should be present
+        assertTrue(selenium.isTextPresent("Not Overridden"));
         assertEquals(TYPE_EC, selenium.getSelectedLabel("id=curateRoleForm_role_typeCode"));
+        logoutUser();// 'curator' logout 
+        loginAsJohnDoe(); // some other curator 
+        openOrgRoleScreen(false);
+        waitForPageToLoad();
+        clickAndWait("overcomm_override_button"); // click on Override button
+        assertFalse(selenium.isTextPresent("Not Overridden")); 
+        assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
+        assertFalse(selenium.isTextPresent("Override"));
         // Update Type to TYPE_REB, and save.
         selenium.select("curateRoleForm_role_typeCode", TYPE_REB);
         updateOrganizationalRole();
 
+        logoutUser();
+        loginAsCurator();
+        openOrgRoleScreen(false);
+        waitForPageToLoad();
         // Ensure that you can now add TYPE_EC again, since the previous one was updated to TYPE_REB.
         setOrgRoleSearchResultsMessage("3 items found, displaying all items");
         setOrgRoleSearchResultsRowNumber("oc_row.3.0");
@@ -165,7 +181,7 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Role status not compatible with associated entity's status"));
         // Test the CR
-        checkCR();
+        checkCR();        
     }
 
     private void openOrgRoleScreen(boolean addMode) {

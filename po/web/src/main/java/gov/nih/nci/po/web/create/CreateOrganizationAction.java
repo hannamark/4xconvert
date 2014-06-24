@@ -47,7 +47,7 @@ public class CreateOrganizationAction extends CurateOrganizationAction implement
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "organization") })
     public String create() throws JMSException, CSException {
-        User createdBy = getCreatedBy();
+        User createdBy = getLoggedInUser();
         getOrganization().setCreatedBy(createdBy);
         String result = super.curate();
         ActionHelper.getMessages().clear();

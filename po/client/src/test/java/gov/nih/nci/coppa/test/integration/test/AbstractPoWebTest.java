@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.DSet;
@@ -94,10 +95,13 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -109,18 +113,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-
 import javax.naming.NamingException;
 
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.io.FileUtils;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+import org.junit.Assert;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 
@@ -147,6 +149,9 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
     protected static final String STATUS_MUST_BE_SET = "Status must be set";
     
     protected static final String ALIAS_STRING = "test_alias_123";
+    
+    private Connection conn = null;
+    private ResultSetHandler<Object[]> h = null;
 
     static {
         new Timer(true).schedule(new TimerTask() {
@@ -185,15 +190,34 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         super.setDriverClass(TstProperties.getDriverClass());
         //super.setDriverClass(PHANTOM_JS_DRIVER);
         System.setProperty("phantomjs.binary.path", TstProperties.getPhantomJsPath());
+        
+        // getting the database connection
+        conn = DataGeneratorUtil.getJDBCConnection(); 
+        // Create a ResultSetHandler implementation to convert the first row into an Object[].
+        h = new ResultSetHandler<Object[]>() {
+            public Object[] handle(ResultSet rs) throws SQLException {
+                if (!rs.next()) {
+                    return null;
+                }
+                ResultSetMetaData meta = rs.getMetaData();
+                int cols = meta.getColumnCount();
+                Object[] result = new Object[cols];
+                for (int i = 0; i < cols; i++) {
+                    result[i] = rs.getObject(i + 1);
+                }
+                return result;
+            }
+        };
+        
         super.setUp();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void tearDown() throws Exception { 
         takeScreenShot();
         logoutUser();
         closeBrowser();
+        DbUtils.closeQuietly(conn);
         super.tearDown();
     }
     
@@ -279,7 +303,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         driver.quit();
     }
 
-    private void logoutUser() {
+    protected void logoutUser() {
         openAndWait("/po-web/login/logout.action");
     }
     protected void login(String username, String password) {
@@ -318,6 +342,10 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         login("curator", "Coppa#12345");
     }
 
+    public void loginAsJohnDoe() {
+        login("jdoe01", "Aa_1111111");
+    }
+    
     protected boolean isLoggedIn() {
         return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
     }
@@ -995,5 +1023,23 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isConfirmationPresent());
         assertTrue(selenium.getConfirmation().matches(confirmationMessagePattern));
         assertEquals("VRF", selenium.getValue(elementId).trim());
+    }
+    
+    protected void setCreatedByInOrg(Long orgId){       
+        long curatorDbId = 0;
+        try {
+            QueryRunner queryRunner = new QueryRunner();
+            Object[] result = queryRunner.query(conn,
+                    "select user_id from csm_user where login_name ='/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=curator'", h);
+            // get the DB Id of 'curator'
+            curatorDbId = ((Long) result[0]).longValue();
+            
+            // set 'createdBy' in the Org    
+            queryRunner.update(conn, "update organization set created_by_id = ? WHERE id = ?", curatorDbId, orgId);
+            
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside setCreatedByInOrg. The exception is: "
+                    + e);
+        }
     }
 }

@@ -20,15 +20,22 @@
                     <ul>
                         <s:iterator value="cr.email" status="e">
                         
-				            <c:if test="${cr.noChange}">
-				                <po:removeButton id="remove_emailEntry_value${e.index}" onclick="removeChangeRequest();"
-				                    buttonStyle="float:right;"/>                                
-				            </c:if>                        
-                        
-                            <po:copyButton id="copy_emailEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'emailEntry_value','email-add');" 
-                                bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
-                               <li>${value}</li>
-                            </po:copyButton>    
+                            <c:if test="${!isReadonly && cr.noChange}">
+                                <po:removeButton id="remove_emailEntry_value${e.index}" onclick="removeChangeRequest();"
+                                    buttonStyle="float:right;"/>                              
+                            </c:if>
+                            
+                            <c:choose>
+				              <c:when test="${isReadonly}">
+				                <li>${value}</li>
+				              </c:when>
+				              <c:otherwise>
+				                <po:copyButton id="copy_emailEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'emailEntry_value','email-add');" 
+                                    bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
+	                               <li>${value}</li>
+	                            </po:copyButton>
+				              </c:otherwise>
+				            </c:choose>
                         </s:iterator>
                     </ul>
                 </div>
@@ -44,15 +51,23 @@
                     <ul>
                         <s:iterator value="cr.phone" status="e">
                         
-				            <c:if test="${cr.noChange}">
-				                <po:removeButton id="remove_phoneEntry_value${e.index}" onclick="removeChangeRequest();"
-				                    buttonStyle="float:right;"/>                                
-				            </c:if>                        
-                        
-                            <po:copyButton id="copy_phoneEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'phoneEntry_value','phone-add');" 
-                                bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
+                            <c:if test="${!isReadonly && cr.noChange}">
+                                <po:removeButton id="remove_phoneEntry_value${e.index}" onclick="removeChangeRequest();"
+                                    buttonStyle="float:right;"/>                               
+                            </c:if>
+				                                   
+                            <c:choose>
+                              <c:when test="${isReadonly}">
                                 <li>${value}</li>
-                            </po:copyButton>
+                              </c:when>
+                              <c:otherwise>
+                                <po:copyButton id="copy_phoneEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'phoneEntry_value','phone-add');" 
+                                    bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
+	                                <li>${value}</li>
+	                            </po:copyButton>
+                              </c:otherwise>
+                            </c:choose>
+                            
                         </s:iterator>
                     </ul>
                 </div>
@@ -66,16 +81,22 @@
                 <div>
                     <ul>
                         <s:iterator value="cr.fax" status="e">
-                        
-				            <c:if test="${cr.noChange}">
-				                <po:removeButton id="remove_faxEntry_value${e.index}" onclick="removeChangeRequest();"
-				                    buttonStyle="float:right;"/>                                
-				            </c:if>
-                                                
-                            <po:copyButton id="copy_faxEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'faxEntry_value','fax-add');" 
-                                bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
+                            <c:if test="${!isReadonly && cr.noChange}">
+                                <po:removeButton id="remove_faxEntry_value${e.index}" onclick="removeChangeRequest();"
+                                    buttonStyle="float:right;"/>                               
+                            </c:if>
+				            
+                            <c:choose>
+                              <c:when test="${isReadonly}">
                                 <li>${value}</li>
-                            </po:copyButton>                    
+                              </c:when>
+                              <c:otherwise>
+                                <po:copyButton id="copy_faxEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'faxEntry_value','fax-add');" 
+	                                bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
+	                                <li>${value}</li>
+	                            </po:copyButton> 
+                              </c:otherwise>
+                            </c:choose>                                              
                         </s:iterator>
                     </ul>           
                 </div>
@@ -90,15 +111,22 @@
                     <ul>
                         <s:iterator value="cr.tty" status="e">
                         
-				            <c:if test="${cr.noChange}">
-				                <po:removeButton id="remove_ttyEntry_value${e.index}" onclick="removeChangeRequest();"
-				                    buttonStyle="float:right;"/>                                
-				            </c:if>                        
-                        
-                            <po:copyButton id="copy_ttyEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'ttyEntry_value','tty-add');" 
-                                bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
+				            <c:if test="${!isReadonly && cr.noChange}">
+                                <po:removeButton id="remove_ttyEntry_value${e.index}" onclick="removeChangeRequest();"
+                                    buttonStyle="float:right;"/>                                
+				            </c:if>
+				                                   
+                            <c:choose>
+                              <c:when test="${isReadonly}">
                                 <li>${value}</li>
-                            </po:copyButton>                    
+                              </c:when>
+                              <c:otherwise>
+                                <po:copyButton id="copy_ttyEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'ttyEntry_value','tty-add');" 
+	                                bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
+	                                <li>${value}</li>
+	                            </po:copyButton>   
+                              </c:otherwise>
+                            </c:choose>                           
                         </s:iterator>
                     </ul>
                 </div>
@@ -114,17 +142,24 @@
                     <ul>
                         <s:iterator value="cr.url" status="e">
                         
-				            <c:if test="${cr.noChange}">
-				                <po:removeButton id="remove_urlEntry_value${e.index}" onclick="removeChangeRequest();"
-				                    buttonStyle="float:right;"/>                                
-				            </c:if>                        
+				            <c:if test="${!isReadonly && cr.noChange}">
+                                <po:removeButton id="remove_urlEntry_value${e.index}" onclick="removeChangeRequest();"
+                                    buttonStyle="float:right;"/> 
+				            </c:if>				                                    
                         
-                            <po:copyButton id="copy_urlEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'urlEntry_value','url-add');" 
-                                bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
-                                <li>
-                                    <a href="${value}" target="_blank"><s:property value="@java.net.URLDecoder@decode(value)" /></a>
-                                </li>
-                            </po:copyButton>                    
+                            <c:choose>
+                              <c:when test="${isReadonly}">
+                                <li>${value}</li>
+                              </c:when>
+                              <c:otherwise>
+                                <po:copyButton id="copy_urlEntry_value${e.index}" onclick="addValue('${func:escapeJavaScript(value)}', 'urlEntry_value','url-add');" 
+	                                bodyStyle="clear:left;float:left;" buttonStyle="float:right;margin-left:10px;">
+	                                <li>
+	                                    <a href="${value}" target="_blank"><s:property value="@java.net.URLDecoder@decode(value)" /></a>
+	                                </li>
+	                            </po:copyButton> 
+                              </c:otherwise>
+                            </c:choose>                                                 
                         </s:iterator>
                     </ul>
                 </div>

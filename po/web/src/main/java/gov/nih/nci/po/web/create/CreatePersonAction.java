@@ -55,7 +55,7 @@ public class CreatePersonAction extends CuratePersonAction implements
                 message = "US and Canadian tty numbers must match ###-###-####(x#*).")
             })
     public String create() throws JMSException, CSException {
-        User createdBy = getCreatedBy();
+        User createdBy = getLoggedInUser();
         getPerson().setCreatedBy(createdBy);
         String result = super.curate();
         ActionHelper.getMessages().clear();

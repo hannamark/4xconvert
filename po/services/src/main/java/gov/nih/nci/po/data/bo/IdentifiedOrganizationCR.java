@@ -82,12 +82,19 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * @author Scott Miller
@@ -141,11 +148,51 @@ public class IdentifiedOrganizationCR extends AbstractIdentifiedOrganization
     public IdentifiedOrganization getTarget() {
         return this.target;
     }
-
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isScoperChanged() {
+        if (getScoper() == null && target.getScoper() == null) {
+            return false;
+        }
+        
+        return !StringUtils.equals(getScoper().getName(), target.getScoper().getName());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isStatusCodeChanged() {
+        return getStatus() != target.getStatus();
+    }
+    
     /**
      * @param target the target to set
      */
     public void setTarget(IdentifiedOrganization target) {
         this.target = target;
     }
+    
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @Transient
+    public PersistentObject getDuplicateOf() {        
+        return null;
+    }
+
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @SuppressWarnings("rawtypes")
+    @Transient
+    public Set getChangeRequests() {        
+        return new HashSet<HealthCareFacilityCR>();
+    }    
+    
 }

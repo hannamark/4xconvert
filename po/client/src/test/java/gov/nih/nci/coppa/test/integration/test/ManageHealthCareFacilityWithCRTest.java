@@ -102,6 +102,7 @@ import javax.naming.NamingException;
 
 /**
  * @author kkanchinadam
+ * @author Rohit Gupta
  *
  */
 public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWithCRTest {
@@ -126,6 +127,9 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
 
         // Test the CR
         checkCR();
+        
+        // Test to check if OrgRole can be Nullified
+        nullifyOrgRole();
     }
 
     private void createHCF() throws Exception {
@@ -162,6 +166,13 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         //accessOrgRoleScreen();
 
         clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
+        
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
+        assertTrue(selenium.isTextPresent("PO Curator"));
+        assertTrue(selenium.isElementPresent("//div[@id='wwlbl_overriddenBy']")); // 'overriddenBy' div should be present
+        assertTrue(selenium.isTextPresent("Not Overridden"));
+        assertFalse(selenium.isElementPresent("//button[@type='button' and @id='override_button']")); // 'override button' shouldn't be present
+        
         // check Status
         checkStatus();
 
@@ -181,6 +192,23 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         
         addContactInformation();
         updateOrganizationalRole();
+        
+        logoutUser();// 'curator' logout 
+        
+        // Step2:: OrgRole not overridden, other curator (who didn't create the OrgRole) logs in.
+        loginAsJohnDoe(); // some other curator        
+        openOrganizationCuratePage();
+        clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
+        assertTrue(selenium.isTextPresent("Not Overridden"));
+        clickAndWait("hcf_override_button"); // click on Override button
+        assertFalse(selenium.isTextPresent("Not Overridden")); 
+        assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
+        assertFalse(selenium.isTextPresent("Override"));
+        selenium.type("curateRoleForm.role.name", "Facility 1 Updated Again by JDoe01");
+        selenium.select("curateRoleForm.role.status", "label=ACTIVE");  // change status(including to ACTIVE)      
+        clickAndWait("save_button"); 
+        logoutUser(); //'John Doe' logs out      
+        loginAsCurator();
     }
 
     private void removeAddressAndContactInformationFromRole() {
@@ -222,22 +250,29 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
 
         clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
         assertTrue(selenium.isTextPresent("exact:Edit Health Care Facility - Comparison"));
-
-        // Check Status
-        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
-        
+       
+        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));        
         assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
-
-        // Check address, email, phone, fax, tty and url info.
-        checkOrgRoleContactInfomation();
-        // Copy CR EMail
-        copyCRInfo("copy_emailEntry_value0", "cr@example.com", "email-entry-1");
+        assertFalse(selenium.isTextPresent("Not Overridden")); 
+        assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
+        assertFalse(selenium.isTextPresent("Copy")); // copy button not present
+        assertTrue(selenium.isTextPresent("Override")); //Override button present        
+        logoutUser(); //'curator' logs out
+        
+        loginAsJohnDoe(); // JohnDoe has overridden the OrgRole
+        openOrganizationCuratePage();
+        clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
+        assertTrue(selenium.isTextPresent("exact:Edit Health Care Facility - Comparison"));
+        assertTrue(selenium.isTextPresent("Copy")); // copy button not present        
+        checkOrgRoleContactInfomation(); // Check address, email, phone, fax, tty and url info.        
+        copyCRInfo("copy_emailEntry_value0", "cr@example.com", "email-entry-1"); // Copy CR EMail
 
         // set the email entry to a blank value, so that there is no alert/confirmation during form submission.
         selenium.type("emailEntry_value", "");
 
         // update org role and check for success message.
         updateOrganizationalRole();
+        logoutUser();
     }
 
     private void updateRemoteHealthCareFacility(String ext) throws EntityValidationException, NamingException, URISyntaxException,
@@ -275,6 +310,16 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         RemoteServiceHelper.getHealthCareFacilityCorrelationService().updateCorrelation(dto);
     }
 
+    private void nullifyOrgRole(){
+        //  Curator who Overrode the Org logs in
+        loginAsJohnDoe(); // curator who overrode the Org
+        openOrganizationCuratePage();
+        clickAndWait("id=edit_healthCareFacility_id_" + getOrganizationalRoleId());
+        selenium.select("curateRoleForm.role.status", "label=NULLIFIED");        
+        clickAndWait("save_button");  // NULLIFIED without selecting Duplicate_Of       
+        logoutUser();
+        loginAsCurator();
+    }
     @Override
     protected String getSortFieldTestColumnName() {
         return "Health Care Facility Name";

@@ -1,6 +1,7 @@
 package gov.nih.nci.po.data.bo;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -22,6 +23,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Valid;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -234,6 +236,13 @@ public class HealthCareFacilityCR extends AbstractEnhancedOrganizationRole
         return getStatus() != target.getStatus();
     }
     
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isNameChanged() {
+        return !StringUtils.equals(getName(), target.getName());
+    }
    
 
     /**
@@ -380,6 +389,25 @@ public class HealthCareFacilityCR extends AbstractEnhancedOrganizationRole
                 && !isPostalCodeChanged() && !isStateOrProvinceChanged()
                 && !isStatusCodeChanged() && !isStreetAddressLineChanged()
                 && !isTtyChanged() && !isUrlChanged();
+    }
+
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @Transient
+    public PersistentObject getDuplicateOf() {        
+        return null;
+    }
+
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @SuppressWarnings("rawtypes")
+    @Transient
+    public Set getChangeRequests() {        
+        return new HashSet<HealthCareFacilityCR>();
     }
     
 

@@ -107,6 +107,7 @@ import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.Valid;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -343,6 +344,26 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
         return getStatus() != target.getStatus();
     }
     
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isTitleChanged() {
+        return !StringUtils.equalsIgnoreCase(getTitle(), target.getTitle());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isContactTypeChanged() {
+        if (getType() == null && target.getType() == null) {
+            return false;
+        }
+        
+        return !StringUtils.equals(getType().getCode(), target.getType().getCode());
+    }
+    
    
 
     /**
@@ -491,5 +512,23 @@ public class OrganizationalContactCR extends AbstractOrganizationalContact
                 && !isTtyChanged() && !isUrlChanged();
     }
 
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @Transient
+    public PersistentObject getDuplicateOf() {        
+        return null;
+    }
+
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @SuppressWarnings("rawtypes")
+    @Transient
+    public Set getChangeRequests() {        
+        return null;
+    }
 
 }

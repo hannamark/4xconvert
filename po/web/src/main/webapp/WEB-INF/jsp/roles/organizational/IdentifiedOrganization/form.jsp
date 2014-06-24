@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
 <head>
+<c:set var="isReadonly" value="${!role.isEditableBy(pageContext.request.remoteUser)}"/>
 <s:set name="isCreate" value="role.id == null" />
 <s:set name="isNotCreate" value="role.id != null" />
 <s:if test="%{isCreate}">
@@ -50,24 +51,33 @@
             </s:else>
             <div class="box_white">
                 <s:actionerror/>
-                <s:form action="%{formAction}" id="curateRoleForm" onsubmit="return confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');">
+                <s:form action="%{formAction}" id="curateRoleForm" onsubmit="submitForm('curateRoleForm');">
                 <s:token/>
                 <s:hidden key="cr"/>
                 <s:hidden key="organization"/>
                 <s:if test="%{isNotCreate}"><s:hidden key="role.id" /></s:if>
                 <s:set name="genericCodeValueService" value="@gov.nih.nci.po.util.PoRegistry@getGenericCodeValueService()" />
-                <po:scoper key="identifiedOrganization.scoper.id"/>
-                <s:select id="curateRoleForm.role.status"
-                   label="%{getText('identifiedOrganization.status')}"
-                   name="role.status"
-                   list="availableStatus"
-                   listKey="name()"
-                   listValue="name()"
-                   value="role.status"
-                   headerKey="" headerValue="--Select a Role Status--"
-                   required="true" cssClass="required"
-                   onchange="handleDuplicateOf();"
-                   />
+                <c:choose>
+	               <c:when test="${isReadonly}">
+	                    <po:field labelKey="identifiedOrganization.scoper">${role.scoper.name} (${role.scoper.id})</po:field>             
+                        <po:field labelKey="identifiedOrganization.status">${role.status}</po:field>
+	               </c:when>
+	               <c:otherwise>
+                        <po:scoper key="identifiedOrganization.scoper.id"/>
+		                <s:select id="curateRoleForm.role.status"
+		                   label="%{getText('identifiedOrganization.status')}"
+		                   name="role.status"
+		                   list="availableStatus"
+		                   listKey="name()"
+		                   listValue="name()"
+		                   value="role.status"
+		                   headerKey="" headerValue="--Select a Role Status--"
+		                   required="true" cssClass="required"
+		                   onchange="handleDuplicateOf();"
+		                   />
+	               </c:otherwise>
+	            </c:choose>
+                
                 <div id="duplicateOfDiv" <s:if test="role.status != @gov.nih.nci.po.data.bo.RoleStatus@NULLIFIED">style="display:none;"</s:if>>
                 <c:if test="${fn:length(availableDuplicateOfs) > 0}">
                     <po:field labelKey="identifiedOrganization.duplicateOf">
@@ -81,14 +91,30 @@
                 </c:if>
                 </div>
                 <s:if test="isNotCreate">                        
-                    <po:createdBy createdByUserName="${role.createdByUserName}"/>               
+                    <po:createdBy createdByUserName="${role.createdByUserName}"/>  
+                    <po:overriddenBy overriddenByUserName="${role.overriddenByUserName}"/>
+                    <c:if test="${isReadonly}">
+                        <div style="margin-bottom:16px;" id="io_override_div">
+                            <c:url var="overrideUrl" value="/protected/roles/organizational/IdentifiedOrganization/override.action">
+                                <c:param name="organization">${organization.id}</c:param>                                
+                                <c:param name="role.id" value="${role.id}"/>
+                            </c:url>
+                            <po:buttonRow>                              
+                                <po:button id="io_override_button" href="${overrideUrl}" style="entity_override" text="Override"/>                           
+                            </po:buttonRow>
+                        </div>
+                        <br/>
+                    </c:if>              
                 </s:if>
+                <div id="ass_iden_div" style="margin-top:24px;">
+                    <fieldset>
+	                    <legend><s:text name="identifiedOrganization.assignedIdentifier"/></legend>
+	                    <s:fielderror><s:param>role.assignedIdentifier</s:param></s:fielderror>
+	                    <po:isoIiForm formNameBase="curateRoleForm" ii="${role.assignedIdentifier}" iiKeyBase="role.assignedIdentifier" 
+	                        iiLabelKeyBase="role.assignedIdentifier" required="true" readonly="${isReadonly}"/>
+                    </fieldset>
+                </div>
                 
-                <fieldset>
-                    <legend><s:text name="identifiedOrganization.assignedIdentifier"/></legend>
-                    <s:fielderror><s:param>role.assignedIdentifier</s:param></s:fielderror>
-                    <po:isoIiForm formNameBase="curateRoleForm" ii="${role.assignedIdentifier}" iiKeyBase="role.assignedIdentifier" iiLabelKeyBase="role.assignedIdentifier" required="true"/>
-                </fieldset>
                  <input id="enableEnterSubmit" type="submit"/>
                 </s:form>
             </div>
@@ -122,8 +148,10 @@
 </div>
     <div class="btnwrapper" style="margin-bottom:20px;">
     <%@include file="../../defineMapToShowConfirm.jsp" %>
-    <po:buttonRow>
-       <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('curateRoleForm.role.status', 'curateRoleForm');" style="save" text="Save"/>
+    <po:buttonRow>       
+       <c:if test="${!isReadonly}">
+            <po:button id="save_button" href="javascript://noop/" onclick="submitForm('curateRoleForm');" style="save" text="Save"/>
+       </c:if>
        <c:url var="managePage" value="/protected/roles/organizational/IdentifiedOrganization/start.action">
            <c:param name="organization" value="${organization.id}"/>
        </c:url>

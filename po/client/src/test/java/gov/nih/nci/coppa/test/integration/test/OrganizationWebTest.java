@@ -165,11 +165,11 @@ public class OrganizationWebTest extends AbstractPoWebTest {
         selenium.click("phone-add");
         waitForElementById("phone-entry-0", 5);
 
-        selenium.type("faxEntry_value", "123-fax-0908");
+        selenium.type("faxEntry_value", "123-987-0908");
         selenium.click("fax-add");
         waitForElementById("fax-entry-0", 5);
 
-        selenium.type("ttyEntry_value", "tty-number");
+        selenium.type("ttyEntry_value", "800-834-7654");
         selenium.click("tty-add");
         waitForElementById("tty-entry-0", 5);
 

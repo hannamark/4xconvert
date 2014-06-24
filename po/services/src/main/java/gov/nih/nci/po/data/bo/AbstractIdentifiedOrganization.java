@@ -83,6 +83,7 @@
 package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import javax.persistence.GeneratedValue;
@@ -161,5 +162,22 @@ public abstract class AbstractIdentifiedOrganization extends AbstractIdentifiedE
      */
     public void setOverriddenBy(User overriddenBy) {
         this.overriddenBy = overriddenBy;
+    }
+    
+    /**
+     * Checks if OrganizationRole is EditableBy a given user.
+     * @param userName userName
+     * @return true if org role is editable
+     */
+    @Transient    
+    public boolean isEditableBy(String userName) { 
+        if (this.getId() == null) {
+            // OrgRole is not created yet, so fields in the UI are editable
+            return true;
+        }        
+        
+        boolean isEditable = PoServiceUtil.isEntityEditableByUser(userName, 
+                                                        this.getCreatedBy(), this.overriddenBy);        
+        return isEditable;               
     }
 }

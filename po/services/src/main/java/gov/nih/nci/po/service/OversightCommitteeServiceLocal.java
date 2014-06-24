@@ -91,7 +91,7 @@ import javax.ejb.Local;
  * Service interface for oversight committee structural role.
  */
 @Local
-public interface OversightCommitteeServiceLocal extends GenericStructrualRoleServiceLocal<OversightCommittee> {
+public interface OversightCommitteeServiceLocal extends GenericOrganizationRoleServiceLocal<OversightCommittee> {
 
     /**
      * Get the number of roles that need attention from the curator.

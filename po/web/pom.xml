@@ -357,6 +357,8 @@
                         <exclude>**/SearchOrganizationAction.java</exclude>
                         <exclude>**/SearchPersonAction.java</exclude>      
                         <exclude>**/ResearchOrganizationAction.java</exclude>                                          
+                        <exclude>**/HealthCareFacilityAction.java</exclude>
+                        <exclude>**/OversightCommitteeAction.java</exclude>
                     </excludes>                    
                     <minimumTokens>125</minimumTokens>
                 </configuration>

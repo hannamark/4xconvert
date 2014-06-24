@@ -142,7 +142,7 @@ public class CurateOrganizationActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testStart() {
+    public void testStart() {        
         action.getOrganization().setId(1L);
         assertEquals(CurateOrganizationAction.CURATE_RESULT, action.start());
         assertEquals(1L, action.getOrganization().getId().longValue());

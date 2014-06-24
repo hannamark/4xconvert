@@ -83,7 +83,9 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.data.bo.OversightCommittee;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
 import java.util.Map;
@@ -143,5 +145,10 @@ public class OversightCommitteeServiceStub implements OversightCommitteeServiceL
 
     public List<OversightCommittee> getByPlayerIds(Long[] pids) {
         return null;
+    }
+
+    @Override
+    public void override(Overridable overridable, User overriddenBy) {
+              
     }
 }

@@ -84,12 +84,15 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationalContact;
+import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.data.bo.Person;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import javax.ejb.Local;
 
 /**
  * @author smatyas
+ * @author Rohit Gupta
  */
 @Local
 public interface OrganizationalContactServiceLocal extends
@@ -108,4 +111,14 @@ public interface OrganizationalContactServiceLocal extends
      * @return the count of roles that need attention.
      */
     int getScoperHotRoleCount(Organization org);
+    
+    /**
+     * Curates the object by setting 'overriddenBy' attribute.
+     * 
+     * @param overridable
+     *            the object to curate.
+     * @param overriddenBy
+     *            User who overrode the entity.
+     */
+    void override(Overridable overridable, User overriddenBy);
 }

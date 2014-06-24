@@ -212,6 +212,8 @@ A.btn SPAN.saveconfirm
 { background:url("../images/ico_saveconfirm.gif") no-repeat; }
 A.btn SPAN.search
 { background:url("../images/ico_search.gif") no-repeat; }
+A.btn SPAN.entity_override
+{ background:url("../images/ico_edit.gif") no-repeat; }
 
 
 /* Credentials Navigation */

@@ -13,6 +13,7 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
 import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.Date;
@@ -36,6 +37,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * Action class to handle curation of Organization entities.
+ * @author Rohit Gupta
  */
 @SuppressWarnings("PMD.TooManyMethods")
 public class CurateOrganizationAction extends AbstractPoAction implements Addressable, Preparable {
@@ -110,6 +112,7 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
         org.getTty().size();
         org.getUrl().size();
         org.getComments().size();
+        org.getPostalAddress().getCountry().getStates().size();
     }
 
     /**
@@ -166,6 +169,20 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
         return SUCCESS;
     }
 
+    /**
+     * Override method.
+     * @return curate
+     * @throws JMSException JMSException
+     * @throws CSException JMSException
+     */
+    public String override() throws JMSException, CSException {
+        organization = PoRegistry.getOrganizationService().getById(organization.getId());      
+        User overriddenBy = getLoggedInUser();
+        PoRegistry.getOrganizationService().override(organization, overriddenBy);
+        
+        return start();
+    }
+    
     private void storeAsActionMessages(CurateEntityValidationException ex) {
         Map<String, String[]> errors = ex.getErrors();
         if (errors != null) {

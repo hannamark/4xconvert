@@ -321,7 +321,7 @@ public class ResearchOrganizationServiceImplTest {
         ResearchOrganization researchOrganization = getBasicBridgResearchOrganization();
         researchOrganization.setPlayerIdentifier(null);
         StringMap errors = service.validate(researchOrganization);
-        assertEquals("Expected errors were not detected.", 2, errors.getEntry().size());
+        assertEquals("Expected errors were not detected.", 1, errors.getEntry().size());
     }
 
     @Test

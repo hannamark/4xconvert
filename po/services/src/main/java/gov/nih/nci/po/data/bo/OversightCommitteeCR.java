@@ -1,21 +1,30 @@
 
 package gov.nih.nci.po.data.bo;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  *
  * @author gax
+ * @author Rohit Gupta
  */
 @Entity
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class OversightCommitteeCR extends AbstractOversightCommittee
         implements CorrelationChangeRequest<OversightCommittee> {
 
@@ -70,6 +79,32 @@ public class OversightCommitteeCR extends AbstractOversightCommittee
     public OversightCommittee getTarget() {
         return target;
     }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public boolean isTypeCodeChanged() {   
+        if (getTypeCode() == null && target.getTypeCode() == null) {
+            return false;
+        }
+        if ((getTypeCode() == null && target.getTypeCode() != null) 
+                || (getTypeCode() != null && target.getTypeCode() == null)) {
+            return true;
+        }
+        
+        return !StringUtils.equalsIgnoreCase(getTypeCode().getCode(), 
+                target.getTypeCode().getCode());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isStatusCodeChanged() {
+        return getStatus() != target.getStatus();
+    }
 
     /**
      *
@@ -79,7 +114,24 @@ public class OversightCommitteeCR extends AbstractOversightCommittee
         this.target = target;
     }
 
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @Transient
+    public PersistentObject getDuplicateOf() {        
+        return null;
+    }
 
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @SuppressWarnings("rawtypes")
+    @Transient
+    public Set getChangeRequests() {        
+        return new HashSet<HealthCareFacilityCR>();
+    }
 
 
 

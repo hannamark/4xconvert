@@ -2,12 +2,20 @@ package gov.nih.nci.po.data.bo;
 
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+
 /**
  * This interface represents entity that may be Overridden.
  * 
+ * @param <BO>
+ *            @see Curatable#<BO>
+ * @param <CR>
+ *            @see Curatable#<CR>
+ * 
  * @author Rohit Gupta
  */
-public interface Overridable {
+public interface Overridable<BO extends PersistentObject, CR extends ChangeRequest<BO>>
+        extends Curatable<BO, CR> {
 
     /**
      * Get the User who Overridden the entity.

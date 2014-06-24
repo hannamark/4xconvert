@@ -91,6 +91,7 @@ import gov.nih.nci.po.service.HealthCareFacilitySortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
@@ -108,10 +109,11 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author Scott Miller
+ * @author Rohit Gupta
  *
  */
 public class HealthCareFacilityAction
-    extends AbstractCtepOwnedOrgRoleAction<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityServiceLocal>
+    extends AbstractOrganizationRoleAction<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityServiceLocal>
     implements Addressable, Preparable {
 
     private static final long serialVersionUID = 1L;
@@ -192,6 +194,17 @@ public class HealthCareFacilityAction
         }
 
         return super.edit();
+    }
+    
+    /**
+     * Override method.
+     * @return input
+     * @throws CSException JMSException
+     */
+    public String override() throws CSException {        
+        User overriddenBy = getLoggedInUser();                
+        getRoleService().override(role, overriddenBy);             
+        return input();
     }
 
     /**

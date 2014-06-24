@@ -91,6 +91,7 @@ import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -102,6 +103,7 @@ import gov.nih.nci.po.service.PersonSearchDTO;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.correlation.NullifiedRoleInterceptorTest.TestInvocationContext;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -123,7 +125,6 @@ import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-import com.fiveamsolutions.nci.commons.util.HibernateUtil;
 
 public class NullifiedEntityInterceptorTest  extends AbstractServiceBeanTest {
     NullifiedEntityInterceptor interceptor;
@@ -443,6 +444,11 @@ public class NullifiedEntityInterceptorTest  extends AbstractServiceBeanTest {
         @Override
         public void removeChangeRequest(OrganizationCR cr) {
           
+            
+        }
+
+        @Override
+        public void override(Overridable overridable, User overriddenBy) {
             
         }
     }

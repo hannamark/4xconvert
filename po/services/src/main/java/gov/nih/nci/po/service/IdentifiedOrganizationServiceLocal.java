@@ -93,7 +93,8 @@ import javax.ejb.Local;
  *
  */
 @Local
-public interface IdentifiedOrganizationServiceLocal extends GenericStructrualRoleServiceLocal<IdentifiedOrganization>  {
+public interface IdentifiedOrganizationServiceLocal extends 
+                            GenericOrganizationRoleServiceLocal<IdentifiedOrganization>  {
 
     /**
      * Get the number of roles that need attention from the curator.

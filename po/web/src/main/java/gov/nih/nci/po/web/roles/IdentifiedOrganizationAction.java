@@ -92,6 +92,7 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceLocal;
 import gov.nih.nci.po.service.IdentifiedOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
@@ -113,6 +114,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * Action to manage IdentifiedOrganization(s).
  *
  * @author smatyas
+ * @author Rohit Gupta
  */
 public class IdentifiedOrganizationAction
     extends AbstractOrganizationRoleAction<IdentifiedOrganization, IdentifiedOrganizationCR,
@@ -247,6 +249,17 @@ public class IdentifiedOrganizationAction
             role.setDuplicateOf(duplicateOf);
         }
         return super.edit();
+    }
+    
+    /**
+     * Override method.
+     * @return input
+     * @throws CSException JMSException
+     */
+    public String override() throws CSException {        
+        User overriddenBy = getLoggedInUser();                
+        getRoleService().override(role, overriddenBy);            
+        return input();
     }
 
     /**

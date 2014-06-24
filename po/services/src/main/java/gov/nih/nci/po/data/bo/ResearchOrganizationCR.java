@@ -4,6 +4,7 @@ package gov.nih.nci.po.data.bo;
 import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,11 +26,13 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.Valid;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  *
  * @author gax
+ * @author Rohit Gupta
  */
 @Entity
 @VaildResearchOrganizationTypeWithFundingMechanism
@@ -238,8 +241,47 @@ public class ResearchOrganizationCR extends AbstractResearchOrganization
         return getStatus() != target.getStatus();
     }
     
-   
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isNameChanged() {
+        return !StringUtils.equals(getName(), target.getName());
+    }
 
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isTypeCodeChanged() {    
+        if (getTypeCode() == null && target.getTypeCode() == null) {
+            return false;
+        }
+        if ((getTypeCode() == null && target.getTypeCode() != null) 
+                || (getTypeCode() != null && target.getTypeCode() == null)) {
+            return true;
+        }
+        
+        return !StringUtils.equalsIgnoreCase(getTypeCode().getDescription(), 
+                target.getTypeCode().getDescription());
+    }
+    
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isFundingMechanismChanged() {     
+        if (getFundingMechanism() == null && target.getFundingMechanism() == null) {
+            return false;
+        }
+        if ((getFundingMechanism() == null && target.getFundingMechanism() != null) 
+                || (getFundingMechanism() != null && target.getFundingMechanism() == null)) {
+            return true;
+        }
+        
+        return !StringUtils.equalsIgnoreCase(getFundingMechanism().getDescription(), 
+                target.getFundingMechanism().getDescription());       
+    }
     /**
      * @return boolean
      */
@@ -386,7 +428,24 @@ public class ResearchOrganizationCR extends AbstractResearchOrganization
                 && !isTtyChanged() && !isUrlChanged();
     }
     
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @Transient
+    public PersistentObject getDuplicateOf() {        
+        return null;
+    }
 
+    /**
+     * blank implementation of method from Curatable interface.
+     * @return null.
+     */
+    @SuppressWarnings("rawtypes")
+    @Transient
+    public Set getChangeRequests() {        
+        return new HashSet<HealthCareFacilityCR>();
+    }
     
 }
 

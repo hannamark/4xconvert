@@ -82,9 +82,13 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.Overridable;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +112,10 @@ public class MockOrganizationService implements OrganizationServiceLocal {
         Organization o = new Organization();
         o.setId(id);
         o.setName("name");
+        
+        Country country = new Country("USA", "840", "US", "USA");
+        Address address = new Address("a", "b", "c", "d", country);
+        o.setPostalAddress(address);
         return o;
     }
 
@@ -189,4 +197,10 @@ public class MockOrganizationService implements OrganizationServiceLocal {
         
     }
 
+    @Override
+    public void override(Overridable overridable, User overriddenBy) {
+        
+    }
+
+    
 }

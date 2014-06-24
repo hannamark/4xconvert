@@ -92,7 +92,7 @@ import javax.jms.JMSException;
  * Interface for health care facilities.
  */
 @Local
-public interface HealthCareFacilityServiceLocal extends GenericStructrualRoleServiceLocal<HealthCareFacility> {
+public interface HealthCareFacilityServiceLocal extends GenericOrganizationRoleServiceLocal<HealthCareFacility> {
 
     /**
      * Get the number of roles that need attention from the curator.

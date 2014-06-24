@@ -94,7 +94,7 @@ public class CreateOrganizationActionTest extends AbstractPoTest {
                 User user = mock(User.class);
                 return user;
             }
-        }).when(action).getCreatedBy();
+        }).when(action).getLoggedInUser();
 
         doAnswer(new Answer<Object>() {
             public Object answer(InvocationOnMock invocation) {

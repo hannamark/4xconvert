@@ -82,9 +82,9 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -97,6 +97,7 @@ import javax.naming.NamingException;
 
 /**
  * @author mshestopalov
+ * @author Rohit Gupta
  *
  */
 public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRolesWithCRTest {
@@ -154,9 +155,24 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));        
         assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
+        assertTrue(selenium.isTextPresent("PO Curator"));
+        assertTrue(selenium.isTextPresent("Not Overridden"));
         // old values
         assertEquals("original OC title", selenium.getValue("curateRoleForm_role_title").trim());
         assertEquals("1", selenium.getValue("curateRoleForm.role.type").trim());
+        
+        logoutUser();
+        
+        loginAsJohnDoe();
+        openAndWait("/po-web/protected/roles/organizational/OrganizationalContact/start.action?organization=" + activeOrgId);
+        clickAndWait("edit_organizationalContact_id_" + ocId.trim());
+        System.out.println("activeOrgId -->"+activeOrgId);
+        System.out.println("ocId.trim() -->"+ocId.trim());
+        assertTrue(selenium.isTextPresent("exact:Edit Organizational Contact - Comparison"));
+        assertTrue(selenium.isTextPresent("Not Overridden"));
+        clickAndWait("orgcont_override_button"); // click on Override button
+        assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
+        assertFalse(selenium.isTextPresent("Not Overridden"));  
         
         // copy over new title and check new value
         selenium.click("copy_curateCrForm_role_title");

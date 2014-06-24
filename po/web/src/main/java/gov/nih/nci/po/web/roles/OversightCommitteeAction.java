@@ -91,6 +91,7 @@ import gov.nih.nci.po.service.OversightCommitteeSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
@@ -110,6 +111,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * Action to manage OversightCommittee(s).
  *
  * @author smatyas
+ * @author Rohit Gupta
  */
 public class OversightCommitteeAction extends
         AbstractOrganizationRoleAction<OversightCommittee, OversightCommitteeCR, OversightCommitteeServiceLocal>
@@ -246,6 +248,17 @@ public class OversightCommitteeAction extends
             role.setDuplicateOf(duplicateOf);
         }
         return super.edit();
+    }
+    
+    /**
+     * Override method.
+     * @return input
+     * @throws CSException JMSException
+     */
+    public String override() throws CSException {        
+        User overriddenBy = getLoggedInUser();                
+        getRoleService().override(role, overriddenBy);            
+        return input();
     }
 
     /**

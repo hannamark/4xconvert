@@ -118,8 +118,8 @@ public class SelectOrganizationTest extends OrganizationWebTest {
 
         //verify that the org details are correct
         verifyTrue(selenium.isElementPresent("link=exact:http://sample.url.org"));
-        verifyTrue(selenium.isTextPresent("tty-number"));
-        verifyTrue(selenium.isTextPresent("123-fax-0908"));
+        verifyTrue(selenium.isTextPresent("800-834-7654"));
+        verifyTrue(selenium.isTextPresent("123-987-0908"));
         verifyTrue(selenium.isTextPresent("899-090-0987"));
         verifyTrue(selenium.isTextPresent("emailAddress@example.com"));
         //address info

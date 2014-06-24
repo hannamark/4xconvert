@@ -99,6 +99,7 @@ import javax.naming.NamingException;
 
 /**
  * @author mshestopalov
+ * @author Rohit Gupta
  *
  */
 public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
@@ -163,6 +164,8 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         // status
         assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
         assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
+        assertTrue(selenium.isTextPresent("PO Curator"));
+        assertTrue(selenium.isTextPresent("Not Overridden"));
         // scoper
         assertEquals(AFFILIATE_ORG_FOR_IO + " (" + ioAffOrgId.trim() + ")", selenium
                 .getText("wwctrl_curateRoleForm_role_scoper_id"));
@@ -173,6 +176,16 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertEquals("identifierNameValue", selenium.getValue("curateRoleForm.role.assignedIdentifier.identifierName").trim());
         assertEquals("BUSN", selenium.getValue("curateRoleForm.role.assignedIdentifier.scope").trim());
         assertEquals("VRF", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
+        logoutUser();
+        
+        loginAsJohnDoe();
+        openAndWait("/po-web/protected/roles/organizational/IdentifiedOrganization/start.action?organization=" + activeOrgId);
+        clickAndWait("edit_identifiedOrganization_id_" + ioId.trim());
+        assertTrue(selenium.isTextPresent("exact:Edit Identified Organization - Comparison"));
+        assertTrue(selenium.isTextPresent("Not Overridden"));
+        clickAndWait("io_override_button"); // click on Override button
+        assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
+        assertFalse(selenium.isTextPresent("Not Overridden"));         
 
         // copy over new ext
         selenium.click("copy_curateCrForm_role_assignedIdentifier");
@@ -191,6 +204,8 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertEquals("UNV", selenium.getValue("curateRoleForm.role.assignedIdentifier.reliability").trim());
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully updated!".trim()));
+        logoutUser();
+        loginAsCurator();
 
         updateRemoteIoOrgWithAssignedIdReliabilityISS(ioId.trim());
 
@@ -198,6 +213,8 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         openAndWait("/po-web/protected/roles/organizational/IdentifiedOrganization/start.action?organization=" + activeOrgId);
         clickAndWait("edit_identifiedOrganization_id_" + ioId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Identified Organization - Comparison"));
+        assertTrue(selenium.isTextPresent("jdoe01"));
+        clickAndWait("io_override_button"); // click on Override button
 
         assertEquals("ISS", selenium.getText("wwctrl_curateCrForm.role.assignedIdentifier.reliability").trim());
 

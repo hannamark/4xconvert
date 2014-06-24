@@ -36,6 +36,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+
 public class CtepUtilsTest {
 
     @Test(expected = Exception.class)
@@ -353,7 +355,15 @@ public class CtepUtilsTest {
     @Test
     public void testValidateAddresses() throws Exception {
         CtepUtils.validateAddresses(null);
-        AbstractEnhancedOrganizationRole role = new AbstractEnhancedOrganizationRole() {};
+        AbstractEnhancedOrganizationRole role = new AbstractEnhancedOrganizationRole() {
+            @Override
+            public PersistentObject getDuplicateOf() {               
+                return null;
+            }
+            @Override
+            public Set getChangeRequests() {
+                return null;
+            }};
         CtepUtils.validateAddresses(role);
         Set<Address> addrs = new HashSet<Address>();
         Address addr = new Address();
@@ -368,7 +378,15 @@ public class CtepUtilsTest {
 
     @Test(expected = CtepImportException.class)
     public void testValidateAddressesException() throws Exception {
-        AbstractEnhancedOrganizationRole role = new AbstractEnhancedOrganizationRole() {};
+        AbstractEnhancedOrganizationRole role = new AbstractEnhancedOrganizationRole() {
+            @Override
+            public PersistentObject getDuplicateOf() {               
+                return null;
+            }
+            @Override
+            public Set getChangeRequests() {
+                return null;
+            }};
         Set<Address> addrs = new HashSet<Address>();
         Address addr = new Address();
         addrs.add(addr);
@@ -380,7 +398,15 @@ public class CtepUtilsTest {
     @Test
     public void testValidateOversightCommitteeAddresses() throws Exception {
         CtepUtils.validateAddresses(null);
-        AbstractOversightCommittee role = new AbstractOversightCommittee() {};
+        AbstractEnhancedOrganizationRole role = new AbstractEnhancedOrganizationRole() {
+            @Override
+            public PersistentObject getDuplicateOf() {               
+                return null;
+            }
+            @Override
+            public Set getChangeRequests() {
+                return null;
+            }};
         CtepUtils.validateAddresses(role);
         Set<Address> addrs = new HashSet<Address>();
         Address addr = new Address();
@@ -395,7 +421,15 @@ public class CtepUtilsTest {
 
     @Test(expected = CtepImportException.class)
     public void testValidateOversightCommitteeAddressesException() throws Exception {
-        AbstractOversightCommittee role = new AbstractOversightCommittee() {};
+        AbstractEnhancedOrganizationRole role = new AbstractEnhancedOrganizationRole() {
+            @Override
+            public PersistentObject getDuplicateOf() {               
+                return null;
+            }
+            @Override
+            public Set getChangeRequests() {
+                return null;
+            }};
         Set<Address> addrs = new HashSet<Address>();
         Address addr = new Address();
         addrs.add(addr);

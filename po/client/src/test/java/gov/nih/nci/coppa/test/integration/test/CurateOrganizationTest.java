@@ -83,6 +83,7 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.coppa.test.integration.test.AbstractPoWebTest.ENTITYTYPE;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Cd;
@@ -93,6 +94,7 @@ import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.TestConvertHelper;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -297,11 +299,155 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
         Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
         saveAsInactive(id);
     }
+    /**
+     * Testcase for Override functionality https://tracker.nci.nih.gov/browse/PO-7335
+     * 
+     */
+    public void testOverrideOrg() throws Exception {        
+        /* create a new org via remote API. */
+        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
+        Ii id = remoteCreateAndCatalog(create(name)); // 'createdBy' is set to 'curator' there
+
+        // Step1:: Org not overridden, Org creator logs in.
+        loginAsCurator(); // user who created the Org
+        searchForOrgByPoId(id); // search for the just created Org        
+        clickAndWait("org_id_" + id.getExtension()); // click on item to curate
+        waitForTelecomFormsToLoad();
+        waitForAliasFormsToLoad();
+        assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
+        verifyTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
+        verifyTrue(selenium.isTextPresent("PO Curator"));
+        verifyTrue(selenium.isElementPresent("//div[@id='wwlbl_overriddenBy']")); // 'overriddenBy' should be present
+        verifyTrue(selenium.isTextPresent("Not Overridden"));
+        assertFalse(selenium.isElementPresent("//button[@type='button' and @id='override_button']")); // 'override button' shouldn't be present
+        
+        String tempName = name.concat(name);
+        selenium.type("curateEntityForm_organization_name", tempName);
+        assertEquals(tempName, selenium.getValue("curateEntityForm_organization_name"));
+        clickAndWait("reset_button");
+        
+        waitForTelecomFormsToLoad();
+        waitForAliasFormsToLoad();
+        assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
+        verifyRequiredIndicators(true); // verify the presence of required indicator in create screen.
+        verifyPostalAddress(ENTITYTYPE.organization);
+        verifyTelecom();        
+        verifyAlias();
+        
+        verifyTrue(selenium.isTextPresent("Not Overridden"));     
+        assertFalse(selenium.isElementPresent("//button[@type='button' and @id='override_button']")); // 'override button' shouldn't be present
+        verifyFalse(selenium.isTextPresent("Override"));
+        
+        saveAsActive(id);
+        logoutUser(); //'curator' logs out
+        
+        // Step2:: Org not overridden, other curator (who didn't create the Org) logs in.
+        loginAsJohnDoe(); // some other curator
+        searchForOrgByPoId(id);         
+        clickAndWait("org_id_" + id.getExtension()); // click on item to curate
+        waitForPageToLoad();
+        verifyTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
+        verifyTrue(selenium.isTextPresent("PO Curator"));
+        verifyTrue(selenium.isElementPresent("//div[@id='wwlbl_overriddenBy']")); // 'overriddenBy' should be present
+        verifyTrue(selenium.isTextPresent("Not Overridden"));
+        verifyTrue(selenium.isElementPresent("//div[@id='wwlbl_organization.name']")); // OrgName label is present
+        verifyFalse(selenium.isElementPresent("curateEntityForm_organization_name")); // OrgName 'text box' shouldn't be present (Non Editable)
+        
+        clickAndWait("override_button"); // click on Override button
+        
+        verifyFalse(selenium.isTextPresent("Not Overridden")); 
+        verifyTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the Org
+        verifyTrue(selenium.isEditable("curateEntityForm_organization_name")); // OrgName should be editable
+        selenium.type("curateEntityForm_organization_name", "Org updated name ABC");
+        verifyFalse(selenium.isElementPresent("//button[@id='override_button']")); // 'override button' should NOT be present
+        verifyFalse(selenium.isTextPresent("Override"));
+        clickAndWait("save_button"); 
+        logoutUser(); //'John Doe' logs out
+        
+        //Step3: Curator who Overrode the Org logs in
+        loginAsJohnDoe(); // curator who overrode the Org
+        searchForOrgByPoId(id);         
+        clickAndWait("org_id_" + id.getExtension()); // click on item to curate
+        waitForPageToLoad();
+        verifyTrue(selenium.isElementPresent("curateEntityForm_organization_name")); // OrgName 'text box' should be present (Editable)
+        verifyTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the Org
+        logoutUser(); //'John Doe' logs out
+        
+        //Step4: Curator who created the Org logs in (but Org was Overrode by other user)
+        loginAsCurator(); 
+        searchForOrgByPoId(id);         
+        clickAndWait("org_id_" + id.getExtension()); // click on item to curate
+        waitForPageToLoad();  
+        verifyTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the Org
+        verifyFalse(selenium.isElementPresent("curateEntityForm_organization_name")); // OrgName 'text box' shouldn't be present (Non Editable)
+        assertTrue(selenium.isTextPresent("Override"));
+        clickAndWait("override_button"); // click on Override button
+        verifyTrue(selenium.isTextPresent("PO Curator")); // curator has overridden the Org
+        verifyTrue(selenium.isElementPresent("curateEntityForm_organization_name")); // OrgName 'text box' should be present (Editable)
+    }
+
+    /**
+     * Testcase for Override functionality https://tracker.nci.nih.gov/browse/PO-7335
+     * Organization is having a ChangeRequest also.
+     */
+    public void testOrverrideOrgWithCRs() throws Exception {        
+        // create a new org via remote API.
+        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
+        Ii id = remoteCreateAndCatalog(create(name));
+
+        // create a CR
+        OrganizationDTO orgDTO = getOrgService().getOrganization(id);
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        orgDTO.getTelecomAddress().getItem().add(email);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI(TelPhone.SCHEME_TEL + ":123-456-7890"));
+        orgDTO.getTelecomAddress().getItem().add(phone);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone fax = new TelPhone();
+        fax.setValue(new URI(TelPhone.SCHEME_X_TEXT_FAX + ":234-567-8901"));
+        orgDTO.getTelecomAddress().getItem().add(fax);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone tty = new TelPhone();
+        tty.setValue(new URI(TelPhone.SCHEME_X_TEXT_TEL + ":345-678-9012"));
+        orgDTO.getTelecomAddress().getItem().add(tty);
+        getOrgService().updateOrganization(orgDTO);
+
+        // Step1 : Curator who created the Org, logs in
+        loginAsCurator();
+        searchForOrgByPoId(id);        
+        clickAndWait("org_id_" + id.getExtension()); // click on item to curate
+        assertEquals(name, selenium.getValue("curateEntityForm_organization_name"));
+
+        // Verify that CR is present
+        verifyTrue(selenium.isTextPresent("Change Request Information"));
+        verifyTrue(selenium.isTextPresent("Copy")); // copy button
+        verifyFalse(selenium.isTextPresent("Override"));
+        logoutUser(); //'curator' logs out
+        
+        // Step2 : Org not overridden, other curator (who didn't create the Org) logs in.
+        loginAsJohnDoe(); // some other curator
+        searchForOrgByPoId(id);         
+        clickAndWait("org_id_" + id.getExtension()); // click on item to curate
+        waitForPageToLoad();
+        verifyFalse(selenium.isElementPresent("curateEntityForm_organization_name")); // OrgName 'text box' shouldn't be present (Non Editable)
+        verifyFalse(selenium.isTextPresent("Copy")); // copy button not present
+        verifyTrue(selenium.isTextPresent("Override")); //Override button present
+        
+        clickAndWait("override_button"); // click on Override button
+        verifyTrue(selenium.isTextPresent("Copy")); // copy button
+        verifyTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the Org
+        verifyTrue(selenium.isEditable("curateEntityForm_organization_name")); // OrgName should be editable
+        selenium.type("curateEntityForm_organization_name", "Org updated name ABC");
+        clickAndWait("save_button"); 
+        logoutUser(); //'John Doe' logs out
+    }
 
     private Ii createNewOrgThenCurateAsActive() throws EntityValidationException, URISyntaxException, CurationException {
         // create a new org via remote API.
         String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
-        Ii id = remoteCreateAndCatalog(create(name));
+        Ii id = remoteCreateAndCatalog(create(name)); // 'createdBy' is set to 'curator' there
 
         if (!isLoggedIn()) {
             loginAsCurator();
@@ -404,11 +550,15 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
     }
 
     private Ii remoteCreateAndCatalog(OrganizationDTO org) throws EntityValidationException, CurationException {
-        Ii id = getOrgService().createOrganization(org);
+        Ii id = getOrgService().createOrganization(org);    
+        Long orgId= IiConverter.convertToLong(id);
+        setCreatedByInOrg(orgId);
         org.setIdentifier(id);
         catalogOrgs.put(id, org);
         return id;
     }
+    
+    
 
     private Ii remoteCreateHcfWithCtepId(Ii orgId) throws EntityValidationException, CurationException, URISyntaxException {
         Ii id = this.getHcfService().createCorrelation(createHcfFromCtep(orgId));

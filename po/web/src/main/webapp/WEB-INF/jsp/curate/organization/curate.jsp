@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html>
-<head>
+<head>     
+    <c:set var="isReadonly" value="${!organization.isEditableBy(pageContext.request.remoteUser)}"/>
     <s:set name="isCreate" value="organization.id == null"/>
     <s:set name="isNotCreate" value="organization.id != null"/>
     <s:if test="%{isCreate}">
@@ -90,7 +91,7 @@
                 <s:date name="organization.statusDate"  format="yyyy-MM-dd" /></po:field>
                 </po:inputRowElement>
                 </po:inputRow>
-                <s:if test="%{showNewStatusField}">
+                <c:if test="${!isReadonly}">
 	                <s:select
 	                   label="New %{getText('organization.statusCode')}"
 	                   name="organization.statusCode"
@@ -100,10 +101,10 @@
 	                   onchange="handleDuplicateOf();"
 	                   required="true" cssClass="required"
 	                   id="curateEntityForm.organization.statusCode"/>
-	            </s:if>
-	            <s:else>
+	            </c:if>
+	            <c:if test="${isReadonly}">
 	               <s:hidden name="organization.statusCode" id="curateEntityForm.organization.statusCode" value="%{organization.statusCode}" />
-	            </s:else>
+	            </c:if>
                 <div id="duplicateOfDiv" <s:if test="organization.statusCode != @gov.nih.nci.po.data.bo.EntityStatus@NULLIFIED">style="display:none;"</s:if>>
                     <script type="text/javascript">
                         var dupeOrgName = '';
@@ -155,10 +156,31 @@
                     </po:inputRow>
                 </div>
             </s:else>
-                <s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
+                <c:choose>
+		          <c:when test="${isReadonly}">
+		            <po:inputRow>
+                        <po:inputRowElement><po:field labelKey="organization.name"><c:out value="${organization.name}"></c:out></po:field></po:inputRowElement>
+                    </po:inputRow>
+		          </c:when>
+		          <c:otherwise>
+		            <s:textfield key="organization.name" required="true" cssClass="required" size="70"/>
+		          </c:otherwise>
+		        </c:choose> 
+                
                 <div class="clear"></div>
                 <s:if test="isNotCreate">                  	 
-                    <po:createdBy createdByUserName="${organization.createdByUserName}"/>               
+                    <po:createdBy createdByUserName="${organization.createdByUserName}"/>    
+                    <po:overriddenBy overriddenByUserName="${organization.overriddenByUserName}"/>
+                    <c:if test="${isReadonly}">
+	                    <div style="margin-bottom:30px;" id="override_div">
+		                    <c:url var="overrideUrl" value="/protected/organization/curate/override.action">
+	                            <c:param name="organization.id">${organization.id}</c:param>
+	                        </c:url>
+	                        <po:buttonRow>	                            
+	                            <po:button id="override_button" href="${overrideUrl}" style="entity_override" text="Override"/>                           
+	                        </po:buttonRow>
+	                    </div> 
+                    </c:if>                        
                 </s:if>
             </div>
         </div>
@@ -167,14 +189,14 @@
         <h2>Aliases</h2>
             <div class="box_white">                
                 <div class="clear"></div>                
-                <po:aliases aliasKeyBase="organization"/>
+                <po:aliases aliasKeyBase="organization" readonly="${isReadonly}"/>
             </div>
         </div>
 
         <div class="boxouter">
         <h2>Address Information</h2>
             <div class="box_white">
-                <po:addressForm formNameBase="curateEntityForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true" noPhoneFormatSwitch="true"/>
+                <po:addressForm formNameBase="curateEntityForm" addressKeyBase="organization.postalAddress" address="${organization.postalAddress}" required="true" noPhoneFormatSwitch="true" readonly="${isReadonly}"/>
                 <div class="clear"></div>
             </div>
         </div>
@@ -186,7 +208,7 @@
         <h2>Contact Information</h2>
             <div class="box_white">
                 <div class="clear"></div>
-                <po:contacts contactableKeyBase="organization" emailRequired="false" usOrCanadaFormatForValidationOnly="true"/>
+                <po:contacts contactableKeyBase="organization" emailRequired="false" usOrCanadaFormatForValidationOnly="true" readonly="${isReadonly}"/>
             </div>
         </div>
 <s:if test="%{isNotCreate}">
@@ -357,7 +379,14 @@
 
 <div class="btnwrapper" style="margin-bottom:20px;">
     <po:buttonRow>
-        <po:button id="save_button" href="javascript://noop/" onclick="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return ((isTelecomFieldsBlank()==true && isAliasFieldBlank()==true) ? confirmThenSubmit('curateEntityForm.organization.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
+        <c:choose>
+          <c:when test="${isReadonly}">
+            <po:button id="save_button" href="javascript://noop/" onclick="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return (confirmThenSubmit('curateEntityForm.organization.statusCode', document.forms.curateEntityForm));" style="save" text="Save"/>
+          </c:when>
+          <c:otherwise>
+            <po:button id="save_button" href="javascript://noop/" onclick="$('curateEntityForm.organization.comments').value = $F('curateEntityForm.organization.commentsText'); return ((isTelecomFieldsBlank()==true && isAliasFieldBlank()==true) ? confirmThenSubmit('curateEntityForm.organization.statusCode', document.forms.curateEntityForm):false);" style="save" text="Save"/>
+          </c:otherwise>
+        </c:choose>     
         <c:set var="querystring" value="${pageContext.request.queryString}"/>
         <c:choose>
           <c:when test="${fn:contains(querystring, 'organization.id')}">

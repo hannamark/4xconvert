@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ tag display-name="createdBy"
 	description="Renders createdBy in the form" body-content="empty"%>
 <%@ attribute name="createdByUserName" type="java.lang.String"
@@ -10,6 +11,6 @@
 	   <s:text name="createdBy" />:
 	</label>	
 	<s:if test='%{#attr.createdByUserName != ""}'>	   
-	   <s:text name="createdByUserName">${createdByUserName}</s:text>
+	   <s:text name="createdByUserName"><c:out value="${createdByUserName}"></c:out></s:text>
 	</s:if>
 </div>

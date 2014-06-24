@@ -88,12 +88,14 @@ import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PersistentObjectHelper;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -110,6 +112,7 @@ import org.hibernate.Session;
 
 /**
  * @author Scott Miller
+ * @author Rohit Gupta
  * @param <T>
  */
 public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractBaseServiceBean<T> {
@@ -207,6 +210,21 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
             s.save(PersistentObjectHelper.initialize(object));
             getPublisher().sendCreate(getTypeArgument(), object);
         }
+    }
+    
+    
+    /**
+     * Curates the object by setting 'overriddenBy' attribute.
+     * @param overridable the object to curate.
+     * @param overriddenBy User who overrode the entity.
+     */
+    @SuppressWarnings({ "rawtypes", "PMD.AvoidReassigningParameters" })
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void override(Overridable overridable, User overriddenBy) {        
+        final Session s = PoHibernateUtil.getCurrentSession(); 
+        overridable = (Overridable) s.load(getTypeArgument(), overridable.getId());
+        overridable.setOverriddenBy(overriddenBy);     
+        s.update(overridable);
     }
     
     /**

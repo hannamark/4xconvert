@@ -6,4 +6,9 @@ function confirmThenSubmit(fieldId, formId){
     map['NULLIFIED'] = '<s:text name="role.curation.nullified.confirmation"/>';
     finalConfirmThenSubmit($(fieldId),$(formId),map);
  }
+ 
+function submitForm(formId){
+	$(formId).submit();
+    return true;
+ }
 </script>

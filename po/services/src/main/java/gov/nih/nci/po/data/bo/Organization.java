@@ -118,6 +118,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Organizations.
+ * @author Rohit Gupta
  *
  * @xsnapshot.snapshot-class name="iso" tostring="none"
  *      class="gov.nih.nci.services.organization.OrganizationDTO"
@@ -126,9 +127,10 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *      serial-version-uid="1L"
  */
 @javax.persistence.Entity
-@SuppressWarnings("PMD.AvoidDuplicateLiterals")
+@SuppressWarnings({ "PMD.AvoidDuplicateLiterals", "PMD.ExcessiveClassLength" })
 public class Organization extends AbstractOrganization
-        implements Overridable, Auditable, CuratableEntity<Organization, OrganizationCR>, Entity {
+        implements Overridable<Organization, OrganizationCR>, Auditable, 
+        CuratableEntity<Organization, OrganizationCR>, Entity {
     private static final long serialVersionUID = 1L;
     private static final String NOT_NULLIFIED_CLAUSE = "status <> 'NULLIFIED'";
     private static final String PLAYER_MAPPING = "player";
@@ -604,5 +606,20 @@ public class Organization extends AbstractOrganization
     @Transient
     public String getOverriddenByUserName() {
         return PoServiceUtil.getUserName(overriddenBy);
+    }
+    
+    /**
+     * Checks if Organization is EditableBy a given user.
+     * @param userName userName
+     * @return true if org is editable
+     */
+    @Transient    
+    public boolean isEditableBy(String userName) { 
+        if (this.getId() == null) {
+            // Org is not created yet, so fields in the UI are editable
+            return true;
+        }        
+        
+        return PoServiceUtil.isEntityEditableByUser(userName, this.createdBy, this.overriddenBy);                
     }
 }

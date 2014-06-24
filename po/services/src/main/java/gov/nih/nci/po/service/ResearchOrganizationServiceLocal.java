@@ -92,7 +92,7 @@ import javax.jms.JMSException;
  * Service interface for Research Organization structural role.
  */
 @Local
-public interface ResearchOrganizationServiceLocal extends GenericStructrualRoleServiceLocal<ResearchOrganization> {
+public interface ResearchOrganizationServiceLocal extends GenericOrganizationRoleServiceLocal<ResearchOrganization> {
     /**
      * @param org method to curate/accept ResearchOrganization's w/ RoleStatus.NEW and transition to RoleStatus.ACTIVE
      * @throws JMSException if problem occurred publishing the announcement message for updates.

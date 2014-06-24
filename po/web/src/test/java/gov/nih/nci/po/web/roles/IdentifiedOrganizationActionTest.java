@@ -145,7 +145,7 @@ public class IdentifiedOrganizationActionTest extends AbstractPoTest {
                 User user = mock(User.class);
                 return user;
             }
-        }).when(action).getCreatedBy();
+        }).when(action).getLoggedInUser();
 
         doCallRealMethod().when(action).setRole(isA(IdentifiedOrganization.class));
         doCallRealMethod().when(action).getRole();

@@ -92,6 +92,7 @@ import gov.nih.nci.po.service.ResearchOrganizationSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
@@ -111,9 +112,10 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
  * Action to manage ResearchOrganization(s).
  *
  * @author smatyas
+ * @author Rohit Gupta
  */
 public class ResearchOrganizationAction
-    extends AbstractCtepOwnedOrgRoleAction<ResearchOrganization, ResearchOrganizationCR,
+    extends AbstractOrganizationRoleAction<ResearchOrganization, ResearchOrganizationCR,
         ResearchOrganizationServiceLocal>
     implements Addressable, Preparable {
 
@@ -207,6 +209,16 @@ public class ResearchOrganizationAction
         return super.edit();
     }
 
+    /**
+     * Override method.
+     * @return input
+     * @throws CSException JMSException
+     */
+    public String override() throws CSException {        
+        User overriddenBy = getLoggedInUser();                
+        getRoleService().override(role, overriddenBy);            
+        return input();
+    }
     /**
      * {@inheritDoc}
      */

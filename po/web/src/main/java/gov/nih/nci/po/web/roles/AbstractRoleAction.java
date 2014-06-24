@@ -229,7 +229,7 @@ public abstract class AbstractRoleAction<ROLE extends Correlation, ROLECR extend
     }
 
     private void setCreatedByUserInRole() throws CSException {
-        User createdBy = getCreatedBy();
+        User createdBy = getLoggedInUser();
         Object role = getBaseRole();
        
         if (role instanceof AbstractRole) {

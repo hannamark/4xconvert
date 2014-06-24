@@ -97,6 +97,7 @@ import javax.naming.NamingException;
 
 /**
  * @author mshestopalov
+ * @author Rohit Gupta
  *
  */
 public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRolesWithCRTest {
@@ -152,16 +153,39 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
         clickAndWaitSaveButton();
-
+        
+        // Step2:: OrgRole not overridden, other curator (who didn't create the OrgRole) logs in.
+        logoutUser();// 'curator' logout 
+        loginAsJohnDoe(); // some other curator   
+        openAndWait("/po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + activeOrgId);
+        clickAndWait("edit_researchOrganization_id_" + roId.trim());
+        assertTrue(selenium.isTextPresent("Not Overridden"));
+        clickAndWait("ro_override_button"); // click on Override button
+        assertFalse(selenium.isTextPresent("Not Overridden")); 
+        assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
+        assertFalse(selenium.isTextPresent("Override"));
+        selenium.select("curateRoleForm.role.status", "label=ACTIVE");
+        clickAndWaitSaveButton();
+        logoutUser(); //'John Doe' logs out      
+        loginAsCurator();
+        
+        // Add a CR
         updateRemoteRoOrg(roId.trim());
 
         // Goto Manage RO Page.... should see CR
         openAndWait("/po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + activeOrgId);
         clickAndWait("edit_researchOrganization_id_" + roId.trim());
-        assertTrue(selenium.isTextPresent("exact:Edit Research Organization - Comparison"));
-        // status
-        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
+        assertTrue(selenium.isTextPresent("exact:Edit Research Organization - Comparison"));        
+        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode")); // status
         assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
+        assertFalse(selenium.isTextPresent("Not Overridden")); 
+        assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
+        assertFalse(selenium.isTextPresent("Copy")); // copy button not present
+        assertTrue(selenium.isTextPresent("Override")); //Override button present        
+        clickAndWait("ro_override_button"); // click on Override button
+        
+        openAndWait("/po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + activeOrgId);
+        clickAndWait("edit_researchOrganization_id_" + roId.trim());
 
         // verify that the type code required indicator is not present. Verifies PO-1155 via UI.
         verifyPresenceOfRequiredIndicator(false, "curateRoleForm_role_typeCode");

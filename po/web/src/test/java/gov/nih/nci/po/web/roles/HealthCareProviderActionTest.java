@@ -166,7 +166,7 @@ public class HealthCareProviderActionTest extends AbstractPoTest {
                 User user = mock(User.class);
                 return user;
             }
-        }).when(action).getCreatedBy();
+        }).when(action).getLoggedInUser();
 
         doCallRealMethod().when(action).getBaseRole();
         doCallRealMethod().when(action).getRoleService();

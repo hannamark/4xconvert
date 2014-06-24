@@ -10,7 +10,6 @@ import static org.mockito.Mockito.mock;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.util.POUtils;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Iterator;
@@ -91,7 +90,7 @@ public class CreatePersonActionTest extends AbstractPoTest {
                 User user = mock(User.class);
                 return user;
             }
-        }).when(action).getCreatedBy();
+        }).when(action).getLoggedInUser();
 
         doAnswer(new Answer<Object>() {
             public Object answer(InvocationOnMock invocation) {

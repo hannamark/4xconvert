@@ -92,6 +92,7 @@ import gov.nih.nci.po.service.OrganizationalContactSortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
@@ -109,6 +110,7 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
 
 /**
  * @author smatyas
+ * @author Rohit Gupta
  */
 public class OrganizationalContactAction extends
         AbstractPersonRoleAction<OrganizationalContact, OrganizationalContactCR, OrganizationalContactServiceLocal>
@@ -355,6 +357,21 @@ public class OrganizationalContactAction extends
             role.setDuplicateOf(duplicateOf);
         }
         return super.edit();
+    }
+    
+    /**
+     * Override method.
+     * @return input
+     * @throws CSException JMSException
+     */
+    public String override() throws CSException {        
+        User overriddenBy = getLoggedInUser();        
+        if (role.getPlayer() != null && role.getPlayer().getId() == null) {
+            // prepare() is setting a default person, causing TransientObjectException
+            role.setPlayer(null); 
+        }
+        getRoleService().override(role, overriddenBy);             
+        return input();
     }
 
     /**

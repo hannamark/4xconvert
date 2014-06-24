@@ -146,7 +146,7 @@ public class ResearchOrganizationActionTest extends AbstractRoleActionTest {
                 User user = mock(User.class);
                 return user;
             }
-        }).when(action).getCreatedBy();
+        }).when(action).getLoggedInUser();
 
         doCallRealMethod().when(action).getBaseRole();
         doCallRealMethod().when(action).getRoleService();
@@ -177,6 +177,7 @@ public class ResearchOrganizationActionTest extends AbstractRoleActionTest {
     public void testGetAvailableStatusForAddForm() {
         List<RoleStatus> expected = new ArrayList<RoleStatus>();
         expected.add(RoleStatus.PENDING);
+        expected.add(RoleStatus.ACTIVE);
 
         action.getRole().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();
@@ -192,7 +193,7 @@ public class ResearchOrganizationActionTest extends AbstractRoleActionTest {
         PrivateAccessor.invokePrivateMethod(role, AbstractRole.class, "setPriorAsString",
                 new Object[] { roleStatus.name() });
         Collection<RoleStatus> allowedTransitions = new ArrayList<RoleStatus>(roleStatus.getAllowedTransitions());
-        allowedTransitions.remove(RoleStatus.ACTIVE);
+//        allowedTransitions.remove(RoleStatus.ACTIVE);
         assertTrue(allowedTransitions.containsAll(getAction().getAvailableStatus()));
         assertTrue(getAction().getAvailableStatus().containsAll(allowedTransitions));
     }

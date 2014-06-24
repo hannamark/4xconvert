@@ -84,6 +84,8 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Overridable;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
 import java.util.Map;
@@ -148,5 +150,10 @@ public class HealthCareFacilityServiceStub implements HealthCareFacilityServiceL
     public void curate(HealthCareFacility healthCareFacility, String ctepId)
             throws JMSException {
         
+    }
+
+    @Override
+    public void override(Overridable overridable, User overriddenBy) {
+                
     }
 }

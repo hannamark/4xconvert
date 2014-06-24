@@ -3,7 +3,9 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
+import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +14,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -24,6 +27,8 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  */
 public class PoServiceUtil {
 
+    private static final Logger LOG = Logger.getLogger(PoServiceUtil.class);
+    
     /**
      * This method is used to fetch the Organization representing "CTEP".
      * 
@@ -101,6 +106,46 @@ public class PoServiceUtil {
                     .getFirstName() + " " + user.getLastName());
         }
         return name;
+    }
+    
+    /**
+     * This method returns true if an entity is editable for the given Username.
+     * 
+     * @param userName - Username 
+     * @param createdBy
+     *            user who created the entity
+     * @param overriddenBy
+     *            user who overrode the entity
+     * @return true if entity is editable
+     */    
+    @SuppressWarnings("PMD.CollapsibleIfStatements")
+    public static boolean isEntityEditableByUser(String userName, User createdBy, User overriddenBy) {
+        boolean isEditable = false;
+        try {
+            // get the user corresponds to given userName
+            User user = SecurityServiceProvider.getUserProvisioningManager("po").getUser(userName);
+            if (overriddenBy != null) {
+                // i.e. entity is overridden
+                if (overriddenBy.getUserId().longValue() == user.getUserId().longValue()) {
+                    // i.e. user overrode the entity
+                    isEditable = true; // editable  
+                }
+            } else {
+                // i.e. entity is not overridden
+                if (createdBy != null) {
+                    if (createdBy.getUserId().longValue() == user.getUserId().longValue()) {
+                        // i.e. user created the entity
+                        isEditable = true; // editable  
+                    }
+                }
+            }        
+        } catch (CSException e) {
+            LOG.error("CSException while getting the logged-in user. The exception is:" + e);
+            isEditable = false;
+        }       
+        
+        // User didn't Overrode/Create the entity, so its not Editable
+        return isEditable; 
     }
 
 }

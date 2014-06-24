@@ -86,6 +86,8 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.Overridable;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
 import java.util.Map;
@@ -100,6 +102,7 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 /**
  *
  * @author gax
+ * @author Rohit Gupta
  */
 @Local
 public interface OrganizationServiceLocal extends GenericSearchService<Organization, SearchCriteria<Organization>> {
@@ -130,6 +133,14 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @throws JMSException if problem occurred publishing the announcement message for updates.
      */
     void curate(Organization curatedOrg) throws JMSException;
+    
+    /**
+     * 
+     * @param overridable org to be updated with 'OverriddenBy' value set.
+     * @param overriddenBy user who overrode the org.
+     */
+    @SuppressWarnings("rawtypes")
+    void override(Overridable overridable, User overriddenBy);
     
     /**
      * @param o Organization to find associated played roles
