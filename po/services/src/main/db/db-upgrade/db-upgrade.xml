@@ -208,4 +208,8 @@
        <comment>Changes to capture 'overriddenBy' when overriding the entity(Org and OrgRole)</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/4.1/PO-7624.sql"/>
     </changeSet>
+    <changeSet id="PO-7707" author="Rohit">
+       <comment>Changes to set 'createdBy' for CTEP created Org/Roles</comment>
+       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/4.1/PO-7707.sql"/>       
+    </changeSet>
 </databaseChangeLog>
