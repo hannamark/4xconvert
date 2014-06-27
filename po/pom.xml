@@ -229,6 +229,7 @@
                     <!--  There's a bug with surefix and jdk 1.6 that results in this value being defaulted to false
                     when it is required to be true so we have to manaully set it here.  -->
                     <argLine>-Dsun.lang.ClassLoader.allowArraySyntax=true</argLine>
+                    <argLine>-XX:PermSize=512m -XX:MaxPermSize=1024m</argLine>
                     <forkMode>once</forkMode>
                     <includes>
                         <include>**/*Test.java</include>

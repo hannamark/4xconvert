@@ -98,7 +98,6 @@ public class OrganizationalContactClientTest {
 
     private static PersonPortType personService;
     private static OrganizationPortType organizationService;
-    private static OrganizationalContactType defaultType;
 
     private OrganizationalContactPortType port;
     private static ServiceLocator oldLocator;
@@ -123,24 +122,8 @@ public class OrganizationalContactClientTest {
         oldLocator = PoRegistry.getInstance().getServiceLocator();
         PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
 
-        initDefaultType();
     }
 
-    private static void initDefaultType() {
-        defaultType = new OrganizationalContactType("defaultType");
-
-        Transaction t = PoHibernateUtil.getCurrentSession().beginTransaction();
-
-        try {
-            PoHibernateUtil.getCurrentSession().save(defaultType);
-            t.commit();
-        } catch(Exception e) {
-            t.rollback();
-            throw new RuntimeException(e);
-        }
-
-
-    }
 
 
     private static void initPersonService() throws MalformedURLException {
@@ -335,7 +318,7 @@ public class OrganizationalContactClientTest {
         payload.setTelecomAddress(new DSETTEL());
 
         CD defaultTypeCode = new CD();
-        defaultTypeCode.setCode(defaultType.getCode());
+        defaultTypeCode.setCode("IRB");
         payload.setTypeCode(defaultTypeCode);
 
         CD status = new CD();
@@ -388,7 +371,7 @@ public class OrganizationalContactClientTest {
         payload.setTelecomAddress(new DSETTEL());
 
         CD defaultTypeCode = new CD();
-        defaultTypeCode.setCode(defaultType.getCode());
+        defaultTypeCode.setCode("IRB");
         payload.setTypeCode(defaultTypeCode);
 
         CD status = new CD();
@@ -831,7 +814,7 @@ public class OrganizationalContactClientTest {
         payload.setStatus(status);
 
         CD defaultTypeCode = new CD();
-        defaultTypeCode.setCode(defaultType.getCode());
+        defaultTypeCode.setCode("IRB");
         payload.setTypeCode(defaultTypeCode);
 
 

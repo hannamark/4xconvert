@@ -50,14 +50,11 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SecurityServiceProvider.class)
+
 public class PersonBoServiceTest extends AbstractEndpointTest{
 
 
     private PersonBoService service;
-    private UserProvisioningManager userProvisioningManager;
-    private User me;
 
     @Before
     public void setup() throws CSException {
@@ -65,25 +62,7 @@ public class PersonBoServiceTest extends AbstractEndpointTest{
 
         service = new PersonBoService();
 
-        UsernameHolder.setUser(CsmUserUtil.getGridIdentityUsername("jdoe01"));
-        me = new User();
-        me.setLoginName(UsernameHolder.getUser());
-
-        userProvisioningManager = mock(UserProvisioningManager.class);
-        when(userProvisioningManager.getUser(anyString())).thenAnswer(
-                new Answer<User>() {
-                    @Override
-                    public User answer(InvocationOnMock invocation) throws Throwable {
-                        User user = new User();
-                        user.setLoginName((String) invocation.getArguments()[0]);
-                        return user;
-                    }
-                }
-        );
-
-
-        mockStatic(SecurityServiceProvider.class);
-        PowerMockito.when(SecurityServiceProvider.getUserProvisioningManager(anyString())).thenReturn(userProvisioningManager);
+        mockSecurity();
     }
 
     @After
@@ -168,7 +147,7 @@ public class PersonBoServiceTest extends AbstractEndpointTest{
     }
 
     @Test(expected = ObjectNotFoundException.class)
-    public void updateNonexistingInstance() throws JMSException, EntityValidationException {
+    public void testUpdateNonexistingInstance() throws JMSException, EntityValidationException {
 
 
         Person updatedPerson = ModelUtils.getBasicPerson();
@@ -185,56 +164,37 @@ public class PersonBoServiceTest extends AbstractEndpointTest{
 
     }
 
-    //curate with entity validation exception
-    @Test(expected = RuntimeException.class)
-    public void updateOwnWithEntityValidationException() throws EntityValidationException, JMSException {
-        User otherUser = new User();
-        otherUser.setLoginName("otherUser");
 
-        Person currentPerson = ModelUtils.getBasicPerson();
-        currentPerson.setId(1L);
-        currentPerson.setCreatedBy(otherUser);
 
-        Person updatedPerson = ModelUtils.getBasicPerson();
-        updatedPerson.setId(1L);
-        updatedPerson.setLastName("JustMarried");
-        updatedPerson.setCreatedBy(otherUser);
-
-        //mock call to getById
-        when(serviceLocator.getPersonCRService().create(any(PersonCR.class)))
-                .thenThrow(new EntityValidationException(Collections.EMPTY_MAP));
-
-        when(serviceLocator.getPersonService().getById(1L))
-                .thenReturn(currentPerson);
-
-        service.curate(updatedPerson);
-
-    }
-
-    //test update another person's
     @Test
-    public void testUpdateSomeoneElses() throws JMSException, EntityValidationException {
-        User otherUser = new User();
-        otherUser.setLoginName("otherUser");
-
+    public void testUpdateOwnWithBlankCtepId() throws EntityValidationException, JMSException {
         Person currentPerson = ModelUtils.getBasicPerson();
         currentPerson.setId(1L);
-        currentPerson.setCreatedBy(otherUser);
+        currentPerson.setCreatedBy(me);
+
+        gov.nih.nci.po.data.bo.IdentifiedPerson currentIdentifiedPerson = new gov.nih.nci.po.data.bo.IdentifiedPerson();
+        currentIdentifiedPerson.setPlayer(currentPerson);
+        currentIdentifiedPerson.setAssignedIdentifier(new Ii());
 
         Person updatedPerson = ModelUtils.getBasicPerson();
         updatedPerson.setId(1L);
         updatedPerson.setLastName("JustMarried");
-
         //mock call to getById
         when(serviceLocator.getPersonService().getById(1L)).thenReturn(currentPerson);
 
-        service.curate(updatedPerson);
+
+        service.curate(updatedPerson, "");
 
         //verify person updated via a CR
-        verify(serviceLocator.getPersonService(), never()).curate(any(Person.class));
-        verify(serviceLocator.getPersonCRService()).create(any(PersonCR.class));
+        verify(serviceLocator.getPersonService()).curate(any(Person.class), anyString());
+        verify(serviceLocator.getPersonCRService(), never()).create(any(PersonCR.class));
 
+        //verify identified person CR created
+        verify(serviceLocator.getIdentifiedPersonService(), never()).curate(any(gov.nih.nci.po.data.bo.IdentifiedPerson.class));
+        verify(serviceLocator.getIdentifiedPersonCRService(), never()).create(any(IdentifiedPersonCR.class));
     }
+
+
 
     @Test
     public void testUpdateOwnWithCtepId() throws JMSException, EntityValidationException {
@@ -286,82 +246,6 @@ public class PersonBoServiceTest extends AbstractEndpointTest{
         service.curate(updatedPerson, "12345");
 
     }
-
-    //test update another person's
-    @Test
-    public void testUpdateSomeoneElsesWithCtepId() throws EntityValidationException, JMSException {
-        User otherUser = new User();
-        otherUser.setLoginName("otherUser");
-
-        Person currentPerson = ModelUtils.getBasicPerson();
-        currentPerson.setId(1L);
-        currentPerson.setCreatedBy(otherUser);
-
-        gov.nih.nci.po.data.bo.IdentifiedPerson currentIdentifiedPerson = new gov.nih.nci.po.data.bo.IdentifiedPerson();
-        currentIdentifiedPerson.setPlayer(currentPerson);
-        currentIdentifiedPerson.setAssignedIdentifier(new Ii());
-
-        List<gov.nih.nci.po.data.bo.IdentifiedPerson> identifiedPersons = new ArrayList<gov.nih.nci.po.data.bo.IdentifiedPerson>();
-        identifiedPersons.add(currentIdentifiedPerson);
-
-        Person updatedPerson = ModelUtils.getBasicPerson();
-        updatedPerson.setId(1L);
-        updatedPerson.setLastName("JustMarried");
-        //mock call to getById
-        when(serviceLocator.getPersonService().getById(1L)).thenReturn(currentPerson);
-        when(serviceLocator.getIdentifiedPersonService().search(any(SearchCriteria.class))).thenReturn(identifiedPersons);
-
-
-        service.curate(updatedPerson, "newCtepId");
-
-        //verify person updated via a CR
-        verify(serviceLocator.getPersonService(), never()).curate(any(Person.class));
-        verify(serviceLocator.getPersonCRService()).create(any(PersonCR.class));
-
-        //verify identified person CR created
-        verify(serviceLocator.getIdentifiedPersonService(), never()).curate(any(gov.nih.nci.po.data.bo.IdentifiedPerson.class));
-        verify(serviceLocator.getIdentifiedPersonCRService()).create(any(IdentifiedPersonCR.class));
-    }
-
-    //test update another person's with blank ctep id
-    @Test
-    public void testUpdateSomeoneElsesWithBlankCtepId() throws EntityValidationException, JMSException {
-        User otherUser = new User();
-        otherUser.setLoginName("otherUser");
-
-        Person currentPerson = ModelUtils.getBasicPerson();
-        currentPerson.setId(1L);
-        currentPerson.setCreatedBy(otherUser);
-
-        gov.nih.nci.po.data.bo.IdentifiedPerson currentIdentifiedPerson = new gov.nih.nci.po.data.bo.IdentifiedPerson();
-        currentIdentifiedPerson.setPlayer(currentPerson);
-        currentIdentifiedPerson.setAssignedIdentifier(new Ii());
-
-        List<gov.nih.nci.po.data.bo.IdentifiedPerson> identifiedPersons = new ArrayList<gov.nih.nci.po.data.bo.IdentifiedPerson>();
-        identifiedPersons.add(currentIdentifiedPerson);
-
-        Person updatedPerson = ModelUtils.getBasicPerson();
-        updatedPerson.setId(1L);
-        updatedPerson.setLastName("JustMarried");
-        //mock call to getById
-        when(serviceLocator.getPersonService().getById(1L)).thenReturn(currentPerson);
-        when(serviceLocator.getIdentifiedPersonService().search(any(SearchCriteria.class))).thenReturn(identifiedPersons);
-
-
-        service.curate(updatedPerson, "");
-
-        //verify person updated via a CR
-        verify(serviceLocator.getPersonService(), never()).curate(any(Person.class));
-        verify(serviceLocator.getPersonCRService()).create(any(PersonCR.class));
-
-        //verify identified person CR created
-        verify(serviceLocator.getIdentifiedPersonService(), never()).curate(any(gov.nih.nci.po.data.bo.IdentifiedPerson.class));
-        verify(serviceLocator.getIdentifiedPersonCRService(), never()).create(any(IdentifiedPersonCR.class));
-    }
-
-
-
-
 
     //getbyid
     @Test

@@ -4,9 +4,12 @@ import gov.nih.nci.coppa.po.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.webservices.service.bo.ResearchOrganizationBoService;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import org.iso._21090.CD;
 import org.iso._21090.II;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
@@ -21,7 +24,7 @@ public class ResearchOrganizationServiceImplTest extends AbstractRoleServiceTest
 
     @Override
     protected void initService() {
-       this.service = new ResearchOrganizationServiceImpl();
+       this.service = new ResearchOrganizationServiceImpl((ResearchOrganizationBoService) this.boService);
     }
 
     @Override
@@ -46,9 +49,10 @@ public class ResearchOrganizationServiceImplTest extends AbstractRoleServiceTest
     }
 
     @Override
-    protected GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.ResearchOrganization> getBoService() {
-        return serviceLocator.getResearchOrganizationService();
+    protected Class<? extends GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.ResearchOrganization>> getBoServiceClass() {
+        return ResearchOrganizationBoService.class;
     }
+
 
     @Override
     protected void setId(gov.nih.nci.po.data.bo.ResearchOrganization instance, long id) {

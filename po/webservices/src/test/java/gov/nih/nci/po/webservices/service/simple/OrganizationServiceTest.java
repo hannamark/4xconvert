@@ -15,7 +15,10 @@ import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
+import gov.nih.nci.po.webservices.service.bo.HealthCareFacilityBoService;
 import gov.nih.nci.po.webservices.service.bo.OrganizationBoService;
+import gov.nih.nci.po.webservices.service.bo.OversightCommitteeBoService;
+import gov.nih.nci.po.webservices.service.bo.ResearchOrganizationBoService;
 import gov.nih.nci.po.webservices.service.bridg.ModelUtils;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.po.webservices.types.Address;
@@ -68,13 +71,19 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
 
     private gov.nih.nci.po.webservices.types.Organization org;
     private gov.nih.nci.po.webservices.types.OrganizationSearchCriteria osCriteria;
-    private OrganizationService orgService;
+    private OrganizationServiceImpl orgService;
     private OrganizationBoService organizationBoService;
+    private HealthCareFacilityBoService healthCareFacilityBoService;
+    private OversightCommitteeBoService oversightCommitteeBoService;
+    private ResearchOrganizationBoService researchOrganizationBoService;
+
 
     @Before
     public void setUp() {
         setupServiceLocator();
         when(serviceLocator.getCountryService().getCountryByAlpha3("USA")).thenReturn(ModelUtils.getDefaultCountry());
+
+        initBoServices();
 
         // setting up gov.nih.nci.po.webservices.types.Organization
         org = new Organization();
@@ -90,8 +99,20 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         osCriteria.setOffset(0);
         osCriteria.setLimit(4);
 
+
+        orgService = new OrganizationServiceImpl();
+        orgService.setHealthCareFacilityBoService(healthCareFacilityBoService);
+        orgService.setOrganizationBoService(organizationBoService);
+        orgService.setOversightCommitteeBoService(oversightCommitteeBoService);
+        orgService.setResearchOrganizationBoService(researchOrganizationBoService);
+
+    }
+
+    private void initBoServices() {
         organizationBoService = mock(OrganizationBoService.class);
-        orgService = new OrganizationServiceImpl(organizationBoService);
+        healthCareFacilityBoService = mock(HealthCareFacilityBoService.class);
+        oversightCommitteeBoService = mock(OversightCommitteeBoService.class);
+        researchOrganizationBoService = mock(ResearchOrganizationBoService.class);
     }
 
     /**
@@ -344,10 +365,8 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
      */
     @Test
     public void testSearchOrganizationsForNoOrganizationFound() {
-        OrganizationServiceLocal orgSerLocal = mock(OrganizationServiceLocal.class);
-        when(serviceLocator.getOrganizationService()).thenReturn(orgSerLocal);
         when(
-                orgSerLocal
+                organizationBoService
                         .search(isA(gov.nih.nci.po.service.OrganizationSearchCriteria.class),
                                 isA(PageSortParams.class))).thenReturn(
                 new ArrayList<OrganizationSearchDTO>());
@@ -390,10 +409,10 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
     public void testCreateOrgRoleHealthCareFacility() throws JMSException, EntityValidationException {
         HealthCareFacility healthCareFacility = getHealthCareFacility();
 
-        when(serviceLocator.getHealthCareFacilityService().create(any(gov.nih.nci.po.data.bo.HealthCareFacility.class)))
+        when(healthCareFacilityBoService.create(any(gov.nih.nci.po.data.bo.HealthCareFacility.class)))
                 .thenReturn(1L);
 
-        when(serviceLocator.getHealthCareFacilityService().getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.HealthCareFacility>() {
+        when(healthCareFacilityBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.HealthCareFacility>() {
             @Override
             public gov.nih.nci.po.data.bo.HealthCareFacility answer(InvocationOnMock invocation) throws Throwable {
                 gov.nih.nci.po.data.bo.Organization player = new gov.nih.nci.po.data.bo.Organization();
@@ -409,7 +428,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
 
         OrganizationRole orgRole = orgService
                 .createOrganizationRole(healthCareFacility);
-       verify(serviceLocator.getHealthCareFacilityService()).create(any(gov.nih.nci.po.data.bo.HealthCareFacility.class));
+       verify(healthCareFacilityBoService).create(any(gov.nih.nci.po.data.bo.HealthCareFacility.class));
     }
 
     /**
@@ -422,10 +441,10 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
 
         OversightCommittee oversightCommittee = getOversightCommittee();
 
-        when(serviceLocator.getOversightCommitteeService().create(any(gov.nih.nci.po.data.bo.OversightCommittee.class)))
+        when(oversightCommitteeBoService.create(any(gov.nih.nci.po.data.bo.OversightCommittee.class)))
                 .thenReturn(1L);
 
-        when(serviceLocator.getOversightCommitteeService().getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.OversightCommittee>() {
+        when(oversightCommitteeBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.OversightCommittee>() {
             @Override
             public gov.nih.nci.po.data.bo.OversightCommittee answer(InvocationOnMock invocation) throws Throwable {
                 gov.nih.nci.po.data.bo.Organization player = new gov.nih.nci.po.data.bo.Organization();
@@ -447,7 +466,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         OrganizationRole orgRole = orgService
                 .createOrganizationRole(oversightCommittee);
 
-        verify(serviceLocator.getOversightCommitteeService()).create(any(gov.nih.nci.po.data.bo.OversightCommittee.class));
+        verify(oversightCommitteeBoService).create(any(gov.nih.nci.po.data.bo.OversightCommittee.class));
     }
 
     /**
@@ -470,13 +489,11 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
      */
     @Test(expected = ServiceException.class)
     public void testCreateOrgRoleExceptionScenario() throws JMSException {
-        HealthCareFacilityServiceLocal hcflocal = mock(HealthCareFacilityServiceLocal.class);
-        when(serviceLocator.getHealthCareFacilityService())
-                .thenReturn(hcflocal);
+
         doThrow(
                 new ServiceException(
                         "Exception Occured while creating Organization Role."))
-                .when(hcflocal).curate(
+                .when(healthCareFacilityBoService).curate(
                         isA(gov.nih.nci.po.data.bo.HealthCareFacility.class));
 
         
@@ -520,7 +537,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         final gov.nih.nci.po.data.bo.Organization player = ModelUtils.getBasicOrganization();
         player.setId(2L);
 
-        when(serviceLocator.getHealthCareFacilityService().getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.HealthCareFacility>() {
+        when(healthCareFacilityBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.HealthCareFacility>() {
             @Override
             public gov.nih.nci.po.data.bo.HealthCareFacility answer(InvocationOnMock invocation) throws Throwable {
 
@@ -559,7 +576,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
 
         when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(player);
 
-        when(serviceLocator.getOversightCommitteeService().getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.OversightCommittee>() {
+        when(oversightCommitteeBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.OversightCommittee>() {
             @Override
             public gov.nih.nci.po.data.bo.OversightCommittee answer(InvocationOnMock invocation) throws Throwable {
 
@@ -620,9 +637,9 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         hcf.setId(1l);
 
         gov.nih.nci.po.data.bo.HealthCareFacility instance = ModelUtils.getBasicHealthCareFacility();
-        when(serviceLocator.getHealthCareFacilityService().getById(1L)).thenReturn(instance);
+        when(healthCareFacilityBoService.getById(1L)).thenReturn(instance);
 
-        HealthCareFacilityServiceLocal healthCareFacilityServiceLocal = serviceLocator.getHealthCareFacilityService();
+        HealthCareFacilityServiceLocal healthCareFacilityServiceLocal = healthCareFacilityBoService;
         doThrow(
                 new ServiceException(
                         "Exception Occured while updating Organization Role."))
@@ -703,7 +720,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         final gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
         organization.setId(2L);
 
-        when(serviceLocator.getHealthCareFacilityService().search(isA(SearchCriteria.class)))
+        when(healthCareFacilityBoService.search(isA(SearchCriteria.class)))
             .thenAnswer(new Answer<List<gov.nih.nci.po.data.bo.HealthCareFacility>>() {
                 @Override
                 public List<gov.nih.nci.po.data.bo.HealthCareFacility> answer(InvocationOnMock invocation) throws Throwable {
@@ -721,7 +738,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
                 }
             });
 
-        when(serviceLocator.getResearchOrganizationService().search(isA(SearchCriteria.class)))
+        when(researchOrganizationBoService.search(isA(SearchCriteria.class)))
                 .thenAnswer(new Answer<List<gov.nih.nci.po.data.bo.ResearchOrganization>>() {
                     @Override
                     public List<gov.nih.nci.po.data.bo.ResearchOrganization> answer(InvocationOnMock invocation) throws Throwable {
@@ -739,7 +756,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
                     }
                 });
 
-        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(organization);
+        when(organizationBoService.getById(2L)).thenReturn(organization);
 
         List<OrganizationRole> orgRoleList = orgService
                 .getOrganizationRolesByCtepId("1234566");
@@ -747,7 +764,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         assertNotNull(orgRoleList);
         assertEquals(2, orgRoleList.size());
 
-        verify(serviceLocator.getOversightCommitteeService(), never()).search(isA(SearchCriteria.class));
+        verify(oversightCommitteeBoService, never()).search(isA(SearchCriteria.class));
     }
 
     /**
@@ -763,8 +780,8 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         gov.nih.nci.po.data.bo.HealthCareFacility instance = ModelUtils.getBasicHealthCareFacility();
         instance.setPlayer(organization);
 
-        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(organization);
-        when(serviceLocator.getHealthCareFacilityService().getById(1L)).thenReturn(instance);
+        when(organizationBoService.getById(2L)).thenReturn(organization);
+        when(healthCareFacilityBoService.getById(1L)).thenReturn(instance);
 
         HealthCareFacility hcf = orgService.getOrganizationRoleById(
                 HealthCareFacility.class, 1l);
@@ -788,8 +805,8 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         gov.nih.nci.po.data.bo.OversightCommittee instance = ModelUtils.getBasicOversightCommittee(type);
         instance.setPlayer(organization);
 
-        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(organization);
-        when(serviceLocator.getOversightCommitteeService().getById(1L)).thenReturn(instance);
+        when(organizationBoService.getById(2L)).thenReturn(organization);
+        when(oversightCommitteeBoService.getById(1L)).thenReturn(instance);
 
         OversightCommittee oc = orgService.getOrganizationRoleById(
                 OversightCommittee.class, 1l);
@@ -813,8 +830,8 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         gov.nih.nci.po.data.bo.ResearchOrganization instance = ModelUtils.getBasicResearchOrganization(type);
         instance.setPlayer(organization);
 
-        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(organization);
-        when(serviceLocator.getResearchOrganizationService().getById(1L)).thenReturn(instance);
+        when(organizationBoService.getById(2L)).thenReturn(organization);
+        when(researchOrganizationBoService.getById(1L)).thenReturn(instance);
 
         ResearchOrganization ro = orgService.getOrganizationRoleById(
                 ResearchOrganization.class, 1l);
@@ -846,9 +863,9 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         healthCareFacility.setStatus(RoleStatus.PENDING);
         healthCareFacility.setPlayer(organization);
 
-        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(organization);
+        when(organizationBoService.getById(2L)).thenReturn(organization);
 
-        when(serviceLocator.getHealthCareFacilityService().getById(1L))
+        when(healthCareFacilityBoService.getById(1L))
                 .thenReturn(healthCareFacility);
 
         HealthCareFacility hcf = orgService.changeOrganizationRoleStatus(
@@ -874,9 +891,9 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         researchOrganization.setStatus(RoleStatus.PENDING);
         researchOrganization.setPlayer(organization);
 
-        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(organization);
+        when(organizationBoService.getById(2L)).thenReturn(organization);
 
-        when(serviceLocator.getResearchOrganizationService().getById(1L))
+        when(researchOrganizationBoService.getById(1L))
                 .thenReturn(researchOrganization);
 
 
@@ -904,9 +921,9 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         oversightCommittee.setStatus(RoleStatus.PENDING);
         oversightCommittee.setPlayer(organization);
 
-        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(organization);
+        when(organizationBoService.getById(2L)).thenReturn(organization);
 
-        when(serviceLocator.getOversightCommitteeService().getById(1L))
+        when(oversightCommitteeBoService.getById(1L))
                 .thenReturn(oversightCommittee);
 
         OversightCommittee oc = orgService.changeOrganizationRoleStatus(
@@ -926,9 +943,9 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         hcf.setId(1l);
 
         gov.nih.nci.po.data.bo.HealthCareFacility instance = ModelUtils.getBasicHealthCareFacility();
-        when(serviceLocator.getHealthCareFacilityService().getById(1L)).thenReturn(instance);
+        when(healthCareFacilityBoService.getById(1L)).thenReturn(instance);
 
-        HealthCareFacilityServiceLocal healthCareFacilityServiceLocal = serviceLocator.getHealthCareFacilityService();
+        HealthCareFacilityServiceLocal healthCareFacilityServiceLocal = healthCareFacilityBoService;
         doThrow(
                 new ServiceException(
                         "Exception Occured while updating Organization Role."))

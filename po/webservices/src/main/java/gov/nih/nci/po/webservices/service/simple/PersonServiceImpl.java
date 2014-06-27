@@ -7,10 +7,8 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
-import gov.nih.nci.po.service.IdentifiedPersonServiceLocal;
 import gov.nih.nci.po.service.PersonSearchDTO;
 import gov.nih.nci.po.util.PoConstants;
-import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.webservices.convert.simple.ClinicalResearchStaffConverter;
 import gov.nih.nci.po.webservices.convert.simple.Converters;
@@ -18,6 +16,10 @@ import gov.nih.nci.po.webservices.convert.simple.HealthCareProviderConverter;
 import gov.nih.nci.po.webservices.convert.simple.OrganizationalContactConverter;
 import gov.nih.nci.po.webservices.convert.simple.PersonConverter;
 import gov.nih.nci.po.webservices.convert.simple.PersonSearchConverter;
+import gov.nih.nci.po.webservices.service.bo.ClinicalResearchStaffBoService;
+import gov.nih.nci.po.webservices.service.bo.HealthCareProviderBoService;
+import gov.nih.nci.po.webservices.service.bo.IdentifiedPersonBoService;
+import gov.nih.nci.po.webservices.service.bo.OrganizationalContactBoService;
 import gov.nih.nci.po.webservices.service.bo.PersonBoService;
 import gov.nih.nci.po.webservices.service.exception.EntityNotFoundException;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
@@ -57,16 +59,22 @@ public class PersonServiceImpl implements PersonService {
     private static final String RAW_TYPES = "rawtypes";
     private static final String UNCHECKED = "unchecked";
 
-    private final PersonBoService personBoService;
 
-    /**
-     * Constructor.
-     * @param boService The BO service to delegate to.
-     */
+
     @Autowired
-    public PersonServiceImpl(PersonBoService boService) {
-        this.personBoService = boService;
-    }
+    private PersonBoService personBoService;
+
+    @Autowired
+    private IdentifiedPersonBoService identifiedPersonBoService;
+
+    @Autowired
+    private HealthCareProviderBoService healthCareProviderBoService;
+
+    @Autowired
+    private ClinicalResearchStaffBoService clinicalResearchStaffBoService;
+
+    @Autowired
+    private OrganizationalContactBoService organizationalContactBoService;
 
     @Override
     public Person createPerson(Person person) {
@@ -192,10 +200,9 @@ public class PersonServiceImpl implements PersonService {
 
         // populate the SearchCriteria
         SearchCriteria<IdentifiedPerson> searchCriteria = new AnnotatedBeanSearchCriteria<IdentifiedPerson>(idenPerson);
-        IdentifiedPersonServiceLocal idenPersonService = PoRegistry
-                .getInstance().getServiceLocator().getIdentifiedPersonService();
+
         // get the IdentifiedPerson List matching the SearchCriteria
-        List<IdentifiedPerson> identifiedPeople = idenPersonService.search(searchCriteria);
+        List<IdentifiedPerson> identifiedPeople = identifiedPersonBoService.search(searchCriteria);
 
         if (identifiedPeople.isEmpty()) {
             return new ArrayList<Person>();
@@ -467,11 +474,11 @@ public class PersonServiceImpl implements PersonService {
             Class<T> personRoleClass) {
         GenericStructrualRoleServiceLocal gsRolSerLocal = null;
         if (HealthCareProvider.class.isAssignableFrom(personRoleClass)) {
-            gsRolSerLocal = PoRegistry.getInstance().getServiceLocator().getHealthCareProviderService();
+            gsRolSerLocal = healthCareProviderBoService;
         } else if (ClinicalResearchStaff.class.isAssignableFrom(personRoleClass)) {
-            gsRolSerLocal = PoRegistry.getInstance().getServiceLocator().getClinicalResearchStaffService();
+            gsRolSerLocal = clinicalResearchStaffBoService;
         } else if (OrganizationalContact.class.isAssignableFrom(personRoleClass)) {
-            gsRolSerLocal = PoRegistry.getInstance().getServiceLocator().getOrganizationalContactService();
+            gsRolSerLocal = organizationalContactBoService;
         } else {
             throw new ServiceException(
                     "Exception while getting GenericStructrualRoleServiceLocal as the incoming Class is wrong.");
@@ -535,6 +542,86 @@ public class PersonServiceImpl implements PersonService {
         List<String> dscList = new ArrayList<String>();
         dscList.add("PERSON_ID");
         return dscList;
+    }
+
+
+    /*
+     * GETTERS AND SETTERS
+     */
+
+    /**
+     * @return The Person BO service.
+     */
+    public PersonBoService getPersonBoService() {
+        return personBoService;
+    }
+
+    /**
+     *
+     * @param personBoService  The Bo service.
+     */
+    public void setPersonBoService(PersonBoService personBoService) {
+        this.personBoService = personBoService;
+    }
+
+    /**
+     * @return The IdentifiedPerson BO service.
+     */
+    public IdentifiedPersonBoService getIdentifiedPersonBoService() {
+        return identifiedPersonBoService;
+    }
+
+    /**
+     *
+     * @param identifiedPersonBoService   The Bo service.
+     */
+    public void setIdentifiedPersonBoService(IdentifiedPersonBoService identifiedPersonBoService) {
+        this.identifiedPersonBoService = identifiedPersonBoService;
+    }
+
+    /**
+     * @return The HealthCareProvider BO service.
+     */
+    public HealthCareProviderBoService getHealthCareProviderBoService() {
+        return healthCareProviderBoService;
+    }
+
+    /**
+     *
+     * @param healthCareProviderBoService The Bo service.
+     */
+    public void setHealthCareProviderBoService(HealthCareProviderBoService healthCareProviderBoService) {
+        this.healthCareProviderBoService = healthCareProviderBoService;
+    }
+
+    /**
+     * @return The ClinicalResearchStaff BO service.
+     */
+    public ClinicalResearchStaffBoService getClinicalResearchStaffBoService() {
+        return clinicalResearchStaffBoService;
+    }
+
+    /**
+     *
+     * @param clinicalResearchStaffBoService  The Bo service.
+     */
+    public void setClinicalResearchStaffBoService(ClinicalResearchStaffBoService clinicalResearchStaffBoService) {
+        this.clinicalResearchStaffBoService = clinicalResearchStaffBoService;
+    }
+
+    /**
+     * @return The OrganizationalContact BO service.
+     */
+    public OrganizationalContactBoService getOrganizationalContactBoService() {
+        return organizationalContactBoService;
+    }
+
+    /**
+     *
+     * @param organizationalContactBoService   The Bo service.
+     */
+    public void setOrganizationalContactBoService(OrganizationalContactBoService organizationalContactBoService) {
+        this.organizationalContactBoService = organizationalContactBoService;
     }
 
 }

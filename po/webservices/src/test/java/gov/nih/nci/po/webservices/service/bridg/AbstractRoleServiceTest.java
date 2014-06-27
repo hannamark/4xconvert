@@ -18,6 +18,7 @@ import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
+import gov.nih.nci.po.webservices.service.bo.AbstractRoleBoService;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -40,6 +41,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,16 +55,18 @@ public abstract class AbstractRoleServiceTest<
         >  extends AbstractEndpointTest{
 
     protected AbstractRoleService<XML_TYPE, DTO_TYPE, BO_TYPE> service;
+    protected GenericStructrualRoleServiceLocal<BO_TYPE> boService;
 
     @Before
     public void setUp() throws Exception {
+        boService = mock(getBoServiceClass());
         initService();
         setupServiceLocator();
     }
 
     protected abstract void initService();
     protected abstract XML_TYPE getBasicModel();
-    protected abstract GenericStructrualRoleServiceLocal<BO_TYPE> getBoService();
+    protected abstract Class<? extends GenericStructrualRoleServiceLocal<BO_TYPE>> getBoServiceClass();
     protected abstract void setId(BO_TYPE instance, long id);
 
     @Test
@@ -81,7 +85,7 @@ public abstract class AbstractRoleServiceTest<
 
         XML_TYPE clinicalResearchStaff = getBasicModel();
 
-        when(getBoService().create((BO_TYPE)any())).thenThrow(new IllegalArgumentException());
+        when(this.boService.create((BO_TYPE)any())).thenThrow(new IllegalArgumentException());
 
         service.create(clinicalResearchStaff);
 
@@ -89,7 +93,7 @@ public abstract class AbstractRoleServiceTest<
 
     @Test(expected = EntityValidationException.class)
     public void testCreateInvalidEntity() throws EntityValidationException, JMSException {
-        when(getBoService().create((BO_TYPE) any())).thenThrow(new EntityValidationException(new HashMap<String, String[]>()));
+        when(this.boService.create((BO_TYPE) any())).thenThrow(new EntityValidationException(new HashMap<String, String[]>()));
 
         XML_TYPE instance = getBasicModel();
         service.create(instance);
@@ -102,7 +106,7 @@ public abstract class AbstractRoleServiceTest<
 
         XML_TYPE query = getBasicModel();
 
-        when(getBoService().search(isA(SearchCriteria.class), isA(PageSortParams.class)))
+        when(this.boService.search(isA(SearchCriteria.class), isA(PageSortParams.class)))
                 .thenReturn(new ArrayList<BO_TYPE>());
 
         List<XML_TYPE> results = service.query(query, new LimitOffset().withLimit(100).withOffset(10));
@@ -118,7 +122,7 @@ public abstract class AbstractRoleServiceTest<
             entities.add(getBoInstance());
         }
 
-        when(getBoService().search(isA(SearchCriteria.class), isA(PageSortParams.class)))
+        when(this.boService.search(isA(SearchCriteria.class), isA(PageSortParams.class)))
                 .thenAnswer(
                         new Answer<List<BO_TYPE>>() {
                             @Override
@@ -149,7 +153,7 @@ public abstract class AbstractRoleServiceTest<
 
     @Test(expected = TooManyResultsException.class)
     public void testQueryWithTooManyHits() throws TooManyResultsException {
-       when(getBoService().search(isA(SearchCriteria.class), isA(PageSortParams.class)))
+       when(this.boService.search(isA(SearchCriteria.class), isA(PageSortParams.class)))
                 .thenAnswer(
                         new Answer<List<BO_TYPE>>() {
                             @Override
@@ -179,7 +183,7 @@ public abstract class AbstractRoleServiceTest<
             entities.add(getBoInstance());
         }
 
-        when(getBoService().search(isA(SearchCriteria.class), isA(PageSortParams.class)))
+        when(this.boService.search(isA(SearchCriteria.class), isA(PageSortParams.class)))
                 .thenAnswer(
                         new Answer<List<BO_TYPE>>() {
                             @Override
@@ -226,7 +230,7 @@ public abstract class AbstractRoleServiceTest<
 
         service.update(xml);
 
-        verify(getBoService()).curate((BO_TYPE)any());
+        verify(this.boService).curate((BO_TYPE)any());
     }
 
 
@@ -243,10 +247,10 @@ public abstract class AbstractRoleServiceTest<
         Id instanceId = IdTransformer.INSTANCE.toXml(ii);
 
         //update it
-        when(getBoService().getById(1L)).thenReturn(instance);
+        when(this.boService.getById(1L)).thenReturn(instance);
 
         service.updateStatus(instanceId, new Cd().withCode(EntityStatus.ACTIVE.toString()));
-        verify(getBoService()).curate((BO_TYPE)any());
+        verify(this.boService).curate((BO_TYPE)any());
     }
 
 
@@ -257,7 +261,7 @@ public abstract class AbstractRoleServiceTest<
         Id nonExistantInstanceId = new Id();
         nonExistantInstanceId.setExtension("1");
 
-        when(getBoService().getById(1L)).thenReturn(null);
+        when(this.boService.getById(1L)).thenReturn(null);
 
         service.updateStatus(nonExistantInstanceId, new Cd().withCode(RoleStatus.ACTIVE.toString()));
     }
@@ -268,7 +272,7 @@ public abstract class AbstractRoleServiceTest<
     public void testValidateWithNoErrors() {
         XML_TYPE instance = getBasicModel();
 
-        when(getBoService().validate((BO_TYPE)any()))
+        when(this.boService.validate((BO_TYPE)any()))
                 .thenAnswer( new Answer<Map<String, String[]>>() {
                     @Override
                     public Map<String, String[]> answer(InvocationOnMock invocation) throws Throwable {
@@ -284,7 +288,7 @@ public abstract class AbstractRoleServiceTest<
     public void testValidateWithErrors() {
         XML_TYPE instance = getBasicModel();
 
-        when(getBoService().validate((BO_TYPE)any()))
+        when(this.boService.validate((BO_TYPE)any()))
                 .thenAnswer( new Answer<Map<String, String[]>>() {
                     @Override
                     public Map<String, String[]> answer(InvocationOnMock invocation) throws Throwable {
@@ -319,7 +323,7 @@ public abstract class AbstractRoleServiceTest<
 
 
 
-        when(getBoService().getByPlayerIds((Long[])any())).thenAnswer( new Answer<List<BO_TYPE>>() {
+        when(this.boService.getByPlayerIds((Long[])any())).thenAnswer( new Answer<List<BO_TYPE>>() {
             @Override
             public List<BO_TYPE> answer(InvocationOnMock invocation) throws Throwable {
                 List<BO_TYPE> results = new ArrayList<BO_TYPE>();
@@ -382,7 +386,7 @@ public abstract class AbstractRoleServiceTest<
         Id instanceId = new Id();
         instanceId.setExtension("1");
 
-        when(getBoService().getById(1L)).thenReturn(getBoInstance());
+        when(this.boService.getById(1L)).thenReturn(getBoInstance());
 
         XML_TYPE hit = service.getById(instanceId);
 
@@ -398,7 +402,7 @@ public abstract class AbstractRoleServiceTest<
         BO_TYPE nullifiedInstance = getBoInstance();
         nullifiedInstance.setStatus(RoleStatus.NULLIFIED);
 
-        when(getBoService().getById(1L)).thenReturn(nullifiedInstance);
+        when(this.boService.getById(1L)).thenReturn(nullifiedInstance);
 
         XML_TYPE hit = service.getById(instanceId);
 
@@ -410,7 +414,7 @@ public abstract class AbstractRoleServiceTest<
         Id instanceId = new Id();
         instanceId.setExtension("1");
 
-        when(getBoService().getById(1L)).thenReturn(null);
+        when(this.boService.getById(1L)).thenReturn(null);
 
         XML_TYPE hit = service.getById(instanceId);
         assertNull(hit);
@@ -427,7 +431,7 @@ public abstract class AbstractRoleServiceTest<
             ids.add(id);
         }
 
-        when(getBoService().getByIds((Long[]) any())).thenAnswer(new Answer<List<BO_TYPE>>() {
+        when(this.boService.getByIds((Long[]) any())).thenAnswer(new Answer<List<BO_TYPE>>() {
             @Override
             public List<BO_TYPE> answer(InvocationOnMock invocation) throws Throwable {
                 List<BO_TYPE> results = new ArrayList<BO_TYPE>();
@@ -453,7 +457,7 @@ public abstract class AbstractRoleServiceTest<
         List<Id> ids = new ArrayList<Id>();
 
 
-        when(getBoService().getByIds((Long[]) any())).thenAnswer(new Answer<List<BO_TYPE>>() {
+        when(this.boService.getByIds((Long[]) any())).thenAnswer(new Answer<List<BO_TYPE>>() {
             @Override
             public List<BO_TYPE> answer(InvocationOnMock invocation) throws Throwable {
                 List<BO_TYPE> results = new ArrayList<BO_TYPE>();
@@ -472,7 +476,7 @@ public abstract class AbstractRoleServiceTest<
 
     @Test
     public void testGetByIdsWithEmptyInput() throws NullifiedRoleException {
-        when(getBoService().getByIds((Long[])any())).thenReturn(Collections.EMPTY_LIST);
+        when(this.boService.getByIds((Long[])any())).thenReturn(Collections.EMPTY_LIST);
 
         List<XML_TYPE> hits = service.getByIds(Collections.EMPTY_LIST);
         assertEquals(0, hits.size());

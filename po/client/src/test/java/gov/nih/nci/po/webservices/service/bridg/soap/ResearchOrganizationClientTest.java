@@ -93,13 +93,14 @@ public class ResearchOrganizationClientTest {
 
     private static PersonPortType personService;
     private static OrganizationPortType organizationService;
-    private static ResearchOrganizationType defaultType;
     private static ServiceLocator oldLocator;
     private ResearchOrganizationPortType port;
 
 
     @BeforeClass
     public static void setupClass() throws MalformedURLException {
+        PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
+
         AuthUtils.addBasicAuthSupport(
                 TstProperties.getWebserviceUsername(),
                 TstProperties.getWebservicePassword()
@@ -117,7 +118,6 @@ public class ResearchOrganizationClientTest {
         oldLocator = PoRegistry.getInstance().getServiceLocator();
         PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
 
-        initDefaultType();
     }
 
 
@@ -154,21 +154,6 @@ public class ResearchOrganizationClientTest {
                 TstProperties.getWebserviceUsername(),
                 TstProperties.getWebservicePassword()
         );
-    }
-
-    private static void initDefaultType() {
-        defaultType = new ResearchOrganizationType("defaultType", "description");
-
-        Transaction t = PoHibernateUtil.getCurrentSession().beginTransaction();
-
-        try {
-            PoHibernateUtil.getCurrentSession().saveOrUpdate(defaultType);
-            t.commit();
-        } catch(Exception e) {
-            t.rollback();
-            throw new RuntimeException(e);
-        }
-
     }
 
 
@@ -333,7 +318,7 @@ public class ResearchOrganizationClientTest {
         payload.setPlayerIdentifier(playerIdentifier);
 
         CD typeCode = new CD();
-        typeCode.setCode(defaultType.getCode());
+        typeCode.setCode("CCR");
         payload.setTypeCode(typeCode);
 
         CD status = new CD();
@@ -376,7 +361,7 @@ public class ResearchOrganizationClientTest {
         payload.setPlayerIdentifier(playerIdentifier);
 
         CD typeCode = new CD();
-        typeCode.setCode(defaultType.getCode());
+        typeCode.setCode("CCR");
         payload.setTypeCode(typeCode);
 
         CD status = new CD();
@@ -789,7 +774,7 @@ public class ResearchOrganizationClientTest {
         payload.setStatus(status);
 
         CD typeCode = new CD();
-        typeCode.setCode(defaultType.getCode());
+        typeCode.setCode("CLC");
         payload.setTypeCode(typeCode);
 
         Address address = new Address();

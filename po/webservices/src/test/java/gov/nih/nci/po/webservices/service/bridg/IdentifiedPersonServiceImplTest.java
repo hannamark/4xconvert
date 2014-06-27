@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.po.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.webservices.service.bo.IdentifiedPersonBoService;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import org.iso._21090.CD;
 import org.iso._21090.II;
@@ -19,7 +20,7 @@ public class IdentifiedPersonServiceImplTest extends AbstractRoleServiceTest
                 >{
     @Override
     protected void initService() {
-       this.service = new IdentifiedPersonServiceImpl();
+       this.service = new IdentifiedPersonServiceImpl((IdentifiedPersonBoService) this.boService);
     }
 
     @Override
@@ -54,8 +55,8 @@ public class IdentifiedPersonServiceImplTest extends AbstractRoleServiceTest
     }
 
     @Override
-    protected GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.IdentifiedPerson> getBoService() {
-        return serviceLocator.getIdentifiedPersonService();
+    protected Class<? extends GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.IdentifiedPerson>> getBoServiceClass() {
+        return IdentifiedPersonBoService.class;
     }
 
     @Override

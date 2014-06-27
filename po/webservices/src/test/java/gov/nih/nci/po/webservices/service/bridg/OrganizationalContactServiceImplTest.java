@@ -13,6 +13,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.webservices.service.bo.OrganizationalContactBoService;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import org.iso._21090.CD;
 import org.iso._21090.II;
@@ -52,7 +53,7 @@ public class OrganizationalContactServiceImplTest extends AbstractRoleServiceTes
 
     @Override
     protected void initService() {
-        this.service = new OrganizationalContactServiceImpl();
+        this.service = new OrganizationalContactServiceImpl((OrganizationalContactBoService) this.boService);
     }
 
     @Override
@@ -106,8 +107,8 @@ public class OrganizationalContactServiceImplTest extends AbstractRoleServiceTes
     }
 
     @Override
-    protected GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.OrganizationalContact> getBoService() {
-        return serviceLocator.getOrganizationalContactService();
+    protected Class<? extends GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.OrganizationalContact>> getBoServiceClass() {
+        return OrganizationalContactBoService.class;
     }
 
     @Override

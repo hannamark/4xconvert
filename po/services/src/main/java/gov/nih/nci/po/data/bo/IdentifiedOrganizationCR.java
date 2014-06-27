@@ -193,6 +193,14 @@ public class IdentifiedOrganizationCR extends AbstractIdentifiedOrganization
     @Transient
     public Set getChangeRequests() {        
         return new HashSet<HealthCareFacilityCR>();
-    }    
+    }
+
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isNoChange() {
+        return !(isScoperChanged() || isStatusCodeChanged());
+    }
     
 }

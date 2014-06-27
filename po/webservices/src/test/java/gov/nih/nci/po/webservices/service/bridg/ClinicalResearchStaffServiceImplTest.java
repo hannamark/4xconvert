@@ -12,11 +12,14 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.webservices.service.bo.ClinicalResearchStaffBoService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import org.iso._21090.CD;
 import org.iso._21090.II;
 
 import java.util.HashSet;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
@@ -27,9 +30,10 @@ public class ClinicalResearchStaffServiceImplTest extends AbstractRoleServiceTes
                 gov.nih.nci.po.data.bo.ClinicalResearchStaff
                 >
 {
+
     @Override
     protected void initService() {
-        this.service = new ClinicalResearchStaffServiceImpl();
+        this.service = new ClinicalResearchStaffServiceImpl((ClinicalResearchStaffBoService) boService);
     }
 
     @Override
@@ -80,9 +84,10 @@ public class ClinicalResearchStaffServiceImplTest extends AbstractRoleServiceTes
     }
 
     @Override
-    protected GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.ClinicalResearchStaff> getBoService() {
-        return serviceLocator.getClinicalResearchStaffService();
+    protected Class<? extends GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.ClinicalResearchStaff>> getBoServiceClass() {
+        return ClinicalResearchStaffBoService.class;
     }
+
 
     @Override
     protected gov.nih.nci.po.data.bo.ClinicalResearchStaff getBoInstance() {

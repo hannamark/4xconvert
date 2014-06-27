@@ -333,6 +333,7 @@
                             <exclude>gov/nih/nci/po/data/bo/HealthCareProviderCR*</exclude>
                             <exclude>gov/nih/nci/po/data/bo/OrganizationalContactCR*</exclude>
                             <exclude>gov/nih/nci/po/data/bo/ResearchOrganizationCR*</exclude>
+                            <exclude>gov/nih/nci/po/service/*SearchCriteria.class</exclude>
                         </excludes>
                     </instrumentation>
                 </configuration>

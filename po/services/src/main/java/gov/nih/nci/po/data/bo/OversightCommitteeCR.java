@@ -134,7 +134,13 @@ public class OversightCommitteeCR extends AbstractOversightCommittee
     }
 
 
-
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isNoChange() {
+        return !(isTypeCodeChanged() || isStatusCodeChanged());
+    }
 
 
 }

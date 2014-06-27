@@ -36,6 +36,8 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.TestServiceLocator;
 import gov.nih.nci.po.webservices.service.bridg.soap.identifiedorganization.EntityValidationFaultFaultMessage;
 import gov.nih.nci.po.webservices.service.bridg.soap.identifiedorganization.IdentifiedOrganizationPortType;
 import gov.nih.nci.po.webservices.service.bridg.soap.identifiedorganization.IdentifiedOrganizationService;
@@ -88,6 +90,8 @@ public class IdentifiedOrganizationClientTest {
 
     @BeforeClass
     public static void setupClass() throws MalformedURLException {
+        PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
+
         AuthUtils.addBasicAuthSupport(
                 TstProperties.getWebserviceUsername(),
                 TstProperties.getWebservicePassword()

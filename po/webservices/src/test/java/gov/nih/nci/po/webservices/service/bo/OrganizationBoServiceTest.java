@@ -48,13 +48,9 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SecurityServiceProvider.class)
 public class OrganizationBoServiceTest extends AbstractEndpointTest{
 
     private OrganizationBoService service;
-    private UserProvisioningManager userProvisioningManager;
-    private User me;
 
     @Before
     public void setup() throws CSException {
@@ -65,24 +61,7 @@ public class OrganizationBoServiceTest extends AbstractEndpointTest{
 
         service = new OrganizationBoService();
 
-        UsernameHolder.setUser(CsmUserUtil.getGridIdentityUsername("jdoe01"));
-        me = new User();
-        me.setLoginName(UsernameHolder.getUser());
-
-        userProvisioningManager = mock(UserProvisioningManager.class);
-        when(userProvisioningManager.getUser(anyString())).thenAnswer(
-                new Answer<User>() {
-                    @Override
-                    public User answer(InvocationOnMock invocation) throws Throwable {
-                        User user = new User();
-                        user.setLoginName((String) invocation.getArguments()[0]);
-                        return user;
-                    }
-                }
-        );
-
-        mockStatic(SecurityServiceProvider.class);
-        PowerMockito.when(SecurityServiceProvider.getUserProvisioningManager(anyString())).thenReturn(userProvisioningManager);
+        mockSecurity();
     }
 
 

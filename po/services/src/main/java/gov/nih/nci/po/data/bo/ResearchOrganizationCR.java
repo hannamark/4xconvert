@@ -425,7 +425,10 @@ public class ResearchOrganizationCR extends AbstractResearchOrganization
                 && !isFaxChanged() && !isPhoneChanged()
                 && !isPostalCodeChanged() && !isStateOrProvinceChanged()
                 && !isStatusCodeChanged() && !isStreetAddressLineChanged()
-                && !isTtyChanged() && !isUrlChanged();
+                && !isTtyChanged() && !isUrlChanged()
+                && !isNameChanged()
+                && !isTypeCodeChanged()
+                && !isFundingMechanismChanged();
     }
     
     /**

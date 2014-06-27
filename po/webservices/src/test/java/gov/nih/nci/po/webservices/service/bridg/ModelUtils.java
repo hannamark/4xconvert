@@ -87,6 +87,7 @@ public class ModelUtils {
         Address mailingAddress =
                 new Address("defaultStreetAddress", "cityOrMunicipality", "defaultState", "12345", getDefaultCountry());
         Organization org = new Organization();
+
         org.setPostalAddress(mailingAddress);
         org.setName("oName");
         org.setStatusCode(EntityStatus.ACTIVE);
@@ -199,6 +200,9 @@ public class ModelUtils {
 
         return healthCareProvider;
     }
+    public static IdentifiedOrganization getBasicIdentifiedOrganization() {
+        return getBasicIdentifiedOrganization(getBasicOrganization());
+    }
 
     public static IdentifiedOrganization getBasicIdentifiedOrganization(Organization organization) {
         IdentifiedOrganization identifiedOrganization = new IdentifiedOrganization();
@@ -212,6 +216,10 @@ public class ModelUtils {
         return  identifiedOrganization;
     }
 
+    public static IdentifiedPerson getBasicIdentifiedPerson() {
+        return getBasicIdentifiedPerson(getBasicPerson());
+    }
+
     public static IdentifiedPerson getBasicIdentifiedPerson(Person person2) {
         IdentifiedPerson identifiedPerson = new IdentifiedPerson();
 
@@ -222,6 +230,14 @@ public class ModelUtils {
         identifiedPerson.setStatus(RoleStatus.PENDING);
 
         return  identifiedPerson;
+    }
+
+    public static OrganizationalContactType getBasicOrganizationalContactType() {
+        return new OrganizationalContactType("basicOrgContactType");
+    }
+
+    public static OrganizationalContact getBasicOrganizationalContact() {
+        return getBasicOrganizationalContact(getBasicOrganizationalContactType());
     }
 
     public static OrganizationalContact getBasicOrganizationalContact(OrganizationalContactType contactType) {
@@ -253,6 +269,14 @@ public class ModelUtils {
         return organizationalContact;
     }
 
+    public static OversightCommitteeType getBasicOversightCommitteeType() {
+        return new OversightCommitteeType("basicOversightCommitteeType");
+    }
+
+    public static OversightCommittee getBasicOversightCommittee() {
+        return getBasicOversightCommittee(getBasicOversightCommitteeType());
+    }
+
     public static OversightCommittee getBasicOversightCommittee(OversightCommitteeType defaultType) {
         OversightCommittee oversightCommittee = new OversightCommittee();
         oversightCommittee.setPlayer(getBasicOrganization());
@@ -278,6 +302,14 @@ public class ModelUtils {
         oversightCommittee.getOtherIdentifiers().add(ctepIdentifier);
 
         return oversightCommittee;
+    }
+
+    public static ResearchOrganizationType getBasicResearchOrganizationType() {
+        return new ResearchOrganizationType("basicResearchOrganizationType","description");
+    }
+
+    public static ResearchOrganization getBasicResearchOrganization() {
+        return getBasicResearchOrganization(getBasicResearchOrganizationType());
     }
 
     public static ResearchOrganization getBasicResearchOrganization(ResearchOrganizationType defaultType) {

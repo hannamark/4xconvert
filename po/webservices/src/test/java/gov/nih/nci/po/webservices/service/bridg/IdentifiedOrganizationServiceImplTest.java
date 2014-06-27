@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.po.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.webservices.service.bo.IdentifiedOrganizationBoService;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import org.iso._21090.CD;
 import org.iso._21090.II;
@@ -19,7 +20,7 @@ public class IdentifiedOrganizationServiceImplTest extends AbstractRoleServiceTe
 
     @Override
     protected void initService() {
-        this.service = new IdentifiedOrganizationServiceImpl();
+        this.service = new IdentifiedOrganizationServiceImpl((IdentifiedOrganizationBoService) this.boService);
     }
 
     @Override
@@ -52,9 +53,11 @@ public class IdentifiedOrganizationServiceImplTest extends AbstractRoleServiceTe
     }
 
     @Override
-    protected GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.IdentifiedOrganization> getBoService() {
-        return serviceLocator.getIdentifiedOrganizationService();
+    protected Class<? extends GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.IdentifiedOrganization>> getBoServiceClass() {
+        return IdentifiedOrganizationBoService.class;
     }
+
+
 
     @Override
     protected void setId(gov.nih.nci.po.data.bo.IdentifiedOrganization instance, long id) {

@@ -4,6 +4,7 @@ import gov.nih.nci.coppa.po.OversightCommittee;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.webservices.service.bo.OversightCommitteeBoService;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import org.iso._21090.CD;
 import org.iso._21090.II;
@@ -21,7 +22,7 @@ public class OversightCommitteeServiceImplTest extends AbstractRoleServiceTest
 
     @Override
     protected void initService() {
-        this.service = new OversightCommitteeServiceImpl();
+        this.service = new OversightCommitteeServiceImpl((OversightCommitteeBoService) this.boService);
     }
 
     @Override
@@ -46,8 +47,8 @@ public class OversightCommitteeServiceImplTest extends AbstractRoleServiceTest
     }
 
     @Override
-    protected GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.OversightCommittee> getBoService() {
-        return serviceLocator.getOversightCommitteeService();
+    protected Class<? extends GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.OversightCommittee>> getBoServiceClass() {
+        return OversightCommitteeBoService.class;
     }
 
     @Override

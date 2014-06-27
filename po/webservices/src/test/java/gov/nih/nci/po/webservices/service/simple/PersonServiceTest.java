@@ -12,6 +12,10 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonSearchDTO;
 import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
+import gov.nih.nci.po.webservices.service.bo.ClinicalResearchStaffBoService;
+import gov.nih.nci.po.webservices.service.bo.HealthCareProviderBoService;
+import gov.nih.nci.po.webservices.service.bo.IdentifiedPersonBoService;
+import gov.nih.nci.po.webservices.service.bo.OrganizationalContactBoService;
 import gov.nih.nci.po.webservices.service.bo.PersonBoService;
 import gov.nih.nci.po.webservices.service.bridg.ModelUtils;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
@@ -70,7 +74,11 @@ public class PersonServiceTest extends AbstractEndpointTest {
     private gov.nih.nci.po.webservices.types.PersonSearchCriteria psCriteria;
 
     private Organization ctep;
-    private PersonService perService;
+    private PersonServiceImpl perService;
+    private ClinicalResearchStaffBoService clinicalResearchStaffBoService;
+    private HealthCareProviderBoService healthCareProviderBoService;
+    private IdentifiedPersonBoService identifiedPersonBoService;
+    private OrganizationalContactBoService organizationalContactBoService;
     private PersonBoService personBoService;
 
 
@@ -78,6 +86,8 @@ public class PersonServiceTest extends AbstractEndpointTest {
     public void setUp() {
         setupServiceLocator();
         when(serviceLocator.getCountryService().getCountryByAlpha3("USA")).thenReturn(ModelUtils.getDefaultCountry());
+
+        initBoService();
 
         ctep = ModelUtils.getBasicOrganization();
         ctep.setId(1L);
@@ -103,8 +113,21 @@ public class PersonServiceTest extends AbstractEndpointTest {
         psCriteria.setLimit(5);
 
 
+
+        perService = new PersonServiceImpl();
+        perService.setPersonBoService(personBoService);
+        perService.setClinicalResearchStaffBoService(clinicalResearchStaffBoService);
+        perService.setHealthCareProviderBoService(healthCareProviderBoService);
+        perService.setIdentifiedPersonBoService(identifiedPersonBoService);
+        perService.setOrganizationalContactBoService(organizationalContactBoService);
+    }
+
+    private void initBoService() {
         personBoService = mock(PersonBoService.class);
-        perService = new PersonServiceImpl(personBoService);
+        clinicalResearchStaffBoService = mock(ClinicalResearchStaffBoService.class);
+        healthCareProviderBoService = mock(HealthCareProviderBoService.class);
+        identifiedPersonBoService = mock(IdentifiedPersonBoService.class);
+        organizationalContactBoService = mock(OrganizationalContactBoService.class);
 
     }
 
@@ -347,7 +370,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
             hits.add(identifiedPerson);
         }
 
-        when(serviceLocator.getIdentifiedPersonService().search(any(SearchCriteria.class))).thenReturn(hits);
+        when(identifiedPersonBoService.search(any(SearchCriteria.class))).thenReturn(hits);
 
         Collection<Person> personList = perService.getPersonsByCtepId("12345");
         Assert.assertNotNull(personList);
@@ -447,13 +470,13 @@ public class PersonServiceTest extends AbstractEndpointTest {
         final gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
         organization.setId(healthCareProvider.getOrganizationId());
 
-        when(serviceLocator.getPersonService().getById(healthCareProvider.getPersonId()))
+        when(personBoService.getById(healthCareProvider.getPersonId()))
                 .thenReturn(personInstance);
 
         when(serviceLocator.getOrganizationService().getById(healthCareProvider.getOrganizationId()))
                 .thenReturn(organization);
 
-        when(serviceLocator.getHealthCareProviderService().getById(anyLong()))
+        when(healthCareProviderBoService.getById(anyLong()))
                 .thenAnswer( new Answer<gov.nih.nci.po.data.bo.HealthCareProvider>() {
                     @Override
                     public gov.nih.nci.po.data.bo.HealthCareProvider answer(InvocationOnMock invocation) throws Throwable {
@@ -487,13 +510,13 @@ public class PersonServiceTest extends AbstractEndpointTest {
         final gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
         organization.setId(clinicalResearchStaff.getOrganizationId());
 
-        when(serviceLocator.getPersonService().getById(clinicalResearchStaff.getPersonId()))
+        when(personBoService.getById(clinicalResearchStaff.getPersonId()))
                 .thenReturn(personInstance);
 
         when(serviceLocator.getOrganizationService().getById(clinicalResearchStaff.getOrganizationId()))
                 .thenReturn(organization);
 
-        when(serviceLocator.getClinicalResearchStaffService().getById(anyLong()))
+        when(clinicalResearchStaffBoService.getById(anyLong()))
                 .thenAnswer( new Answer<gov.nih.nci.po.data.bo.ClinicalResearchStaff>() {
                     @Override
                     public gov.nih.nci.po.data.bo.ClinicalResearchStaff answer(InvocationOnMock invocation) throws Throwable {
@@ -525,13 +548,13 @@ public class PersonServiceTest extends AbstractEndpointTest {
         final gov.nih.nci.po.data.bo.Organization organization = ModelUtils.getBasicOrganization();
         organization.setId(organizationalContact.getOrganizationId());
 
-        when(serviceLocator.getPersonService().getById(organizationalContact.getPersonId()))
+        when(personBoService.getById(organizationalContact.getPersonId()))
                 .thenReturn(personInstance);
 
         when(serviceLocator.getOrganizationService().getById(organizationalContact.getOrganizationId()))
                 .thenReturn(organization);
 
-        when(serviceLocator.getOrganizationalContactService().getById(anyLong()))
+        when(organizationalContactBoService.getById(anyLong()))
                 .thenAnswer( new Answer<gov.nih.nci.po.data.bo.OrganizationalContact>() {
                     @Override
                     public gov.nih.nci.po.data.bo.OrganizationalContact answer(InvocationOnMock invocation) throws Throwable {
@@ -559,16 +582,16 @@ public class PersonServiceTest extends AbstractEndpointTest {
      */
     @Test(expected = ServiceException.class)
     public void testCreatePersonRoleExceptionScenario() throws JMSException {
-        HealthCareProviderServiceLocal hcplocal = mock(HealthCareProviderServiceLocal.class);
-        when(serviceLocator.getHealthCareProviderService())
-                .thenReturn(hcplocal);
+
         doThrow(
                 new ServiceException(
-                        "Exception Occured while creating Person Role.")).when(
-                hcplocal).curate(
-                isA(gov.nih.nci.po.data.bo.HealthCareProvider.class));
+                        "Exception Occured while creating Person Role."))
+                .when(
+                    healthCareProviderBoService).curate(
+                        isA(gov.nih.nci.po.data.bo.HealthCareProvider.class)
+                );
 
-        
+
         perService.createPersonRole(getHealthCareProvider());
     }
 
@@ -577,7 +600,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
      */
     @Test(expected = ServiceException.class)
     public void testUpdateNullPersonRole() {
-        
+
         perService.updatePersonRole(null);
     }
 
@@ -588,7 +611,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
     public void testUpdatePersonRoleForNullDBId() {
         HealthCareProvider hcp = getHealthCareProvider();
         hcp.setId(null);
-        
+
         perService.updatePersonRole(hcp);
     }
 
@@ -597,7 +620,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
      */
     @Test
     public void testUpdatePersonRoleHealthCareProvider() {
-        
+
         HealthCareProvider hcp = getHealthCareProvider();
         hcp.setId(1l);
 
@@ -607,9 +630,9 @@ public class PersonServiceTest extends AbstractEndpointTest {
         final Organization organization = ModelUtils.getBasicOrganization();
         organization.setId(hcp.getOrganizationId());
 
-        when(serviceLocator.getPersonService().getById(hcp.getPersonId())).thenReturn(player);
+        when(personBoService.getById(hcp.getPersonId())).thenReturn(player);
 
-        when(serviceLocator.getHealthCareProviderService().getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.HealthCareProvider>() {
+        when(healthCareProviderBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.HealthCareProvider>() {
             @Override
             public gov.nih.nci.po.data.bo.HealthCareProvider answer(InvocationOnMock invocation) throws Throwable {
 
@@ -633,7 +656,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
      */
     @Test
     public void testUpdatePersonRoleClinicalResearchStaff() {
-        
+
         ClinicalResearchStaff crs = getClinicalResearchStaff();
         crs.setId(123l);
 
@@ -644,9 +667,9 @@ public class PersonServiceTest extends AbstractEndpointTest {
         final Organization organization = ModelUtils.getBasicOrganization();
         organization.setId(crs.getOrganizationId());
 
-        when(serviceLocator.getPersonService().getById(crs.getPersonId())).thenReturn(player);
+        when(personBoService.getById(crs.getPersonId())).thenReturn(player);
 
-        when(serviceLocator.getClinicalResearchStaffService().getById(123L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.ClinicalResearchStaff>() {
+        when(clinicalResearchStaffBoService.getById(123L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.ClinicalResearchStaff>() {
             @Override
             public gov.nih.nci.po.data.bo.ClinicalResearchStaff answer(InvocationOnMock invocation) throws Throwable {
 
@@ -671,7 +694,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
      */
     @Test
     public void testUpdatePersonRoleOrganizationalContact() {
-        
+
         final OrganizationalContact oc = getOrganizationalContact();
         oc.setId(5639l);
 
@@ -681,9 +704,9 @@ public class PersonServiceTest extends AbstractEndpointTest {
         final Organization organization = ModelUtils.getBasicOrganization();
         organization.setId(oc.getOrganizationId());
 
-        when(serviceLocator.getPersonService().getById(oc.getPersonId())).thenReturn(player);
+        when(personBoService.getById(oc.getPersonId())).thenReturn(player);
 
-        when(serviceLocator.getOrganizationalContactService().getById(5639L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.OrganizationalContact>() {
+        when(organizationalContactBoService.getById(5639L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.OrganizationalContact>() {
             @Override
             public gov.nih.nci.po.data.bo.OrganizationalContact answer(InvocationOnMock invocation) throws Throwable {
 
@@ -708,7 +731,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
 
     /**
      * Testcase for PersonService-updatePersonRole-ExceptionScenario
-     * 
+     *
      * @throws JMSException
      */
     @Test(expected = ServiceException.class)
@@ -722,7 +745,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
                 hcplocal).curate(
                 isA(gov.nih.nci.po.data.bo.HealthCareProvider.class));
 
-        
+
         HealthCareProvider hcp = getHealthCareProvider();
         hcp.setId(4546l);
         perService.updatePersonRole(hcp);
@@ -768,7 +791,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
      */
     @Test(expected = ServiceException.class)
     public void testGetPersonRolesPersonNotFoundInDB() {
-        
+
         perService.getPersonRolesByPersonId(1002l);
     }
 
@@ -781,7 +804,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
         instance.getScoper().setId(2L);
         instance.getPlayer().setId(3L);
 
-        when(serviceLocator.getHealthCareProviderService().getById(1L))
+        when(healthCareProviderBoService.getById(1L))
                 .thenReturn(instance);
 
         HealthCareProvider hcp = perService.getPersonRoleById(
@@ -800,7 +823,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
         instance.getScoper().setId(2L);
         instance.getPlayer().setId(3L);
 
-        when(serviceLocator.getClinicalResearchStaffService().getById(1L))
+        when(clinicalResearchStaffBoService.getById(1L))
                 .thenReturn(instance);
 
         ClinicalResearchStaff crs = perService.getPersonRoleById(
@@ -824,7 +847,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
         instance.getScoper().setId(2L);
         instance.getPlayer().setId(3L);
 
-        when(serviceLocator.getOrganizationalContactService().getById(1L))
+        when(organizationalContactBoService.getById(1L))
                 .thenReturn(instance);
 
         OrganizationalContact oc = perService.getPersonRoleById(
@@ -838,7 +861,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
      */
     @Test(expected = ServiceException.class)
     public void testGetNullPersonRole() {
-        
+
         PersonRole hcp = perService.getPersonRoleById(null, 1l);
         Assert.assertNotNull(hcp);
     }
@@ -852,7 +875,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
         instance.getScoper().setId(2L);
         instance.getPlayer().setId(3L);
 
-        when(serviceLocator.getHealthCareProviderService().getById(1L))
+        when(healthCareProviderBoService.getById(1L))
                 .thenReturn(instance);
 
         HealthCareProvider hcp = perService.changePersonRoleStatus(
@@ -871,7 +894,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
         instance.getScoper().setId(2L);
         instance.getPlayer().setId(3L);
 
-        when(serviceLocator.getClinicalResearchStaffService().getById(1L))
+        when(clinicalResearchStaffBoService.getById(1L))
                 .thenReturn(instance);
 
         ClinicalResearchStaff crs = perService.changePersonRoleStatus(
@@ -895,7 +918,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
         instance.getScoper().setId(2L);
         instance.getPlayer().setId(3L);
 
-        when(serviceLocator.getOrganizationalContactService().getById(1L))
+        when(organizationalContactBoService.getById(1L))
                 .thenReturn(instance);
 
         OrganizationalContact oc = perService.changePersonRoleStatus(

@@ -12,6 +12,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.webservices.service.bo.HealthCareFacilityBoService;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import org.iso._21090.CD;
 import org.iso._21090.II;
@@ -30,7 +31,7 @@ public class HealthCareFacilityServiceImplTest extends AbstractRoleServiceTest
 
     @Override
     protected void initService() {
-        this.service = new HealthCareFacilityServiceImpl();
+        this.service = new HealthCareFacilityServiceImpl((HealthCareFacilityBoService) this.boService);
     }
 
     @Override
@@ -72,9 +73,11 @@ public class HealthCareFacilityServiceImplTest extends AbstractRoleServiceTest
     }
 
     @Override
-    protected GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.HealthCareFacility> getBoService() {
-        return serviceLocator.getHealthCareFacilityService();
+    protected Class<? extends GenericStructrualRoleServiceLocal<gov.nih.nci.po.data.bo.HealthCareFacility>> getBoServiceClass() {
+        return HealthCareFacilityBoService.class;
     }
+
+
 
     @Override
     protected void setId(gov.nih.nci.po.data.bo.HealthCareFacility instance, long id) {

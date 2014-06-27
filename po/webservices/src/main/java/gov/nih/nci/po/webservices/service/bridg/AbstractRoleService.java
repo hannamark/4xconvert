@@ -53,6 +53,17 @@ public abstract class AbstractRoleService
 
     private int maxHitsPerRequest = DEFAULT_MAX_HITS_PER_REQUEST;
 
+    private final GenericStructrualRoleServiceLocal<BO_TYPE> boService;
+
+    /**
+     * Constructor.
+     * @param boService The BO service to delegate to.
+     */
+    protected AbstractRoleService(GenericStructrualRoleServiceLocal<BO_TYPE> boService) {
+        this.boService = boService;
+    }
+
+
     @Override
     public Id create(XML_TYPE definition) throws EntityValidationException {
 
@@ -63,7 +74,7 @@ public abstract class AbstractRoleService
 
             BO_TYPE bo = (BO_TYPE) PoXsnapshotHelper.createModel(dto);
 
-            long id = getEjbService().create(bo);
+            long id = boService.create(bo);
 
             Ii ii = new IdConverter.ClinicalResearchStaffIdConverter().convertToIi(id);
 
@@ -108,7 +119,7 @@ public abstract class AbstractRoleService
                     getSortCriterion(),
                     false);
 
-            List<BO_TYPE> boHits = getEjbService().search(criteria, pageSortParams);
+            List<BO_TYPE> boHits = boService.search(criteria, pageSortParams);
 
             //convert to bridge service model
             results.addAll(generateList(boHits));
@@ -134,7 +145,7 @@ public abstract class AbstractRoleService
 
             BO_TYPE instance = (BO_TYPE) PoXsnapshotHelper.createModel(dto);
 
-            getEjbService().curate(instance);
+            boService.curate(instance);
 
         } catch (DtoTransformException e) {
             throw new ServiceException(e);
@@ -147,14 +158,14 @@ public abstract class AbstractRoleService
 
     @Override
     public void updateStatus(Id targetId, Cd statusCode) throws EntityValidationException {
-        BO_TYPE instance = getEjbService().getById(Long.parseLong(targetId.getExtension()));
+        BO_TYPE instance = boService.getById(Long.parseLong(targetId.getExtension()));
 
         RoleStatus newStatus = RoleStatus.valueOf(statusCode.getCode());
 
         instance.setStatus(newStatus);
 
         try {
-            getEjbService().curate(instance);
+            boService.curate(instance);
         } catch (JMSException e) {
             throw new ServiceException(e);
         }
@@ -170,7 +181,7 @@ public abstract class AbstractRoleService
 
             BO_TYPE instance = (BO_TYPE) PoXsnapshotHelper.createModel(dto);
 
-            Map<String, String[]> errors = getEjbService().validate(instance);
+            Map<String, String[]> errors = boService.validate(instance);
 
             for (Map.Entry<String, String[]> entry : errors.entrySet()) {
                 StringMapType.Entry errorEntry = new StringMapType.Entry();
@@ -195,7 +206,7 @@ public abstract class AbstractRoleService
             idSet.add(Long.parseLong(id.getExtension()));
         }
 
-        List<BO_TYPE> hits = getEjbService().getByPlayerIds(idSet.toArray(new Long[idSet.size()]));
+        List<BO_TYPE> hits = boService.getByPlayerIds(idSet.toArray(new Long[idSet.size()]));
 
         return generateList(hits);
     }
@@ -203,7 +214,7 @@ public abstract class AbstractRoleService
     @Override
     public XML_TYPE getById(Id id) throws NullifiedRoleException {
 
-        BO_TYPE hit = getEjbService().getById(Long.parseLong(id.getExtension()));
+        BO_TYPE hit = boService.getById(Long.parseLong(id.getExtension()));
 
         if (hit != null) {
             validateNotNullified(hit);
@@ -231,7 +242,7 @@ public abstract class AbstractRoleService
         for (Id id : ids) {
             idSet.add(Long.parseLong(id.getExtension()));
         }
-        List<BO_TYPE> hits = getEjbService().getByIds(idSet.toArray(new Long[idSet.size()]));
+        List<BO_TYPE> hits = boService.getByIds(idSet.toArray(new Long[idSet.size()]));
 
         validateNotNullified(hits);
 
@@ -311,12 +322,6 @@ public abstract class AbstractRoleService
      * @return  The appropriate DTO transformer.
      */
     protected abstract Transformer<XML_TYPE, DTO_TYPE>  getTransformer();
-
-    /**
-     *
-     * @return The appropriate local EJB service.
-     */
-    protected abstract GenericStructrualRoleServiceLocal<BO_TYPE> getEjbService();
 
     /**
      *

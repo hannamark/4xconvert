@@ -6,19 +6,18 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
-import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
-import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
-import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoConstants;
-import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.webservices.convert.simple.Converters;
 import gov.nih.nci.po.webservices.convert.simple.HealthCareFacilityConverter;
 import gov.nih.nci.po.webservices.convert.simple.OrganizationConverter;
 import gov.nih.nci.po.webservices.convert.simple.OrganizationSearchConverter;
 import gov.nih.nci.po.webservices.convert.simple.OversightCommitteeConverter;
 import gov.nih.nci.po.webservices.convert.simple.ResearchOrganizationConverter;
+import gov.nih.nci.po.webservices.service.bo.HealthCareFacilityBoService;
 import gov.nih.nci.po.webservices.service.bo.OrganizationBoService;
+import gov.nih.nci.po.webservices.service.bo.OversightCommitteeBoService;
+import gov.nih.nci.po.webservices.service.bo.ResearchOrganizationBoService;
 import gov.nih.nci.po.webservices.service.exception.EntityNotFoundException;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.po.webservices.types.EntityStatus;
@@ -59,16 +58,21 @@ public class OrganizationServiceImpl implements OrganizationService {
     private static final String RAW_TYPES = "rawtypes";
     private static final String UNCHECKED = "unchecked";
 
-    private final OrganizationBoService organizationBoService;
 
-    /**
-     * Constructor.
-     * @param organizationBoService The BO service to delegate to.
-     */
+
     @Autowired
-    public OrganizationServiceImpl(OrganizationBoService organizationBoService) {
-        this.organizationBoService = organizationBoService;
-    }
+    private OrganizationBoService organizationBoService;
+
+    @Autowired
+    private HealthCareFacilityBoService healthCareFacilityBoService;
+
+    @Autowired
+    private ResearchOrganizationBoService researchOrganizationBoService;
+
+    @Autowired
+    private OversightCommitteeBoService oversightCommitteeBoService;
+
+
 
 
     @Override
@@ -88,7 +92,6 @@ public class OrganizationServiceImpl implements OrganizationService {
                     .get(OrganizationConverter.class);
             orgBo = oConverter.convertFromJaxbToBO(organization);
 
-            // call the EJB service method to create the Organization
             retOrgId = organizationBoService.create(orgBo);
         } catch (EntityValidationException e) {
             LOG.error("Organization couldn't be created as data is invalid.", e);
@@ -438,7 +441,7 @@ public class OrganizationServiceImpl implements OrganizationService {
 
 
     /**
-     * This methos is used to check if the Alias list contains the name(case
+     * This method is used to check if the Alias list contains the name(case
      * insensitive).
      *
      * @return true if the name if present in the list.
@@ -510,15 +513,13 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     private void getAndPopulateHCFByCtepId(gov.nih.nci.iso21090.Ii assIden,
             List<OrganizationRole> orgRoleList) {
-        HealthCareFacilityServiceLocal hcflocal = PoRegistry.getInstance()
-                .getServiceLocator().getHealthCareFacilityService();
         gov.nih.nci.po.data.bo.HealthCareFacility hcf = new gov.nih.nci.po.data.bo.HealthCareFacility();
         hcf.getOtherIdentifiers().add(assIden);
         // populate the SearchCriteria with the CtepId
         SearchCriteria<gov.nih.nci.po.data.bo.HealthCareFacility> hcfSearchCriteria = 
                 new AnnotatedBeanSearchCriteria<gov.nih.nci.po.data.bo.HealthCareFacility>(hcf);
         // search for existing Records matching the CtepId
-        List<gov.nih.nci.po.data.bo.HealthCareFacility> hcfList = hcflocal
+        List<gov.nih.nci.po.data.bo.HealthCareFacility> hcfList = healthCareFacilityBoService
                 .search(hcfSearchCriteria);
         if (CollectionUtils.isNotEmpty(hcfList)) {
             HealthCareFacilityConverter hcfConverter = Converters
@@ -537,15 +538,14 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     private void getAndPopulateROByCtepId(gov.nih.nci.iso21090.Ii assIden,
             List<OrganizationRole> orgRoleList) {
-        ResearchOrganizationServiceLocal rolocal = PoRegistry.getInstance()
-                .getServiceLocator().getResearchOrganizationService();
+
         gov.nih.nci.po.data.bo.ResearchOrganization ro = new gov.nih.nci.po.data.bo.ResearchOrganization();
         ro.getOtherIdentifiers().add(assIden);
         // populate the SearchCriteria with the CtepId
         SearchCriteria<gov.nih.nci.po.data.bo.ResearchOrganization> roSearchCriteria = 
                 new AnnotatedBeanSearchCriteria<gov.nih.nci.po.data.bo.ResearchOrganization>(ro);
         // search for existing Records matching the CtepId
-        List<gov.nih.nci.po.data.bo.ResearchOrganization> roList = rolocal
+        List<gov.nih.nci.po.data.bo.ResearchOrganization> roList = researchOrganizationBoService
                 .search(roSearchCriteria);
         if (CollectionUtils.isNotEmpty(roList)) {
             ResearchOrganizationConverter roConverter = Converters
@@ -581,24 +581,17 @@ public class OrganizationServiceImpl implements OrganizationService {
             gov.nih.nci.po.data.bo.ResearchOrganization inROBo = 
                     (gov.nih.nci.po.data.bo.ResearchOrganization) inOrgRoleBo;
             handleOrgRoleNameAndAliases(existROBo, inROBo); // handle Aliases
-            ResearchOrganizationServiceLocal serLocal = PoRegistry
-                    .getInstance().getServiceLocator()
-                    .getResearchOrganizationService();
-            serLocal.curate(inROBo, ctepId); // curate
+            researchOrganizationBoService.curate(inROBo, ctepId); // curate
         } else if (inOrgRoleBo instanceof gov.nih.nci.po.data.bo.HealthCareFacility) {
             gov.nih.nci.po.data.bo.HealthCareFacility existHCFBo = 
                     (gov.nih.nci.po.data.bo.HealthCareFacility) existOrgRolBo;
             gov.nih.nci.po.data.bo.HealthCareFacility inHCFBo = 
                     (gov.nih.nci.po.data.bo.HealthCareFacility) inOrgRoleBo;
             handleOrgRoleNameAndAliases(existHCFBo, inHCFBo); // handle Aliases
-            HealthCareFacilityServiceLocal serLocal = PoRegistry.getInstance()
-                    .getServiceLocator().getHealthCareFacilityService();
-            serLocal.curate(inHCFBo, ctepId); // curate
+            healthCareFacilityBoService.curate(inHCFBo, ctepId); // curate
         } else if (inOrgRoleBo instanceof gov.nih.nci.po.data.bo.OversightCommittee) {
             gov.nih.nci.po.data.bo.OversightCommittee ocBo = (gov.nih.nci.po.data.bo.OversightCommittee) inOrgRoleBo;
-            OversightCommitteeServiceLocal serLocal = PoRegistry.getInstance()
-                    .getServiceLocator().getOversightCommitteeService();
-            serLocal.curate(ocBo); // curate
+            oversightCommitteeBoService.curate(ocBo); // curate
         }
     }
 
@@ -698,14 +691,11 @@ public class OrganizationServiceImpl implements OrganizationService {
             Class<T> orgRoleClass) {
         GenericStructrualRoleServiceLocal gsRolSerLocal = null;
         if (ResearchOrganization.class.isAssignableFrom(orgRoleClass)) {
-            gsRolSerLocal = PoRegistry.getInstance().getServiceLocator()
-                    .getResearchOrganizationService();
+            gsRolSerLocal = researchOrganizationBoService;
         } else if (OversightCommittee.class.isAssignableFrom(orgRoleClass)) {
-            gsRolSerLocal = PoRegistry.getInstance().getServiceLocator()
-                    .getOversightCommitteeService();
+            gsRolSerLocal = oversightCommitteeBoService;
         } else if (HealthCareFacility.class.isAssignableFrom(orgRoleClass)) {
-            gsRolSerLocal = PoRegistry.getInstance().getServiceLocator()
-                    .getHealthCareFacilityService();
+            gsRolSerLocal = healthCareFacilityBoService;
         }
 
         return gsRolSerLocal;
@@ -769,6 +759,70 @@ public class OrganizationServiceImpl implements OrganizationService {
         List<String> dscList = new ArrayList<String>();
         dscList.add("ID");
         return dscList;
+    }
+
+
+    /*
+     * GETTERS AND SETTERS
+     */
+
+    /**
+     * @return The organization BO service.
+     */
+    public OrganizationBoService getOrganizationBoService() {
+        return organizationBoService;
+    }
+
+    /**
+     *
+     * @param organizationBoService The organization BO service.
+     */
+    public void setOrganizationBoService(OrganizationBoService organizationBoService) {
+        this.organizationBoService = organizationBoService;
+    }
+
+    /**
+     * @return The HealthCareFacility BO service.
+     */
+    public HealthCareFacilityBoService getHealthCareFacilityBoService() {
+        return healthCareFacilityBoService;
+    }
+
+    /**
+     *
+     * @param healthCareFacilityBoService The HealthCareFacility BO service.
+     */
+    public void setHealthCareFacilityBoService(HealthCareFacilityBoService healthCareFacilityBoService) {
+        this.healthCareFacilityBoService = healthCareFacilityBoService;
+    }
+
+    /**
+     * @return The ResearchOrganization BO service.
+     */
+    public ResearchOrganizationBoService getResearchOrganizationBoService() {
+        return researchOrganizationBoService;
+    }
+
+    /**
+     *
+     * @param researchOrganizationBoService The ResearchOrganization BO service.
+     */
+    public void setResearchOrganizationBoService(ResearchOrganizationBoService researchOrganizationBoService) {
+        this.researchOrganizationBoService = researchOrganizationBoService;
+    }
+
+    /**
+     * @return The OversightCommittee BO service.
+     */
+    public OversightCommitteeBoService getOversightCommitteeBoService() {
+        return oversightCommitteeBoService;
+    }
+
+    /**
+     * @param oversightCommitteeBoService The OversightCommittee BO service.
+     */
+    public void setOversightCommitteeBoService(OversightCommitteeBoService oversightCommitteeBoService) {
+        this.oversightCommitteeBoService = oversightCommitteeBoService;
     }
 
 }

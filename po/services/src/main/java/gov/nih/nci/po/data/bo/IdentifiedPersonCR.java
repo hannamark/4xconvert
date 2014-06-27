@@ -85,7 +85,9 @@ package gov.nih.nci.po.data.bo;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -146,5 +148,33 @@ public class IdentifiedPersonCR extends AbstractIdentifiedPerson implements Corr
      */
     public void setTarget(IdentifiedPerson target) {
         this.target = target;
+    }
+
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isScoperChanged() {
+        if (getScoper() == null && target.getScoper() == null) {
+            return false;
+        }
+
+        return !StringUtils.equals(getScoper().getName(), target.getScoper().getName());
+    }
+
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isStatusCodeChanged() {
+        return getStatus() != target.getStatus();
+    }
+
+    /**
+     * @return boolean
+     */
+    @Transient
+    public boolean isNoChange() {
+        return !(isStatusCodeChanged() || isScoperChanged());
     }
 }

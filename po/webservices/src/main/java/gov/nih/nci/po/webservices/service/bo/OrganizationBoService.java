@@ -97,7 +97,7 @@ public class OrganizationBoService implements OrganizationServiceLocal {
         } else {
             //someone else made it, so create a CR
             try {
-                createOrganizationCR(curatedOrg);
+                createOrganizationCR(current, curatedOrg);
             } catch (EntityValidationException e) {
                 throw new RuntimeException(e);
             }
@@ -124,10 +124,9 @@ public class OrganizationBoService implements OrganizationServiceLocal {
         return result;
     }
 
-    private void createOrganizationCR(Organization curatedOrganization) throws EntityValidationException {
-        Organization target = PoRegistry.getOrganizationService().getById(curatedOrganization.getId());
-
-        OrganizationCR organizationCR = new OrganizationCR(target);
+    private void createOrganizationCR(Organization current, Organization curatedOrganization)
+            throws EntityValidationException {
+        OrganizationCR organizationCR = new OrganizationCR(current);
 
         OrganizationDTO curatedOrganizationDto
                 = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(curatedOrganization);

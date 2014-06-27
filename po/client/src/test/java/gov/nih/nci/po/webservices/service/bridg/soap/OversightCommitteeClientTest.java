@@ -88,7 +88,6 @@ public class OversightCommitteeClientTest {
 
     private static PersonPortType personService;
     private static OrganizationPortType organizationService;
-    private static OversightCommitteeType defaultType;
     private OversightCommitteePortType port;
     private static ServiceLocator oldLocator;
 
@@ -110,8 +109,6 @@ public class OversightCommitteeClientTest {
         //This is to plug a hole... (there's a hibernate validator that depends on a local EJB being available)
         oldLocator = PoRegistry.getInstance().getServiceLocator();
         PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
-
-        initDefaultType();
     }
 
 
@@ -150,21 +147,7 @@ public class OversightCommitteeClientTest {
         );
     }
 
-    private static void initDefaultType() {
-        defaultType = new OversightCommitteeType("defaultType");
 
-        Transaction t = PoHibernateUtil.getCurrentSession().beginTransaction();
-
-        try {
-            PoHibernateUtil.getCurrentSession().save(defaultType);
-            t.commit();
-        } catch(Exception e) {
-            t.rollback();
-            throw new RuntimeException(e);
-        }
-
-
-    }
 
     @Before
     public void setup() throws Exception {
@@ -320,7 +303,7 @@ public class OversightCommitteeClientTest {
         payload.setPlayerIdentifier(playerIdentifier);
 
         CD typeCode = new CD();
-        typeCode.setCode(defaultType.getCode());
+        typeCode.setCode("Ethics Committee");
         payload.setTypeCode(typeCode);
 
         CD status = new CD();
@@ -363,7 +346,7 @@ public class OversightCommitteeClientTest {
         payload.setPlayerIdentifier(playerIdentifier);
 
         CD typeCode = new CD();
-        typeCode.setCode(defaultType.getCode());
+        typeCode.setCode("Ethics Committee");
         payload.setTypeCode(typeCode);
 
         CD status = new CD();
@@ -654,16 +637,7 @@ public class OversightCommitteeClientTest {
     @Test
     public void testUpdate() throws EntityValidationFaultFaultMessage, NullifiedRoleFaultFaultMessage {
 
-        Transaction t = PoHibernateUtil.getCurrentSession().beginTransaction();
-        OversightCommitteeType newType = new OversightCommitteeType("NewCommitteeType");
 
-        try {
-            PoHibernateUtil.getCurrentSession().save(newType);
-            t.commit();
-        } catch(Exception e) {
-            t.rollback();
-            throw new RuntimeException(e);
-        }
 
         //create an instace in the pending state
         OversightCommittee payload = generateNewOversightCommittee();
@@ -678,12 +652,8 @@ public class OversightCommitteeClientTest {
         UpdateRequest updateRequest = new UpdateRequest();
         UpdateRequest.OversightCommittee updatePayloadWrapper = new UpdateRequest.OversightCommittee();
 
-
-
-
-
         OversightCommittee updatePayload = retrieve(response.getId());
-        updatePayload.getTypeCode().setCode(newType.getCode());
+        updatePayload.getTypeCode().setCode("Ethics Committee");
 
         updatePayloadWrapper.setOversightCommittee(updatePayload);
         updateRequest.setOversightCommittee(updatePayloadWrapper);
@@ -692,7 +662,7 @@ public class OversightCommitteeClientTest {
         assertNotNull(updateResponse);
 
         OversightCommittee retrieved = retrieve(response.getId());
-        assertEquals("NewCommitteeType", retrieved.getTypeCode().getCode());
+        assertEquals("Ethics Committee", retrieved.getTypeCode().getCode());
 
     }
 
@@ -789,7 +759,7 @@ public class OversightCommitteeClientTest {
         payload.setStatus(status);
 
         CD typeCode = new CD();
-        typeCode.setCode(defaultType.getCode());
+        typeCode.setCode("Research Ethics Board");
         payload.setTypeCode(typeCode);
 
         Address address = new Address();

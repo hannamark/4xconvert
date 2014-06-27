@@ -10,9 +10,7 @@
     <context:annotation-config/>
     <context:component-scan base-package="gov.nih.nci.po.webservices.service.bridg" />
 
-
     <!-- Bridg Service Endpoints -->
-
     <jaxws:endpoint id="clinicalResearchStaffBridgSoapEndpoint"
                     implementor="#clinicalResearchStaffBridgSoapEndpointImpl"
                     address="/bridg/ClinicalResearchStaffService"
@@ -53,6 +51,7 @@
             <entry key="schema-validation-enabled" value="false" />
         </jaxws:properties>
     </jaxws:endpoint>
+
 
     <jaxws:endpoint id="healthCareFacilityBridgSoapEndpoint"
                     implementor="#healthCareFacilityBridgSoapEndpointImpl"
