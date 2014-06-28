@@ -9,6 +9,7 @@ import java.util.List;
 
 /**
  * @author Denis G. Krylov
+ * @author Rohit Gupta
  * 
  */
 @SuppressWarnings("PMD.TooManyFields")
@@ -23,6 +24,7 @@ public class OrganizationSearchDTO extends BaseSearchResultDTO {
     private String familyName;
     private String roCtepId;
     private String hcfCtepId;
+    private String ioCtepId;
     private int changeRequests;
     private int pendingROs;
     private int pendingHCFs;
@@ -92,6 +94,23 @@ public class OrganizationSearchDTO extends BaseSearchResultDTO {
      */
     public void setHcfCtepId(String hcfCtepId) {
         this.hcfCtepId = hcfCtepId;
+    }
+    
+    /**
+     * 
+     * @return the ioCtepId
+     */
+    public String getIoCtepId() {
+        return ioCtepId;
+    }
+
+    /**
+     * 
+     * @param ioCtepId 
+     *         the ioCtepId to set
+     */
+    public void setIoCtepId(String ioCtepId) {
+        this.ioCtepId = ioCtepId;
     }
 
     /**

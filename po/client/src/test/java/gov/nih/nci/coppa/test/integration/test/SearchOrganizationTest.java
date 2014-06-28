@@ -110,6 +110,65 @@ public class SearchOrganizationTest extends OrganizationWebTest {
         
         searchByOrgAlias();
       }
+    
+    
+    public void testSearchOrganizationUsingCtepId(){
+        
+        // Step1:: Create an Organization & its Identified Org (Ctep Id)
+        String AFFILIATE_ORG_FOR_IO = "affiliate_org_for_io_search_by_CtepId";
+        String ORG_FOR_TEST = "org_for_search_by_CtepId";
+        String ctepId = "12346789";
+
+        loginAsCurator();
+        // create an ACTIVE ORG for later
+        createOrganization("ACTIVE", AFFILIATE_ORG_FOR_IO, getAddress(), "sample@example.com", "703-111-2345",
+                "703-111-1234", "703-111-1234", "http://www.example.com");
+        String ioAffOrgId = selenium.getText("wwctrl_organization.id");
+        assertNotEquals("null", ioAffOrgId.trim());
+
+        // create ACTIVE org we are using now.
+        createOrganization("ACTIVE", ORG_FOR_TEST, getAddress(), "sample@example.com", "703-111-2345",
+                "703-111-1234", "703-111-1234", "http://www.example.com");
+        String activeOrgId = selenium.getText("wwctrl_organization.id");
+        assertNotEquals("null", activeOrgId.trim());
+
+        // Goto Manage IO Page
+        accessManageIdentifiedOrganizationScreen();
+        // add IO
+        clickAndWait("add_button_io");
+        assertTrue(selenium.isTextPresent("Identified Organization Role Information"));
+        // ensure the player is ACTIVE
+        assertEquals("ACTIVE", selenium.getText("wwctrl_organization.statusCode"));
+        // select a ACTIVE Scoper
+        selectOrganizationScoper(ioAffOrgId.trim(), AFFILIATE_ORG_FOR_IO);
+        selenium.select("curateRoleForm.role.status", "label=ACTIVE");
+        selenium.type("curateRoleForm.role.assignedIdentifier.extension", ctepId);
+        selenium.type("curateRoleForm.role.assignedIdentifier.root", "2.16.840.1.113883.3.26.6.2");
+        selenium.select("curateRoleForm.role.assignedIdentifier.displayable", "label=TRUE");
+        selenium.type("curateRoleForm.role.assignedIdentifier.identifierName", "Cancer Therapy Evaluation Program Organization Identifier");
+        selenium.select("curateRoleForm.role.assignedIdentifier.reliability", "label=VRF");
+        selenium.select("curateRoleForm.role.assignedIdentifier.scope", "label=OBJ");
+        clickAndWaitSaveButton();
+        assertTrue(selenium.isTextPresent("exact:Identified Organization was successfully created!"));
+        
+        // Step2:: Searching using the CTEP ID
+        openSearchOrganization();
+        selenium.type("searchOrganizationForm_criteria_ctepID", ctepId);
+        clickAndWait("submitSearchOrganizationForm");
+        int secondColumn = 1;
+        int row = getRow(ORG_FOR_TEST, secondColumn);
+        if (row == -1) {
+            fail("Did not find organization for CTEP ID " + ctepId);
+        } else {
+            setPoId(row);
+            assertEquals(poId, selenium.getTable("row." + row + ".0"));
+            assertEquals(ORG_FOR_TEST, selenium.getTable("row." + row + ".1"));
+            assertEquals(ctepId, selenium.getTable("row." + row + ".5"));            
+            assertEquals("Curate", selenium.getTable("row." + row + ".10"));            
+            clear();            
+        }
+        
+      }
 
     private void verifyRequiredIndicators(boolean expectedValue) {
         verifyPresenceOfRequiredIndicator(expectedValue, "curateEntityForm.organization.postalAddress.country");

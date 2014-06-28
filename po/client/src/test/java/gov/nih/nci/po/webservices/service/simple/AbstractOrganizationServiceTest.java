@@ -2,14 +2,16 @@ package gov.nih.nci.po.webservices.service.simple;
 
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.po.webservices.types.Organization;
-import junit.framework.Assert;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.junit.Assert;
 
 /**
  * This is a base class with common code to be used across REST/SOAP based
@@ -73,6 +75,29 @@ public abstract class AbstractOrganizationServiceTest extends AbstractBaseTest {
                 return result;
             }
         };
+    }
+    
+    protected void createIdentifiedOrganization(long organizationId, String ctepId) {
+        try {
+            setUpOrganizationServiceData();
+            QueryRunner queryRunner = new QueryRunner();            
+            Object[] result = queryRunner.query(conn,
+                    "select id from organization where name = 'Cancer Therapy Evaluation Program'", h);
+            long ctepOrgId = ((Long) result[0]).longValue();
+            
+            // insert data into "IdentifiedOrganization" table
+            long idenOrgId = getNextSequenceId();
+            queryRunner.update(conn,
+                    "insert into identifiedorganization(id,assigned_identifier_displayable,assigned_identifier_extension,"
+                    + "assigned_identifier_identifier_name,assigned_identifier_reliability, assigned_identifier_root, assigned_identifier_scope,"
+                    + "status, statusdate, scoper_id, player_id) values(?, 'TRUE', ?, 'CTEP ID','VRF','2.16.840.1.113883.3.26.6.2','OBJ','ACTIVE','2008-12-30',?,?)", 
+                    idenOrgId, ctepId, ctepOrgId, organizationId);
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside createIdentifiedOrganization. The exception is: "
+                    + e);
+        }finally{
+            DbUtils.closeQuietly(conn);
+        }
     }
 
     private long getNextSequenceId() {

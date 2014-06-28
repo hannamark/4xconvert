@@ -85,6 +85,7 @@ package gov.nih.nci.po.service; // NOPMD
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.CR;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.FAMILY;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.HCF_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.IO_CTEP_ID;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.ID;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.NAME;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_HCF;
@@ -149,6 +150,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 /**
  *
  * @author gax
+ * @author Rohit Gupta
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -515,6 +517,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         dto.setPhones((String) row[23]);
         dto.setDuplicateOf(((BigInteger) row[24]));
         dto.setCountryCode((String) row[25]);
+        dto.setIoCtepId((String) row[26]);
         return dto;
     }
     // CHECKSTYLE:ON
@@ -568,6 +571,9 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
         if (HCF_CTEP_ID == sortEnum) {
             sql.append("hcfCtepId");
+        }
+        if (IO_CTEP_ID == sortEnum) {
+            sql.append("ioCtepId");
         }
         if (CR == sortEnum) {
             sql.append("changeRequests");
@@ -793,7 +799,13 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                             + "'NULLIFIED' and ro_oi.root='%s' and lower(ro_oi.extension) like '%s') or exists "
                             + "(select hcf_oi.extension from hcf_otheridentifier hcf_oi inner join healthcarefacility "
                             + "hcf on hcf_oi.hcf_id=hcf.id and hcf.player_id=o.id and hcf.status <> 'NULLIFIED' and"
-                            + " hcf_oi.root='%s' and lower(hcf_oi.extension) like '%s')) ",
+                            + " hcf_oi.root='%s' and lower(hcf_oi.extension) like '%s') or exists "
+                            + "(select io.assigned_identifier_extension from identifiedorganization io "
+                            + "where io.player_id=o.id and io.status <> 'NULLIFIED' "
+                            + "and io.assigned_identifier_root='%s' and"
+                            + " lower(io.assigned_identifier_extension) like '%s'))",
+                            CtepOrganizationImporter.CTEP_ORG_ROOT, "%"
+                                    + StringEscapeUtils.escapeSql(criteria.getCtepID().trim()).toLowerCase() + "%",
                             CtepOrganizationImporter.CTEP_ORG_ROOT, "%"
                                     + StringEscapeUtils.escapeSql(criteria.getCtepID().trim()).toLowerCase() + "%",
                             CtepOrganizationImporter.CTEP_ORG_ROOT, "%"

@@ -75,6 +75,7 @@ public class OrganizationSearchConverter extends AbstractBaseSearchConverter {
             osResult.setFamilyName(osDto.getFamilyName());
             osResult.setRoCtepID(osDto.getRoCtepId());
             osResult.setHcfCtepID(osDto.getHcfCtepId());
+            osResult.setIoCtepId(osDto.getIoCtepId());
             osResult.setChangeRequests(osDto.getChangeRequests());
             osResult.setPendingROs(osDto.getPendingROs());
             osResult.setPendingHCFs(osDto.getPendingHCFs());

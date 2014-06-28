@@ -38,6 +38,8 @@
         sortable="true" sortProperty="HCF_CTEP_ID" />           
     <display:column titleKey="organization.roCtepId" property="roCtepId"
         sortable="true" sortProperty="RO_CTEP_ID" />
+    <display:column titleKey="organization.ioCtepId" property="ioCtepId"
+        sortable="true" sortProperty="IO_CTEP_ID" />    
         
     <display:column titleKey="organization.address1" property="address1" media="excel csv"/>       
     <display:column titleKey="organization.address2" property="address2" media="excel csv"/>

@@ -1320,6 +1320,12 @@
 							</documentation>
 						</annotation>
 					</element>
+					<element name="ioCtepId" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>Identified Organization's ctepID
+                            </documentation>
+                        </annotation>
+                    </element>
 					<element name="changeRequests" type="int">
 						<annotation>
 							<documentation> Total count of Organization Change Requests

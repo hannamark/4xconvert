@@ -1,5 +1,8 @@
 package gov.nih.nci.po.webservices.service.simple.rest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.test.TestUtils;
 import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.po.webservices.service.simple.AbstractOrganizationServiceTest;
@@ -17,7 +20,20 @@ import gov.nih.nci.po.webservices.types.OversightCommittee;
 import gov.nih.nci.po.webservices.types.OversightCommitteeType;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.types.ResearchOrganizationType;
-import junit.framework.Assert;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.URLEncoder;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpEntity;
@@ -35,24 +51,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.namespace.QName;
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.URLEncoder;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * This is an Integration test class for OrganizationService(REST).
@@ -1523,7 +1524,7 @@ public class OrganizationRESTServiceTest extends
             assertTrue(osr.getOrganizationName().equals(randomName));
         }
     }
-
+    
     /**
      * Testcase for OrganizationService-searchOrganizations- by PO database Id -
      * JSON Format
@@ -1555,6 +1556,202 @@ public class OrganizationRESTServiceTest extends
             // check that the Organization is same as what we are expecting
             assertTrue(osr.getId() == createdOrg.getId());
             assertTrue(osr.getOrganizationName().equals(randomName));
+        }
+    }
+    
+    /**
+     * Testcase for OrganizationService-searchOrganizations- by CTEP Id
+     */
+    @Test
+    public void testSearchOrganizationsByCTEPId() throws Exception {        
+        // create an ACTIVE organization first
+        Organization createdOrg = createActiveOrganization();
+                
+        // create HCF with CETP ID and search the Org by that CTEP ID
+        String hcfCtepId = RandomStringUtils.random(57, true, true);
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setCtepId(hcfCtepId);
+        hcf.setOrganizationId(createdOrg.getId());
+        String url = osUrl + "/role";
+        StringWriter writer = marshalOrganizationRole(hcf);
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_XML);
+        postRequest.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgRolEntity = new StringEntity(writer.getBuffer()
+                .toString());
+        postRequest.setEntity(orgRolEntity);        
+        HttpResponse postRes = httpClient.execute(postRequest);
+        EntityUtils.consume(postRes.getEntity());
+
+        // search the Org using HCF CTEP ID
+        url = osUrl + "/organizations?ctepID=" + hcfCtepId;
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_XML);
+        HttpResponse response = httpClient.execute(getReq);
+
+        assertEquals(200, getReponseCode(response));
+        assertEquals(APPLICATION_XML, getResponseContentType(response));
+
+        OrganizationSearchResultList osrList = unmarshalOrganizationSearchResultList(response
+                .getEntity());
+        assertTrue(osrList.getOrganizationSearchResult().size() == 1);
+
+        for (OrganizationSearchResult osr : osrList
+                .getOrganizationSearchResult()) {
+            // check that the Organization is same as what we are expecting
+            assertTrue(osr.getId() == createdOrg.getId());
+            assertEquals(osr.getHcfCtepID(), hcfCtepId);
+        }
+        
+        
+        // create RO with CETP ID and search the Org by that CTEP ID
+        String roCtepId = RandomStringUtils.random(58, true, true);
+        ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setCtepId(roCtepId);
+        ro.setOrganizationId(createdOrg.getId());
+        url = osUrl + "/role";
+        writer = marshalOrganizationRole(ro);
+        postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_XML);
+        postRequest.addHeader("Accept", APPLICATION_XML);
+        orgRolEntity = new StringEntity(writer.getBuffer().toString());
+        postRequest.setEntity(orgRolEntity);        
+        postRes = httpClient.execute(postRequest);
+        EntityUtils.consume(postRes.getEntity());
+
+        // search the Org using RO CTEP ID
+        url = osUrl + "/organizations?ctepID=" + roCtepId;
+        getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_XML);
+        response = httpClient.execute(getReq);
+        osrList = unmarshalOrganizationSearchResultList(response.getEntity());
+        assertTrue(osrList.getOrganizationSearchResult().size() == 1);
+
+        for (OrganizationSearchResult osr : osrList.getOrganizationSearchResult()) {
+            // check that the Organization is same as what we are expecting
+            assertTrue(osr.getId() == createdOrg.getId());
+            assertEquals(osr.getRoCtepID(), roCtepId);
+        }
+        
+        
+        // create IdentifiedOrganization with CETP ID and search the Org by that CTEP ID
+        String ioCtepId = RandomStringUtils.random(56, true, true);
+        createIdentifiedOrganization(createdOrg.getId(), ioCtepId);
+        
+        // search the Org using IO CTEP ID
+        url = osUrl + "/organizations?ctepID=" + ioCtepId;
+        getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_XML);
+        response = httpClient.execute(getReq);
+        osrList = unmarshalOrganizationSearchResultList(response.getEntity());
+        assertTrue(osrList.getOrganizationSearchResult().size() == 1);
+
+        for (OrganizationSearchResult osr : osrList.getOrganizationSearchResult()) {
+            // check that the Organization is same as what we are expecting
+            assertTrue(osr.getId() == createdOrg.getId());
+            assertEquals(osr.getIoCtepId(), ioCtepId);
+        }
+    }
+    
+    /**
+     * Testcase for OrganizationService-searchOrganizations- by CTEP ID -
+     * JSON Format
+     */
+    @Test
+    public void testSearchOrganizationsByCTEPId_JSON() throws Exception {
+        // create an ACTIVE organization first
+        Organization createdOrg = createActiveOrganization();
+        
+        // create HCF with CETP ID and search the Org by that CTEP ID
+        String hcfCtepId = RandomStringUtils.random(58, true, true);
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setOrganizationId(createdOrg.getId());
+        hcf.setCtepId(hcfCtepId);
+        String url = osUrl + "/role";
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_JSON);
+        postRequest.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgRolEntity = new StringEntity(
+                mapper.writeValueAsString(hcf));
+        postRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(postRequest);       
+        EntityUtils.consume(response.getEntity());
+
+        // search the Org using HCF CTEP ID
+        url = osUrl + "/organizations?ctepID=" + hcfCtepId;
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_JSON);
+        response = httpClient.execute(getReq);
+        assertEquals(200, getReponseCode(response));
+        assertEquals(APPLICATION_JSON, getResponseContentType(response));
+
+        HttpEntity resEntity = response.getEntity();
+        String orgJSONStr = EntityUtils.toString(resEntity, "utf-8");
+        mapper = new ObjectMapper();
+        OrganizationSearchResultList osrList = mapper.readValue(orgJSONStr,OrganizationSearchResultList.class);
+        assertTrue(osrList.getOrganizationSearchResult().size() == 1);
+
+        for (OrganizationSearchResult osr : osrList.getOrganizationSearchResult()) {
+            // check that the Organization is same as what we are expecting
+            assertTrue(osr.getId() == createdOrg.getId());
+            assertEquals(osr.getHcfCtepID(), hcfCtepId);
+        }
+        
+        // create RO with CETP ID and search the Org by that CTEP ID
+        String roCtepId = RandomStringUtils.random(58, true, true);
+        ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setCtepId(roCtepId);
+        ro.setOrganizationId(createdOrg.getId());
+        url = osUrl + "/role";
+        postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_JSON);
+        postRequest.addHeader("Accept", APPLICATION_JSON);
+
+        mapper = new ObjectMapper();
+        orgRolEntity = new StringEntity(mapper.writeValueAsString(ro));
+        postRequest.setEntity(orgRolEntity);
+        response = httpClient.execute(postRequest);       
+        EntityUtils.consume(response.getEntity());
+
+        // search the Org using RO CTEP ID
+        url = osUrl + "/organizations?ctepID=" + roCtepId;
+        getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_JSON);
+        response = httpClient.execute(getReq);
+        resEntity = response.getEntity();
+        orgJSONStr = EntityUtils.toString(resEntity, "utf-8");
+        mapper = new ObjectMapper();
+        osrList = mapper.readValue(orgJSONStr,OrganizationSearchResultList.class);
+        assertTrue(osrList.getOrganizationSearchResult().size() == 1);
+
+        for (OrganizationSearchResult osr : osrList.getOrganizationSearchResult()) {
+            // check that the Organization is same as what we are expecting
+            assertTrue(osr.getId() == createdOrg.getId());
+            assertEquals(osr.getRoCtepID(), roCtepId);
+        }
+        
+        
+        // create IdentifiedOrganization with CETP ID and search the Org by that CTEP ID
+        String ioCtepId = RandomStringUtils.random(56, true, true);
+        createIdentifiedOrganization(createdOrg.getId(), ioCtepId);
+        
+        // search the Org using IO CTEP ID
+        url = osUrl + "/organizations?ctepID=" + ioCtepId;
+        getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_JSON);
+        response = httpClient.execute(getReq);
+        resEntity = response.getEntity();
+        orgJSONStr = EntityUtils.toString(resEntity, "utf-8");
+        mapper = new ObjectMapper();
+        osrList = mapper.readValue(orgJSONStr,OrganizationSearchResultList.class);
+        assertTrue(osrList.getOrganizationSearchResult().size() == 1);
+
+        for (OrganizationSearchResult osr : osrList.getOrganizationSearchResult()) {
+            // check that the Organization is same as what we are expecting
+            assertTrue(osr.getId() == createdOrg.getId());
+            assertEquals(osr.getIoCtepId(), ioCtepId);
         }
     }
 

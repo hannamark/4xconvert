@@ -24,7 +24,8 @@
     (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join organization_comment oc on oc.comment_id=c.id where oc.organization_id=o.id) as comments,
     (select array_to_string(array_agg(e.value), '; ') from email e inner join organization_email oe on oe.email_id=e.id and oe.organization_id=o.id) as emailAddresses,
     (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join organization_phone oe on oe.phone_id=e.id and oe.organization_id=o.id) as phones,   
-    dup_org.id as duplicateOf, c.alpha3 as countrycode
+    dup_org.id as duplicateOf, c.alpha3 as countrycode,
+    (select io.assigned_identifier_extension from identifiedorganization io where io.player_id=o.id and io.status <> 'NULLIFIED' and io.assigned_identifier_root='2.16.840.1.113883.3.26.6.2' limit 1) as ioCtepId
     from organization o inner join address a on o.postal_address_id=a.id inner join country c on a.country_id=c.id left join organization dup_org on dup_org.id=o.duplicate_of
     ]]>
 	</sql-query>
@@ -59,7 +60,8 @@
     (select array_to_string(array_agg(c.value), '\r\n') from comment c inner join organization_comment oc on oc.comment_id=c.id where oc.organization_id=o.id) as comments,
     (select array_to_string(array_agg(e.value), '; ') from email e inner join organization_email oe on oe.email_id=e.id and oe.organization_id=o.id) as emailAddresses,
     (select array_to_string(array_agg(e.value), '; ') from phonenumber e inner join organization_phone oe on oe.phone_id=e.id and oe.organization_id=o.id) as phones,   
-    dup_org.id as duplicateOf, c.alpha3 as countrycode
+    dup_org.id as duplicateOf, c.alpha3 as countrycode,
+    (select io.assigned_identifier_extension from identifiedorganization io where io.player_id=o.id and io.status <> 'NULLIFIED' and io.assigned_identifier_root='2.16.840.1.113883.3.26.6.2' limit 1) as ioCtepId
     from organization o inner join address a on o.postal_address_id=a.id inner join country c on a.country_id=c.id left join organization dup_org on dup_org.id=o.duplicate_of
     
     where

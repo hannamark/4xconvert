@@ -86,7 +86,7 @@ public class OrganizationWebTest extends AbstractPoWebTest {
     protected String orgName = "orgName" + Long.toString(System.currentTimeMillis());
     protected String poId = null;
 
-    private void setPoId(int row) {
+    protected void setPoId(int row) {
         if (poId == null) {
             poId = selenium.getText("//table[@id='row']/tbody/tr[" + row + "]/td[1]");
         }
@@ -106,9 +106,9 @@ public class OrganizationWebTest extends AbstractPoWebTest {
             assertEquals(poId, selenium.getTable("row." + row + ".0"));
             assertEquals(orgName, selenium.getTable("row." + row + ".1"));
             assertEquals("", selenium.getTable("row." + row + ".2"));
-            assertEquals("PENDING", selenium.getTable("row." + row + ".8"));
-            assertEquals("", selenium.getTable("row." + row + ".5"));
-            assertEquals("Curate", selenium.getTable("row." + row + ".9"));
+            assertEquals("PENDING", selenium.getTable("row." + row + ".9"));
+            assertEquals("", selenium.getTable("row." + row + ".6"));
+            assertEquals("Curate", selenium.getTable("row." + row + ".10"));
             if (clear) {
                 clear();
             }
@@ -138,8 +138,8 @@ public class OrganizationWebTest extends AbstractPoWebTest {
             setPoId(row);
             assertEquals(poId, selenium.getTable("row." + row + ".0"));
             assertEquals(orgName, selenium.getTable("row." + row + ".1"));
-            assertEquals("PENDING", selenium.getTable("row." + row + ".8"));            
-            assertEquals("Curate", selenium.getTable("row." + row + ".9"));            
+            assertEquals("PENDING", selenium.getTable("row." + row + ".9"));            
+            assertEquals("Curate", selenium.getTable("row." + row + ".10"));            
             clear();            
         }
     }

@@ -34,6 +34,7 @@ public class OrganizationSearchConverterTest extends
         osDto.setName("Mayo Clinic");
         osDto.setRoCtepId("12345");
         osDto.setHcfCtepId("2345678");
+        osDto.setIoCtepId("9876543");
         osDto.setChangeRequests(2);
         osDto.setPendingROs(1);
         osDto.setPendingHCFs(2);
@@ -108,8 +109,9 @@ public class OrganizationSearchConverterTest extends
         Assert.assertEquals(osDto.getFamilyName(), retOsRes.getFamilyName());
         Assert.assertEquals(osDto.getRoCtepId(), retOsRes.getRoCtepID());
         Assert.assertEquals(osDto.getHcfCtepId(), retOsRes.getHcfCtepID());
-        Assert.assertEquals(osDto.getHcfCtepId(), retOsRes.getHcfCtepID());
-        Assert.assertEquals(osDto.getHcfCtepId(), retOsRes.getHcfCtepID());
+        Assert.assertEquals(osDto.getIoCtepId(), retOsRes.getIoCtepId());
+        Assert.assertEquals(osDto.getPendingROs(), retOsRes.getPendingROs());
+        Assert.assertEquals(osDto.getPendingHCFs(), retOsRes.getPendingHCFs());
         Assert.assertTrue(PoWSUtil.areSameDates(retOsRes.getStatusDate(),
                 osDto.getStatusDate()));
         Assert.assertEquals(osDto.getTotalROs(), retOsRes.getTotalROs());

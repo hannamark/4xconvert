@@ -43,9 +43,10 @@ import gov.nih.nci.po.webservices.types.OversightCommittee;
 import gov.nih.nci.po.webservices.types.OversightCommitteeType;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.types.ResearchOrganizationType;
-import junit.framework.Assert;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,8 +55,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
+
 import java.net.URL;
 import java.util.List;
+
+import org.junit.Assert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -752,6 +756,112 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertTrue(orgList.size() == 1);
         // check that the Organization is same as what we are expecting
         Assert.assertEquals(randomName, orgList.get(0).getOrganizationName());
+    }
+    
+    /**
+     * Testcase for OrganizationService-searchOrganizations- by CTEP ID
+     */
+    @Test
+    public void testSearchOrganizationsByCtepId() {        
+        // create an organization first
+        CreateOrganizationRequest request = new CreateOrganizationRequest();        
+        request.setOrganization(org);
+        CreateOrganizationResponse response = orgService
+                .createOrganization(request);
+        Organization createdOrg = response.getOrganization(); 
+        
+        // create HCF with CETP ID and search the Org by that CTEP ID
+        String hcfCtepId = RandomStringUtils.random(47, true, true);
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setOrganizationId(createdOrg.getId());
+        hcf.setCtepId(hcfCtepId);
+        CreateOrganizationRoleRequest corReq = new CreateOrganizationRoleRequest();
+        corReq.setOrganizationRole(hcf);
+        orgService.createOrganizationRole(corReq);        
+        // search the Org using HCF CTEP ID
+        SearchOrganizationsRequest soRequest = new SearchOrganizationsRequest();
+        OrganizationSearchCriteria criteria = new OrganizationSearchCriteria();
+        criteria.setCtepID(hcfCtepId);
+        soRequest.setOrganizationSearchCriteria(criteria);
+        SearchOrganizationsResponse soResponse = orgService.searchOrganizations(soRequest);
+        List<OrganizationSearchResult> orgList = soResponse.getOrganizationSearchResultList();
+
+        Assert.assertNotNull(orgList);
+        Assert.assertTrue(orgList.size() >= 1);
+        boolean createdOrgPresent = false;
+        for (OrganizationSearchResult osr : orgList) {
+            // also check that the collection contain just created Org
+            if (osr.getId() == createdOrg.getId()) {
+                createdOrgPresent = true;
+                Assert.assertEquals(hcfCtepId, osr.getHcfCtepID());
+                Assert.assertTrue(StringUtils.isBlank(osr.getRoCtepID())); // RO CTEP ID was not set
+                Assert.assertTrue(StringUtils.isBlank(osr.getIoCtepId())); // IO CTEP ID was not set
+            }
+        }
+        if (!createdOrgPresent) {
+            Assert.fail("The Org Search using HCF CTEP ID doesn't contain newly created organization.");
+        }
+        
+        
+        // create RO with CETP ID and search the Org by that CTEP ID
+        String roCtepId = RandomStringUtils.random(48, true, true);
+        ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setOrganizationId(createdOrg.getId());
+        ro.setCtepId(roCtepId);
+        corReq = new CreateOrganizationRoleRequest();
+        corReq.setOrganizationRole(ro);
+        orgService.createOrganizationRole(corReq);        
+        // search the Org using RO CTEP ID
+        soRequest = new SearchOrganizationsRequest();
+        criteria = new OrganizationSearchCriteria();
+        criteria.setCtepID(roCtepId);
+        soRequest.setOrganizationSearchCriteria(criteria);
+        soResponse = orgService.searchOrganizations(soRequest);
+        orgList = soResponse.getOrganizationSearchResultList();
+
+        Assert.assertNotNull(orgList);
+        Assert.assertTrue(orgList.size() >= 1);
+        createdOrgPresent = false;
+        for (OrganizationSearchResult osr : orgList) {
+            // also check that the collection contain just created Org
+            if (osr.getId() == createdOrg.getId()) {
+                createdOrgPresent = true;
+                Assert.assertEquals(roCtepId, osr.getRoCtepID());
+                Assert.assertEquals(hcfCtepId, osr.getHcfCtepID()); // HCF CTEP ID was set above
+                Assert.assertTrue(StringUtils.isBlank(osr.getIoCtepId())); // IO CTEP ID was not set
+            }
+        }
+        if (!createdOrgPresent) {
+            Assert.fail("The Org Search using RO CTEP ID doesn't contain newly created organization.");
+        }
+        
+        // create IdentifiedOrganization with CETP ID and search the Org by that CTEP ID
+        String ioCtepId = RandomStringUtils.random(51, true, true);
+        createIdentifiedOrganization(createdOrg.getId(), ioCtepId);
+        // search the Org using IO CTEP ID
+        soRequest = new SearchOrganizationsRequest();
+        criteria = new OrganizationSearchCriteria();
+        criteria.setCtepID(ioCtepId);
+        soRequest.setOrganizationSearchCriteria(criteria);
+        soResponse = orgService.searchOrganizations(soRequest);
+        orgList = soResponse.getOrganizationSearchResultList();
+
+        Assert.assertNotNull(orgList);
+        Assert.assertTrue(orgList.size() >= 1);
+        createdOrgPresent = false;
+        for (OrganizationSearchResult osr : orgList) {
+            // also check that the collection contain just created Org
+            if (osr.getId() == createdOrg.getId()) {
+                createdOrgPresent = true;
+                Assert.assertEquals(ioCtepId, osr.getIoCtepId()); 
+                Assert.assertEquals(roCtepId, osr.getRoCtepID()); // RO CTEP ID was set above
+                Assert.assertEquals(hcfCtepId, osr.getHcfCtepID()); // HCF CTEP ID was set above
+            }
+        }
+        if (!createdOrgPresent) {
+            Assert.fail("The Org Search using IO CTEP ID doesn't contain newly created organization.");
+        }
+        
     }
 
     /**
