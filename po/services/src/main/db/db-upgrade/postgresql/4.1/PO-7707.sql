@@ -1,8 +1,10 @@
--- Create CTEP user in the database if it not already present.
+-- Create 'CTEP ECM' user in the database if it not present and if present then update its first name & last name.
 CREATE OR REPLACE FUNCTION insert_ctep_user() RETURNS VOID AS $$
  	BEGIN
     	IF NOT EXISTS (SELECT * FROM csm_user WHERE  login_name ='/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm') THEN
-			INSERT INTO CSM_USER (LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ('/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm','CTEP','ECM','');			
+			INSERT INTO CSM_USER (LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ('/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm','CTEP','ECM','');
+		ELSE
+		    UPDATE CSM_USER SET FIRST_NAME ='CTEP',  LAST_NAME = 'ECM' WHERE login_name ='/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm';
      END IF;
   	END;
 $$ LANGUAGE plpgsql;
