@@ -58,7 +58,6 @@ import javax.xml.ws.WebServiceException;
 
 import java.net.URL;
 import java.util.List;
-
 import org.junit.Assert;
 
 import static org.junit.Assert.assertEquals;
@@ -1319,6 +1318,36 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertNotNull(orgRole);
         Assert.assertTrue(orgRole instanceof ResearchOrganization);
         Assert.assertNotNull(orgRole.getId());
+        Assert.assertNotNull(((ResearchOrganization)orgRole).getCtepId());
+
+        checkOrgRoleAddressDetails(ro, orgRole);
+        checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",
+                "571-456-1245", "571-456-1278", "571-123-1123",
+                "http://www.mayoclinic.org");
+    }
+    
+    /**
+     * Testcase for OrganizationService-createOrganizationRole-RO-
+     * CTEP ID is not passed.
+     */
+    @Test
+    public void testCreateOrganizationRoleROWithoutCTEPId() {
+        // create a new organization
+        Organization organization = createActiveOrganization();
+
+        ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setCtepId(null);
+        ro.setOrganizationId(organization.getId());
+
+        CreateOrganizationRoleRequest request = new CreateOrganizationRoleRequest();
+        request.setOrganizationRole(ro);
+        CreateOrganizationRoleResponse response = orgService
+                .createOrganizationRole(request);
+        OrganizationRole orgRole = response.getOrganizationRole();
+        Assert.assertNotNull(orgRole);
+        Assert.assertTrue(orgRole instanceof ResearchOrganization);
+        Assert.assertNotNull(orgRole.getId());
+        Assert.assertNull(((ResearchOrganization)orgRole).getCtepId());
 
         checkOrgRoleAddressDetails(ro, orgRole);
         checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",

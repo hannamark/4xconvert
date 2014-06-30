@@ -2,6 +2,7 @@ package gov.nih.nci.po.webservices.service.simple.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.test.TestUtils;
 import gov.nih.nci.coppa.test.TstProperties;
@@ -2264,6 +2265,7 @@ public class OrganizationRESTServiceTest extends
                 .getEntity());
         assertTrue(orgRole instanceof HealthCareFacility);
         assertNotNull(orgRole.getId());
+        assertNotNull(((HealthCareFacility)orgRole).getCtepId());
         // check the details in DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
@@ -2296,6 +2298,75 @@ public class OrganizationRESTServiceTest extends
                 OrganizationRole.class);
         assertTrue(orgRole instanceof HealthCareFacility);
         assertNotNull(orgRole.getId());
+        assertNotNull(((HealthCareFacility)orgRole).getCtepId());
+        // check the details in DB for HCF
+        checkOrgRoleAddressDetails(hcf, orgRole);
+        checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
+                "571-456-1245", "571-456-1278", "571-123-1123",
+                "http://www.mayoclinic.org");
+    }
+    
+    /**
+     * Testcase for OrganizationService-createOrganizationRole-HCF -
+     * CTEP ID is not passed.
+     */
+    @Test
+    public void testCreateOrganizationRoleHCFWithoutCTPEId() throws Exception {
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setCtepId(null);
+        String url = osUrl + "/role";
+        StringWriter writer = marshalOrganizationRole(hcf);
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_XML);
+        postRequest.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgRolEntity = new StringEntity(writer.getBuffer()
+                .toString());
+        postRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        assertEquals(201, getReponseCode(response));
+        assertEquals(APPLICATION_XML, getResponseContentType(response));
+
+        OrganizationRole orgRole = unmarshalOrganizationRole(response
+                .getEntity());
+        assertTrue(orgRole instanceof HealthCareFacility);
+        assertNotNull(orgRole.getId());
+        assertNull(((HealthCareFacility)orgRole).getCtepId());
+        // check the details in DB for HCF
+        checkOrgRoleAddressDetails(hcf, orgRole);
+        checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
+                "571-456-1245", "571-456-1278", "571-123-1123",
+                "http://www.mayoclinic.org");
+    }
+
+    /**
+     * Testcase for OrganizationService-createOrganizationRole-HCF - 
+     * CTEP ID is not passed.- JSON Format
+     */
+    @Test
+    public void testCreateOrganizationRoleHCFWithoutCTPEId_JSON() throws Exception {
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setCtepId(null);
+        String url = osUrl + "/role";
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_JSON);
+        postRequest.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgRolEntity = new StringEntity(
+                mapper.writeValueAsString(hcf));
+        postRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        assertEquals(201, getReponseCode(response));
+        assertEquals(APPLICATION_JSON, getResponseContentType(response));
+        String perJSONStr = EntityUtils.toString(response.getEntity(), "utf-8");
+
+        OrganizationRole orgRole = mapper.readValue(perJSONStr,
+                OrganizationRole.class);
+        assertTrue(orgRole instanceof HealthCareFacility);
+        assertNotNull(orgRole.getId());
+        assertNull(((HealthCareFacility)orgRole).getCtepId());
         // check the details in DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",

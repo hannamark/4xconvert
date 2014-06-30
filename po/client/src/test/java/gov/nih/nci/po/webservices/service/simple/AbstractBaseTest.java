@@ -18,7 +18,7 @@ import gov.nih.nci.po.webservices.types.OversightCommittee;
 import gov.nih.nci.po.webservices.types.Person;
 import gov.nih.nci.po.webservices.types.PersonRole;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
-import junit.framework.Assert;
+
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
@@ -27,6 +27,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
 import org.junit.After;
+import org.junit.Assert;
 
 import java.io.IOException;
 import java.sql.Connection;

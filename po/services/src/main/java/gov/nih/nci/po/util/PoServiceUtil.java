@@ -72,7 +72,7 @@ public class PoServiceUtil {
      */
     public static String getOrgRoleBoCtepId(
             gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole aeOrgRoleBo) {
-        String boCtepId = "";
+        String boCtepId = null;
         Set<gov.nih.nci.iso21090.Ii> otherIdenSet = aeOrgRoleBo
                 .getOtherIdentifiers();
 
