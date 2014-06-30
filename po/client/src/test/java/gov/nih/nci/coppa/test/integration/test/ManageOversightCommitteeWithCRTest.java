@@ -225,12 +225,13 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
     }
 
     private void checkCR() throws Exception {
-        //create a cr remotely
-        updateRemoteOversightCommittee(getOrganizationalRoleId());
+        //create a cr remotely        
+        updateRemoteOversightCommittee(getOrganizationalRoleId());        
 
+        // scenario 1: Curator access a OrgRole-CR without clicking 'Override' button as curator created this OC
         //curate org
         openOrganizationCuratePage();
-        // Go to the Manage HCF Screen
+        // Go to the Manage OC Screen
         accessOrgRoleScreen();
 
         clickAndWait("edit_oversightCommittee_id_" + getOrganizationalRoleId());
@@ -243,12 +244,30 @@ public class ManageOversightCommitteeWithCRTest extends AbstractManageOrgRolesWi
         assertEquals(TYPE_IRB, selenium.getSelectedLabel("id=curateRoleForm_role_typeCode"));
         //Confirm change request type = Research Ethics Board.
         assertEquals(TYPE_REB, selenium.getText("wwctrl_curateCrForm_cr_typeCode_code").trim());
+        assertTrue(selenium.isTextPresent("Copy")); // copy button present 
         // Copy over the new Type Code.
         selenium.click("copy_curateCrForm_role_typeCode");
         assertEquals(TYPE_REB, selenium.getSelectedLabel("id=curateRoleForm_role_typeCode"));
 
         // update org role and check for success message.
         updateOrganizationalRole();
+        logoutUser();
+        
+        
+        // Scenario 2: Curator access a OrgRole-CR after clicking 'Override' button 
+        //create another CR remotely
+        updateRemoteOversightCommittee(getOrganizationalRoleId());        
+        loginAsJohnDoe();
+        openOrgRoleScreen(false);
+        assertFalse(selenium.isTextPresent("Copy")); // copy button not present as role is overrode by different curator
+        assertTrue(selenium.isTextPresent("Override")); //Override button present as role is overrode by different curator 
+        clickAndWait("overcomm_override_button"); // click on Override button
+        assertTrue(selenium.isTextPresent("Copy")); // copy button present
+        // Copy over the new Type Code.
+        selenium.click("copy_curateCrForm_role_typeCode");
+        assertEquals(TYPE_REB, selenium.getSelectedLabel("id=curateRoleForm_role_typeCode"));
+        updateOrganizationalRole();
+        logoutUser();        
     }
 
     private void updateRemoteOversightCommittee(String ext) throws EntityValidationException, NamingException, URISyntaxException,

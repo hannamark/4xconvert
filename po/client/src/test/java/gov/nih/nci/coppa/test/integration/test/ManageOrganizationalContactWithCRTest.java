@@ -146,6 +146,7 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         // save everything
         clickAndWaitSaveButton();
         
+        // scenario 1: Curator access a OrgRole-CR without clicking 'Override' button as curator created this OC
         updateRemoteOcOrg(ocId.trim(), null);
 
         // Goto Manage OC Page.... should see CR
@@ -161,13 +162,29 @@ public class ManageOrganizationalContactWithCRTest extends AbstractManageOrgRole
         assertEquals("original OC title", selenium.getValue("curateRoleForm_role_title").trim());
         assertEquals("1", selenium.getValue("curateRoleForm.role.type").trim());
         
+        assertTrue(selenium.isTextPresent("Copy")); // copy button present
+        // copy over new title and check new value
+        selenium.click("copy_curateCrForm_role_title");
+        waitForElementById("curateRoleForm_role_title", 5);
+        assertEquals("new OC title", selenium.getValue("curateRoleForm_role_title").trim());
+        
+        // copy over new type code and check value
+        selenium.click("copy_curateCrForm_role_type");
+        waitForElementById("curateRoleForm.role.type", 5);
+        assertEquals("500", selenium.getValue("curateRoleForm.role.type").trim());
+        
+        clickAndWaitSaveButton();
+        assertTrue(selenium.isTextPresent("exact:Organizational Contact was successfully updated!".trim()));
         logoutUser();
+        
+        
+        // Scenario 2: Different curator access a OrgRole-CR after clicking 'Override' button 
+        // Create another CR
+        updateRemoteOcOrg(ocId.trim(), null);
         
         loginAsJohnDoe();
         openAndWait("/po-web/protected/roles/organizational/OrganizationalContact/start.action?organization=" + activeOrgId);
-        clickAndWait("edit_organizationalContact_id_" + ocId.trim());
-        System.out.println("activeOrgId -->"+activeOrgId);
-        System.out.println("ocId.trim() -->"+ocId.trim());
+        clickAndWait("edit_organizationalContact_id_" + ocId.trim());        
         assertTrue(selenium.isTextPresent("exact:Edit Organizational Contact - Comparison"));
         assertTrue(selenium.isTextPresent("Not Overridden"));
         clickAndWait("orgcont_override_button"); // click on Override button

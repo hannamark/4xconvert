@@ -171,7 +171,8 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         
         // Add a CR
         updateRemoteRoOrg(roId.trim());
-
+        
+        // Scenario -- Different curator access a OrgRole-CR after clicking 'Override' button
         // Goto Manage RO Page.... should see CR
         openAndWait("/po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + activeOrgId);
         clickAndWait("edit_researchOrganization_id_" + roId.trim());
@@ -180,8 +181,8 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         assertTrue(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' should be present
         assertFalse(selenium.isTextPresent("Not Overridden")); 
         assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
-        assertFalse(selenium.isTextPresent("Copy")); // copy button not present
-        assertTrue(selenium.isTextPresent("Override")); //Override button present        
+        assertFalse(selenium.isTextPresent("Copy")); // copy button not present as role is overrode by different curator
+        assertTrue(selenium.isTextPresent("Override")); //Override button present as role is overrode by different curator       
         clickAndWait("ro_override_button"); // click on Override button
         
         openAndWait("/po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + activeOrgId);
@@ -212,6 +213,21 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
 
         clickAndWaitSaveButton();
         assertTrue(selenium.isTextPresent("exact:Research Organization was successfully updated!".trim()));
+        
+        logoutUser(); //logs out current user      
+        loginAsCurator();
+        
+        // Add another CR
+        updateRemoteRoOrg(roId.trim());
+        // Scenario -- OrgRole creator access a OrgRole-CR without clicking 'Override' button
+        openAndWait("/po-web/protected/roles/organizational/ResearchOrganization/start.action?organization=" + activeOrgId);
+        clickAndWait("edit_researchOrganization_id_" + roId.trim());
+        assertTrue(selenium.isTextPresent("Copy")); // copy button present as role is overrode by this user
+        // copy over new name
+        selenium.click("copy_curateCrForm_role_name");
+        waitForElementById("curateRoleForm.role.name", 5);
+        assertEquals("new RO name", selenium.getValue("curateRoleForm.role.name").trim());
+        
     }
 
     private void checkContactInformation() throws Exception {

@@ -183,6 +183,8 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         clickAndWait("edit_identifiedOrganization_id_" + ioId.trim());
         assertTrue(selenium.isTextPresent("exact:Edit Identified Organization - Comparison"));
         assertTrue(selenium.isTextPresent("Not Overridden"));
+        // Scenario -- curator access a OrgRole-CR after clicking 'Override' button 
+        assertFalse(selenium.isTextPresent("Copy")); // copy button not present 
         clickAndWait("io_override_button"); // click on Override button
         assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
         assertFalse(selenium.isTextPresent("Not Overridden"));         
@@ -215,6 +217,11 @@ public class ManageIdentifiedOrganizationWithCRTest extends AbstractPoWebTest {
         assertTrue(selenium.isTextPresent("exact:Edit Identified Organization - Comparison"));
         assertTrue(selenium.isTextPresent("jdoe01"));
         clickAndWait("io_override_button"); // click on Override button
+        logoutUser();
+        loginAsCurator();
+        // Scenario : Curator access a OrgRole-CR without clicking 'Override' button 
+        openAndWait("/po-web/protected/roles/organizational/IdentifiedOrganization/start.action?organization=" + activeOrgId);
+        clickAndWait("edit_identifiedOrganization_id_" + ioId.trim());
 
         assertEquals("ISS", selenium.getText("wwctrl_curateCrForm.role.assignedIdentifier.reliability").trim());
 
