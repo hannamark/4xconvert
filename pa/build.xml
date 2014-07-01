@@ -225,6 +225,10 @@
             <property name="tier" value="${tier}"/>
         	<property name="webdriver.class" value="${webdriver.class}"/>
         </ant>
+        <ant target="run-selenium-tests" dir="pa-webservices" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+            <property name="webdriver.class" value="${webdriver.class}"/>
+        </ant>    	
     </target>
 
    

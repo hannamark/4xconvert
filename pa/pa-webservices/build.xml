@@ -42,11 +42,18 @@
     <property name="pa-webservices.war" value="${pa-webservices.build.finalName}.war"/>
     <property name="pa-webservices.build.coberturaOutputDir" value="${pa-webservices.build.dir}/generated-classes"/>
     <property name="pa-webservices.build.javadoc" value="${pa-webservices.build.dir}/javadoc"/>
+	
+	<property name="pa-web.build.integrationTestDir.0" value="${pa.dir}/pa-web/test-integration/java"/>
 
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     
     <property name="database.upgrades.dir" value="${basedir}/../dbscripts/db-upgrade"/>
+    
+    <property name="selenium.delay" value="50"/>
+	<property name="webdriver.class" value="org.openqa.selenium.firefox.FirefoxDriver"/>
+	<property name="phantomjs.binary.path" value="/local/home/hudsonuser/jenkins_data/tools/phantomjs-1.9.7-linux-x86_64/bin/phantomjs"/>
+
     
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -82,8 +89,8 @@
         </fileset>
     </path>
 
-    <path id="integration.classpath">
-        <fileset dir="${lib.dir}/test-integration">
+    <path id="selenium.classpath">
+        <fileset dir="${lib.dir}/test-selenium">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -200,6 +207,10 @@
             <filterset>             
                 <filter token="pa.server.name" value="${pa.server.name}"/>
                 <filter token="jboss.port" value="${jboss.port}" />
+                <filter token="selenium.server.port" value="${selenium.server.port}"/>
+                <filter token="selenium.delay" value="${selenium.delay}" />
+            	<filter token="webdriver.class" value="${webdriver.class}" />
+            	<filter token="phantomjs.binary.path" value="${phantomjs.binary.path}" />
             	<filter token="jdbc.driver" value="${jdbc.driver}"/>
                 <filter token="jdbc.url" value="${jdbc.url}"/>
                 <filter token="db.username" value="${db.username}"/>
@@ -237,12 +248,13 @@
             <src>
                 <pathelement location="${pa-webservices.build.testDir.0}"/>
                 <pathelement location="${pa-webservices.build.integrationTestDir.0}"/>
+            	<pathelement location="${pa-web.build.integrationTestDir.0}"/>
             </src>
             <classpath>
                 <pathelement location="${pa-webservices.build.outputDir}"/>
                 <path refid="test.classpath"/>
                 <path refid="test-junit.classpath"/>
-                <!--<path refid="integration.classpath"/> -->
+                <path refid="selenium.classpath"/>
                 <path refid="compile.classpath"/>
                 <path refid="ejb.package.classpath"/>
                 <path refid="common.package.classpath"/>
@@ -308,7 +320,7 @@
     <!-- ====================================================================== -->
     <!-- Run JUnit Integration Tests                                            -->
     <!-- ====================================================================== -->
-    <target name="run-integration-tests" depends="compile-tests" description="Run integration tests">
+    <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
         <mkdir dir="${pa-webservices.test.reports}"/>
         <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." showoutput="yes" failureproperty="junit.failure">
             <jvmarg value="-XX:-UseSplitVerifier"/>
@@ -316,14 +328,14 @@
             <formatter type="plain" usefile="false"/>
             <classpath>
                 <path location="${pa-webservices.build.testOutputDir}"/>
-                <path refid="integration.classpath"/>
+                <path refid="selenium.classpath"/>
                 <path refid="common.package.classpath"/>
             	<path refid="test-junit.classpath"/>
             	<path refid="test.classpath"/>            	
             </classpath>
             <batchtest todir="${pa-webservices.test.reports}">
                 <fileset dir="${pa-webservices.build.integrationTestDir.0}">
-                    <include name="**/AllIntegrationTests.java"/>
+                    <include name="**/*.java"/>
                 </fileset>
             </batchtest>
         </junit>
