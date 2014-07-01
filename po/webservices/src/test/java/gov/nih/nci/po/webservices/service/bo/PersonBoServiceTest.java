@@ -11,27 +11,18 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonSearchCriteria;
 import gov.nih.nci.po.service.PersonSearchDTO;
 import gov.nih.nci.po.service.PersonServiceLocal;
-import gov.nih.nci.po.util.CsmUserUtil;
 import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
 import gov.nih.nci.po.webservices.service.bridg.ModelUtils;
-import gov.nih.nci.security.SecurityServiceProvider;
-import gov.nih.nci.security.UserProvisioningManager;
-import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import org.hibernate.ObjectNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.jms.JMSException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +36,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
@@ -317,7 +307,7 @@ public class PersonBoServiceTest extends AbstractEndpointTest{
     @Test
     public void testGetInboxPersons() {
         when(serviceLocator.getPersonService().getInboxPersons(any(PageSortParams.class)))
-                .thenAnswer( new Answer<List<PersonSearchDTO>>() {
+                .thenAnswer(new Answer<List<PersonSearchDTO>>() {
                     @Override
                     public List<PersonSearchDTO> answer(InvocationOnMock invocation) throws Throwable {
                         List<PersonSearchDTO> result = new ArrayList<PersonSearchDTO>();
@@ -370,6 +360,4 @@ public class PersonBoServiceTest extends AbstractEndpointTest{
 
         assertEquals(3, retrieved);
     }
-
-
 }

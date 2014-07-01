@@ -7,7 +7,6 @@ import gov.nih.nci.po.data.bo.AbstractIdentifiedEntity;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Correlation;
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -16,7 +15,6 @@ import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
 import gov.nih.nci.po.webservices.service.bridg.ModelUtils;
-import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import org.junit.Before;
@@ -25,8 +23,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import javax.jms.JMSException;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,9 +31,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -438,6 +432,7 @@ public abstract class AbstractRoleBoServiceTest<TYPE extends Correlation, CR_TYP
     private User getCreatedBy(TYPE instance) {
         return ((AbstractRole) instance).getCreatedBy();
     }
+
 
 
 }

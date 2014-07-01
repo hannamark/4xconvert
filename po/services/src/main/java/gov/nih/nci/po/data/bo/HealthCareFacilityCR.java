@@ -1,10 +1,14 @@
 package gov.nih.nci.po.data.bo;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Valid;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,16 +19,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.validator.Valid;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -243,7 +242,15 @@ public class HealthCareFacilityCR extends AbstractEnhancedOrganizationRole
     public boolean isNameChanged() {
         return !StringUtils.equals(getName(), target.getName());
     }
-   
+
+    /**
+     *
+     * @return True if the value changed, false otherwise.
+     */
+    @Transient
+    public boolean isAliasChanged() {
+        return !ListUtils.isEqualList(target.getAlias(), getAlias());
+    }
 
     /**
      * @return boolean
@@ -388,7 +395,9 @@ public class HealthCareFacilityCR extends AbstractEnhancedOrganizationRole
                 && !isFaxChanged() && !isPhoneChanged()
                 && !isPostalCodeChanged() && !isStateOrProvinceChanged()
                 && !isStatusCodeChanged() && !isStreetAddressLineChanged()
-                && !isTtyChanged() && !isUrlChanged();
+                && !isTtyChanged() && !isUrlChanged()
+                && !isNameChanged()
+                && !isAliasChanged();
     }
 
     /**

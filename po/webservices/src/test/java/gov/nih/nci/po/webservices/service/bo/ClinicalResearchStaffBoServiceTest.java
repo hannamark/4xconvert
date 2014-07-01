@@ -2,7 +2,6 @@ package gov.nih.nci.po.webservices.service.bo;
 
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.webservices.service.bridg.ModelUtils;

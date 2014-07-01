@@ -82,9 +82,13 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Valid;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -93,13 +97,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.validator.Valid;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 
 
 /**
@@ -287,6 +287,15 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
     }
 
     /**
+     *
+     * @return boolean
+     */
+    @Transient
+    private boolean isAliasChanged() {
+        return !ListUtils.isEqualList(target.getAlias(), getAlias());
+    }
+
+    /**
      * @return boolean
      */
     @Transient
@@ -408,7 +417,10 @@ public class OrganizationCR extends AbstractOrganization implements ChangeReques
                 && !isFaxChanged() && !isNameChanged() && !isPhoneChanged()
                 && !isPostalCodeChanged() && !isStateOrProvinceChanged()
                 && !isStatusCodeChanged() && !isStreetAddressLineChanged()
-                && !isTtyChanged() && !isUrlChanged();
+                && !isTtyChanged() && !isUrlChanged()
+                && !isAliasChanged();
     }
-    
+
+
+
 }

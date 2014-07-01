@@ -6,50 +6,65 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.webservices.service.bo.filter.CrCreationFilter;
+import gov.nih.nci.po.webservices.service.bo.filter.CreatedByFilter;
+import gov.nih.nci.po.webservices.service.bo.filter.RoleUpdateFilter;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import org.apache.commons.lang.StringUtils;
 
 import javax.jms.JMSException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
- *
- * @param <TYPE> The BO type
+ * @param <TYPE>    The BO type
  * @param <CR_TYPE> The CR type
+ * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
-@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidThrowingRawExceptionTypes" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.AvoidThrowingRawExceptionTypes", "PMD.TooManyMethods" })
 public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE extends ChangeRequest<TYPE>>
         implements GenericStructrualRoleServiceLocal<TYPE> {
 
+
+    private final List<RoleUpdateFilter<TYPE>> updateFilters;
+    private final List<CrCreationFilter<TYPE, CR_TYPE>> crCreationFilters;
+
     /**
-     *
+     * Default constructor.  Sets up filter to pick up
+     * createdBY field on updates.
+     */
+    public AbstractRoleBoService() {
+        updateFilters = new ArrayList<RoleUpdateFilter<TYPE>>();
+        updateFilters.add(new CreatedByFilter<TYPE>());
+
+        crCreationFilters = new ArrayList<CrCreationFilter<TYPE, CR_TYPE>>();
+    }
+
+    /**
      * @return The EJB service from the Services module.
      */
     protected abstract GenericStructrualRoleServiceLocal<TYPE> getCorrelationService();
 
     /**
-     *
      * @return The EJB service for creating CRs from the Services module.
      */
     protected abstract GenericStructrualRoleCRServiceLocal<CR_TYPE> getCrService();
 
     /**
-     *
      * @param cr A CR.
      * @return True if the CR reflects a set of changes, or false if no changes are present.
      */
     protected abstract boolean hasChanges(CR_TYPE cr);
 
     /**
-     *
      * @param currentInstance The current instance.
      * @param updatedInstance The proposed state.
      * @return A CR for the change
@@ -61,7 +76,7 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
         User user = null;
 
         try {
-            user =  SecurityServiceProvider.getUserProvisioningManager("po")
+            user = SecurityServiceProvider.getUserProvisioningManager("po")
                     .getUser(UsernameHolder.getUser());
         } catch (CSException e) {
             throw new RuntimeException(e);
@@ -71,7 +86,6 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
 
         return getCorrelationService().create(structuralRole);
     }
-
 
 
     @Override
@@ -86,7 +100,7 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
 
     @Override
     public List<TYPE> getByPlayerIds(Long[] pids) {
-        return  getCorrelationService().getByPlayerIds(pids);
+        return getCorrelationService().getByPlayerIds(pids);
     }
 
     @Override
@@ -94,30 +108,59 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
 
         TYPE currentInstance = getCorrelationService().getById(updatedInstance.getId());
 
-        if (currentInstance != null) {
-            ((AbstractRole) updatedInstance).setCreatedBy(((AbstractRole) currentInstance).getCreatedBy());
-        }
+        applyUpdateFilters(currentInstance, updatedInstance);
 
         CR_TYPE cr = createCr(currentInstance, updatedInstance);
+        applyCrCreateFilters(updatedInstance, cr);
+
 
         if (currentInstance != null && !hasChanges(cr)) {
             return;
         }
 
-        if (currentInstance == null || isCreatedByMe(currentInstance) || currentInstance instanceof PersonRole) {
+        if (updateDirectly(currentInstance)) {
             getCorrelationService().curate(updatedInstance);
         } else {
-
             try {
                 getCrService().create(cr);
             } catch (EntityValidationException e) {
                 throw new RuntimeException(e);
             }
         }
-
-
     }
 
+    private void applyCrCreateFilters(TYPE updatedInstance, CR_TYPE cr) {
+        for (CrCreationFilter<TYPE, CR_TYPE> crCreationFilter : crCreationFilters) {
+            crCreationFilter.handle(updatedInstance, cr);
+        }
+    }
+
+    private void applyUpdateFilters(TYPE currentInstance, TYPE updatedInstance) {
+        for (RoleUpdateFilter<TYPE> filter : updateFilters) {
+            filter.handle(currentInstance, updatedInstance);
+        }
+    }
+
+    private boolean updateDirectly(TYPE currentInstance) {
+        return currentInstance == null
+                || (isCreatedByMe(currentInstance) && !isOverridden(currentInstance))
+                || currentInstance instanceof PersonRole;
+    }
+
+    /**
+     *
+     * @param currentInstance
+     * @return True if the current instance is overridden, otherwise return false.
+     */
+    private boolean isOverridden(TYPE currentInstance) {
+        boolean result = false;
+
+        if (currentInstance instanceof Overridable) {
+            result = ((Overridable) currentInstance).getOverriddenBy() != null;
+        }
+
+        return result;
+    }
 
 
     @Override
@@ -140,7 +183,11 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
         return getCorrelationService().count(criteria);
     }
 
-    private boolean isCreatedByMe(TYPE currentInstance) {
+    /**
+     * @param currentInstance The current instance of the model.
+     * @return True if the current user created the currentInstance, false otherwise.
+     */
+    protected boolean isCreatedByMe(TYPE currentInstance) {
         String loginName = null;
 
         User createdBy = ((AbstractRole) currentInstance).getCreatedBy();
@@ -150,5 +197,24 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
         }
 
         return StringUtils.equals(UsernameHolder.getUser(), loginName);
+    }
+
+    /**
+     * Getter for the update filters.
+     *
+     * @return The update filter list.
+     */
+    public List<RoleUpdateFilter<TYPE>> getUpdateFilters() {
+        return updateFilters;
+    }
+
+
+    /**
+     * Getter for the CR Creation filters.
+     *
+     * @return The CR Creation filter list.
+     */
+    public List<CrCreationFilter<TYPE, CR_TYPE>> getCrCreationFilters() {
+        return crCreationFilters;
     }
 }

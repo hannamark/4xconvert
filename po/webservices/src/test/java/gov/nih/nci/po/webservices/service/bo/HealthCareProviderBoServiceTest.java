@@ -1,6 +1,5 @@
 package gov.nih.nci.po.webservices.service.bo;
 
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;

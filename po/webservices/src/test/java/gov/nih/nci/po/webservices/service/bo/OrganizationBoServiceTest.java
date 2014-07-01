@@ -10,23 +10,16 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
-import gov.nih.nci.po.util.CsmUserUtil;
 import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
 import gov.nih.nci.po.webservices.service.bridg.ModelUtils;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
-import gov.nih.nci.security.SecurityServiceProvider;
-import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import org.hibernate.ObjectNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.jms.JMSException;
 import java.util.ArrayList;
@@ -43,7 +36,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
@@ -379,7 +371,7 @@ public class OrganizationBoServiceTest extends AbstractEndpointTest{
     }
 
     @Test(expected = ObjectNotFoundException.class)
-    public void updateNonexistingInstance() throws JMSException, EntityValidationException {
+    public void testUpdateNonexistingInstance() throws JMSException, EntityValidationException {
 
 
         Organization updatedOrganization = ModelUtils.getBasicOrganization();
@@ -398,7 +390,7 @@ public class OrganizationBoServiceTest extends AbstractEndpointTest{
     }
 
     @Test(expected = ServiceException.class)
-    public void updateWithErrors() throws JMSException {
+    public void testUpdateWithErrors() throws JMSException {
 
 
         Organization updatedOrganization = ModelUtils.getBasicOrganization();
@@ -420,7 +412,7 @@ public class OrganizationBoServiceTest extends AbstractEndpointTest{
 
 
     @Test
-    public void testAlias() throws JMSException {
+    public void testAlias() throws JMSException, EntityValidationException {
         gov.nih.nci.po.data.bo.Organization currentInstance = ModelUtils.getBasicOrganization();
         currentInstance.setId(2L);
         currentInstance.setCreatedBy(me);
@@ -441,11 +433,43 @@ public class OrganizationBoServiceTest extends AbstractEndpointTest{
         assertEquals(2, updatedInstance.getAlias().size());
         assertEquals("alpha", updatedInstance.getAlias().get(0).getValue());
         assertEquals("delta", updatedInstance.getAlias().get(1).getValue());
+        verify(serviceLocator.getOrganizationService()).curate(any(Organization.class));
+        verify(serviceLocator.getOrganizationCRService(), never()).create(any(OrganizationCR.class));
 
     }
 
     @Test
-    public void testDuplicateAlias() throws JMSException {
+    public void testUpdateSomeoneElsesAlias() throws JMSException, EntityValidationException {
+        User otherUser = new User();
+        otherUser.setLoginName("otherUser");
+
+        gov.nih.nci.po.data.bo.Organization currentInstance = ModelUtils.getBasicOrganization();
+        currentInstance.setId(2L);
+        currentInstance.setCreatedBy(otherUser);
+        currentInstance.setName("beta");
+        currentInstance.getAlias().add(new Alias("alpha"));
+
+
+        gov.nih.nci.po.data.bo.Organization updatedInstance = ModelUtils.getBasicOrganization();
+        updatedInstance.setId(2L);
+        updatedInstance.setName("delta");
+
+        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(currentInstance);
+
+        service.curate(updatedInstance);
+
+        //assert that the updated instance has aliases set
+        assertEquals("beta", updatedInstance.getName());
+        assertEquals(2, updatedInstance.getAlias().size());
+        assertEquals("alpha", updatedInstance.getAlias().get(0).getValue());
+        assertEquals("delta", updatedInstance.getAlias().get(1).getValue());
+        verify(serviceLocator.getOrganizationService(), never()).curate(any(Organization.class));
+        verify(serviceLocator.getOrganizationCRService()).create(any(OrganizationCR.class));
+
+    }
+
+    @Test
+    public void testDuplicateAlias() throws JMSException, EntityValidationException {
         gov.nih.nci.po.data.bo.Organization currentInstance = ModelUtils.getBasicOrganization();
         currentInstance.setId(2L);
         currentInstance.setCreatedBy(me);
@@ -465,7 +489,87 @@ public class OrganizationBoServiceTest extends AbstractEndpointTest{
         assertEquals("beta", updatedInstance.getName());
         assertEquals(1, updatedInstance.getAlias().size());
         assertEquals("alpha", updatedInstance.getAlias().get(0).getValue());
+        verify(serviceLocator.getOrganizationService(), never()).curate(any(Organization.class));
+        verify(serviceLocator.getOrganizationCRService(), never()).create(any(OrganizationCR.class));
+    }
+
+    @Test
+    public void testDuplicateAliasOnSomeoneElsesOrganization() throws JMSException, EntityValidationException {
+        User otherUser = new User();
+        otherUser.setLoginName("otherUser");
+
+        gov.nih.nci.po.data.bo.Organization currentInstance = ModelUtils.getBasicOrganization();
+        currentInstance.setId(2L);
+        currentInstance.setCreatedBy(otherUser);
+        currentInstance.setName("beta");
+        currentInstance.getAlias().add(new Alias("alpha"));
+
+
+        gov.nih.nci.po.data.bo.Organization updatedInstance = ModelUtils.getBasicOrganization();
+        updatedInstance.setId(2L);
+        updatedInstance.setName("alpha");
+
+        when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(currentInstance);
+
+        service.curate(updatedInstance);
+
+        //assert that the updated instance has aliases set
+        assertEquals("beta", updatedInstance.getName());
+        assertEquals(1, updatedInstance.getAlias().size());
+        assertEquals("alpha", updatedInstance.getAlias().get(0).getValue());
+        verify(serviceLocator.getOrganizationService(), never()).curate(any(Organization.class));
+        verify(serviceLocator.getOrganizationCRService(), never()).create(any(OrganizationCR.class));
+    }
+
+    @Test
+    public void testUpdateOwnOverridden() throws JMSException, EntityValidationException {
+        User otherUser = new User();
+        otherUser.setLoginName("otherUser");
+
+        Organization currentOrganization = ModelUtils.getBasicOrganization();
+        currentOrganization.setId(1L);
+        currentOrganization.setCreatedBy(me);
+        currentOrganization.setOverriddenBy(otherUser);
+
+        Organization updatedOrganization = ModelUtils.getBasicOrganization();
+        updatedOrganization.setId(1L);
+        updatedOrganization.setName("Just Reorganized");
+
+        //mock call to getById
+        when(serviceLocator.getOrganizationService().getById(1L)).thenReturn(currentOrganization);
+
+        service.curate(updatedOrganization);
+
+        //verify organization updated directly
+        verify(serviceLocator.getOrganizationService(), never()).curate(any(Organization.class));
+        verify(serviceLocator.getOrganizationCRService()).create(any(OrganizationCR.class));
+
 
     }
 
+    @Test
+    public void testUpdateOwnOverriddenWithNoChanges() throws JMSException, EntityValidationException {
+        User otherUser = new User();
+        otherUser.setLoginName("otherUser");
+
+        Organization currentOrganization = ModelUtils.getBasicOrganization();
+        currentOrganization.setId(1L);
+        currentOrganization.setOverriddenBy(otherUser);
+        currentOrganization.setCreatedBy(me);
+
+        Organization updatedOrganization = ModelUtils.getBasicOrganization();
+        updatedOrganization.setId(1L);
+
+        //mock call to getById
+        when(serviceLocator.getOrganizationService().getById(1L)).thenReturn(currentOrganization);
+
+        service.curate(updatedOrganization);
+
+        //verify organization updated directly
+        verify(serviceLocator.getOrganizationService(), never()).curate(any(Organization.class));
+        verify(serviceLocator.getOrganizationCRService(), never()).create(any(OrganizationCR.class));
+
+
+
+    }
 }

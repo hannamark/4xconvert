@@ -20,7 +20,6 @@ import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +43,7 @@ public class OrganizationBoService implements OrganizationServiceLocal {
         User user = null;
 
         try {
-            user =  SecurityServiceProvider.getUserProvisioningManager("po")
+            user = SecurityServiceProvider.getUserProvisioningManager("po")
                     .getUser(UsernameHolder.getUser());
         } catch (CSException e) {
             throw new RuntimeException(e);
@@ -83,25 +82,35 @@ public class OrganizationBoService implements OrganizationServiceLocal {
 
         Map<String, String[]> errors = PoRegistry.getOrganizationService().validate(curatedOrg);
         if (!errors.isEmpty()) {
-            EntityValidationException validationException =  new EntityValidationException(errors);
+            EntityValidationException validationException = new EntityValidationException(errors);
             throw new ServiceException(validationException);
         }
 
-        if (noChangesMade(current, curatedOrg)) {
+        OrganizationCR organizationCR = createOrganizationCR(current, curatedOrg);
+
+        if (current != null && organizationCR.isNoChange()) {
             return;
         }
 
-        if (current == null || isCreatedByMe(current)) {
-
+        if (updateDirectly(current)) {
             PoRegistry.getOrganizationService().curate(curatedOrg);
         } else {
             //someone else made it, so create a CR
             try {
-                createOrganizationCR(current, curatedOrg);
+                PoRegistry.getInstance().getServiceLocator().getOrganizationCRService().create(organizationCR);
             } catch (EntityValidationException e) {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    /**
+     *
+     * @param current The current state.
+     * @return True if we need to update directly, false if a CR is needed.
+     */
+    private boolean updateDirectly(Organization current) {
+        return current == null || (isCreatedByMe(current) && current.getOverriddenBy() == null);
     }
 
     @Override
@@ -110,22 +119,8 @@ public class OrganizationBoService implements OrganizationServiceLocal {
         PoRegistry.getOrganizationService().override(overridable, overriddenBy);
     }
 
-    private boolean noChangesMade(Organization current, Organization curatedOrg) {
-        boolean result = false;
 
-        if (current != null) {
-            OrganizationDTO tmp = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(curatedOrg);
-            OrganizationCR cr = new OrganizationCR(current);
-            PoXsnapshotHelper.copyIntoAbstractModel(tmp, cr, AbstractOrganization.class);
-
-            result = cr.isNoChange() && CollectionUtils.isEqualCollection(current.getAlias(), curatedOrg.getAlias());
-        }
-
-        return result;
-    }
-
-    private void createOrganizationCR(Organization current, Organization curatedOrganization)
-            throws EntityValidationException {
+    private OrganizationCR createOrganizationCR(Organization current, Organization curatedOrganization) {
         OrganizationCR organizationCR = new OrganizationCR(current);
 
         OrganizationDTO curatedOrganizationDto
@@ -133,9 +128,10 @@ public class OrganizationBoService implements OrganizationServiceLocal {
 
         curatedOrganizationDto.setIdentifier(null);
         PoXsnapshotHelper.copyIntoAbstractModel(curatedOrganizationDto, organizationCR, AbstractOrganization.class);
+        organizationCR.getAlias().addAll(curatedOrganization.getAlias());
         organizationCR.setId(null);
 
-        PoRegistry.getInstance().getServiceLocator().getOrganizationCRService().create(organizationCR);
+        return organizationCR;
     }
 
     @Override

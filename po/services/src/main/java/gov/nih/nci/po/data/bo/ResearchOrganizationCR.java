@@ -1,13 +1,16 @@
 
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.VaildResearchOrganizationTypeWithFundingMechanism;
-
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.validator.Valid;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,16 +21,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.validator.Valid;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  *
@@ -250,6 +248,15 @@ public class ResearchOrganizationCR extends AbstractResearchOrganization
     }
 
     /**
+     *
+     * @return True if the value changed, false otherwise.
+     */
+    @Transient
+    public boolean isAliasChanged() {
+        return !ListUtils.isEqualList(target.getAlias(), getAlias());
+    }
+
+    /**
      * @return boolean
      */
     @Transient
@@ -428,7 +435,8 @@ public class ResearchOrganizationCR extends AbstractResearchOrganization
                 && !isTtyChanged() && !isUrlChanged()
                 && !isNameChanged()
                 && !isTypeCodeChanged()
-                && !isFundingMechanismChanged();
+                && !isFundingMechanismChanged()
+                && !isAliasChanged();
     }
     
     /**

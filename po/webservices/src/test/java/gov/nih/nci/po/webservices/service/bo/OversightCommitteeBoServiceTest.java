@@ -1,6 +1,5 @@
 package gov.nih.nci.po.webservices.service.bo;
 
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
@@ -10,7 +9,7 @@ import gov.nih.nci.po.webservices.service.bridg.ModelUtils;
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
-public class OversightCommitteeBoServiceTest extends AbstractRoleBoServiceTest<OversightCommittee, OversightCommitteeCR> {
+public class OversightCommitteeBoServiceTest extends AbstractOrganizationRoleTest<OversightCommittee, OversightCommitteeCR> {
     @Override
     protected void initServiceUnderTest() {
         this.service = new OversightCommitteeBoService();

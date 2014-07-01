@@ -33,7 +33,6 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.AddressConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -52,6 +51,7 @@ import gov.nih.nci.po.webservices.service.bridg.soap.researchorganization.Resear
 import gov.nih.nci.po.webservices.service.bridg.soap.researchorganization.ResearchOrganizationService;
 import gov.nih.nci.po.webservices.service.bridg.soap.researchorganization.TooManyResultsFaultFaultMessage;
 import gov.nih.nci.po.webservices.service.utils.AuthUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Transaction;
 import org.iso._21090.CD;
 import org.iso._21090.DSETAD;
@@ -76,6 +76,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -665,7 +666,8 @@ public class ResearchOrganizationClientTest {
         UpdateRequest.ResearchOrganization updatePayloadWrapper = new UpdateRequest.ResearchOrganization();
 
         ResearchOrganization updatePayload = retrieve(response.getId());
-        updatePayload.getName().getPart().get(0).setValue("NewName");
+        assertFalse(StringUtils.equals("RSB", updatePayload.getTypeCode().getCode()));
+        updatePayload.getTypeCode().setCode("RSB");
 
         updatePayloadWrapper.setResearchOrganization(updatePayload);
         updateRequest.setResearchOrganization(updatePayloadWrapper);
@@ -674,7 +676,7 @@ public class ResearchOrganizationClientTest {
         assertNotNull(updateResponse);
 
         ResearchOrganization retrieved = retrieve(response.getId());
-        assertEquals("NewName", retrieved.getName().getPart().get(0).getValue());
+        assertEquals("RSB", retrieved.getTypeCode().getCode());
     }
 
 

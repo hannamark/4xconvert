@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Wrapper around EJB service to implement business logic
  * for web services without breaking legacy code contracts.
- *
+ * <p/>
  * TODO:  Configure transactions (use JTA manager)
  *
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
@@ -38,7 +38,7 @@ public class PersonBoService implements PersonServiceLocal {
         User user = null;
 
         try {
-            user =  SecurityServiceProvider.getUserProvisioningManager("po")
+            user = SecurityServiceProvider.getUserProvisioningManager("po")
                     .getUser(UsernameHolder.getUser());
         } catch (CSException e) {
             throw new RuntimeException(e);
@@ -54,7 +54,7 @@ public class PersonBoService implements PersonServiceLocal {
         User user = null;
 
         try {
-            user =  SecurityServiceProvider.getUserProvisioningManager("po")
+            user = SecurityServiceProvider.getUserProvisioningManager("po")
                     .getUser(UsernameHolder.getUser());
         } catch (CSException e) {
             throw new RuntimeException(e);
@@ -78,7 +78,7 @@ public class PersonBoService implements PersonServiceLocal {
     /**
      * The given Person should either have an it, or be a previously created instance.
      * If the given Person has an ID, but no current instance is found...//TODO
-     *
+     * <p/>
      * {@inheritDoc}
      */
     @Override
@@ -106,7 +106,6 @@ public class PersonBoService implements PersonServiceLocal {
         PoRegistry.getPersonService().curate(curatedPerson, ctepId);
 
     }
-
 
 
     @Override
@@ -143,7 +142,6 @@ public class PersonBoService implements PersonServiceLocal {
     public int count(SearchCriteria<Person> criteria) {
         return PoRegistry.getPersonService().count(criteria);
     }
-
 
 
 }

@@ -1,5 +1,6 @@
 package gov.nih.nci.po.webservices.service.bo;
 
+import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractResearchOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Overridable;
@@ -20,7 +21,8 @@ import javax.jms.JMSException;
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
 @Service("researchOrganizationBoService")
-public class ResearchOrganizationBoService extends AbstractRoleBoService<ResearchOrganization, ResearchOrganizationCR>
+public class ResearchOrganizationBoService
+        extends AbstractEnhancedOrganizationRoleBoService<ResearchOrganization, ResearchOrganizationCR>
         implements ResearchOrganizationServiceLocal {
     @Override
     protected GenericStructrualRoleServiceLocal<ResearchOrganization> getCorrelationService() {
@@ -45,6 +47,7 @@ public class ResearchOrganizationBoService extends AbstractRoleBoService<Researc
         ResearchOrganizationDTO curatedInstanceDto
                 = (ResearchOrganizationDTO) PoXsnapshotHelper.createSnapshot(updatedInstance);
         curatedInstanceDto.setIdentifier(null);
+        PoXsnapshotHelper.copyIntoAbstractModel(curatedInstanceDto, cr, AbstractEnhancedOrganizationRole.class);
         PoXsnapshotHelper.copyIntoAbstractModel(curatedInstanceDto, cr, AbstractResearchOrganization.class);
         cr.setId(null);
 

@@ -1,6 +1,5 @@
 package gov.nih.nci.po.webservices.service.bo;
 
-import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
@@ -13,7 +12,7 @@ import static org.mockito.Mockito.when;
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
-public class ResearchOrganizationBoServiceTest extends AbstractRoleBoServiceTest<ResearchOrganization, ResearchOrganizationCR>{
+public class ResearchOrganizationBoServiceTest extends AbstractEnhancedOrganizationRoleTest<ResearchOrganization, ResearchOrganizationCR>{
     @Override
     protected void initServiceUnderTest() {
         this.service = new ResearchOrganizationBoService();

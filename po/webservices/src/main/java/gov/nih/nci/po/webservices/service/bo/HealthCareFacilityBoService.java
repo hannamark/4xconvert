@@ -20,7 +20,8 @@ import javax.jms.JMSException;
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
  */
 @Service("healthCareFacilityBoService")
-public class HealthCareFacilityBoService extends AbstractRoleBoService<HealthCareFacility, HealthCareFacilityCR>
+public class HealthCareFacilityBoService
+        extends AbstractEnhancedOrganizationRoleBoService<HealthCareFacility, HealthCareFacilityCR>
         implements HealthCareFacilityServiceLocal {
 
     @Override
