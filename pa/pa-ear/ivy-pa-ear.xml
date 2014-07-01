@@ -44,14 +44,14 @@ This is the definition of a virtual module called bda-download that has a depend
 
     <!-- container -->
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="container->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.10-SNAPSHOT"           conf="container->master"/>
+    <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.10.2-SNAPSHOT"           conf="container->master"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="container->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.10.0-SNAPSHOT" conf="container->master"/>
     <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="1.4.10-SNAPSHOT"  conf="container->master"/>
     <dependency org="csmapi"                 name="csmapi"                  rev="4.2"             conf="container->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="1.1"             conf="container->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="container->master"/>
-    <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="container->master"/>
+    <dependency org="org.mockito"            name="mockito-all"             rev="1.9.5"           conf="container->master"/>
 
     <!-- Grid Registration container jar -->
     <dependency org="caGrid"                 name="caGrid-dorian-service"  rev="1.3" conf="container->master">

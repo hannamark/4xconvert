@@ -27,4 +27,5 @@
 	<sub-deployment name="pa-ejb.jar" />
 	<sub-deployment name="reg-web.war" />
 	<sub-deployment name="pa-web.war" />
+	<sub-deployment name="pa-webservices.war" />
 </jboss-deployment-structure>

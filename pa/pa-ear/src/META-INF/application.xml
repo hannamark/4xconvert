@@ -17,6 +17,12 @@
     </web>
   </module>
   <module>
+    <web>
+      <web-uri>pa-webservices.war</web-uri>
+      <context-root>/services</context-root>
+    </web>
+  </module>  
+  <module>
     <ejb>pa-ejb.jar</ejb>
   </module>
   <library-directory>lib</library-directory>

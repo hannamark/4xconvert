@@ -1,0 +1,7 @@
+server.hostname=@pa.server.name@
+server.port=@jboss.port@
+
+test.db.connection.url = @jdbc.url@
+test.db.driver = @jdbc.driver@
+test.db.user = @db.username@
+test.db.password = @db.password@

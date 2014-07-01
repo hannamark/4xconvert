@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="gov.nih.nci.pa.webservices.types"
+	xmlns:tns="gov.nih.nci.pa.webservices.types" elementFormDefault="qualified"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
+	xmlns:annox="http://annox.dev.java.net" xmlns:ja="http://annox.dev.java.net/org.codehaus.jackson.annotate"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd
+                        http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
+
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="gov.nih.nci.pa.webservices.types" />
+			</jaxb:schemaBindings>
+		</appinfo>
+	</annotation>
+
+
+	<element name="paTrialID" type="long">
+		<annotation>
+			<documentation>PA's internal trial identifier, which is a numerical
+				value. Immutable.
+			</documentation>
+		</annotation>
+	</element>
+
+	<element name="nciTrialID">
+		<annotation>
+			<documentation>NCI ID assigned to each newly registered trial. It
+				follows a specific format (e.g. NCI-2014-00672) and stays immutable
+				with a trial.
+			</documentation>
+		</annotation>
+		<simpleType>
+			<restriction base="string">
+				<pattern value="NCI-[0-9]{4}-[0-9]{1,8}" />
+			</restriction>
+		</simpleType>
+	</element>
+
+	<element name="ctepTrialID" type="string">
+		<annotation>
+			<documentation>A trial can have an optional identifier assigned by
+				CTEP. A string value of no strictly defined format.
+			</documentation>
+		</annotation>
+	</element>
+
+	<element name="TrialRegistrationConfirmation" type="tns:TrialRegistrationConfirmation">
+		<annotation>
+			<documentation>A snapshot of basic trial information that serves as a
+				confirmation of a successful trial registration, update, or
+				amendment.
+			</documentation>
+		</annotation>
+	</element>
+
+	<complexType name="TrialRegistrationConfirmation">
+		<annotation>
+			<documentation>A snapshot of basic trial information that serves as a
+				confirmation of a successful trial registration, update, or
+				amendment.
+			</documentation>
+		</annotation>
+		<sequence>
+			<element ref="tns:paTrialID" />
+			<element ref="tns:nciTrialID" />
+		</sequence>
+	</complexType>
+
+
+</schema>

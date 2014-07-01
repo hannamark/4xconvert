@@ -14,6 +14,7 @@
     <property name="commons.target" value="${basedir}/commons/target"/>
     <property name="ejb.target" value="${basedir}/pa-ejb/target"/>
     <property name="pa-web.target" value="${basedir}/pa-web/target"/>
+	<property name="pa-webservices.target" value="${basedir}/pa-webservices/target"/>
     <property name="reg-web.target" value="${basedir}/../reg-web/target"/>
     <property name="ear.target" value="${basedir}/pa-ear/target"/>
     <property name="ear.dir" value="${ear.target}/pa"/>
@@ -45,6 +46,9 @@
         <ant target="clean" dir="pa-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+    	<ant target="clean" dir="pa-webservices" inheritAll="false">
+    	    <property name="tier" value="${tier}"/>
+    	</ant>
         <ant target="clean" dir="../reg-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
@@ -71,6 +75,9 @@
         <ant target="test-static-analysis" dir="pa-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+        <ant target="test-static-analysis" dir="pa-webservices" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>    	
     </target>
 
     <!-- ====================================================================== -->
@@ -87,6 +94,9 @@
         <ant target="test-all" dir="pa-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+        <ant target="test-all" dir="pa-webservices" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>    	
         <ant target="test-all" dir="../reg-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
@@ -115,6 +125,9 @@
         <ant target="package-notest" dir="pa-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+        <ant target="package-notest" dir="pa-webservices" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>   	
         <ant target="package-notest" dir="../reg-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
@@ -122,10 +135,11 @@
 
     <target name="ear" description="Build the EAR">
         <delete dir="${ear.target}"/>
-          <copy todir="${ear.dir}">
+        <copy todir="${ear.dir}">
             <fileset dir="${basedir}/pa-ear/src"/>
         </copy>
-          <copy todir="${ear.dir}/lib">
+    	
+        <copy todir="${ear.dir}/lib">
             <fileset dir="${lib.dir}/ear"/>
         </copy>
 
@@ -135,6 +149,7 @@
         <copy file="${commons.target}/pa-commons.jar" todir="${ear.dir}/lib"/>
         <copy file="${ejb.target}/pa-ejb.jar" todir="${ear.dir}"/>
         <copy file="${pa-web.target}/pa-web.war" todir="${ear.dir}"/>
+    	<copy file="${pa-webservices.target}/pa-webservices.war" todir="${ear.dir}"/>
         <copy file="${reg-web.target}/reg-web.war" todir="${ear.dir}"/>
         <ear destfile="${ear.target}/pa.ear"
              basedir="${ear.dir}"
@@ -167,6 +182,9 @@
         <ant target="package" dir="pa-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+        <ant target="package" dir="pa-webservices" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>    	
         <ant target="package" dir="../reg-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
@@ -259,7 +277,7 @@
     <!-- Ivy targets                                                            -->
     <!-- ====================================================================== -->
 
-    <target name="ivy-get" depends="ivy-clean,ivy-build,ivy-compile,ivy-ear,ivy-pa-web,ivy-reg-web,ivy-test">
+    <target name="ivy-get" depends="ivy-clean,ivy-build,ivy-compile,ivy-ear,ivy-pa-web,ivy-pa-webservices,ivy-reg-web,ivy-test">
     </target>
 
     <target name="ivy-clean">
@@ -299,6 +317,12 @@
         <ivy:resolve refresh="true" conf="pa-web"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="pa-web"/>
     </target>
+	
+    <target name="ivy-pa-webservices" depends="ivy-init">
+        <ivy:resolve refresh="true" conf="pa-webservices"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="pa-webservices"/>
+    </target>
+	
  
     <target name="ivy-reg-web" depends="ivy-init">
         <ivy:resolve refresh="true" conf="reg-web"/>
@@ -395,6 +419,11 @@
         <copy todir="javadoc/pa-web">
               <fileset dir="pa-web/target/javadoc/"/>
         </copy>
+    	
+        <ant target="generate-javadoc" dir="pa-webservices" inheritAll="false" />
+        <copy todir="javadoc/pa-webservices">
+              <fileset dir="pa-webservices/target/javadoc/"/>
+        </copy>   	
 
         <zip destfile="javadoc/pa-javadoc.zip">
             <fileset dir="javadoc" />

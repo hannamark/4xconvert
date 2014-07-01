@@ -3,6 +3,7 @@
 
     <description>CTRP PMD Rules</description>
     <exclude-pattern>.*/test/.*</exclude-pattern>
+    <exclude-pattern>.*/generated-src/.*</exclude-pattern>
     <exclude-pattern>.*/pdq/src/.*</exclude-pattern>
 
     <rule ref="rulesets/basic.xml" />
