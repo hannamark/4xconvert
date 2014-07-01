@@ -21,7 +21,7 @@
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
         <nci-commons.version>1.4.10.1-SNAPSHOT</nci-commons.version>
-        <coppa-commons.version>1.3.10.1-SNAPSHOT</coppa-commons.version>
+        <coppa-commons.version>1.3.10.2-SNAPSHOT</coppa-commons.version>
         <iso-datatypes.version>2.0</iso-datatypes.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
         <maven-checkstyle-plugin.version>2.4</maven-checkstyle-plugin.version>
@@ -229,7 +229,7 @@
                     <!--  There's a bug with surefix and jdk 1.6 that results in this value being defaulted to false
                     when it is required to be true so we have to manaully set it here.  -->
                     <argLine>-Dsun.lang.ClassLoader.allowArraySyntax=true</argLine>
-                    <argLine>-XX:PermSize=512m -XX:MaxPermSize=1024m</argLine>
+                    <argLine>-XX:PermSize=512m -XX:MaxPermSize=2048m</argLine>
                     <forkMode>once</forkMode>
                     <includes>
                         <include>**/*Test.java</include>

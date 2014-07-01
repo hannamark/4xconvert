@@ -521,8 +521,17 @@
                             <groupId>gov.nih.nci.coppa</groupId>
                             <artifactId>coppa-commons</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
-
                         </jarModule>
+                        <jarModule>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-mock</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
+                        </jarModule>
+                        <jarModule>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-core</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
+                        </jarModule>                        
                         <jarModule>
                             <groupId>gov.nih.nci.coppa</groupId>
                             <artifactId>nci-commons-ctrp-core</artifactId>
