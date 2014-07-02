@@ -328,6 +328,7 @@
             <formatter type="plain" usefile="false"/>
             <classpath>
                 <path location="${pa-webservices.build.testOutputDir}"/>
+            	<path location="${pa-webservices.build.outputDir}"/>
                 <path refid="selenium.classpath"/>
                 <path refid="common.package.classpath"/>
             	<path refid="test-junit.classpath"/>
