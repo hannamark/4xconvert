@@ -80,140 +80,128 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.services.correlation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.services.correlation.HealthCareProviderDTOTest;
-import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.data.bo.HealthCareProviderCR;
+import gov.nih.nci.po.data.convert.StringConverter;
+import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.CorrelationService;
 
 import java.util.List;
 import java.util.Map;
 
-import javax.jms.JMSException;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
-import com.fiveamsolutions.nci.commons.audit.AuditType;
+/**
+ * @author Scott Miller
+ *
+ */
+public class HealthCareProviderRemoteServiceTest
+    extends AbstractPersonRoleDTORemoteServiceTest<HealthCareProviderDTO, HealthCareProviderCR> {
 
-public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
-
-    private HealthCareProviderServiceBean hcpServiceBean;
-
-    public HealthCareProviderServiceBean getHealthCareProviderServiceBean() {
-        return hcpServiceBean;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    CorrelationService<HealthCareProviderDTO> getCorrelationService() {
+       return EjbTestHelper.getHealthCareProviderCorrelationServiceRemote();
     }
 
-    @Before
-    public void setUpData() {
-        hcpServiceBean = EjbTestHelper.getHealthCareProviderServiceBean();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected HealthCareProviderDTO getSampleDto() throws Exception {
+        HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        createAndSetOrganization();
+        fillInPersonRoleDate(pr);
+        St st = new St();
+        st.setValue("testCertLicense");
+        pr.setCertificateLicenseText(st);
+        return pr;
     }
 
-    @After
-    public void teardown() {
-        hcpServiceBean = null;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void verifyDto(HealthCareProviderDTO e, HealthCareProviderDTO a) {
+        assertEquals(e.getCertificateLicenseText().getValue(), a.getCertificateLicenseText().getValue());
+        verifyPersonRoleDto(e, a);
     }
 
-    public HealthCareProvider getBasicHealthCareProvider() throws Exception {
-        PersonServiceBeanTest ps = new PersonServiceBeanTest();
-        ps.setDefaultCountry(getDefaultCountry());
-        ps.setUpData();
-        long personId = ps.createPerson();
-        OrganizationServiceBeanTest os = new OrganizationServiceBeanTest();
-        os.setDefaultCountry(getDefaultCountry());
-        os.setUpData();
-        long orgId = os.createOrganization();
-        HealthCareProviderDTOTest hcpdto = new HealthCareProviderDTOTest();
-        hcpdto.setUpTest();
-        hcpdto.setUpTestData();
-        HealthCareProvider hcp = (HealthCareProvider)hcpdto.getExampleTestClass();
-        hcp.setPlayer((Person) PoHibernateUtil.getCurrentSession().load(Person.class, personId));
-        hcp.setScoper((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId));
-        hcp.setId(null);
-        PoHibernateUtil.getCurrentSession().flush();
-        return hcp;
-    }
-
-    @Test
-    public void create() throws Exception {
-        createHealthCareProvider();
-    }
-
-    public long createHealthCareProvider() throws Exception {
-        return createHealthCareProvider(getBasicHealthCareProvider());
-    }
-
-    protected long createHealthCareProvider(HealthCareProvider hcp) throws EntityValidationException, JMSException {
-        long id = hcpServiceBean.create(hcp);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        HealthCareProvider savedHealthCareProvider = (HealthCareProvider) PoHibernateUtil.getCurrentSession().load(HealthCareProvider.class, id);
-
-        // adjust the expected value to NEW
-        hcp.setStatus(RoleStatus.PENDING);
-        verifyEquals(hcp, savedHealthCareProvider);
-        PoHibernateUtil.getCurrentSession().flush();
-
-        List<AuditLogRecord> alr = AuditTestUtil.find(HealthCareProvider.class, savedHealthCareProvider.getId());
-        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "certificateLicenseText", null, "testCertLicense", false);
-        return id;
+    @Test(expected = EntityValidationException.class)
+    public void testCreateWithException() throws Exception {
+        HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        getCorrelationService().createCorrelation(pr);
     }
 
     @Test
-    public void createHealthCareProviderWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws Exception {
-        HealthCareProvider hcp = getBasicHealthCareProvider();
-        hcp.setStatus(RoleStatus.NULLIFIED);
-        hcp.setCertificateLicenseText("text");
-
-        long id = hcpServiceBean.create(hcp);
-
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        HealthCareProvider savedHealthCareProvider = hcpServiceBean.getById(id);
-
-        // adjust the expected value to NEW
-        hcp.setStatus(RoleStatus.PENDING);
-        verifyEquals(hcp, savedHealthCareProvider);
+    public void testValidate() throws Exception {
+        HealthCareProviderDTO pr = new HealthCareProviderDTO();
+        Map<String, String[]> errors = getCorrelationService().validate(pr);
+        assertEquals(4, errors.keySet().size());
     }
 
-    private void verifyEquals(HealthCareProvider expected, HealthCareProvider found) {
-        assertEquals(expected.getId(), found.getId());
-        assertEquals(expected.getStatus(), found.getStatus());
-        assertEquals(expected.getCertificateLicenseText(), found.getCertificateLicenseText());
-
-        assertEquals(expected.getPostalAddresses().size(), found.getPostalAddresses().size());
-
-        assertEquals(expected.getEmail().size(), found.getEmail().size());
-        assertEquals(expected.getPhone().size(), found.getPhone().size());
-        assertEquals(expected.getFax().size(), found.getFax().size());
-        assertEquals(expected.getTty().size(), found.getTty().size());
-        assertEquals(expected.getUrl().size(), found.getUrl().size());
+    @Override
+    protected void alter(HealthCareProviderDTO dto) {
+        dto.setCertificateLicenseText(StringConverter.convertToSt("some new Cert License Text"));
     }
 
-    @Test
-    public void testPhoneNotEmptyValidator() throws Exception {
-        HealthCareProvider obj = (HealthCareProvider) PoHibernateUtil.getCurrentSession().load(HealthCareProvider.class, createHealthCareProvider());
-        obj.getPlayer().setStatusCode(EntityStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().update(obj.getPlayer());
-        obj.getScoper().setStatusCode(EntityStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().update(obj.getScoper());
-        obj.setStatus(RoleStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().update(obj);
+    @Override
+    protected void verifyAlterations(HealthCareProviderCR cr) {
+        super.verifyAlterations(cr);
+        assertEquals("some new Cert License Text", cr.getCertificateLicenseText());
+    }
 
-        obj.getPhone().clear();
-        obj.getEmail().clear();
-        Map<String, String[]> errors = EjbTestHelper.getHealthCareProviderServiceBean().validate(obj);
-        assertEquals(1, errors.size());
-        assertEquals(1, errors.get("").length);
-        assertNull(errors.get(null));
-   }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void modifySubClassSpecificFieldsForCorrelation2(HealthCareProviderDTO correlation2) {
+        correlation2.getCertificateLicenseText().setValue(correlation2.getCertificateLicenseText().getValue() + "2");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected HealthCareProviderDTO getEmptySearchCriteria() {
+        return new HealthCareProviderDTO();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void testSearchOnSubClassSpecificFields(HealthCareProviderDTO correlation1, Ii id2,
+            HealthCareProviderDTO searchCriteria) throws NullifiedRoleException {
+        // search by cert text
+        searchCriteria.setCertificateLicenseText(new St());
+        searchCriteria.getCertificateLicenseText().setValue(correlation1.getCertificateLicenseText().getValue());
+        List<HealthCareProviderDTO> results = getCorrelationService().search(searchCriteria);
+        assertEquals(2, results.size());
+
+        searchCriteria.getCertificateLicenseText().setValue(
+                correlation1.getCertificateLicenseText().getValue().toUpperCase());
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(2, results.size());
+
+        searchCriteria.getCertificateLicenseText().setValue(correlation1.getCertificateLicenseText().getValue() + "2");
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(1, results.size());
+        assertEquals(results.get(0).getIdentifier().getItem().iterator().next().getExtension(), id2.getExtension());
+
+        searchCriteria.getCertificateLicenseText().setValue("text 2dfjsd");
+        results = getCorrelationService().search(searchCriteria);
+        assertEquals(0, results.size());
+
+        searchCriteria.setCertificateLicenseText(null);
+        testNullifiedRoleNotFoundInSearch(id2, searchCriteria, HealthCareProvider.class);
+    }
 }

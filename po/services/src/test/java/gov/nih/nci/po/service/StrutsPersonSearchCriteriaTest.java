@@ -7,8 +7,8 @@ import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.service.correlation.ClinicalResearchStaffServiceTest;
-import gov.nih.nci.po.service.correlation.IdentifiedPersonServiceTest;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffServiceTest;
+import gov.nih.nci.services.correlation.IdentifiedPersonServiceTest;
 import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 

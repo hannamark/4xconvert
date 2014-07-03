@@ -7,8 +7,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
 import gov.nih.nci.common.exceptions.CTEPEntException;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
@@ -36,12 +39,16 @@ import gov.nih.nci.po.service.IdentifiedOrganizationServiceBean;
 import gov.nih.nci.po.service.MessageProducerTest;
 import gov.nih.nci.po.service.OrganizationServiceBean;
 import gov.nih.nci.po.service.ResearchOrganizationServiceBean;
-import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
-import gov.nih.nci.po.service.correlation.ResearchOrganizationServiceTest;
+import gov.nih.nci.services.correlation.HealthCareFacilityServiceTest;
+import gov.nih.nci.services.correlation.ResearchOrganizationServiceTest;
 import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.service.external.stubs.CTEPOrgServiceStubBuilder;
 import gov.nih.nci.po.service.external.stubs.CTEPOrganizationServiceStub;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.UserProvisioningManager;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.Date;
@@ -52,18 +59,28 @@ import java.util.Set;
 import javax.jms.JMSException;
 import javax.naming.Context;
 
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.util.CollectionUtils;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SecurityServiceProvider.class)
 public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
     /**
      * Root used by CTEP to identify organizations
      */
     public static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
+    private static final String CTEP_LOGIN_NAME = "/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm";
     private CtepOrganizationImporter importer = null;
     private OrganizationServiceBean oSvc;
     private IdentifiedOrganizationServiceBean ioSvc;
@@ -85,6 +102,16 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         };
 
         createCTEPOrg();
+        createCTEPUser();
+    }
+
+    private void createCTEPUser() {
+        User ctepUser = new User();
+        ctepUser.setFirstName("CTEP");
+        ctepUser.setLastName("ECM");
+        ctepUser.setLoginName(CTEP_LOGIN_NAME);
+        ctepUser.setUpdateDate(new Date());
+        PoHibernateUtil.getCurrentSession().save(ctepUser);
     }
 
     /**
@@ -914,5 +941,63 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         Organization persistedOrg = io.getPlayer();
         assertNotNull(persistedOrg);
         assertEquals(EntityStatus.INACTIVE, persistedOrg.getStatusCode());
+    }
+
+
+    @Test
+    public void testCreatedBySetOnHealthCareFacilityCreation() throws Exception {
+        mockSecurity();
+
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFStub();
+        importer.setCtepOrgService(service);
+        OrganizationDTO org = service.getOrg();
+
+        // create the org.
+        Organization importedOrg = importer.importOrganization(org.getIdentifier());
+        assertEquals(CTEP_LOGIN_NAME, importedOrg.getCreatedBy().getLoginName());
+
+        List<HealthCareFacility> healthCareFacilities = hcfSvc.getByPlayerIds(new Long[]{importedOrg.getId()});
+        assertEquals(1, healthCareFacilities.size());
+        assertEquals(CTEP_LOGIN_NAME, healthCareFacilities.get(0).getCreatedBy().getLoginName());
+
+    }
+
+    @Test
+    public void testCreatedBySetOnResearchOrganizationCreation() throws Exception {
+        mockSecurity();
+        CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROStub();
+        importer.setCtepOrgService(service);
+        OrganizationDTO org = service.getOrg();
+
+        // create the org.
+        Organization importedOrg = importer.importOrganization(org.getIdentifier());
+        assertEquals(CTEP_LOGIN_NAME, importedOrg.getCreatedBy().getLoginName());
+
+        List<ResearchOrganization> researchOrganizations = roSvc.getByPlayerIds(new Long[]{importedOrg.getId()});
+        assertEquals(1, researchOrganizations.size());
+        assertEquals(CTEP_LOGIN_NAME, researchOrganizations.get(0).getCreatedBy().getLoginName());
+
+    }
+
+
+    private void mockSecurity() {
+        UserProvisioningManager userProvisioningManager = mock(UserProvisioningManager.class);
+        when(userProvisioningManager.getUser(anyString())).thenAnswer(
+                new Answer<User>() {
+                    @Override
+                    public User answer(InvocationOnMock invocation) throws Throwable {
+                        return (User) PoHibernateUtil.getCurrentSession().createCriteria(User.class)
+                                .add(Restrictions.eq("loginName", invocation.getArguments()[0])).uniqueResult();
+                    }
+                }
+        );
+
+
+        mockStatic(SecurityServiceProvider.class);
+        try {
+            PowerMockito.when(SecurityServiceProvider.getUserProvisioningManager("po")).thenReturn(userProvisioningManager);
+        } catch (CSException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -82,11 +82,13 @@
  */
 package gov.nih.nci.services.correlation;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.convert.CdConverter;
@@ -99,7 +101,9 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericAutoCuratableStructuralRoleServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
+import gov.nih.nci.po.util.CsmUserUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.Utils;
 
@@ -181,6 +185,10 @@ public abstract class AbstractCorrelationServiceBean
     public Ii createCorrelation(DTO dto) throws EntityValidationException, CurationException {
         T po = (T) PoXsnapshotHelper.createModel(dto);
         try {
+            if (po instanceof AbstractOrganizationRole) {
+                User currentUser = CsmUserUtil.getUser(UsernameHolder.getUser());
+                ((AbstractOrganizationRole) po).setCreatedBy(currentUser);
+            }
             return getIdConverter().convertToIi(getLocalService().create(po));
         } catch (JMSException e) {
             LOG.error("Problem is JMS, unable to complete requst to create data.", e);

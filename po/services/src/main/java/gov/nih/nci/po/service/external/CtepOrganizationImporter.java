@@ -107,6 +107,9 @@ import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -138,6 +141,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      * The value of the 'root' element of a ctep ii for an org.
      */
     public static final String CTEP_ORG_ROOT = "2.16.840.1.113883.3.26.6.2";
+    private static final String CTEP_USER_LOGIN
+            = "/O=caBIG/OU=caGrid/OU=Training/OU=National Cancer Institute/CN=ctepecm";
 
     private final OrganizationServiceLocal orgService = PoRegistry.getOrganizationService();
     private final OrganizationCRServiceLocal orgCRService = PoRegistry.getInstance().getServiceLocator()
@@ -308,15 +313,33 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     private Organization createCtepOrg(Organization ctepOrg, Ii ctepOrgId, RoleStatus roleStatus) throws JMSException,
             EntityValidationException, CtepImportException {
+
+        User ctepUser = getCtepUser();
+
         // create the local record
+        ctepOrg.setCreatedBy(ctepUser);
         this.orgService.curate(ctepOrg);
 
+        HealthCareFacility hcf = handleHcfUpdate(ctepOrg, ctepOrgId, roleStatus, ctepUser);
+
+        ResearchOrganization ro = handleRoUpdate(ctepOrg, ctepOrgId, roleStatus, ctepUser);
+
+        // create an identified org record
+        IdentifiedOrganization identifiedOrg = genIdentifiedOrg(hcf, ro, ctepOrgId, ctepOrg, roleStatus);
+        identifiedOrg.setCreatedBy(ctepUser);
+        this.identifiedOrgService.curate(identifiedOrg);
+
+        return ctepOrg;
+    }
+
+    private HealthCareFacility handleHcfUpdate(Organization ctepOrg, Ii ctepOrgId, RoleStatus roleStatus, User ctepUser)
+            throws CtepImportException, JMSException {
         HealthCareFacility hcf = getCtepHealthCareFacility(ctepOrgId);
         if (hcf != null) {
             if (hcf.getId() != null) {
-                throw new CtepImportException("org " + ctepOrgId.getExtension() + " not in po but ctep has po hcf id", 
+                throw new CtepImportException("org " + ctepOrgId.getExtension() + " not in po but ctep has po hcf id",
                         "CTEP ECM provided a po hcf id " + hcf.getId() + " for the org " + ctepOrgId
-                        + " but org not found in database. ECM and PO are out of synch.");
+                                + " but org not found in database. ECM and PO are out of synch.");
             }
             hcf.setPlayer(ctepOrg);
             hcf.setStatus(roleStatus);
@@ -325,15 +348,24 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             // with our copy of it with the reliability set to VRF
             hcf.getOtherIdentifiers().clear();
             hcf.getOtherIdentifiers().add(ctepOrgId);
+            hcf.setCreatedBy(ctepUser);
             this.hcfService.curate(hcf);
         }
 
+        return hcf;
+    }
+
+    private ResearchOrganization handleRoUpdate(Organization ctepOrg,
+                                                Ii ctepOrgId,
+                                                RoleStatus roleStatus,
+                                                User ctepUser)
+            throws CtepImportException, JMSException {
         ResearchOrganization ro = getCtepResearchOrganization(ctepOrgId);
         if (ro != null) {
             if (ro.getId() != null) {
-                throw new CtepImportException("org " + ctepOrgId.getExtension() + " not in po but ctep has po ro id", 
+                throw new CtepImportException("org " + ctepOrgId.getExtension() + " not in po but ctep has po ro id",
                         "CTEP provided a po ro id " + ro.getId() + " for the org " + ctepOrgId
-                        + " but org not found in database. ECM and PO are out of synch.");
+                                + " but org not found in database. ECM and PO are out of synch.");
             }
             ro.setPlayer(ctepOrg);
             ro.setStatus(roleStatus);
@@ -342,15 +374,23 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             // with our copy of it with the reliability set to VRF
             ro.getOtherIdentifiers().clear();
             ro.getOtherIdentifiers().add(ctepOrgId);
+            ro.setCreatedBy(ctepUser);
             this.roService.curate(ro);
         }
 
-        // create an identified org record
-        IdentifiedOrganization identifiedOrg = genIdentifiedOrg(hcf, ro, ctepOrgId, ctepOrg, roleStatus);
+        return ro;
+    }
 
-        this.identifiedOrgService.curate(identifiedOrg);
+    private User getCtepUser() {
+        User ctepUser = null;
 
-        return ctepOrg;
+        try {
+            ctepUser = SecurityServiceProvider.getUserProvisioningManager("po").getUser(CTEP_USER_LOGIN);
+        } catch (CSException e) {
+            LOG.warn(String.format("CTEP user with login \"%s\" was not found!", CTEP_USER_LOGIN), e);
+        }
+
+        return ctepUser;
     }
 
     private IdentifiedOrganization genIdentifiedOrg(HealthCareFacility hcf, ResearchOrganization ro, Ii assignedId,

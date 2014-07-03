@@ -80,128 +80,164 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.services.correlation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.services.correlation.HealthCareProviderDTOTest;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.data.convert.IiConverter.CorrelationIiConverter;
+import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.services.PoIsoConstraintException;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.jms.JMSException;
 
-import org.junit.After;
-import org.junit.Before;
+import org.hibernate.Session;
 import org.junit.Test;
+/**
+ * @author Scott Miller
+ *
+ */
+public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceTest<ClinicalResearchStaff> {
 
-import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
-import com.fiveamsolutions.nci.commons.audit.AuditType;
-
-public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
-
-    private HealthCareProviderServiceBean hcpServiceBean;
-
-    public HealthCareProviderServiceBean getHealthCareProviderServiceBean() {
-        return hcpServiceBean;
+    /**
+     * {@inheritDoc}
+     * @throws EntityValidationException
+     * @throws JMSException 
+     */
+    @Override
+    ClinicalResearchStaff getSampleStructuralRole() throws EntityValidationException, JMSException {
+        ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        createAndGetOrganization();
+        fillinPersonRoleFields(crs);
+        return crs;
     }
 
-    @Before
-    public void setUpData() {
-        hcpServiceBean = EjbTestHelper.getHealthCareProviderServiceBean();
-    }
-
-    @After
-    public void teardown() {
-        hcpServiceBean = null;
-    }
-
-    public HealthCareProvider getBasicHealthCareProvider() throws Exception {
-        PersonServiceBeanTest ps = new PersonServiceBeanTest();
-        ps.setDefaultCountry(getDefaultCountry());
-        ps.setUpData();
-        long personId = ps.createPerson();
-        OrganizationServiceBeanTest os = new OrganizationServiceBeanTest();
-        os.setDefaultCountry(getDefaultCountry());
-        os.setUpData();
-        long orgId = os.createOrganization();
-        HealthCareProviderDTOTest hcpdto = new HealthCareProviderDTOTest();
-        hcpdto.setUpTest();
-        hcpdto.setUpTestData();
-        HealthCareProvider hcp = (HealthCareProvider)hcpdto.getExampleTestClass();
-        hcp.setPlayer((Person) PoHibernateUtil.getCurrentSession().load(Person.class, personId));
-        hcp.setScoper((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId));
-        hcp.setId(null);
-        PoHibernateUtil.getCurrentSession().flush();
-        return hcp;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void verifyStructuralRole(ClinicalResearchStaff expected, ClinicalResearchStaff actual) {
+        verifyPersonRole(expected, actual);
     }
 
     @Test
-    public void create() throws Exception {
-        createHealthCareProvider();
+    public void testHotRoleCount() throws EntityValidationException, JMSException {
+        ClinicalResearchStaff hcf = getSampleStructuralRole();
+        ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();
+        s.create(hcf);
+        int c = s.getHotRoleCount(hcf.getPlayer());
+        assertEquals(1, c);
     }
-
-    public long createHealthCareProvider() throws Exception {
-        return createHealthCareProvider(getBasicHealthCareProvider());
-    }
-
-    protected long createHealthCareProvider(HealthCareProvider hcp) throws EntityValidationException, JMSException {
-        long id = hcpServiceBean.create(hcp);
+    
+    /**
+     * Test a simple create and get.
+     */
+    @Test
+    public void testCreateActiveFallback() throws Exception {
+        ClinicalResearchStaff hcf = getSampleStructuralRole();
+        ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();
+        s.createActiveWithFallback(hcf);
+        
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        HealthCareProvider savedHealthCareProvider = (HealthCareProvider) PoHibernateUtil.getCurrentSession().load(HealthCareProvider.class, id);
 
-        // adjust the expected value to NEW
-        hcp.setStatus(RoleStatus.PENDING);
-        verifyEquals(hcp, savedHealthCareProvider);
-        PoHibernateUtil.getCurrentSession().flush();
+        ClinicalResearchStaff retrievedRole = s.getById(hcf.getId());
+        assertEquals(RoleStatus.PENDING, retrievedRole.getStatus());
+                
+    }
+    
+    /**
+     * Test a simple create and get.
+     */
+    @Test
+    public void testCreateActiveSuccess() throws Exception {
+        final Session session = PoHibernateUtil.getCurrentSession();        
+        ClinicalResearchStaff hcf = getSampleStructuralRole();
+        
+        hcf.getScoper().setStatusCode(EntityStatus.ACTIVE);
+        session.save(hcf.getScoper());
+        hcf.getPlayer().setStatusCode(EntityStatus.ACTIVE);
+        session.save(hcf.getPlayer());
+        session.flush();
+        
+        ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();        
+        s.createActiveWithFallback(hcf);
+        
+        session.flush();
+        session.clear();
 
-        List<AuditLogRecord> alr = AuditTestUtil.find(HealthCareProvider.class, savedHealthCareProvider.getId());
-        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "certificateLicenseText", null, "testCertLicense", false);
-        return id;
+        ClinicalResearchStaff retrievedRole = s.getById(hcf.getId());
+        assertEquals(RoleStatus.ACTIVE, retrievedRole.getStatus());
+                
     }
 
     @Test
-    public void createHealthCareProviderWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws Exception {
-        HealthCareProvider hcp = getBasicHealthCareProvider();
-        hcp.setStatus(RoleStatus.NULLIFIED);
-        hcp.setCertificateLicenseText("text");
+    public void testConvertToCRS() throws Exception {
+        ClinicalResearchStaff input = getSampleStructuralRole();
+        ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();
+        s.create(input);
+        
+        CorrelationIiConverter converter = new IiConverter.CorrelationIiConverter();
 
-        long id = hcpServiceBean.create(hcp);
+        Class<ClinicalResearchStaff> returnClass = ClinicalResearchStaff.class;
+        ClinicalResearchStaff crs = converter.convert(returnClass, null);
+        assertEquals(null, crs);
 
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
+        Ii value = new Ii();
+        value.setNullFlavor(NullFlavor.NI);
+        crs = converter.convert(returnClass, value);
+        assertEquals(null, crs);
 
-        HealthCareProvider savedHealthCareProvider = hcpServiceBean.getById(id);
+        value = new Ii();
+        value.setExtension("" + input.getId());
+        try {
+            crs = converter.convert(returnClass, value);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            // expected
+        }
 
-        // adjust the expected value to NEW
-        hcp.setStatus(RoleStatus.PENDING);
-        verifyEquals(hcp, savedHealthCareProvider);
+        value.setRoot(IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
+        try {
+            crs = converter.convert(returnClass, value);
+            fail();
+        } catch (PoIsoConstraintException e) {
+            // expected
+        }
+
+        value.setIdentifierName(IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+        crs = converter.convert(returnClass, value);
+        assertEquals(input.getId(), crs.getId());
     }
 
-    private void verifyEquals(HealthCareProvider expected, HealthCareProvider found) {
-        assertEquals(expected.getId(), found.getId());
-        assertEquals(expected.getStatus(), found.getStatus());
-        assertEquals(expected.getCertificateLicenseText(), found.getCertificateLicenseText());
-
-        assertEquals(expected.getPostalAddresses().size(), found.getPostalAddresses().size());
-
-        assertEquals(expected.getEmail().size(), found.getEmail().size());
-        assertEquals(expected.getPhone().size(), found.getPhone().size());
-        assertEquals(expected.getFax().size(), found.getFax().size());
-        assertEquals(expected.getTty().size(), found.getTty().size());
-        assertEquals(expected.getUrl().size(), found.getUrl().size());
+    @Override
+    @Test(expected = EntityValidationException.class)
+    public void testUniqueConstraint() throws Exception {
+        ClinicalResearchStaff obj = getSampleStructuralRole();
+        ClinicalResearchStaff obj2 = getSampleStructuralRole();
+        //ensure player is same
+        obj.setPlayer(obj2.getPlayer());
+        //ensure scoper is same
+        obj2.setScoper(obj.getScoper());
+        getService().create(obj);
+        getService().create(obj2);
     }
 
     @Test
     public void testPhoneNotEmptyValidator() throws Exception {
-        HealthCareProvider obj = (HealthCareProvider) PoHibernateUtil.getCurrentSession().load(HealthCareProvider.class, createHealthCareProvider());
+        ClinicalResearchStaff obj = createSample();
         obj.getPlayer().setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(obj.getPlayer());
         obj.getScoper().setStatusCode(EntityStatus.ACTIVE);
@@ -211,9 +247,15 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
 
         obj.getPhone().clear();
         obj.getEmail().clear();
-        Map<String, String[]> errors = EjbTestHelper.getHealthCareProviderServiceBean().validate(obj);
+        Map<String, String[]> errors = getService().validate(obj);
         assertEquals(1, errors.size());
         assertEquals(1, errors.get("").length);
         assertNull(errors.get(null));
    }
+
+    @Override
+    ClinicalResearchStaff getNewStructuralRole() {
+        return new ClinicalResearchStaff();
+    }
+    
 }

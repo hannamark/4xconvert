@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The pa
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute 
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
  * government employees are authors, any rights in such works shall be subject 
  * to Title 17 of the United States Code, section 105. 
  *
- * This pa Software License (the License) is between NCI and You. You (or 
+ * This po Software License (the License) is between NCI and You. You (or 
  * Your) shall mean a person or an entity, and all other entities that control, 
  * are controlled by, or are under common control with the entity. Control for 
  * purposes of this definition means (i) the direct or indirect power to cause 
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described 
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up, 
  * no-charge, irrevocable, transferable and royalty-free right and license in 
- * its rights in the pa Software to (i) use, install, access, operate, 
+ * its rights in the po Software to (i) use, install, access, operate, 
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the pa Software; (ii) distribute and 
- * have distributed to and by third parties the pa Software and any 
+ * and prepare derivative works of the po Software; (ii) distribute and 
+ * have distributed to and by third parties the po Software and any 
  * modifications and derivative works thereof; and (iii) sublicense the 
  * foregoing rights set out in (i) and (ii) to third parties, including the 
  * right to license such rights to further third parties. For sake of clarity, 
@@ -80,66 +80,53 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.util;
+package gov.nih.nci.services.family;
 
-import gov.nih.nci.security.SecurityServiceProvider;
-import gov.nih.nci.security.authorization.domainobjects.User;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.convert.FamilyFunctionalTypeConverter;
+import gov.nih.nci.po.data.convert.IdConverter.FamilyOrganizationRelationshipIdConverter;
+import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 
-import gov.nih.nci.security.exceptions.CSException;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Utility class for manipulating data from the CSM user object.
- * 
- * @author Michael Visee
+ * @author mshestopalov
+ *
  */
-public class CsmUserUtil {
+public class FamilyOrganizationRelationshipDTOTest {
 
-    private static final Logger LOG = Logger.getLogger(CsmUserUtil.class);
-
-    /**
-     * Given a username string, determines if its in the grid format, returns the CN.
-     * @param gridIdentity the grid identity string.
-     * @return the username or the grid identity.
-     */
-    public static String getGridIdentityUsername(String gridIdentity) {
-        String splitString = "CN=";
-        if (StringUtils.contains(gridIdentity, splitString)) {
-            return gridIdentity.split(splitString)[1];
-        }
-        return gridIdentity;
+    FamilyOrganizationRelationshipDTO dto;
+    
+    @Before
+    public void setup() {
+        dto = new FamilyOrganizationRelationshipDTO();
+       
     }
 
-    /**
-     * Returns the displayable user name of the given user. It is Lastname, firsname if Lastname exists. It is the CN if
-     * lastname is empty.
-     * @param user The user
-     * @return The displayable user name
-     */
-    public static String getDisplayUsername(User user) {
-        if (user != null) {
-            return (StringUtils.isEmpty(user.getLastName())) ? getGridIdentityUsername(user.getLoginName()) : user
-                .getLastName() + ", " + user.getFirstName();
-
-        }
-        return null;
+    @Test
+    public void convertIdentifier() {
+        dto.setIdentifier(new FamilyOrganizationRelationshipIdConverter().convertToIi(1L));
+        FamilyOrganizationRelationship f = (FamilyOrganizationRelationship) PoXsnapshotHelper.createModel(dto);
+        assertEquals(new Long(1), f.getId());
     }
 
-    /**
-     *
-     * @param loginName The login name.
-     * @return The {@link User} for the given login name, or null if it does not exist.
-     */
-    public static User getUser(String loginName) {
-        User user = null;
-        try {
-            user = SecurityServiceProvider.getUserProvisioningManager("po").getUser(loginName);
-        } catch (CSException e) {
-            LOG.warn(String.format("User with login \"%s\" was not found!", loginName), e);
-        }
-
-        return user;
+    @Test
+    public void convertType() {
+        dto.setFunctionalType(FamilyFunctionalTypeConverter.convertToCd(FamilyFunctionalType.AFFILIATION));
+        assertEquals(FamilyFunctionalType.AFFILIATION, ((FamilyOrganizationRelationship) 
+                PoXsnapshotHelper.createModel(dto)).getFunctionalType());
     }
 
+    @Test
+    public void roundTripIdentifier() {
+        dto.setIdentifier(new FamilyOrganizationRelationshipIdConverter().convertToIi(1L));
+        FamilyOrganizationRelationship bo = (FamilyOrganizationRelationship) PoXsnapshotHelper.createModel(dto);
+        FamilyOrganizationRelationshipDTO copy = (FamilyOrganizationRelationshipDTO) PoXsnapshotHelper.createSnapshot(bo);
+        EqualsBuilder.reflectionEquals(dto.getIdentifier(), copy.getIdentifier());
+    }
 }

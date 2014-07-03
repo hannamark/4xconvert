@@ -80,140 +80,79 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.services.correlation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.HealthCareProvider;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.data.bo.Person;
-import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.services.correlation.HealthCareProviderDTOTest;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.iso21090.IdentifierReliability;
+import gov.nih.nci.iso21090.IdentifierScope;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.jms.JMSException;
-
-import org.junit.After;
-import org.junit.Before;
+import org.hibernate.validator.InvalidStateException;
 import org.junit.Test;
+/**
+ * @author Scott Miller
+ *
+ */
+public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleServiceTest<IdentifiedOrganization> {
 
-import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
-import com.fiveamsolutions.nci.commons.audit.AuditType;
+    private int ext = 0;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    IdentifiedOrganization getSampleStructuralRole() {
+        IdentifiedOrganization io = new IdentifiedOrganization();
+        io.setPlayer(basicOrganization);
+        io.setScoper(basicOrganization);
 
-public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
+        Ii ii = new Ii();
+        // we're going to set to nonsense values, to ensure that the whole type can be persisted
+        ii.setDisplayable(Boolean.TRUE);
+        ii.setExtension("myExtension" + (ext++));
+        ii.setIdentifierName("myIdName");
+        ii.setReliability(IdentifierReliability.ISS);
+        ii.setRoot("myRoot");
+        ii.setScope(IdentifierScope.BUSN);
 
-    private HealthCareProviderServiceBean hcpServiceBean;
+        io.setAssignedIdentifier(ii);
 
-    public HealthCareProviderServiceBean getHealthCareProviderServiceBean() {
-        return hcpServiceBean;
+        return io;
     }
 
-    @Before
-    public void setUpData() {
-        hcpServiceBean = EjbTestHelper.getHealthCareProviderServiceBean();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void verifyStructuralRole(IdentifiedOrganization expected, IdentifiedOrganization actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertTrue(actual.getAssignedIdentifier().getDisplayable().booleanValue());
+        assertTrue(actual.getAssignedIdentifier().getExtension().startsWith("myExtension"));
+        assertEquals("myIdName", actual.getAssignedIdentifier().getIdentifierName());
+        assertEquals(IdentifierReliability.ISS, actual.getAssignedIdentifier().getReliability());
+        assertEquals("myRoot", actual.getAssignedIdentifier().getRoot());
+        assertEquals(IdentifierScope.BUSN, actual.getAssignedIdentifier().getScope());
+        assertEquals(expected.getScoper().getId(), actual.getScoper().getId());
+        assertEquals(expected.getPlayer().getId(), actual.getPlayer().getId());
     }
 
-    @After
-    public void teardown() {
-        hcpServiceBean = null;
-    }
+    @Test(expected = InvalidStateException.class)
+    public void testUnique() throws Exception {
+        IdentifiedOrganization io1 = createSample();
+        IdentifiedOrganization io2 = createSample();
 
-    public HealthCareProvider getBasicHealthCareProvider() throws Exception {
-        PersonServiceBeanTest ps = new PersonServiceBeanTest();
-        ps.setDefaultCountry(getDefaultCountry());
-        ps.setUpData();
-        long personId = ps.createPerson();
-        OrganizationServiceBeanTest os = new OrganizationServiceBeanTest();
-        os.setDefaultCountry(getDefaultCountry());
-        os.setUpData();
-        long orgId = os.createOrganization();
-        HealthCareProviderDTOTest hcpdto = new HealthCareProviderDTOTest();
-        hcpdto.setUpTest();
-        hcpdto.setUpTestData();
-        HealthCareProvider hcp = (HealthCareProvider)hcpdto.getExampleTestClass();
-        hcp.setPlayer((Person) PoHibernateUtil.getCurrentSession().load(Person.class, personId));
-        hcp.setScoper((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId));
-        hcp.setId(null);
-        PoHibernateUtil.getCurrentSession().flush();
-        return hcp;
-    }
-
-    @Test
-    public void create() throws Exception {
-        createHealthCareProvider();
-    }
-
-    public long createHealthCareProvider() throws Exception {
-        return createHealthCareProvider(getBasicHealthCareProvider());
-    }
-
-    protected long createHealthCareProvider(HealthCareProvider hcp) throws EntityValidationException, JMSException {
-        long id = hcpServiceBean.create(hcp);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        HealthCareProvider savedHealthCareProvider = (HealthCareProvider) PoHibernateUtil.getCurrentSession().load(HealthCareProvider.class, id);
-
-        // adjust the expected value to NEW
-        hcp.setStatus(RoleStatus.PENDING);
-        verifyEquals(hcp, savedHealthCareProvider);
-        PoHibernateUtil.getCurrentSession().flush();
-
-        List<AuditLogRecord> alr = AuditTestUtil.find(HealthCareProvider.class, savedHealthCareProvider.getId());
-        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "certificateLicenseText", null, "testCertLicense", false);
-        return id;
-    }
-
-    @Test
-    public void createHealthCareProviderWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws Exception {
-        HealthCareProvider hcp = getBasicHealthCareProvider();
-        hcp.setStatus(RoleStatus.NULLIFIED);
-        hcp.setCertificateLicenseText("text");
-
-        long id = hcpServiceBean.create(hcp);
+        io1.setPlayer(io2.getPlayer());
+        io1.setScoper(io2.getScoper());
+        io1.setAssignedIdentifier(io2.getAssignedIdentifier());
 
         PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-
-        HealthCareProvider savedHealthCareProvider = hcpServiceBean.getById(id);
-
-        // adjust the expected value to NEW
-        hcp.setStatus(RoleStatus.PENDING);
-        verifyEquals(hcp, savedHealthCareProvider);
+        PoHibernateUtil.getCurrentSession().update(io1);
     }
 
-    private void verifyEquals(HealthCareProvider expected, HealthCareProvider found) {
-        assertEquals(expected.getId(), found.getId());
-        assertEquals(expected.getStatus(), found.getStatus());
-        assertEquals(expected.getCertificateLicenseText(), found.getCertificateLicenseText());
-
-        assertEquals(expected.getPostalAddresses().size(), found.getPostalAddresses().size());
-
-        assertEquals(expected.getEmail().size(), found.getEmail().size());
-        assertEquals(expected.getPhone().size(), found.getPhone().size());
-        assertEquals(expected.getFax().size(), found.getFax().size());
-        assertEquals(expected.getTty().size(), found.getTty().size());
-        assertEquals(expected.getUrl().size(), found.getUrl().size());
+    @Override
+    IdentifiedOrganization getNewStructuralRole() {
+        return new IdentifiedOrganization();
     }
-
-    @Test
-    public void testPhoneNotEmptyValidator() throws Exception {
-        HealthCareProvider obj = (HealthCareProvider) PoHibernateUtil.getCurrentSession().load(HealthCareProvider.class, createHealthCareProvider());
-        obj.getPlayer().setStatusCode(EntityStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().update(obj.getPlayer());
-        obj.getScoper().setStatusCode(EntityStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().update(obj.getScoper());
-        obj.setStatus(RoleStatus.ACTIVE);
-        PoHibernateUtil.getCurrentSession().update(obj);
-
-        obj.getPhone().clear();
-        obj.getEmail().clear();
-        Map<String, String[]> errors = EjbTestHelper.getHealthCareProviderServiceBean().validate(obj);
-        assertEquals(1, errors.size());
-        assertEquals(1, errors.get("").length);
-        assertNull(errors.get(null));
-   }
 }

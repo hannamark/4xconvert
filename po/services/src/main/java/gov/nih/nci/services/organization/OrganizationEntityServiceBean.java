@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.organization;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
@@ -103,8 +104,10 @@ import gov.nih.nci.po.service.ExtendedOrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.OrganizationSortCriterion;
+import gov.nih.nci.po.util.CsmUserUtil;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.Utils;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
@@ -194,6 +197,9 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     public Ii createOrganization(OrganizationDTO org) throws EntityValidationException, CurationException {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(org);
         try {
+            //set createdby
+            User currentUser = CsmUserUtil.getUser(UsernameHolder.getUser());
+            orgBO.setCreatedBy(currentUser);
             return new OrgIdConverter().convertToIi(orgService.create(orgBO));
         } catch (JMSException e) {
             LOG.error("Problem is JMS, unable to complete requst to create data.", e);

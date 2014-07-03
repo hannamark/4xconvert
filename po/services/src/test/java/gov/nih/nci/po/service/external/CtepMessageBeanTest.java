@@ -15,7 +15,7 @@ import gov.nih.nci.po.service.AbstractServiceBeanTest;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareFacilityServiceBean;
-import gov.nih.nci.po.service.correlation.HealthCareFacilityServiceTest;
+import gov.nih.nci.services.correlation.HealthCareFacilityServiceTest;
 import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.service.external.CtepMessageBean.RecordType;
 import gov.nih.nci.po.service.external.CtepMessageBean.TransactionType;
