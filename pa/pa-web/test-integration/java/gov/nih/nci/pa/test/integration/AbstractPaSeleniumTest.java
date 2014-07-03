@@ -916,6 +916,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + orgName + "' limit 1", new ArrayHandler())[0];
         
     }
+    
+    protected Number getTrialIdByNct(String nctID) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (Number) runner
+                .query(connection,
+                        "select study_protocol_identifier from rv_trial_id_nct where local_sp_indentifier='"
+                                + nctID + "'", new ArrayHandler())[0];
+    }
 
     private void addDWS(TrialInfo info, String status) throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -951,6 +959,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + " (select * from study_site ss where ss.study_protocol_identifier=study_protocol.identifier and ss.local_sp_indentifier='"
                 + nctID + "')";
         runner.update(connection, sql);
+        
+        runner.update(connection, "delete from study_site where local_sp_indentifier='"+nctID+"'");
     }
 
     public static final class TrialInfo {

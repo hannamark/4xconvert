@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -35,6 +36,7 @@ public class TrialRegistrationServiceTest extends AbstractPaSeleniumTest {
 
     @SuppressWarnings("deprecation")
     private DefaultHttpClient httpClient = null;
+    private AuthScope authScope;
 
     private String baseURL = "";
 
@@ -45,7 +47,7 @@ public class TrialRegistrationServiceTest extends AbstractPaSeleniumTest {
         super.setUp();
         httpClient = new DefaultHttpClient();
 
-        AuthScope authScope = new AuthScope(TestProperties.getServerHostname(),
+        authScope = new AuthScope(TestProperties.getServerHostname(),
                 TestProperties.getServerPort());
         Credentials credentials = new UsernamePasswordCredentials(
                 "submitter-ci", "Coppa#12345");
@@ -54,6 +56,84 @@ public class TrialRegistrationServiceTest extends AbstractPaSeleniumTest {
 
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/services";
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testInvalidCredentials() throws Exception {
+        Credentials credentials = new UsernamePasswordCredentials(
+                "nonexistentuserfortesting", "nonexistentuserfortesting");
+        httpClient.getCredentialsProvider().setCredentials(authScope,
+                credentials);
+        String url = baseURL + "/registration/abbreviated/NCT01721876";
+
+        HttpPost req = new HttpPost(url);
+        req.addHeader("Accept", APPLICATION_XML);
+        HttpResponse response = httpClient.execute(req);
+        assertEquals(401, getReponseCode(response));
+        assertNull(response.getFirstHeader("Set-Cookie"));
+
+    }
+
+    @Test
+    public void testValidCredentialsButNoRole() throws Exception {
+        Credentials credentials = new UsernamePasswordCredentials("curator",
+                "Coppa#12345");
+        httpClient.getCredentialsProvider().setCredentials(authScope,
+                credentials);
+        String url = baseURL + "/registration/abbreviated/NCT01721876";
+
+        HttpPost req = new HttpPost(url);
+        req.addHeader("Accept", APPLICATION_XML);
+        HttpResponse response = httpClient.execute(req);
+        assertEquals(401, getReponseCode(response));
+        assertNull(response.getFirstHeader("Set-Cookie"));
+
+    }
+
+    @Test
+    public void testNctValidation() throws Exception {
+        String url = baseURL + "/registration/abbreviated/%20";
+        HttpPost req = new HttpPost(url);
+        req.addHeader("Accept", APPLICATION_XML);
+        HttpResponse response = httpClient.execute(req);
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
+        assertEquals(400, getReponseCode(response));
+        assertEquals("Please provide an ClinicalTrials.gov Identifier value.",
+                IOUtils.toString(response.getEntity().getContent()));
+
+        url = baseURL + "/registration/abbreviated/NCT_0124232";
+        req = new HttpPost(url);
+        req.addHeader("Accept", APPLICATION_XML);
+        response = httpClient.execute(req);
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
+        assertEquals(400, getReponseCode(response));
+        assertEquals("Provided ClinicalTrials.gov Identifer is invalid.",
+                IOUtils.toString(response.getEntity().getContent()));
+
+        url = baseURL + "/registration/abbreviated/NCT2834908239048";
+        req = new HttpPost(url);
+        req.addHeader("Accept", APPLICATION_XML);
+        response = httpClient.execute(req);
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
+        assertEquals(404, getReponseCode(response));
+        assertEquals(
+                "A study with the given identifier is not found in ClinicalTrials.gov.",
+                IOUtils.toString(response.getEntity().getContent()));
+
+        String nctID = "NCT01920308";
+        deactivateTrialByNctId(nctID);
+        importByNctIdViaService(nctID);
+        url = baseURL + "/registration/abbreviated/" + nctID;
+        req = new HttpPost(url);
+        req.addHeader("Accept", APPLICATION_XML);
+        response = httpClient.execute(req);
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
+        assertEquals(412, getReponseCode(response));
+        assertEquals(
+                "A study with the given identifier already exists in CTRP.",
+                IOUtils.toString(response.getEntity().getContent()));
 
     }
 
@@ -103,7 +183,7 @@ public class TrialRegistrationServiceTest extends AbstractPaSeleniumTest {
 
     private void importByNctIdViaService(String nctID)
             throws ClientProtocolException, IOException, ParseException,
-            JAXBException {
+            JAXBException, SQLException {
         String url = baseURL + "/registration/abbreviated/" + nctID;
 
         HttpPost req = new HttpPost(url);
@@ -115,8 +195,10 @@ public class TrialRegistrationServiceTest extends AbstractPaSeleniumTest {
 
         assertEquals(200, getReponseCode(response));
         assertEquals(APPLICATION_XML, getResponseContentType(response));
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
         assertTrue(StringUtils.isNotBlank(conf.getNciTrialID()));
         assertNotNull(conf.getPaTrialID());
+        assertEquals(getTrialIdByNct(nctID).longValue(), conf.getPaTrialID());
 
     }
 
