@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION populate_createdby() RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION populate_createdby2() RETURNS VOID AS $$
     DECLARE    
         created_by_user_id INTEGER;             
         org_id INTEGER; 
@@ -109,7 +109,7 @@ CREATE OR REPLACE FUNCTION populate_createdby() RETURNS VOID AS $$
     END;
 $$ LANGUAGE plpgsql;
 
-select populate_createdby();
+select populate_createdby2();
 
 -- drop this functions as this is meant for temporary used only
-DROP FUNCTION populate_createdby();
+DROP FUNCTION populate_createdby2();
