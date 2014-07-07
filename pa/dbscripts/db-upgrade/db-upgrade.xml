@@ -1607,5 +1607,9 @@
      <changeSet id="PO-6887-2" author="krylovd">
         <comment>Populating study_inbox_id of ctgovimport_log.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6887-2.sql"/>
-     </changeSet>     
+     </changeSet>  
+     <changeSet id="PO-6316" author="Reshma">
+        <comment>Update pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-6316.sql"/>
+     </changeSet>   
 </databaseChangeLog>
