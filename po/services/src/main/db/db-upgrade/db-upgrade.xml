@@ -212,8 +212,8 @@
        <comment>Changes to set 'createdBy' for CTEP created Org/Roles</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/4.1/PO-7707.sql"/>       
     </changeSet>    
-    <changeSet id="PO-7741" author="Rohit" runOnChange="true">
+    <!-- <changeSet id="PO-7741" author="Rohit" runOnChange="true">
        <comment>Changes to set 'createdBy' for legacy entity</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/4.1/PO-7741.sql"/>       
-    </changeSet>
+    </changeSet> -->
 </databaseChangeLog>
