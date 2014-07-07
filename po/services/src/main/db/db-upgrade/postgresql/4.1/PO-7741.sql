@@ -15,19 +15,8 @@ CREATE OR REPLACE FUNCTION populate_createdby3() RETURNS VOID AS $$
     BEGIN               
      
 	 -- Step 1: Create a temp table 'auditlogrecord_temp2'
-     CREATE TABLE auditlogrecord_temp2
-        (
-        id bigint NOT NULL,
-        username character varying(100) NOT NULL,
-        entityname character varying(254) NOT NULL,
-        entityid bigint NOT NULL,
-        createddate timestamp without time zone NOT NULL,
-        transactionid bigint NOT NULL,
-        type character varying(255) NOT NULL
-        );
-
-    CREATE INDEX auditlog_temp_index ON auditlogrecord_temp2 USING btree (entityid);
-
+    CREATE TEMPORARY TABLE auditlogrecord_temp2 (LIKE auditlogrecord INCLUDING DEFAULTS);
+    
     -- Step 2: Load data into 'auditlogrecord_temp2' from 'auditlogrecord' table
     insert into auditlogrecord_temp2 (id,type,username,entityname,entityid,createddate,transactionid)
 	select id,type,username,entityname,entityid,createddate,transactionid from auditlogrecord where type ='INSERT' 
@@ -103,8 +92,7 @@ CREATE OR REPLACE FUNCTION populate_createdby3() RETURNS VOID AS $$
         END LOOP;
 
         
-    -- Step4: Drop the temp table
-        drop table auditlogrecord_temp2;
+   
            
     END;
 $$ LANGUAGE plpgsql;
