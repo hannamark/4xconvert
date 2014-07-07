@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog logicalFilePath="/tmp/po/db-upgrade.xml"
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
-    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
     <preConditions>
         <dbms type="postgresql" />
     </preConditions>
@@ -212,8 +212,8 @@
        <comment>Changes to set 'createdBy' for CTEP created Org/Roles</comment>
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/4.1/PO-7707.sql"/>       
     </changeSet>    
-    <!-- <changeSet id="PO-7741" author="Rohit" runOnChange="true">
+    <changeSet id="PO-7741" author="Rohit" runOnChange="true" runInTransaction="false">
        <comment>Changes to set 'createdBy' for legacy entity</comment>
-       <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/4.1/PO-7741.sql"/>       
-    </changeSet> -->
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/4.1/PO-7741.sql"/>       
+    </changeSet>
 </databaseChangeLog>
