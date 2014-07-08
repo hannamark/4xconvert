@@ -11,19 +11,19 @@
 
     <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="wsa.xsd"/>
 
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd">
-        <xs:annotation>
-            <xs:documentation>
-                Get access to the xml: attribute groups for xml:lang as declared on 'schema'
-                and 'documentation' below
-            </xs:documentation>
-            <xs:appinfo>
-                <jaxb:schemaBindings>
-                    <jaxb:package name="gov.nih.nci.coppa.po.faults"/>
-                </jaxb:schemaBindings>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:import>
+    <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+
+    <xs:annotation>
+        <xs:documentation>
+            Get access to the xml: attribute groups for xml:lang as declared on 'schema'
+            and 'documentation' below
+        </xs:documentation>
+        <xs:appinfo>
+            <jaxb:schemaBindings>
+                <jaxb:package name="gov.nih.nci.coppa.po.faults"/>
+            </jaxb:schemaBindings>
+        </xs:appinfo>
+    </xs:annotation>
 
     <xs:complexType name="StringMapType">
 		<xs:sequence>
