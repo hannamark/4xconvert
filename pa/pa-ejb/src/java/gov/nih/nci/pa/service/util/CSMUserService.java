@@ -422,4 +422,13 @@ public class CSMUserService implements CSMUserUtil {
         }
         return false;
     }
+    
+    public static boolean isCurrentUserRegAdmin() throws PAException {
+        CSMUserUtil ins = getInstance();
+        User user = ins.getCSMUser(UsernameHolder.getUser());
+        if (user != null) {
+            return ins.isUserInGroup(user.getLoginName(), "RegAdmin");
+        }
+        return false;
+    }
 }
