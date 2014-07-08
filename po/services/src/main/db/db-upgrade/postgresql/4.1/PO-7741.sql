@@ -10,6 +10,9 @@ insert into auditlogrecord_temp (id,type,username,entityname,entityid,createddat
 insert into auditlogrecord_temp (id,type,username,entityname,entityid,createddate,transactionid)
    select id,type,replace(username,'pauser||',''),entityname,entityid,createddate,transactionid from auditlogrecord_022713 where type ='INSERT' 
     and entityname in ('Organization','HealthCareFacility','ResearchOrganization','OversightCommittee','IdentifiedOrganization','Person','ClinicalResearchStaff','HealthCareProvider','OrganizationalContact','IdentifiedPerson');
+    
+update auditlogrecord_temp set username='/o=cabig/ou=cagrid/ou=loa1/ou=nci/cn=brucheyks' where username like '%brucheyk%';      
+update auditlogrecord_temp set username='/o=cabig/ou=cagrid/ou=loa1/ou=nci/cn=mamuadr' where username like '%mamuadr%';
 
 CREATE INDEX auditlog_temp_index01 ON auditlogrecord_temp (entityid, entityname);    
     
