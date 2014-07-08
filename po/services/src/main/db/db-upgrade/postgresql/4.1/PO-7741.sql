@@ -3,12 +3,12 @@ CREATE TABLE IF NOT EXISTS auditlogrecord_022713 (LIKE auditlogrecord INCLUDING 
     
     
 insert into auditlogrecord_temp (id,type,username,entityname,entityid,createddate,transactionid)
-	select id,type,username,entityname,entityid,createddate,transactionid from auditlogrecord where type ='INSERT' 
+	select id,type,replace(username,'pauser||',''),entityname,entityid,createddate,transactionid from auditlogrecord where type ='INSERT' 
 	   and entityname in ('Organization','HealthCareFacility','ResearchOrganization','OversightCommittee','IdentifiedOrganization','Person','ClinicalResearchStaff','HealthCareProvider','OrganizationalContact','IdentifiedPerson');
 
 
 insert into auditlogrecord_temp (id,type,username,entityname,entityid,createddate,transactionid)
-   select id,type,username,entityname,entityid,createddate,transactionid from auditlogrecord_022713 where type ='INSERT' 
+   select id,type,replace(username,'pauser||',''),entityname,entityid,createddate,transactionid from auditlogrecord_022713 where type ='INSERT' 
     and entityname in ('Organization','HealthCareFacility','ResearchOrganization','OversightCommittee','IdentifiedOrganization','Person','ClinicalResearchStaff','HealthCareProvider','OrganizationalContact','IdentifiedPerson');
 
 CREATE INDEX auditlog_temp_index01 ON auditlogrecord_temp (entityid, entityname);    
