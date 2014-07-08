@@ -213,6 +213,9 @@
        <sqlFile splitStatements="false" path="${db-upgrade.run.dir}/postgresql/4.1/PO-7707.sql"/>       
     </changeSet>    
     <changeSet id="PO-7741" author="Rohit" runOnChange="true" runInTransaction="false">
+       <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="PostgreSQL 9">select substring(version() from 1 for 12)</sqlCheck>
+       </preConditions>    
        <comment>Changes to set 'createdBy' for legacy entity</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/4.1/PO-7741.sql"/>       
     </changeSet>
