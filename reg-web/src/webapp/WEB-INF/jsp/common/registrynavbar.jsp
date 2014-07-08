@@ -33,11 +33,15 @@
               <li><a href="${pageContext.request.contextPath}/protected/submitProprietaryTrialinputNct.action?sum4FundingCatCode=Industrial">Industrial/Other<i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.regtrial_industrial" />" data-placement="right" data-trigger="hover" data-toggle="modal" data-target=".bs-modal-lg"></i></a></li>
               <li><a href="#" data-toggle="modal" data-target="#myModal">View Category Definitions</a></li>
               <li><a href="${pageContext.request.contextPath}/protected/addSites.action">Add Sites</a></li>
+              <s:set name="isUserRegAdmin" value="@gov.nih.nci.pa.service.util.CSMUserService@isCurrentUserRegAdmin()" scope="page" />
+              <c:if test="${isUserRegAdmin}">
               <li class="batch">
                 <button type="button" class="btn btn-icon btn-sm btn-default" onclick="displayBatchUpload();"><i class="fa-upload"></i> Batch Upload</button>
               </li>
+              </c:if>
             </ul>
           </li>
+          <s:set name="isUserRegAdmin" value="@gov.nih.nci.pa.service.util.CSMUserService@isCurrentUserRegAdmin()" scope="page" />
           <c:if test="${sessionScope.isSiteAdmin}">
 	          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration <b class="caret"></b></a>
 	            <ul class="dropdown-menu">
