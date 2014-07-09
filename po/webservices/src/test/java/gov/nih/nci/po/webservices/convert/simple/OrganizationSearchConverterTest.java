@@ -109,7 +109,7 @@ public class OrganizationSearchConverterTest extends
         Assert.assertEquals(osDto.getFamilyName(), retOsRes.getFamilyName());
         Assert.assertEquals(osDto.getRoCtepId(), retOsRes.getRoCtepID());
         Assert.assertEquals(osDto.getHcfCtepId(), retOsRes.getHcfCtepID());
-        Assert.assertEquals(osDto.getIoCtepId(), retOsRes.getIoCtepId());
+        Assert.assertEquals(osDto.getIoCtepId(), retOsRes.getOrgCtepId());
         Assert.assertEquals(osDto.getPendingROs(), retOsRes.getPendingROs());
         Assert.assertEquals(osDto.getPendingHCFs(), retOsRes.getPendingHCFs());
         Assert.assertTrue(PoWSUtil.areSameDates(retOsRes.getStatusDate(),

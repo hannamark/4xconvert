@@ -86,10 +86,12 @@ import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 
 import javax.ejb.Local;
+import javax.jms.JMSException;
 
 
 /**
  * @author Scott Miller
+ * @author Rohit Gupta
  *
  */
 @Local
@@ -102,4 +104,14 @@ public interface IdentifiedOrganizationServiceLocal extends
      * @return the count of roles that need attention.
      */
     int getHotRoleCount(Organization org);
+    
+    /**
+     * This method is used to set the CTEP ID in an Organization.
+     * @param org Organization
+     * @param ctepId CTEP ID to be set
+     * @throws JMSException JMSException
+     * @throws EntityValidationException EntityValidationException
+     * @return Organization Organization
+     */
+    Organization setOrgCtepId(Organization org, String ctepId) throws JMSException, EntityValidationException;
 }

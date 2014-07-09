@@ -1,7 +1,16 @@
 package gov.nih.nci.po.webservices.service.simple;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
@@ -12,8 +21,8 @@ import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
-import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.util.PoConstants;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.webservices.service.AbstractEndpointTest;
 import gov.nih.nci.po.webservices.service.bo.HealthCareFacilityBoService;
 import gov.nih.nci.po.webservices.service.bo.OrganizationBoService;
@@ -35,31 +44,30 @@ import gov.nih.nci.po.webservices.types.OversightCommittee;
 import gov.nih.nci.po.webservices.types.OversightCommitteeType;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.types.ResearchOrganizationType;
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
-import javax.jms.JMSException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import javax.jms.JMSException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * This is the test class for OrganizationServiceImpl.
@@ -67,9 +75,12 @@ import static org.mockito.Mockito.when;
  * @author Rohit Gupta
  * 
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(PoServiceUtil.class)
 public class OrganizationServiceTest extends AbstractEndpointTest {
 
     private gov.nih.nci.po.webservices.types.Organization org;
+    private gov.nih.nci.po.data.bo.Organization ctep;
     private gov.nih.nci.po.webservices.types.OrganizationSearchCriteria osCriteria;
     private OrganizationServiceImpl orgService;
     private OrganizationBoService organizationBoService;
@@ -84,6 +95,11 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         when(serviceLocator.getCountryService().getCountryByAlpha3("USA")).thenReturn(ModelUtils.getDefaultCountry());
 
         initBoServices();
+        
+        ctep = ModelUtils.getBasicOrganization();
+        ctep.setId(1L);
+        mockStatic(PoServiceUtil.class);
+        PowerMockito.when(PoServiceUtil.getCtepOrganization()).thenReturn(ctep);
 
         // setting up gov.nih.nci.po.webservices.types.Organization
         org = new Organization();
@@ -121,7 +137,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
     @Test
     public void testcreateOrganization() throws JMSException, EntityValidationException {
 
-        when(organizationBoService.create(any(gov.nih.nci.po.data.bo.Organization.class)))
+        when(organizationBoService.create(any(gov.nih.nci.po.data.bo.Organization.class), anyString()))
                 .thenReturn(1L);
 
         when(organizationBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.Organization>() {
@@ -158,7 +174,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
     @Test(expected = ServiceException.class)
     public void testcreateOrganizationEntityValidationExceptionScenario()
             throws EntityValidationException, JMSException {
-        when(organizationBoService.create(isA(gov.nih.nci.po.data.bo.Organization.class)))
+        when(organizationBoService.create(isA(gov.nih.nci.po.data.bo.Organization.class), anyString()))
                 .thenThrow(
                         new EntityValidationException(
                                 "EntityValidationException Occured while creating the organization.",
@@ -173,7 +189,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
     @Test(expected = ServiceException.class)
     public void testcreateOrganizationForExceptionScenario()
             throws EntityValidationException, JMSException {
-        when(organizationBoService.create(isA(gov.nih.nci.po.data.bo.Organization.class)))
+        when(organizationBoService.create(isA(gov.nih.nci.po.data.bo.Organization.class), anyString()))
                 .thenThrow(
                         new ServiceException(
                                 "Exception Occured while creating the organization.",
@@ -232,17 +248,18 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
      * Testcase for OrganizationService-updateOrganization-Exception Scenario
      * 
      * @throws JMSException
+     * @throws EntityValidationException 
      */
     @Test(expected = ServiceException.class)
     public void testUpdateOrganizationForExceptionScenario()
-            throws JMSException {
+            throws JMSException, EntityValidationException {
         org.setId(1l);
 
         gov.nih.nci.po.data.bo.Organization instance = ModelUtils.getBasicOrganization();
         instance.setId(1L);
 
         doThrow(new RuntimeException())
-                .when(organizationBoService).curate(any(gov.nih.nci.po.data.bo.Organization.class));
+                .when(organizationBoService).curate(any(gov.nih.nci.po.data.bo.Organization.class), anyString());
 
         when(organizationBoService.getById(1L)).thenReturn(instance);
 

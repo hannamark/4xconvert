@@ -85,17 +85,42 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.util.PoRegistry;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Change Request (CR) management interface.
  * @author gax
+ * @author Rohit Gupta
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class OrganizationCRServiceBean extends AbstractCRServiceBean<OrganizationCR, Organization>
         implements OrganizationCRServiceLocal {
+    
+    @EJB
+    private IdentifiedOrganizationServiceLocal idenOrgServ;
+
+    @Override
+    public long create(OrganizationCR orgCR, String ctepId)
+            throws EntityValidationException, JMSException {
+        // Step 1: create a CR
+        long crId = super.create(orgCR);
+        
+        // Step2: if CtepId is not blank then update/create it
+        if (StringUtils.isNotBlank(ctepId)) {     
+            Organization org = PoRegistry.getOrganizationService().getById(orgCR.getTarget().getId());
+            // set the CTEP ID in the Org
+            idenOrgServ.setOrgCtepId(org, ctepId);
+        }        
+        
+        return crId;
+    }
 }

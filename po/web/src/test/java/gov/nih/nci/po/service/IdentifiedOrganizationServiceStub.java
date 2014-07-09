@@ -67,4 +67,13 @@ public class IdentifiedOrganizationServiceStub implements IdentifiedOrganization
                
     }
 
+    @Override
+    public Organization setOrgCtepId(Organization org, String ctepId)
+            throws JMSException, EntityValidationException {
+       
+        return null;
+    }
+
+    
+
 }

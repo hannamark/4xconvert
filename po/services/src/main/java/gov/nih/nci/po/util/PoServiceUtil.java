@@ -1,20 +1,24 @@
 package gov.nih.nci.po.util;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * This is a Utility class for po-service project which has common utility
@@ -143,6 +147,38 @@ public class PoServiceUtil {
         
         // User didn't Overrode/Create the entity, so its not Editable
         return isEditable; 
+    }
+    
+    
+    /**
+     * This method is used to create a new IdentifiedOrganization object using the
+     * passed parameters.
+     * @param ctepId CTEP ID
+     * @param organization Organization
+     * @param setCtepId true if CTEP ID is to be set
+     * @return IdentifiedOrganization new IdentifiedOrganization object 
+     */
+    public static IdentifiedOrganization getNewIdentifiedOrganizationObject(String ctepId,
+            gov.nih.nci.po.data.bo.Organization organization,
+            boolean setCtepId) {
+        
+        // get the Organization representing "CTEP"
+        Organization ctepOrg = getCtepOrganization();
+        
+        gov.nih.nci.iso21090.Ii assIden = new gov.nih.nci.iso21090.Ii();
+        assIden.setRoot(PoConstants.ORG_CTEP_ID_ROOT);
+        assIden.setIdentifierName(PoConstants.ORG_CTEP_ID_IDENTIFIER_NAME);
+        if (setCtepId) {
+            assIden.setExtension(ctepId);
+        }
+        IdentifiedOrganization idenOrg = new IdentifiedOrganization();
+        idenOrg.setAssignedIdentifier(assIden);
+        idenOrg.setPlayer(organization);
+        idenOrg.setScoper(ctepOrg);
+        // set bi-directional association b/w org & idenorg
+        organization.getIdentifiedOrganizations().add(idenOrg);
+
+        return idenOrg;
     }
 
 

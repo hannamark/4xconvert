@@ -1,6 +1,8 @@
 package gov.nih.nci.po.webservices.service.simple.soap;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.test.TestUtils;
 import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.po.webservices.service.simple.AbstractOrganizationServiceTest;
@@ -44,24 +46,21 @@ import gov.nih.nci.po.webservices.types.OversightCommitteeType;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.types.ResearchOrganizationType;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import java.net.URL;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
-import java.net.URL;
-import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
+import org.junit.After;
 import org.junit.Assert;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This is an Integration test class for OrganizationService(SOAP).
@@ -124,6 +123,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     @Test
     public void testCreateOrganization() {
         CreateOrganizationRequest request = new CreateOrganizationRequest();
+        org.setCtepId("123435");
         request.setOrganization(org);
         CreateOrganizationResponse response = orgService
                 .createOrganization(request);
@@ -188,7 +188,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         }
 
         Assert.assertTrue(excepMessage
-                .contains("One of \'{\"gov.nih.nci.po.webservices.types\":address}' is expected"));
+                .contains("gov.nih.nci.po.webservices.types\":address}' is expected"));
 
     }
 
@@ -237,6 +237,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
         createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
+        createdOrg.setCtepId("111111111");
 
         // now update the created organization
         UpdateOrganizationRequest updateRequest = new UpdateOrganizationRequest();
@@ -527,6 +528,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
 
         // create an organization first
         CreateOrganizationRequest request = new CreateOrganizationRequest();
+        org.setCtepId("22222222222222");
         request.setOrganization(org);
         CreateOrganizationResponse response = orgService
                 .createOrganization(request);
@@ -543,6 +545,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertEquals(EntityStatus.PENDING.value(), retOrg.getStatus()
                 .value());
         Assert.assertEquals(createdOrg.getId(), retOrg.getId());
+        assertEquals(createdOrg.getCtepId(), retOrg.getCtepId());
     }
 
     /**
@@ -794,7 +797,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 createdOrgPresent = true;
                 Assert.assertEquals(hcfCtepId, osr.getHcfCtepID());
                 Assert.assertTrue(StringUtils.isBlank(osr.getRoCtepID())); // RO CTEP ID was not set
-                Assert.assertTrue(StringUtils.isBlank(osr.getIoCtepId())); // IO CTEP ID was not set
+                Assert.assertTrue(StringUtils.isBlank(osr.getOrgCtepId())); // IO CTEP ID was not set
             }
         }
         if (!createdOrgPresent) {
@@ -827,7 +830,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 createdOrgPresent = true;
                 Assert.assertEquals(roCtepId, osr.getRoCtepID());
                 Assert.assertEquals(hcfCtepId, osr.getHcfCtepID()); // HCF CTEP ID was set above
-                Assert.assertTrue(StringUtils.isBlank(osr.getIoCtepId())); // IO CTEP ID was not set
+                Assert.assertTrue(StringUtils.isBlank(osr.getOrgCtepId())); // IO CTEP ID was not set
             }
         }
         if (!createdOrgPresent) {
@@ -852,7 +855,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
             // also check that the collection contain just created Org
             if (osr.getId() == createdOrg.getId()) {
                 createdOrgPresent = true;
-                Assert.assertEquals(ioCtepId, osr.getIoCtepId()); 
+                Assert.assertEquals(ioCtepId, osr.getOrgCtepId()); 
                 Assert.assertEquals(roCtepId, osr.getRoCtepID()); // RO CTEP ID was set above
                 Assert.assertEquals(hcfCtepId, osr.getHcfCtepID()); // HCF CTEP ID was set above
             }

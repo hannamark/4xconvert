@@ -114,6 +114,15 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @throws JMSException if JMS fails
      */
     long create(Organization org) throws EntityValidationException, JMSException;
+    
+    /**
+     * @param org new organization
+     * @param ctepId ctepId to be set
+     * @return id
+     * @throws EntityValidationException if validation fails
+     * @throws JMSException if JMS fails
+     */
+    long create(Organization org, String ctepId) throws EntityValidationException, JMSException;
 
     /**
      * @param id db id to get
@@ -133,6 +142,15 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      * @throws JMSException if problem occurred publishing the announcement message for updates.
      */
     void curate(Organization curatedOrg) throws JMSException;
+    
+    /**
+     * @param curatedOrg method to curate/accept Organization's w/ EntityStatus.NEW and transition to
+     *            EntityStatus.ACTIVE
+     * @param ctepId ctepId to be set            
+     * @throws EntityValidationException if validation fails 
+     * @throws JMSException if problem occurred publishing the announcement message for updates.
+     */
+    void curate(Organization curatedOrg, String ctepId) throws EntityValidationException, JMSException;
     
     /**
      * 

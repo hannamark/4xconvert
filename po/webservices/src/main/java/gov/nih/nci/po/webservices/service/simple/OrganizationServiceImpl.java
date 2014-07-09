@@ -3,11 +3,13 @@ package gov.nih.nci.po.webservices.service.simple;
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.util.PoConstants;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.webservices.convert.simple.Converters;
 import gov.nih.nci.po.webservices.convert.simple.HealthCareFacilityConverter;
 import gov.nih.nci.po.webservices.convert.simple.OrganizationConverter;
@@ -29,6 +31,7 @@ import gov.nih.nci.po.webservices.types.OrganizationSearchResult;
 import gov.nih.nci.po.webservices.types.OversightCommittee;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -36,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -86,13 +90,23 @@ public class OrganizationServiceImpl implements OrganizationService {
 
         gov.nih.nci.po.data.bo.Organization orgBo = null;
         long retOrgId = -1;
+        String ctepId = organization.getCtepId();
+        gov.nih.nci.po.data.bo.Organization ctepOrgBo = null;
         try {
+            if (StringUtils.isNotBlank(ctepId)) {
+                // get the Organization representing "CTEP"
+                ctepOrgBo = PoServiceUtil.getCtepOrganization();
+                if (ctepOrgBo == null) {
+                    LOG.error("Organization couldn't be created as CTEP Organization is not found.");
+                    throw new ServiceException("Organization couldn't be created as CTEP Organization is not found.");
+                }
+            }
             // get the corresponding BO object
-            OrganizationConverter oConverter = Converters
-                    .get(OrganizationConverter.class);
+            OrganizationConverter oConverter = Converters.get(OrganizationConverter.class);
             orgBo = oConverter.convertFromJaxbToBO(organization);
-
-            retOrgId = organizationBoService.create(orgBo);
+            
+            // call the BO service method
+            retOrgId = organizationBoService.create(orgBo, ctepId);
         } catch (EntityValidationException e) {
             LOG.error("Organization couldn't be created as data is invalid.", e);
             throw new ServiceException(
@@ -115,14 +129,24 @@ public class OrganizationServiceImpl implements OrganizationService {
         validateUpdateOrgReqAndGetExistingOrg(organization);
 
         gov.nih.nci.po.data.bo.Organization inOrgBo = null;
+        String ctepId = organization.getCtepId();
+        gov.nih.nci.po.data.bo.Organization ctepOrgBo = null;
         try {
+            if (StringUtils.isNotBlank(ctepId)) {
+                // get the Organization representing "CTEP"
+                ctepOrgBo = PoServiceUtil.getCtepOrganization();
+                if (ctepOrgBo == null) {
+                    LOG.error("Organization couldn't be updated as CTEP Organization is not found.");
+                    throw new ServiceException("Organization couldn't be updated as CTEP Organization is not found.");
+                }
+            }
             // get the corresponding BO object
             OrganizationConverter oConverter = Converters
                     .get(OrganizationConverter.class);
             inOrgBo = oConverter.convertFromJaxbToBO(organization);
 
-            // call the EJB service method to update the Organization
-            organizationBoService.curate(inOrgBo);
+            // call the BO service method
+            organizationBoService.curate(inOrgBo, ctepId);
         } catch (ServiceException e) {
             LOG.error(
                     "Exception occured while updating the organization having Id "

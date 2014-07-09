@@ -85,14 +85,22 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.util.PoServiceUtil;
+
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
 /**
  * @author Scott Miller
+ * @author Rohit Gupta
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -114,5 +122,35 @@ public class IdentifiedOrganizationServiceBean extends AbstractCuratableServiceB
      */
     public int getHotRoleCount(Organization org) {
         return super.getHotRoleCount(org.getId(), IdentifiedOrganization.class);
+    }
+
+    @Override
+    public Organization setOrgCtepId(Organization org, String ctepId) throws JMSException, EntityValidationException {
+
+        // populate SearchCriteria to search the existing CtepId Record
+        // don't set CtepId during search
+        IdentifiedOrganization idenOrg = PoServiceUtil.getNewIdentifiedOrganizationObject(ctepId, org, false);
+        SearchCriteria<IdentifiedOrganization> searchCriteria = 
+                new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(idenOrg);
+
+        // search for existing CtepId Record
+        List<IdentifiedOrganization> identifiedOrgs = search(searchCriteria);
+
+        // if existing CtepId record found, then update it
+        if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
+            idenOrg = identifiedOrgs.get(0);
+            idenOrg.getAssignedIdentifier().setExtension(ctepId);           
+            curate(idenOrg);                     
+        } else {
+            // If there is existing CtepId, then create new
+            idenOrg.getAssignedIdentifier().setExtension(ctepId);
+            create(idenOrg);
+        }
+        
+        // set bi-directional association b/w org & idenorg
+        org.getIdentifiedOrganizations().clear();
+        org.getIdentifiedOrganizations().add(idenOrg);    
+        
+        return org;
     }
 }

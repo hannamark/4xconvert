@@ -138,6 +138,7 @@ public class OrganizationRESTServiceTest extends
      */
     @Test
     public void testCreateOrganization() throws Exception {
+        org.setCtepId("111111111");
         StringWriter writer = marshalOrganization(org);
         String url = osUrl + "/organization";
 
@@ -170,7 +171,7 @@ public class OrganizationRESTServiceTest extends
         Assert.assertNotNull(retOrg.getId());
         checkOrganizationDetails(org.getName(), org, retOrg,
                 "my.email@mayoclinic.org", "571-456-1245", "571-456-1278",
-                "571-123-1123", "http://www.mayoclinic.org");
+                "571-123-1123", "http://www.mayoclinic.org");        
     }
 
     /**
@@ -178,6 +179,7 @@ public class OrganizationRESTServiceTest extends
      */
     @Test
     public void testCreateOrganization_JSON() throws Exception {
+        org.setCtepId("111111111");
         String url = osUrl + "/organization";
         HttpPost postRequest = new HttpPost(url);
         postRequest.addHeader("content-type", APPLICATION_JSON);
@@ -411,6 +413,7 @@ public class OrganizationRESTServiceTest extends
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
         createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
+        createdOrg.setCtepId("22222222222");        
 
         // now update the created organization (HttpPut)
         String url = osUrl + "/organization/" + createdOrg.getId();
@@ -449,6 +452,7 @@ public class OrganizationRESTServiceTest extends
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
         createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
+        createdOrg.setCtepId("22222222222"); 
 
         // now update the created organization (HttpPut)
         String url = osUrl + "/organization/" + createdOrg.getId();
@@ -1650,7 +1654,7 @@ public class OrganizationRESTServiceTest extends
         for (OrganizationSearchResult osr : osrList.getOrganizationSearchResult()) {
             // check that the Organization is same as what we are expecting
             assertTrue(osr.getId() == createdOrg.getId());
-            assertEquals(osr.getIoCtepId(), ioCtepId);
+            assertEquals(osr.getOrgCtepId(), ioCtepId);
         }
     }
     
@@ -1752,7 +1756,7 @@ public class OrganizationRESTServiceTest extends
         for (OrganizationSearchResult osr : osrList.getOrganizationSearchResult()) {
             // check that the Organization is same as what we are expecting
             assertTrue(osr.getId() == createdOrg.getId());
-            assertEquals(osr.getIoCtepId(), ioCtepId);
+            assertEquals(osr.getOrgCtepId(), ioCtepId);
         }
     }
 

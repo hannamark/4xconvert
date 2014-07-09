@@ -85,8 +85,8 @@ package gov.nih.nci.po.service; // NOPMD
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.CR;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.FAMILY;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.HCF_CTEP_ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.IO_CTEP_ID;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.IO_CTEP_ID;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.NAME;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_HCF;
 import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_RO;
@@ -165,6 +165,9 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
 
     @EJB
     private FamilyOrganizationRelationshipServiceLocal familyOrganizationRelationshipService;
+    
+    @EJB
+    private IdentifiedOrganizationServiceLocal idenOrgServ;
 
     /**
      * Constructs an {@link OrganizationServiceBean} with the default MergeOrganizationHelper.
@@ -204,7 +207,31 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         org.setStatusCode(EntityStatus.PENDING);
         return super.create(org);
     }
-
+    
+    @Override
+    public long create(Organization org, String ctepId) throws EntityValidationException, JMSException {
+        long createdOrgId = 0;
+        // Step1: create the organization
+        createdOrgId = create(org);
+        
+        // Step2: now create Org-CtepId
+        if (StringUtils.isNotBlank(ctepId)) {
+            idenOrgServ.setOrgCtepId(org, ctepId);
+        }        
+        return createdOrgId;
+    }
+    
+    @Override
+    public void curate(Organization org, String ctepId) throws EntityValidationException, JMSException {        
+        // Step1: if CtepId is not blank then update it
+        if (StringUtils.isNotBlank(ctepId)) { 
+            idenOrgServ.setOrgCtepId(org, ctepId);
+        }
+        
+        // Step2: curate the organization
+        curate(org);        
+    }
+    
     /**
      * {@inheritDoc}
      */

@@ -95,6 +95,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jms.JMSException;
+
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
@@ -200,6 +202,17 @@ public class MockOrganizationService implements OrganizationServiceLocal {
     @Override
     public void override(Overridable overridable, User overriddenBy) {
         
+    }
+
+    @Override
+    public long create(Organization org, String ctepId)
+            throws EntityValidationException, JMSException {
+        return 0;
+    }
+
+    @Override
+    public void curate(Organization curatedOrg, String ctepId)
+            throws EntityValidationException, JMSException {   
     }
 
     

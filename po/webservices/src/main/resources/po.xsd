@@ -318,6 +318,14 @@
 							</restriction>
 						</simpleType>
 					</element>
+					<element name="ctepId" minOccurs="0">
+                        <simpleType>
+                            <restriction base="string">
+                                <maxLength value="255" />
+                                <minLength value="1" />
+                            </restriction>
+                        </simpleType>
+                    </element>
 					<element name="address" type="tns:Address" />
 					<element name="contact" type="tns:Contact" maxOccurs="unbounded"
 						minOccurs="0" />
@@ -1320,9 +1328,9 @@
 							</documentation>
 						</annotation>
 					</element>
-					<element name="ioCtepId" type="string" minOccurs="0">
+					<element name="orgCtepId" type="string" minOccurs="0">
                         <annotation>
-                            <documentation>Identified Organization's ctepID
+                            <documentation>Organization's ctepID (mapped to Identified CTEP ID)
                             </documentation>
                         </annotation>
                     </element>

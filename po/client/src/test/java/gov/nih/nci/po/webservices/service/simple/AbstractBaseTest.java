@@ -657,7 +657,8 @@ public abstract class AbstractBaseTest {
                     resOrg.getAddress().getCountry().value());
             Assert.assertEquals(reqOrg.getAddress().getCountry().value(),
                     result[7]);
-
+            Assert.assertEquals(reqOrg.getCtepId(), resOrg.getCtepId());
+            
             // Asserts for contact details in returned organization object
             for (Contact contact : resOrg.getContact()) {
                 if (contact.getType().value().equalsIgnoreCase("EMAIL")) {

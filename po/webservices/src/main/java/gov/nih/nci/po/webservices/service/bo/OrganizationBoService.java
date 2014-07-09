@@ -1,11 +1,9 @@
 package gov.nih.nci.po.webservices.service.bo;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.Overridable;
@@ -13,6 +11,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
+import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
@@ -20,13 +19,21 @@ import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Service;
 
-import javax.jms.JMSException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.jms.JMSException;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * Wrapper around EJB service to implement business logic
@@ -52,6 +59,24 @@ public class OrganizationBoService implements OrganizationServiceLocal {
         org.setCreatedBy(user);
 
         return PoRegistry.getOrganizationService().create(org);
+    }
+    
+
+    @Override
+    public long create(Organization org, String ctepId)
+            throws EntityValidationException, JMSException {
+        User user = null;
+
+        try {
+            user = SecurityServiceProvider.getUserProvisioningManager("po")
+                    .getUser(UsernameHolder.getUser());
+        } catch (CSException e) {
+            throw new RuntimeException(e);
+        }
+
+        org.setCreatedBy(user);
+
+        return PoRegistry.getOrganizationService().create(org, ctepId);
     }
 
     @Override
@@ -102,6 +127,63 @@ public class OrganizationBoService implements OrganizationServiceLocal {
                 throw new RuntimeException(e);
             }
         }
+    }
+    
+    @Override
+    public void curate(Organization curatedOrg, String ctepId)
+            throws EntityValidationException, JMSException {
+        Organization current = PoRegistry.getOrganizationService().getById(curatedOrg.getId());
+
+        if (current != null) {
+            curatedOrg.setCreatedBy(current.getCreatedBy());
+            curatedOrg.setOverriddenBy(current.getOverriddenBy());
+
+            handleOrgNameAndAliases(current, curatedOrg);
+        }
+
+        Map<String, String[]> errors = PoRegistry.getOrganizationService().validate(curatedOrg);
+        if (!errors.isEmpty()) {
+            EntityValidationException validationException = new EntityValidationException(errors);
+            throw new ServiceException(validationException);
+        }
+
+        OrganizationCR organizationCR = createOrganizationCR(current, curatedOrg);
+
+        if (current != null && organizationCR.isNoChange() && !isCtepIdChanged(current, ctepId)) {
+            return;
+        }
+
+        if (updateDirectly(current)) {
+            PoRegistry.getOrganizationService().curate(curatedOrg, ctepId);
+        } else {
+            //someone else made it, so create a CR
+            try {
+                PoRegistry.getInstance().getServiceLocator().
+                    getOrganizationCRService().create(organizationCR, ctepId);                
+            } catch (EntityValidationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+    }
+    
+    private boolean isCtepIdChanged(Organization current, String curatedOrgCtepId) {
+        
+        String currentCtepId = null;        
+        
+        if (CollectionUtils.isNotEmpty(current.getIdentifiedOrganizations())) {
+            Iterator<IdentifiedOrganization> iterator = current.getIdentifiedOrganizations().iterator();
+            // Iterate and look for the one that has CTEP ID root
+            while (iterator.hasNext()) {
+                IdentifiedOrganization idenOrg = iterator.next();
+                String root = idenOrg.getAssignedIdentifier().getRoot();
+                if (PoConstants.ORG_CTEP_ID_ROOT.equalsIgnoreCase(root)) {
+                    currentCtepId = idenOrg.getAssignedIdentifier().getExtension();
+                 }            
+            }
+        }        
+        
+        return !StringUtils.equalsIgnoreCase(currentCtepId, curatedOrgCtepId); 
     }
 
     /**
@@ -244,4 +326,6 @@ public class OrganizationBoService implements OrganizationServiceLocal {
 
         return result;
     }
+
+
 }

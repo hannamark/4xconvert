@@ -1,7 +1,13 @@
 package gov.nih.nci.po.webservices.convert.simple;
 
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
+import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.webservices.types.EntityStatus;
 import gov.nih.nci.po.webservices.types.Organization;
+
+import java.util.Iterator;
+import java.util.Set;
+
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -44,7 +50,7 @@ public class OrganizationConverter
                 organizationBo.setPostalAddress(addressBo);
             }
 
-            // logic to set CtepId is removed as per PO-7006.
+            // logic to set CtepId is removed as CtepId is handled separately.
 
             // Set the Contacts
             if (CollectionUtils.isNotEmpty(organization.getContact())) {
@@ -87,7 +93,8 @@ public class OrganizationConverter
                 organization.setAddress(address);
             }
 
-            // logic to set CtepId is removed as per PO-7006.
+            // Set the CtepId
+            populateBoCtepIdInJaxbOrganization(organizationBo, organization);
 
             // Set the Contacts
             populateBoContactListInJaxb(organizationBo,
@@ -95,5 +102,32 @@ public class OrganizationConverter
         }
 
         return organization;
+    }
+    
+    /**
+     * This method is used to populate BOCtepId into Jaxb Organization.
+     */
+    private void populateBoCtepIdInJaxbOrganization(
+            gov.nih.nci.po.data.bo.Organization organizationBo,
+            gov.nih.nci.po.webservices.types.Organization organization) {
+
+        String ctepId = null;
+        Set<IdentifiedOrganization> identifiedOrgSet = organizationBo
+                .getIdentifiedOrganizations();
+
+        if (CollectionUtils.isNotEmpty(identifiedOrgSet)) {
+            Iterator<IdentifiedOrganization> iterator = identifiedOrgSet
+                    .iterator();
+            // Iterate and look for the one that has CTEP ID root
+            while (iterator.hasNext()) {
+                IdentifiedOrganization idenOrg = iterator.next();
+                String root = idenOrg.getAssignedIdentifier().getRoot();
+                if (PoConstants.ORG_CTEP_ID_ROOT.equalsIgnoreCase(root)) {
+                    ctepId = idenOrg.getAssignedIdentifier().getExtension();
+                }
+            }
+        }
+
+        organization.setCtepId(ctepId);
     }
 }

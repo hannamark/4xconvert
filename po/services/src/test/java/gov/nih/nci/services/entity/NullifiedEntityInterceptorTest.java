@@ -451,5 +451,17 @@ public class NullifiedEntityInterceptorTest  extends AbstractServiceBeanTest {
         public void override(Overridable overridable, User overriddenBy) {
             
         }
+
+        @Override
+        public long create(Organization org, String ctepId)
+                throws EntityValidationException, JMSException {
+            return 0;
+        }
+
+        @Override
+        public void curate(Organization curatedOrg, String ctepId)
+                throws EntityValidationException, JMSException {
+            
+        }
     }
 }

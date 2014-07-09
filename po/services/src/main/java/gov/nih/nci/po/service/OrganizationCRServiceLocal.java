@@ -88,10 +88,12 @@ import gov.nih.nci.po.data.bo.OrganizationCR;
 import java.util.Map;
 
 import javax.ejb.Local;
+import javax.jms.JMSException;
 
 /**
  * Change Request (OrganizationCR) management interface.
  * @author gax
+ * @author Rohit Gupta
  */
 @Local
 public interface OrganizationCRServiceLocal {
@@ -103,6 +105,7 @@ public interface OrganizationCRServiceLocal {
      */
     OrganizationCR getById(long id);
 
+    
     /**
      * add a OrganizationCR for later processing.
      * @return the identifier
@@ -110,6 +113,16 @@ public interface OrganizationCRServiceLocal {
      * @throws EntityValidationException if the OrganizationCR proposes an invalid state for the target.
      */
     long create(OrganizationCR proposedState) throws EntityValidationException;
+    
+    /**
+     * add a OrganizationCR for later processing.
+     * @param orgCR the OrganizationCR containg the proposed stated.
+     * @param ctepId CTEP ID
+     * @return the identifier 
+     * @throws EntityValidationException if the OrganizationCR proposes an invalid state for the target.
+     * @throws JMSException JMSException
+     */
+    long create(OrganizationCR orgCR, String ctepId) throws EntityValidationException, JMSException;
 
     /**
      * @param entity the OrganizationCR to validate
