@@ -13,6 +13,7 @@ insert into auditlogrecord_temp (id,type,username,entityname,entityid,createddat
     
 update auditlogrecord_temp set username='/o=cabig/ou=cagrid/ou=loa1/ou=nci/cn=brucheyks' where username like '%brucheyk%';      
 update auditlogrecord_temp set username='/o=cabig/ou=cagrid/ou=loa1/ou=nci/cn=mamuadr' where username like '%mamuadr%';
+update auditlogrecord_temp set username='/o=cabig/ou=cagrid/ou=loa1/ou=nci/cn=macyba' where username like '%macyb%';
 
 CREATE INDEX auditlog_temp_index01 ON auditlogrecord_temp (entityid, entityname);    
     
