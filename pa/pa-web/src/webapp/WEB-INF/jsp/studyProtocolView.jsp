@@ -17,20 +17,57 @@
                 BubbleTips.activateTipOn("acronym");
                 BubbleTips.activateTipOn("dfn");
             }
+            
             function handleAction(action) {
                 var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
                 var form = document.forms[0];
                 if ((action == 'adminCheckIn') || (action == 'scientificCheckIn') || (action == 'adminAndScientificCheckIn')){
-                    var bs=new Array(64).join(' ');
-                    var comment=prompt(bs+"Enter check-in comment:"+bs,"");
+                    showCommentsBox(action);
+                } 
+                else {
+                form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
+                form.submit();
+                
+                }
+            }
+            
+            function saveCheckin(action) {
+                var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
+                var form = document.forms[0];
+                var commandVal= document.getElementById('commentCommand').value;
+               
+                if ((commandVal == 'adminCheckIn') || (commandVal == 'scientificCheckIn') || (commandVal == 'adminAndScientificCheckIn')){
+                    comment = document.getElementById('comments').value;
+                   
                     if (comment==null){
                         return;
                     }
-                    form.elements["checkInReason"].value = comment.substr(0,200);
-                }
-                form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
+                    form.elements["checkInReason"].value =comment;
+                   
+               }
+                form.action="studyProtocol" + commandVal + ".action?studyProtocolId=" + studyProtocolId;
                 form.submit();
             }
+            var eltDims = null;
+            function showCommentsBox(action) {
+                document.getElementById('commentCommand').value=action;
+                // retrieve required dimensions
+                if (eltDims == null) {
+                    eltDims = $('comment-dialog').getDimensions();
+                }
+                var browserDims = $(document).viewport.getDimensions();
+
+                // calculate the center of the page using the browser and element dimensions
+                var y  = (browserDims.height - eltDims.height) / 2;
+                var x = (browserDims.width - eltDims.width) / 2;    
+                var y1 = y * 2 + y - 200;
+                
+                $('comment-dialog').absolutize(); 
+                $('comment-dialog').style.left = x + 'px';
+                $('comment-dialog').style.top = y1 + 'px';
+                $('comment-dialog').show();
+            }    
+            
         </script>
         <style type="text/css">
             
@@ -233,7 +270,22 @@
                              </td>
                          </tr>  
                  </table>
-                          
+                 <div id="comment-dialog" style="display: none">
+               <s:hidden id="commentCommand"></s:hidden>
+                       <div class="body" style="">
+                           <div>
+                           <label for="comments">Enter check in comment:</label></br>
+                           <s:textarea id="comments" name="comments" value="" rows="5" cssClass="charcounter" cssStyle="width: 670px;"/>
+                           </div>
+                           <br/>
+                           <div align="center">
+                               <button type="button" class="btn btn-icon btn-primary" data-dismiss="modal"value="Save" 
+                                   onclick="$('comment-dialog').hide();saveCheckin('${commentCommand}');"><i class="fa-save"></i>Ok</button>
+                               <button type="button" class="btn btn-icon btn-default" data-dismiss="modal" value="Cancel"
+                                   onclick="$('comment-dialog').hide();"><i class="fa-times-circle"></i>Cancel</button>
+                           </div>
+                       </div>
+            </div>    
             </s:form>
         </div>
     </body>
