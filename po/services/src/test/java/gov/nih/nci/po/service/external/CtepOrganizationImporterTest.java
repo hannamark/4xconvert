@@ -17,6 +17,7 @@ import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -59,6 +60,8 @@ import java.util.Set;
 import javax.jms.JMSException;
 import javax.naming.Context;
 
+import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
@@ -69,7 +72,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.util.CollectionUtils;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
@@ -210,7 +212,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
         MessageProducerTest.assertMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService(), true);
 
-        assertNull("the ctep organization's id is erased before converting to a Organization (BO)", service.getOrg()
+        assertNull("the ctep localOrganization's id is erased before converting to a Organization (BO)", service.getOrg()
                 .getIdentifier());
         assertNotNull(service.getOrgId());
         IdentifiedOrganization io = getByCtepOrgId(service.getOrgId());
@@ -466,7 +468,14 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
                 (ResearchOrganizationServiceBean) importer.getROService(), false);
         ResearchOrganization freshRo = (ResearchOrganization) PoHibernateUtil.getCurrentSession().createCriteria(
                 ResearchOrganization.class).uniqueResult();
-        assertEquals("NAME", freshRo.getName());
+
+        Alias alias = (Alias) CollectionUtils.find(
+                                   freshRo.getAlias(),
+                                   new BeanPropertyValueEqualsPredicate("value", "NAME")
+                              );
+
+        assertNotNull(alias);
+
         assertFalse(ro.getFundingMechanism().getCode().equals(freshRo.getFundingMechanism().getCode()));
         assertEquals("20110", freshRo.getPostalAddresses().iterator().next().getPostalCode());
 
@@ -1000,4 +1009,8 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
             throw new RuntimeException(e);
         }
     }
+
+
+
+
 }

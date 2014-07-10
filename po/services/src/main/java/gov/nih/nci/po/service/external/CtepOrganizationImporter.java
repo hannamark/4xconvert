@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service.external;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.common.exceptions.CTEPEntException;
 import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.Enxp;
@@ -89,13 +90,19 @@ import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
+import gov.nih.nci.po.data.bo.AbstractOrganization;
+import gov.nih.nci.po.data.bo.AbstractResearchOrganization;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
+import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -113,25 +120,21 @@ import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.jms.JMSException;
-import javax.naming.Context;
-
+import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import javax.jms.JMSException;
+import javax.naming.Context;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Scott Miller
- *
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class CtepOrganizationImporter extends CtepEntityImporter {
 
     private static final Logger LOG = Logger.getLogger(CtepOrganizationImporter.class);
@@ -169,9 +172,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      * Get the organization representing ctep.
      *
      * @return the org
-     * @throws JMSException on error
+     * @throws JMSException              on error
      * @throws EntityValidationException if a validation error occurs anywhere throughout
-     * @throws CtepImportException ctep import exception
+     * @throws CtepImportException       ctep import exception
      */
     public Organization getCtepOrganization() throws JMSException, EntityValidationException, CtepImportException {
         if (persistedCtepOrg == null) {
@@ -189,11 +192,11 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      *
      * @param ctepOrgId the org id.
      * @return the org
-     * @throws JMSException on error
+     * @throws JMSException              on error
      * @throws EntityValidationException if validation errors occur anywhere throughout
-     * @throws CtepImportException ctep import exception
+     * @throws CtepImportException       ctep import exception
      */
-    public Organization importOrgNoUpdate(Ii ctepOrgId) throws JMSException, EntityValidationException, 
+    public Organization importOrgNoUpdate(Ii ctepOrgId) throws JMSException, EntityValidationException,
             CtepImportException {
         IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);
         if (identifiedOrg == null) {
@@ -207,12 +210,12 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      *
      * @param ctepOrgId the ctep id.
      * @return the organization record.
-     * @throws JMSException on error
+     * @throws JMSException              on error
      * @throws EntityValidationException if validation errors occur anywhere throughout
-     * @throws CtepImportException ctep import exception 
+     * @throws CtepImportException       ctep import exception
      */
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
-    public Organization importOrganization(Ii ctepOrgId) throws JMSException, EntityValidationException, 
+    public Organization importOrganization(Ii ctepOrgId) throws JMSException, EntityValidationException,
             CtepImportException {
         try {
             // get org from ctep and convert to local data model
@@ -260,7 +263,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private boolean isNewCtepOrg(IdentifiedOrganization identifiedOrg,
-            HealthCareFacility hcf, ResearchOrganization ro) {
+                                 HealthCareFacility hcf, ResearchOrganization ro) {
         return (identifiedOrg == null && (hcf == null || hcf.getPlayer() == null)
                 && (ro == null || ro.getPlayer() == null));
     }
@@ -296,6 +299,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
 
     /**
      * Find the persisted instance of a given organization using ctep id.
+     *
      * @param ctepOrgId the ctep id
      * @return existing organization
      */
@@ -394,7 +398,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private IdentifiedOrganization genIdentifiedOrg(HealthCareFacility hcf, ResearchOrganization ro, Ii assignedId,
-            Organization ctepOrg, RoleStatus roleStatus) 
+                                                    Organization ctepOrg, RoleStatus roleStatus)
             throws JMSException, EntityValidationException, CtepImportException {
 
         IdentifiedOrganization identifiedOrg = new IdentifiedOrganization();
@@ -415,19 +419,18 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         } else if (ro != null && ro.getId() != null) {
             identifiedOrg.setPlayer(ro.getPlayer());
         } else {
-            throw new CtepImportException("no role id", 
+            throw new CtepImportException("no role id",
                     "Either the HCF or the RO must be not null so we may get player id.");
         }
         return identifiedOrg;
     }
 
     private Organization updateCtepOrg(Organization src, IdentifiedOrganization identifiedOrg, Ii assignedId,
-            HealthCareFacility hcf, ResearchOrganization ro) throws JMSException, EntityValidationException,
-            CtepImportException {
+                                       HealthCareFacility hcf, ResearchOrganization ro)
+            throws JMSException, EntityValidationException, CtepImportException {
 
         Organization org = identifiedOrg.getPlayer();
 
-        update(src, org);
 
         identifiedOrg.setStatus(identifiedOrg.getPlayer().getStatusCode() == EntityStatus.ACTIVE ? RoleStatus.ACTIVE
                 : RoleStatus.PENDING);
@@ -439,13 +442,23 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         this.identifiedOrgService.curate(identifiedOrg);
 
         // update health care facility role
+        HealthCareFacilityCR healthCareFacilityCR = null;
         if (hcf != null) {
-            updateHcfRole(org, hcf, assignedId);
+            healthCareFacilityCR = updateHcfRole(org, hcf, assignedId);
         }
 
         // update research org role
+        ResearchOrganizationCR researchOrganizationCR = null;
+
         if (ro != null) {
-            updateRoRole(org, ro, assignedId);
+            researchOrganizationCR = updateRoRole(org, ro, assignedId);
+
+        }
+
+        if (researchOrganizationCR != null || healthCareFacilityCR != null) {
+            updateWithCr(src, org);
+        } else {
+            update(src, org);
         }
 
         return org;
@@ -454,9 +467,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     /**
      * Either updates a pending local org, or creates a CR for a active org based upon incoming ctep data.
      *
-     * @param ctep incoming ctep data
+     * @param ctep  incoming ctep data
      * @param local current local state
-     * @throws JMSException unable to publish
+     * @throws JMSException              unable to publish
      * @throws EntityValidationException invalid new state
      */
     private void update(Organization ctep, Organization local) throws JMSException, EntityValidationException {
@@ -466,18 +479,34 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
     }
 
-    private void updateRoRole(Organization org, ResearchOrganization ro, Ii assignedId) throws JMSException,
-            CtepImportException {
+    private void updateWithCr(Organization ctep, Organization local) throws JMSException, EntityValidationException {
+        if (CtepUtils.isDifferent(ctep, local)) {
+            OrganizationCR organizationCr = new OrganizationCR(local);
+
+            OrganizationDTO oDto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(ctep);
+            oDto.setIdentifier(null);
+            PoXsnapshotHelper.copyIntoAbstractModel(oDto, organizationCr, AbstractOrganization.class);
+            organizationCr.setId(null);
+
+            PoRegistry.getInstance().getServiceLocator().getOrganizationCRService().create(organizationCr);
+        }
+    }
+
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    private ResearchOrganizationCR updateRoRole(Organization org, ResearchOrganization ro, Ii assignedId)
+            throws JMSException, CtepImportException, EntityValidationException {
         ResearchOrganization toSave = null;
+        ResearchOrganization persistedRo = null;
+
         if (ro.getId() != null) {
-            ResearchOrganization persistedRo = roService.getById(ro.getId());
+            persistedRo = roService.getById(ro.getId());
             if (persistedRo == null) {
                 throw new CtepImportException("po ro id " + ro.getId() + " from ctep not valid", "The po ro id "
                         + ro.getId() + " pulled from ctep not found in database. ECM and PO are out of synch.");
             }
             toSave = updateExistingRo(persistedRo, ro, assignedId);
         } else {
-            ResearchOrganization persistedRo = getRoInDbByCtepId(assignedId, "CTEP ID");
+            persistedRo = getRoInDbByCtepId(assignedId, "CTEP ID");
             if (persistedRo != null) {
                 toSave = updateExistingRo(persistedRo, ro, assignedId);
             } else {
@@ -490,19 +519,69 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             }
         }
         // only save if something has actually changed, to avoid sending out unneeded JMS messages
+
+        ResearchOrganizationCR researchOrganizationCR = null;
+
         if (toSave != null) {
-            this.roService.curate(toSave);
+            //copy ro aliases into org aliases
+            List<Alias> orgAliases = org.getAlias();
+
+            for (Alias roAlias : toSave.getAlias()) {
+                //if the alias isn't in the org aliases yet....
+                Object found =
+                        CollectionUtils.find(
+                            orgAliases,
+                            new BeanPropertyValueEqualsPredicate("value", roAlias.getValue())
+                        );
+                if (found == null) {
+                    orgAliases.add(roAlias);
+                }
+            }
+
+
+            if (persistedRo.getOverriddenBy() != null || org.getOverriddenBy() != null) {
+                //overridden
+                researchOrganizationCR = new ResearchOrganizationCR(persistedRo);
+                ResearchOrganizationDTO toSaveDto
+                        = (ResearchOrganizationDTO) PoXsnapshotHelper.createSnapshot(toSave);
+                toSaveDto.setIdentifier(null);
+                PoXsnapshotHelper
+                        .copyIntoAbstractModel(
+                                toSaveDto,
+                                researchOrganizationCR,
+                                AbstractEnhancedOrganizationRole.class
+                        );
+                PoXsnapshotHelper
+                        .copyIntoAbstractModel(
+                                toSaveDto,
+                                researchOrganizationCR,
+                                AbstractResearchOrganization.class
+                        );
+
+                researchOrganizationCR.setId(null);
+                PoRegistry.getInstance().getServiceLocator()
+                        .getResearchOrganizationCRService().create(researchOrganizationCR);
+            } else {
+                this.roService.curate(toSave);
+            }
+
+
         }
 
+
+        return researchOrganizationCR;
     }
 
     private ResearchOrganization updateExistingRo(ResearchOrganization persistedRo, ResearchOrganization ctepRo,
-            Ii assignedId) {
+                                                  Ii assignedId) {
         ResearchOrganization toSave = updateFundingMechanism(ctepRo, persistedRo);
         toSave = updateTypeCode(ctepRo, persistedRo);
+
+
         if (copyCtepRoleToExistingRole(ctepRo, persistedRo, assignedId)) {
             toSave = persistedRo;
         }
+
         return toSave;
     }
 
@@ -529,18 +608,20 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return toSave;
     }
 
-    private void updateHcfRole(Organization org, HealthCareFacility hcf, Ii assignedId) throws JMSException,
-            CtepImportException {
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
+    private HealthCareFacilityCR updateHcfRole(Organization org, HealthCareFacility hcf, Ii assignedId)
+            throws JMSException, CtepImportException, EntityValidationException {
         HealthCareFacility toSave = null;
+        HealthCareFacility persistedHcf = null;
         if (hcf.getId() != null) {
-            HealthCareFacility persistedHcf = hcfService.getById(hcf.getId());
+            persistedHcf = hcfService.getById(hcf.getId());
             if (persistedHcf == null) {
                 throw new CtepImportException("po hcf id " + hcf.getId() + " from ctep not valid", "The po hcf id "
                         + hcf.getId() + " pulled from ctep not found in database. ECM and PO are out of synch.");
             }
             toSave = updateExistingHcf(persistedHcf, hcf, assignedId);
         } else {
-            HealthCareFacility persistedHcf = getHcfInDbByCtepId(assignedId, "CTEP ID");
+            persistedHcf = getHcfInDbByCtepId(assignedId, "CTEP ID");
             if (persistedHcf != null) {
                 toSave = updateExistingHcf(persistedHcf, hcf, assignedId);
             } else {
@@ -553,14 +634,55 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             }
         }
 
+        HealthCareFacilityCR healthCareFacilityCR = null;
+
         // only save if something has actually changed, to avoid sending out unneeded JMS messages
         if (toSave != null) {
-            this.hcfService.curate(toSave);
+            //copy ro aliases into org aliases
+            List<Alias> orgAliases = org.getAlias();
+
+            for (Alias roAlias : toSave.getAlias()) {
+                //if the alias isn't in the org aliases yet....
+                Object existingAlias
+                        = CollectionUtils.find(
+                            orgAliases,
+                            new BeanPropertyValueEqualsPredicate("value", roAlias.getValue())
+                        );
+
+                if (existingAlias == null) {
+                    orgAliases.add(roAlias);
+                }
+            }
+
+
+            if (persistedHcf.getOverriddenBy() != null || org.getOverriddenBy() != null) {
+                //overridden
+                healthCareFacilityCR = new HealthCareFacilityCR(persistedHcf);
+                HealthCareFacilityDTO curatedInstanceDto
+                        = (HealthCareFacilityDTO) PoXsnapshotHelper.createSnapshot(toSave);
+                curatedInstanceDto.setIdentifier(null);
+
+                PoXsnapshotHelper.copyIntoAbstractModel(
+                        curatedInstanceDto,
+                        healthCareFacilityCR,
+                        AbstractEnhancedOrganizationRole.class
+                );
+
+                healthCareFacilityCR.setId(null);
+
+                PoRegistry.getInstance().getServiceLocator()
+                        .getHealthCareFacilityCRService().create(healthCareFacilityCR);
+            } else {
+                this.hcfService.curate(toSave);
+            }
         }
+
+        return healthCareFacilityCR;
     }
 
     private HealthCareFacility updateExistingHcf(HealthCareFacility persistedHcf, HealthCareFacility ctepHcf,
-            Ii assignedId) {
+                                                 Ii assignedId) {
+
         if (copyCtepRoleToExistingRole(ctepHcf, persistedHcf, assignedId)) {
             return persistedHcf;
         }
@@ -580,12 +702,17 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return scoper;
     }
 
-    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
     private boolean copyCtepRoleToExistingRole(AbstractEnhancedOrganizationRole ctepRole,
-            AbstractEnhancedOrganizationRole role, Ii assignedId) {
+                                               AbstractEnhancedOrganizationRole role, Ii assignedId) {
         boolean changed = false;
+
+        //aliases
+        // if the name changed
         if (!StringUtils.equals(role.getName(), ctepRole.getName())) {
-            role.setName(ctepRole.getName());
+            //add it as alias on role
+            role.getAlias().add(new Alias(ctepRole.getName()));
+
             changed = true;
         }
 
@@ -717,9 +844,9 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     /**
      * Handle the nullification with duplicate of an organization from the ctep system.
      *
-     * @param ctepOrgId the ctep org id
+     * @param ctepOrgId     the ctep org id
      * @param duplicateOfId the ID of the organization of which this is a duplicate
-     * @param orgType organization type
+     * @param orgType       organization type
      * @throws JMSException on error
      */
     public void nullifyCtepOrganization(Ii ctepOrgId, Ii duplicateOfId, OrganizationType orgType) throws JMSException {
@@ -785,7 +912,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private void checkRoleResults(List<? extends Correlation> roles, String roleType, String logStr, String ext,
-            boolean required) {
+                                  boolean required) {
         if (required && CollectionUtils.isEmpty(roles)) {
             throw new IllegalArgumentException("The " + roleType + " " + logStr + " " + ext
                     + " provided could not be found in our system.");

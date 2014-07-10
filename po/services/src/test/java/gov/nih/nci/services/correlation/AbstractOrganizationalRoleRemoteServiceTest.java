@@ -63,9 +63,9 @@ public abstract class AbstractOrganizationalRoleRemoteServiceTest<T extends Abst
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        T retrievedRole = service.getCorrelation(id1);
         verifyCreatedBy(id1);
     }
+
 
     protected abstract void verifyCreatedBy(Ii id1);
 }
