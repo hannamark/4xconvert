@@ -932,7 +932,7 @@ public abstract class AbstractTsrReportGenerator {
     }
 
     private Table getParticipatingSitesTableForProprietaryTrials() throws DocumentException {
-        Table siteTable = getInnerTable(Arrays.asList(TSRReportLabelText.PS_FACILITY,
+        Table siteTable = getInnerTable(Arrays.asList(TSRReportLabelText.PS_PO_ID, TSRReportLabelText.PS_FACILITY,
                 TSRReportLabelText.PS_INVESTIGATORS, TSRReportLabelText.PS_LOCAL_TRIAL_IDENTIFIER,
                 TSRReportLabelText.PS_RECRUITMENT_STATUS_AND_DATES, TSRReportLabelText.PS_TARGET_ACCRUAL,
                 TSRReportLabelText.PS_SUMMARY4_SPONSOR, TSRReportLabelText.PS_PROGRAM_CODE));
@@ -942,6 +942,7 @@ public abstract class AbstractTsrReportGenerator {
                     + "; Category: " + getSummary4Information().getFundingCategory();
         }
         for (TSRReportParticipatingSite site : getParticipatingSites()) {
+            siteTable.addCell(getItemValueCell(site.getPoId()));
             siteTable.addCell(getItemValueCell(site.getFacility()));
             List<String> investigatorList = new ArrayList<String>();
             StringBuffer sb = new StringBuffer();
@@ -968,10 +969,11 @@ public abstract class AbstractTsrReportGenerator {
     }
 
     private Table getParticipatingSitesTableForNonProprietaryTrials() throws DocumentException {
-        Table siteTable = getInnerTable(Arrays.asList(TSRReportLabelText.PS_FACILITY, TSRReportLabelText.PS_CONTACT,
-                TSRReportLabelText.PS_RECRUITMENT_STATUS_AND_DATES, TSRReportLabelText.PS_TARGET_ACCRUAL,
-                TSRReportLabelText.PS_INVESTIGATORS));
+        Table siteTable = getInnerTable(Arrays.asList(TSRReportLabelText.PS_PO_ID, TSRReportLabelText.PS_FACILITY,
+                TSRReportLabelText.PS_CONTACT, TSRReportLabelText.PS_RECRUITMENT_STATUS_AND_DATES,
+                TSRReportLabelText.PS_TARGET_ACCRUAL, TSRReportLabelText.PS_INVESTIGATORS));
         for (TSRReportParticipatingSite site : getParticipatingSites()) {
+            siteTable.addCell(getItemValueCell(site.getPoId()));
             siteTable.addCell(getItemValueCell(site.getFacility()));
             siteTable.addCell(getItemValueCell(site.getContact()));
             siteTable.addCell(getItemValueCell(site.getRecruitmentStatus()));

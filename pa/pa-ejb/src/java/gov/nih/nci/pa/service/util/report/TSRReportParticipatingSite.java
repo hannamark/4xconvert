@@ -94,6 +94,7 @@ import java.util.List;
  */
 
 public class TSRReportParticipatingSite implements Comparable<TSRReportParticipatingSite> {
+    private String poId;
     private String facility;
     private String contact;
     private String recruitmentStatus;
@@ -220,5 +221,19 @@ public class TSRReportParticipatingSite implements Comparable<TSRReportParticipa
             return 1;
         }
         return facility.compareToIgnoreCase(that.facility);
+    }
+    
+    /**
+     * @return the poId
+     */
+    public String getPoId() {
+        return poId;
+    }
+    
+    /**
+     * @param poId the poId to set
+     */
+    public void setPoId(String poId) {
+        this.poId = poId;
     }
 }

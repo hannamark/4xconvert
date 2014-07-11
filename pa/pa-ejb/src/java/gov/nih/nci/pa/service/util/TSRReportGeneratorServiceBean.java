@@ -1187,6 +1187,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceL
                 String recruitmentStatus = getValue(ssas.getStatusCode()) + " as of "
                         + PAUtil.convertTsToFormattedDate(ssas.getStatusDate());
                 participatingSite.setRecruitmentStatus(recruitmentStatus);
+                participatingSite.setPoId(orgBo.getIdentifier());
                 participatingSite.setTargetAccrual(getValue(sp.getTargetAccrualNumber()));                
                 participatingSite.setLocalTrialIdentifier(getValue(sp.getLocalStudyProtocolIdentifier(),
                         INFORMATION_NOT_PROVIDED));

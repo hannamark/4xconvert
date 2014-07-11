@@ -241,7 +241,7 @@ public class PAUtil {
      * @return Date
      */
     private static Date dateStringToDate(String inDate) {
-        if (inDate == null) {
+        if (inDate == null || inDate.isEmpty()) {
             return null;
         }
 
