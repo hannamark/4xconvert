@@ -85,10 +85,6 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
-
-import java.io.Serializable;
-import java.sql.Connection;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.LogicalExpression;
@@ -96,6 +92,9 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.mapping.Property;
 import org.hibernate.validator.PropertyConstraint;
 import org.hibernate.validator.Validator;
+
+import java.io.Serializable;
+import java.sql.Connection;
 
 
 /**

@@ -82,15 +82,13 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.OrganizationRelationship;
-
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Local;
-
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.service.GenericSearchService;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
+
+import javax.ejb.Local;
+import java.util.Date;
+import java.util.List;
 /**
  * interface for OrganizationRelationship.
  * @author vrushali

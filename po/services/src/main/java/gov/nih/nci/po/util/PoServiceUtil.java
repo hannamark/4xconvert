@@ -1,5 +1,6 @@
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
@@ -8,17 +9,14 @@ import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * This is a Utility class for po-service project which has common utility

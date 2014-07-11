@@ -83,10 +83,9 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import org.apache.commons.lang.builder.CompareToBuilder;
 
 import java.util.Comparator;
-
-import org.apache.commons.lang.builder.CompareToBuilder;
 
 /**
  * Compares Organization Relationships based on related organization names (and id if names are equal).

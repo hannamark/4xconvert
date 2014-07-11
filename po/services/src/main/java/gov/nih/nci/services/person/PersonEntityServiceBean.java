@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.services.person;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
@@ -114,16 +117,16 @@ import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.PersonSortCriterion;
 import gov.nih.nci.po.service.StrutsPersonSearchCriteria;
+import gov.nih.nci.po.util.CsmUserUtil;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.Utils;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -132,13 +135,10 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jboss.ejb3.annotation.SecurityDomain;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
 *
@@ -265,6 +265,8 @@ public class PersonEntityServiceBean implements PersonEntityServiceRemote {
     public Ii createPerson(PersonDTO person) throws EntityValidationException, CurationException {
         Person perBO = (Person) PoXsnapshotHelper.createModel(person);
         try {
+            User currentUser = CsmUserUtil.getUser(UsernameHolder.getUser());
+            perBO.setCreatedBy(currentUser);
             return new PersonIdConverter().convertToIi(perService.create(perBO));
         } catch (JMSException e) {
             LOG.error("Problem is JMS, unable to complete requst to create data.", e);

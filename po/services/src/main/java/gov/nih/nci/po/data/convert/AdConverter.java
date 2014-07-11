@@ -91,11 +91,10 @@ import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.State;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.services.PoIsoConstraintException;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Converts for Ad (both simple and set based).

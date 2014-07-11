@@ -82,25 +82,23 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.ValidIi;
-
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import javax.persistence.Column;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 
 /**
  * @author Scott Miller

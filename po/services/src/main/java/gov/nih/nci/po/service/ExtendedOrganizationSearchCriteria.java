@@ -82,20 +82,18 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.search.AbstractSearchCriteria;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
-
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 
-import com.fiveamsolutions.nci.commons.search.AbstractSearchCriteria;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Criteria class to search for organizations.

@@ -85,10 +85,9 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.OrganizationCR;
 
-import java.util.Map;
-
 import javax.ejb.Local;
 import javax.jms.JMSException;
+import java.util.Map;
 
 /**
  * Change Request (OrganizationCR) management interface.

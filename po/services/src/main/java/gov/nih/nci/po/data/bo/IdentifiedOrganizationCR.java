@@ -82,19 +82,17 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
-
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Scott Miller

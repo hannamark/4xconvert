@@ -89,10 +89,12 @@ import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 
 import java.net.URI;
@@ -115,6 +117,14 @@ public class ClinicalResearchStaffRemoteServiceTest
     @Override
     CorrelationService<ClinicalResearchStaffDTO> getCorrelationService() {
         return EjbTestHelper.getClinicalResearchStaffCorrelationServiceRemote();
+    }
+
+    @Override
+    protected void verifyCreatedBy(long id) {
+        ClinicalResearchStaff oversightCommittee =
+                (ClinicalResearchStaff) PoHibernateUtil.getCurrentSession().get(ClinicalResearchStaff.class, id);
+
+        assertEquals(getUser(), oversightCommittee.getCreatedBy());
     }
 
     /**

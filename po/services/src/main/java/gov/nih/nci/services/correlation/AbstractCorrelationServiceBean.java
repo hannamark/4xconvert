@@ -82,13 +82,15 @@
  */
 package gov.nih.nci.services.correlation;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.convert.CdConverter;
@@ -106,21 +108,16 @@ import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.Utils;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.log4j.Logger;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
-
-import org.apache.log4j.Logger;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Generic superclass for correlation services.
@@ -185,10 +182,8 @@ public abstract class AbstractCorrelationServiceBean
     public Ii createCorrelation(DTO dto) throws EntityValidationException, CurationException {
         T po = (T) PoXsnapshotHelper.createModel(dto);
         try {
-            if (po instanceof AbstractOrganizationRole) {
-                User currentUser = CsmUserUtil.getUser(UsernameHolder.getUser());
-                ((AbstractOrganizationRole) po).setCreatedBy(currentUser);
-            }
+            User currentUser = CsmUserUtil.getUser(UsernameHolder.getUser());
+            ((AbstractRole) po).setCreatedBy(currentUser);
             return getIdConverter().convertToIi(getLocalService().create(po));
         } catch (JMSException e) {
             LOG.error("Problem is JMS, unable to complete requst to create data.", e);
@@ -212,6 +207,8 @@ public abstract class AbstractCorrelationServiceBean
         try {
             final GenericStructrualRoleServiceLocal<T> localService = getLocalService();
             if (localService instanceof GenericAutoCuratableStructuralRoleServiceLocal) {
+                User currentUser = CsmUserUtil.getUser(UsernameHolder.getUser());
+                ((AbstractRole) po).setCreatedBy(currentUser);
                 return getIdConverter()
                         .convertToIi(
                                 ((GenericAutoCuratableStructuralRoleServiceLocal<T>) localService)

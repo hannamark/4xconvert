@@ -4,10 +4,9 @@ import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import org.hibernate.validator.Validator;
 
 import java.io.Serializable;
-
-import org.hibernate.validator.Validator;
 
 /**
  * Validates a Curatable instance.

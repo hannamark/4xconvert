@@ -85,14 +85,13 @@ package gov.nih.nci.po.util;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
-
-import java.io.Serializable;
-import java.util.Date;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.type.Type;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Interceptor that verifies that curatable entities' curation status only

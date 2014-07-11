@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
+import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.AbstractPatient;
@@ -89,18 +90,15 @@ import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.PatientCR;
 import gov.nih.nci.po.data.convert.CdConverter;
 import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.PatientIdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.IiDsetConverter;
-import gov.nih.nci.po.data.convert.IdConverter.PatientIdConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -109,10 +107,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
-
-import org.jboss.ejb3.annotation.SecurityDomain;
-
-import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Correlation service bean for Patient.

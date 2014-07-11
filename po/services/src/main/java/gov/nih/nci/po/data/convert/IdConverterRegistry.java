@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.po.data.convert;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
@@ -112,9 +114,6 @@ import gov.nih.nci.po.data.convert.IdConverter.ResearchOrganizationIdConverter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 
 /**
  * IdConverter registry.

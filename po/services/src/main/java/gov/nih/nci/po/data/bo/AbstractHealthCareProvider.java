@@ -83,18 +83,16 @@
 package gov.nih.nci.po.data.bo;
 
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.PoRegistry;
-
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 
 
 /**

@@ -84,7 +84,6 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
-
 import gov.nih.nci.security.exceptions.CSException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;

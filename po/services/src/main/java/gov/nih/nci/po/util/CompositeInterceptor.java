@@ -82,13 +82,13 @@
  */
 package gov.nih.nci.po.util;
 
-import java.io.Serializable;
-import java.util.Iterator;
-
 import org.hibernate.EntityMode;
 import org.hibernate.Interceptor;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
+
+import java.io.Serializable;
+import java.util.Iterator;
 
 /**
  * Implements the Composite pattern for hibernate interceptors.  For each interceptor method,

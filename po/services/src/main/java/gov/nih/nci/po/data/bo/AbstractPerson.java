@@ -82,14 +82,16 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Index;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
+import org.hibernate.validator.Valid;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -104,16 +106,11 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-import org.hibernate.validator.Valid;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**

@@ -82,16 +82,7 @@
  */
 package gov.nih.nci.po.service; // NOPMD
 
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.CR;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.FAMILY;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.HCF_CTEP_ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.IO_CTEP_ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.NAME;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_HCF;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_RO;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.RO_CTEP_ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.STATUS;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -116,7 +107,20 @@ import gov.nih.nci.po.util.MergeOrganizationHelperImpl;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.RoleStatusChangeHelper;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -130,22 +134,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jms.JMSException;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.CR;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.FAMILY;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.HCF_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.IO_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.NAME;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_HCF;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_RO;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.RO_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.STATUS;
 
 /**
  *

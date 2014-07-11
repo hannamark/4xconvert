@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
-
-import java.util.Date;
+import org.hibernate.annotations.ForeignKey;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -99,10 +99,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.ForeignKey;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import java.util.Date;
 
 /**
  * Represents a comment.

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
+import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
@@ -91,16 +92,13 @@ import gov.nih.nci.po.service.ClinicalResearchStaffCRServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-
-import org.jboss.ejb3.annotation.SecurityDomain;
-
-import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 
 /**
  * @author Scott Miller

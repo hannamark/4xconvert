@@ -82,13 +82,14 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Index;
+import org.hibernate.validator.NotNull;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -96,13 +97,9 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Base class for all roles.

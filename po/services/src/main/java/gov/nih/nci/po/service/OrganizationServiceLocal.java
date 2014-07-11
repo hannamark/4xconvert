@@ -83,21 +83,19 @@
 
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import javax.ejb.Local;
+import javax.jms.JMSException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.ejb.Local;
-import javax.jms.JMSException;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  *

@@ -82,18 +82,13 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.ValidStateCountry;
 import gov.nih.nci.po.util.ValidZip;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.ForeignKey;
@@ -101,9 +96,12 @@ import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  * Primary address class.

@@ -88,11 +88,10 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Utility class for converting between BO and ISO types.

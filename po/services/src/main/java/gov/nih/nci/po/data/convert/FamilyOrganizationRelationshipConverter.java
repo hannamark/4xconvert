@@ -85,14 +85,13 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ObjectUtils;
 
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ObjectUtils;
 
 /**
  * Converts between SortedSet of FamilyOrganziationRelatioships and DSet of Iis. 

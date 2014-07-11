@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.po.service;
 
-import javax.ejb.Local;
-
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.service.GenericDataService;
+
+import javax.ejb.Local;
 
 
 /**

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.services.correlation;
 
+import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 import gov.nih.nci.po.data.bo.AbstractResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
@@ -91,16 +92,13 @@ import gov.nih.nci.po.service.ResearchOrganizationCRServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import org.jboss.ejb3.annotation.SecurityDomain;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-
-import org.jboss.ejb3.annotation.SecurityDomain;
-
-import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 
 /**
  * Service implementation.

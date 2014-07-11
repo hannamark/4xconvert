@@ -1,5 +1,6 @@
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.AbstractPerson;
@@ -16,21 +17,17 @@ import gov.nih.nci.services.organization.AbstractOrganizationDTO;
 import gov.nih.nci.services.organization.ExtendedOrganizationDTOHelper;
 import gov.nih.nci.services.person.AbstractPersonDTO;
 import gov.nih.nci.services.person.ExtendedPersonDTOHelper;
-
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-
 import net.sf.xsnapshot.SnapshotHelper;
 import net.sf.xsnapshot.TransformContext;
 import net.sf.xsnapshot.XSnapshotRegistry;
 import net.sf.xsnapshot.XSnapshotUtils;
 import net.sf.xsnapshot.cfg.XSnapshotPropertiesConfigurator;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
 
 /**
  *

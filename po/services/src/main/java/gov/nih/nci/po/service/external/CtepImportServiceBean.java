@@ -88,9 +88,7 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.external.CtepMessageBean.OrganizationType;
 import gov.nih.nci.po.util.PoHibernateSessionInterceptor;
-
-import java.util.Hashtable;
-import java.util.Properties;
+import weblogic.jndi.WLInitialContextFactory;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -99,8 +97,8 @@ import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
 import javax.naming.Context;
 import javax.naming.NamingException;
-
-import weblogic.jndi.WLInitialContextFactory;
+import java.util.Hashtable;
+import java.util.Properties;
 
 /**
  * @author Scott Miller

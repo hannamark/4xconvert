@@ -82,9 +82,9 @@
  */
 package gov.nih.nci.po.service;
 
-import java.util.List;
-
 import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
+
+import java.util.List;
 
 /**
  * Extension to the standard sort criterion.

@@ -82,12 +82,11 @@
  */
 package gov.nih.nci.po.data.convert;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Converts persistent objects to II's.

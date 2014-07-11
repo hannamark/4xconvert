@@ -85,9 +85,8 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.State;
 
-import java.util.List;
-
 import javax.ejb.Local;
+import java.util.List;
 
 /**
  *

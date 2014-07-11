@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service.external;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.common.exceptions.CTEPEntException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Adxp;
@@ -111,16 +112,12 @@ import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.person.PersonDTO;
-
-import java.util.Iterator;
-import java.util.List;
+import org.apache.log4j.Logger;
 
 import javax.jms.JMSException;
 import javax.naming.Context;
-
-import org.apache.log4j.Logger;
-
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Scott Miller

@@ -82,11 +82,10 @@
  */
 package gov.nih.nci.po.util;
 
-import org.hibernate.Session;
-
 import com.fiveamsolutions.nci.commons.audit.AuditLogInterceptor;
 import com.fiveamsolutions.nci.commons.util.CsmEnabledHibernateHelper;
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
+import org.hibernate.Session;
 
 /**
  * PO implementation of hibernate util.

@@ -4,7 +4,6 @@ import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.EntityNamePartType;
 import gov.nih.nci.iso21090.Enxp;
 import gov.nih.nci.iso21090.NullFlavor;
-
 import org.apache.commons.lang.StringUtils;
 
 /**

@@ -83,10 +83,10 @@
 package gov.nih.nci.po.data.bo;
 
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+
 import java.util.Date;
 import java.util.Set;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Primary curation interface.  Curatable objects have a curation lifecycle, typically

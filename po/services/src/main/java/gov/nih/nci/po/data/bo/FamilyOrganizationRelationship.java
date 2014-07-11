@@ -82,12 +82,14 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.FamilyOrgRelDateValidator.FamilyOrgRelValidDate;
 import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 import gov.nih.nci.po.util.PastOrCurrentDateValidator;
 import gov.nih.nci.po.util.UniqueFamilyOrganizationRelationship;
-
-import java.util.Date;
+import org.hibernate.annotations.Where;
+import org.hibernate.validator.NotNull;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -97,12 +99,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.Where;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.Date;
    
 /**
  * A specific relationship of an organization to a family.

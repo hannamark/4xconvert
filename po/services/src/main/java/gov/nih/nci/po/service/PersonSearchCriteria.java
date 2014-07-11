@@ -3,15 +3,13 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Person;
-
-import java.io.Serializable;
-
 import org.apache.commons.lang.StringUtils;
 
-import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+import java.io.Serializable;
 
 /**
  * @author Denis G. Krylov

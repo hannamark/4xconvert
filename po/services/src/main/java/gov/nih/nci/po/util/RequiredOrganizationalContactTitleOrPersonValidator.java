@@ -1,11 +1,10 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.AbstractOrganizationalContact;
-
-import java.io.Serializable;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.Validator;
+
+import java.io.Serializable;
 
 /**
  * Used to validate that at least one of player or title is set.

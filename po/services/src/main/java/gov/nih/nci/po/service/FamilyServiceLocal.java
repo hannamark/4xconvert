@@ -82,14 +82,12 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.data.bo.Family;
-
-import java.util.Date;
 
 import javax.ejb.Local;
 import javax.jms.JMSException;
-
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import java.util.Date;
 
 /**
  * defines CURD for Family.

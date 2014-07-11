@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
@@ -94,23 +95,6 @@ import gov.nih.nci.po.util.UniqueOrganizationalContactPlayerScoperType;
 import gov.nih.nci.po.util.UniqueOrganizationalContactTitleScoperType;
 import gov.nih.nci.po.util.ValidIi;
 import gov.nih.nci.security.authorization.domainobjects.User;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Columns;
@@ -123,7 +107,20 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Valid;
 
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author smatyas

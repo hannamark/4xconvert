@@ -86,8 +86,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
 import gov.nih.nci.po.data.bo.OrganizationalContactType;
+import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.convert.GenericTypeCodeConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -119,6 +121,13 @@ public class OrganizationalContactRemoteServiceTest extends
         PoHibernateUtil.getCurrentSession().clear();
     }
 
+    @Override
+    protected void verifyCreatedBy(long id) {
+        OrganizationalContact oversightCommittee =
+                (OrganizationalContact) PoHibernateUtil.getCurrentSession().get(OrganizationalContact.class, id);
+
+        assertEquals(getUser(), oversightCommittee.getCreatedBy());
+    }
     /**
      * {@inheritDoc}
      */

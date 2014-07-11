@@ -4,12 +4,11 @@ import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
-
-import java.io.Serializable;
-
 import org.hibernate.mapping.Property;
 import org.hibernate.validator.PropertyConstraint;
 import org.hibernate.validator.Validator;
+
+import java.io.Serializable;
 
 /**
  * Ensures only CTEP-owned may be ACTIVE.

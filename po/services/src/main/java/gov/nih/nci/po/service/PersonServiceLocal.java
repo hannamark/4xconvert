@@ -83,16 +83,14 @@
 package gov.nih.nci.po.service;
 
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.data.bo.Person;
-
-import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Local;
 import javax.jms.JMSException;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import java.util.List;
+import java.util.Map;
 
 /**
  *

@@ -90,6 +90,7 @@ import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.PatientCR;
 import gov.nih.nci.po.data.bo.PhoneNumber;
@@ -124,6 +125,10 @@ public class PatientRemoteServiceTest extends AbstractPersonRoleDTORemoteService
         return EjbTestHelper.getPatientCorrelationServiceRemote();
     }
 
+    @Override
+    protected void verifyCreatedBy(long id) {
+        //not currently stored
+    }
     /**
      * {@inheritDoc}
      */

@@ -87,9 +87,11 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.HealthCareProviderCR;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.convert.StringConverter;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.CorrelationService;
 
 import java.util.List;
@@ -110,6 +112,14 @@ public class HealthCareProviderRemoteServiceTest
     @Override
     CorrelationService<HealthCareProviderDTO> getCorrelationService() {
        return EjbTestHelper.getHealthCareProviderCorrelationServiceRemote();
+    }
+
+    @Override
+    protected void verifyCreatedBy(long id) {
+        HealthCareProvider oversightCommittee =
+                (HealthCareProvider) PoHibernateUtil.getCurrentSession().get(HealthCareProvider.class, id);
+
+        assertEquals(getUser(), oversightCommittee.getCreatedBy());
     }
 
     /**

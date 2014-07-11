@@ -82,14 +82,12 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.data.bo.Correlation;
 
+import javax.jms.JMSException;
 import java.util.List;
 import java.util.Map;
-
-import javax.jms.JMSException;
-
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * Defines the generic methods we expect to implement for all structural role.

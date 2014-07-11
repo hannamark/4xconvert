@@ -82,9 +82,13 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.validator.NotNull;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -92,12 +96,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * @author Scott Miller

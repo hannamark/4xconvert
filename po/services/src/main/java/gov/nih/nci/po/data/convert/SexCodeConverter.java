@@ -86,13 +86,12 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.po.data.bo.PersonSex;
 import gov.nih.nci.services.PoIsoConstraintException;
-
-import java.util.Locale;
-
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
 import org.apache.commons.lang.StringUtils;
+
+import java.util.Locale;
 
 
 /**

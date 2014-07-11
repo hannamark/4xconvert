@@ -82,11 +82,10 @@
  */
 package gov.nih.nci.services.correlation;
 
-import java.util.List;
-
 import gov.nih.nci.services.CorrelationService;
 
 import javax.ejb.Remote;
+import java.util.List;
 
 /**
  * @author Scott Miller

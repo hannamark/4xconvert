@@ -3,11 +3,11 @@
  */
 package gov.nih.nci.po.service;
 
-import java.io.Serializable;
-import java.util.Collection;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.CompareToBuilder;
+
+import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * @author Denis G. Krylov

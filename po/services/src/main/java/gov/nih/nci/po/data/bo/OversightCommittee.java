@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
@@ -90,10 +91,15 @@ import gov.nih.nci.po.util.RoleStatusChange;
 import gov.nih.nci.po.util.UniqueOversightCommittee;
 import gov.nih.nci.po.util.ValidIi;
 import gov.nih.nci.security.authorization.domainobjects.User;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
+import org.hibernate.validator.Valid;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -105,18 +111,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
-import org.hibernate.validator.Valid;
-
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**

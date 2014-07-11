@@ -83,8 +83,10 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.lang.management.ManagementFactory;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -101,11 +103,7 @@ import javax.jms.TopicSubscriber;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import java.lang.management.ManagementFactory;
 
 /**
  * CTEP JMS connection and subscription service. Startup is asynchronous and non-failing, for speed and ease of

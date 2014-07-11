@@ -84,6 +84,10 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.dao.FamilyUtilDao;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
+import org.hibernate.validator.Validator;
+import org.hibernate.validator.ValidatorClass;
 
 import java.io.Serializable;
 import java.lang.annotation.Documented;
@@ -94,11 +98,6 @@ import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.util.Calendar;
 import java.util.Date;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Session;
-import org.hibernate.validator.Validator;
-import org.hibernate.validator.ValidatorClass;
 
 /**
  * Validates that FamilyOrganizationRelationship startDate/endDate is valid per existing relationships.

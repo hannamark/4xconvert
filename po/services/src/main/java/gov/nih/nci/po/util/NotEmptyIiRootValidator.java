@@ -2,11 +2,10 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.iso21090.Ii;
-
-import java.util.Iterator;
-
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
+
+import java.util.Iterator;
 
 /**
  * Checks that the Ii root has been set.

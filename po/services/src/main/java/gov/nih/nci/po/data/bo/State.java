@@ -82,8 +82,16 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -94,16 +102,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 
 /**

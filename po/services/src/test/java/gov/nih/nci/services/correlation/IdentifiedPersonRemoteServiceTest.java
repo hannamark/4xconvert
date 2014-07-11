@@ -94,6 +94,7 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
@@ -121,6 +122,14 @@ public class IdentifiedPersonRemoteServiceTest
     @Override
     CorrelationService<IdentifiedPersonDTO> getCorrelationService() {
        return EjbTestHelper.getIdentifiedPersonServiceBeanAsRemote();
+    }
+
+    @Override
+    protected void verifyCreatedBy(long id) {
+        IdentifiedPerson oversightCommittee =
+                (IdentifiedPerson) PoHibernateUtil.getCurrentSession().get(IdentifiedPerson.class, id);
+
+        assertEquals(getUser(), oversightCommittee.getCreatedBy());
     }
 
     /**

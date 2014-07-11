@@ -82,20 +82,18 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.search.SearchableUtils;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.search.SearchableUtils;
+import java.util.Map;
 
 /**
  * @author Scott Miller

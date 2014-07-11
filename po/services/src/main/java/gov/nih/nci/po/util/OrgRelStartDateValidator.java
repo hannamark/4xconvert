@@ -84,6 +84,9 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.data.dao.FamilyUtilDao;
+import org.hibernate.Session;
+import org.hibernate.validator.Validator;
+import org.hibernate.validator.ValidatorClass;
 
 import java.io.Serializable;
 import java.lang.annotation.Documented;
@@ -93,10 +96,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.util.Date;
-
-import org.hibernate.Session;
-import org.hibernate.validator.Validator;
-import org.hibernate.validator.ValidatorClass;
 
 /**
  * Validates that OrganizationRelationship startDate is valid.

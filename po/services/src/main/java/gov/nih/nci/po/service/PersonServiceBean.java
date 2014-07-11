@@ -82,14 +82,8 @@
  */
 package gov.nih.nci.po.service; // NOPMD
 
-import static gov.nih.nci.po.service.PersonSearchSortEnum.CITY;
-import static gov.nih.nci.po.service.PersonSearchSortEnum.CTEP_ID;
-import static gov.nih.nci.po.service.PersonSearchSortEnum.EMAIL;
-import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_FIRSTNAME;
-import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_ID;
-import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_LASTNAME;
-import static gov.nih.nci.po.service.PersonSearchSortEnum.STATE;
-import static gov.nih.nci.po.service.PersonSearchSortEnum.STATUS;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -104,7 +98,19 @@ import gov.nih.nci.po.service.PersonSearchDTO.Affiliation.RoleGroup;
 import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoServiceUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -119,22 +125,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jms.JMSException;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.CITY;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.CTEP_ID;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.EMAIL;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_FIRSTNAME;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_ID;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.PERSON_LASTNAME;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.STATE;
+import static gov.nih.nci.po.service.PersonSearchSortEnum.STATUS;
 
 /**
  * 

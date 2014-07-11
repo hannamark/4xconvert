@@ -1,19 +1,17 @@
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
 import gov.nih.nci.po.data.bo.RoleStatus;
-
-import java.io.Serializable;
-import java.sql.Connection;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.Validator;
 
-import com.fiveamsolutions.nci.commons.util.ProxyUtils;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.util.List;
 
 /**
  * Used to validate that the scoper is unique for the given player, ignoring NULLIFIED records.

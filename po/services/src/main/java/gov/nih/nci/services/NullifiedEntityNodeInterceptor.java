@@ -8,13 +8,12 @@ import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
 
 
 /**

@@ -82,18 +82,16 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 
+import javax.jms.JMSException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.jms.JMSException;
-
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * Interface of the family organization relationship service bean.

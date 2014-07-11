@@ -8,11 +8,10 @@ import gov.nih.nci.iso21090.AdxpCnt;
 import gov.nih.nci.iso21090.AdxpCty;
 import gov.nih.nci.iso21090.AdxpSta;
 import gov.nih.nci.iso21090.AdxpZip;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author smatyas

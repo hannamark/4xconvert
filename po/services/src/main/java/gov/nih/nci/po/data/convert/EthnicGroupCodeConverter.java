@@ -87,16 +87,15 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.po.data.bo.PersonEthnicGroup;
 import gov.nih.nci.services.PoIsoConstraintException;
-
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-
 import org.apache.commons.collections.BidiMap;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.collections.bidimap.UnmodifiableBidiMap;
 import org.apache.commons.lang.StringUtils;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 
 /**

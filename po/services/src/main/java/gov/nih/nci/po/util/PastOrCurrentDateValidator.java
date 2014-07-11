@@ -1,5 +1,9 @@
 package gov.nih.nci.po.util;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.validator.Validator;
+import org.hibernate.validator.ValidatorClass;
+
 import java.io.Serializable;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -8,10 +12,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Calendar;
 import java.util.Date;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.validator.Validator;
-import org.hibernate.validator.ValidatorClass;
 
 /**
  * Validates that date is not in the future.

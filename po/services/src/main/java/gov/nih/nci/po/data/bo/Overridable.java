@@ -1,8 +1,7 @@
 package gov.nih.nci.po.data.bo;
 
-import gov.nih.nci.security.authorization.domainobjects.User;
-
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 /**
  * This interface represents entity that may be Overridden.

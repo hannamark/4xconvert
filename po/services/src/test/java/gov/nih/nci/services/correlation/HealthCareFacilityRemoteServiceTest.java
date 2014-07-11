@@ -88,6 +88,7 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -115,6 +116,15 @@ public class HealthCareFacilityRemoteServiceTest extends AbstractEnhancedOrganiz
         // re-gen a player org for next sample for uniqueness
         createAndSetOrganization();
         return dto;
+    }
+
+
+    @Override
+    protected void verifyCreatedBy(long id) {
+        HealthCareFacility oversightCommittee =
+                (HealthCareFacility) PoHibernateUtil.getCurrentSession().get(HealthCareFacility.class, id);
+
+        assertEquals(getUser(), oversightCommittee.getCreatedBy());
     }
 
     @Override

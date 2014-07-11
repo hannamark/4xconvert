@@ -83,11 +83,12 @@
 package gov.nih.nci.po.data.bo;
 
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.PoRegistry;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -96,13 +97,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
-
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**

@@ -88,23 +88,21 @@ import gov.nih.nci.po.data.bo.CtepJMSLogRecord;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.EmailLogger;
 import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.io.StringReader;
-import java.text.MessageFormat;
-import java.util.Date;
-
-import javax.ejb.EJB;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
-
 import org.apache.commons.digester.Digester;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.xml.sax.SAXException;
+
+import javax.ejb.EJB;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+import java.io.StringReader;
+import java.text.MessageFormat;
+import java.util.Date;
 
 /**
  *

@@ -86,13 +86,12 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 /**
  * Dao for Family and related classes.

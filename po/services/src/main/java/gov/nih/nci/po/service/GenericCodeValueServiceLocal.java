@@ -3,9 +3,8 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.po.data.bo.CodeValue;
 
-import java.util.List;
-
 import javax.ejb.Local;
+import java.util.List;
 
 /**
  * Generic ISO Cd Lookup service.

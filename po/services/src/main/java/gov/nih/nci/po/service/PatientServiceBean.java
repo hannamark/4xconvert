@@ -82,21 +82,19 @@
  */
 package gov.nih.nci.po.service;
 
-import java.util.Collections;
-import java.util.List;
-
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Service bean for Patient.

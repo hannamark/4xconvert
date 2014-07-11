@@ -94,6 +94,7 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
@@ -120,6 +121,14 @@ public class IdentifiedOrganizationRemoteServiceTest
         return EjbTestHelper.getIdentifiedOrganizationServiceBeanAsRemote();
     }
 
+
+    @Override
+    protected void verifyCreatedBy(long id) {
+        IdentifiedOrganization oversightCommittee =
+                (IdentifiedOrganization) PoHibernateUtil.getCurrentSession().get(IdentifiedOrganization.class, id);
+
+        assertEquals(getUser(), oversightCommittee.getCreatedBy());
+    }
     /**
      * {@inheritDoc}
      */

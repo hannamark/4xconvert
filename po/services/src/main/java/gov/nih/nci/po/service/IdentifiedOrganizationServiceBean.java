@@ -82,21 +82,18 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoServiceUtil;
-
-import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
-
-import org.apache.commons.collections.CollectionUtils;
-
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import java.util.List;
 
 /**
  * @author Scott Miller

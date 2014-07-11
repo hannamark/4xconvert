@@ -87,7 +87,6 @@ import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.po.data.bo.CodeValue;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoRegistry;
-
 import org.apache.commons.collections.BidiMap;
 
 /**

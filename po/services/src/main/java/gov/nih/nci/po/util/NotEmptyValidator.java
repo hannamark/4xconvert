@@ -1,17 +1,17 @@
 //$Id: $
 package gov.nih.nci.po.util;
 
-import java.io.Serializable;
-import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
 import org.hibernate.mapping.SingleTableSubclass;
 import org.hibernate.validator.PropertyConstraint;
 import org.hibernate.validator.Validator;
+
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Check the non emptyness of the element.

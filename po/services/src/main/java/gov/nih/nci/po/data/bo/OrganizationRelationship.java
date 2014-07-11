@@ -83,12 +83,13 @@
 package gov.nih.nci.po.data.bo;
 
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 import gov.nih.nci.po.util.OrgRelStartDateValidator.OrgRelStartDate;
 import gov.nih.nci.po.util.PastOrCurrentDateValidator;
 import gov.nih.nci.po.util.UniqueOrganizationRelationship;
-
-import java.util.Date;
+import org.hibernate.validator.NotNull;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -99,11 +100,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.Date;
 
 /**
  * A relationship between two organizations within a family.

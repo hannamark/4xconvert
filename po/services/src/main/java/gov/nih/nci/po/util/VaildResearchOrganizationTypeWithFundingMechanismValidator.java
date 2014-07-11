@@ -1,10 +1,9 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.AbstractResearchOrganization;
+import org.hibernate.validator.Validator;
 
 import java.io.Serializable;
-
-import org.hibernate.validator.Validator;
 
 /**
  * Validates a Curatable instance.

@@ -82,14 +82,19 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.util.NotEmptyIiExtension;
 import gov.nih.nci.po.util.NotEmptyIiRoot;
 import gov.nih.nci.po.util.PatientRoleStatusChange;
 import gov.nih.nci.po.util.ValidIi;
-
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.Type;
+import org.hibernate.validator.Valid;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -100,16 +105,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.IndexColumn;
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.Valid;
-
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author mshestopalov

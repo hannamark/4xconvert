@@ -2,10 +2,9 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.State;
+import org.hibernate.validator.Validator;
 
 import java.io.Serializable;
-
-import org.hibernate.validator.Validator;
 
 /**
  * Validates that the State Or Province of an Address type is valid for the specified Country.

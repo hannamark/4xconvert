@@ -15,12 +15,10 @@ import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
-
-import java.util.Map.Entry;
+import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
 
 import javax.interceptor.InvocationContext;
-
-import org.apache.commons.collections.keyvalue.UnmodifiableMapEntry;
+import java.util.Map.Entry;
 
 /**
  * Contains helper method for Correlation, Person and Organization Null checking.

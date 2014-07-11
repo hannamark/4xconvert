@@ -9,9 +9,8 @@ import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
-import java.util.List;
-
 import javax.ejb.Remote;
+import java.util.List;
 
 /**
  * Remote Service that contains methods which scope extends a simple entity. 

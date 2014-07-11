@@ -83,36 +83,34 @@
 
 package gov.nih.nci.po.util;
 
+import gov.nih.nci.po.service.external.CtepImportServiceBean;
 import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
 import org.apache.log4j.Layout;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
 import org.apache.log4j.helpers.CyclicBuffer;
-import org.apache.log4j.helpers.OptionConverter;
 import org.apache.log4j.helpers.LogLog;
-import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.helpers.OptionConverter;
 import org.apache.log4j.spi.ErrorCode;
+import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.TriggeringEventEvaluator;
 
-import gov.nih.nci.po.service.external.CtepImportServiceBean;
-
-import java.util.Properties;
-import java.util.Date;
-
-import javax.mail.Session;
 import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Transport;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.mail.Multipart;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.InternetAddress;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
 import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.util.Date;
+import java.util.Properties;
 
 /**
  * 

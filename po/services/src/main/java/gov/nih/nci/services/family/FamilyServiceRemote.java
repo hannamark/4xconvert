@@ -87,11 +87,10 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 
+import javax.ejb.Remote;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.ejb.Remote;
 
 /**
  * @author mshestopalov

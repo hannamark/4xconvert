@@ -89,6 +89,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
+import gov.nih.nci.po.data.bo.OrganizationalContact;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
@@ -109,6 +110,14 @@ public class ResearchOrganizationRemoteServiceTest extends
     @Override
     CorrelationService<ResearchOrganizationDTO> getCorrelationService() {
         return EjbTestHelper.getResearchOrganizationCorrelationServiceRemote();
+    }
+
+    @Override
+    protected void verifyCreatedBy(long id) {
+        ResearchOrganization oversightCommittee =
+                (ResearchOrganization) PoHibernateUtil.getCurrentSession().get(ResearchOrganization.class, id);
+
+        assertEquals(getUser(), oversightCommittee.getCreatedBy());
     }
 
     @Override

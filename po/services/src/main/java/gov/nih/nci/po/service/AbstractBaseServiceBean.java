@@ -83,23 +83,20 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.util.PoHibernateUtil;
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import gov.nih.nci.po.util.PersistentObjectHelper;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
  * @author smatyas

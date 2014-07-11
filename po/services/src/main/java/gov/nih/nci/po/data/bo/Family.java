@@ -82,20 +82,20 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.FamilyDateValidator.FamilyValidDate;
 import gov.nih.nci.po.util.FamilyOrganizationRelationshipOrgComparator;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 import gov.nih.nci.po.util.PastOrCurrentDateValidator.PastOrCurrentDate;
 import gov.nih.nci.po.util.PoRegistry;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.Where;
+import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -107,16 +107,13 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-import org.hibernate.annotations.Where;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Family represents a set of related organizations.

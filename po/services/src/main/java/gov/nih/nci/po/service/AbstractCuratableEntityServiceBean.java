@@ -1,5 +1,7 @@
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
+import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
@@ -7,19 +9,14 @@ import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.jms.JMSException;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 
-import com.fiveamsolutions.nci.commons.util.JndiUtils;
-import com.fiveamsolutions.nci.commons.util.ProxyUtils;
+import javax.jms.JMSException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @param <T> Entity type.

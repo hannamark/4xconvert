@@ -1,10 +1,9 @@
 package gov.nih.nci.po.data.bo;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Date;
 
 /**
  * Logging CTRP JMS messages.

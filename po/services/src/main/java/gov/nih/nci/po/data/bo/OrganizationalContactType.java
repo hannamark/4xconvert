@@ -82,10 +82,10 @@
  */
 package gov.nih.nci.po.data.bo;
 
-import javax.persistence.Entity;
-
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.Entity;
 
 /**
  * Lookup class for types of organizational contacts.

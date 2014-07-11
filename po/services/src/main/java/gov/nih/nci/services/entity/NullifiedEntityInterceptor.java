@@ -91,13 +91,12 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
 
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
 
 /**
  * Interceptor to catch any NULLIFIED entities and throw a NullifiedEntityException.

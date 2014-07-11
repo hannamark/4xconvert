@@ -82,9 +82,9 @@
  */
 package gov.nih.nci.po.service;
 
-import javax.jms.JMSException;
-
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+
+import javax.jms.JMSException;
 
 /**
  *

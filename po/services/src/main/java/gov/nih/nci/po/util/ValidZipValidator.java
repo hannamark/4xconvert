@@ -2,11 +2,10 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.UsOrCanadaAddressHelper;
-
-import java.io.Serializable;
-
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.Validator;
+
+import java.io.Serializable;
 
 /**
  * @author Hugh Reinhart

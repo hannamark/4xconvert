@@ -93,22 +93,20 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonRole;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PersistentObjectHelper;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import javax.ejb.EJB;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Scott Miller

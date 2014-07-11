@@ -85,12 +85,11 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.CuratableRole;
 import gov.nih.nci.po.data.bo.ScopedRole;
-
-import java.io.Serializable;
-
 import org.hibernate.mapping.Property;
 import org.hibernate.validator.PropertyConstraint;
 import org.hibernate.validator.Validator;
+
+import java.io.Serializable;
 
 
 /**

@@ -82,13 +82,12 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.services.SubscriberUpdateMessage;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Properties;
+import org.apache.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -102,11 +101,9 @@ import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import org.apache.log4j.Logger;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.util.JndiUtils;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Properties;
 
 /**
  * EJB that handles publishing changes to people and organizations to

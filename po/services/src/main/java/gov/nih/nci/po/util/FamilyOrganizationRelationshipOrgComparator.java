@@ -83,10 +83,9 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import org.apache.commons.lang.builder.CompareToBuilder;
 
 import java.util.Comparator;
-
-import org.apache.commons.lang.builder.CompareToBuilder;
 
 /**
  * Compares Family Organization Relationships based on organization names (and id if names are equal).

@@ -1,11 +1,10 @@
 package gov.nih.nci.services;
 
 import gov.nih.nci.iso21090.Bl;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.collections.CollectionUtils;
 
 /**
  * The Entity Node Dto Contains an Entity and optional correlations.

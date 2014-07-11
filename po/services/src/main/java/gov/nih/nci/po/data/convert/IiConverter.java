@@ -84,6 +84,7 @@
 
 package gov.nih.nci.po.data.convert;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
@@ -93,16 +94,13 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.services.PoIsoConstraintException;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  *

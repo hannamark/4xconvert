@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import gov.nih.nci.po.data.bo.AbstractIdentifiedEntity;
 import gov.nih.nci.po.data.bo.AbstractOrganizationalContact;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
@@ -109,8 +110,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
  * Provides support for merging Structural Roles of a merging Organization. Given the Structural Role (correlation) and

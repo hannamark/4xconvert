@@ -121,6 +121,15 @@ public class OversightCommitteeRemoteServiceTest extends AbstractOrganizationalR
     }
 
     @Override
+    protected void verifyCreatedBy(long id) {
+        OversightCommittee oversightCommittee =
+                (OversightCommittee) PoHibernateUtil.getCurrentSession().get(OversightCommittee.class, id);
+
+        assertEquals(getUser(), oversightCommittee.getCreatedBy());
+    }
+
+
+    @Override
     protected OversightCommitteeDTO getSampleDto() throws Exception {
         OversightCommitteeDTO dto = new OversightCommitteeDTO();
         Ii ii = new Ii();

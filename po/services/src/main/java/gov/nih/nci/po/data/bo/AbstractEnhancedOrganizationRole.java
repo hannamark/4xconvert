@@ -1,19 +1,16 @@
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.PoRegistry;
+import org.hibernate.annotations.Index;
+import org.hibernate.validator.Length;
 
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.Length;
-
-import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Base class for all organization to health care facility types.

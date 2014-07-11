@@ -87,11 +87,10 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
 import gov.nih.nci.po.data.convert.IiDsetConverter;
+import net.sf.xsnapshot.TransformContext;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import net.sf.xsnapshot.TransformContext;
 
 /**
  * XSnapshot helper to convert ID + otherIdentifiers in the model into the combined DSet identifier in the snapshot.

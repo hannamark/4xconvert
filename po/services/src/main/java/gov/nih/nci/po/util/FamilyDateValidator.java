@@ -84,6 +84,8 @@ package gov.nih.nci.po.util;
 
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.service.FamilyServiceLocal;
+import org.hibernate.validator.Validator;
+import org.hibernate.validator.ValidatorClass;
 
 import java.io.Serializable;
 import java.lang.annotation.Documented;
@@ -92,9 +94,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Date;
-
-import org.hibernate.validator.Validator;
-import org.hibernate.validator.ValidatorClass;
 
 /**
  * Validates that Family startDate and endDate is valid per existing relationships.

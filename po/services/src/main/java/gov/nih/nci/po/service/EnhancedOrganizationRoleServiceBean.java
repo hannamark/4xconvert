@@ -2,14 +2,12 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
-
-import java.util.HashSet;
+import org.apache.commons.lang.StringUtils;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.HashSet;
 
 /**
  * This class has methods which are specific to HealthCareFacility &

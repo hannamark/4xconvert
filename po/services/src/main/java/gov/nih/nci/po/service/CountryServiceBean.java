@@ -85,19 +85,17 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.State;
 import gov.nih.nci.po.util.PoHibernateUtil;
-
-import java.util.Collections;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *

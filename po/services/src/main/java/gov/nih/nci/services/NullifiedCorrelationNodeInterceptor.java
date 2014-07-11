@@ -7,13 +7,12 @@ import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.NullifiedRoleInterceptor;
 
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
 
 
 

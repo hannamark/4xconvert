@@ -1,10 +1,10 @@
 package gov.nih.nci.po.service;
 
 
-import javax.ejb.Local;
-
 import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
+import javax.ejb.Local;
 
 /**
  * Local interface for searching audit log records.

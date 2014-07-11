@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.util;
 
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.UsOrCanEnforceable;
@@ -92,8 +93,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
  * @author mshestopalov

@@ -1,10 +1,8 @@
 package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Hugh Reinhart

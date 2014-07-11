@@ -1,20 +1,17 @@
 package gov.nih.nci.po.data.bo;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 import gov.nih.nci.po.util.NotEmpty;
 import gov.nih.nci.po.util.PoRegistry;
-
-import java.io.Serializable;
+import org.hibernate.annotations.Index;
+import org.hibernate.validator.Length;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
-import org.hibernate.annotations.Index;
-import org.hibernate.validator.Length;
-
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import java.io.Serializable;
 
 /**
  * This Entity represents an Alias.

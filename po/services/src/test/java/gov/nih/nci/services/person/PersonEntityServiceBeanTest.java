@@ -1,10 +1,15 @@
-package gov.nih.nci.po.services.person;
+package gov.nih.nci.services.person;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
@@ -51,6 +56,10 @@ import gov.nih.nci.po.service.CountryTestUtil;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.PersonServiceBeanTest;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.UserProvisioningManager;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.correlation.PatientRemoteServiceTest;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
@@ -71,9 +80,18 @@ import java.util.Map;
 
 import javax.jms.JMSException;
 
+import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SecurityServiceProvider.class)
 public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
     private PersonEntityServiceRemote remote;
@@ -84,6 +102,29 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
     @Before
     public void setupService() {
         remote = EjbTestHelper.getPersonEntityServiceBeanAsRemote();
+    }
+
+
+    @Before
+    public void mockSecurity() {
+        UserProvisioningManager userProvisioningManager = mock(UserProvisioningManager.class);
+        when(userProvisioningManager.getUser(anyString())).thenAnswer(
+                new Answer<User>() {
+                    @Override
+                    public User answer(InvocationOnMock invocation) throws Throwable {
+                        return (User) PoHibernateUtil.getCurrentSession().createCriteria(User.class)
+                                .add(Restrictions.eq("loginName", invocation.getArguments()[0])).uniqueResult();
+                    }
+                }
+        );
+
+
+        mockStatic(SecurityServiceProvider.class);
+        try {
+            PowerMockito.when(SecurityServiceProvider.getUserProvisioningManager("po")).thenReturn(userProvisioningManager);
+        } catch (CSException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String findValueByType(EnPn enpn, EntityNamePartType type) {
@@ -202,6 +243,8 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
         Person p = (Person) PoHibernateUtil.getCurrentSession().get(Person.class, IiConverter.convertToLong(id));
         assertEquals(findValueByType(dto.getName(), EntityNamePartType.FAM), p.getLastName());
         assertEquals(findValueByType(dto.getName(), EntityNamePartType.GIV), p.getFirstName());
+        assertNotNull("CreatedBy not set on creation.", p.getCreatedBy());
+        assertEquals(getUser(), p.getCreatedBy());
     }
     
     private PersonDTO createPersonWithNoPhones() throws URISyntaxException {

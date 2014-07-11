@@ -82,12 +82,11 @@
  */
 package gov.nih.nci.po.service;
 
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
  * Common methods for admin-related entity services.  These are for entities that do not require curation,

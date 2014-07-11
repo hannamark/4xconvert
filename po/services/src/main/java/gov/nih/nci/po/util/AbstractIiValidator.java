@@ -83,14 +83,13 @@
 package gov.nih.nci.po.util;
 
 import gov.nih.nci.iso21090.Ii;
+import org.hibernate.validator.PropertyConstraint;
+import org.hibernate.validator.Validator;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Iterator;
-
-import org.hibernate.validator.PropertyConstraint;
-import org.hibernate.validator.Validator;
 
 /**
  * Base class to validate either a single Ii or the individual Iis within a Collection&lt;Ii&gt;.  An empty collection

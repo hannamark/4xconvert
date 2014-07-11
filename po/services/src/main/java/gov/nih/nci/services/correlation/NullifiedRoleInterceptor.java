@@ -88,13 +88,12 @@ import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.services.AbstractBaseNullifiedInterceptor;
 import gov.nih.nci.services.CorrelationDto;
 
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
 
 /**
  * Interceptor to catch any NULLIFIED roles and throw a NullifiedEntityException.

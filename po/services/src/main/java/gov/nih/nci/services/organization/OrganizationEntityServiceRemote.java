@@ -91,10 +91,9 @@ import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
+import javax.ejb.Remote;
 import java.util.List;
 import java.util.Map;
-
-import javax.ejb.Remote;
 /**
  *
  * @author gax
