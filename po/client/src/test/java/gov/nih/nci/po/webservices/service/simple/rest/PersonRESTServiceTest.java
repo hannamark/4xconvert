@@ -3106,14 +3106,14 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         HttpPut putReq = new HttpPut(url);
         putReq.addHeader("content-type", TXT_PLAIN);
         putReq.addHeader("Accept", TXT_PLAIN);
-        StringEntity personEntity = new StringEntity("INACTIVE");
+        StringEntity personEntity = new StringEntity("PENDING");
         putReq.setEntity(personEntity);
         HttpResponse response = httpClient.execute(putReq);
 
         assertEquals(500, getReponseCode(response));
         assertEquals(TXT_PLAIN, getResponseContentType(response));
         assertTrue(getResponseMessage(response).contains(
-                "Illegal curation transition from PENDING to SUSPENDED"));
+                "Illegal curation transition from ACTIVE to PENDING"));
     }
 
     private Person createActivePerson() throws Exception {

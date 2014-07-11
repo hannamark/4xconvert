@@ -1,8 +1,6 @@
 package gov.nih.nci.po.webservices.service.simple.rest;
 
-import gov.nih.nci.po.webservices.Constants;
 import gov.nih.nci.po.webservices.service.exception.EntityNotFoundException;
-import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
 import gov.nih.nci.po.webservices.types.EntityStatus;
 import gov.nih.nci.po.webservices.types.Organization;
 import gov.nih.nci.po.webservices.types.OrganizationRole;
@@ -11,12 +9,11 @@ import gov.nih.nci.po.webservices.types.OrganizationSearchCriteria;
 import gov.nih.nci.po.webservices.types.OrganizationSearchResult;
 import gov.nih.nci.po.webservices.types.OrganizationSearchResultList;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.jaxrs.ext.MessageContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -31,10 +28,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * This is implementation class for OrganizationService(REST Version).
@@ -42,8 +42,7 @@ import java.util.List;
  * @author Rohit Gupta
  * 
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength",
-        "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 @Service("organizationServiceSimpleRestEndpoint")
 public class OrganizationRESTService {
 
@@ -594,7 +593,7 @@ public class OrganizationRESTService {
         populateOrgSearchCriteria(osc, req);
 
         // populate base search criteria fields
-        populateBaseSearchCriteria(osc, req);
+        PoWSUtil.populateBaseSearchCriteria(osc, req);
 
         return osc;
     }
@@ -607,9 +606,26 @@ public class OrganizationRESTService {
      * @param req
      *            HttpRequest
      */
-    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
     private void populateOrgSearchCriteria(OrganizationSearchCriteria osc,
             HttpServletRequest req) {
+        
+        populateIdFields(osc, req);
+        
+        populateNameStatus(osc, req);
+
+        populateHasFields(osc, req);
+        
+        boolean searchAliases = false;
+        if (req.getParameter("searchAliases") != null) {
+            searchAliases = Boolean.valueOf(req
+                    .getParameter("searchAliases"));            
+            osc.setSearchAliases(searchAliases);
+        }
+    }
+    
+    private void populateIdFields(OrganizationSearchCriteria osc,
+            HttpServletRequest req) {
+        
         String ctepID = req.getParameter("ctepID");
         if (StringUtils.isNotBlank(ctepID)) {
             osc.setCtepID(ctepID);
@@ -619,8 +635,12 @@ public class OrganizationRESTService {
         if (req.getParameter("id") != null) {
             id = Long.valueOf(req.getParameter("id"));
             osc.setId(id);
-        }
-
+        }   
+    }
+    
+    private void populateNameStatus(OrganizationSearchCriteria osc,
+            HttpServletRequest req) {
+        
         EntityStatus etyStatus = null;
         if (StringUtils.isNotBlank(req.getParameter("statusCode"))) {
             etyStatus = PoWSUtil
@@ -637,6 +657,10 @@ public class OrganizationRESTService {
         if (StringUtils.isNotBlank(familyName)) {
             osc.setFamilyName(familyName);
         }
+    }
+    
+    private void populateHasFields(OrganizationSearchCriteria osc,
+            HttpServletRequest req) {
 
         boolean hasChangeRequest = false;
         if (req.getParameter("hasChangeRequest") != null) {
@@ -655,68 +679,7 @@ public class OrganizationRESTService {
             hasPendingRoRoles = Boolean.valueOf(req
                     .getParameter("hasPendingRoRoles"));
             osc.setHasPendingRoRoles(hasPendingRoRoles);
-        }
-        boolean searchAliases = false;
-        if (req.getParameter("searchAliases") != null) {
-            searchAliases = Boolean.valueOf(req
-                    .getParameter("searchAliases"));            
-            osc.setSearchAliases(searchAliases);
-        }
-    }
-
-    /**
-     * This method is used to populate base search criteria fields.
-     * 
-     * @param osc
-     *            OSC to be populated
-     * @param req
-     *            HttpRequest
-     */
-    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-    private void populateBaseSearchCriteria(OrganizationSearchCriteria osc,
-            HttpServletRequest req) {
-        int offset = Constants.DEFAULT_OFFSET, limit = Constants.DEFAULT_SEARCH_LIMIT;
-        if (req.getParameter("offset") != null) {
-            offset = Integer.valueOf(req.getParameter("offset"));
-        }
-        osc.setOffset(offset);
-
-        if (req.getParameter("limit") != null) {
-            limit = Integer.valueOf(req.getParameter("limit"));
-        }
-        osc.setLimit(limit);
-
-        String line1 = req.getParameter("line1");
-        if (StringUtils.isNotBlank(line1)) {
-            osc.setLine1(line1);
-        }
-
-        String line2 = req.getParameter("line2");
-        if (StringUtils.isNotBlank(line2)) {
-            osc.setLine2(line2);
-        }
-
-        String city = req.getParameter("city");
-        if (StringUtils.isNotBlank(city)) {
-            osc.setCity(city);
-        }
-
-        String stateOrProvince = req.getParameter("stateOrProvince");
-        if (StringUtils.isNotBlank(stateOrProvince)) {
-            osc.setStateOrProvince(stateOrProvince);
-        }
-
-        String countryCode = req.getParameter("countryCode");
-        CountryISO31661Alpha3Code countryAlpha3 = null;
-        if (StringUtils.isNotBlank(countryCode)) {
-            countryAlpha3 = CountryISO31661Alpha3Code.fromValue(countryCode);
-            osc.setCountryCode(countryAlpha3);
-        }
-
-        String postalcode = req.getParameter("postalcode");
-        if (StringUtils.isNotBlank(postalcode)) {
-            osc.setPostalcode(postalcode);
-        }
+        }        
     }
 
 }

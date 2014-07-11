@@ -1,10 +1,13 @@
 package gov.nih.nci.po.webservices.util;
 
 import gov.nih.nci.coppa.domain.RoleStatus;
+import gov.nih.nci.po.webservices.Constants;
 import gov.nih.nci.po.webservices.convert.simple.ConverterException;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.po.webservices.service.simple.soap.person.RoleType;
+import gov.nih.nci.po.webservices.types.BaseSearchCriteria;
 import gov.nih.nci.po.webservices.types.ClinicalResearchStaff;
+import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
 import gov.nih.nci.po.webservices.types.EntityStatus;
 import gov.nih.nci.po.webservices.types.HealthCareFacility;
 import gov.nih.nci.po.webservices.types.HealthCareProvider;
@@ -13,10 +16,14 @@ import gov.nih.nci.po.webservices.types.OversightCommittee;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.types.Role;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This is a Utility class for PO-WebService project which has common utility
@@ -25,6 +32,7 @@ import java.util.GregorianCalendar;
  * @author Rohit Gupta
  * 
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class PoWSUtil {
 
     /**
@@ -197,5 +205,67 @@ public class PoWSUtil {
             isSame = true;
         }
         return isSame;
+    }
+    
+    /**
+     * This method is used to populate BaseSearchCriteria.
+     * @param bsc BaseSearchCriteria
+     * @param req HttpServletRequest
+     */
+    public static void populateBaseSearchCriteria(BaseSearchCriteria bsc,
+            HttpServletRequest req) {
+        int offset = Constants.DEFAULT_OFFSET, limit = Constants.DEFAULT_SEARCH_LIMIT;
+        if (req.getParameter("offset") != null) {
+            offset = Integer.valueOf(req.getParameter("offset"));
+        }
+        bsc.setOffset(offset);
+
+        if (req.getParameter("limit") != null) {
+            limit = Integer.valueOf(req.getParameter("limit"));
+        }
+        bsc.setLimit(limit);
+
+        populateAddressSearchCriteria(bsc, req);
+    }
+    
+    /**
+     * This method is used to populate Address related information
+     * of BaseSearchCriteria.
+     */
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" })
+    private static void populateAddressSearchCriteria(BaseSearchCriteria bsc,
+            HttpServletRequest req) {       
+
+        String line1 = req.getParameter("line1");
+        if (StringUtils.isNotBlank(line1)) {
+            bsc.setLine1(line1);
+        }
+
+        String line2 = req.getParameter("line2");
+        if (StringUtils.isNotBlank(line2)) {
+            bsc.setLine2(line2);
+        }
+
+        String city = req.getParameter("city");
+        if (StringUtils.isNotBlank(city)) {
+            bsc.setCity(city);
+        }
+
+        String stateOrProvince = req.getParameter("stateOrProvince");
+        if (StringUtils.isNotBlank(stateOrProvince)) {
+            bsc.setStateOrProvince(stateOrProvince);
+        }
+
+        String countryCode = req.getParameter("countryCode");
+        CountryISO31661Alpha3Code countryAlpha3 = null;
+        if (StringUtils.isNotBlank(countryCode)) {
+            countryAlpha3 = CountryISO31661Alpha3Code.fromValue(countryCode);
+            bsc.setCountryCode(countryAlpha3);
+        }
+
+        String postalcode = req.getParameter("postalcode");
+        if (StringUtils.isNotBlank(postalcode)) {
+            bsc.setPostalcode(postalcode);
+        }
     }
 }

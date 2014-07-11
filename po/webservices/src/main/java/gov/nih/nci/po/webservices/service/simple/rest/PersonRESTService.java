@@ -1,8 +1,6 @@
 package gov.nih.nci.po.webservices.service.simple.rest;
 
-import gov.nih.nci.po.webservices.Constants;
 import gov.nih.nci.po.webservices.service.exception.EntityNotFoundException;
-import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
 import gov.nih.nci.po.webservices.types.EntityStatus;
 import gov.nih.nci.po.webservices.types.Person;
 import gov.nih.nci.po.webservices.types.PersonList;
@@ -12,12 +10,11 @@ import gov.nih.nci.po.webservices.types.PersonSearchCriteria;
 import gov.nih.nci.po.webservices.types.PersonSearchResult;
 import gov.nih.nci.po.webservices.types.PersonSearchResultList;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.jaxrs.ext.MessageContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -32,10 +29,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 /**
  * This is implementation class for PersonService(REST Version).
@@ -43,8 +43,7 @@ import java.util.List;
  * @author Rohit Gupta
  * 
  */
-@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength",
-        "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 @Service("personServiceSimpleRestEndpoint")
 public class PersonRESTService {
 
@@ -583,35 +582,47 @@ public class PersonRESTService {
      * This method is used to populate the PersonSearchCriteria.
      * 
      * @throws UnsupportedEncodingException
-     */
-    @SuppressWarnings({ "PMD.ExcessiveMethodLength",
-            "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
+     */    
     private PersonSearchCriteria getPersonSearchCriteria()
             throws UnsupportedEncodingException {
         PersonSearchCriteria psc = new PersonSearchCriteria();
         HttpServletRequest req = context.getHttpServletRequest();
-        req.setCharacterEncoding("utf-8");
+        req.setCharacterEncoding("utf-8");        
 
-        String firstName = req.getParameter("firstName");
-        if (StringUtils.isNotBlank(firstName)) {
-            psc.setFirstName(firstName);
-        }
+        // populate Person Specific Search Criteria fields
+        populatePersonSearchCriteria(psc, req);
 
-        String lastName = req.getParameter("lastName");
-        if (StringUtils.isNotBlank(lastName)) {
-            psc.setLastName(lastName);
-        }
+        // populate base search criteria fields
+        PoWSUtil.populateBaseSearchCriteria(psc, req);        
 
-        String email = req.getParameter("email");
-        if (StringUtils.isNotBlank(email)) {
-            psc.setEmail(email);
-        }
+        return psc;
+    }
+    
+    private void populatePersonSearchCriteria(PersonSearchCriteria psc,
+            HttpServletRequest req) {
+        
+        populateNameEmailFields(psc, req);        
 
         String affiliation = req.getParameter("affiliation");
         if (StringUtils.isNotBlank(affiliation)) {
             psc.setAffiliation(affiliation);
         }
 
+        populateIdFields(psc, req);
+
+        EntityStatus etyStatus = null;
+        if (StringUtils.isNotBlank(req.getParameter("statusCode"))) {
+            etyStatus = PoWSUtil
+                    .getEntityStatus(req.getParameter("statusCode"));
+            psc.setStatusCode(etyStatus);
+        }
+
+        populatePendingRoleFields(psc, req);
+    }
+    
+    private void populateIdFields(PersonSearchCriteria psc,
+            HttpServletRequest req) {
+        
         String ctepID = req.getParameter("ctepID");
         if (StringUtils.isNotBlank(ctepID)) {
             psc.setCtepID(ctepID);
@@ -621,14 +632,29 @@ public class PersonRESTService {
         if (req.getParameter("id") != null) {
             id = Long.valueOf(req.getParameter("id"));
             psc.setId(id);
+        }     
+    }
+    
+    private void populateNameEmailFields(PersonSearchCriteria psc,
+            HttpServletRequest req) {
+        String firstName = req.getParameter("firstName");
+        if (StringUtils.isNotBlank(firstName)) {
+            psc.setFirstName(firstName);
         }
 
-        EntityStatus etyStatus = null;
-        if (StringUtils.isNotBlank(req.getParameter("statusCode"))) {
-            etyStatus = PoWSUtil
-                    .getEntityStatus(req.getParameter("statusCode"));
-            psc.setStatusCode(etyStatus);
+        String lastName = req.getParameter("lastName");
+        if (StringUtils.isNotBlank(lastName)) {
+            psc.setLastName(lastName);
+        }        
+        
+        String email = req.getParameter("email");
+        if (StringUtils.isNotBlank(email)) {
+            psc.setEmail(email);
         }
+    }
+    
+    private void populatePendingRoleFields(PersonSearchCriteria psc,
+            HttpServletRequest req) {
 
         boolean hasPendingCrsRoles = false;
         if (req.getParameter("hasPendingCrsRoles") != null) {
@@ -648,51 +674,6 @@ public class PersonRESTService {
                     .getParameter("hasPendingOcRoles"));
             psc.setHasPendingOcRoles(hasPendingOcRoles);
         }
-
-        int offset = Constants.DEFAULT_OFFSET, limit = Constants.DEFAULT_SEARCH_LIMIT;
-        if (req.getParameter("offset") != null) {
-            offset = Integer.valueOf(req.getParameter("offset"));
-        }
-        psc.setOffset(offset);
-
-        if (req.getParameter("limit") != null) {
-            limit = Integer.valueOf(req.getParameter("limit"));
-        }
-        psc.setLimit(limit);
-
-        String line1 = req.getParameter("line1");
-        if (StringUtils.isNotBlank(line1)) {
-            psc.setLine1(line1);
-        }
-
-        String line2 = req.getParameter("line2");
-        if (StringUtils.isNotBlank(line2)) {
-            psc.setLine2(line2);
-        }
-
-        String city = req.getParameter("city");
-        if (StringUtils.isNotBlank(city)) {
-            psc.setCity(city);
-        }
-
-        String stateOrProvince = req.getParameter("stateOrProvince");
-        if (StringUtils.isNotBlank(stateOrProvince)) {
-            psc.setStateOrProvince(stateOrProvince);
-        }
-
-        String countryCode = req.getParameter("countryCode");
-        CountryISO31661Alpha3Code countryAlpha3 = null;
-        if (StringUtils.isNotBlank(countryCode)) {
-            countryAlpha3 = CountryISO31661Alpha3Code.fromValue(countryCode);
-            psc.setCountryCode(countryAlpha3);
-        }
-
-        String postalcode = req.getParameter("postalcode");
-        if (StringUtils.isNotBlank(postalcode)) {
-            psc.setPostalcode(postalcode);
-        }
-
-        return psc;
     }
-
+    
 }

@@ -206,6 +206,48 @@ public class OrganizationRESTServiceTest extends
                 "my.email@mayoclinic.org", "571-456-1245", "571-456-1278",
                 "571-123-1123", "http://www.mayoclinic.org");
     }
+    
+    /**
+     * Testcase for OrganizationService-createOrganization - ACTIVE Status
+     */
+    @Test
+    public void testCreateActiveOrganization() throws Exception {
+        org.setCtepId("111111111");
+        org.setStatus(EntityStatus.ACTIVE);
+        StringWriter writer = marshalOrganization(org);
+        String url = osUrl + "/organization";
+
+        // Define a postRequest request
+        HttpPost postRequest = new HttpPost(url);
+
+        // Set the API media type in http content-type header
+        postRequest.addHeader("content-type", APPLICATION_XML);
+        postRequest.addHeader("Accept", APPLICATION_XML);
+
+        // Set the request post body
+        StringEntity orgEntity = new StringEntity(writer.getBuffer().toString());
+        postRequest.setEntity(orgEntity);
+
+        // Send the request
+        HttpResponse response = httpClient.execute(postRequest);
+
+        // check the response code
+        assertEquals(201, getReponseCode(response));
+
+        // check the return content-type
+        assertEquals(APPLICATION_XML, getResponseContentType(response));
+
+        // Now pull back the response object
+        HttpEntity resEntity = response.getEntity();
+        Organization retOrg = unmarshalOrganization(resEntity);
+
+        // check for returned organization
+        Assert.assertNotNull(retOrg);
+        Assert.assertNotNull(retOrg.getId());
+        checkOrganizationDetails(org.getName(), org, retOrg,
+                "my.email@mayoclinic.org", "571-456-1245", "571-456-1278",
+                "571-123-1123", "http://www.mayoclinic.org");        
+    }
 
     /**
      * Testcase for OrganizationService-createOrganization-Organization is Null
@@ -2270,6 +2312,7 @@ public class OrganizationRESTServiceTest extends
         assertTrue(orgRole instanceof HealthCareFacility);
         assertNotNull(orgRole.getId());
         assertNotNull(((HealthCareFacility)orgRole).getCtepId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the details in DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
@@ -2303,6 +2346,7 @@ public class OrganizationRESTServiceTest extends
         assertTrue(orgRole instanceof HealthCareFacility);
         assertNotNull(orgRole.getId());
         assertNotNull(((HealthCareFacility)orgRole).getCtepId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the details in DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
@@ -2401,6 +2445,7 @@ public class OrganizationRESTServiceTest extends
                 .getEntity());
         assertTrue(orgRole instanceof OversightCommittee);
         assertNotNull(orgRole.getId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the details in DB for OC
         checkOrgRoleAddressDetails(oc, orgRole);
         checkOrgRoleContactDetails(oc, orgRole, "my.email@mayoclinic.org",
@@ -2434,6 +2479,7 @@ public class OrganizationRESTServiceTest extends
                 OrganizationRole.class);
         assertTrue(orgRole instanceof OversightCommittee);
         assertNotNull(orgRole.getId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the details in DB for OC
         checkOrgRoleAddressDetails(oc, orgRole);
         checkOrgRoleContactDetails(oc, orgRole, "my.email@mayoclinic.org",
@@ -2464,6 +2510,7 @@ public class OrganizationRESTServiceTest extends
                 .getEntity());
         assertTrue(orgRole instanceof ResearchOrganization);
         assertNotNull(orgRole.getId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the details in DB for OC
         checkOrgRoleAddressDetails(ro, orgRole);
         checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",
@@ -2496,6 +2543,7 @@ public class OrganizationRESTServiceTest extends
                 OrganizationRole.class);
         assertTrue(orgRole instanceof ResearchOrganization);
         assertNotNull(orgRole.getId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the details in DB for OC
         checkOrgRoleAddressDetails(ro, orgRole);
         checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",
