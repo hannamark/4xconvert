@@ -428,7 +428,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
 
         // a user creates an HCF in the system, this hcf will have a ctep id added to it
         HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setStatus(RoleStatus.ACTIVE);
+        hcf.setStatus(RoleStatus.PENDING);
         hcf.setName("NAME");
         Address addr = AdConverter.SimpleConverter.convertToAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine", "cityOrMunicipality", "VA",
                 "20110", "USA", "United States"));

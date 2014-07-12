@@ -307,7 +307,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         org.setName(StringUtils.repeat("testO", 32));
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
-        org.setStatusCode(EntityStatus.NULLIFIED);
+        org.setStatusCode(EntityStatus.PENDING);
         org.getEmail().add(new Email("foo@example.com"));
         org.getUrl().add(new URL("http://example.com"));
         org.getAlias().add(new Alias("test org alias"));
@@ -340,7 +340,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         org.setName(StringUtils.repeat("testO", 32));
         Address mailingAddress = new Address("test", "test", "test", "test", country);
         org.setPostalAddress(mailingAddress);
-        org.setStatusCode(EntityStatus.NULLIFIED);
+        org.setStatusCode(EntityStatus.PENDING);
         org.getEmail().add(new Email("foo@example.com"));
         org.getUrl().add(new URL("http://example.com"));
         org.getAlias().add(new Alias("test org alias"));
@@ -743,7 +743,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         final Country c = EjbTestHelper.getCountryServiceBean().getCountry(getDefaultCountry().getId());
         setDefaultCountry(c);
         Organization o = getBasicOrganization();
-        Organization o2 = getBasicOrganization();
+        Organization o2 = getBasicOrganization();        
         long id = createOrganization(o);
         long id2 = createOrganization(o2);
         o = getOrgServiceBean().getById(id);
@@ -756,7 +756,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setPlayer(o);
-        hcf.setStatus(RoleStatus.ACTIVE);
+        hcf.setStatus(RoleStatus.PENDING);
         hcf.setName("HCF Name");
         HealthCareFacilityServiceLocal healthCareFacilityServiceBean = EjbTestHelper.getHealthCareFacilityServiceBean();
         long hcfId = healthCareFacilityServiceBean.create(hcf);

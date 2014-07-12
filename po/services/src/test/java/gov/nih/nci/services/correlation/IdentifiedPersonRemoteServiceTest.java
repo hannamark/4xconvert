@@ -158,7 +158,7 @@ public class IdentifiedPersonRemoteServiceTest
         dto.setScoperIdentifier(ii);
 
         Cd status = new Cd();
-        status.setCode("active");
+        status.setCode("pending");
         dto.setStatus(status);
 
         ii = new Ii();

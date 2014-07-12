@@ -134,6 +134,25 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 "my.email@mayoclinic.org", "571-456-1245", "571-456-1278",
                 "571-123-1123", "http://www.mayoclinic.org");
     }
+    
+    /**
+     * Testcase for OrganizationService-createOrganization -- ACTIVE Status
+     */
+    @Test
+    public void testCreateActiveOrganization() {
+        CreateOrganizationRequest request = new CreateOrganizationRequest();
+        org.setCtepId("123435");
+        org.setStatus(EntityStatus.ACTIVE);
+        request.setOrganization(org);
+        CreateOrganizationResponse response = orgService
+                .createOrganization(request);
+        Organization retOrg = response.getOrganization();
+        Assert.assertNotNull(retOrg);
+        Assert.assertNotNull(retOrg.getId());
+        checkOrganizationDetails(org.getName(), org, retOrg,
+                "my.email@mayoclinic.org", "571-456-1245", "571-456-1278",
+                "571-123-1123", "http://www.mayoclinic.org");
+    }
 
     /**
      * Testcase for OrganizationService-createOrganization-Organization is Null
@@ -766,7 +785,8 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     @Test
     public void testSearchOrganizationsByCtepId() {        
         // create an organization first
-        CreateOrganizationRequest request = new CreateOrganizationRequest();        
+        CreateOrganizationRequest request = new CreateOrganizationRequest();   
+        org.setStatus(EntityStatus.ACTIVE);
         request.setOrganization(org);
         CreateOrganizationResponse response = orgService
                 .createOrganization(request);
@@ -1269,6 +1289,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertNotNull(orgRole.getId());
         Assert.assertEquals("1234567",
                 ((HealthCareFacility) orgRole).getCtepId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the address details from DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
@@ -1295,6 +1316,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertNotNull(orgRole);
         Assert.assertTrue(orgRole instanceof OversightCommittee);
         Assert.assertNotNull(orgRole.getId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
 
         checkOrgRoleAddressDetails(oc, orgRole);
         checkOrgRoleContactDetails(oc, orgRole, "my.email@mayoclinic.org",
@@ -1322,6 +1344,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertTrue(orgRole instanceof ResearchOrganization);
         Assert.assertNotNull(orgRole.getId());
         Assert.assertNotNull(((ResearchOrganization)orgRole).getCtepId());
+        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
 
         checkOrgRoleAddressDetails(ro, orgRole);
         checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",
@@ -2047,6 +2070,10 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
      * Testcase for OrganizationService-changeOrganizationStatus-for invalid
      * transition
      */
+    /**
+     * Testcase for
+     * OrganizationService-changeOrganizationStatus-InvalidStatusTransition
+     */
     @Test
     public void testChangeOrganizationRoleStatusForInvalidTransition() {
 
@@ -2068,7 +2095,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ChangeOrganizationRoleStatusRequest req = new ChangeOrganizationRoleStatusRequest();
         req.setOrganizationRoleID(orgRole.getId());
         req.setRoleType(RoleType.HEALTH_CARE_FACILITY);
-        req.setStatus(EntityStatus.INACTIVE);
+        req.setStatus(EntityStatus.PENDING);
         try {
             orgService.changeOrganizationRoleStatus(req);
         } catch (Exception e) {
@@ -2076,7 +2103,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         }
 
         Assert.assertTrue(excepMessage
-                .contains("Illegal curation transition from PENDING to SUSPENDED"));
+                .contains("Illegal curation transition from ACTIVE to PENDING"));
     }
 
     @After
@@ -2087,18 +2114,12 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     private Organization createActiveOrganization() {
         // create an organization first
         CreateOrganizationRequest request = new CreateOrganizationRequest();
+        org.setStatus(EntityStatus.ACTIVE);
         request.setOrganization(org);
         CreateOrganizationResponse response = orgService
                 .createOrganization(request);
         Organization retOrg = response.getOrganization();
-
-        // make the organization ACTIVE
-        retOrg.setStatus(EntityStatus.ACTIVE);
-        UpdateOrganizationRequest upRequest = new UpdateOrganizationRequest();
-        upRequest.setOrganization(retOrg);
-        UpdateOrganizationResponse res = orgService
-                .updateOrganization(upRequest);
-        return res.getOrganization();
+        return retOrg;
     }
 
     private HealthCareFacility getHealthCareFacilityObj() {

@@ -159,7 +159,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         pr.getPlayer().setId(2L);
         pr.setScoper(new Organization());
         pr.getScoper().setId(3L);
-        pr.setStatus(RoleStatus.ACTIVE);
+        pr.setStatus(RoleStatus.PENDING);
         pr.setEmail(new ArrayList<Email>());
         pr.getEmail().add(new Email("me@example.com"));
         pr.setPhone(new ArrayList<PhoneNumber>());
@@ -204,7 +204,7 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         assertTrue(EqualsBuilder.reflectionEquals(expectedIi, dto.getScoperIdentifier()));
 
         // test status code
-        assertEquals("active", dto.getStatus().getCode());
+        assertEquals("pending", dto.getStatus().getCode());
 
         // test dest of tel
         boolean emailFound = false;

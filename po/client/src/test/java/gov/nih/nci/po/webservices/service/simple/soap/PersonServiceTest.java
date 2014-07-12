@@ -1,6 +1,8 @@
 package gov.nih.nci.po.webservices.service.simple.soap;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.test.TestUtils;
 import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.po.webservices.service.simple.AbstractBaseTest;
@@ -42,21 +44,20 @@ import gov.nih.nci.po.webservices.types.Person;
 import gov.nih.nci.po.webservices.types.PersonRole;
 import gov.nih.nci.po.webservices.types.PersonSearchCriteria;
 import gov.nih.nci.po.webservices.types.PersonSearchResult;
-import junit.framework.Assert;
-import org.apache.commons.lang.RandomStringUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import java.net.URL;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
-import java.net.URL;
-import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import org.apache.commons.lang.RandomStringUtils;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This is an Integration test class for PersonService(SOAP).
@@ -1510,7 +1511,7 @@ public class PersonServiceTest extends AbstractBaseTest {
         CreatePersonRoleResponse response = personService
                 .createPersonRole(request);
         PersonRole perRole = response.getPersonRole();
-        Assert.assertEquals(EntityStatus.PENDING.value(), perRole.getStatus().value());
+        assertEquals(EntityStatus.ACTIVE.value(), perRole.getStatus().value());
 
         // now change the status to InActive
         ChangePersonRoleStatusRequest req = new ChangePersonRoleStatusRequest();
@@ -1520,7 +1521,7 @@ public class PersonServiceTest extends AbstractBaseTest {
         ChangePersonRoleStatusResponse res = personService
                 .changePersonRoleStatus(req);
 
-        Assert.assertEquals(EntityStatus.NULLIFIED.value(),  res.getPersonRole().getStatus().value());
+        assertEquals(EntityStatus.NULLIFIED.value(),  res.getPersonRole().getStatus().value());
         checkHCPStatusInDB(res.getPersonRole().getId(), EntityStatus.NULLIFIED.value());
     }
 
@@ -1536,7 +1537,7 @@ public class PersonServiceTest extends AbstractBaseTest {
         CreatePersonRoleResponse response = personService
                 .createPersonRole(request);
         PersonRole perRole = response.getPersonRole();
-        Assert.assertEquals(EntityStatus.PENDING.value(), perRole.getStatus().value());
+        assertEquals(EntityStatus.ACTIVE.value(), perRole.getStatus().value());
 
         // now change the status to InActive
         ChangePersonRoleStatusRequest req = new ChangePersonRoleStatusRequest();
@@ -1557,13 +1558,12 @@ public class PersonServiceTest extends AbstractBaseTest {
     public void testChangePersonRoleStatusCRS() {
         // create a role-CRS
         ClinicalResearchStaff crs = getClinicalResearchStaffObj();
-        crs.setStatus(EntityStatus.ACTIVE);
         CreatePersonRoleRequest request = new CreatePersonRoleRequest();
         request.setPersonRole(crs);
         CreatePersonRoleResponse response = personService
                 .createPersonRole(request);
         PersonRole perRole = response.getPersonRole();
-        Assert.assertEquals(EntityStatus.PENDING.value(), perRole.getStatus().value());
+        assertEquals(EntityStatus.ACTIVE.value(), perRole.getStatus().value());
 
         // now change the status to InActive
         ChangePersonRoleStatusRequest req = new ChangePersonRoleStatusRequest();
@@ -1609,7 +1609,7 @@ public class PersonServiceTest extends AbstractBaseTest {
         CreatePersonRoleResponse response = personService
                 .createPersonRole(request);
         PersonRole perRole = response.getPersonRole();
-        Assert.assertEquals(EntityStatus.PENDING.value(), perRole.getStatus().value());
+        Assert.assertEquals(EntityStatus.ACTIVE.value(), perRole.getStatus().value());
 
         // now update the status but RoleType is null
         String excepMessage = "";
@@ -1641,13 +1641,13 @@ public class PersonServiceTest extends AbstractBaseTest {
         CreatePersonRoleResponse response = personService
                 .createPersonRole(request);
         PersonRole perRole = response.getPersonRole();
-        Assert.assertEquals(EntityStatus.PENDING.value(), perRole.getStatus().value());
+        assertEquals(EntityStatus.ACTIVE.value(), perRole.getStatus().value());
 
         // now change the status to Pending
         ChangePersonRoleStatusRequest req = new ChangePersonRoleStatusRequest();
         req.setPersonRoleID(perRole.getId());
         req.setRoleType(RoleType.HEALTH_CARE_PROVIDER);
-        req.setStatus(EntityStatus.INACTIVE); // invalid transition
+        req.setStatus(EntityStatus.PENDING); // invalid transition
         try {
             personService.changePersonRoleStatus(req);
         } catch (Exception e) {
@@ -1655,7 +1655,7 @@ public class PersonServiceTest extends AbstractBaseTest {
         }
 
         Assert.assertTrue(excepMessage
-                .contains("Illegal curation transition from PENDING to SUSPENDED"));
+                .contains("Illegal curation transition from ACTIVE to PENDING"));
     }
 
     @After

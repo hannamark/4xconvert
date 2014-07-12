@@ -202,7 +202,10 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(Organization org) throws EntityValidationException, JMSException {
-        org.setStatusCode(EntityStatus.PENDING);
+        if (org.getStatusCode() == null) {
+            org.setStatusCode(EntityStatus.PENDING);
+        }
+        
         return super.create(org);
     }
     

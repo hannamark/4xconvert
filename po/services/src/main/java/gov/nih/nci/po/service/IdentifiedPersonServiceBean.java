@@ -106,7 +106,9 @@ public class IdentifiedPersonServiceBean extends AbstractCuratableServiceBean<Id
      */
     @Override
     public long create(IdentifiedPerson obj) throws EntityValidationException, JMSException {
-        obj.setStatus(RoleStatus.PENDING);
+        if (obj.getStatus() == null) {
+            obj.setStatus(RoleStatus.PENDING);
+        }
         return super.create(obj);
     }
 

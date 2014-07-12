@@ -170,7 +170,7 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
     @Test
     public void createHealthCareProviderWithNonNullOrNonNewCurationStatusSpecifiedDefaultsToNew() throws Exception {
         HealthCareProvider hcp = getBasicHealthCareProvider();
-        hcp.setStatus(RoleStatus.NULLIFIED);
+        hcp.setStatus(RoleStatus.PENDING);
         hcp.setCertificateLicenseText("text");
 
         long id = hcpServiceBean.create(hcp);

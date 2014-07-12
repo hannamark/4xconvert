@@ -110,7 +110,9 @@ public class IdentifiedOrganizationServiceBean extends AbstractCuratableServiceB
      */
     @Override
     public long create(IdentifiedOrganization obj) throws EntityValidationException, JMSException {
-        obj.setStatus(RoleStatus.PENDING);
+        if (obj.getStatus() == null) {
+            obj.setStatus(RoleStatus.PENDING);
+        }
         return super.create(obj);
     }
 

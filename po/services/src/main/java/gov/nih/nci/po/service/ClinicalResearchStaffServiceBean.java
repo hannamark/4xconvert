@@ -107,7 +107,9 @@ public class ClinicalResearchStaffServiceBean extends AbstractCuratableServiceBe
      */
     @Override
     public long create(ClinicalResearchStaff obj) throws EntityValidationException, JMSException {
-        obj.setStatus(RoleStatus.PENDING);
+        if (obj.getStatus() == null) {
+            obj.setStatus(RoleStatus.PENDING);
+        }
         return super.create(obj);
     }
     

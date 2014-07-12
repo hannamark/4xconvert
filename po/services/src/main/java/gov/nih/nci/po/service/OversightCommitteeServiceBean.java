@@ -105,7 +105,9 @@ public class OversightCommitteeServiceBean extends AbstractCuratableServiceBean<
      */
     @Override
     public long create(OversightCommittee obj) throws EntityValidationException, JMSException {
-        obj.setStatus(RoleStatus.PENDING);
+        if (obj.getStatus() == null) {
+            obj.setStatus(RoleStatus.PENDING);
+        }
         return super.create(obj);
     }
 

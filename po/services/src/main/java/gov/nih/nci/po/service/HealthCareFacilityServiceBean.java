@@ -105,7 +105,9 @@ public class HealthCareFacilityServiceBean extends EnhancedOrganizationRoleServi
      */
     @Override
     public long create(HealthCareFacility obj) throws EntityValidationException, JMSException {
-        obj.setStatus(RoleStatus.PENDING);
+        if (obj.getStatus() == null) {
+            obj.setStatus(RoleStatus.PENDING);
+        }        
         return super.create(obj);
     }
 
