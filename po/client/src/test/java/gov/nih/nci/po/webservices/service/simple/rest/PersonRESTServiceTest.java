@@ -17,7 +17,6 @@ import gov.nih.nci.po.webservices.types.PersonRole;
 import gov.nih.nci.po.webservices.types.PersonRoleList;
 import gov.nih.nci.po.webservices.types.PersonSearchResult;
 import gov.nih.nci.po.webservices.types.PersonSearchResultList;
-import junit.framework.Assert;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -1004,7 +1003,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         PersonList retPerList = unmarshalPersonList(response.getEntity());
         assertTrue(retPerList.getPerson().size() == 3);
         for (Person person : retPerList.getPerson()) {
-            Assert.assertEquals(randomCtepId, person.getCtepId());
+            assertEquals(randomCtepId, person.getCtepId());
         }
     }
 
@@ -1039,7 +1038,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
 
         assertTrue(retPerList.getPerson().size() == 3);
         for (Person person : retPerList.getPerson()) {
-            Assert.assertEquals(randomCtepId, person.getCtepId());
+            assertEquals(randomCtepId, person.getCtepId());
         }
     }
 
@@ -1207,12 +1206,9 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
      * Testcase for PersonService-searchPersons- by FirstName having special
      * chars
      */
-    // @Test
+    @Test
     public void testSearchPersonsByFirstNameHavingSpecialChars()
             throws Exception {
-
-        // TODO:: enable this testcase after fixing
-        // https://tracker.nci.nih.gov/browse/PO-7151
 
         // create a person having special chars in first name
         person.setFirstName(SPECIAL_CHARS_STR);
@@ -1803,20 +1799,17 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertTrue(psrList.getPersonSearchResult().size() == 3);
         for (PersonSearchResult psr : psrList.getPersonSearchResult()) {
             // check that serach was find using LastName
-            Assert.assertTrue(psr.getLastName()
+            assertTrue(psr.getLastName()
                     .equalsIgnoreCase(randomLastName));
         }
         for (int i = 0; i < psrList.getPersonSearchResult().size(); i++) {
             PersonSearchResult psr = psrList.getPersonSearchResult().get(i);
             if (i == 0) {
-                Assert.assertTrue(psr.getFirstName().equalsIgnoreCase(
-                        "2222222222222222222222222"));
+                assertTrue(psr.getFirstName().equalsIgnoreCase("2222222222222222222222222"));
             } else if (i == 1) {
-                Assert.assertTrue(psr.getFirstName().equalsIgnoreCase(
-                        "3333333333333333333333333"));
+                assertTrue(psr.getFirstName().equalsIgnoreCase("3333333333333333333333333"));
             } else if (i == 2) {
-                Assert.assertTrue(psr.getFirstName().equalsIgnoreCase(
-                        "44444444444444444444444444"));
+               assertTrue(psr.getFirstName().equalsIgnoreCase("44444444444444444444444444"));
             }
         }
     }
@@ -1875,20 +1868,17 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertTrue(psrList.getPersonSearchResult().size() == 3);
         for (PersonSearchResult psr : psrList.getPersonSearchResult()) {
             // check that serach was find using LastName
-            Assert.assertTrue(psr.getLastName()
+            assertTrue(psr.getLastName()
                     .equalsIgnoreCase(randomLastName));
         }
         for (int i = 0; i < psrList.getPersonSearchResult().size(); i++) {
             PersonSearchResult psr = psrList.getPersonSearchResult().get(i);
             if (i == 0) {
-                Assert.assertTrue(psr.getFirstName().equalsIgnoreCase(
-                        "2222222222222222222222222"));
+                assertTrue(psr.getFirstName().equalsIgnoreCase("2222222222222222222222222"));
             } else if (i == 1) {
-                Assert.assertTrue(psr.getFirstName().equalsIgnoreCase(
-                        "3333333333333333333333333"));
+                assertTrue(psr.getFirstName().equalsIgnoreCase("3333333333333333333333333"));
             } else if (i == 2) {
-                Assert.assertTrue(psr.getFirstName().equalsIgnoreCase(
-                        "44444444444444444444444444"));
+                assertTrue(psr.getFirstName().equalsIgnoreCase("44444444444444444444444444"));
             }
         }
     }
