@@ -126,28 +126,6 @@ public abstract class AbstractMockTest {
         when(serviceLocator.getGenericCodeValueService()).thenReturn(genericCodeValueServiceLocal);
     }
 
-    public void mockSecurity() throws CSException {
-        /*
-        UsernameHolder.setUser(CsmUserUtil.getGridIdentityUsername("jdoe01"));
-        me = new User();
-        me.setLoginName(UsernameHolder.getUser());
 
-        userProvisioningManager = mock(UserProvisioningManager.class);
-        when(userProvisioningManager.getUser(anyString())).thenAnswer(
-                new Answer<User>() {
-                    @Override
-                    public User answer(InvocationOnMock invocation) throws Throwable {
-                        User user = new User();
-                        user.setLoginName((String) invocation.getArguments()[0]);
-                        return user;
-                    }
-                }
-        );
-
-
-        mockStatic(SecurityServiceProvider.class);
-        PowerMockito.when(SecurityServiceProvider.getUserProvisioningManager(anyString())).thenReturn(userProvisioningManager);
-        */
-    }
 }
 

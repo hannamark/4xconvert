@@ -88,8 +88,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.Country;
@@ -111,9 +118,14 @@ import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.util.CsmUserUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.security.SecurityServiceProvider;
+import gov.nih.nci.security.UserProvisioningManager;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
@@ -125,9 +137,11 @@ import java.util.Map;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.junit.After;
@@ -137,12 +151,20 @@ import org.junit.Test;
 import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
+import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Tests the organization service.
  *
  * @author Scott Miller
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(SecurityServiceProvider.class)
 public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
     private OrganizationServiceBean orgServiceBean;
@@ -153,8 +175,12 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
     @Before
     public void setUpData() {
+
         orgServiceBean = EjbTestHelper.getOrganizationServiceBean();
     }
+
+
+
 
     @After
     public void teardown() {
@@ -1218,12 +1244,266 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(1L, getOrgServiceBean().count(criteria));
     }
 
+
+    @Test
+    public void testDeactivateOrganization() throws JMSException, EntityValidationException {
+        long organizationId = createOrganization();
+        Organization organization
+                = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, organizationId);
+
+
+        //org is active
+        organization.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().save(organization);
+
+        //org has active roles not created by me
+        User otherUser = createRandomUser();
+
+        List<AbstractOrganizationRole> organizationRoles = createRolesForOrganization(organization, otherUser);
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            //org role is not created by me, and is not overidden
+            assertFalse(getUser().equals(organizationRole.getCreatedBy()));
+            assertNull(organizationRole.getOverriddenBy());
+
+            PoHibernateUtil.getCurrentSession().save(organizationRole);
+        }
+
+        PoHibernateUtil.getCurrentSession().flush();
+
+        //when the org is set to pending
+        organization.setStatusCode(EntityStatus.INACTIVE);
+        orgServiceBean.curate(organization);
+
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            //roles are inactive
+            assertEquals(RoleStatus.SUSPENDED, organizationRole.getStatus());
+
+            //roles are overridden
+            assertEquals(String.format("Overridden by not set for %s", organizationRole.getClass().getCanonicalName()),
+                    getUser(),
+                    organizationRole.getOverriddenBy());
+        }
+
+    }
+
+    private User createRandomUser() {
+        String randomString = "test-" + RandomStringUtils.randomAlphanumeric(5);
+        User otherUser = new User();
+        otherUser.setFirstName(randomString);
+        otherUser.setLastName(randomString);
+        otherUser.setLoginName(randomString);
+        otherUser.setUpdateDate(new Date());
+
+        PoHibernateUtil.getCurrentSession().save(otherUser);
+
+        return otherUser;
+    }
+
+    private List<AbstractOrganizationRole> createRolesForOrganization(Organization organization, User createdBy) {
+        List<AbstractOrganizationRole> results = new ArrayList<AbstractOrganizationRole>();
+
+        ResearchOrganization researchOrganization = new ResearchOrganization();
+        researchOrganization.setPlayer(organization);
+        researchOrganization.setName("researchOrg");
+        researchOrganization.setStatus(RoleStatus.ACTIVE);
+        researchOrganization.setCreatedBy(createdBy);
+
+        ResearchOrganizationType researchOrganizationType = (ResearchOrganizationType) PoHibernateUtil
+                .getCurrentSession().get(ResearchOrganizationType.class, 1L);
+        researchOrganization.setTypeCode(researchOrganizationType);
+
+        results.add(researchOrganization);
+
+        HealthCareFacility healthCareFacility = new HealthCareFacility();
+        healthCareFacility.setPlayer(organization);
+        healthCareFacility.setName("healthCareFacility");
+        healthCareFacility.setStatus(RoleStatus.ACTIVE);
+        healthCareFacility.setCreatedBy(createdBy);
+
+        results.add(healthCareFacility);
+
+
+        OversightCommittee oversightCommittee = new OversightCommittee();
+        oversightCommittee.setPlayer(organization);
+        oversightCommittee.setTypeCode(getOversightCommitee());
+        oversightCommittee.setStatus(RoleStatus.ACTIVE);
+        oversightCommittee.setCreatedBy(createdBy);
+        results.add(oversightCommittee);
+
+        return results;
+    }
+
+    @Test
+    public void testDeactivateOrganizationWithOverriddenRole() throws JMSException, EntityValidationException {
+        //org is active
+        long organizationId = createOrganization();
+        Organization organization
+                = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, organizationId);
+
+        organization.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().save(organization);
+
+        //org role is not created by me, and is overidden by someone else
+        User otherUser = createRandomUser();
+
+        List<AbstractOrganizationRole> organizationRoles = createRolesForOrganization(organization, otherUser);
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            assertFalse(getUser().equals(organizationRole.getCreatedBy()));
+            organizationRole.setOverriddenBy(otherUser);
+            PoHibernateUtil.getCurrentSession().save(organizationRole);
+        }
+
+        PoHibernateUtil.getCurrentSession().flush();
+
+        //when the org is set to INACTIVE
+        organization.setStatusCode(EntityStatus.INACTIVE);
+        orgServiceBean.curate(organization);
+
+
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            //roles are inactive
+            assertEquals(RoleStatus.SUSPENDED, organizationRole.getStatus());
+
+            //roles are overridden
+            assertEquals(getUser(), organizationRole.getOverriddenBy());
+        }
+
+    }
+
+    @Test
+    public void testDeactivateOwnedOrganization() throws JMSException, EntityValidationException {
+        //org is active
+        long organizationId = createOrganization();
+        Organization organization
+                = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, organizationId);
+
+        organization.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().save(organization);
+
+        //org roles are active
+        //org role is createdBy me and not overridden
+        List<AbstractOrganizationRole> organizationRoles = createRolesForOrganization(organization, getUser());
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            assertTrue(getUser().equals(organizationRole.getCreatedBy()));
+            organizationRole.setOverriddenBy(null);
+            PoHibernateUtil.getCurrentSession().save(organizationRole);
+        }
+        PoHibernateUtil.getCurrentSession().flush();
+
+        //org is set to inactive
+        organization.setStatusCode(EntityStatus.INACTIVE);
+        orgServiceBean.curate(organization);
+
+
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            //roles are inactive
+            assertEquals(RoleStatus.SUSPENDED, organizationRole.getStatus());
+
+            //roles are not overridden
+            assertNull(organizationRole.getOverriddenBy());
+        }
+    }
+
+    @Test
+    public void testDeactiveOwnedOrgWithRoleOverriddenByMe() throws JMSException, EntityValidationException {
+        //org is active
+        long organizationId = createOrganization();
+        Organization organization
+                = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, organizationId);
+
+        organization.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().save(organization);
+
+        //org roles are active
+        //org role is createdBy me and is overridden by me
+
+        List<AbstractOrganizationRole> organizationRoles = createRolesForOrganization(organization, getUser());
+
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            organizationRole.setOverriddenBy(getUser());
+            PoHibernateUtil.getCurrentSession().save(organizationRole);
+        }
+
+        PoHibernateUtil.getCurrentSession().flush();
+
+        //org updated to INACTIVE
+        organization.setStatusCode(EntityStatus.INACTIVE);
+        orgServiceBean.curate(organization);
+
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            //roles are inactive
+            assertEquals(RoleStatus.SUSPENDED, organizationRole.getStatus());
+
+            //roles are still overridden by me
+            assertEquals(getUser(), organizationRole.getOverriddenBy());
+        }
+    }
+
+    @Test
+    public void testDeactiveOwnedOrgWithRoleOverridden() throws JMSException, EntityValidationException {
+        //org is active
+        long organizationId = createOrganization();
+        Organization organization
+                = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, organizationId);
+
+        organization.setStatusCode(EntityStatus.ACTIVE);
+        PoHibernateUtil.getCurrentSession().save(organization);
+
+        //org roles are active
+        //org role is createdBy me and is overridden by someone else
+        User otherUser = createRandomUser();
+
+        List<AbstractOrganizationRole> organizationRoles = createRolesForOrganization(organization, getUser());
+
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            organizationRole.setOverriddenBy(otherUser);
+            PoHibernateUtil.getCurrentSession().save(organizationRole);
+        }
+
+        PoHibernateUtil.getCurrentSession().flush();
+
+        //org is set to INACTIVE
+        organization.setStatusCode(EntityStatus.INACTIVE);
+        orgServiceBean.curate(organization);
+
+        for (AbstractOrganizationRole organizationRole : organizationRoles) {
+            //roles are inactive
+            assertEquals(RoleStatus.SUSPENDED, organizationRole.getStatus());
+
+            //roles are overridden
+            assertEquals(getUser(), organizationRole.getOverriddenBy());
+        }
+    }
+
     public static Family getFamily(String name, Date date) {
         Family family = new Family();
         family.setName(name);
         family.setStartDate(date);
         family.setStatusCode(FamilyStatus.ACTIVE);
         return family;
+    }
+
+    @Before
+    public void mockSecurity() throws CSException {
+
+        UserProvisioningManager userProvisioningManager = mock(UserProvisioningManager.class);
+        when(userProvisioningManager.getUser(anyString())).thenAnswer(
+                new Answer<User>() {
+                    @Override
+                    public User answer(InvocationOnMock invocation) throws Throwable {
+                       String login = (String) invocation.getArguments()[0];
+
+                        User user = (User) PoHibernateUtil.getCurrentSession().createCriteria(User.class)
+                                .add(Restrictions.eq("loginName", login)).uniqueResult();
+                        return user;
+                    }
+                }
+        );
+
+
+        mockStatic(SecurityServiceProvider.class);
+        PowerMockito.when(SecurityServiceProvider.getUserProvisioningManager(anyString())).thenReturn(userProvisioningManager);
+
     }
 
 }

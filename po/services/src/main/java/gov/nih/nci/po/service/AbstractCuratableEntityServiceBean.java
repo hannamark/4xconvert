@@ -2,13 +2,18 @@ package gov.nih.nci.po.service;
 
 import com.fiveamsolutions.nci.commons.util.JndiUtils;
 import com.fiveamsolutions.nci.commons.util.ProxyUtils;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CuratableEntity;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.util.CsmUserUtil;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoServiceUtil;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.LogicalExpression;
@@ -72,11 +77,48 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
             if (x.getStatus() == RoleStatus.ACTIVE) {
                 x.setStatus(RoleStatus.SUSPENDED);
                 GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
+
+
+
+                boolean needsOverride = handleRoleUpdateOverride(x);
+
+                if (needsOverride) {
+                    ((Overridable) x).setOverriddenBy(CsmUserUtil.getUser(UsernameHolder.getUser()));
+                }
+
                 service.curate(x);
+
+
+
             }
         }
     }
-    
+
+    private boolean handleRoleUpdateOverride(Correlation x) {
+        boolean result = false;
+
+        boolean isOverridable = x instanceof Overridable;
+
+        if (isOverridable) {
+            //is it created by me?
+            boolean createdByMe
+                    = x instanceof AbstractRole && PoServiceUtil.isCreatedByCurrentUser((AbstractRole) x);
+
+            //is it overidden by me?
+            boolean overridden
+                    = isOverridable && ((Overridable) x).getOverriddenBy() != null;
+
+            boolean overriddenByMe
+                    = isOverridable && PoServiceUtil.isOverriddenByCurrentUser((Overridable) x);
+
+            if (!createdByMe || (overridden && !overriddenByMe)) {
+                result = true;
+            }
+        }
+
+       return result;
+    }
+
     /**
      * Activate any pending CTEP roles associated with the given entity.
      * @param e entity checking associations.

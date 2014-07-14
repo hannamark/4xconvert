@@ -1,9 +1,12 @@
 package gov.nih.nci.po.util;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.service.OrganizationSearchCriteria;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.security.SecurityServiceProvider;
@@ -179,6 +182,23 @@ public class PoServiceUtil {
         return idenOrg;
     }
 
+    /**
+     *
+     * @param role A role.
+     * @return Returns true if the given item is created by the current user, false otherwise.
+     */
+    public static boolean isCreatedByCurrentUser(AbstractRole role) {
+        return role.getCreatedBy() != null
+                && StringUtils.equals(UsernameHolder.getUser(), role.getCreatedBy().getLoginName());
+    }
 
-
+    /**
+     *
+     * @param overridable An overridable.
+     * @return Returns true if the given item is overridden by the current user, false otherwise.
+     */
+    public static boolean isOverriddenByCurrentUser(Overridable overridable) {
+        return overridable.getOverriddenBy() != null
+                && StringUtils.equals(UsernameHolder.getUser(), overridable.getOverriddenBy().getLoginName());
+    }
 }

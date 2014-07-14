@@ -119,6 +119,8 @@ public class ClinicalResearchStaffDTOTest extends AbstractPersonRoleDTOTest {
         ClinicalResearchStaffDTO dto = new ClinicalResearchStaffDTO();
         fillInPersonRoleDTOFields(dto, personId, orgId);
 
+
+        //determine the new id
         Ii ii = new Ii();
         ii.setExtension("" + 1L);
         ii.setDisplayable(true);
