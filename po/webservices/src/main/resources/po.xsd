@@ -835,6 +835,34 @@
 					</documentation>
 				</annotation>
 			</element>
+            <element name="ctepID" minOccurs="0">
+                <annotation>
+                    <documentation>It will search for Person's/Organization's(HCF, RO, IO) 'ctepID'
+                        using "LIKE" search
+                    </documentation>
+                </annotation>
+                <simpleType>
+                    <restriction base="string">
+                        <maxLength value="255" />
+                        <minLength value="1" />
+                    </restriction>
+                </simpleType>
+            </element>
+            <element name="id" type="long" minOccurs="0">
+                <annotation>
+                    <documentation>It will search for Person's/Organization's database Id
+                        using "EXACT" search
+                    </documentation>
+                </annotation>
+            </element>
+            <element name="statusCode" type="tns:EntityStatus"
+                minOccurs="0">
+                <annotation>
+                    <documentation>It will search for Person's/Organization's Status
+                        using "EXACT" search
+                    </documentation>
+                </annotation>
+            </element>			
 			<element name="line1" type="string" minOccurs="0">
 				<annotation>
 					<documentation>It will search for Address-'line1' using LIKE-search
@@ -939,40 +967,7 @@
 								<minLength value="1" />
 							</restriction>
 						</simpleType>
-					</element>
-					<element name="ctepID" minOccurs="0">
-						<annotation>
-							<documentation>It will search for Person's 'ctepID'
-								using
-								"LIKE"
-								search
-							</documentation>
-						</annotation>
-						<simpleType>
-							<restriction base="string">
-								<maxLength value="255" />
-								<minLength value="1" />
-							</restriction>
-						</simpleType>
-					</element>
-					<element name="id" type="long" minOccurs="0">
-						<annotation>
-							<documentation>It will search for Person's database Id
-								using
-								"EXACT" search
-							</documentation>
-						</annotation>
-					</element>
-					<element name="statusCode" type="tns:EntityStatus"
-						minOccurs="0">
-						<annotation>
-							<documentation>It will search for Person's 'status'
-								using
-								"EXACT"
-								search
-							</documentation>
-						</annotation>
-					</element>
+					</element>					
 					<element name="hasPendingCrsRoles" type="boolean"
 						minOccurs="0">
 						<annotation>
@@ -1198,41 +1193,7 @@
 		</annotation>
 		<complexContent>
 			<extension base="tns:BaseSearchCriteria">
-				<sequence>
-					<element name="ctepID" minOccurs="0">
-						<annotation>
-							<documentation>It will search for Organization Role's (both HCF and RO)
-							   'ctepID'
-								using
-								"LIKE"
-								search
-							</documentation>
-						</annotation>
-						<simpleType>
-							<restriction base="string">
-								<maxLength value="255" />
-								<minLength value="1" />
-							</restriction>
-						</simpleType>
-					</element>
-					<element name="id" type="long" minOccurs="0">
-						<annotation>
-							<documentation>It will search for Organization's database Id
-								using
-								"EXACT" search
-							</documentation>
-						</annotation>
-					</element>
-					<element name="statusCode" type="tns:EntityStatus"
-						minOccurs="0">
-						<annotation>
-							<documentation>It will search for Organization's status
-								using
-								"EXACT"
-								search
-							</documentation>
-						</annotation>
-					</element>
+				<sequence>					
 					<element name="organizationName" type="string" minOccurs="0">
 						<annotation>
 							<documentation>Organization's Name using LIKE search
