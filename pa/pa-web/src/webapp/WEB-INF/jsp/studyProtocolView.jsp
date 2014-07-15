@@ -60,11 +60,10 @@
                 // calculate the center of the page using the browser and element dimensions
                 var y  = (browserDims.height - eltDims.height) / 2;
                 var x = (browserDims.width - eltDims.width) / 2;    
-                var y1 = y * 2 + y - 200;
                 
                 $('comment-dialog').absolutize(); 
                 $('comment-dialog').style.left = x + 'px';
-                $('comment-dialog').style.top = y1 + 'px';
+                $('comment-dialog').style.top = y + 'px';
                 $('comment-dialog').show();
             }    
             
@@ -275,7 +274,7 @@
                        <div class="body" style="">
                            <div>
                            <label for="comments">Enter check in comment:</label></br>
-                           <s:textarea id="comments" name="comments" value="" rows="5" cssClass="charcounter" cssStyle="width: 670px;"/>
+                           <s:textarea id="comments" name="comments" value="" rows="5" maxlength="4000" cssClass="charcounter" cssStyle="width: 100%;"/>
                            </div>
                            <br/>
                            <div align="center">

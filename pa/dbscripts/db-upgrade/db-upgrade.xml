@@ -1612,4 +1612,8 @@
         <comment>Update pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-6316.sql"/>
      </changeSet>   
+    <changeSet id="PO-7263" author="Reshma">
+        <comment>Update study_checkout comments column size</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7263.sql"/>
+     </changeSet>
 </databaseChangeLog>

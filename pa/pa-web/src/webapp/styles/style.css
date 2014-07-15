@@ -709,8 +709,7 @@ UL#maintabs LI A:focus
 #comment-dialog {
     border: 2px solid black;
     width: 700px !important;
-    height: 150px !important;
-    white-space: nowrap !important;
+    height: 180px !important;
     z-index: 100;
     background: url("../images/bg_menu.gif") repeat-y scroll right center #E9E9E9;    
     -moz-box-shadow: 10px 10px 5px #888;
