@@ -2,6 +2,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import org.apache.commons.lang.StringUtils;
 
 import javax.ejb.TransactionAttribute;
@@ -49,6 +50,7 @@ public class EnhancedOrganizationRoleServiceBean<T extends Correlation> extends
         // Initialize the collection to avoid LazyInitException
         curatable.getOtherIdentifiers().size();
         curatable.setOtherIdentifiers(null);
+
         // This 'curate' removes existing CtepId & updates other attribute.
         curate(curatable);
 
@@ -62,5 +64,23 @@ public class EnhancedOrganizationRoleServiceBean<T extends Correlation> extends
             curatable.getOtherIdentifiers().add(assIden);
             curate(curatable);
         }
+    }
+
+
+    @Override
+    public void curate(T curatable) throws JMSException {
+
+        handleStatusChange(curatable);
+        super.curate(curatable);
+    }
+
+    private void handleStatusChange(T curatable) {
+        if (curatable.getPriorStatus() != curatable.getStatus() && curatable.getStatus() == RoleStatus.NULLIFIED) {
+            cascadeStatusChangeNullified(curatable);
+        }
+    }
+
+    private void cascadeStatusChangeNullified(T curatable) {
+        super.mergeAliasesToDuplicate(curatable);
     }
 }

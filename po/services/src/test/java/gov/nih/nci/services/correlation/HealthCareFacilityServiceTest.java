@@ -87,9 +87,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -288,5 +290,38 @@ public class HealthCareFacilityServiceTest extends AbstractOrganizationalRoleSer
     @Override
     HealthCareFacility getNewStructuralRole() {
         return new HealthCareFacility();
+    }
+
+    @Test
+    public void testNullifyRoleWithDuplicateSet() throws Exception {
+
+        //role 1 exists with alias1
+        HealthCareFacility role1 = getSampleStructuralRole();
+        role1.setName("role1");
+        role1.getAlias().clear();
+        role1.getAlias().add(new Alias("alias1"));
+
+        //role 2 exists with alias2
+        HealthCareFacility role2 = getSampleStructuralRole();
+        role2.setName("role2");
+        role2.getAlias().clear();
+        role2.getAlias().add(new Alias("alias2"));
+
+        getService().create(role1);
+        long id2 = getService().create(role2);
+
+        //role 1 is nullified with duplicateOf set to role 2
+        role1.setStatus(RoleStatus.NULLIFIED);
+        role1.setDuplicateOf(role2);
+        getService().curate(role1);
+
+        //verify aliases copied
+        role2 = getService().getById(id2);
+        List<Alias> aliases = role2.getAlias();
+
+        assertEquals(3, aliases.size());
+        assertEquals("alias2", aliases.get(0).getValue());
+        assertEquals("alias1", aliases.get(1).getValue());
+        assertEquals("role1", aliases.get(2).getValue());
     }
 }

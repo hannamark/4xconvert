@@ -82,11 +82,11 @@
  */
 package gov.nih.nci.po.util;
 
-import gov.nih.nci.security.SecurityServiceProvider;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.exceptions.CSException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * Utility class for manipulating data from the CSM user object.
@@ -131,11 +131,11 @@ public class CsmUserUtil {
      * @return The {@link User} for the given login name, or null if it does not exist.
      */
     public static User getUser(String loginName) {
-        User user = null;
-        try {
-            user = SecurityServiceProvider.getUserProvisioningManager("po").getUser(loginName);
-        } catch (CSException e) {
-            LOG.warn(String.format("User with login \"%s\" was not found!", loginName), e);
+        User user = (User) PoHibernateUtil.getCurrentSession().createCriteria(User.class)
+                    .add(Restrictions.eq("loginName", UsernameHolder.getUser())).uniqueResult();
+
+        if (user == null) {
+            LOG.warn(String.format("User with login \"%s\" was not found!", loginName));
         }
 
         return user;

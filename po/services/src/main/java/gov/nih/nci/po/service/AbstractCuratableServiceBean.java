@@ -82,12 +82,16 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractPersonRole;
+import gov.nih.nci.po.data.bo.Alias;
+import gov.nih.nci.po.data.bo.Aliasable;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Contactable;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PersonRole;
@@ -96,6 +100,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PersistentObjectHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import org.apache.commons.lang.Validate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -254,6 +259,7 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         Curatable target = null;
         ArrayList<ChangeRequest<Curatable>> crs = new ArrayList<ChangeRequest<Curatable>>(
                 object.getChangeRequests());
+
         for (ChangeRequest<Curatable> cr : crs) {
             Curatable currentTarget = cr.getTarget();
 
@@ -325,5 +331,61 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         hql.append(entityId).append(" and (r.status = 'PENDING' or rcr.processed = 'false')");
         Number n = (Number) PoHibernateUtil.getCurrentSession().createQuery(hql.toString()).uniqueResult();
         return n.intValue();
+    }
+
+    /**
+     * Merges the aliases for the given object to its duplicate denoted by deuplicateOf.
+     *
+     * The name of the item and its aliases are merged into the aliases of its duplicate.
+     * @param e The entity to merge.
+     */
+    protected void mergeAliasesToDuplicate(T e) {
+        Validate.notNull(e);
+
+        //if duplicate set, then cascade aliases
+        if (e instanceof Aliasable && e.getDuplicateOf() instanceof Aliasable) {
+
+            mergeAliases((Aliasable) e, (Aliasable) e.getDuplicateOf());
+        }
+    }
+
+
+    private void mergeAliases(Aliasable e, Aliasable duplicateOf) {
+        List<String> targetValues = new ArrayList<String>();
+        for (Alias alias : duplicateOf.getAlias()) {
+            targetValues.add(alias.getValue());
+        }
+
+        for (Alias alias : e.getAlias()) {
+            if (!targetValues.contains(alias.getValue())) {
+                duplicateOf.getAlias().add(alias);
+            }
+        }
+
+        Alias nameAlias = getNameAsAlias(e);
+
+        if (nameAlias != null
+                && !targetValues.contains(nameAlias.getValue())) {
+            duplicateOf.getAlias().add(nameAlias);
+        }
+
+
+    }
+
+    private Alias getNameAsAlias(Aliasable e) {
+        Alias nameAlias = null;
+
+        if (e instanceof Organization) {
+            nameAlias = new Alias(
+                    ((Organization) e).getName()
+            );
+        } else  if (e instanceof AbstractEnhancedOrganizationRole) {
+
+            nameAlias = new Alias(
+                    ((AbstractEnhancedOrganizationRole) e).getName()
+            );
+        }
+
+        return nameAlias;
     }
 }

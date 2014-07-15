@@ -119,7 +119,7 @@ import java.util.List;
  */
 @MappedSuperclass
 @SuppressWarnings("PMD.UnusedPrivateMethod")
-public abstract class AbstractOrganization implements PersistentObject, UsOrCanEnforceable {
+public abstract class AbstractOrganization implements PersistentObject, UsOrCanEnforceable, Aliasable {
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 160;
     private Long id;

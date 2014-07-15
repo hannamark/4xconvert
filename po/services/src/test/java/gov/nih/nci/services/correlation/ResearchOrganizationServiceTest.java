@@ -85,6 +85,7 @@ package gov.nih.nci.services.correlation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.data.bo.Alias;
@@ -307,4 +308,37 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         return new ResearchOrganization();
     }
 
+    @Test
+    public void testNullifyRoleWithDuplicateSet() throws Exception {
+
+        //role 1 exists with alias1
+        ResearchOrganization role1 = getSampleStructuralRole();
+        role1.setName("role1");
+        role1.getAlias().clear();
+        role1.getAlias().add(new Alias("alias1"));
+
+        //role 2 exists with alias2
+        ResearchOrganization role2 = getSampleStructuralRole();
+        role2.setName("role2");
+        role2.getAlias().clear();
+        role2.getAlias().add(new Alias("alias2"));
+
+        getService().create(role1);
+        long id2 = getService().create(role2);
+
+        //role 1 is nullified with duplicateOf set to role 2
+        role1.setStatus(RoleStatus.NULLIFIED);
+        role1.setDuplicateOf(role2);
+        getService().curate(role1);
+
+        //verify aliases copied
+        role2 = getService().getById(id2);
+        List<Alias> aliases = role2.getAlias();
+
+        assertEquals(3, aliases.size());
+        assertEquals("alias2", aliases.get(0).getValue());
+        assertEquals("alias1", aliases.get(1).getValue());
+        assertEquals("role1", aliases.get(2).getValue());
+    }
 }
+

@@ -295,6 +295,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         if (org.getDuplicateOf() == null) {
             super.cascadeStatusChangeNullified(org, s);
         } else {
+            super.mergeAliasesToDuplicate(org);
             mergeCorrelations(org, s);
         }
         endFamilyOrgRelationships(org);

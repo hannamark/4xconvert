@@ -155,6 +155,7 @@ import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -163,8 +164,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
  *
  * @author Scott Miller
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SecurityServiceProvider.class)
 public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
     private OrganizationServiceBean orgServiceBean;
@@ -220,6 +219,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         return org;
     }
 
+
     protected long createOrganization(Organization org) throws EntityValidationException, JMSException {
         assertNull(org.getStatusDate());
         long id = getOrgServiceBean().create(org);
@@ -234,7 +234,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().flush();
 
         List<AuditLogRecord> alr = AuditTestUtil.find(Organization.class, saved.getId());
-        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "name", null, "oName", false);
+        AuditTestUtil.assertDetail(alr, AuditType.INSERT, "name", null, org.getName(), false);
 
         MessageProducerTest.assertMessageCreated(org, getOrgServiceBean(), true);
         return id;
@@ -252,7 +252,11 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(expected.getUrl().size(), found.getUrl().size());
         
         assertEquals(expected.getAlias().size(), found.getAlias().size());
-        assertEquals(expected.getAlias().get(0).getValue(), found.getAlias().get(0).getValue());
+
+        for (int i=0; i<expected.getAlias().size(); i++) {
+            assertEquals(expected.getAlias().get(i).getValue(), found.getAlias().get(i).getValue());
+        }
+
     }
 
     public long createOrganization() throws EntityValidationException, JMSException {
@@ -568,7 +572,15 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     @Test
     public void curateToNullifiedWithDuplicateOf() throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
+        o.setName("org1name");
+        o.getAlias().clear();
+        o.getAlias().add(new Alias("org1alias"));
+
         Organization o2 = getBasicOrganization();
+        o2.setName("org2name");
+        o2.getAlias().clear();
+        o2.getAlias().add(new Alias("org2alias"));
+
         long id = createOrganization(o);
         long id2 = createOrganization(o2);
         o = getOrgServiceBean().getById(id);
@@ -591,6 +603,12 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(1, result.getPhone().size());
         assertEquals(1, result.getTty().size());
         assertEquals(1, result.getUrl().size());
+
+        Organization retrievedOrg2 = getOrgServiceBean().getById(id2);
+        assertEquals(3, retrievedOrg2.getAlias().size());
+        assertEquals("org2alias", retrievedOrg2.getAlias().get(0).getValue());
+        assertEquals("org1alias", retrievedOrg2.getAlias().get(1).getValue());
+        assertEquals("org1name", retrievedOrg2.getAlias().get(2).getValue());
 
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
@@ -1481,29 +1499,6 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         family.setStartDate(date);
         family.setStatusCode(FamilyStatus.ACTIVE);
         return family;
-    }
-
-    @Before
-    public void mockSecurity() throws CSException {
-
-        UserProvisioningManager userProvisioningManager = mock(UserProvisioningManager.class);
-        when(userProvisioningManager.getUser(anyString())).thenAnswer(
-                new Answer<User>() {
-                    @Override
-                    public User answer(InvocationOnMock invocation) throws Throwable {
-                       String login = (String) invocation.getArguments()[0];
-
-                        User user = (User) PoHibernateUtil.getCurrentSession().createCriteria(User.class)
-                                .add(Restrictions.eq("loginName", login)).uniqueResult();
-                        return user;
-                    }
-                }
-        );
-
-
-        mockStatic(SecurityServiceProvider.class);
-        PowerMockito.when(SecurityServiceProvider.getUserProvisioningManager(anyString())).thenReturn(userProvisioningManager);
-
     }
 
 }

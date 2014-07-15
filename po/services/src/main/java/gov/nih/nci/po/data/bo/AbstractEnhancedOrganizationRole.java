@@ -23,7 +23,7 @@ import java.util.Set;
  */
 @MappedSuperclass
 public abstract class AbstractEnhancedOrganizationRole extends AbstractOrganizationRole
-    implements UsOrCanEnforceable, Mailable {
+    implements UsOrCanEnforceable, Mailable, Aliasable {
 
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_TEXT_COL_LENGTH = 160;
