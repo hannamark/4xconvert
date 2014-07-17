@@ -709,15 +709,23 @@ public class PersonServiceBean extends
             // search for existing CtepId Record
             List<IdentifiedPerson> identifiedPeople = idenPerServ.search(searchCriteria);
 
-            // if existing CtepId record found, then update it
-            if (CollectionUtils.isNotEmpty(identifiedPeople)) {
-                idenPerson = identifiedPeople.get(0);
-                idenPerson.getAssignedIdentifier().setExtension(ctepId);
-                idenPerServ.curate(idenPerson);
-            } else {
+            if (CollectionUtils.isEmpty(identifiedPeople)) {
                 // call the EJB service method to create CtepId
                 idenPerson.getAssignedIdentifier().setExtension(ctepId);
                 idenPerServ.create(idenPerson);
+            } else if (identifiedPeople.size() > 1) {
+                IdentifiedPerson[] identifiedPersonsArray = new IdentifiedPerson[identifiedPeople.size()];
+                identifiedPeople.toArray(identifiedPersonsArray);
+                for (int i = 0; i < identifiedPersonsArray.length; i++) {
+                    PoHibernateUtil.getCurrentSession().delete(identifiedPersonsArray[i]);
+                }
+                idenPerson.getAssignedIdentifier().setExtension(ctepId);
+                idenPerServ.create(idenPerson);
+            } else {
+                // if existing CtepId record found, then update it
+                idenPerson = identifiedPeople.get(0);
+                idenPerson.getAssignedIdentifier().setExtension(ctepId);
+                idenPerServ.curate(idenPerson);
             }
         }
     }

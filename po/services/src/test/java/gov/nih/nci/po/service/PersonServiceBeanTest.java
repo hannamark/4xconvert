@@ -83,17 +83,23 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
+import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.ServiceLocator;
@@ -104,6 +110,7 @@ import java.util.List;
 
 import javax.jms.JMSException;
 
+import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,10 +118,14 @@ import org.junit.Test;
 import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class PersonServiceBeanTest extends AbstractServiceBeanTest {
 
     private PersonServiceBean personServiceBean;
+    private ServiceLocator serviceLocatorToRestore;
+    private Organization ctepOrganization;
 
     public PersonServiceBean getPersonServiceBean() {
         return personServiceBean;
@@ -123,11 +134,27 @@ public class PersonServiceBeanTest extends AbstractServiceBeanTest {
     @Before
     public void setUpData() {        
         personServiceBean = EjbTestHelper.getPersonServiceBean();
+
+        ctepOrganization = new Organization();
+        ctepOrganization.setName("Cancer Therapy Evaluation Program");
+        ctepOrganization.setStatusCode(EntityStatus.ACTIVE);
+        ctepOrganization.setPostalAddress(new Address());
+        ctepOrganization.getPostalAddress().setStreetAddressLine("bogus");
+        ctepOrganization.getPostalAddress().setCityOrMunicipality("city");
+        ctepOrganization.getPostalAddress().setStateOrProvince("VA");
+        ctepOrganization.getPostalAddress().setPostalCode("12345");
+        ctepOrganization.getPostalAddress().setCountry(getDefaultCountry());
+        ctepOrganization.getEmail().add(new Email("abc@example.com"));
+        PoHibernateUtil.getCurrentSession().save(ctepOrganization);
     }
 
     @After
     public void teardown() {
         personServiceBean = null;
+
+        if (serviceLocatorToRestore != null) {
+            PoRegistry.getInstance().setServiceLocator(serviceLocatorToRestore);
+        }
     }
 
     public Person getBasicPerson() {
@@ -209,17 +236,81 @@ public class PersonServiceBeanTest extends AbstractServiceBeanTest {
         
         // now update the person
         person.setFirstName("update fname");
-        personServiceBean.curate(person, ctepId);        
+        personServiceBean.curate(person, ctepId);
+
+
         Person savedPerson = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
         
-        verifyEquals(person, savedPerson);        
-        PoHibernateUtil.getCurrentSession().flush();        
+        verifyEquals(person, savedPerson);
+
+        assertCtepId(savedPerson, ctepId);
+
+
+        for (int i=0; i<3; i++) {
+            ctepId = ctepId + i;
+            personServiceBean.curate(person, ctepId);
+
+            person = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+
+            assertCtepId(person, ctepId);
+
+            PoHibernateUtil.getCurrentSession().flush();
+        }
     }
-    
-    private void setupMockData() throws EntityValidationException, JMSException{
+
+    @Test
+    public void updatePersonWithMultipleCtepId() throws EntityValidationException, JMSException {
+        setupMockData();
+        String ctepId="123456";
+        Person person = getBasicPerson();
+        person.setStatusCode(EntityStatus.ACTIVE);
+        long id = personServiceBean.create(person);
+
+        for (int i=0; i<3; i++) {
+            Ii assignedIdentifier = new Ii();
+            assignedIdentifier.setRoot(PoConstants.PERSON_CTEP_ID_ROOT);
+            assignedIdentifier.setIdentifierName(PoConstants.PERSON_CTEP_ID_IDENTIFIER_NAME);
+            assignedIdentifier.setExtension("ctepId" + i);
+
+            IdentifiedPerson identifiedPerson = new IdentifiedPerson();
+            identifiedPerson.setAssignedIdentifier(assignedIdentifier);
+            identifiedPerson.setPlayer(person);
+            identifiedPerson.setScoper(ctepOrganization);
+            identifiedPerson.setStatus(RoleStatus.ACTIVE);
+            PoHibernateUtil.getCurrentSession().save(identifiedPerson);
+        }
+
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        // now update the person
+        person.setFirstName("update fname");
+        personServiceBean.curate(person, ctepId);
+
+
+        Person savedPerson = (Person) PoHibernateUtil.getCurrentSession().load(Person.class, id);
+
+        verifyEquals(person, savedPerson);
+
+        assertCtepId(savedPerson, ctepId);
+    }
+
+    private void assertCtepId(Person person, String ctepId) {
+        List<IdentifiedPerson> identifiedPersons =
+                PoHibernateUtil.getCurrentSession().createCriteria(IdentifiedPerson.class)
+                    .add(Restrictions.eq("player.id", person.getId())).list();
+
+        assertEquals(1, identifiedPersons.size());
+        assertEquals(ctepId, identifiedPersons.get(0).getAssignedIdentifier().getExtension());
+    }
+
+    private ServiceLocator setupMockData() throws EntityValidationException, JMSException{
         ServiceLocator serviceLocator = null;
         serviceLocator = mock(ServiceLocator.class);
+
+        serviceLocatorToRestore = PoRegistry.getInstance().getServiceLocator();
         PoRegistry.getInstance().setServiceLocator(serviceLocator);
+
         // Mock setup for getting Organization
         OrganizationServiceLocal orgSerLocal = mock(OrganizationServiceLocal.class);
         when(serviceLocator.getOrganizationService()).thenReturn(
@@ -228,14 +319,22 @@ public class PersonServiceBeanTest extends AbstractServiceBeanTest {
                 orgSerLocal.search(isA(OrganizationSearchCriteria.class),
                         isA(PageSortParams.class))).thenReturn(
                 getOrgSearchDtoList());
-        
+
+        when(orgSerLocal.getById(any(Long.class)))
+                .thenAnswer( new Answer<Organization>() {
+                    @Override
+                    public Organization answer(InvocationOnMock invocation) throws Throwable {
+                        return (Organization) PoHibernateUtil.getCurrentSession()
+                                .get(Organization.class, (Long) invocation.getArguments()[0]);
+                    }
+                });
         // Mock setup for getting IdentifiedPerson
-        IdentifiedPersonServiceLocal ipSerLocal = mock(IdentifiedPersonServiceLocal.class);
+        IdentifiedPersonServiceLocal ipSerLocal = EjbTestHelper.getIdentifiedPersonServiceBean();
         personServiceBean.setIdenPerServ(ipSerLocal);
         when(serviceLocator.getIdentifiedPersonService()).thenReturn(
                 ipSerLocal);
-        when(ipSerLocal.create(isA(IdentifiedPerson.class))).thenReturn(1l);
-        doNothing().when(ipSerLocal).curate(isA(IdentifiedPerson.class));       
+
+        return serviceLocator;
     }
     
     private List<OrganizationSearchDTO> getOrgSearchDtoList() {
