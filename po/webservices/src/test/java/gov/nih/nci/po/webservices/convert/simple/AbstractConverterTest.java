@@ -2,6 +2,7 @@ package gov.nih.nci.po.webservices.convert.simple;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
 import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Contactable;
@@ -31,6 +32,7 @@ import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.FamilyOrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
@@ -57,6 +59,7 @@ import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
+
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -67,6 +70,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -315,9 +319,9 @@ public abstract class AbstractConverterTest {
             familyBo1.setName("Duke Cancer Institute");
             familyBo1.setStatusCode(FamilyStatus.ACTIVE);
             familyBo1.getFamilyOrganizationRelationships().add(
-                    getFamilyOrganizationRelationshipList().get(0));
+                    getFamilyOrganizationRelationshipList(familyBo1).get(0));
             familyBo1.getFamilyOrganizationRelationships().add(
-                    getFamilyOrganizationRelationshipList().get(1));
+                    getFamilyOrganizationRelationshipList(familyBo1).get(1));
             when(familyServiceLocal.getById(1l)).thenReturn(familyBo1);
 
             when(familyServiceLocal.getById(1002l)).thenReturn(null);
@@ -327,7 +331,7 @@ public abstract class AbstractConverterTest {
             familyBo2.setName("Fox Chase Cancer Center");
             familyBo2.setStatusCode(FamilyStatus.ACTIVE);
             familyBo2.getFamilyOrganizationRelationships().add(
-                    getFamilyOrganizationRelationshipList().get(1));
+                    getFamilyOrganizationRelationshipList(familyBo2).get(1));
             List<Family> familyList = new ArrayList<Family>();
             familyList.add(familyBo1);
             familyList.add(familyBo2);
@@ -350,7 +354,14 @@ public abstract class AbstractConverterTest {
             orgRelBoList.add(orgRel);
             when(orgRelSerLocal.search(isA(SearchCriteria.class))).thenReturn(
                     orgRelBoList);
-
+            
+            // Mock setup for getting FamilyOrganizationRelationship
+            FamilyOrganizationRelationshipServiceLocal famOrgRelSerLocal = mock(FamilyOrganizationRelationshipServiceLocal.class);
+            when(serviceLocator.getFamilyOrganizationRelationshipService())
+                    .thenReturn(famOrgRelSerLocal);
+            when(famOrgRelSerLocal.getById(1l)).thenReturn(getFamilyOrganizationRelationshipList(familyBo1).get(0));
+            when(famOrgRelSerLocal.getById(1002l)).thenReturn(null);
+            
             //mock security
             UserProvisioningManager userProvisioningManager = mock(UserProvisioningManager.class);
             when(userProvisioningManager.getUser(isA(String.class)))
@@ -620,7 +631,7 @@ public abstract class AbstractConverterTest {
         return orgSearchDtoList;
     }
 
-    private List<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipList() {
+    private List<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipList(Family familyBo) {
         List<FamilyOrganizationRelationship> forList = new ArrayList<FamilyOrganizationRelationship>();
 
         Organization organization = new Organization();
@@ -632,12 +643,14 @@ public abstract class AbstractConverterTest {
         for0.setFunctionalType(FamilyFunctionalType.AFFILIATION);
         for0.setId(12345l);
         for0.setOrganization(organization);
+        for0.setFamily(familyBo);
 
         FamilyOrganizationRelationship for1 = new FamilyOrganizationRelationship();
         for1.setStartDate(new Date());
         for1.setFunctionalType(FamilyFunctionalType.CONTRACTUAL);
         for1.setId(123456l);
         for1.setOrganization(organization);
+        for1.setFamily(familyBo);
 
         forList.add(for0);
         forList.add(for1);

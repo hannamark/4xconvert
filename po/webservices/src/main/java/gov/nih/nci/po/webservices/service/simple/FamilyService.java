@@ -1,6 +1,7 @@
 package gov.nih.nci.po.webservices.service.simple;
 
 import gov.nih.nci.po.webservices.types.Family;
+import gov.nih.nci.po.webservices.types.FamilyMember;
 import gov.nih.nci.po.webservices.types.FamilyMemberRelationship;
 
 import java.util.List;
@@ -35,6 +36,20 @@ public interface FamilyService {
      */
     List<Family> searchFamiliesByOrgId(long organizationId);
 
+    /**
+     * @param familyId
+     *            - Id of the Family to be get
+     * @return Family- Family corresponding to giving Id
+     */
+    Family getFamily(long familyId);
+    
+    /**
+     * @param familyMemberId
+     *            - Id of the FamilyMember to be get
+     * @return FamilyMember- FamilyMember corresponding to giving Id
+     */
+    FamilyMember getFamilyMember(long familyMemberId);
+    
     /**
      * This method is used to get all FamilyMemberRelationship records for a
      * given family.

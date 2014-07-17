@@ -2,6 +2,7 @@ package gov.nih.nci.po.webservices.convert.simple;
 
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.FamilyP30;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.util.FamilyOrganizationRelationshipOrgComparator;
@@ -11,10 +12,12 @@ import gov.nih.nci.po.webservices.types.FamilyMember;
 import gov.nih.nci.po.webservices.types.FamilyMemberType;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -41,6 +44,7 @@ public class FamilyConverterTest extends AbstractConverterTest {
         family.setId(4l);
         family.setName("Test Name");
         family.setStartDate(toXMLGregorianCalendar(new Date()));
+        family.setP30SerialNumber("serialNumber");
         FamilyMember familyMember = new FamilyMember();
         familyMember.setOrganizationId(1l);
         familyMember.setType(FamilyMemberType.AFFILIATION);
@@ -50,18 +54,22 @@ public class FamilyConverterTest extends AbstractConverterTest {
         family.setStatus(EntityStatus.ACTIVE);
 
         // setting up gov.nih.nci.po.data.bo.Family
-        familyBo = new gov.nih.nci.po.data.bo.Family();
+        familyBo = new gov.nih.nci.po.data.bo.Family();        
         familyBo.setId(23l);
         familyBo.setName("Family BO test name");
         familyBo.setStartDate(new Date());
         familyBo.setStatusCode(FamilyStatus.ACTIVE);
+        FamilyP30 fp30 = new FamilyP30();
+        fp30.setSerialNumber("some serialNumber");
+        familyBo.setFamilyP30(fp30);
         FamilyOrganizationRelationship faOrgRel = new FamilyOrganizationRelationship();
         Organization organization = new Organization();
-        organization.setId(1l);
+        organization.setId(1l);        
         faOrgRel.setOrganization(organization);
         faOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
         faOrgRel.setStartDate(new Date());
-        faOrgRel.setEndDate(new Date());
+        faOrgRel.setEndDate(new Date());        
+        faOrgRel.setFamily(familyBo);
         familyBo.getFamilyOrganizationRelationships().add(faOrgRel);
 
         super.setUpMockObjects();
@@ -81,7 +89,7 @@ public class FamilyConverterTest extends AbstractConverterTest {
     }
 
     @Test
-    public void testConvertJaxbToBOForFamily() {
+    public void testConvertJaxbToBOForNullFamily() {
         FamilyConverter fConverter = new FamilyConverter();
         // Family is null while calling the converter
         gov.nih.nci.po.data.bo.Family retFamilyBo = fConverter
@@ -163,6 +171,7 @@ public class FamilyConverterTest extends AbstractConverterTest {
             gov.nih.nci.po.data.bo.Family retFamilyBo) {
         Assert.assertEquals(family.getId(), retFamilyBo.getId());
         Assert.assertEquals(family.getName(), retFamilyBo.getName());
+        Assert.assertEquals(family.getP30SerialNumber(), retFamilyBo.getFamilyP30().getSerialNumber());
         Assert.assertEquals(family.getStatus().value(), retFamilyBo
                 .getStatusCode().name());
         Assert.assertTrue(areSameDates(family.getStartDate(),
@@ -228,6 +237,7 @@ public class FamilyConverterTest extends AbstractConverterTest {
             gov.nih.nci.po.webservices.types.Family retFamily) {
         Assert.assertEquals(familyBo.getId(), retFamily.getId());
         Assert.assertEquals(familyBo.getName(), retFamily.getName());
+        Assert.assertEquals(familyBo.getFamilyP30().getSerialNumber(), retFamily.getP30SerialNumber());
         Assert.assertEquals(familyBo.getStatusCode().name(), retFamily
                 .getStatus().value());
         Assert.assertTrue(areSameDates(retFamily.getStartDate(),
@@ -282,6 +292,7 @@ public class FamilyConverterTest extends AbstractConverterTest {
     /**
      * This test case is added for Code Coverage
      */
+    @Test
     public void testToXMLGregorianCalendarForNullDate() {
         FamilyConverter fConverter = new FamilyConverter();
         XMLGregorianCalendar date = fConverter.toXMLGregorianCalendar(null);

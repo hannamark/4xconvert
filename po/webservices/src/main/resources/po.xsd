@@ -475,6 +475,7 @@
 						</simpleType>
 					</element>
 					<element name="startDate" type="date" />
+					<element name="p30SerialNumber" type="string" minOccurs="0"/>
 					<element name="member" type="tns:FamilyMember" minOccurs="0"
 						maxOccurs="unbounded" />
 				</sequence>
@@ -489,6 +490,7 @@
 			</documentation>
 		</annotation>
 		<sequence>
+		    <element name="familyId" type="long" />
 			<element name="organizationId" type="long" />
 			<element name="type" type="tns:FamilyMemberType" />
 			<element name="startDate" type="date" />

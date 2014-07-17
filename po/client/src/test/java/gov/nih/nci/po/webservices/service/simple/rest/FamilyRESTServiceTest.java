@@ -1,5 +1,8 @@
 package gov.nih.nci.po.webservices.service.simple.rest;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.po.webservices.service.simple.AbstractFamilyServiceTest;
 import gov.nih.nci.po.webservices.service.utils.AuthUtils;
@@ -8,7 +11,17 @@ import gov.nih.nci.po.webservices.types.FamilyList;
 import gov.nih.nci.po.webservices.types.FamilyMember;
 import gov.nih.nci.po.webservices.types.FamilyMemberRelationship;
 import gov.nih.nci.po.webservices.types.FamilyMemberRelationshipList;
-import junit.framework.Assert;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -24,18 +37,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * This is an Integration test class for FamilyService(REST).
@@ -207,7 +208,7 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
                 }
             }
             if (!isOrgFound) {
-                Assert.fail("FamilyMember doesn't contain the OrgId:"
+               fail("FamilyMember doesn't contain the OrgId:"
                         + org1.getId());
             }
         }
@@ -242,7 +243,7 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
                 }
             }
             if (!isOrgFound) {
-                Assert.fail("FamilyMember doesn't contain the OrgId:"
+                fail("FamilyMember doesn't contain the OrgId:"
                         + org1.getId());
             }
         }
@@ -406,11 +407,181 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
     }
 
     /**
+     * Testcase for FamilyService-getFamily
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetFamily() throws Exception {
+
+        String url = fsUrl + "/family/" + familyId1;
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_XML);
+        HttpResponse response = httpClient.execute(getReq);
+
+        HttpEntity resEntity = response.getEntity();
+        Family retFamily = unmarshalFamily(resEntity);
+
+        assertEquals(200, getReponseCode(response));
+        assertEquals(APPLICATION_XML, getResponseContentType(response));
+        assertTrue(retFamily.getName().contains("Arizona"));
+    }
+
+    /**
+     * Testcase for FamilyService-getFamily - JSON Format
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetFamily_JSON() throws Exception {
+
+        String url = fsUrl + "/family/" + familyId1;
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_JSON);
+        HttpResponse response = httpClient.execute(getReq);
+
+        HttpEntity resEntity = response.getEntity();
+        String famJSONStr = EntityUtils.toString(resEntity, "utf-8");
+        ObjectMapper mapper = new ObjectMapper();
+        Family retFamily = mapper.readValue(famJSONStr, Family.class);
+
+        assertEquals(200, getReponseCode(response));
+        assertEquals(APPLICATION_JSON, getResponseContentType(response));
+        assertTrue(retFamily.getName().contains("Arizona"));
+    }
+
+    /**
+     * Testcase for FamilyService-getFamily -Family Not Found in DB
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetFamilyNotFound() throws Exception {
+
+        String url = fsUrl + "/family/999999888888777777";
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_XML);
+        HttpResponse response = httpClient.execute(getReq);
+
+        assertEquals(404, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "Family is not found in the database"));
+    }
+
+    /**
+     * Testcase for FamilyService-getFamily -Family Not Found in DB - JSON
+     * Format
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetFamilyNotFound_JSON() throws Exception {
+
+        String url = fsUrl + "/family/999999888888777777";
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_JSON);
+        HttpResponse response = httpClient.execute(getReq);
+
+        assertEquals(404, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "Family is not found in the database"));
+    }
+
+    /**
+     * Testcase for FamilyService-getFamilyMember
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetFamilyMember() throws Exception {
+
+        String url = fsUrl + "/familymember/" + famOrgRelId1;
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_XML);
+        HttpResponse response = httpClient.execute(getReq);
+
+        HttpEntity resEntity = response.getEntity();
+        FamilyMember retFamMem = unmarshalFamilyMember(resEntity);
+
+        assertEquals(200, getReponseCode(response));
+        assertEquals(APPLICATION_XML, getResponseContentType(response));
+        assertTrue(familyId1 == retFamMem.getFamilyId());
+        assertTrue("ORGANIZATIONAL".equalsIgnoreCase(retFamMem.getType().value()));
+    }
+
+    /**
+     * Testcase for FamilyService-getFamilyMember-JSON Format
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetFamilyMember_JSON() throws Exception {
+
+        String url = fsUrl + "/familymember/" + famOrgRelId1;
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_JSON);
+        HttpResponse response = httpClient.execute(getReq);
+
+        HttpEntity resEntity = response.getEntity();
+        String famMemJSONStr = EntityUtils.toString(resEntity, "utf-8");
+        ObjectMapper mapper = new ObjectMapper();
+        FamilyMember retFamMem = mapper.readValue(famMemJSONStr,FamilyMember.class);
+
+        assertEquals(200, getReponseCode(response));
+        assertEquals(APPLICATION_JSON, getResponseContentType(response));
+        assertTrue(familyId1 == retFamMem.getFamilyId());
+        assertTrue("ORGANIZATIONAL".equalsIgnoreCase(retFamMem.getType().value()));
+    }
+
+    /**
+     * Testcase for FamilyService-getFamilyMember -FamilyMember Not Found in DB
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetFamilyMemberNotFound() throws Exception {
+
+        String url = fsUrl + "/familymember/999999888888777777";
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_XML);
+        HttpResponse response = httpClient.execute(getReq);
+
+        assertEquals(404, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "Family Member is not found in the database"));
+    }
+
+    /**
+     * Testcase for FamilyService-getFamilyMember -FamilyMember Not Found in DB
+     * - JSON Format
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testGetFamilyMemberNotFound_JSON() throws Exception {
+
+        String url = fsUrl + "/familymember/999999888888777777";
+        HttpGet getReq = new HttpGet(url);
+        getReq.addHeader("Accept", APPLICATION_JSON);
+        HttpResponse response = httpClient.execute(getReq);
+
+        assertEquals(404, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "Family Member is not found in the database"));
+    }
+    
+    
+    
+    /**
      * Testcase for FamilyService-getFamilyMemberRelationshipsByFamilyId
      */
     @Test
     public void testGetFamilyMemberRelationshipsByFamilyId() throws Exception {
-        String url = fsUrl + "/familyOrganizationRelationships?familyId="
+        String url = fsUrl + "/familyMemberRelationships?familyId="
                 + familyId1;
         HttpGet getReq = new HttpGet(url);
         getReq.addHeader("Accept", APPLICATION_XML);
@@ -435,7 +606,7 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
     @Test
     public void testGetFamilyMemberRelationshipsByFamilyId_JSON()
             throws Exception {
-        String url = fsUrl + "/familyOrganizationRelationships?familyId="
+        String url = fsUrl + "/familyMemberRelationships?familyId="
                 + familyId1;
         HttpGet getReq = new HttpGet(url);
         getReq.addHeader("Accept", APPLICATION_JSON);
@@ -463,7 +634,7 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
     @Test
     public void testGetFamilyMemberRelationshipsByFamilyIdForFamilyNotFound()
             throws Exception {
-        String url = fsUrl + "/familyOrganizationRelationships?familyId="
+        String url = fsUrl + "/familyMemberRelationships?familyId="
                 + "999999999999999999";
         HttpGet getReq = new HttpGet(url);
         getReq.addHeader("Accept", APPLICATION_XML);
@@ -483,7 +654,7 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
     @Test
     public void testGetFamilyMemberRelationshipsByFamilyIdForFamilyNotFound_JSON()
             throws Exception {
-        String url = fsUrl + "/familyOrganizationRelationships?familyId="
+        String url = fsUrl + "/familyMemberRelationships?familyId="
                 + "999999999999999999";
         HttpGet getReq = new HttpGet(url);
         getReq.addHeader("Accept", APPLICATION_JSON);
@@ -503,7 +674,7 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
     @Test
     public void testGetFamilyMemberRelationshipsByFamilyIdForCriteriaNotSpecified()
             throws Exception {
-        String url = fsUrl + "/familyOrganizationRelationships";
+        String url = fsUrl + "/familyMemberRelationships";
         HttpGet getReq = new HttpGet(url);
         getReq.addHeader("Accept", APPLICATION_XML);
         HttpResponse response = httpClient.execute(getReq);
@@ -521,7 +692,7 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
     @Test
     public void testGetFamilyMemberRelationshipsByFamilyIdForCriteriaNotSpecified_JSON()
             throws Exception {
-        String url = fsUrl + "/familyOrganizationRelationships";
+        String url = fsUrl + "/familyMemberRelationships";
         HttpGet getReq = new HttpGet(url);
         getReq.addHeader("Accept", APPLICATION_JSON);
         HttpResponse response = httpClient.execute(getReq);
@@ -559,6 +730,28 @@ public class FamilyRESTServiceTest extends AbstractFamilyServiceTest {
         JAXBElement<FamilyMemberRelationshipList> jaxbEle = (JAXBElement<FamilyMemberRelationshipList>) jaxbUnmarshaller
                 .unmarshal(new StreamSource(new StringReader(fmrListXMLStr)),
                         FamilyMemberRelationshipList.class);
+        return jaxbEle.getValue();
+    }
+    
+    private Family unmarshalFamily(HttpEntity httpEntity) throws JAXBException,
+            ParseException, IOException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(Family.class);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        String familyXMLStr = EntityUtils.toString(httpEntity, "utf-8");
+        JAXBElement<Family> jaxbEle = (JAXBElement<Family>) jaxbUnmarshaller
+                .unmarshal(new StreamSource(new StringReader(familyXMLStr)),
+                        Family.class);
+        return jaxbEle.getValue();
+    }
+        
+    private FamilyMember unmarshalFamilyMember(HttpEntity httpEntity)
+            throws JAXBException, ParseException, IOException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(FamilyMember.class);
+        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        String famMemXMLStr = EntityUtils.toString(httpEntity, "utf-8");
+        JAXBElement<FamilyMember> jaxbEle = (JAXBElement<FamilyMember>) jaxbUnmarshaller
+                .unmarshal(new StreamSource(new StringReader(famMemXMLStr)),
+                        FamilyMember.class);
         return jaxbEle.getValue();
     }
 }

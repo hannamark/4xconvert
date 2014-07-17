@@ -12,17 +12,18 @@ import gov.nih.nci.po.webservices.types.Address;
 import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
 import gov.nih.nci.po.webservices.types.EntityStatus;
 import gov.nih.nci.po.webservices.types.Organization;
-import junit.framework.Assert;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.junit.After;
 
-import javax.xml.namespace.QName;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+
+import javax.xml.namespace.QName;
+
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.junit.Assert;
 
 /**
  * This is a base class with common code to be used across REST/SOAP based
@@ -39,7 +40,7 @@ public abstract class AbstractFamilyServiceTest extends AbstractBaseTest {
     protected static Organization org1 = null;
     protected static Organization org2 = null;
     protected static long familyId1, familyId2;
-    private static long famOrgRelId1, famOrgRelId2, famOrgRelId3, famOrgRelId4;
+    protected static long famOrgRelId1, famOrgRelId2, famOrgRelId3, famOrgRelId4;
     private static long orgRelId1, orgRelId2, orgRelId3, orgRelId4;
 
     public static void setUpFamilyServiceData() throws Exception {

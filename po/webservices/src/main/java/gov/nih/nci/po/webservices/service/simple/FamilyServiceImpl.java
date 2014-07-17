@@ -1,6 +1,5 @@
 package gov.nih.nci.po.webservices.service.simple;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
@@ -8,19 +7,24 @@ import gov.nih.nci.po.service.FamilySortCriterion;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.webservices.convert.simple.Converters;
 import gov.nih.nci.po.webservices.convert.simple.FamilyConverter;
+import gov.nih.nci.po.webservices.convert.simple.FamilyMemberConverter;
 import gov.nih.nci.po.webservices.convert.simple.FamilyMemberRelationshipConverter;
 import gov.nih.nci.po.webservices.service.exception.EntityNotFoundException;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.po.webservices.types.Family;
+import gov.nih.nci.po.webservices.types.FamilyMember;
 import gov.nih.nci.po.webservices.types.FamilyMemberRelationship;
 import gov.nih.nci.services.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * This is the FamilyService implementation class.
@@ -90,12 +94,33 @@ public class FamilyServiceImpl implements FamilyService {
         }
 
     }
+    
+    @Override
+    public Family getFamily(long familyId) {
+        // get the FamilyBO for given familyId
+        gov.nih.nci.po.data.bo.Family familyBo = PoRegistry.getFamilyService().getById(familyId);
+        FamilyConverter fConverter = Converters.get(FamilyConverter.class);
+        Family family = fConverter.convertFromBOToJaxB(familyBo);
+        
+        return family;
+    }
+    
+    @Override
+    public FamilyMember getFamilyMember(long familyMemberId) {
+        
+        FamilyOrganizationRelationship famOrgRelBo = PoRegistry.getFamilyOrganizationRelationshipService()
+                .getById(familyMemberId);
+        FamilyMemberConverter fmConverter = new FamilyMemberConverter();
+        FamilyMember famMem = fmConverter.convertFromBOToJaxB(famOrgRelBo);
+        
+        return famMem;
+    }
 
     @Override
     public List<FamilyMemberRelationship> getFamilyMemberRelationshipsByFamilyId(
             long familyId) {
 
-        // get the FamilyBO for given organizationId
+        // get the FamilyBO for given familyId
         gov.nih.nci.po.data.bo.Family familyBo = PoRegistry.getFamilyService()
                 .getById(familyId);
         if (familyBo == null) {

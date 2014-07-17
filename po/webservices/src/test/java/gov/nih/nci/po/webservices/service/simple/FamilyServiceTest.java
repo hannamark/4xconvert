@@ -1,22 +1,26 @@
 package gov.nih.nci.po.webservices.service.simple;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.po.service.FamilyServiceLocal;
 import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.webservices.convert.simple.AbstractConverterTest;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.po.webservices.types.Family;
+import gov.nih.nci.po.webservices.types.FamilyMember;
 import gov.nih.nci.po.webservices.types.FamilyMemberRelationship;
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.List;
 
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * This is the test class for FamilyServiceImpl.
@@ -39,8 +43,8 @@ public class FamilyServiceTest extends AbstractConverterTest {
         FamilyService famService = new FamilyServiceImpl();
         List<Family> famList = famService.searchFamiliesByName("Cancer");
 
-        Assert.assertNotNull(famList);
-        Assert.assertTrue(famList.size() == 2);
+        assertNotNull(famList);
+        assertTrue(famList.size() == 2);
     }
 
     /**
@@ -79,8 +83,8 @@ public class FamilyServiceTest extends AbstractConverterTest {
         FamilyService famService = new FamilyServiceImpl();
         List<Family> famList = famService.searchFamiliesByOrgId(1l);
 
-        Assert.assertNotNull(famList);
-        Assert.assertTrue(famList.size() == 2);
+        assertNotNull(famList);
+        assertTrue(famList.size() == 2);
     }
 
     /**
@@ -110,6 +114,48 @@ public class FamilyServiceTest extends AbstractConverterTest {
         FamilyService famService = new FamilyServiceImpl();
         famService.searchFamiliesByOrgId(1l);
     }
+    
+    /**
+     * Testcase for FamilyService-getFamily
+     */
+    @Test
+    public void testGetFamilyById() {
+        FamilyService famService = new FamilyServiceImpl();
+        Family family = famService.getFamily(1l);
+
+        assertNotNull(family);
+    }
+    
+    /**
+     * Testcase for FamilyService-getFamily - Family not exist for given Id.
+     */
+    @Test
+    public void testGetFamilyByIdForFamilyNotExist() {
+        FamilyService famService = new FamilyServiceImpl();
+        Family family = famService.getFamily(1002l);
+        assertNull(family);
+    }
+    
+    /**
+     * Testcase for FamilyService-getFamilyMember
+     */
+    @Test
+    public void testGetFamilyMemberById() {
+        FamilyService famService = new FamilyServiceImpl();
+        FamilyMember familyMember = famService.getFamilyMember(1l);
+
+        assertNotNull(familyMember);
+    }
+    
+    /**
+     * Testcase for FamilyService-getFamilyMember - FamilyMember not exist for given Id.
+     */
+    @Test
+    public void testGetFamilyMemberByIdForFamilyMemberNotExist() {
+        FamilyService famService = new FamilyServiceImpl();
+        FamilyMember familyMember = famService.getFamilyMember(1002l);
+        assertNull(familyMember);
+    }
 
     /**
      * Testcase for FamilyService-getFamilyMemberRelationshipsByFamilyId
@@ -120,7 +166,7 @@ public class FamilyServiceTest extends AbstractConverterTest {
         List<FamilyMemberRelationship> fmrList = famService
                 .getFamilyMemberRelationshipsByFamilyId(1l);
 
-        Assert.assertNotNull(fmrList);
+        assertNotNull(fmrList);
     }
 
     /**

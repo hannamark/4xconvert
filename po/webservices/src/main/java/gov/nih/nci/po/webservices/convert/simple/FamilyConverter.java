@@ -2,12 +2,14 @@ package gov.nih.nci.po.webservices.convert.simple;
 
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.FamilyP30;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.webservices.types.EntityStatus;
 import gov.nih.nci.po.webservices.types.Family;
 import gov.nih.nci.po.webservices.types.FamilyMember;
 import gov.nih.nci.po.webservices.types.FamilyMemberType;
+
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Iterator;
@@ -42,8 +44,10 @@ public class FamilyConverter
             familyBo.setName(family.getName());
             familyBo.setId(family.getId());
             familyBo.setStartDate(toDate(family.getStartDate()));
-            familyBo.setStatusCode(FamilyStatus.valueOf(family.getStatus()
-                    .value()));
+            gov.nih.nci.po.data.bo.FamilyP30 familyP30 = new FamilyP30();
+            familyP30.setSerialNumber(family.getP30SerialNumber());
+            familyBo.setFamilyP30(familyP30);
+            familyBo.setStatusCode(FamilyStatus.valueOf(family.getStatus().value()));
 
             // Set the FamilyMember list
             populateJaxbFamilyMemberListInBo(family, familyBo);
@@ -72,8 +76,10 @@ public class FamilyConverter
             family.setId(familyBo.getId());
             family.setName(familyBo.getName());
             family.setStartDate(toXMLGregorianCalendar(familyBo.getStartDate()));
-            family.setStatus(EntityStatus.fromValue(familyBo.getStatusCode()
-                    .name()));
+            if (familyBo.getFamilyP30() != null) {
+                family.setP30SerialNumber(familyBo.getFamilyP30().getSerialNumber());
+            }           
+            family.setStatus(EntityStatus.fromValue(familyBo.getStatusCode().name()));
 
             // Set the FamilyMember list
             populateBoFamilyMemberListInJaxb(familyBo, family);
@@ -124,6 +130,7 @@ public class FamilyConverter
                 gov.nih.nci.po.data.bo.FamilyOrganizationRelationship faOrgRel = iterator
                         .next();
                 gov.nih.nci.po.webservices.types.FamilyMember familyMember = new FamilyMember();
+                familyMember.setFamilyId(faOrgRel.getFamily().getId());
                 familyMember.setOrganizationId(faOrgRel.getOrganization()
                         .getId());
                 familyMember.setType(FamilyMemberType.fromValue(faOrgRel
