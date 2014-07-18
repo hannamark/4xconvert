@@ -3,17 +3,24 @@ package gov.nih.nci.po.webservices.service.simple.soap;
 import gov.nih.nci.po.webservices.service.simple.soap.family.FamilyService;
 import gov.nih.nci.po.webservices.service.simple.soap.family.GetFamilyMemberRelationshipsByFamilyIdRequest;
 import gov.nih.nci.po.webservices.service.simple.soap.family.GetFamilyMemberRelationshipsByFamilyIdResponse;
+import gov.nih.nci.po.webservices.service.simple.soap.family.GetFamilyMemberRequest;
+import gov.nih.nci.po.webservices.service.simple.soap.family.GetFamilyMemberResponse;
+import gov.nih.nci.po.webservices.service.simple.soap.family.GetFamilyRequest;
+import gov.nih.nci.po.webservices.service.simple.soap.family.GetFamilyResponse;
 import gov.nih.nci.po.webservices.service.simple.soap.family.SearchFamiliesByNameRequest;
 import gov.nih.nci.po.webservices.service.simple.soap.family.SearchFamiliesByNameResponse;
 import gov.nih.nci.po.webservices.service.simple.soap.family.SearchFamiliesByOrgIdRequest;
 import gov.nih.nci.po.webservices.service.simple.soap.family.SearchFamiliesByOrgIdResponse;
 import gov.nih.nci.po.webservices.types.Family;
+import gov.nih.nci.po.webservices.types.FamilyMember;
 import gov.nih.nci.po.webservices.types.FamilyMemberRelationship;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.jws.WebService;
+
 import java.util.List;
 
 /**
@@ -70,5 +77,25 @@ public class FamilyServiceImpl implements FamilyService {
         response.getFamilyMemberRelationshipList().addAll(fmrList);
         return response;
     }
+    
+    @Override
+    public GetFamilyResponse getFamily(GetFamilyRequest request) {
+        Family family = famServImpl.getFamily(request.getFamilyId());
+        
+        GetFamilyResponse response = new GetFamilyResponse();
+        response.setFamily(family);
+        return response;
+    }
+
+    @Override
+    public GetFamilyMemberResponse getFamilyMember(GetFamilyMemberRequest request) {
+        FamilyMember famMem = famServImpl.getFamilyMember(request.getFamilyMemberId());
+        
+        GetFamilyMemberResponse response = new GetFamilyMemberResponse();
+        response.setFamilyMember(famMem);
+        return response;
+    }
+
+    
 
 }

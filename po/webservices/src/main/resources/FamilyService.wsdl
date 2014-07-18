@@ -57,6 +57,34 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
+			<xsd:element name="getFamilyRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="familyId" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getFamilyResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="family" type="f:Family" minOccurs="0"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="getFamilyMemberRequest">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="familyMemberId" type="xsd:long"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>			
+			<xsd:element name="getFamilyMemberResponse">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="familyMember" type="f:FamilyMember" minOccurs="0"></xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
 		</xsd:schema>
 	</wsdl:types>
 
@@ -80,7 +108,19 @@
 		<wsdl:part name="parameters"
 			element="tns:getFamilyMemberRelationshipsByFamilyIdResponse"></wsdl:part>
 	</wsdl:message>
-
+	<wsdl:message name="getFamilyRequest">
+		<wsdl:part name="parameters" element="tns:getFamilyRequest"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getFamilyResponse">
+		<wsdl:part name="parameters" element="tns:getFamilyResponse"></wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="getFamilyMemberRequest">
+		<wsdl:part name="parameters" element="tns:getFamilyMemberRequest"></wsdl:part>
+	</wsdl:message>	
+	<wsdl:message name="getFamilyMemberResponse">
+		<wsdl:part name="parameters" element="tns:getFamilyMemberResponse"></wsdl:part>
+	</wsdl:message>
+	
 	<wsdl:portType name="FamilyService">
 		<wsdl:operation name="searchFamiliesByName">
 			<wsdl:documentation>This method is used to get all the Families
@@ -101,6 +141,11 @@
 		<wsdl:operation name="getFamilyMemberRelationshipsByFamilyId">
 			<wsdl:input message="tns:getFamilyMemberRelationshipsByFamilyIdRequest"></wsdl:input>
 			<wsdl:output message="tns:getFamilyMemberRelationshipsByFamilyIdResponse"></wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getFamily">
+			<wsdl:input message="tns:getFamilyRequest"></wsdl:input>
+			<wsdl:output message="tns:getFamilyResponse"></wsdl:output>
+		</wsdl:operation>		<wsdl:operation name="getFamilyMember">			<wsdl:input message="tns:getFamilyMemberRequest"></wsdl:input>			<wsdl:output message="tns:getFamilyMemberResponse"></wsdl:output>
 		</wsdl:operation>
 	</wsdl:portType>
 
@@ -134,6 +179,24 @@
 				<soap:body use="literal" />
 			</wsdl:output>
 		</wsdl:operation>
+		<wsdl:operation name="getFamily">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getFamilyMember">
+            <soap:operation soapAction="" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
 	</wsdl:binding>
 
 	<wsdl:service name="FamilyService">
