@@ -30,6 +30,7 @@ var registryApp = {
 
 <script type="text/javascript" src="${scriptPath}/js/showhide.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/popup.js"></script>
+<script type='text/javascript' src="${scriptPath}/js/timeout.js"></script> 
 
 <script type="text/javascript" src="${scriptPath}/js/Help.js"></script>
 <script type="text/javascript">

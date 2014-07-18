@@ -30,6 +30,8 @@ jQuery(document).ready(function() {
    jQuery(function (jQuery) {
         jQuery('[rel=tooltip]').tooltip()
     });
+   
+   jQuery.timeoutDialog(null);
 });
 
 //Multi-level Dropdown

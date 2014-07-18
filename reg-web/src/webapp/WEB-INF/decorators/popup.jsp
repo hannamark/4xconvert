@@ -11,6 +11,7 @@
         <link href="${pageContext.request.contextPath}/struts/niftycorners/niftyPrint.css" rel="stylesheet" type="text/css" media="print"/>
         <script type="text/javascript">
            jQuery(function(){
+        	   $.timeoutDialog();
                 if(!NiftyCheck()) {
                     return;
                 }

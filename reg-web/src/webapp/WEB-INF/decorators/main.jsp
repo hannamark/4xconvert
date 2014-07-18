@@ -21,6 +21,7 @@
             document.xsrfForm.action=action;
             document.xsrfForm.submit();
           }
+          
         </script>
     </head>
     <body>

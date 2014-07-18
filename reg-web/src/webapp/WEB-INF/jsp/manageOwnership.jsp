@@ -139,7 +139,7 @@
          <s:hidden name="checked" id="checked"/>
          <s:token/>
          <h3 class="heading"><span><fmt:message key="managetrialownership.users.header"><fmt:param><c:out value="${siteName}"/></fmt:param></fmt:message></span></h3>
-         <p><strong>Select one or more username:</strong><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_users" />" data-placement="top" data-trigger="hover"></i></p>
+         <p><strong>Select one or more user names:</strong><i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.select_users" />" data-placement="top" data-trigger="hover"></i></p>
          
               <div class="trial-ownership-container" id="regUserRowDiv" >
                 <s:set name="orgMembers" value="registryUsers" scope="request"/>

@@ -13,6 +13,7 @@
 	<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
 	
 	<script type="text/javascript" language="javascript">
+		window.supressTimeoutPopup = true;
 	
 		document.onkeypress = runEnterScript;
 		function runEnterScript(e) {
@@ -29,6 +30,8 @@
 					return false;
 				}
 			}
+			
+			return true;
 		}
 		
 

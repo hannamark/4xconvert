@@ -11,7 +11,7 @@
             <del class="btnwrapper">
                 <ul class="btnrow">         
                     <li>       
-                        <s:a href="javascript:void(0)" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="close">Close</span></span></s:a>
+                        <s:a href="javascript:void(0)" cssClass="btn" onclick="parent.hidePopWin(false);"><span class="btn_img"><span class="close">Close</span></span></s:a>
                     </li> 
                 </ul>   
             </del>
