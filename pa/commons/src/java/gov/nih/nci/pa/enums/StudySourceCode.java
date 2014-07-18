@@ -37,6 +37,11 @@ public enum StudySourceCode implements CodedEnum<String> {
     GRID_SERVICE("Grid Service"),
     
     /**
+     * Trials registered through the REST service.
+     */
+    REST_SERVICE("REST Service"),
+    
+    /**
      * Trials from PA not otherwise indicated.
      */
     OTHER("Other");

@@ -10,7 +10,7 @@
     <property file="${basedir}/../../build-pa/build-lite.properties"/>
     <property file="${basedir}/../../build-pa/version.properties"/>
     <property name="pa-webservices.coverage.line" value="85"/>
-    <property name="pa-webservices.coverage.branch" value="85"/>
+    <property name="pa-webservices.coverage.branch" value="72"/>
     <property name="pa-webservices.pmd.maxerrors" value="0"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
@@ -141,9 +141,7 @@
     </path>
 
     <path id="ejb.package.classpath">
-        <fileset dir="${pa.dir}/pa-ejb/target">
-            <include name="*.jar"/>
-        </fileset>
+    	<dirset dir="${pa.dir}/pa-ejb/target/classes"></dirset>       
     </path>
 
     <!-- ====================================================================== -->
@@ -487,11 +485,17 @@
         <delete file="${pa-webservices.build.dir}/cobertura.ser" />
 
         <cobertura-instrument datafile="${pa-webservices.build.dir}/cobertura.ser"
-                              toDir="${pa-webservices.build.coberturaOutputDir}">
+                              toDir="${pa-webservices.build.coberturaOutputDir}" ignoreTrivial="true">
             <fileset dir="${pa-webservices.build.outputDir}">
                 <include name="**/*.class" />
             	<exclude name="**/gov/nih/nci/pa/webservices/types/*.class"/>
+            	<exclude name="**/gov/nih/nci/po/webservices/types/*.class"/>
             </fileset>
+        	<auxClasspath>
+        		 <path refid="ejb.package.classpath"/>
+        		 <path refid="compile.classpath"/>
+        		 <path refid="common.package.classpath"/>
+        	</auxClasspath>
         </cobertura-instrument>
 
         <mkdir dir="${pa-webservices.test.reports}"/>

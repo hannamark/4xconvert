@@ -475,10 +475,15 @@
     <target name="test-cobertura" depends="compile-tests">
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
         <delete file="${reg-web.build.dir}/cobertura.ser" />
-        <cobertura-instrument datafile="${reg-web.build.dir}/cobertura.ser" toDir="${reg-web.build.coberturaOutputDir}">
+        <cobertura-instrument datafile="${reg-web.build.dir}/cobertura.ser" toDir="${reg-web.build.coberturaOutputDir}" ignoreTrivial="true">
             <fileset dir="${reg-web.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
+            <auxClasspath>            	 
+                  <path refid="ejb.package.classpath"/>
+                  <path refid="compile.classpath"/>
+                  <path refid="common.package.classpath"/>
+             </auxClasspath>
         </cobertura-instrument>
         <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." failureproperty="junit.failure" maxmemory="256m">

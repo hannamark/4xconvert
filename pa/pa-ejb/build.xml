@@ -9,7 +9,7 @@
     <property file="${basedir}/../../build-pa/tier-properties/build-lite-${tier}.properties"/>
     <property file="${basedir}/../../build-pa/build-lite.properties"/>
     <property file="${basedir}/../../build-pa/version.properties"/>
-    <property name="pa-ejb.coverage.line" value="79"/>
+    <property name="pa-ejb.coverage.line" value="78"/>
     <property name="pa-ejb.coverage.branch" value="64"/>
     <property name="pa-ejb.coverage.line.ci" value="74"/>
     <property name="pa-ejb.coverage.branch.ci" value="59"/>
@@ -246,13 +246,19 @@
         <property name="coverage.branch" value="${pa-ejb.coverage.branch}"/>
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
         <delete file="${pa-ejb.build.dir}/cobertura.ser" />
-        <cobertura-instrument datafile="${pa-ejb.build.dir}/cobertura.ser" toDir="${pa-ejb.build.coberturaOutputDir}">
+    	
+        <cobertura-instrument datafile="${pa-ejb.build.dir}/cobertura.ser" toDir="${pa-ejb.build.coberturaOutputDir}" ignoreTrivial="true">
             <fileset dir="${pa-ejb.build.outputDir}">
                 <include name="**/*.class" />
             	<exclude name="**/gov/nih/nci/pa/service/ctgov/*.class" />
-		<exclude name="**/gov/nih/nci/pa/util/pomock/*.class" />
+            	<exclude name="**/gov/nih/nci/pa/util/pomock/*.class" />
             </fileset>
+            <auxClasspath>            
+                 <path refid="compile.classpath"/>
+                 <path refid="common.package.classpath"/>
+            </auxClasspath>        	
         </cobertura-instrument>
+    	
         <mkdir dir="${pa-ejb.test.reports}"/>
         <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." showoutput="no" failureproperty="junit.failure">
             <jvmarg value="-XX:-UseSplitVerifier"/>

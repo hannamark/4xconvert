@@ -5,6 +5,7 @@ package gov.nih.nci.pa.webservices;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -12,9 +13,9 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.webservices.TrialRegistrationService;
 import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
 
 import java.util.Arrays;
@@ -23,6 +24,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBElement;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+import org.apache.log4j.SimpleLayout;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +35,18 @@ import org.junit.Test;
  * @author dkrylov
  * 
  */
-public class TrialRegistrationServiceTest extends AbstractMockitoTest {
+public class TrialRegistrationServiceAbbreviatedImportTest extends AbstractMockitoTest {
+    
+    static {
+        try {
+            final ConsoleAppender appender = new ConsoleAppender(new SimpleLayout());
+            appender.setThreshold(Priority.INFO);
+            Logger.getRootLogger().addAppender(
+                    appender);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
 
     private TrialRegistrationService service;
 
@@ -62,6 +78,10 @@ public class TrialRegistrationServiceTest extends AbstractMockitoTest {
                 PaRegistry.getStudyProtocolService().getStudyProtocolsByNctId(
                         eq("NCT290384"))).thenReturn(
                 Arrays.asList((StudyProtocolDTO) spDto));
+        
+        PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
+        when(paServiceUtils.getTrialNciId(any(Long.class))).thenReturn("NCI-2014-00999");
+        service.setPaServiceUtils(paServiceUtils);
     }
 
     /**

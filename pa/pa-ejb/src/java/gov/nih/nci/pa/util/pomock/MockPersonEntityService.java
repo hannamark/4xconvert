@@ -77,9 +77,15 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
         personDTO.setStatusCode(CdConverter
                 .convertToCd(EntityStatusCode.PENDING));
         personDTO.setIdentifier(IiConverter.convertToPoPersonIi(poPersonId));
-        final Ad ad = getAddress();       
-        personDTO.setPostalAddress(ad);
-        personDTO.setTelecomAddress(getTelAdd());
+        
+        if (personDTO.getPostalAddress() == null) {
+            final Ad ad = getAddress();       
+            personDTO.setPostalAddress(ad);
+        }
+        
+        if (personDTO.getTelecomAddress()==null) {
+            personDTO.setTelecomAddress(getTelAdd());
+        }
         
         STORE.put(poPersonId, personDTO);
         return IiConverter.convertToPoPersonIi(poPersonId);
@@ -89,6 +95,7 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
        PersonDTO person = new PersonDTO();
        person.setName(EnPnConverter.convertToEnPn("John", "G", "Doe", "Mr.", "III"));
        createAndStorePerson(person);
+       PO_ID_TO_CTEP_ID.put(IiConverter.convertToString(person.getIdentifier()), "JDOE01");
     }
 
     /*

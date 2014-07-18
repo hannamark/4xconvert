@@ -87,16 +87,19 @@ public class MockOrganizationEntityService implements
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CTEP_ORG_NAME));
             createOrg(org);
             if (createROs) createRO(org);
+            PO_ID_TO_CTEP_ID.put(IiConverter.convertToString(org.getIdentifier()), "CTEP");
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.DCP_ORG_NAME));
             createOrg(org);
             if (createROs) createRO(org);
+            PO_ID_TO_CTEP_ID.put(IiConverter.convertToString(org.getIdentifier()), "DCP");
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.NCI_ORG_NAME));
             createOrg(org);
             if (createROs) createRO(org);
+            PO_ID_TO_CTEP_ID.put(IiConverter.convertToString(org.getIdentifier()), "NCI");
             
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CCR_ORG_NAME));
@@ -140,8 +143,12 @@ public class MockOrganizationEntityService implements
         orgDTO.setStatusCode(CdConverter.convertToCd(EntityStatusCode.PENDING));
 
         final Ad ad = getAddress();
-        orgDTO.setPostalAddress(ad);
-        orgDTO.setTelecomAddress(getTelAdd());
+        if (orgDTO.getPostalAddress()==null) {
+            orgDTO.setPostalAddress(ad);
+        }
+        if (orgDTO.getTelecomAddress() == null) {
+            orgDTO.setTelecomAddress(getTelAdd());
+        }
 
         final DSet fams = new DSet();
         fams.setItem(new HashSet());

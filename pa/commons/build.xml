@@ -229,11 +229,14 @@
         <delete file="${commons.build.dir}/cobertura.ser" />
 
         <cobertura-instrument datafile="${commons.build.dir}/cobertura.ser"
-                              toDir="${commons.build.coberturaOutputDir}">
+                              toDir="${commons.build.coberturaOutputDir}" ignoreTrivial="true">
             <fileset dir="${commons.build.outputDir}">
                 <include name="**/*.class" />	
             	<exclude name="**/StudyIdentifierType.class"/>
             </fileset>
+        	<auxClasspath>
+                 <path refid="compile.classpath"/>                
+            </auxClasspath>
         </cobertura-instrument>
 
         <mkdir dir="${commons.test.reports}"/>

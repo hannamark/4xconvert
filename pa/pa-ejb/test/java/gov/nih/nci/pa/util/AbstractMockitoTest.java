@@ -86,6 +86,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ad;
@@ -109,6 +110,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
+import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -915,6 +917,7 @@ public class AbstractMockitoTest {
         when(paRegSvcLoc.getStudyResoucringService()).thenReturn(studyResourcingSvc);
         when(paRegSvcLoc.getStratumGroupService()).thenReturn(stratumGroupSvc);
         when(paRegSvcLoc.getMailManagerService()).thenReturn(mailManagerSvc);        
+        when(paRegSvcLoc.getRegulatoryInformationService()).thenReturn(regulInfoSvc);
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
     }
 
@@ -1032,6 +1035,12 @@ public class AbstractMockitoTest {
         regulInfoSvc = mock(RegulatoryInformationServiceLocal.class);
         when(regulInfoSvc.get(anyLong())).thenReturn(ra);
         when(regulInfoSvc.getRegulatoryAuthorityCountry(anyLong())).thenReturn(country);
+        
+        final CountryRegAuthorityDTO usa = new CountryRegAuthorityDTO();
+        usa.setAlpha3("USA");
+        usa.setName("United States");
+        when(regulInfoSvc.getDistinctCountryNames()).thenReturn(Arrays.asList(usa));
+        when(regulInfoSvc.getRegulatoryAuthorityId(eq("Federal Government"), eq("United States"))).thenReturn(1L);
     }
 
     private void setupSraMock() throws PAException {

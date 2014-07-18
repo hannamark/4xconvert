@@ -491,10 +491,15 @@
         <delete file="${pa-web.build.dir}/cobertura.ser" />
 
         <cobertura-instrument datafile="${pa-web.build.dir}/cobertura.ser"
-                              toDir="${pa-web.build.coberturaOutputDir}">
+                              toDir="${pa-web.build.coberturaOutputDir}" ignoreTrivial="true">
             <fileset dir="${pa-web.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
+        	<auxClasspath>
+                 <path refid="ejb.package.classpath"/>
+                 <path refid="compile.classpath"/>
+                 <path refid="common.package.classpath"/>
+            </auxClasspath>
         </cobertura-instrument>
 
         <mkdir dir="${pa-web.test.reports}"/>
