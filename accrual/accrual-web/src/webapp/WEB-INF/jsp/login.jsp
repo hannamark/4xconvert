@@ -6,6 +6,8 @@
 	<c:url value="/../registry/registerUser.action" var="createAccountUrl" />
 	<body>
 	<script>
+	window.supressTimeoutPopup = true;
+	
 	$(document).keypress(function(event) {
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if (keycode == '13') {

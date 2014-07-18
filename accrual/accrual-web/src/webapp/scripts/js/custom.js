@@ -66,6 +66,8 @@ $('.navbar-nav .dropdown').hover(function() {
    jQuery(function ($) {
         $('[rel=tooltip]').tooltip()
     });
+   
+   jQuery.timeoutDialog(null);
 });
 
 //Multi-level Dropdown
