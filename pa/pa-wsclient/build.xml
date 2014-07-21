@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- pa-wsclient ant script for COPPA PA                                         -->
+<!-- ====================================================================== -->
+
+<project name="pa-wsclient" default="package" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+    <property name="tier" value="LOCAL"/>
+    <property file="${basedir}/../../build-pa/tier-properties/build-lite-${tier}.properties"/>
+    <property file="${basedir}/../../build-pa/build-lite.properties"/>
+    <property file="${basedir}/../../build-pa/version.properties"/>
+    <property name="pa-wsclient.coverage.line" value="20"/>
+    <property name="pa-wsclient.coverage.branch" value="35"/>
+    <property name="pa-wsclient.coverage.line.ci" value="20"/>
+    <property name="pa-wsclient.coverage.branch.ci" value="35"/>
+    <property name="pa-wsclient.pmd.maxerrors" value="10"/>
+
+    <property name="software.dir" value="${basedir}/../.."/>
+    <property name="pa.dir" value="${software.dir}/pa"/>
+    <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
+    <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
+
+    <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
+    <property name="pa.checkstyle.url" value="${pa.resourceDir}/checkstyle.xml"/>
+
+    <property name="java.major.version" value="1.7"/>
+    <property name="java.encoding" value="utf-8"/>
+
+    <property name="pa-wsclient.build.finalName" value="pa-wsclient"/>
+    <property name="pa-wsclient.build.dir" value="${pa.dir}/pa-wsclient/target"/>
+	<property name="pa-wsclient.build.srcgenDir" value="${pa-wsclient.build.dir}/generated-src"/>
+    <property name="pa-wsclient.build.outputDir" value="${pa-wsclient.build.dir}/classes"/>
+    <property name="pa-wsclient.build.srcDir.0" value="${pa.dir}/pa-wsclient/src/java"/>
+    <property name="pa-wsclient.build.resourceDir.0" value="${pa.dir}/pa-wsclient/src/resources"/>
+    <property name="pa-wsclient.build.testOutputDir" value="${pa-wsclient.build.dir}/test-classes"/>
+    <property name="pa-wsclient.build.testDir.0" value="${pa.dir}/pa-wsclient/test/java"/>
+    <property name="pa-wsclient.build.testResourceDir.0" value="${pa.dir}/pa-wsclient/test/resources"/>
+    <property name="pa-wsclient.test.reports" value="${pa.report.dir}/pa-wsclient/test-reports"/>
+    <property name="pa-wsclient.coverage.reports" value="${pa.report.dir}/pa-wsclient/coverage-reports"/>
+    <property name="pa-wsclient.reporting.outputDirectory" value="${pa.report.dir}/pa-wsclient/site"/>
+    <property name="pa-wsclient.jar" value="${pa-wsclient.build.finalName}.jar"/>
+    <property name="pa-wsclient.build.coberturaOutputDir" value="${pa-wsclient.build.dir}/generated-classes"/>
+    <property name="pa-wsclient.build.javadoc" value="${pa-wsclient.build.dir}/javadoc"/>
+    <property name="pa-wsclient-test.jar" value="${pa-wsclient.build.finalName}-test.jar"/>
+    <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
+    <property name="common.dir" value="${software.dir}/build-pa/common"/>
+	
+    <condition property="ci.server">
+        <equals arg1="${tier}" arg2="CI"/>
+    </condition>
+
+    <!-- ====================================================================== -->
+    <!-- Defining classpaths                                                    -->
+    <!-- ====================================================================== -->
+
+    <path id="build.classpath">
+        <fileset dir="${lib.dir}/build">
+            <include name="*.jar"/>
+        </fileset>
+   </path>
+
+	<path id="common.package.classpath">
+        <fileset dir="${pa.dir}/commons/target">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="compile.classpath">
+        <fileset dir="${lib.dir}/compile">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/ear">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test.classpath">
+        <fileset dir="${lib.dir}/test">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/ear">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/compile">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test-simian.classpath">
+        <fileset dir="${lib.dir}/test-simian">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test-junit.classpath">
+        <fileset dir="${lib.dir}/test-junit">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test-cobertura.classpath">
+        <fileset dir="${lib.dir}/test-cobertura">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test-checkstyle.classpath">
+        <fileset dir="${lib.dir}/test-checkstyle">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="test-pmd.classpath">
+        <fileset dir="${lib.dir}/test-pmd">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- ====================================================================== -->
+    <!-- Cleaning up target                                                     -->
+    <!-- ====================================================================== -->
+
+    <target name="clean" description="Clean the output directory">
+        <delete dir="${pa-wsclient.build.dir}"/>
+        <delete dir="${pa.report.dir}/pa-wsclient"/>
+        <mkdir dir="${pa.report.dir}/pa-wsclient"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Compilation target                                                     -->
+    <!-- ====================================================================== -->
+
+	<target name="run-xjc" description="Generates JAXB classes">
+		<!-- <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="build.classpath"/> -->
+		<taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task" classpathref="build.classpath"/>
+		<mkdir dir="${pa-wsclient.build.srcgenDir}"/>
+	</target>
+	
+    <target name="compile" depends="run-xjc" description="Compile the code">
+        <mkdir dir="${pa-wsclient.build.outputDir}"/>
+        <javac destdir="${pa-wsclient.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
+            <src>
+            	<pathelement location="${pa-wsclient.build.srcgenDir}"/>
+                <pathelement location="${pa-wsclient.build.srcDir.0}"/>
+            </src>
+            <classpath>
+                <path refid="compile.classpath"/>
+                <path refid="common.package.classpath" />
+            </classpath>
+        </javac>
+
+        <copy todir="${pa-wsclient.build.outputDir}" filtering="true">
+            <filterset>
+                <filter token="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}" />
+                <filter token="pdq.upload.filepath.loc" value="${pdq.upload.filepath.loc}" />
+                <filter token="tooltips.filepath.loc" value="${tooltips.filepath.loc}" />
+                <filter token="batch.upload.filepath.loc" value="${batch.upload.filepath.loc}" />
+                <filter token="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}" />
+                <filter token="po.server.name" value="${po.server.name}" />
+                <filter token="po.port.number" value="${po.port.number}" />
+                <filter token="po.principal" value="${po.principal}" />
+                <filter token="po.credentials" value="${po.credentials}" /> 
+                <filter token="po.topic.clientId" value="${po.topic.clientId}" />
+                <filter token="po.topic.userName" value="${po.topic.userName}" />
+                <filter token="po.topic.password" value="${po.topic.password}" />	
+            	<filter token="csm.submitter.group" value="${csm.submitter.group}" />
+                <filter token="grid.dorian.url" value="${grid.dorian.url}" />
+                <filter token="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
+                <filter token="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
+                <filter token="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
+                <filter token="gridgrouper.url" value="${gridgrouper.url}"/>
+                <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
+                <filter token="cteprss.user" value="${cteprss.user}"/>
+                <filter token="mock.po" value="${mock.po}" />
+                <filter token="nci.ldap.prefix" value="${nci.ldap.prefix}" />
+                <filter token="wikiHelp.baseUrl.pa" value="${wikiHelp.baseUrl.pa}" />
+                <filter token="wikiHelp.baseUrl.registry" value="${wikiHelp.baseUrl.registry}" />
+                <filter token="wikiHelp.baseUrl.accrual" value="${wikiHelp.baseUrl.accrual}" />
+                <filter token="wikiHelp.baseUrl.trialStatusRules" value="${wikiHelp.baseUrl.trialStatusRules}" />            	
+                <filter token="ctgov.ftp.url" value="${ctgov.ftp.url}"/>
+                <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
+                <filter token="db.username" value="${db.username}"/>
+                <filter token="db.password" value="${db.password}"/>
+                <filter token="jdbc.driver" value="${jdbc.driver}"/>
+                <filter token="jdbc.url" value="${jdbc.url}"/>
+            </filterset>
+            <fileset dir="${pa-wsclient.build.resourceDir.0}"/>
+        </copy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Test-compilation target                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="compile-tests" depends="compile" description="Compile the test code">
+        <mkdir dir="${pa-wsclient.build.testOutputDir}"/>
+        <javac destdir="${pa-wsclient.build.testOutputDir}" nowarn="false" debug="true" optimize="false"
+            deprecation="true" source="${java.major.version}" target="${java.major.version}" verbose="false" 
+            fork="false" encoding="${java.encoding}">
+            <src>
+                <pathelement location="${pa-wsclient.build.testDir.0}"/>
+            </src>
+            <classpath>
+                <pathelement location="${pa-wsclient.build.outputDir}"/>
+                <path refid="test.classpath"/>
+                <path refid="common.package.classpath"/>
+                <path refid="test-junit.classpath"/>
+            </classpath>
+        </javac>
+        <copy todir="${pa-wsclient.build.testOutputDir}">
+            <fileset dir="${pa-wsclient.build.testResourceDir.0}"/>
+        </copy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run Cobertura and JUnit                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="runTest" description="Runs the test you specify on the command line with -Dtest=" depends="compile-tests">
+        <mkdir dir="${pa-wsclient.test.reports}"/>
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
+            <sysproperty key="basedir" value="."/>
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${pa-wsclient.build.outputDir}"/>
+            <classpath location="${pa-wsclient.build.testOutputDir}"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="common.package.classpath"/>
+            <classpath refid="test-junit.classpath"/>
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <batchtest todir="${pa-wsclient.test.reports}" fork="yes" unless="test">
+                <fileset dir="${pa-wsclient.build.testDir.0}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="test-cobertura" depends="compile-tests">
+        <property name="coverage.line" value="${pa-wsclient.coverage.line}"/>
+        <property name="coverage.branch" value="${pa-wsclient.coverage.branch}"/>
+        <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
+        <delete file="${pa-wsclient.build.dir}/cobertura.ser" />
+        <cobertura-instrument datafile="${pa-wsclient.build.dir}/cobertura.ser" toDir="${pa-wsclient.build.coberturaOutputDir}">
+            <fileset dir="${pa-wsclient.build.outputDir}">
+                <include name="**/*.class" />
+            </fileset>
+        </cobertura-instrument>
+        <mkdir dir="${pa-wsclient.test.reports}"/>
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." showoutput="no" failureproperty="junit.failure">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
+            <sysproperty key="basedir" value="."/>
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${pa-wsclient.build.dir}/cobertura.ser" />
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath location="${pa-wsclient.build.coberturaOutputDir}"/>
+            <classpath location="${pa-wsclient.build.outputDir}"/>
+            <classpath location="${pa-wsclient.build.testOutputDir}"/>
+            <classpath refid="test.classpath"/>
+            <classpath refid="common.package.classpath"/>
+            <classpath refid="test-junit.classpath"/>
+            <classpath refid="test-cobertura.classpath"/>
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <batchtest todir="${pa-wsclient.test.reports}" unless="test">
+                <fileset dir="${pa-wsclient.build.testDir.0}">
+                    <include name="**/*Test.java"/>                 
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${pa-wsclient.test.reports}">
+            <fileset dir="${pa-wsclient.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${pa-wsclient.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports at ${pa-wsclient.test.reports}/index.html."/>
+
+        <cobertura-report datafile="${pa-wsclient.build.dir}/cobertura.ser"
+                          destdir="${pa-wsclient.coverage.reports}"
+                          srcdir="${pa-wsclient.build.srcDir.0}" />
+        <cobertura-report datafile="${pa-wsclient.build.dir}/cobertura.ser"
+                          format="xml"
+                          destdir="${pa-wsclient.coverage.reports}"
+                          srcdir="${pa-wsclient.build.srcDir.0}" />
+        <cobertura-check datafile="${pa-wsclient.build.dir}/cobertura.ser"
+                         totalbranchrate="${coverage.branch}"
+                         totallinerate="${coverage.line}"
+                         haltonfailure="true"/>
+     </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run checkstyle                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="test-checkstyle">
+        <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
+        <checkstyle config="${pa.checkstyle.url}" failOnViolation="true">
+            <classpath>
+                <pathelement location="${pa-wsclient.build.outputDir}"/>
+                <path refid="compile.classpath"/>
+                <path refid="common.package.classpath"/>
+            </classpath>
+            <fileset dir="src" includes="**/*.java" />
+            <formatter type="plain"/>
+            <formatter type="plain" toFile="${pa.report.dir}/pa-wsclient/checkstyle.txt"/>
+            <formatter type="xml"   toFile="${pa.report.dir}/pa-wsclient/checkstyle.xml"/>
+        </checkstyle>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run PMD                                                                -->
+    <!-- ====================================================================== -->
+
+    <target name="test-pmd">
+        <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="${pa-wsclient.pmd.maxerrors}">
+            <formatter type="text" toConsole="true"/>
+            <formatter type="text" toFile="${pa.report.dir}/pa-wsclient/pmd.txt"/>
+            <formatter type="xml"  toFile="${pa.report.dir}/pa-wsclient/pmd.xml"/>
+            <formatter type="html" toFile="${pa.report.dir}/pa-wsclient/pmd.html"/>
+            <fileset dir="src">
+                <include name="**/*.java"/>
+            </fileset>
+         </pmd>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run Simian                                                             -->
+    <!-- ====================================================================== -->
+
+    <target name="test-simian">
+        <taskdef resource="simiantask.properties" classpathref="test-simian.classpath"/>
+        <simian>
+            <fileset dir="src" includes="**/*.java" />
+            <formatter type="plain" toFile="${pa.report.dir}/pa-wsclient/simian.txt"/>
+            <formatter type="xml"   toFile="${pa.report.dir}/pa-wsclient/simian.xml"/>
+            <formatter type="plain"/>
+        </simian>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Run all tests                                                          -->
+    <!-- ====================================================================== -->
+
+    <target name="test-dynamic-analysis"
+            depends="compile,compile-tests, jar-test, test-cobertura"
+            description="Run dynamic analysis."/>
+
+    <target name="test-static-analysis"
+            depends="compile, jar-test, test-checkstyle,test-pmd,test-simian"
+            description="Run static analysis."/>
+
+    <target name="test-all"
+            depends="test-static-analysis,test-dynamic-analysis"
+            description="Run all tests"/>
+
+    <!-- ====================================================================== -->
+    <!-- Package target                                                         -->
+    <!-- ====================================================================== -->
+
+    <target name="jar">
+        <jar jarfile="${pa-wsclient.build.dir}/${pa-wsclient.jar}"
+             compress="true"
+             index="false"
+             basedir="${pa-wsclient.build.outputDir}"/>
+    </target>
+
+    <target name="jar-test" depends="compile-tests">
+                <jar jarfile="${pa-wsclient.build.dir}/${pa-wsclient-test.jar}"
+                     compress="true"
+                     index="false"
+                     basedir="${pa-wsclient.build.testOutputDir}"
+                     />
+    </target>
+
+    <target name="package-notest" depends="compile,jar"
+            description="Package the application.  Do not run tests."/>
+
+    <target name="package" depends="clean,compile,test-all,jar,jar-test"
+            description="Package the application"/>
+
+    <!-- ====================================================================== -->
+    <!-- Help target                                                            -->
+    <!-- ====================================================================== -->
+
+    <target name="help">
+        <echo message="Please run: $ant -projecthelp"/>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Maven Installation Targets                                             -->
+    <!-- ====================================================================== -->
+    <target name="maven:generate-pom">
+        <!-- We cannot use in memory poms due to a bug: http://jira.codehaus.org/browse/MANTTASKS-170 -->
+        <taskdef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="build.classpath" />
+        <artifact:pom id="pa-wsclient-pom-temp" groupId="gov.nih.nci.coppa.pa" artifactId="pa-wsclient-client" version="${pa.clients.version}" name="PA EJB Client"/>
+        <artifact:writepom pomRefId="pa-wsclient-pom-temp" file="target/pom.xml"/>
+        <artifact:pom id="pa-wsclient-pom" file="target/pom.xml"/>
+    </target>
+
+    <target name="maven:install" depends="package,maven:generate-pom">
+        <echo message="Installing version ${pa.clients.version} to the local maven repo."/>
+        <artifact:install file="${pa-wsclient.build.dir}/pa-wsclient.jar">
+            <pom refid="pa-wsclient-pom"/>
+        </artifact:install>
+    </target>
+
+    <target name="maven:deploy" depends="package,maven:generate-pom">
+        <artifact:remoteRepository id="remote.repository" url="https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/">
+            <authentication username="${maven.username}" password="${maven.password}"/>
+        </artifact:remoteRepository>
+        <echo message="Installing version ${pa.clients.version} to the remote maven repo."/>
+        <artifact:deploy file="${pa-wsclient.build.dir}/pa-wsclient-client.jar" uniqueversion="false">
+            <remoteRepository refid="remote.repository" />
+            <pom refid="pa-wsclient-pom"/>
+        </artifact:deploy>
+    </target>
+
+    <!-- ====================================================================== -->
+    <!-- Generate Javadoc                                                       -->
+    <!-- ====================================================================== -->
+
+    <target name="generate-javadoc">
+        <javadoc destdir="${pa-wsclient.build.javadoc}"
+            sourcepath="${pa-wsclient.build.srcDir.0}"
+            windowtitle="CTRP PA EJB">
+            <doctitle><![CDATA[<h1>CTRP PA WebService Layer</h1>]]></doctitle>
+            <classpath>
+                <path refid="compile.classpath"/>
+                <path refid="common.package.classpath" />
+            </classpath>
+        </javadoc>
+    </target>
+
+</project>

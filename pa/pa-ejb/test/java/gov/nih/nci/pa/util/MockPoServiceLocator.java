@@ -18,6 +18,7 @@ import gov.nih.nci.pa.service.MockPoOrganizationalContactCorrelationService;
 import gov.nih.nci.pa.service.MockPoOversightCommitteeCorrelationService;
 import gov.nih.nci.pa.service.MockPoPersonEntityService;
 import gov.nih.nci.pa.service.MockPoResearchOrganizationCorrelationService;
+import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;

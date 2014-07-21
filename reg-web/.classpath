@@ -6,7 +6,7 @@
 	<classpathentry kind="src" path="test/resources"/>
 	<classpathentry kind="src" path="test-integration/java"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/json-20140107.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/ajaxtags-1.3-beta-rc7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/commons-lang3-3.1.jar"/>
@@ -30,7 +30,6 @@
 	<classpathentry kind="var" path="PA_LIB/ear/commons-fileupload-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/commons-io-1.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/commons-lang-2.4.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/coppa-commons-1.3.10.2-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ehcache-1.2.4.jar"/>
@@ -45,9 +44,8 @@
 	<classpathentry kind="var" path="PA_LIB/ear/ognl-3.0.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ojdbc6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/po-services-client-3.10.0-SNAPSHOT.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/spring-asm-3.0.5.RELEASE.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/spring-beans-3.0.5.RELEASE.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/spring-core-3.0.5.RELEASE.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/spring-beans-3.2.2.RELEASE.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/spring-core-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/picketbox-spi-bare-4.0.19.SP2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/asm-3.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/axis-1.2RC2.jar"/>
@@ -101,7 +99,7 @@
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-jaxrs-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxrs-2.3.7.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxb-provider-2.3.7.Final.jar"/>
-	<classpathentry kind="var" path="PA_LIB/reg-web/commons-codec-1.4.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/commons-codec-1.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/hibernate-3.2.0.ga.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/hibernate-validator-3.0.0.ga.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/cglib-2.2.jar"/>
@@ -118,8 +116,6 @@
 	<classpathentry kind="var" path="PA_LIB/test-selenium/guava-15.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/htmlunit-2.13.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/htmlunit-core-js-2.13.jar"/>
-	<classpathentry kind="var" path="PA_LIB/test-selenium/httpclient-4.3.1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/test-selenium/httpcore-4.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/httpmime-4.3.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/jcip-annotations-1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/jetty-http-8.1.12.v20130726.jar"/>

@@ -1234,7 +1234,7 @@ public class PADomainUtils {
             if (CollectionUtils.isNotEmpty(orgDTO.getFamilyOrganizationRelationships().getItem())) {
                 famOrgRelIiList.addAll(orgDTO.getFamilyOrganizationRelationships().getItem());
             }
-            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService()
+            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyServiceRemote()
                     .getFamilies(famOrgRelIiList);
             paOrgDTO.setFamilies(getFamilies(orgDTO.getFamilyOrganizationRelationships(), familyMap));
 

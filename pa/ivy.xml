@@ -18,8 +18,18 @@
 
   <dependencies>
     <dependency conf="build->master" org="ant-contrib" name="ant-contrib" rev="1.0b3"/>
-    <dependency conf="build->master" org="com.sun.xml.bind" name="jaxb-impl" rev="2.1.10"/>
-    <dependency conf="build->master" org="com.sun.xml.bind" name="jaxb-xjc" rev="2.1.10"/>
+    <dependency conf="build->master" org="com.sun.xml.bind" name="jaxb-impl" rev="2.2.6"/>
+    <dependency conf="build->master" org="com.sun.xml.bind" name="jaxb-xjc" rev="2.2.6"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics-ant" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics-tools" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics-runtime" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics-annotate" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-fluent-api" rev="3.0"/>
+    <dependency conf="build->master" org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13"/>
+    <dependency conf="build->master" org="org.jvnet.annox" name="annox" rev="0.5.1"/>
+    <dependency conf="build->master" org="commons-logging" name="commons-logging" rev="1.1.3"/>
+    <dependency conf="build->master" org="commons-lang" name="commons-lang" rev="2.6"/>
     <dependency conf="build->master" org="org.apache.maven" name="maven-ant-tasks" rev="2.1.3"/>
     <dependency conf="build->master" org="org.liquibase" name="liquibase-core" rev="3.0.8"/>
 
@@ -72,7 +82,14 @@
     <dependency conf="compile->master" org="org.jboss.web" name="jbossweb" rev="7.2.2.Final"/>
     <dependency conf="compile->master" org="org.picketbox" name="picketbox-spi-bare" rev="4.0.19.SP2"/>
     <dependency conf="compile->master" org="xerces" name="xercesImpl" rev="2.9.1"/>
-
+    <dependency conf="compile->master" org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13"/>
+    <dependency conf="compile->master" org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.13"/>
+    <dependency conf="compile->master" org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.4.1"/>
+    <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.4" />
+    <dependency conf="compile->master" org="org.springframework" name="spring-oxm" rev="3.2.2.RELEASE"/>
+    <dependency conf="compile->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
+    <dependency conf="compile->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
+    
     <dependency conf="ear->master" org="antlr" name="antlr" rev="2.7.7"/>
     <dependency conf="ear->master" org="com.lowagie" name="itext" rev="2.1.7"/>
     <dependency conf="ear->master" org="com.lowagie" name="itext-rtf" rev="2.1.7"/>
@@ -83,7 +100,6 @@
     <dependency conf="ear->master" org="commons-fileupload" name="commons-fileupload" rev="1.3"/>
     <dependency conf="ear->master" org="commons-io" name="commons-io" rev="1.4"/>
     <dependency conf="ear->master" org="commons-lang" name="commons-lang" rev="2.4"/>
-    <dependency conf="ear->master" org="commons-codec" name="commons-codec" rev="1.3"/>
     <dependency conf="ear->master" org="commons-logging" name="commons-logging" rev="1.0.4"/>
     <dependency conf="ear->master" org="de.jollyday" name="jollyday" rev="0.4.5"/>
     <dependency conf="ear->master" org="dom4j" name="dom4j" rev="1.6.1"/>
@@ -96,12 +112,20 @@
     <dependency conf="ear->master" org="ognl" name="ognl" rev="3.0.6"/>    
     <dependency conf="ear->master" org="org.jdom" name="jdom" rev="1.1"/> 
     <dependency conf="ear->master" org="org.mockito" name="mockito-all" rev="1.9.5"/> 
-    <dependency conf="ear->master" org="org.springframework" name="spring-asm" rev="3.0.5.RELEASE"/>
-    <dependency conf="ear->master" org="org.springframework" name="spring-beans" rev="3.0.5.RELEASE"/>
-    <dependency conf="ear->master" org="org.springframework" name="spring-core" rev="3.0.5.RELEASE"/>
-    <dependency conf="ear->master" org="org.springframework" name="spring-mock" rev="2.0.8"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-beans" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-context" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-expression" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-core" rev="3.2.2.RELEASE"/>
     <dependency conf="ear->master" org="xalan" name="xalan" rev="2.6.0"/>
     <dependency conf="ear->master" org="xerces" name="xercesImpl" rev="2.9.1"/>
+    <dependency conf="ear->master" org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13"/>
+    <dependency conf="ear->master" org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.13"/>
+    <dependency conf="ear->master" org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.4.1"/>
+    <dependency conf="ear->master" org="commons-httpclient" name="commons-httpclient" rev="3.1"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-oxm" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
+    <dependency conf="ear->master" org="commons-codec" name="commons-codec" rev="1.6"/>
 
     <dependency conf="pa-web->master" org="aopalliance" name="aopalliance" rev="1.0"/> 
     <dependency conf="pa-web->master" org="asm" name="asm" rev="3.3"/>
@@ -127,15 +151,15 @@
     <dependency conf="pa-web->master" org="org.apache.struts" name="struts2-spring-plugin" rev="2.3.16.3"/>
     <dependency conf="pa-web->master" org="org.apache.struts.xwork" name="xwork-core" rev="2.3.16.3"/>
     <dependency conf="pa-web->master" org="org.freemarker" name="freemarker" rev="2.3.19"/>
-    <dependency conf="pa-web->master" org="org.springframework" name="spring-aop" rev="3.0.5.RELEASE"/>
-    <dependency conf="pa-web->master" org="org.springframework" name="spring-context" rev="3.0.5.RELEASE"/>
-    <dependency conf="pa-web->master" org="org.springframework" name="spring-expression" rev="3.0.5.RELEASE"/>
-    <dependency conf="pa-web->master" org="org.springframework" name="spring-web" rev="3.0.5.RELEASE"/>
+    <dependency conf="pa-web->master" org="org.springframework" name="spring-aop" rev="3.2.2.RELEASE"/>
+    <dependency conf="pa-web->master" org="org.springframework" name="spring-context" rev="3.2.2.RELEASE"/>
+    <dependency conf="pa-web->master" org="org.springframework" name="spring-expression" rev="3.2.2.RELEASE"/>
+    <dependency conf="pa-web->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
+    <dependency conf="pa-web->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
     <dependency conf="pa-web->master" org="taglibs" name="standard" rev="1.1.2"/>
     
     <dependency conf="pa-webservices->master" org="commons-io" name="commons-io" rev="2.4"/>
-
-    <dependency conf="reg-web->master" org="commons-codec" name="commons-codec" rev="1.4"/>
+    
     <dependency conf="reg-web->master" org="displaytag" name="displaytag" rev="1.2"/>
     <dependency conf="reg-web->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-struts2" rev="1.4.10.1-SNAPSHOT"/>
     <dependency conf="reg-web->master" org="javax.servlet" name="jstl" rev="1.1.2"/>
@@ -159,8 +183,7 @@
     <dependency conf="test->master" org="org.slf4j" name="slf4j-api" rev="1.6.0"/>
     <dependency conf="test->master" org="org.slf4j" name="slf4j-log4j12" rev="1.6.0"/>
     <dependency conf="test->master" org="gov.nih.nci.coppa" name="coppa-commons-test" rev="1.3.7"/>
-    
-    
+    <dependency conf="test->master" org="org.springframework" name="spring-test" rev="3.2.2.RELEASE"/>
 
     <!-- other test targets -->
     <dependency conf="test-checkstyle->master,runtime" org="com.google.guava" name="guava" rev="15.0" force="true">

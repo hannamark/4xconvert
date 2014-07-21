@@ -774,7 +774,7 @@ public class TrialRegistrationServiceCompleteRegistrationTest extends
         assertEquals(reg.getPhase(), dto.getPhaseCode().getCode());
 
         if (reg.getPhase().equals("NA")) {
-            if (reg.getPilot()) {
+            if (reg.isPilot()) {
                 assertEquals("Pilot", dto.getPhaseAdditionalQualifierCode()
                         .getCode());
             }

@@ -16,13 +16,13 @@ import gov.nih.nci.pa.util.AddressUtil;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
+import gov.nih.nci.pa.util.PoRegistry;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -228,7 +228,7 @@ public class PopUpOrgAction extends AbstractPopUpPoAction {
                     famOrgRelIiList.addAll(dto.getFamilyOrganizationRelationships().getItem());
                 }
             }
-            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
+            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyServiceRemote().getFamilies(famOrgRelIiList);
             for (OrganizationDTO dto : orgList) {
                 PaOrganizationDTO paDTO = PADomainUtils.convertPoOrganizationDTO(dto, getCountryList());
                 paDTO.setFamilies(PADomainUtils.getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));

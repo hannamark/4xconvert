@@ -100,7 +100,7 @@ public class OrganizationSearchAction extends ActionSupport {
                 }
             }
 
-            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService()
+            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyServiceRemote()
                     .getFamilies(famOrgRelIiList);
             results = new ArrayList<PaOrganizationDTO>();
             for (OrganizationDTO dto : orgList) {

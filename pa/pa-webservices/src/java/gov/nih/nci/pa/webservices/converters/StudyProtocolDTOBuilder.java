@@ -150,7 +150,7 @@ public final class StudyProtocolDTOBuilder {
         dto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(reg
                 .getPhase())));
         dto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode
-                .getByCode(Boolean.TRUE.equals(reg.getPilot()) ? "Pilot" : "")));
+                .getByCode(Boolean.TRUE.equals(reg.isPilot()) ? "Pilot" : "")));
     }
 
     private void convertStudyDesignSpecifics(CompleteTrialRegistration reg,

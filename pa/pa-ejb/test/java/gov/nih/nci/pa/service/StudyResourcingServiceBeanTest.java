@@ -112,12 +112,18 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
+import gov.nih.nci.po.ws.common.types.EntityStatus;
+import gov.nih.nci.po.ws.common.types.Family;
+import gov.nih.nci.po.ws.common.types.FamilyMember;
+import gov.nih.nci.po.ws.common.types.FamilyMemberType;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyP30DTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.webservices.rest.client.FamilyRestServiceClient;
+import gov.nih.nci.webservices.rest.client.util.PoRestServiceLocator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -154,33 +160,38 @@ public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
 
     private void setupFamilyHelper(String p30SerialNumber) throws Exception {
         PoServiceLocator psl = mock(PoServiceLocator.class);
+        PoRestServiceLocator prsl = mock(PoRestServiceLocator.class);
         OrganizationEntityServiceRemote oes = mock(OrganizationEntityServiceRemote.class);
         when(psl.getOrganizationEntityService()).thenReturn(oes);
         FamilyServiceRemote fs = mock(FamilyServiceRemote.class);
         when(psl.getFamilyService()).thenReturn(fs);
         PoRegistry.getInstance().setPoServiceLocator(psl);
+        FamilyRestServiceClient fsc = mock(FamilyRestServiceClient.class);
+        fsc = mock(FamilyRestServiceClient.class);
+        when(prsl.getFamilyService()).thenReturn(fsc);
+        when(prsl.getFamilyServiceRemote()).thenReturn(fs);
+        PoRegistry.getInstance().setPoResPoServiceLocator(prsl);
+        
         if (p30SerialNumber != null) {
-            OrganizationDTO org  = new OrganizationDTO();
-            DSet<Ii> dset = new DSet<Ii>();
-            org.setFamilyOrganizationRelationships(dset);
-            List<OrganizationDTO> result = new ArrayList<OrganizationDTO>();
-            result.add(org);
-            when(oes.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(result);
-            Set<Ii> familySet = new HashSet<Ii>();
-            familySet.add(IiConverter.convertToPoFamilyIi("1"));
-            dset.setItem(familySet);
-            Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
-            FamilyDTO family = new FamilyDTO();
-            family.setName(EnOnConverter.convertToEnOn("family name"));
-            familyMap.put(IiConverter.convertToPoFamilyIi("1"), family);
-            when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
-            FamilyOrganizationRelationshipDTO forDto = new FamilyOrganizationRelationshipDTO();
-            forDto.setFunctionalType(CdConverter.convertStringToCd(FamilyFunctionalType.ORGANIZATIONAL.name()));
-            when(fs.getFamilyOrganizationRelationship(any(Ii.class))).thenReturn(forDto);
-            FamilyP30DTO p30 = new FamilyP30DTO();
-            p30.setSerialNumber(EnOnConverter.convertToEnOn(p30SerialNumber));
-            when(fs.getP30Grant(anyLong())).thenReturn(p30);
+            Family family = getFamily(2L);
+            family.setP30SerialNumber(p30SerialNumber);
+            List<Family> familyList = new ArrayList<Family>();
+            familyList.add(family);  
+            when(fsc.search(any(Family.class))).thenReturn(familyList);
         }
+    }
+    
+    private Family getFamily(long index) {
+        Family family = new Family();
+        family.setName("some family name"+index);
+        family.setStatus(EntityStatus.ACTIVE);
+        family.setId(index);
+        FamilyMember fm = new FamilyMember();
+        fm.setFamilyId(index);
+        fm.setOrganizationId(index);
+        fm.setType(FamilyMemberType.ORGANIZATIONAL);
+        family.getMember().add(fm);
+        return family;
     }
 
     @Test

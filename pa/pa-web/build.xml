@@ -66,6 +66,9 @@
         <fileset dir="${pa.dir}/commons/target">
             <include name="*.jar"/>
         </fileset>
+    	<fileset dir="${pa.dir}/pa-wsclient/target">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="pa-ejb.package.test.classpath">

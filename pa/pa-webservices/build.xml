@@ -69,6 +69,9 @@
         <fileset dir="${pa.dir}/commons/target">
             <include name="*.jar"/>
         </fileset>
+    	<fileset dir="${pa.dir}/pa-wsclient/target">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="pa-ejb.package.test.classpath">
@@ -166,9 +169,9 @@
     <!-- ====================================================================== -->
 
 	<target name="run-xjc" description="Generates JAXB classes">
-        <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" classpathref="build.classpath"/>
+		<taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task" classpathref="build.classpath"/>
         <mkdir dir="${pa-webservices.build.srcgenDir}"/>
-        <xjc destdir="${pa-webservices.build.srcgenDir}">
+        <xjc destdir="${pa-webservices.build.srcgenDir}" extension="true">
         	  <schema  dir="${pa-webservices.build.resourceDir.0}" includes="ws.xsd"/>          
         </xjc>
 	</target>

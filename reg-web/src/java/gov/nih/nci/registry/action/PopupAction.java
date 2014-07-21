@@ -401,7 +401,7 @@ public class PopupAction extends ActionSupport implements Preparable {
                 }
             }
             
-            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
+            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyServiceRemote().getFamilies(famOrgRelIiList);
             for (OrganizationDTO dto : orgList) {
                 PaOrganizationDTO paDTO = PADomainUtils.convertPoOrganizationDTO(dto, getCountryList());
                 paDTO.setFamilies(PADomainUtils.getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));

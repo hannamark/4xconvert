@@ -12,12 +12,12 @@ import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
+import gov.nih.nci.pa.util.PoRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -106,7 +106,7 @@ public class OrganizationSearchAction extends ActionSupport {
                 }
             }
 
-            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyService()
+            Map<Ii, FamilyDTO> familyMap = PoRegistry.getFamilyServiceRemote()
                     .getFamilies(famOrgRelIiList);
             results = new ArrayList<PaOrganizationDTO>();
             for (OrganizationDTO dto : orgList) {

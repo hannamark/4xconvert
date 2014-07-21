@@ -27,6 +27,7 @@
 
     <property name="commons.build.finalName" value="pa-commons"/>
     <property name="commons.build.dir" value="${commons.dir}/target"/>
+	<property name="commons.build.srcgenDir" value="${commons.build.dir}/generated-src"/>
     <property name="commons.build.outputDir" value="${commons.build.dir}/classes"/>
     <property name="commons.build.srcDir.0" value="${commons.dir}/src/java"/>
     <property name="commons.build.resourceDir.0" value="${commons.dir}/src/resources"/>
@@ -132,8 +133,19 @@
     <!-- ====================================================================== -->
     <!-- Compilation target                                                     -->
     <!-- ====================================================================== -->
-
-    <target name="compile" description="Compile the code">
+	
+	<target name="run-xjc" description="Generates JAXB classes">
+		<taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task" classpathref="build.classpath"/>
+		<mkdir dir="${commons.build.srcgenDir}"/>
+	
+		<xjc destdir="${commons.build.srcgenDir}" extension="true" package="gov.nih.nci.po.ws.common.types">
+		  <schema  dir="${commons.build.resourceDir.0}" includes="po.xsd"/>
+		  <arg value="-Xfluent-api" />
+		  <arg value="-Xannotate" />
+		</xjc>
+	</target>
+	
+    <target name="compile" depends="run-xjc" description="Compile the code">
         <mkdir dir="${commons.build.outputDir}"/>
         <!-- Only needed here to keep eclipse happy -->
         <mkdir dir="${commons.build.testOutputDir}"/>
@@ -141,6 +153,7 @@
         <javac destdir="${commons.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="${java.major.version}" source="${java.major.version}" verbose="false" fork="false" encoding="${java.encoding}">
             <src>
+            	<pathelement location="${commons.build.srcgenDir}"/>
                 <pathelement location="${commons.build.srcDir.0}"/>
             </src>
             <classpath>
@@ -233,6 +246,7 @@
             <fileset dir="${commons.build.outputDir}">
                 <include name="**/*.class" />	
             	<exclude name="**/StudyIdentifierType.class"/>
+            	<exclude name="**/gov/nih/nci/po/ws/common/types/*.class" />
             </fileset>
         	<auxClasspath>
                  <path refid="compile.classpath"/>                
