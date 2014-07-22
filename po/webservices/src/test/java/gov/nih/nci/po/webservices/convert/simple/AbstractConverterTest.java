@@ -14,6 +14,7 @@ import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
+import gov.nih.nci.po.data.bo.FundingMechanism;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
@@ -29,6 +30,7 @@ import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -187,6 +189,11 @@ public abstract class AbstractConverterTest {
                     "CCR", "CCR");
             when(gcvLocal.getByCode(ResearchOrganizationType.class, "CCR"))
                     .thenReturn(roType);
+            // getting FundingMechanism
+            FundingMechanism fundMech = new gov.nih.nci.po.data.bo.FundingMechanism("P30", "Center Core Grants", 
+                    "Research Program Projects and Centers", FundingMechanismStatus.ACTIVE);
+            when(gcvLocal.getByCode(FundingMechanism.class, "P30"))
+                    .thenReturn(fundMech);
             // getting OrganizationalContactType
             OrganizationalContactType orgConType = new OrganizationalContactType(
                     "IRB");

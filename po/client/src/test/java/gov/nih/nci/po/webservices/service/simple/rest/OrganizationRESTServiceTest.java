@@ -11,6 +11,7 @@ import gov.nih.nci.po.webservices.types.Contact;
 import gov.nih.nci.po.webservices.types.ContactType;
 import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
 import gov.nih.nci.po.webservices.types.EntityStatus;
+import gov.nih.nci.po.webservices.types.FundingMechanism;
 import gov.nih.nci.po.webservices.types.HealthCareFacility;
 import gov.nih.nci.po.webservices.types.Organization;
 import gov.nih.nci.po.webservices.types.OrganizationRole;
@@ -2506,11 +2507,11 @@ public class OrganizationRESTServiceTest extends
         assertEquals(201, getReponseCode(response));
         assertEquals(APPLICATION_XML, getResponseContentType(response));
 
-        OrganizationRole orgRole = unmarshalOrganizationRole(response
-                .getEntity());
-        assertTrue(orgRole instanceof ResearchOrganization);
+        ResearchOrganization orgRole = (ResearchOrganization) unmarshalOrganizationRole(response.getEntity());
         assertNotNull(orgRole.getId());
         assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals("NWK", orgRole.getType().name());
+        assertEquals(ro.getFundingMechanism().value(), orgRole.getFundingMechanism().value());
         // check the details in DB for OC
         checkOrgRoleAddressDetails(ro, orgRole);
         checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",
@@ -2539,11 +2540,11 @@ public class OrganizationRESTServiceTest extends
         assertEquals(APPLICATION_JSON, getResponseContentType(response));
         String perJSONStr = EntityUtils.toString(response.getEntity(), "utf-8");
 
-        OrganizationRole orgRole = mapper.readValue(perJSONStr,
-                OrganizationRole.class);
-        assertTrue(orgRole instanceof ResearchOrganization);
+        ResearchOrganization orgRole = (ResearchOrganization) mapper.readValue(perJSONStr,OrganizationRole.class);
         assertNotNull(orgRole.getId());
         assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals("NWK", orgRole.getType().name());
+        assertEquals(ro.getFundingMechanism().value(), orgRole.getFundingMechanism().value());
         // check the details in DB for OC
         checkOrgRoleAddressDetails(ro, orgRole);
         checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",
@@ -2837,6 +2838,8 @@ public class OrganizationRESTServiceTest extends
         // update the contact details
         ro.getContact().clear(); // clear existing
         ro.getContact().addAll(getJaxbUpdatedContactList());// UPDATED
+        ro.setType(ResearchOrganizationType.RSB);
+        ro.setFundingMechanism(FundingMechanism.U_10);
 
         String url = osUrl + "/role/ResearchOrganization/" + ro.getId();
         StringWriter writer = marshalOrganizationRole(ro);
@@ -2863,6 +2866,8 @@ public class OrganizationRESTServiceTest extends
                 "http://www.updatedmayoclinic.org");
         Assert.assertEquals("Mayo RO", retRO.getName()); // no name changed
         checkOrgRoleAliases("Mayo RO 111", ro); // check for alias
+        assertEquals(ResearchOrganizationType.RSB.value(), retRO.getType().value());
+        assertEquals("U10", retRO.getFundingMechanism().value());
     }
 
     /**
@@ -2882,6 +2887,8 @@ public class OrganizationRESTServiceTest extends
         // update the contact details
         ro.getContact().clear(); // clear existing
         ro.getContact().addAll(getJaxbUpdatedContactList());// UPDATED
+        ro.setType(ResearchOrganizationType.RSB);
+        ro.setFundingMechanism(FundingMechanism.U_10);
 
         String url = osUrl + "/role/ResearchOrganization/" + ro.getId();
         HttpPut putRequest = new HttpPut(url);
@@ -2910,6 +2917,8 @@ public class OrganizationRESTServiceTest extends
                 "http://www.updatedmayoclinic.org");
         Assert.assertEquals("Mayo RO", retRO.getName()); // no name changed
         checkOrgRoleAliases("Mayo RO 111", ro); // check for alias
+        assertEquals(ResearchOrganizationType.RSB.value(), retRO.getType().value());
+        assertEquals("U10", retRO.getFundingMechanism().value());
     }
 
     /**
@@ -3569,6 +3578,8 @@ public class OrganizationRESTServiceTest extends
         assertEquals(APPLICATION_XML, getResponseContentType(getResponse));
         assertEquals(ro.getName(), retOrgRole.getName());
         assertEquals(ro.getCtepId(), retOrgRole.getCtepId());
+        assertEquals(ro.getType().value(), retOrgRole.getType().value());
+        assertEquals(ro.getFundingMechanism().value(), retOrgRole.getFundingMechanism().value());
     }
 
     /**
@@ -3600,6 +3611,8 @@ public class OrganizationRESTServiceTest extends
         assertEquals(APPLICATION_JSON, getResponseContentType(getResponse));
         assertEquals(ro.getName(), retOrgRole.getName());
         assertEquals(ro.getCtepId(), retOrgRole.getCtepId());
+        assertEquals(ro.getType().value(), retOrgRole.getType().value());
+        assertEquals(ro.getFundingMechanism().value(), retOrgRole.getFundingMechanism().value());
     }
 
     /**
@@ -3957,7 +3970,8 @@ public class OrganizationRESTServiceTest extends
         ro.setCtepId("1221234");
         ro.setName("Mayo RO");
         ro.setOrganizationId(createActiveOrganization().getId());
-        ro.setType(ResearchOrganizationType.NCP);
+        ro.setType(ResearchOrganizationType.NWK);
+        ro.setFundingMechanism(FundingMechanism.G_11);
         ro.setStatus(EntityStatus.ACTIVE);
         ro.getAddress().add(getJaxbAddressList().get(0));
         ro.getContact().addAll(getJaxbContactList());

@@ -490,15 +490,30 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
      * Testcase for
      * OrganizationService-createOrganizationRole-ResearchOrganization
      */
-    // @Test
-    public void testCreateOrgRoleResearchOrganization() {
-        // TODO:: Debug as why this testcase is failing -- Mocking issue
+    public void testCreateOrgRoleResearchOrganization() throws JMSException, EntityValidationException {
         
-        OrganizationRole orgRole = orgService
-                .createOrganizationRole(getResearchOrganization());
-        Assert.assertTrue(orgRole instanceof ResearchOrganization);
-        Assert.assertFalse(orgRole instanceof HealthCareFacility);
-    }
+        ResearchOrganization researchOrganization = getResearchOrganization();
+
+        when(researchOrganizationBoService.create(any(gov.nih.nci.po.data.bo.ResearchOrganization.class)))
+                .thenReturn(1L);
+
+        when(researchOrganizationBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.ResearchOrganization>() {
+            @Override
+            public gov.nih.nci.po.data.bo.ResearchOrganization answer(InvocationOnMock invocation) throws Throwable {
+                gov.nih.nci.po.data.bo.Organization player = new gov.nih.nci.po.data.bo.Organization();
+                player.setId(2L);
+
+                gov.nih.nci.po.data.bo.ResearchOrganization result = new gov.nih.nci.po.data.bo.ResearchOrganization();
+                result.setId(1L);
+                result.setStatus(RoleStatus.PENDING);
+                result.setPlayer(player);
+                return result;
+            }
+        });
+
+        OrganizationRole orgRole = orgService.createOrganizationRole(researchOrganization);
+       verify(researchOrganizationBoService).create(any(gov.nih.nci.po.data.bo.ResearchOrganization.class));
+   }
 
     /**
      * Testcase for OrganizationService-createOrganizationRole-Exception
@@ -629,19 +644,39 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         Assert.assertTrue(orgRole instanceof OversightCommittee);
     }
 
+   
     /**
      * Testcase for
-     * OrganizationService-createOrganizationRole-ResearchOrganization
+     * OrganizationService-updateOrganizationRole-ResearchOrganization
      */
-    // @Test
+     @Test
     public void testUpdateOrgRoleResearchOrganization() {
-        
-        // TODO:: Debug as why this testcase is failing -- Mocking issue
-        ResearchOrganization ro = getResearchOrganization();
-        ro.setId(1l);
-        OrganizationRole orgRole = orgService.updateOrganizationRole(ro);
-        assertNotNull(orgRole);
-        Assert.assertTrue(orgRole instanceof ResearchOrganization);
+                  
+         ResearchOrganization ro = getResearchOrganization();
+         ro.setId(1l);
+         ro.setOrganizationId(2L);
+         ro.setName("test ro");
+
+         final gov.nih.nci.po.data.bo.Organization player = new gov.nih.nci.po.data.bo.Organization();
+         player.setId(2L);
+
+         when(serviceLocator.getOrganizationService().getById(2L)).thenReturn(player);
+
+         when(researchOrganizationBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.ResearchOrganization>() {
+             @Override
+             public gov.nih.nci.po.data.bo.ResearchOrganization answer(InvocationOnMock invocation) throws Throwable {               
+                 gov.nih.nci.po.data.bo.ResearchOrganization result = new gov.nih.nci.po.data.bo.ResearchOrganization();
+                 result.setId(1L);
+                 result.setStatus(RoleStatus.PENDING);
+                 result.setPlayer(player);    
+                 result.setName("test ro");
+                 return result;
+             }
+         });
+
+         OrganizationRole orgRole = orgService.updateOrganizationRole(ro);
+         assertNotNull(orgRole);
+         Assert.assertTrue(orgRole instanceof ResearchOrganization);
     }
 
     /**

@@ -1,6 +1,7 @@
 package gov.nih.nci.po.webservices.convert.simple;
 
 import gov.nih.nci.po.data.bo.Email;
+import gov.nih.nci.po.data.bo.FundingMechanism.FundingMechanismStatus;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
@@ -9,14 +10,17 @@ import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.webservices.types.Address;
 import gov.nih.nci.po.webservices.types.Contact;
 import gov.nih.nci.po.webservices.types.EntityStatus;
+import gov.nih.nci.po.webservices.types.FundingMechanism;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.types.ResearchOrganizationType;
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This is the test class for ResearchOrganizationConverter.
@@ -38,6 +42,7 @@ public class ResearchOrganizationConverterTest extends
         researchOrg.setId(654l);
         researchOrg.setName("National Cancer Institute");
         researchOrg.setType(ResearchOrganizationType.CCR);
+        researchOrg.setFundingMechanism(FundingMechanism.P_30);
         researchOrg.setStatus(EntityStatus.NULLIFIED);
         researchOrg.setCtepId("1234567");
         populateOrganizationRoleJaxbObject(researchOrg);
@@ -49,6 +54,9 @@ public class ResearchOrganizationConverterTest extends
         researchOrgBo
                 .setTypeCode(new gov.nih.nci.po.data.bo.ResearchOrganizationType(
                         "RSB", "description"));
+        researchOrgBo.setFundingMechanism(
+                new gov.nih.nci.po.data.bo.FundingMechanism("U10", "Cooperative Clinical Research Cooperative Agreements", 
+                        "Cooperative Agreements", FundingMechanismStatus.ACTIVE));
         // set status to 'SUSPENDED' to test Status mapping to INACTIVE
         researchOrgBo.setStatus(RoleStatus.SUSPENDED);
         gov.nih.nci.iso21090.Ii assIden = new gov.nih.nci.iso21090.Ii();
@@ -202,6 +210,8 @@ public class ResearchOrganizationConverterTest extends
         Assert.assertEquals(researchOrg.getName(), retROBo.getName());
         Assert.assertEquals(researchOrg.getType().value(), retROBo
                 .getTypeCode().getCode());
+        Assert.assertEquals(researchOrg.getFundingMechanism().value(), retROBo
+                .getFundingMechanism().getCode());
         Assert.assertEquals(new Long(researchOrg.getOrganizationId()), retROBo
                 .getPlayer().getId());
         Assert.assertEquals(researchOrg.getStatus().value(), retROBo
@@ -218,6 +228,8 @@ public class ResearchOrganizationConverterTest extends
         Assert.assertEquals(researchOrgBo.getName(), retRO.getName());
         Assert.assertEquals(researchOrgBo.getTypeCode().getCode(), retRO
                 .getType().value());
+        Assert.assertEquals(researchOrgBo.getFundingMechanism().getCode(), retRO
+                .getFundingMechanism().value());
         Assert.assertEquals(researchOrgBo.getPlayer().getId(),
                 new Long(retRO.getOrganizationId()));
         // If RoleStatus is 'SUSPENDED' then it should be mapped to 'INACTIVE'

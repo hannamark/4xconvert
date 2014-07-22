@@ -32,14 +32,20 @@ public class ResearchOrganizationConverter
             researchOrgBo.setId(researchOrg.getId());
             researchOrgBo.setName(researchOrg.getName());
             if (researchOrg.getType() != null) { // Type is NOT mandatory
-                ResearchOrganizationType roType = PoRegistry
+                gov.nih.nci.po.data.bo.ResearchOrganizationType roType = PoRegistry
                         .getGenericCodeValueService().getByCode(
                                 ResearchOrganizationType.class,
                                 researchOrg.getType().value());
                 researchOrgBo.setTypeCode(roType);
             }
-            researchOrgBo.setStatus(getBORoleStatus(researchOrg.getStatus()
-                    .value()));
+            if (researchOrg.getFundingMechanism() != null) { // FundingMechanism is NOT mandatory
+                gov.nih.nci.po.data.bo.FundingMechanism fundMechanism = PoRegistry
+                        .getGenericCodeValueService().getByCode(
+                                gov.nih.nci.po.data.bo.FundingMechanism.class,
+                                researchOrg.getFundingMechanism().value());
+                researchOrgBo.setFundingMechanism(fundMechanism);
+            }
+            researchOrgBo.setStatus(getBORoleStatus(researchOrg.getStatus().value()));
 
             // populate CtepId
             populateJaxbCtepIdInBoOrgRole(researchOrg, researchOrgBo);
@@ -70,13 +76,14 @@ public class ResearchOrganizationConverter
             researchOrg.setId(researchOrgBo.getId());
             researchOrg.setName(researchOrgBo.getName());
             if (researchOrgBo.getTypeCode() != null) { // Type is NOT mandatory
-                researchOrg
-                        .setType(gov.nih.nci.po.webservices.types.ResearchOrganizationType
-                                .fromValue(researchOrgBo.getTypeCode()
-                                        .getCode()));
+                researchOrg.setType(gov.nih.nci.po.webservices.types.ResearchOrganizationType
+                                .fromValue(researchOrgBo.getTypeCode().getCode()));
             }
-            researchOrg.setStatus(getEntityStatus(researchOrgBo.getStatus()
-                    .name()));
+            if (researchOrgBo.getFundingMechanism() != null) { // FundingMechanism is NOT mandatory
+                researchOrg.setFundingMechanism(gov.nih.nci.po.webservices.types.FundingMechanism
+                                .fromValue(researchOrgBo.getFundingMechanism().getCode()));
+            }
+            researchOrg.setStatus(getEntityStatus(researchOrgBo.getStatus().name()));
 
             // populate CtepId
             populateBoCtepIdInJaxbOrgRole(researchOrgBo, researchOrg);

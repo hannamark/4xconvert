@@ -36,6 +36,7 @@ import gov.nih.nci.po.webservices.types.Contact;
 import gov.nih.nci.po.webservices.types.ContactType;
 import gov.nih.nci.po.webservices.types.CountryISO31661Alpha3Code;
 import gov.nih.nci.po.webservices.types.EntityStatus;
+import gov.nih.nci.po.webservices.types.FundingMechanism;
 import gov.nih.nci.po.webservices.types.HealthCareFacility;
 import gov.nih.nci.po.webservices.types.Organization;
 import gov.nih.nci.po.webservices.types.OrganizationRole;
@@ -1339,12 +1340,13 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         request.setOrganizationRole(ro);
         CreateOrganizationRoleResponse response = orgService
                 .createOrganizationRole(request);
-        OrganizationRole orgRole = response.getOrganizationRole();
+        ResearchOrganization orgRole = (ResearchOrganization) response.getOrganizationRole();
         Assert.assertNotNull(orgRole);
-        Assert.assertTrue(orgRole instanceof ResearchOrganization);
         Assert.assertNotNull(orgRole.getId());
         Assert.assertNotNull(((ResearchOrganization)orgRole).getCtepId());
         assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals("NWK", orgRole.getType().name());
+        assertEquals(ro.getFundingMechanism().value(), orgRole.getFundingMechanism().value());
 
         checkOrgRoleAddressDetails(ro, orgRole);
         checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",
@@ -1532,7 +1534,8 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         // now update the RO details
         UpdateOrganizationRoleRequest upRequest = new UpdateOrganizationRoleRequest();
         createdRO.setName("Mayo RO 111"); // added to alias, name not change
-        createdRO.setType(ResearchOrganizationType.NWK);
+        createdRO.setType(ResearchOrganizationType.RSB);
+        createdRO.setFundingMechanism(FundingMechanism.U_10);
         // update the address
         createdRO.getAddress().set(0, getJaxbAddressList().get(1));
         // update the contact details
@@ -1543,8 +1546,10 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 .updateOrganizationRole(upRequest);
         ResearchOrganization upRO = (ResearchOrganization) upResponse
                 .getOrganizationRole();
-        Assert.assertEquals(ResearchOrganizationType.NWK.value(), upRO
+        Assert.assertEquals(ResearchOrganizationType.RSB.value(), upRO
                 .getType().value());
+        assertEquals("U10", upRO
+                .getFundingMechanism().value());
         // check for the updated address details
         checkOrgRoleAddressDetails(createdRO, upRO);
         // check for the updated contact details
@@ -1817,6 +1822,8 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 .longValue());
         Assert.assertEquals(ro.getName(), retOrgRole.getName());
         Assert.assertEquals(ro.getCtepId(), retOrgRole.getCtepId());
+        assertEquals(ro.getType().value(), retOrgRole.getType().value());
+        assertEquals(ro.getFundingMechanism().value(), retOrgRole.getFundingMechanism().value());
     }
 
     /**
@@ -2148,7 +2155,8 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ro.setCtepId("1221234");
         ro.setName("Mayo RO");
         ro.setOrganizationId(1l);
-        ro.setType(ResearchOrganizationType.NCP);
+        ro.setType(ResearchOrganizationType.NWK);
+        ro.setFundingMechanism(FundingMechanism.G_11);
         ro.setStatus(EntityStatus.ACTIVE);
         ro.getAddress().add(getJaxbAddressList().get(0));
         ro.getContact().addAll(getJaxbContactList());
