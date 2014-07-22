@@ -116,6 +116,7 @@
     <dependency conf="ear->master" org="org.springframework" name="spring-context" rev="3.2.2.RELEASE"/>
     <dependency conf="ear->master" org="org.springframework" name="spring-expression" rev="3.2.2.RELEASE"/>
     <dependency conf="ear->master" org="org.springframework" name="spring-core" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-mock" rev="2.0.8"/>
     <dependency conf="ear->master" org="xalan" name="xalan" rev="2.6.0"/>
     <dependency conf="ear->master" org="xerces" name="xercesImpl" rev="2.9.1"/>
     <dependency conf="ear->master" org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13"/>
