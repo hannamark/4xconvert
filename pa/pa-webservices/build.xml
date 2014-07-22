@@ -338,6 +338,7 @@
             <batchtest todir="${pa-webservices.test.reports}">
                 <fileset dir="${pa-webservices.build.integrationTestDir.0}">
                     <include name="**/*.java"/>
+                	<exclude name="**/Abstract*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
