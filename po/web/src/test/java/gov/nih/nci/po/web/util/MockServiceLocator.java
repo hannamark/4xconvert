@@ -100,6 +100,7 @@ import gov.nih.nci.po.service.GenericCodeValueServiceLocal;
 import gov.nih.nci.po.service.GenericServiceLocal;
 import gov.nih.nci.po.service.GenericServiceStub;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
+import gov.nih.nci.po.service.HealthCareFacilityCRServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilityServiceStub;
 import gov.nih.nci.po.service.HealthCareProviderServiceLocal;
@@ -125,6 +126,7 @@ import gov.nih.nci.po.service.PatientServiceLocal;
 import gov.nih.nci.po.service.PatientServiceStub;
 import gov.nih.nci.po.service.PersonCRServiceLocal;
 import gov.nih.nci.po.service.PersonServiceLocal;
+import gov.nih.nci.po.service.ResearchOrganizationCRServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceStub;
 import gov.nih.nci.po.service.external.CtepImportService;
@@ -293,7 +295,7 @@ public class MockServiceLocator implements ServiceLocator {
      *
      * {@inheritDoc}
      */
-    public GenericStructrualRoleCRServiceLocal<HealthCareFacilityCR> getHealthCareFacilityCRService() {
+    public HealthCareFacilityCRServiceLocal getHealthCareFacilityCRService() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -337,7 +339,7 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public GenericStructrualRoleCRServiceLocal<ResearchOrganizationCR> getResearchOrganizationCRService() {
+    public ResearchOrganizationCRServiceLocal getResearchOrganizationCRService() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

@@ -1896,6 +1896,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
 
         // create a role-RO for this CtepId
         ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setOrganizationId(organization.getId());
         ro.setCtepId(randomCtepId);
         CreateOrganizationRoleRequest roRequest = new CreateOrganizationRoleRequest();
         roRequest.setOrganizationRole(ro);
@@ -2004,6 +2005,10 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 .createOrganizationRole(request);
         OrganizationRole orgRole = response.getOrganizationRole();
         Assert.assertTrue(orgRole instanceof ResearchOrganization);
+        
+        // create the alias for the RO
+        setUpOrganizationServiceData();        
+        createROAliasesData(orgRole.getId());
 
         // now change the status
         ChangeOrganizationRoleStatusRequest req = new ChangeOrganizationRoleStatusRequest();

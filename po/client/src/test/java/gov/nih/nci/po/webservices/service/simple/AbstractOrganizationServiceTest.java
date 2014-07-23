@@ -57,6 +57,27 @@ public abstract class AbstractOrganizationServiceTest extends AbstractBaseTest {
                     + e);
         }
     }
+    
+    protected void createROAliasesData(long roId) {
+        try {
+            QueryRunner queryRunner = new QueryRunner();
+            // insert data into "Alias" table
+            long aliasId1 = getNextSequenceId();
+            queryRunner.update(conn,
+                    "insert into alias(id,value) values(?, ?)", aliasId1,
+                    "test RO alias 1");            
+
+            // insert data into "ro_alias" table
+            queryRunner
+                    .update(conn,
+                            "insert into ro_alias(ro_id,alias_id,idx) values(?, ?, 0)",
+                            roId, aliasId1);
+
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside createOrgAliasesData. The exception is: "
+                    + e);
+        }
+    }
 
     protected void setUpOrganizationServiceData() {
         // getting the database connection

@@ -1,8 +1,5 @@
 package gov.nih.nci.po.webservices.service.bo;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Correlation;
@@ -17,12 +14,18 @@ import gov.nih.nci.po.webservices.service.bo.filter.RoleUpdateFilter;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
-import org.apache.commons.lang.StringUtils;
 
-import javax.jms.JMSException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.jms.JMSException;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @param <TYPE>    The BO type
@@ -127,21 +130,36 @@ public abstract class AbstractRoleBoService<TYPE extends Correlation, CR_TYPE ex
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    private void applyCrCreateFilters(TYPE updatedInstance, CR_TYPE cr) {
+    }   
+    
+    /**
+     * apply created_by
+     * @param updatedInstance updatedInstance
+     * @param cr CR
+     */
+    protected void applyCrCreateFilters(TYPE updatedInstance, CR_TYPE cr) {
         for (CrCreationFilter<TYPE, CR_TYPE> crCreationFilter : crCreationFilters) {
             crCreationFilter.handle(updatedInstance, cr);
         }
     }
 
-    private void applyUpdateFilters(TYPE currentInstance, TYPE updatedInstance) {
+    /**
+     * 
+     * @param currentInstance currentInstance
+     * @param updatedInstance updatedInstance
+     */
+    protected void applyUpdateFilters(TYPE currentInstance, TYPE updatedInstance) {
         for (RoleUpdateFilter<TYPE> filter : updateFilters) {
             filter.handle(currentInstance, updatedInstance);
         }
     }
 
-    private boolean updateDirectly(TYPE currentInstance) {
+    /**
+     * 
+     * @param currentInstance currentInstance
+     * @return true if entity can be updated directly
+     */
+    protected boolean updateDirectly(TYPE currentInstance) {
         return currentInstance == null
                 || (isCreatedByMe(currentInstance) && !isOverridden(currentInstance))
                 || currentInstance instanceof PersonRole;

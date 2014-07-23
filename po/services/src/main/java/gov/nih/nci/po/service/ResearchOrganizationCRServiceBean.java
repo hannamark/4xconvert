@@ -83,12 +83,18 @@
 
 package gov.nih.nci.po.service;
 
+import java.util.HashSet;
+
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Change Request (CR) management interface.
@@ -99,4 +105,30 @@ import javax.ejb.TransactionAttributeType;
 public class ResearchOrganizationCRServiceBean
         extends AbstractCRServiceBean<ResearchOrganizationCR, ResearchOrganization>
         implements ResearchOrganizationCRServiceLocal {
+
+    /**
+     * The value of the 'root' element of a ctep ii for an org.
+     */
+    public static final String ORG_CTEP_ID_ROOT = "2.16.840.1.113883.3.26.6.2";
+
+    /**
+     * The value of the 'identifier' element of a ctep ii for an org.
+     */
+    public static final String ORG_CTEP_ID_IDENTIFIER_NAME = "CTEP ID";
+    
+    @Override
+    public long create(ResearchOrganizationCR roCR, String ctepId)
+            throws EntityValidationException, JMSException {
+        
+        if (StringUtils.isNotBlank(ctepId)) {
+            gov.nih.nci.iso21090.Ii assIden = new gov.nih.nci.iso21090.Ii();
+            assIden.setRoot(ORG_CTEP_ID_ROOT);
+            assIden.setIdentifierName(ORG_CTEP_ID_IDENTIFIER_NAME);
+            assIden.setExtension(ctepId);
+            roCR.setOtherIdentifiers(new HashSet<Ii>()); // initialize it
+            roCR.getOtherIdentifiers().add(assIden);            
+        }
+        
+        return create(roCR);
+    }
 }

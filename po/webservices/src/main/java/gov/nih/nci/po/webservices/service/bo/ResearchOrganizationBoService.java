@@ -13,9 +13,10 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
-import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
+
+import org.springframework.stereotype.Service;
 
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
@@ -61,7 +62,7 @@ public class ResearchOrganizationBoService
 
     @Override
     public void curate(ResearchOrganization researchOrganization, String ctepId) throws JMSException {
-        ((ResearchOrganizationServiceLocal) getCorrelationService()).curate(researchOrganization, ctepId);
+        super.curate(researchOrganization, ctepId);
     }
 
     @Override

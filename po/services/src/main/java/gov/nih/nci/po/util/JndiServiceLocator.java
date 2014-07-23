@@ -82,15 +82,12 @@
  */
 package gov.nih.nci.po.util;
 
-import com.fiveamsolutions.nci.commons.util.JndiUtils;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaffCR;
-import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.HealthCareProviderCR;
 import gov.nih.nci.po.data.bo.IdentifiedOrganizationCR;
 import gov.nih.nci.po.data.bo.IdentifiedPersonCR;
 import gov.nih.nci.po.data.bo.OrganizationalContactCR;
 import gov.nih.nci.po.data.bo.OversightCommitteeCR;
-import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.service.ClinicalResearchStaffCRServiceLocal;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.CountryServiceLocal;
@@ -120,6 +117,8 @@ import gov.nih.nci.po.service.PersonServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationCRServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepImportService;
+
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
 
 /**
  * @author Scott Miller
@@ -265,7 +264,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public GenericStructrualRoleCRServiceLocal<HealthCareFacilityCR> getHealthCareFacilityCRService() {
+    public HealthCareFacilityCRServiceLocal getHealthCareFacilityCRService() {
 
         return (HealthCareFacilityCRServiceLocal) JndiUtils
                 .lookup("java:app/po-services/HealthCareFacilityCRServiceBean");
@@ -308,7 +307,7 @@ public class JndiServiceLocator implements ServiceLocator {
     }
 
     @Override
-    public GenericStructrualRoleCRServiceLocal<ResearchOrganizationCR> getResearchOrganizationCRService() {
+    public ResearchOrganizationCRServiceLocal getResearchOrganizationCRService() {
         return (ResearchOrganizationCRServiceLocal) JndiUtils
                 .lookup("java:app/po-services/ResearchOrganizationCRServiceBean");
     }

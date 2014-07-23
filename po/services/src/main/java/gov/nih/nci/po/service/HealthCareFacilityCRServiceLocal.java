@@ -86,12 +86,23 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 
 import javax.ejb.Local;
+import javax.jms.JMSException;
 
 /**
  * Change Request (CR) management interface.
  * @author gax
+ * @author Rohit Gupta
  */
 @Local
 public interface HealthCareFacilityCRServiceLocal extends GenericStructrualRoleCRServiceLocal<HealthCareFacilityCR> {
 
+    /**
+     * add a HealthCareFacilityCR for later processing.
+     * @param hcfCR the HealthCareFacilityCR containg the proposed stated.
+     * @param ctepId CTEP ID
+     * @return the identifier 
+     * @throws EntityValidationException if the HealthCareFacilityCR proposes an invalid state for the target.
+     * @throws JMSException JMSException
+     */
+    long create(HealthCareFacilityCR hcfCR, String ctepId) throws EntityValidationException, JMSException;
 }

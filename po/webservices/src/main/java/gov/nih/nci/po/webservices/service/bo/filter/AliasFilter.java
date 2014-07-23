@@ -4,6 +4,8 @@ import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Correlation;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
@@ -49,8 +51,15 @@ public class AliasFilter<TYPE extends Correlation, CR_TYPE extends ChangeRequest
     private void handleInternal(AbstractEnhancedOrganizationRole currentInstance,
                                 AbstractEnhancedOrganizationRole updatedInstance) {
 
-        // set the existing aliases as it was ignored during converter
-        updatedInstance.getAlias().addAll(currentInstance.getAlias());
+        // set the existing aliases as it was ignored during converter (if they are not already present)
+        if (CollectionUtils.isNotEmpty(currentInstance.getAlias())) {
+            for (int i = 0; i < currentInstance.getAlias().size(); i++) {
+                Alias alias = currentInstance.getAlias().get(i);
+                if (aliasIsNotPresent(updatedInstance.getAlias(), alias.getValue())) {
+                    updatedInstance.getAlias().add(alias);
+                }            
+            }            
+        }   
 
         // check if existing Org name or aliases has the incoming name
         if (nameHasChanged(currentInstance, updatedInstance)

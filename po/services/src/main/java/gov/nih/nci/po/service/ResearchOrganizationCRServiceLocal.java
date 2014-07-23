@@ -86,6 +86,7 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 
 import javax.ejb.Local;
+import javax.jms.JMSException;
 
 /**
  * Change Request (CR) management interface.
@@ -95,4 +96,13 @@ import javax.ejb.Local;
 public interface ResearchOrganizationCRServiceLocal
         extends GenericStructrualRoleCRServiceLocal<ResearchOrganizationCR> {
 
+    /**
+     * add a OrganizationCR for later processing.
+     * @param roCR the ResearchOrganizationCR containg the proposed stated.
+     * @param ctepId CTEP ID
+     * @return the identifier 
+     * @throws EntityValidationException if the ResearchOrganizationCR proposes an invalid state for the target.
+     * @throws JMSException JMSException
+     */
+    long create(ResearchOrganizationCR roCR, String ctepId) throws EntityValidationException, JMSException;
 }

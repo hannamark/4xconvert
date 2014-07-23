@@ -286,8 +286,15 @@ public class OrganizationBoService implements OrganizationServiceLocal {
      */
     private void handleOrgNameAndAliases(Organization currentInstance, Organization updatedInstance) {
 
-        // set the existing aliases as it was ignored during converter
-        updatedInstance.getAlias().addAll(currentInstance.getAlias());
+        // set the existing aliases as it was ignored during converter (if they are not already present)
+        if (CollectionUtils.isNotEmpty(currentInstance.getAlias())) {
+            for (int i = 0; i < currentInstance.getAlias().size(); i++) {
+                Alias alias = currentInstance.getAlias().get(i);
+                if (aliasIsNotPresent(updatedInstance.getAlias(), alias.getValue())) {                    
+                    updatedInstance.getAlias().add(alias);
+                }            
+            }            
+        }        
 
         // check if existing Org name or aliases has the incoming name
         if (nameHasChanged(currentInstance, updatedInstance)
