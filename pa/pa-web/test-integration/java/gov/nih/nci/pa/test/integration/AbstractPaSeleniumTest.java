@@ -110,6 +110,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.FastDateFormat;
@@ -120,17 +121,19 @@ import org.openqa.selenium.TakesScreenshot;
 
 /**
  * Abstract base class for selenium tests.
- *
+ * 
  * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
  */
 @Ignore
 public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
-    
-    protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
+
+    protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat
+            .getInstance("MM/dd/yyyy");
     private static final String PHANTOM_JS_DRIVER = "org.openqa.selenium.phantomjs.PhantomJSDriver";
-    public static Logger LOG = Logger.getLogger(AbstractPaSeleniumTest.class.getName());    
+    public static Logger LOG = Logger.getLogger(AbstractPaSeleniumTest.class
+            .getName());
     protected Connection connection;
-    
+
     static {
         new Timer(true).schedule(new TimerTask() {
             @SuppressWarnings("rawtypes")
@@ -161,27 +164,29 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }, 120000, 120000);
     }
 
-
-
     @Override
     public void setUp() throws Exception {
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setDriverClass(TestProperties.getDriverClass());
         //super.setDriverClass(PHANTOM_JS_DRIVER);
-        System.setProperty("phantomjs.binary.path", TestProperties.getPhantomJsPath());
+        System.setProperty("phantomjs.binary.path",
+                TestProperties.getPhantomJsPath());
         super.setUp();
         selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
-        
+
         openDbConnection();
     }
 
     private void openDbConnection() {
         try {
             DbUtils.loadDriver(TestProperties.getProperty(TEST_DB_DRIVER));
-            this.connection = DriverManager.getConnection(TestProperties.getProperty(TEST_DB_URL),
-                    TestProperties.getProperty(TEST_DB_USER), TestProperties.getProperty(TEST_DB_PASSWORD));
-            LOG.info("Successfully connected to the database at "+TestProperties.getProperty(TEST_DB_URL));
+            this.connection = DriverManager.getConnection(
+                    TestProperties.getProperty(TEST_DB_URL),
+                    TestProperties.getProperty(TEST_DB_USER),
+                    TestProperties.getProperty(TEST_DB_PASSWORD));
+            LOG.info("Successfully connected to the database at "
+                    + TestProperties.getProperty(TEST_DB_URL));
         } catch (Exception e) {
             LOG.severe("Unable to open a JDBC connection to the database: tests may fail!");
             LOG.log(Level.SEVERE, e.getMessage(), e);
@@ -196,9 +201,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         closeBrowser();
         super.tearDown();
     }
-    
+
     private void takeScreenShot() {
-        try {           
+        try {
             final String screenShotFileName = getClass().getSimpleName()
                     + "_ScreenShot_"
                     + new Timestamp(System.currentTimeMillis()).toString()
@@ -217,7 +222,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     }
 
-    
     private void closeBrowser() {
         driver.quit();
     }
@@ -225,7 +229,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected void logoutUser() {
         openAndWait("/pa/logout.action");
     }
-    
+
     @SuppressWarnings("deprecation")
     protected void reInitializeWebDriver() throws Exception {
         closeBrowser();
@@ -239,7 +243,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected boolean isPhantomJS() {
         return driver.getClass().getName().equals(PHANTOM_JS_DRIVER);
     }
-
 
     protected void login(String username, String password) {
         openAndWait("/pa");
@@ -311,7 +314,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     /**
      * Verifies that a trial has been selected from the search results.
-     * @param nciTrialIdentifier the NCI trial identifier i.e. NCI-2010-00001
+     * 
+     * @param nciTrialIdentifier
+     *            the NCI trial identifier i.e. NCI-2010-00001
      */
     protected void verifyTrialSelected(String nciTrialIdentifier) {
         assertTrue(selenium.isTextPresent(nciTrialIdentifier));
@@ -322,7 +327,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isElementPresent("link=On-hold Information"));
         assertTrue(selenium.isElementPresent("link=Manage Accrual Access"));
         assertTrue(selenium.isElementPresent("link=View TSR"));
-        assertTrue(selenium.isElementPresent("link=Assign Ownership"));        
+        assertTrue(selenium.isElementPresent("link=Assign Ownership"));
         assertTrue(selenium.isTextPresent("Validation"));
         assertTrue(selenium.isElementPresent("link=Trial Related Documents"));
         assertTrue(selenium.isElementPresent("link=Trial Status"));
@@ -333,7 +338,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     /**
-     * Checks a trial out as a scientific abstractor. Assumes that the trial has already been selected.
+     * Checks a trial out as a scientific abstractor. Assumes that the trial has
+     * already been selected.
      */
     protected void checkOutTrialAsScientificAbstractor() {
         assertTrue(selenium.isElementPresent("link=Trial Identification"));
@@ -359,7 +365,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     /**
-     * Checks a trial out as a admin abstractor. Assumes that the trial has already been selected.
+     * Checks a trial out as a admin abstractor. Assumes that the trial has
+     * already been selected.
      */
     protected void checkOutTrialAsAdminAbstractor() {
         assertTrue(selenium.isElementPresent("link=Trial Identification"));
@@ -372,7 +379,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     /**
-     * Checks a trial out as an admin abstractor. Assumes that the trial has already been selected.
+     * Checks a trial out as an admin abstractor. Assumes that the trial has
+     * already been selected.
      */
     protected void checkInTrialAsAdminAbstractor() {
         assertTrue(selenium.isElementPresent("link=Trial Identification"));
@@ -406,7 +414,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isElementPresent("link=On-hold Information"));
         assertTrue(selenium.isElementPresent("link=Manage Accrual Access"));
         assertTrue(selenium.isElementPresent("link=View TSR"));
-        assertTrue(selenium.isElementPresent("link=Assign Ownership"));        
+        assertTrue(selenium.isElementPresent("link=Assign Ownership"));
 
         assertTrue(selenium.isTextPresent("Administrative Data"));
         assertTrue(selenium.isElementPresent("link=General Trial Details"));
@@ -428,7 +436,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isElementPresent("link=Disease/Condition"));
         assertTrue(selenium.isElementPresent("link=Markers"));
         assertTrue(selenium.isElementPresent("link=Interventions"));
-        assertTrue(selenium.isElementPresent("link=Arms"));
+        assertTrue(selenium.isElementPresent("link=Arms")
+                || selenium.isElementPresent("link=Groups/Cohorts"));
         assertTrue(selenium.isElementPresent("link=Sub-groups"));
 
         assertTrue(selenium.isTextPresent("Completion"));
@@ -436,14 +445,18 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     /**
-     * Searches for, checks out, select and accepts the trial with the given title. Title must be unique among
-     * available trials
-     * @param trialTitle the trial title to search for
-     * @param adminAbstractor whether or not to check out the trial as an admin abstractor
-     * @param scientificAbstractor whether or not to check out the trial as scientific abstractor
+     * Searches for, checks out, select and accepts the trial with the given
+     * title. Title must be unique among available trials
+     * 
+     * @param trialTitle
+     *            the trial title to search for
+     * @param adminAbstractor
+     *            whether or not to check out the trial as an admin abstractor
+     * @param scientificAbstractor
+     *            whether or not to check out the trial as scientific abstractor
      */
-    protected void searchSelectAndAcceptTrial(String trialTitle, boolean adminAbstractor,
-            boolean scientificAbstractor) {
+    protected void searchSelectAndAcceptTrial(String trialTitle,
+            boolean adminAbstractor, boolean scientificAbstractor) {
         String nciTrialId = searchAndSelectTrial(trialTitle);
         verifyTrialSelected(nciTrialId);
         if (adminAbstractor) {
@@ -456,8 +469,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         verifyTrialAccepted();
     }
 
-    protected String searchAndSelectTrialWithMilestoneCheck(String trialTitle, String currMilestone,
-            String adminMilestone, String scientificMilestone) {
+    protected String searchAndSelectTrialWithMilestoneCheck(String trialTitle,
+            String currMilestone, String adminMilestone,
+            String scientificMilestone) {
         verifyTrialSearchPage();
 
         selenium.type("id=officialTitle", trialTitle);
@@ -465,12 +479,18 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isTextPresent("One item found"));
         assertTrue(selenium.isElementPresent("id=row"));
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
-        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[2]"));
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]").contains(currMilestone));
-        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[4]").contains(adminMilestone));
-        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[5]").contains(scientificMilestone));
+        assertFalse(selenium
+                .isElementPresent("xpath=//table[@id='row']//tr[2]"));
+        assertTrue(selenium
+                .isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
+        String nciTrialId = selenium
+                .getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]")
+                .contains(currMilestone));
+        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[4]")
+                .contains(adminMilestone));
+        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[5]")
+                .contains(scientificMilestone));
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
         return nciTrialId;
     }
@@ -478,8 +498,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected String searchAndSelectTrial(String trialTitle) {
         return searchAndSelectTrialWithMilestoneCheck(trialTitle, "", "", "");
     }
-    
-    public void loginAsSuperAbstractor() {      
+
+    public void loginAsSuperAbstractor() {
         login("ctrpsubstractor", "Coppa#12345");
         disclaimer(true);
     }
@@ -506,7 +526,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected boolean isLoggedIn() {
-        return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
+        return selenium.isElementPresent("link=Logout")
+                && !selenium.isElementPresent("link=Login");
     }
 
     protected void openAndWait(String url) {
@@ -517,7 +538,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }
         waitForPageToLoad();
     }
-    
+
     private void openAndHandleStuckPhantomJsDriver(final String url) {
         int tries = 0;
         while (tries < 3) {
@@ -549,7 +570,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
         }
     }
-    
+
     protected TrialInfo createSubmittedTrial() throws SQLException {
         TrialInfo info = new TrialInfo();
         info.uuid = UUID.randomUUID().toString();
@@ -604,7 +625,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         new ArrayHandler())[0];
         assignNciId(info);
         addDWS(info, "SUBMITTED");
-        addMilestone(info, "SUBMISSION_RECEIVED");       
+        addMilestone(info, "SUBMISSION_RECEIVED");
         addLeadOrg(info, "ClinicalTrials.gov");
         addPI(info, "1");
         addSOS(info, "APPROVED");
@@ -613,7 +634,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return info;
 
     }
-    
+
     protected Number createStudyInbox(TrialInfo trial) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO study_inbox (identifier,comments,open_date,close_date,study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,user_last_updated_id,type_code,admin,scientific,admin_close_date,scientific_close_date,admin_ack_user_id,scientific_ack_user_id)"
@@ -629,15 +650,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + trial.csmUserID
                 + ","
                 + trial.csmUserID
-                + ","
-                + "'UPDATE',null,null,null,null,null,null)";
+                + "," + "'UPDATE',null,null,null,null,null,null)";
         runner.update(connection, sql);
         return (Number) runner
                 .query(connection,
                         "select identifier from study_inbox order by identifier desc limit 1",
                         new ArrayHandler())[0];
     }
-    
+
     protected void makeAdminPerformed(Number studyInboxID, Number csmUserID)
             throws SQLException {
         new QueryRunner().update(connection,
@@ -645,15 +665,15 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         + pastMillenium() + ", admin_ack_user_id=" + csmUserID
                         + " where identifier=" + studyInboxID);
     }
-    
+
     protected void makeScientificPerformed(Number studyInboxID, Number csmUserID)
             throws SQLException {
         new QueryRunner().update(connection,
                 "update study_inbox set scientific=true, scientific_close_date="
-                        + pastMillenium() + ", scientific_ack_user_id=" + csmUserID
-                        + " where identifier=" + studyInboxID);
+                        + pastMillenium() + ", scientific_ack_user_id="
+                        + csmUserID + " where identifier=" + studyInboxID);
     }
-    
+
     protected void makeAdminPending(Number studyInboxID, Number ctgovEntryID)
             throws SQLException {
         new QueryRunner().update(connection,
@@ -663,17 +683,18 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 "update ctgovimport_log set admin=true, review_required=true where identifier="
                         + ctgovEntryID);
     }
-    
-    protected void makeScientificPending(Number studyInboxID, Number ctgovEntryID)
-            throws SQLException {
+
+    protected void makeScientificPending(Number studyInboxID,
+            Number ctgovEntryID) throws SQLException {
         new QueryRunner().update(connection,
                 "update study_inbox set scientific=true where identifier="
                         + studyInboxID);
-        new QueryRunner().update(connection,
-                "update ctgovimport_log set scientific=true, review_required=true where identifier="
-                        + ctgovEntryID);
+        new QueryRunner()
+                .update(connection,
+                        "update ctgovimport_log set scientific=true, review_required=true where identifier="
+                                + ctgovEntryID);
     }
-    
+
     protected Number createCtGovImportLogEntry(TrialInfo trial,
             Number studyInboxID) throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -702,7 +723,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         "select identifier from ctgovimport_log order by identifier desc limit 1",
                         new ArrayHandler())[0];
     }
-    
+
     protected TrialInfo createAcceptedTrial() throws SQLException {
         TrialInfo info = createSubmittedTrial();
         addDWS(info, "ACCEPTED");
@@ -726,15 +747,16 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     private String today() {
-        return String.format("{ts '%s'}", new Timestamp(System.currentTimeMillis()).toString());       
+        return String.format("{ts '%s'}",
+                new Timestamp(System.currentTimeMillis()).toString());
     }
-    
+
     private String millenium() {
-        return "{ts '2000-01-01 00:00:00.000'}";       
+        return "{ts '2000-01-01 00:00:00.000'}";
     }
-    
+
     private String pastMillenium() {
-        return "{ts '2000-01-02 00:00:00.000'}";       
+        return "{ts '2000-01-02 00:00:00.000'}";
     }
 
     private void addMilestone(TrialInfo info, String code) throws SQLException {
@@ -772,21 +794,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "study_protocol_identifier,status_code,status_date_range_low,date_last_created,date_last_updated,"
                 + "status_date_range_high,organizational_contact_identifier,user_last_created_id,user_last_updated_id,"
                 + "title) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'STUDY_PRINCIPAL_INVESTIGATOR',null,null,null,null,null,null,null,null"
-                + ",null,"
-                + hcpID
-                + ","
-                + crsID
-                + ","
-                + info.id
-                + ",'PENDING',"
-                + today()
-                + ",null,null,null,null,"
+                + ",null," + hcpID + "," + crsID + "," + info.id
+                + ",'PENDING'," + today() + ",null,null,null,null,"
                 + info.csmUserID + "," + info.csmUserID + ",null)";
         runner.update(connection, sql);
-        
 
     }
-    
+
     private Number findOrCreateHcp(Number paPersonID, String orgName)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -824,7 +838,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }
         return crsID;
     }
-    
+
     private void createHcp(Number paPersonID, String orgName)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -860,8 +874,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         Number paID = results != null ? (Number) results[0] : null;
         if (paID == null) {
             createPerson(poPersonID, "John", "G", "Doe", "Mr.", "III");
-            paID = (Number) runner.query(connection, sql,
-                    new ArrayHandler())[0];
+            paID = (Number) runner.query(connection, sql, new ArrayHandler())[0];
         }
         return paID;
     }
@@ -911,18 +924,26 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         QueryRunner runner = new QueryRunner();
         return (Number) runner
                 .query(connection,
-                        "select ro.identifier from research_organization ro inner join organization o " +
-                        "on o.identifier=ro.organization_identifier and o.name='"
+                        "select ro.identifier from research_organization ro inner join organization o "
+                                + "on o.identifier=ro.organization_identifier and o.name='"
                                 + orgName + "' limit 1", new ArrayHandler())[0];
-        
+
     }
-    
+
     protected Number getTrialIdByNct(String nctID) throws SQLException {
         QueryRunner runner = new QueryRunner();
         return (Number) runner
                 .query(connection,
                         "select study_protocol_identifier from rv_trial_id_nct where local_sp_indentifier='"
                                 + nctID + "'", new ArrayHandler())[0];
+    }
+
+    protected Number getTrialIdByLeadOrgID(String loID) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (Number) runner
+                .query(connection,
+                        "select study_protocol_identifier from rv_lead_organization where local_sp_indentifier='"
+                                + loID + "'", new ArrayHandler())[0];
     }
 
     private void addDWS(TrialInfo info, String status) throws SQLException {
@@ -952,15 +973,33 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "','NCI study protocol entity identifier',null,'2.16.840.1.113883.3.26.4.3',null)";
         runner.update(connection, sql);
     }
-    
+
     protected void deactivateTrialByNctId(String nctID) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "update study_protocol set status_code='INACTIVE' where exists"
                 + " (select * from study_site ss where ss.study_protocol_identifier=study_protocol.identifier and ss.local_sp_indentifier='"
                 + nctID + "')";
         runner.update(connection, sql);
-        
-        runner.update(connection, "delete from study_site where local_sp_indentifier='"+nctID+"'");
+
+        runner.update(connection,
+                "delete from study_site where local_sp_indentifier='" + nctID
+                        + "'");
+    }
+
+    protected final void deactivateTrialByLeadOrgId(String leadOrgID)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        runner.update(
+                connection,
+                "update study_protocol sp set status_code='INACTIVE' where exists "
+                        + "(select local_sp_indentifier from study_site ss where ss.study_protocol_identifier=sp.identifier "
+                        + "and ss.functional_code='LEAD_ORGANIZATION' and ss.local_sp_indentifier='"
+                        + StringEscapeUtils.escapeSql(leadOrgID) + "')");
+        runner.update(
+                connection,
+                "delete from study_site where functional_code='LEAD_ORGANIZATION' and local_sp_indentifier='"
+                        + StringEscapeUtils.escapeSql(leadOrgID) + "'");
+        LOG.info("De-activated trial with Lead Org ID of " + leadOrgID);
     }
 
     public static final class TrialInfo {
@@ -972,9 +1011,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         public String nciID;
         public Long registryUserID;
         public Long csmUserID;
-        
+
         @Override
-        public String toString() {         
+        public String toString() {
             return ToStringBuilder.reflectionToString(this);
         }
 

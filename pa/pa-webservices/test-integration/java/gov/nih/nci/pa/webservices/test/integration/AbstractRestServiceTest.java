@@ -71,6 +71,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                 .newInstance(TrialRegistrationConfirmation.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         String orgXMLStr = EntityUtils.toString(httpEntity, "utf-8");
+        LOG.info(orgXMLStr);
         JAXBElement<TrialRegistrationConfirmation> jaxbEle = (JAXBElement<TrialRegistrationConfirmation>) jaxbUnmarshaller
                 .unmarshal(new StreamSource(new StringReader(orgXMLStr)),
                         TrialRegistrationConfirmation.class);

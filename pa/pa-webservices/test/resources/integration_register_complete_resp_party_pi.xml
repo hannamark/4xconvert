@@ -33,7 +33,13 @@
 		</tns:existingOrganization>
 	</tns:sponsor>
 	<tns:responsibleParty>
-		<tns:type>Sponsor</tns:type>
+		<tns:type>Principal Investigator</tns:type>
+		<tns:investigatorTitle>Chairman</tns:investigatorTitle>
+		<tns:investigatorAffiliation>
+			<tns:existingOrganization>
+				<tns:ctepID>NCI</tns:ctepID>
+			</tns:existingOrganization>
+		</tns:investigatorAffiliation>
 	</tns:responsibleParty>
 	<tns:summary4FundingSponsor>
 		<tns:existingOrganization>

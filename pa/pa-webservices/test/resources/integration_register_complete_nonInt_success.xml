@@ -13,10 +13,13 @@
 	<tns:accrualDiseaseTerminology>ICD10</tns:accrualDiseaseTerminology>
 	<tns:primaryPurpose>Other</tns:primaryPurpose>
 	<tns:primaryPurposeOtherDescription>PP Other Description</tns:primaryPurposeOtherDescription>
-	<tns:interventionalDesign>
-		<tns:secondaryPurpose>Other</tns:secondaryPurpose>
-		<tns:secondaryPurposeOtherDescription>Secondary Other Description</tns:secondaryPurposeOtherDescription>
-	</tns:interventionalDesign>
+	<tns:nonInterventionalDesign>
+		<tns:trialType>Observational</tns:trialType>
+		<tns:studyModelCode>Other</tns:studyModelCode>
+		<tns:studyModelCodeOtherDescription>studyModelCode other</tns:studyModelCodeOtherDescription>
+		<tns:timePerspectiveCode>Other</tns:timePerspectiveCode>
+		<tns:timePerspectiveCodeOtherDescription>timePerspectiveCode other</tns:timePerspectiveCodeOtherDescription>
+	</tns:nonInterventionalDesign>
 	<tns:leadOrganization>
 		<tns:existingOrganization>
 			<tns:poID>1</tns:poID>

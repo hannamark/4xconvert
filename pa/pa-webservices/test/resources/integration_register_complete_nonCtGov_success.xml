@@ -3,7 +3,7 @@
 	xmlns:tns1="gov.nih.nci.po.webservices.types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="gov.nih.nci.pa.webservices.types ../../src/resources/ws.xsd ">
 	<tns:category>Externally Peer-Reviewed</tns:category>
-	<tns:clinicalTrialsDotGovXmlRequired>true</tns:clinicalTrialsDotGovXmlRequired>
+	<tns:clinicalTrialsDotGovXmlRequired>false</tns:clinicalTrialsDotGovXmlRequired>
 	<tns:leadOrgTrialID>REST00001</tns:leadOrgTrialID>
 	<tns:clinicalTrialsDotGovTrialID>NCT000000000001</tns:clinicalTrialsDotGovTrialID>
 	<tns:otherTrialID>OTHER00000000001</tns:otherTrialID>
@@ -26,15 +26,7 @@
 		<tns:existingPerson>
 			<tns:poID>1</tns:poID>
 		</tns:existingPerson>
-	</tns:pi>
-	<tns:sponsor>
-		<tns:existingOrganization>
-			<tns:poID>2</tns:poID>
-		</tns:existingOrganization>
-	</tns:sponsor>
-	<tns:responsibleParty>
-		<tns:type>Sponsor</tns:type>
-	</tns:responsibleParty>
+	</tns:pi>	
 	<tns:summary4FundingSponsor>
 		<tns:existingOrganization>
 			<tns:poID>3</tns:poID>
@@ -72,15 +64,7 @@
 		<tns:expandedAccess>true</tns:expandedAccess>
 		<tns:expandedAccessType>Available</tns:expandedAccessType>
 		<tns:exempt>true</tns:exempt>
-	</tns:ide>
-	<tns:regulatoryInformation>
-		<tns:country>USA</tns:country>
-		<tns:authorityName>Federal Government</tns:authorityName>
-		<tns:fdaRegulated>true</tns:fdaRegulated>
-		<tns:section801>true</tns:section801>
-		<tns:delayedPosting>true</tns:delayedPosting>
-		<tns:dataMonitoringCommitteeAppointed>true</tns:dataMonitoringCommitteeAppointed>
-	</tns:regulatoryInformation>
+	</tns:ide>	
 	<tns:protocolDocument filename="protocol.pdf">dGVzdA==</tns:protocolDocument>
 	<tns:irbApprovalDocument filename="irb.pdf">dGVzdA==</tns:irbApprovalDocument>
 	<tns:participatingSitesDocument

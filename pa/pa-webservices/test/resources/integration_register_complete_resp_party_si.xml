@@ -33,7 +33,30 @@
 		</tns:existingOrganization>
 	</tns:sponsor>
 	<tns:responsibleParty>
-		<tns:type>Sponsor</tns:type>
+		<tns:type>Sponsor-Investigator</tns:type>
+		<tns:investigator>
+			<tns:newPerson>
+				<tns1:status>ACTIVE</tns1:status>
+				<tns1:prefix>Mr.</tns1:prefix>
+				<tns1:firstName>Jane</tns1:firstName>
+				<tns1:lastName>Smith</tns1:lastName>
+				<tns1:suffix>Sr.</tns1:suffix>
+				<tns1:address>
+					<tns1:line1>1029 N Stuart St</tns1:line1>
+					<tns1:line2> Apt 99999</tns1:line2>
+					<tns1:city>Vienna</tns1:city>
+					<tns1:stateOrProvince>VA</tns1:stateOrProvince>
+					<tns1:country>USA</tns1:country>
+					<tns1:postalcode>22201</tns1:postalcode>
+				</tns1:address>
+				<tns1:contact type="EMAIL">example@example.com</tns1:contact>
+				<tns1:contact type="FAX">555-555-5551</tns1:contact>
+				<tns1:contact type="PHONE">555-555-5552</tns1:contact>
+				<tns1:contact type="TTY">555-555-5553</tns1:contact>
+				<tns1:contact type="URL">http://example.com</tns1:contact>
+			</tns:newPerson>
+		</tns:investigator>
+		<tns:investigatorTitle>CEO &amp; Chairman</tns:investigatorTitle>
 	</tns:responsibleParty>
 	<tns:summary4FundingSponsor>
 		<tns:existingOrganization>
