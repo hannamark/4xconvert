@@ -1319,7 +1319,7 @@ Interventional]]></text>
 6. Center Trial: Trials not registered by CTRO  or  DCP-PIO
 7. Complete Trials: Proprietary_Trial_Indicator= 'False'
 8. Abbreviated Trials: Proprietary_Trial_Indicator ='True'
-9. Import from Clinicalrials.gov=Trials with submitter='CT.Gov Import'
+9. Import from Clinicalrials.gov=Trials with submitter='ClinicalTrials.gov Import'
 
 
 

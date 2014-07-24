@@ -45,7 +45,7 @@ CREATE TABLE dw_study_type AS
   UNION
   SELECT 8, 'Import from Clinicaltrials.gov', NULL, nci_id
     FROM dw_study
-    WHERE SUBSTRING(created_by FROM 1 FOR 13) = 'CT.Gov Import'
+    WHERE SUBSTRING(created_by FROM 1 FOR 25) = 'ClinicalTrials.gov Import'
   UNION
   SELECT 9, 'Consortia/Other', NULL, nci_id
     FROM dw_study
