@@ -333,7 +333,8 @@
                 <path refid="selenium.classpath"/>
                 <path refid="common.package.classpath"/>
             	<path refid="test-junit.classpath"/>
-            	<path refid="test.classpath"/>            	
+            	<path refid="test.classpath"/>    
+            	<path refid="ejb.package.classpath"/>
             </classpath>
             <batchtest todir="${pa-webservices.test.reports}">
                 <fileset dir="${pa-webservices.build.integrationTestDir.0}">
