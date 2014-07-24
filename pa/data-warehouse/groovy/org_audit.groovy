@@ -21,6 +21,9 @@ try {
     def file = new File("..//pa//data-warehouse//sql//org_audit.sql");
     if (!file.exists()) {
         file = new File("sql//org_audit.sql");
+		if (!file.exists()) {
+			file = new File("pa//data-warehouse//sql//org_audit.sql");
+		}
     }
     destinationConnection.executeUpdate(file.getText());
 }
