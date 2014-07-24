@@ -1,29 +1,48 @@
 package gov.nih.nci.pa.webservices.test.integration;
 
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.enums.NihInstituteCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 import gov.nih.nci.pa.util.pomock.MockPersonEntityService;
+import gov.nih.nci.pa.webservices.types.AccrualDiseaseTerminology;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
+import gov.nih.nci.pa.webservices.types.ExpandedAccessType;
 import gov.nih.nci.pa.webservices.types.Grant;
+import gov.nih.nci.pa.webservices.types.GrantorCode;
+import gov.nih.nci.pa.webservices.types.HolderType;
 import gov.nih.nci.pa.webservices.types.INDIDE;
+import gov.nih.nci.pa.webservices.types.NciDivisionProgramCode;
+import gov.nih.nci.pa.webservices.types.NihInstitutionCode;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.Organization;
 import gov.nih.nci.pa.webservices.types.Person;
+import gov.nih.nci.pa.webservices.types.PrimaryPurpose;
 import gov.nih.nci.pa.webservices.types.ResponsiblePartyType;
+import gov.nih.nci.pa.webservices.types.SecondaryPurpose;
+import gov.nih.nci.pa.webservices.types.StudyModelCode;
+import gov.nih.nci.pa.webservices.types.TimePerspectiveCode;
+import gov.nih.nci.pa.webservices.types.TrialCategory;
 import gov.nih.nci.pa.webservices.types.TrialDocument;
 import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
+import gov.nih.nci.pa.webservices.types.TrialStatusCode;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.GregorianCalendar;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.namespace.QName;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
@@ -39,6 +58,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -51,16 +71,23 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
         super.setUp();
-        insertOtherSecondaryPurpose();
+        insertSecondaryPurposes();
     }
 
-    private void insertOtherSecondaryPurpose() throws SQLException {
+    private void insertSecondaryPurposes() throws SQLException {
         try {
             QueryRunner runner = new QueryRunner();
             String sql = "INSERT INTO secondary_purpose (name) VALUES ('Other')";
             runner.update(connection, sql);
         } catch (SQLException e) {
             LOG.warning("Oops; 'Other' most likely is in secondary_purpose already; ignoring...");
+        }
+        try {
+            QueryRunner runner = new QueryRunner();
+            String sql = "INSERT INTO secondary_purpose (name) VALUES ('Ancillary-Correlative')";
+            runner.update(connection, sql);
+        } catch (SQLException e) {
+            LOG.warning("Oops; 'Ancillary-Correlative' most likely is in secondary_purpose already; ignoring...");
         }
     }
 
@@ -136,7 +163,15 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     @Test
     public void testImportSchemaValidation() throws Exception {
         verifyFailureToRegister(
-                "/integration_register_complete_schema_violation.xml", 400);
+                "/integration_register_complete_schema_violation.xml", 400,
+                "cvc-enumeration-valid");
+    }
+
+    @Test
+    public void testImportBusinessValidation() throws Exception {
+        verifyFailureToRegister(
+                "/integration_register_complete_validation_error.xml", 400,
+                "Validation Exception");
     }
 
     @Test
@@ -144,11 +179,168 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         registerAndVerify("/integration_register_complete_minimal_dataset.xml");
     }
 
-    private void verifyFailureToRegister(String file, int code)
-            throws JAXBException, SAXException, UnsupportedEncodingException,
-            ClientProtocolException, IOException {
+    @Test
+    public void testImportRotateEnumValues() throws Exception {
+
+        for (TrialCategory v : TrialCategory.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.setCategory(v);
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyNCISpecificInformation(reg, conf);
+        }
+
+        for (PrimaryPurpose v : PrimaryPurpose.values()) {
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            reg.setPrimaryPurpose(v);
+            reg.setPrimaryPurposeOtherDescription(v != PrimaryPurpose.OTHER ? null
+                    : "PrimaryPurpose.OTHER");
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyTrialDesign(reg, conf);
+        }
+
+        for (SecondaryPurpose v : SecondaryPurpose.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.getInterventionalDesign().setSecondaryPurpose(v);
+            reg.getInterventionalDesign().setSecondaryPurposeOtherDescription(
+                    v != SecondaryPurpose.OTHER ? null
+                            : "SecondaryPurpose.OTHER");
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyTrialDesign(reg, conf);
+        }
+
+        for (AccrualDiseaseTerminology v : AccrualDiseaseTerminology.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.setAccrualDiseaseTerminology(v);
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyDiseaseTerm(reg, conf);
+        }
+
+        for (StudyModelCode v : StudyModelCode.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_nonInt_success.xml");
+            reg.getNonInterventionalDesign().setStudyModelCode(v);
+            reg.getNonInterventionalDesign().setStudyModelCodeOtherDescription(
+                    v != StudyModelCode.OTHER ? null : "StudyModelCode.OTHER");
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyTrialDesign(reg, conf);
+        }
+
+        for (TimePerspectiveCode v : TimePerspectiveCode.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_nonInt_success.xml");
+            reg.getNonInterventionalDesign().setTimePerspectiveCode(v);
+            reg.getNonInterventionalDesign()
+                    .setTimePerspectiveCodeOtherDescription(
+                            v != TimePerspectiveCode.OTHER ? null
+                                    : "TimePerspectiveCode.OTHER");
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyTrialDesign(reg, conf);
+        }
+
+        for (TrialStatusCode v : TrialStatusCode.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.setTrialStatus(v);
+            if (StudyStatusCode.getByCode(v.value()).requiresReasonText()) {
+                reg.setWhyStopped("WhyStopped");
+            }
+            if (v.value().contains("Complete")) {
+                reg.getPrimaryCompletionDate().setValue(
+                        DatatypeFactory.newInstance().newXMLGregorianCalendar(
+                                new GregorianCalendar()));
+                reg.getPrimaryCompletionDate().setType("Actual");
+                reg.getCompletionDate().setValue(
+                        DatatypeFactory.newInstance().newXMLGregorianCalendar(
+                                new GregorianCalendar()));
+                reg.getCompletionDate().setType("Actual");
+            }
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyTrialStatus(reg, conf);
+        }
+
+        for (HolderType v : HolderType.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            if (v == HolderType.NIH || v == HolderType.NCI) {
+                continue;
+            }
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.getInd().get(0).setHolderType(v);
+            reg.getIde().get(0).setHolderType(v);
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyIndIde(reg, conf);
+        }
+
+        for (GrantorCode v : new GrantorCode[] { GrantorCode.CBER,
+                GrantorCode.CDER }) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.getInd().get(0).setGrantor(v);
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyIndIde(reg, conf);
+        }
+
+        for (NihInstitutionCode v : NihInstitutionCode.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.getInd().get(0).setNihInstitution(v);
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyIndIde(reg, conf);
+        }
+
+        for (NciDivisionProgramCode v : NciDivisionProgramCode.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.getIde().get(0).setNciDivisionProgramCode(v);
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyIndIde(reg, conf);
+        }
+
+        for (ExpandedAccessType v : ExpandedAccessType.values()) {
+            LOG.info("Rotating " + v.getClass() + ": " + v.name());
+            CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+            reg.getInd().get(0).setExpandedAccessType(v);
+            deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+            TrialRegistrationConfirmation conf = registerTrialFromJAXBElement(reg);
+            logInFindAndAcceptTrial(conf);
+            verifyIndIde(reg, conf);
+        }
+    }
+
+    private void verifyFailureToRegister(String file, int code,
+            String expectedErrMsg) throws JAXBException, SAXException,
+            UnsupportedEncodingException, ClientProtocolException, IOException {
         HttpResponse response = submitRegistrationAndReturnResponse(file);
         assertEquals(code, getReponseCode(response));
+
+        String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
+        LOG.info(respBody);
+        assertTrue(respBody.contains(expectedErrMsg));
     }
 
     private void registerAndVerify(String file) throws SQLException,
@@ -166,16 +358,7 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
             CompleteTrialRegistration reg) throws JAXBException, SAXException,
             SQLException {
 
-        loginAsSuperAbstractor();
-
-        clickAndWait("id=trialSearchMenuOption");
-        selenium.type("id=identifier", conf.getNciTrialID());
-        selenium.select("id=identifierType", "NCI");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("One item found"));
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        acceptTrial();
-        verifyTrialAccepted();
+        logInFindAndAcceptTrial(conf);
 
         verifyTrialIdentification(reg, conf);
         verifyDiseaseTerm(reg, conf);
@@ -189,6 +372,23 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         verifyTrialDocuments(reg, conf);
         verifyTrialDesign(reg, conf);
 
+    }
+
+    /**
+     * @param conf
+     */
+    private void logInFindAndAcceptTrial(TrialRegistrationConfirmation conf) {
+        logoutUser();
+        loginAsSuperAbstractor();
+
+        clickAndWait("id=trialSearchMenuOption");
+        selenium.type("id=identifier", conf.getNciTrialID());
+        selenium.select("id=identifierType", "NCI");
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found"));
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        acceptTrial();
+        verifyTrialAccepted();
     }
 
     private void verifyTrialDesign(CompleteTrialRegistration reg,
@@ -385,14 +585,27 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
                 selenium.getText("xpath=//table[@id='row']//tr[" + i
                         + "]//td[4]"));
 
-        if (indide.getNihInstitution() != null) {
+        if (indide.getNihInstitution() != null
+                && indide.getHolderType() == HolderType.NIH) {
+            assertEquals(
+                    NihInstituteCode.valueOf(indide.getNihInstitution().name())
+                            .getCode(),
+                    selenium.getText("xpath=//table[@id='row']//tr[" + i
+                            + "]//td[5]"));
+        } else {
             assertTrue(selenium.getText(
                     "xpath=//table[@id='row']//tr[" + i + "]//td[5]")
-                    .startsWith(indide.getNihInstitution().value()));
+                    .equals(""));
         }
-        if (indide.getNciDivisionProgramCode() != null) {
+        if (indide.getNciDivisionProgramCode() != null
+                && indide.getHolderType() == HolderType.NCI) {
             assertEquals(
                     indide.getNciDivisionProgramCode().value(),
+                    selenium.getText("xpath=//table[@id='row']//tr[" + i
+                            + "]//td[6]"));
+        } else {
+            assertEquals(
+                    "",
                     selenium.getText("xpath=//table[@id='row']//tr[" + i
                             + "]//td[6]"));
         }
@@ -664,7 +877,39 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
             throws ClientProtocolException, IOException, ParseException,
             JAXBException, SQLException {
         HttpResponse response = submitRegistrationAndReturnResponse(file);
+        return processResponseAndDoBasicVerification(response);
 
+    }
+
+    @SuppressWarnings("unchecked")
+    private TrialRegistrationConfirmation registerTrialFromJAXBElement(
+            CompleteTrialRegistration o) throws ClientProtocolException,
+            IOException, ParseException, JAXBException, SQLException {
+        JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
+        Marshaller m = jc.createMarshaller();
+        StringWriter out = new StringWriter();
+        m.marshal(new JAXBElement<CompleteTrialRegistration>(
+                new QName("gov.nih.nci.pa.webservices.types",
+                        "CompleteTrialRegistration"),
+                CompleteTrialRegistration.class, o), out);
+
+        StringEntity entity = new StringEntity(out.toString());
+        HttpResponse response = submitRegistrationAndReturnResponse(entity);
+        return processResponseAndDoBasicVerification(response);
+
+    }
+
+    /**
+     * @param response
+     * @return
+     * @throws JAXBException
+     * @throws ParseException
+     * @throws IOException
+     * @throws SQLException
+     */
+    private TrialRegistrationConfirmation processResponseAndDoBasicVerification(
+            HttpResponse response) throws JAXBException, ParseException,
+            IOException, SQLException {
         HttpEntity resEntity = response.getEntity();
         TrialRegistrationConfirmation conf = unmarshalTrialRegistrationConfirmation(resEntity);
 
@@ -679,7 +924,14 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         LOG.info(ToStringBuilder.reflectionToString(conf));
 
         return conf;
+    }
 
+    private HttpResponse submitRegistrationAndReturnResponse(String file)
+            throws UnsupportedEncodingException, IOException,
+            ClientProtocolException {
+        StringEntity orgEntity = new StringEntity(IOUtils.toString(getClass()
+                .getResourceAsStream(file), "UTF-8"));
+        return submitRegistrationAndReturnResponse(orgEntity);
     }
 
     /**
@@ -689,16 +941,14 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
      * @throws IOException
      * @throws ClientProtocolException
      */
-    private HttpResponse submitRegistrationAndReturnResponse(String file)
-            throws UnsupportedEncodingException, IOException,
-            ClientProtocolException {
+    private HttpResponse submitRegistrationAndReturnResponse(
+            StringEntity orgEntity) throws UnsupportedEncodingException,
+            IOException, ClientProtocolException {
         String url = baseURL + "/registration/complete";
 
         HttpPost req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
         req.addHeader("Content-Type", APPLICATION_XML);
-        StringEntity orgEntity = new StringEntity(IOUtils.toString(getClass()
-                .getResourceAsStream(file), "UTF-8"));
         req.setEntity(orgEntity);
 
         HttpResponse response = httpClient.execute(req);
