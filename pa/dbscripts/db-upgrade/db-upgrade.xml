@@ -1567,7 +1567,7 @@
         <comment>Add AccrualBlankSite properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-7122.sql"/>
      </changeSet>
-     <changeSet id="PO-6887-1" author="Anubhav">
+     <changeSet id="PO-6887-1" author="Anubhav" runOnChange="false"><validCheckSum>ANY</validCheckSum>
         <comment>PA: Enhance search for Updates of, and Acknowledged Updates for, trials from ClinicalTrials.gov</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.0.1/PO-6887-1.sql"/>
      </changeSet>

@@ -178,6 +178,11 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
     public void testImportMinimalData() throws Exception {
         registerAndVerify("/integration_register_complete_minimal_dataset.xml");
     }
+    
+    @Test
+    public void testImportFundedByNciGrant() throws Exception {
+        registerAndVerify("/integration_register_complete_nci_grant.xml");
+    }
 
     @Test
     public void testImportRotateEnumValues() throws Exception {
@@ -490,6 +495,9 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
                     .isTextPresent("No funding records exist on the trial"));
         } else {
             final Grant grant = reg.getGrant().get(0);
+            assertTrue(selenium
+                    .isChecked(reg.isFundedByNciGrant() ? "id=nciGranttrue"
+                            : "id=nciGrantfalse"));
             assertEquals(grant.getFundingMechanism(),
                     selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"));
             assertEquals(grant.getNihInstitutionCode(),
