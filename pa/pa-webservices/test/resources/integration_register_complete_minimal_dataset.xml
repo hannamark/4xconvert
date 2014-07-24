@@ -5,8 +5,8 @@
 	<tns:category>National</tns:category>
 	<tns:clinicalTrialsDotGovXmlRequired>false
 	</tns:clinicalTrialsDotGovXmlRequired>
-	<tns:leadOrgTrialID>REST00001</tns:leadOrgTrialID>
-	<tns:title>REST Trial Test</tns:title>
+	<tns:leadOrgTrialID>UPCC 34890534</tns:leadOrgTrialID>
+	<tns:title>A Phase I/II Study Of Brentuximab Vedotin In Combination With Multi-Agent Chemotherapy</tns:title>
 	<tns:phase>I</tns:phase>
 	<tns:accrualDiseaseTerminology>ICD10</tns:accrualDiseaseTerminology>
 	<tns:primaryPurpose>Treatment</tns:primaryPurpose>

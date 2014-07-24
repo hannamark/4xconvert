@@ -926,7 +926,7 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
         assertTrue(StringUtils.isNotBlank(conf.getNciTrialID()));
         assertNotNull(conf.getPaTrialID());
-        assertEquals(getTrialIdByLeadOrgID("REST00001").longValue(),
+        assertEquals(getTrialIdByLeadOrgID("UPCC 34890534").longValue(),
                 conf.getPaTrialID());
 
         LOG.info(ToStringBuilder.reflectionToString(conf));
