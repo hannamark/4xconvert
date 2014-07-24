@@ -40,12 +40,9 @@ public class CsmUserFilterTest {
 
         CsmUserFilter filter = new CsmUserFilter();
         filter.init(null);
-        MockHttpServletRequest request = new MockHttpServletRequest() {
-            @Override
-            public String getRemoteUser() {
-                return "aUser";
-            }
-        };
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRemoteUser("aUser");
+
         request.setSession(new MockHttpSession());
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain chain = new MockFilterChain();
