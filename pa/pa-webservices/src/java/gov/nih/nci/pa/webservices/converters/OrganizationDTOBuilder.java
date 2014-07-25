@@ -8,6 +8,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelUrl;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -80,8 +81,7 @@ public class OrganizationDTOBuilder {
         try {
             OrganizationDTO orgDto = new OrganizationDTO();
             orgDto.setName(EnOnConverter.convertToEnOn(newOrg.getName()));
-            orgDto.setStatusCode(CdConverter.convertStringToCd(newOrg
-                    .getStatus().value()));
+            orgDto.setStatusCode(CdConverter.convertStringToCd(EntityStatusCode.PENDING.name()));
 
             final Address addr = newOrg.getAddress();
             orgDto.setPostalAddress(AddressConverterUtil.create(

@@ -4,9 +4,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
 	xmlns:annox="http://annox.dev.java.net" xmlns:ja="http://annox.dev.java.net/org.codehaus.jackson.annotate"
-	xmlns:po="gov.nih.nci.po.webservices.types"
+	xmlns:po="gov.nih.nci.po.webservices.types.trimmed"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd
-	                    gov.nih.nci.po.webservices.types po.xsd
+	                    gov.nih.nci.po.webservices.types.trimmed po.xsd
                         http://www.w3.org/2001/XMLSchema http://www.w3.org/2001/XMLSchema.xsd">
 
 	<annotation>
@@ -17,7 +17,7 @@
 		</appinfo>
 	</annotation>
 
-	<import namespace="gov.nih.nci.po.webservices.types"
+	<import namespace="gov.nih.nci.po.webservices.types.trimmed"
 		schemaLocation="po.xsd" />
 
 	<element name="paTrialID" type="long">

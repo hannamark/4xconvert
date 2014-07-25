@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="gov.nih.nci.po.webservices.types"
-	xmlns:tns="gov.nih.nci.po.webservices.types" elementFormDefault="qualified"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="gov.nih.nci.po.webservices.types.trimmed"
+	xmlns:tns="gov.nih.nci.po.webservices.types.trimmed" elementFormDefault="qualified"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
 	xmlns:annox="http://annox.dev.java.net" xmlns:ja="http://annox.dev.java.net/org.codehaus.jackson.annotate"
@@ -14,19 +14,6 @@
 			</jaxb:schemaBindings>
 		</appinfo>
 	</annotation>
-
-	<simpleType name="EntityStatus">
-		<annotation>
-			<documentation>List of all statuses that a PO entity can be in
-			</documentation>
-		</annotation>
-		<restriction base="string">
-			<enumeration value="PENDING" />
-			<enumeration value="ACTIVE" />
-			<enumeration value="NULLIFIED" />
-			<enumeration value="INACTIVE" />
-		</restriction>
-	</simpleType>
 
 	<simpleType name="ContactType">
 		<annotation>
@@ -109,30 +96,12 @@
 		<sequence />
 	</complexType>
 
-	<complexType name="EntityWithStatus" abstract="true">
-		<annotation>
-			<documentation>Entity with a status</documentation>
-		</annotation>
-		<complexContent>
-			<extension base="tns:Entity">
-				<sequence>
-					<element name="status" type="tns:EntityStatus">
-						<annotation>
-							<documentation>Current status of a PO entity
-							</documentation>
-						</annotation>
-					</element>
-				</sequence>
-			</extension>
-		</complexContent>
-	</complexType>
-
 	<complexType name="Person">
 		<annotation>
 			<documentation>A human being</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="tns:EntityWithStatus">
+			<extension base="tns:Entity">
 				<sequence>
 					<element name="prefix" minOccurs="0">
 						<simpleType>
@@ -187,7 +156,7 @@
 			</documentation>
 		</annotation>
 		<complexContent>
-			<extension base="tns:EntityWithStatus">
+			<extension base="tns:Entity">
 				<sequence>
 					<element name="name">
 						<simpleType>

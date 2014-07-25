@@ -12,6 +12,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.dto.PaPersonDTO;
+import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -130,8 +131,7 @@ public class PersonDTOBuilder {
             dto.setPostalAddress(AddressConverterUtil.create(addr.getLine1(),
                     addr.getLine2(), addr.getCity(), addr.getStateOrProvince(),
                     addr.getPostalcode(), addr.getCountry().value()));
-            dto.setStatusCode(CdConverter.convertStringToCd(p.getStatus()
-                    .value()));
+            dto.setStatusCode(CdConverter.convertStringToCd(EntityStatusCode.PENDING.name()));
             return PoRegistry.getPersonEntityService().getPerson(
                     PoRegistry.getPersonEntityService().createPerson(dto));
         } catch (NullifiedEntityException e) {
