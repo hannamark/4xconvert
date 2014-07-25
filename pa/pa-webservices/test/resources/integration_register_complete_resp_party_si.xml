@@ -35,8 +35,7 @@
 	<tns:responsibleParty>
 		<tns:type>Sponsor-Investigator</tns:type>
 		<tns:investigator>
-			<tns:newPerson>
-				<tns1:status>ACTIVE</tns1:status>
+			<tns:newPerson>				
 				<tns1:prefix>Mr.</tns1:prefix>
 				<tns1:firstName>Jane</tns1:firstName>
 				<tns1:lastName>Smith</tns1:lastName>

@@ -18,8 +18,7 @@
 		<tns:secondaryPurposeOtherDescription>Secondary Other Description</tns:secondaryPurposeOtherDescription>
 	</tns:interventionalDesign>
 	<tns:leadOrganization>
-		<tns:newOrganization>
-			<tns1:status>ACTIVE</tns1:status>
+		<tns:newOrganization>			
 			<tns1:name>Mayo Clinic in Arizona</tns1:name>
 			<tns1:address>
 				<tns1:line1>13400 East Shea Boulevard</tns1:line1>
@@ -37,8 +36,7 @@
 		</tns:newOrganization>
 	</tns:leadOrganization>
 	<tns:pi>
-		<tns:newPerson>
-			<tns1:status>ACTIVE</tns1:status>
+		<tns:newPerson>			
 			<tns1:prefix>Mr.</tns1:prefix>
 			<tns1:firstName>Richard</tns1:firstName>
 			<tns1:lastName>Roe</tns1:lastName>
@@ -59,8 +57,7 @@
 		</tns:newPerson>
 	</tns:pi>
 	<tns:sponsor>
-		<tns:newOrganization>
-			<tns1:status>ACTIVE</tns1:status>
+		<tns:newOrganization>			
 			<tns1:name>Duke University</tns1:name>
 			<tns1:address>
 				<tns1:line1>13400 East Shea Boulevard</tns1:line1>
@@ -81,8 +78,7 @@
 		<tns:type>Sponsor</tns:type>
 	</tns:responsibleParty>
 	<tns:summary4FundingSponsor>
-		<tns:newOrganization>
-			<tns1:status>ACTIVE</tns1:status>
+		<tns:newOrganization>			
 			<tns1:name>City of Hope</tns1:name>
 			<tns1:address>
 				<tns1:line1>13400 East Shea Boulevard</tns1:line1>
