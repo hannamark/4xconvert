@@ -347,6 +347,42 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertTrue(orgList.get(0).getAlias().size() == 2);
 
     }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganization- create a Change Request
+     */
+    @Test
+    public void testUpdateOrganization_create_ChangeRequest() {
+        // create an Organization first
+        CreateOrganizationRequest request = new CreateOrganizationRequest();
+        request.setOrganization(org);
+        CreateOrganizationResponse response = orgService
+                .createOrganization(request);
+        Organization createdOrg = response.getOrganization();
+        
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(Organization.class, createdOrg.getId());
+
+        // now change some attributes of this organization
+        String orgUpName ="My Mayo 123";
+        createdOrg.setName(orgUpName); // CR should have this name
+        createdOrg.setStatus(EntityStatus.ACTIVE);
+        // address is updated with another address object
+        createdOrg.setAddress(getJaxbAddressList().get(1));
+        // clear the existing contacts & set new one
+        createdOrg.getContact().clear();
+        createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
+        createdOrg.setCtepId("111111111");
+
+        // now update the created organization, it should create a Change Request
+        UpdateOrganizationRequest updateRequest = new UpdateOrganizationRequest();
+        updateRequest.setOrganization(createdOrg);
+        orgService.updateOrganization(updateRequest);      
+        
+        checkOrganizationCRDetails(orgUpName, createdOrg, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org");   
+    }
 
     /**
      * Testcase for OrganizationService-updateOrganization-OrgNotFoundInDB
@@ -1464,6 +1500,46 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertEquals(hcf.getName(), upHCF.getName()); // no name changed
         checkOrgRoleAliases("Mayo HCF 111", upHCF);
     }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-HCF - create a Change Request
+     */
+    @Test
+    public void testUpdateOrganizationRoleHCF_create_ChangeRequest() {
+        // create a new organization
+        Organization organization = createActiveOrganization();
+
+        // create a HCF first
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setOrganizationId(organization.getId());
+
+        CreateOrganizationRoleRequest request = new CreateOrganizationRoleRequest();
+        request.setOrganizationRole(hcf);
+        CreateOrganizationRoleResponse response = orgService
+                .createOrganizationRole(request);
+        HealthCareFacility createdHCF = (HealthCareFacility) response
+                .getOrganizationRole();
+        Assert.assertTrue(createdHCF instanceof HealthCareFacility);
+        
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(HealthCareFacility.class, createdHCF.getId());
+
+        // now update the HCF details
+        UpdateOrganizationRoleRequest upRequest = new UpdateOrganizationRoleRequest();
+        String rolUpName ="Mayo HCF 111";
+        createdHCF.setName(rolUpName); // CR should have this name
+        // update the address
+        createdHCF.getAddress().set(0, getJaxbAddressList().get(1));
+        // update the contact details
+        createdHCF.getContact().clear(); // clear existing
+        createdHCF.getContact().addAll(getJaxbUpdatedContactList());// UPDATED
+        upRequest.setOrganizationRole(createdHCF);
+        orgService.updateOrganizationRole(upRequest);     
+       
+        checkHCFChangeRequestDetails(rolUpName, createdHCF, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org");    
+    }
 
     /**
      * Testcase for OrganizationService-updateOrganizationRole-OC
@@ -1559,6 +1635,53 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 "http://www.updatedmayoclinic.org");
         Assert.assertEquals(ro.getName(), upRO.getName()); // no name changed
         checkOrgRoleAliases("Mayo RO 111", upRO);
+    }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-RO -  create a Change Request
+     */
+    @Test
+    public void testUpdateOrganizationRoleRO_create_ChangeRequest() {
+
+        // create a new organization
+        Organization organization = createActiveOrganization();
+
+        // create a RO first
+        ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setOrganizationId(organization.getId());
+
+        CreateOrganizationRoleRequest request = new CreateOrganizationRoleRequest();
+        request.setOrganizationRole(ro);
+        CreateOrganizationRoleResponse response = orgService
+                .createOrganizationRole(request);
+        ResearchOrganization createdRO = (ResearchOrganization) response
+                .getOrganizationRole();
+        Assert.assertNotNull(createdRO);
+        Assert.assertTrue(createdRO instanceof ResearchOrganization);
+        
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(ResearchOrganization.class, createdRO.getId());
+
+        // now update the RO details
+        UpdateOrganizationRoleRequest upRequest = new UpdateOrganizationRoleRequest();
+        String rolUpName ="Mayo RO 111";
+        createdRO.setName(rolUpName); // CR should have this name
+        createdRO.setType(ResearchOrganizationType.RSB);
+        createdRO.setFundingMechanism(FundingMechanism.U_10);
+        // update the address
+        createdRO.getAddress().set(0, getJaxbAddressList().get(1));
+        // update the contact details
+        createdRO.getContact().clear(); // clear existing
+        createdRO.getContact().addAll(getJaxbUpdatedContactList());// UPDATED
+        upRequest.setOrganizationRole(createdRO);
+        UpdateOrganizationRoleResponse upResponse = orgService.updateOrganizationRole(upRequest);
+        ResearchOrganization upRO = (ResearchOrganization) upResponse.getOrganizationRole();
+        
+        assertEquals(ResearchOrganizationType.RSB.value(), upRO.getType().value());
+        assertEquals("U10", upRO.getFundingMechanism().value());
+        checkROChangeRequestDetails(rolUpName, createdRO, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org");  
     }
 
     /**

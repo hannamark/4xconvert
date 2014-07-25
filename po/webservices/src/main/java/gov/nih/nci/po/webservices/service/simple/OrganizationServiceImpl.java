@@ -1,9 +1,5 @@
 package gov.nih.nci.po.webservices.service.simple;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
@@ -32,17 +28,21 @@ import gov.nih.nci.po.webservices.types.OversightCommittee;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.jms.JMSException;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.jms.JMSException;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * This is the OrganizationService implementation class.
@@ -62,8 +62,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     private static final String RAW_TYPES = "rawtypes";
     private static final String UNCHECKED = "unchecked";
 
-
-
     @Autowired
     private OrganizationBoService organizationBoService;
 
@@ -75,9 +73,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Autowired
     private OversightCommitteeBoService oversightCommitteeBoService;
-
-
-
 
     @Override
     public Organization createOrganization(Organization organization) {
@@ -126,7 +121,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public Organization updateOrganization(Organization organization) {
         // validate the request data and get the existing org
-        validateUpdateOrgReqAndGetExistingOrg(organization);
+        validateUpdateOrgRequest(organization);
 
         gov.nih.nci.po.data.bo.Organization inOrgBo = null;
         String ctepId = organization.getCtepId();
@@ -303,7 +298,8 @@ public class OrganizationServiceImpl implements OrganizationService {
     public OrganizationRole updateOrganizationRole(OrganizationRole orgRole) {
 
         // validate the request data and get the existing org role
-        gov.nih.nci.po.data.bo.Correlation existOrgRolBo = validateUpdateOrgRoleReqAndGetExistingOrg(orgRole);
+        validateUpdateOrgRoleRequest(orgRole);
+         
         gov.nih.nci.po.data.bo.Correlation inOrgRoleBo = null;
         try {
             // get the CtepId from the OrgRole
@@ -313,7 +309,7 @@ public class OrganizationServiceImpl implements OrganizationService {
             inOrgRoleBo = convertJaxbRoleToBO(orgRole);
 
             // call the method to update the OrganizationRole
-            updateOrgRole(existOrgRolBo, inOrgRoleBo, ctepId);
+            updateOrgRole(inOrgRoleBo, ctepId);
 
             // convert from BO to JaxB & return it
             return convertFromBoRoleToJaxB(inOrgRoleBo);
@@ -437,10 +433,9 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     /**
-     * This method is used to validate 'updateOrganization' request data and if
-     * valid, then get the existing organization.
+     * This method is used to validate 'updateOrganization' request data.
      */
-    private gov.nih.nci.po.data.bo.Organization validateUpdateOrgReqAndGetExistingOrg(
+    private void validateUpdateOrgRequest(
             Organization organization) {
         // null check for Organization or OrganizationId
         if ((organization == null) || (organization.getId() == null)) {
@@ -458,34 +453,12 @@ public class OrganizationServiceImpl implements OrganizationService {
                     "Couldn't update the Organization for organizationID "
                             + organization.getId() + ORG_NOT_FOUND_IN_DB_MSG);
         }
-
-        return existOrgBo;
-    }
-
-
-
-    /**
-     * This method is used to check if the Alias list contains the name(case
-     * insensitive).
-     *
-     * @return true if the name if present in the list.
-     */
-    private boolean isAliasListContainsName(
-            List<gov.nih.nci.po.data.bo.Alias> aliasList, String str) {
-        for (gov.nih.nci.po.data.bo.Alias alias : aliasList) {
-            if (alias.getValue().equalsIgnoreCase(str)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
-     * This method is used to validate 'updateOrganizationRole' request data and
-     * if valid, then get the existing organization role.
+     * This method is used to validate 'updateOrganizationRole' request data.
      */
-    @SuppressWarnings("rawtypes")
-    private gov.nih.nci.po.data.bo.Correlation validateUpdateOrgRoleReqAndGetExistingOrg(
+    private void validateUpdateOrgRoleRequest(
             OrganizationRole orgRole) {
         String msg = "The OrganizationRole couldn't be updated ";
 
@@ -508,8 +481,6 @@ public class OrganizationServiceImpl implements OrganizationService {
             throw new EntityNotFoundException(msg + "for ID " + orgRole.getId()
                     + ORG_ROLE_NOT_FOUND_IN_DB_MSG);
         }
-
-        return existOrgRolBo;
     }
 
     /**
@@ -585,8 +556,6 @@ public class OrganizationServiceImpl implements OrganizationService {
     /**
      * This method is used to update an Organizational Role(HCF, RO, OC).
      * 
-     * @param existOrgRolBo
-     *            - existing OrgRoleBO object
      * @param inOrgRoleBo
      *            - incoming OrgRoleBO object
      * @param ctepId
@@ -595,54 +564,20 @@ public class OrganizationServiceImpl implements OrganizationService {
      * @throws Exception
      *             - incase any exception occurs
      */
-    private void updateOrgRole(
-            gov.nih.nci.po.data.bo.Correlation existOrgRolBo,
-            gov.nih.nci.po.data.bo.Correlation inOrgRoleBo, String ctepId)
+    private void updateOrgRole(gov.nih.nci.po.data.bo.Correlation inOrgRoleBo, String ctepId)
             throws JMSException {
         if (inOrgRoleBo instanceof gov.nih.nci.po.data.bo.ResearchOrganization) {
-            gov.nih.nci.po.data.bo.ResearchOrganization existROBo = 
-                    (gov.nih.nci.po.data.bo.ResearchOrganization) existOrgRolBo;
             gov.nih.nci.po.data.bo.ResearchOrganization inROBo = 
                     (gov.nih.nci.po.data.bo.ResearchOrganization) inOrgRoleBo;
-            handleOrgRoleNameAndAliases(existROBo, inROBo); // handle Aliases
             researchOrganizationBoService.curate(inROBo, ctepId); // curate
         } else if (inOrgRoleBo instanceof gov.nih.nci.po.data.bo.HealthCareFacility) {
-            gov.nih.nci.po.data.bo.HealthCareFacility existHCFBo = 
-                    (gov.nih.nci.po.data.bo.HealthCareFacility) existOrgRolBo;
             gov.nih.nci.po.data.bo.HealthCareFacility inHCFBo = 
                     (gov.nih.nci.po.data.bo.HealthCareFacility) inOrgRoleBo;
-            handleOrgRoleNameAndAliases(existHCFBo, inHCFBo); // handle Aliases
             healthCareFacilityBoService.curate(inHCFBo, ctepId); // curate
         } else if (inOrgRoleBo instanceof gov.nih.nci.po.data.bo.OversightCommittee) {
             gov.nih.nci.po.data.bo.OversightCommittee ocBo = (gov.nih.nci.po.data.bo.OversightCommittee) inOrgRoleBo;
             oversightCommitteeBoService.curate(ocBo); // curate
         }
-    }
-
-    /**
-     * This method is used to handle the OrgRole(HCF & RO) name & aliases. It
-     * will check if the incoming OrgRole name is same as Existing OrgRole Name
-     * or any of the existing aliases. If not, then it will add the new name to
-     * the list of aliases.
-     */
-    private void handleOrgRoleNameAndAliases(
-            gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole existOrgRolBo,
-            gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole inOrgRoleBo) {
-
-        // set the existing aliases as it was ignored during converter
-        inOrgRoleBo.getAlias().addAll(existOrgRolBo.getAlias());
-
-        // check if existing OrgRole name or aliases has the incoming name
-        if (!(existOrgRolBo.getName().equalsIgnoreCase(inOrgRoleBo.getName()) || isAliasListContainsName(
-                existOrgRolBo.getAlias(), inOrgRoleBo.getName()))) {
-            // if not then add it new name to the list of org role aliases
-            inOrgRoleBo.getAlias().add(
-                    new gov.nih.nci.po.data.bo.Alias(inOrgRoleBo.getName()));
-        }
-
-        // set name to the existing name as it might have been overwritten
-        // during JAXB-BO converter (set it at the 'end')
-        inOrgRoleBo.setName(existOrgRolBo.getName());
     }
 
     /**

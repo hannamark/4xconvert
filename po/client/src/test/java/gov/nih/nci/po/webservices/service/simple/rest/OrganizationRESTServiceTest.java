@@ -694,6 +694,86 @@ public class OrganizationRESTServiceTest extends
                 .getAlias().size() == 2);
 
     }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganization- create a Change Request
+     */
+    @Test
+    public void testUpdateOrganization_create_ChangeRequest() throws Exception {
+
+        // create a organization first
+        Organization createdOrg = createActiveOrganization();
+        
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(Organization.class, createdOrg.getId());
+
+        // now change some attributes of the newly created organization
+        String orgUpName ="My Mayo 123";
+        createdOrg.setName(orgUpName);
+        createdOrg.setStatus(EntityStatus.ACTIVE);
+        // address is updated with another address object
+        createdOrg.setAddress(getJaxbAddressList().get(1));
+        // clear the existing contacts & set new one
+        createdOrg.getContact().clear();
+        createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
+        createdOrg.setCtepId("22222222222");        
+
+        // now update the created organization, it should create a Change Request
+        String url = osUrl + "/organization/" + createdOrg.getId();
+        StringWriter writer = marshalOrganization(createdOrg);
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_XML);
+        putReq.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgEntity = new StringEntity(writer.getBuffer().toString());
+        putReq.setEntity(orgEntity);
+        HttpResponse response = httpClient.execute(putReq);
+        EntityUtils.consume(response.getEntity());
+        checkOrganizationCRDetails(orgUpName, createdOrg, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org");
+    }
+
+    /**
+     * Testcase for OrganizationService-updateOrganization -create a Change Request- JSON Format
+     */
+    @Test
+    public void testUpdateOrganization_create_ChangeRequest_JSON() throws Exception {
+
+        // create a organization first
+        Organization createdOrg = createActiveOrganization();
+        
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(Organization.class, createdOrg.getId());
+
+        // now change some attributes of the newly created organization
+        String orgUpName ="My Mayo 123";
+        createdOrg.setName(orgUpName);
+        createdOrg.setStatus(EntityStatus.ACTIVE);
+        // address is updated with another address object
+        createdOrg.setAddress(getJaxbAddressList().get(1));
+        // clear the existing contacts & set new one
+        createdOrg.getContact().clear();
+        createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
+        createdOrg.setCtepId("22222222222"); 
+
+        // now update the created organization (HttpPut)
+        String url = osUrl + "/organization/" + createdOrg.getId();
+
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_JSON);
+        putReq.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgEntity = new StringEntity(
+                mapper.writeValueAsString(createdOrg));
+        putReq.setEntity(orgEntity);
+        HttpResponse response = httpClient.execute(putReq);
+        EntityUtils.consume(response.getEntity());
+
+        checkOrganizationCRDetails(orgUpName, createdOrg, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org");
+    }
 
     /**
      * Testcase for OrganizationService-updateOrganization-IdNotPresentInRequest
@@ -2001,11 +2081,10 @@ public class OrganizationRESTServiceTest extends
      * Testcase for OrganizationService-searchOrganizations- by AddressLine1 -
      * having special characters
      */
-    // @Test
+     @Test
     public void testSearchOrganizationsByAddressLine1HavingSpecialChars()
             throws Exception {
-        // TODO:: enable this testcase after fixing
-        // https://tracker.nci.nih.gov/browse/PO-7151
+       
         org.getAddress().setLine1(SPECIAL_CHARS_STR);
         createActiveOrganization();
         createActiveOrganization();
@@ -3198,6 +3277,81 @@ public class OrganizationRESTServiceTest extends
     }
 
     /**
+     * Testcase for OrganizationService-updateOrganizationRole-create a Change Request-HCF
+     */
+    @Test
+    public void testUpdateOrganizationRoleHCF_create_ChangeRequest() throws Exception {
+        // create HCF first
+        HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
+
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(HealthCareFacility.class, hcf.getId());
+        
+        // now update the HCF details
+        String rolUpName ="Mayo HCF 111";
+        hcf.setName(rolUpName); // CR should have this name
+        // update the status
+        hcf.setStatus(EntityStatus.INACTIVE);
+        // update the address
+        hcf.getAddress().set(0, getJaxbAddressList().get(1));
+        // update the contact details
+        hcf.getContact().clear(); // clear existing
+        hcf.getContact().addAll(getJaxbUpdatedContactList());// UPDATED
+
+        String url = osUrl + "/role/HealthCareFacility/" + hcf.getId();
+        StringWriter writer = marshalOrganizationRole(hcf);
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_XML);
+        putReq.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgRolEntity = new StringEntity(writer.getBuffer().toString());
+        putReq.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(putReq);        
+        EntityUtils.consume(response.getEntity());
+        
+        checkHCFChangeRequestDetails(rolUpName, hcf, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org"); 
+    }
+
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-HCF - create a Change Request- JSON Format
+     */
+    @Test
+    public void testUpdateOrganizationRoleHCF_create_ChangeRequest_JSON() throws Exception {
+        // create HCF first
+        HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
+        
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(HealthCareFacility.class, hcf.getId());
+
+        // now update the HCF details
+        String rolUpName ="Mayo HCF 111";
+        hcf.setName(rolUpName); //  CR should have this name
+        // update the status
+        hcf.setStatus(EntityStatus.INACTIVE);
+        // update the address
+        hcf.getAddress().set(0, getJaxbAddressList().get(1));
+        // update the contact details
+        hcf.getContact().clear(); // clear existing
+        hcf.getContact().addAll(getJaxbUpdatedContactList());// UPDATED
+
+        String url = osUrl + "/role/HealthCareFacility/" + hcf.getId();
+        HttpPut putRequest = new HttpPut(url);
+        putRequest.addHeader("content-type", APPLICATION_JSON);
+        putRequest.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgRolEntity = new StringEntity(mapper.writeValueAsString(hcf));
+        putRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(putRequest);
+        EntityUtils.consume(response.getEntity());        
+        
+        checkHCFChangeRequestDetails(rolUpName, hcf, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org"); 
+    }
+    
+    /**
      * Testcase for OrganizationService-updateOrganizationRole-Aliases-RO
      */
     @Test
@@ -3321,6 +3475,99 @@ public class OrganizationRESTServiceTest extends
         Assert.assertEquals("Mayo RO", retRO.getName()); // no name changed
         checkOrgRoleAliases("Mayo RO 111", ro); // check for alias
         checkOrgRoleAliases("Mayo RO 222", ro); // check for alias
+    }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-create a Change Request-RO
+     */
+    @Test
+    public void testUpdateOrganizationRoleRO_create_ChangeRequest() throws Exception {
+        // create OC first
+        ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
+        System.out.println("created ro id -->"+ ro.getId());
+        
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(ResearchOrganization.class, ro.getId());
+
+        // now update the RO details
+        String rolUpName ="Mayo RO 111";
+        ro.setName(rolUpName); // CR should have this name
+        ro.setStatus(EntityStatus.INACTIVE); // update the status
+        // update the address
+        ro.getAddress().set(0, getJaxbAddressList().get(1));
+        // update the contact details
+        ro.getContact().clear(); // clear existing
+        ro.getContact().addAll(getJaxbUpdatedContactList());// UPDATED
+        ro.setType(ResearchOrganizationType.RSB);
+        ro.setFundingMechanism(FundingMechanism.U_10);
+
+        String url = osUrl + "/role/ResearchOrganization/" + ro.getId();
+        StringWriter writer = marshalOrganizationRole(ro);
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_XML);
+        putReq.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgRolEntity = new StringEntity(writer.getBuffer().toString());
+        putReq.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(putReq);
+
+        HttpEntity resEntity = response.getEntity();
+        ResearchOrganization retRO = (ResearchOrganization) unmarshalOrganizationRole(resEntity);
+
+        assertEquals(200, getReponseCode(response));
+        assertEquals(APPLICATION_XML, getResponseContentType(response));
+
+        assertEquals(ResearchOrganizationType.RSB.value(), retRO.getType().value());
+        assertEquals("U10", retRO.getFundingMechanism().value());        
+        checkROChangeRequestDetails(rolUpName, ro, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org"); 
+    }
+
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-RO -create a Change Request- JSON Format
+     */
+    @Test
+    public void testUpdateOrganizationRoleRO_create_ChangeRequest_JSON() throws Exception {
+        // create OC first
+        ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
+        
+        // set Overridden by CTRPQATester1
+        setUpOrganizationServiceData();
+        updateOverriddenBy(ResearchOrganization.class, ro.getId());
+
+        // now update the OC details
+        String rolUpName ="Mayo RO 111";
+        ro.setName(rolUpName); // CR should have this name
+        // update the status
+        ro.setStatus(EntityStatus.INACTIVE);
+        // update the address
+        ro.getAddress().set(0, getJaxbAddressList().get(1));
+        // update the contact details
+        ro.getContact().clear(); // clear existing
+        ro.getContact().addAll(getJaxbUpdatedContactList());// UPDATED
+        ro.setType(ResearchOrganizationType.RSB);
+        ro.setFundingMechanism(FundingMechanism.U_10);
+
+        String url = osUrl + "/role/ResearchOrganization/" + ro.getId();
+        HttpPut putRequest = new HttpPut(url);
+        putRequest.addHeader("content-type", APPLICATION_JSON);
+        putRequest.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgRolEntity = new StringEntity(
+                mapper.writeValueAsString(ro));
+        putRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(putRequest);
+
+        String orgRolJSONStr = EntityUtils.toString(response.getEntity(),"utf-8");
+        ResearchOrganization retRO = (ResearchOrganization) mapper.readValue(
+                orgRolJSONStr, OrganizationRole.class);
+        assertEquals(200, getReponseCode(response));
+        assertEquals(APPLICATION_JSON, getResponseContentType(response));
+        assertEquals(ResearchOrganizationType.RSB.value(), retRO.getType().value());
+        assertEquals("U10", retRO.getFundingMechanism().value());
+        checkROChangeRequestDetails(rolUpName, ro, "my.updated.email@mayoclinic.org", 
+                "314-213-1245", "314-213-1278", "314-213-1123", "http://www.updatedmayoclinic.org");
     }
 
     /**

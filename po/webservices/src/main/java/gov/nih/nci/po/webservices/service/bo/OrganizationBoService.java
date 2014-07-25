@@ -97,6 +97,7 @@ public class OrganizationBoService implements OrganizationServiceLocal {
     public void curate(Organization curatedOrg) throws JMSException {
 
         Organization current = PoRegistry.getOrganizationService().getById(curatedOrg.getId());
+        String curOrgName = curatedOrg.getName();
 
         if (current != null) {
             curatedOrg.setCreatedBy(current.getCreatedBy());
@@ -112,6 +113,7 @@ public class OrganizationBoService implements OrganizationServiceLocal {
         }
 
         OrganizationCR organizationCR = createOrganizationCR(current, curatedOrg);
+        organizationCR.setName(curOrgName); // as 'handleOrgNameAndAliases()' will set older name
 
         if (current != null && organizationCR.isNoChange()) {
             return;
@@ -133,6 +135,7 @@ public class OrganizationBoService implements OrganizationServiceLocal {
     public void curate(Organization curatedOrg, String ctepId)
             throws EntityValidationException, JMSException {
         Organization current = PoRegistry.getOrganizationService().getById(curatedOrg.getId());
+        String curOrgName = curatedOrg.getName();
 
         if (current != null) {
             curatedOrg.setCreatedBy(current.getCreatedBy());
@@ -148,6 +151,7 @@ public class OrganizationBoService implements OrganizationServiceLocal {
         }
 
         OrganizationCR organizationCR = createOrganizationCR(current, curatedOrg);
+        organizationCR.setName(curOrgName); // as 'handleOrgNameAndAliases()' will set older name
 
         if (current != null && organizationCR.isNoChange() && !isCtepIdChanged(current, ctepId)) {
             return;

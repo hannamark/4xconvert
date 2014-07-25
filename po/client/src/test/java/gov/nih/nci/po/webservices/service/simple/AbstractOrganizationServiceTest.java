@@ -1,7 +1,9 @@
 package gov.nih.nci.po.webservices.service.simple;
 
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.po.webservices.types.HealthCareFacility;
 import gov.nih.nci.po.webservices.types.Organization;
+import gov.nih.nci.po.webservices.types.ResearchOrganization;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -74,8 +76,7 @@ public abstract class AbstractOrganizationServiceTest extends AbstractBaseTest {
                             roId, aliasId1);
 
         } catch (SQLException e) {
-            Assert.fail("Exception occured inside createOrgAliasesData. The exception is: "
-                    + e);
+            Assert.fail("Exception occured inside createOrgAliasesData for roId + "+roId + ".The exception is: "+ e);
         }
     }
 
@@ -120,6 +121,30 @@ public abstract class AbstractOrganizationServiceTest extends AbstractBaseTest {
             DbUtils.closeQuietly(conn);
         }
     }
+    
+    /**
+     * This method is used to Override the Entity.
+     * @param clazz Class
+     * @param id EntityId
+     */
+    protected void updateOverriddenBy(Class clazz, long id){
+        try {
+            QueryRunner queryRunner = new QueryRunner();
+            long johnDoeUserId = getCTRPQATester1UserId();            
+          
+            if (Organization.class.isAssignableFrom(clazz)) {
+                queryRunner.update(conn, "update organization set overridden_by_id = ?", johnDoeUserId);                
+            } else if (HealthCareFacility.class.isAssignableFrom(clazz)) {
+                queryRunner.update(conn, "update healthcarefacility set overridden_by_id = ?", johnDoeUserId);                   
+            } else if (ResearchOrganization.class.isAssignableFrom(clazz)) {
+                queryRunner.update(conn, "update researchorganization set overridden_by_id = ?", johnDoeUserId);
+            }         
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside updateOverriddenBy for id + "+id + ".The exception is: "+ e);
+        }finally{
+            DbUtils.closeQuietly(conn);
+        }        
+    }
 
     private long getNextSequenceId() {
         long nextDbId = 0;
@@ -129,10 +154,22 @@ public abstract class AbstractOrganizationServiceTest extends AbstractBaseTest {
                     "select nextval('hibernate_sequence')", h);
             nextDbId = ((Long) result[0]).longValue();
         } catch (SQLException e) {
-            Assert.fail("Exception occured inside getNextSequenceId. The exception is: "
-                    + e);
+            Assert.fail("Exception occured inside getNextSequenceId. The exception is: "+ e);
         }
         return nextDbId;
+    }
+    
+    
+    private long getCTRPQATester1UserId() {
+        long userId = 0;
+        try {
+            QueryRunner queryRunner = new QueryRunner();
+            Object[] result = queryRunner.query(conn,"select user_id from csm_user where login_name like '%CTRPQATester1%'", h);
+            userId = ((Long) result[0]).longValue();
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside getJohnDoeUserId. The exception is: "+ e);
+        }
+        return userId;
     }
 
 }

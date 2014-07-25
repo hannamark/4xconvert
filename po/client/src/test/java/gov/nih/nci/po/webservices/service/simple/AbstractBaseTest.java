@@ -29,6 +29,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Assert;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -718,6 +720,68 @@ public abstract class AbstractBaseTest {
                     + e);
         }
     }
+    
+    protected void checkOrganizationCRDetails(String orgUpName,
+            gov.nih.nci.po.webservices.types.Organization reqOrg,
+            String email, String phone, String fax, String tty, String url) {
+        try {
+            QueryRunner queryRunner = new QueryRunner();
+            
+            // get the OrgCR Id from the database for the given orgId
+            Object[] result = queryRunner.query(conn,"select id from organizationcr where target =?", h, reqOrg.getId());
+            long crId = ((Long) result[0]).longValue();
+            
+            // get the organizationCR/address from database & use in Assert check
+            queryRunner = new QueryRunner();                        
+            result = queryRunner.query(conn,
+                            "SELECT organizationcr.name, organizationcr.status, address.streetaddressline, address.deliveryaddressline, "
+                                    + "address.cityormunicipality, address.postalcode, address.stateorprovince, "
+                                    + "country.alpha3 FROM organizationcr, address, country "
+                                    + "WHERE organizationcr.postal_address_id = address.id AND address.country_id = country.id AND organizationcr.id=?",
+                            h, crId);
+            
+            assertEquals(orgUpName, result[0]);            
+            assertEquals(reqOrg.getStatus().value(), result[1]);
+            assertEquals(reqOrg.getAddress().getLine1(), result[2]);
+            assertEquals(reqOrg.getAddress().getLine2(), result[3]);
+            assertEquals(reqOrg.getAddress().getCity(), result[4]);
+            assertEquals(reqOrg.getAddress().getPostalcode(), result[5]);
+            assertEquals(reqOrg.getAddress().getStateOrProvince(),result[6]);
+            assertEquals(reqOrg.getAddress().getCountry().value(), result[7]);            
+            
+            // check for contact details(email)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from email where id=(select email_id from org_cr_email where org_cr_id=?)", h, crId);
+            assertEquals(email, result[0]);
+
+            // check for contact details(phone)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from phonenumber where id=(select phone_id from org_cr_phone where org_cr_id=?)",h, crId);
+            assertEquals(phone, result[0]);
+
+            // check for contact details(fax)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from phonenumber where id=(select fax_id from org_cr_fax where org_cr_id=?)",h, crId);
+            assertEquals(fax, result[0]);
+
+            // check for contact details(tty)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from phonenumber where id=(select tty_id from org_cr_tty where org_cr_id=?)",h, crId);
+            assertEquals(tty, result[0]);
+
+            // check for contact details(url)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from url where id=(select url_id from org_cr_url where org_cr_id=?)",h, crId);
+            assertEquals(url, result[0]);
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside checkOrganizationCRDetails. The exception is: "+ e);
+        }
+    }
 
     protected void checkOrgAliases(String orgName, OrganizationSearchResult osr) {
         try {
@@ -1132,6 +1196,145 @@ public abstract class AbstractBaseTest {
                     + e);
         }
     }
+    
+    protected void checkHCFChangeRequestDetails(String rolUpName, OrganizationRole reqRole,
+                        String email, String phone, String fax,
+                        String tty, String url) {
+      
+        try {
+            QueryRunner queryRunner = new QueryRunner();
+            
+            // get the HCF-CR Id from the database for the given hcfId
+            Object[] result = queryRunner.query(conn,"select id from healthcarefacilitycr where target =?", h, reqRole.getId());
+            long crId = ((Long) result[0]).longValue();
+            
+            // get the hcfCR from database & use in Assert check
+            queryRunner = new QueryRunner();                        
+            result = queryRunner.query(conn, "SELECT name, status from healthcarefacilitycr where id=?", h, crId);            
+            assertEquals(rolUpName, result[0]);   // check the name    
+            if ("INACTIVE".equals(reqRole.getStatus().value())) {
+                assertEquals("SUSPENDED", result[1]); // check status    
+            }            
+            
+            // get the hcfCR address from database & use in Assert check
+            queryRunner = new QueryRunner();                        
+            result = queryRunner.query(conn,
+                            "SELECT address.streetaddressline, address.deliveryaddressline, address.cityormunicipality, address.postalcode, "
+                            + "address.stateorprovince, country.alpha3 FROM hcfcr_address, address, country "
+                             + "WHERE hcfcr_address.address_id = address.id AND address.country_id = country.id AND hcfcr_address.hcfcr_id=?",
+                             h, crId);           
+            assertEquals(reqRole.getAddress().get(0).getLine1(), result[0]);
+            assertEquals(reqRole.getAddress().get(0).getLine2(), result[1]);
+            assertEquals(reqRole.getAddress().get(0).getCity(), result[2]);
+            assertEquals(reqRole.getAddress().get(0).getPostalcode(), result[3]);
+            assertEquals(reqRole.getAddress().get(0).getStateOrProvince(),result[4]);
+            assertEquals(reqRole.getAddress().get(0).getCountry().value(), result[5]);
+            
+            // check for contact details(email)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from email where id=(select email_id from hcfcr_email where hcfcr_id=?)", h, crId);
+            assertEquals(email, result[0]);
+
+            // check for contact details(phone)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from phonenumber where id=(select phone_id from hcfcr_phone where hcfcr_id=?)",h, crId);
+            assertEquals(phone, result[0]);
+
+            // check for contact details(fax)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from phonenumber where id=(select fax_id from hcfcr_fax where hcfcr_id=?)",h, crId);
+            assertEquals(fax, result[0]);
+
+            // check for contact details(tty)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from phonenumber where id=(select tty_id from hcfcr_tty where hcfcr_id=?)",h, crId);
+            assertEquals(tty, result[0]);
+
+            // check for contact details(url)
+            queryRunner = new QueryRunner();
+            result = queryRunner.query(conn,
+                            "select value from url where id=(select url_id from hcfcr_url where hcfcr_id=?)",h, crId);
+            assertEquals(url, result[0]);
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside checkHCFChangeRequestDetails for id: "+ reqRole.getId()+". The exception is: "+ e);
+        }
+    }
+    
+
+    protected void checkROChangeRequestDetails(String rolUpName, OrganizationRole reqRole,
+            String email, String phone, String fax,
+            String tty, String url) {
+
+        try {
+        QueryRunner queryRunner = new QueryRunner();
+        
+        System.out.println("reqRole.getId()--->"+reqRole.getId());
+        
+        // get the RO-CR Id from the database for the given hcfId
+        Object[] result = queryRunner.query(conn,"select id from researchorganizationcr where target =?", h, reqRole.getId());
+        long crId = ((Long) result[0]).longValue();
+        
+        // get the roCR from database & use in Assert check
+        queryRunner = new QueryRunner();                        
+        result = queryRunner.query(conn, "SELECT name, status from researchorganizationcr where id=?", h, crId);            
+        assertEquals(rolUpName, result[0]);   // check the name      
+        if ("INACTIVE".equals(reqRole.getStatus().value())) {
+            assertEquals("SUSPENDED", result[1]); // check status    
+        }       
+        
+        // get the roCR address from database & use in Assert check
+        queryRunner = new QueryRunner();                        
+        result = queryRunner.query(conn,
+                        "SELECT address.streetaddressline, address.deliveryaddressline, address.cityormunicipality, address.postalcode, "
+                        + "address.stateorprovince, country.alpha3 FROM rocr_address, address, country "
+                         + "WHERE rocr_address.address_id = address.id AND address.country_id = country.id AND rocr_address.rocr_id=?",
+                         h, crId);           
+        assertEquals(reqRole.getAddress().get(0).getLine1(), result[0]);
+        assertEquals(reqRole.getAddress().get(0).getLine2(), result[1]);
+        assertEquals(reqRole.getAddress().get(0).getCity(), result[2]);
+        assertEquals(reqRole.getAddress().get(0).getPostalcode(), result[3]);
+        assertEquals(reqRole.getAddress().get(0).getStateOrProvince(),result[4]);
+        assertEquals(reqRole.getAddress().get(0).getCountry().value(), result[5]);
+        
+        // check for contact details(email)
+        queryRunner = new QueryRunner();
+        result = queryRunner.query(conn,
+                        "select value from email where id=(select email_id from rocr_email where rocr_id=?)", h, crId);
+        assertEquals(email, result[0]);
+        
+        // check for contact details(phone)
+        queryRunner = new QueryRunner();
+        result = queryRunner.query(conn,
+                        "select value from phonenumber where id=(select phone_id from rocr_phone where rocr_id=?)",h, crId);
+        assertEquals(phone, result[0]);
+        
+        // check for contact details(fax)
+        queryRunner = new QueryRunner();
+        result = queryRunner.query(conn,
+                        "select value from phonenumber where id=(select fax_id from rocr_fax where rocr_id=?)",h, crId);
+        assertEquals(fax, result[0]);
+        
+        // check for contact details(tty)
+        queryRunner = new QueryRunner();
+        result = queryRunner.query(conn,
+                        "select value from phonenumber where id=(select tty_id from rocr_tty where rocr_id=?)",h, crId);
+        assertEquals(tty, result[0]);
+        
+        // check for contact details(url)
+        queryRunner = new QueryRunner();
+        result = queryRunner.query(conn,
+                        "select value from url where id=(select url_id from rocr_url where rocr_id=?)",h, crId);
+        assertEquals(url, result[0]);
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside checkROChangeRequestDetails for id: "+ reqRole.getId()+". The exception is: "+ e);
+        }
+    }    
+    
+    
 
     protected int getReponseCode(HttpResponse response) {
         return response.getStatusLine().getStatusCode();

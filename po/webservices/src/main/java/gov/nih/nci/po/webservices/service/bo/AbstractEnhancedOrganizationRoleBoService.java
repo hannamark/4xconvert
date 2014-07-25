@@ -17,6 +17,7 @@ import gov.nih.nci.po.webservices.service.bo.filter.AliasFilter;
 import javax.jms.JMSException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @param <TYPE>    see {@link AbstractRoleBoService}
@@ -29,6 +30,7 @@ public abstract class AbstractEnhancedOrganizationRoleBoService
         <TYPE extends Correlation, CR_TYPE extends ChangeRequest<TYPE>>
         extends AbstractRoleBoService<TYPE, CR_TYPE> {
 
+    private static final Logger LOG = Logger.getLogger(AbstractEnhancedOrganizationRoleBoService.class);
     /**
      * Default constructor that initializes some filters.
      */
@@ -46,14 +48,17 @@ public abstract class AbstractEnhancedOrganizationRoleBoService
      */
     @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.AvoidThrowingRawExceptionTypes" })
     public void curate(TYPE updatedInstance, String ctepId) throws JMSException {
+        
+        String curOrgRolName = ((AbstractEnhancedOrganizationRole) updatedInstance).getName();
 
         TYPE currentInstance = getCorrelationService().getById(
-                updatedInstance.getId());
+                updatedInstance.getId());        
 
         applyUpdateFilters(currentInstance, updatedInstance);
 
         CR_TYPE cr = createCr(currentInstance, updatedInstance);
         applyCrCreateFilters(updatedInstance, cr);
+        ((AbstractEnhancedOrganizationRole) cr).setName(curOrgRolName); // as filters will set older name
 
         if (currentInstance != null && !hasChanges(cr)
                 && !isCtepIdChanged(currentInstance, ctepId)) {
@@ -72,13 +77,14 @@ public abstract class AbstractEnhancedOrganizationRoleBoService
             try {
                 if (updatedInstance instanceof gov.nih.nci.po.data.bo.ResearchOrganization) {
                     PoRegistry.getInstance().getServiceLocator().getResearchOrganizationCRService()
-                            .create((ResearchOrganizationCR) updatedInstance, ctepId);
+                            .create((ResearchOrganizationCR) cr, ctepId);
                 } else if (updatedInstance instanceof gov.nih.nci.po.data.bo.HealthCareFacility) {                    
                     PoRegistry.getInstance().getServiceLocator().getHealthCareFacilityCRService()
-                            .create((HealthCareFacilityCR) updatedInstance, ctepId);
+                            .create((HealthCareFacilityCR) cr, ctepId);
                 }
 
             } catch (EntityValidationException e) {
+                LOG.error("EntityValidationException while creating a Change Request for:" + cr.getTarget(), e);
                 throw new RuntimeException(e);
             }
         }
