@@ -10,7 +10,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -21,15 +20,16 @@ import org.apache.commons.lang.StringUtils;
 public class StudySiteDTOBuilder {
 
     /**
-     * @param reg
-     *            CompleteTrialRegistration
+     * @param clinicalTrialsDotGovTrialID
+     *            clinicalTrialsDotGovTrialID
      * @return StudySiteDTO
-     * @throws PAException  PAException
+     * @throws PAException
+     *             PAException
      */
     public StudySiteDTO buildClinicalTrialsGovIdAssigner(
-            CompleteTrialRegistration reg) throws PAException {
+            String clinicalTrialsDotGovTrialID) throws PAException {
         StudySiteDTO isoDto = new StudySiteDTO();
-        if (StringUtils.isNotEmpty(reg.getClinicalTrialsDotGovTrialID())) {
+        if (StringUtils.isNotEmpty(clinicalTrialsDotGovTrialID)) {
             String poOrgId = PaRegistry.getOrganizationCorrelationService()
                     .getPOOrgIdentifierByIdentifierType(
                             PAConstants.NCT_IDENTIFIER_TYPE);
@@ -38,8 +38,8 @@ public class StudySiteDTOBuilder {
                             IiConverter.convertToPoOrganizationIi(String
                                     .valueOf(poOrgId)));
             isoDto.setResearchOrganizationIi(nctROIi);
-            isoDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt(reg
-                    .getClinicalTrialsDotGovTrialID()));
+            isoDto.setLocalStudyProtocolIdentifier(StConverter
+                    .convertToSt(clinicalTrialsDotGovTrialID));
         }
         return isoDto;
     }

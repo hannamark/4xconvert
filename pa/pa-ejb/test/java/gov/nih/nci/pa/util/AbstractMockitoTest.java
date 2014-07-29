@@ -190,6 +190,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -282,6 +283,7 @@ public class AbstractMockitoTest {
     protected ProtocolQueryServiceLocal protocolQueryServiceLocal;
     protected CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorServiceLocal;
     protected FamilyServiceRemote familySvc;
+    protected AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyServiceRemote;
 
     protected Ii spId;
     protected InterventionalStudyProtocolDTO spDto;
@@ -364,6 +366,7 @@ public class AbstractMockitoTest {
        studyOverallStatusDto = new StudyOverallStatusDTO();
        studyOverallStatusDto.setStatusCode(CdConverter.convertStringToCd(StudyStatusCode.WITHDRAWN.getCode()));
        studyOverallStatusDto.setStatusDate(TsConverter.convertToTs(new Timestamp(0)));
+       studyOverallStatusDto.setStudyProtocolIdentifier(spId);
 
        studyRecruitmentStatusDto = new StudyRecruitmentStatusDTO();
        studyRecruitmentStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.COMPLETED));
@@ -831,9 +834,17 @@ public class AbstractMockitoTest {
         setupMailMgrSvc();
         setupProtocolQueryServiceMock();
         setupCtGovXmlMock();
+        setupAccrualDiseaseMock();
 
         setupPaRegistry();
 
+    }
+
+    private void setupAccrualDiseaseMock() {
+        accrualDiseaseTerminologyServiceRemote = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(
+                accrualDiseaseTerminologyServiceRemote
+                        .canChangeCodeSystem(any(Long.class))).thenReturn(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -918,6 +929,7 @@ public class AbstractMockitoTest {
         when(paRegSvcLoc.getStratumGroupService()).thenReturn(stratumGroupSvc);
         when(paRegSvcLoc.getMailManagerService()).thenReturn(mailManagerSvc);        
         when(paRegSvcLoc.getRegulatoryInformationService()).thenReturn(regulInfoSvc);
+        when(paRegSvcLoc.getAccrualDiseaseTerminologyService()).thenReturn(accrualDiseaseTerminologyServiceRemote);
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
     }
 

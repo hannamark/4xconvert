@@ -807,7 +807,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     public StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO studyProtocolDTO = null;
         if (ISOUtil.isIiNull(studyProtocolIi)) {
-            throw new PAException("Ii should not be null");
+            throw new PAException(
+                    "When searching for a study protocol, please provide a valid non-empty study identifier.");
         }
 
         if (isNCIIdentifier(studyProtocolIi)) {

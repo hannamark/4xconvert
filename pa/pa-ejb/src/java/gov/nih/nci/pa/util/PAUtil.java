@@ -1506,4 +1506,20 @@ public class PAUtil {
         return telecomAddress;
     }
     
+    /**
+     * @param item Set<Ii>
+     * @param extension extension
+     * @param root root
+     * @return boolean
+     */
+    public static boolean containsIi(Set<Ii> item, String extension, String root) {
+        for (Ii ii : item) {
+            if (StringUtils.equals(ii.getExtension(), extension)
+                    && StringUtils.equals(ii.getRoot(), root)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
 }

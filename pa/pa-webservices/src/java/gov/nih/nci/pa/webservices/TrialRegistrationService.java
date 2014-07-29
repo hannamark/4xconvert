@@ -24,6 +24,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.webservices.converters.DocumentDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.OrganizationDTOBuilder;
@@ -36,6 +37,7 @@ import gov.nih.nci.pa.webservices.converters.StudyRegulatoryAuthorityDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.StudyResourcingDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.StudySiteDTOBuilder;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
+import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -100,7 +102,7 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
             List<StudyIndldeDTO> studyIndldeDTOs = new StudyIndldeDTOBuilder()
                     .build(reg);
             List<StudyResourcingDTO> studyResourcingDTOs = new StudyResourcingDTOBuilder()
-                    .build(reg);
+                    .build(reg.getGrant());
             List<DocumentDTO> documentDTOs = new DocumentDTOBuilder()
                     .build(reg);
             OrganizationDTO leadOrgDTO = new OrganizationDTOBuilder().build(reg
@@ -118,7 +120,8 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
             studyIdentifierDTOs.add(new StudySiteDTOBuilder()
-                    .buildClinicalTrialsGovIdAssigner(reg));
+                    .buildClinicalTrialsGovIdAssigner(reg
+                            .getClinicalTrialsDotGovTrialID()));
 
             List<OrganizationDTO> summary4orgDTO = new OrganizationDTOBuilder()
                     .build(reg.getSummary4FundingSponsor());
@@ -149,20 +152,92 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
                             BlConverter.convertToBl(Boolean.FALSE), owners);
             long paTrialID = IiConverter.convertToLong(studyProtocolIi);
             return buildTrialRegConfirmationResponse(paTrialID);
-        } catch (PoEntityNotFoundException e) {
+        } catch (Exception e) {
+            return handleException(e);
+        }
+
+    }
+
+    /**
+     * Updates a complete trial.
+     * 
+     * @param reg
+     *            CompleteTrialRegistration
+     * @return Response
+     */
+    @POST
+    @Path("/update/complete")
+    @Consumes({ APPLICATION_XML })
+    @Produces({ APPLICATION_XML })
+    @NoCache
+    public Response updateCompleteTrial(@Validate CompleteTrialUpdate reg) {
+        try {
+            StudyProtocolDTO spDTO = findTrial(reg);
+            Long paTrialID = IiConverter.convertToLong(spDTO.getIdentifier());
+
+            List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+            if (StringUtils.isBlank(paServiceUtils.getStudyIdentifier(
+                    spDTO.getIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE))) {
+                studyIdentifierDTOs.add(new StudySiteDTOBuilder()
+                        .buildClinicalTrialsGovIdAssigner(reg
+                                .getClinicalTrialsDotGovTrialID()));
+            }
+            new StudyProtocolDTOBuilder().build(spDTO, reg);
+            List<StudyResourcingDTO> studyResourcingDTOs = new StudyResourcingDTOBuilder()
+                    .build(reg.getGrant());
+            StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTOBuilder()
+                    .build(spDTO, reg);
+            List<DocumentDTO> documentDTOs = new DocumentDTOBuilder().build(
+                    spDTO, reg);
+            PaRegistry.getTrialRegistrationService().update(spDTO,
+                    overallStatusDTO, studyIdentifierDTOs, null,
+                    studyResourcingDTOs, documentDTOs, null, null, null, null,
+                    null, null, null, null, null,
+                    BlConverter.convertToBl(Boolean.FALSE));
+            return buildTrialRegConfirmationResponse(paTrialID);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+
+    }
+
+    private StudyProtocolDTO findTrial(CompleteTrialUpdate reg)
+            throws PAException {
+        return findTrialByAnyIdentifier(reg.getPaTrialID(),
+                reg.getNciTrialID(), reg.getCtepTrialID());
+    }
+
+    // Ugly method signature, I know. Sorry.
+    private StudyProtocolDTO findTrialByAnyIdentifier(Long paTrialID,
+            String nciTrialID, String ctepTrialID) throws PAException {
+        Ii ii = new Ii();
+        if (paTrialID != null) {
+            ii = IiConverter.convertToStudyProtocolIi(paTrialID);
+        } else if (StringUtils.isNotBlank(nciTrialID)) {
+            ii.setExtension(nciTrialID);
+            ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        } else if (StringUtils.isNotBlank(ctepTrialID)) {
+            ii.setExtension(ctepTrialID);
+            ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+        }
+        return PaRegistry.getStudyProtocolService().getStudyProtocol(ii);
+    }
+
+    private Response handleException(Exception e) {
+        if (e instanceof PoEntityNotFoundException) {
             return logErrorAndPrepareResponse(Status.NOT_FOUND, e);
-        } catch (TrialDataException | PoEntityCannotBeCreatedException
-                | PAValidationException e) {
+        } else if (e instanceof TrialDataException
+                || e instanceof PoEntityCannotBeCreatedException
+                || e instanceof PAValidationException) {
             return logErrorAndPrepareResponse(Status.BAD_REQUEST, e);
-        } catch (PAException e) {
+        } else if (e instanceof PAException) {
             return StringUtils.startsWithIgnoreCase(e.getMessage(),
                     "Validation Exception") ? logErrorAndPrepareResponse(
                     Status.BAD_REQUEST, e) : logErrorAndPrepareResponse(
                     Status.INTERNAL_SERVER_ERROR, e);
-        } catch (Exception e) {
+        } else {
             return logErrorAndPrepareResponse(Status.INTERNAL_SERVER_ERROR, e);
         }
-
     }
 
     private Response logErrorAndPrepareResponse(Status status, Exception e) {

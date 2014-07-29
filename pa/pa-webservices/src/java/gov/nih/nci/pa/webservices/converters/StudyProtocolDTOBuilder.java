@@ -20,7 +20,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
+import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.InterventionalTrialDesign;
 import gov.nih.nci.pa.webservices.types.NonInterventionalTrialDesign;
 import gov.nih.nci.pa.webservices.types.PrimaryPurpose;
@@ -39,6 +42,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @author dkrylov
  * 
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public final class StudyProtocolDTOBuilder {
 
     /**
@@ -67,7 +71,7 @@ public final class StudyProtocolDTOBuilder {
                 .isClinicalTrialsDotGovXmlRequired()));
 
         convertRegulatoryInfo(reg, dto);
-        convertOtherIdentifiers(reg, dto);
+        convertOtherIdentifiers(reg.getOtherTrialID(), dto);
 
         dto.setAccrualDiseaseCodeSystem(StConverter.convertToSt(reg
                 .getAccrualDiseaseTerminology().value()));
@@ -80,14 +84,47 @@ public final class StudyProtocolDTOBuilder {
     }
 
     /**
+     * @param spDTO
+     *            StudyProtocolDTO
+     * @param upd
+     *            CompleteTrialUpdate
+     */
+    public void build(StudyProtocolDTO spDTO, CompleteTrialUpdate upd) {
+        addAdditionalOtherIdentifiers(upd.getOtherTrialID(), spDTO);
+        if (upd.getAccrualDiseaseTerminology() != null
+                && PaRegistry
+                        .getAccrualDiseaseTerminologyService()
+                        .canChangeCodeSystem(
+                                IiConverter.convertToLong(spDTO.getIdentifier()))) {
+            spDTO.setAccrualDiseaseCodeSystem(StConverter.convertToSt(upd
+                    .getAccrualDiseaseTerminology().value()));
+        }
+        convertTrialDates(upd, spDTO);
+        setUser(spDTO);
+    }
+
+    private void addAdditionalOtherIdentifiers(List<String> otherIDList,
+            StudyProtocolDTO spDTO) {
+        if (CollectionUtils.isNotEmpty(otherIDList)) {
+            for (String otherID : otherIDList) {
+                Ii ii = IiConverter.convertToOtherIdentifierIi(otherID);
+                if (!PAUtil.containsIi(spDTO.getSecondaryIdentifiers()
+                        .getItem(), ii.getExtension(), ii.getRoot())) {
+                    spDTO.getSecondaryIdentifiers().getItem().add(ii);
+                }
+            }
+        }
+    }
+
+    /**
      * @param reg
      * @param dto
      */
-    private void convertOtherIdentifiers(CompleteTrialRegistration reg,
+    private void convertOtherIdentifiers(List<String> otherIDList,
             StudyProtocolDTO dto) {
-        if (CollectionUtils.isNotEmpty(reg.getOtherTrialID())) {
+        if (CollectionUtils.isNotEmpty(otherIDList)) {
             List<Ii> iis = new ArrayList<Ii>();
-            for (String otherID : reg.getOtherTrialID()) {
+            for (String otherID : otherIDList) {
                 iis.add(IiConverter.convertToOtherIdentifierIi(otherID));
             }
             dto.setSecondaryIdentifiers(DSetConverter
@@ -145,12 +182,44 @@ public final class StudyProtocolDTOBuilder {
      * @param reg
      * @param dto
      */
+    private void convertTrialDates(CompleteTrialUpdate reg, StudyProtocolDTO dto) {
+        if (reg.getTrialStartDate() != null) {
+            dto.setStartDate(TsConverter.convertToTs(reg.getTrialStartDate()
+                    .getValue().toGregorianCalendar().getTime()));
+            dto.setStartDateTypeCode(CdConverter
+                    .convertToCd(ActualAnticipatedTypeCode.getByCode(reg
+                            .getTrialStartDate().getType())));
+        }
+        if (reg.getPrimaryCompletionDate() != null) {
+            dto.setPrimaryCompletionDate(TsConverter.convertToTs((reg
+                    .getPrimaryCompletionDate().getValue()
+                    .toGregorianCalendar().getTime())));
+            dto.setPrimaryCompletionDateTypeCode(CdConverter
+                    .convertToCd(ActualAnticipatedTypeCode.getByCode(reg
+                            .getPrimaryCompletionDate().getType())));
+        }
+        if (reg.getCompletionDate() != null) {
+            dto.setCompletionDate(TsConverter.convertToTs(reg
+                    .getCompletionDate().getValue().toGregorianCalendar()
+                    .getTime()));
+            dto.setCompletionDateTypeCode(CdConverter
+                    .convertToCd(ActualAnticipatedTypeCode.getByCode(reg
+                            .getCompletionDate().getType())));
+        }
+    }
+
+    /**
+     * @param reg
+     * @param dto
+     */
     private void convertPhase(CompleteTrialRegistration reg,
             StudyProtocolDTO dto) {
         dto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(reg
                 .getPhase())));
-        dto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(PhaseAdditionalQualifierCode
-                .getByCode(Boolean.TRUE.equals(reg.isPilot()) ? "Pilot" : "")));
+        dto.setPhaseAdditionalQualifierCode(CdConverter
+                .convertToCd(PhaseAdditionalQualifierCode
+                        .getByCode(Boolean.TRUE.equals(reg.isPilot()) ? "Pilot"
+                                : "")));
     }
 
     private void convertStudyDesignSpecifics(CompleteTrialRegistration reg,

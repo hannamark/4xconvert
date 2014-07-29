@@ -50,6 +50,20 @@
 		</annotation>
 	</element>
 
+	<element name="clinicalTrialsDotGovTrialID">
+		<annotation>
+			<documentation>The format for the ClinicalTrials.gov registry number
+				is NCT followed by an 8-digit number, e.g.: NCT00000419.
+			</documentation>
+		</annotation>
+		<simpleType>
+			<restriction base="string">
+				<pattern value="NCT[0-9]{1,47}" />
+				<maxLength value="50" />
+			</restriction>
+		</simpleType>
+	</element>
+
 	<element name="TrialRegistrationConfirmation" type="tns:TrialRegistrationConfirmation">
 		<annotation>
 			<documentation>A snapshot of basic trial information that serves as a
@@ -825,6 +839,155 @@
 		</annotation>
 	</element>
 
+	<element name="CompleteTrialUpdate" type="tns:CompleteTrialUpdate">
+		<annotation>
+			<documentation>A request to update a Complete trial in CTRP. An
+				update permits trial owners to change a limited set
+				of data element
+				of the trial. Most of the elements are optional; if you omit an
+				element, corresponding trial data will remain unchanged.
+			</documentation>
+		</annotation>
+	</element>
+
+	<complexType name="CompleteTrialUpdate">
+		<annotation>
+			<documentation>A request to update a Complete trial in CTRP. An
+				update permits trial owners to change a limited set
+				of data element
+				of the trial. Most of the elements are optional; if you omit an
+				element, corresponding trial data will remain unchanged.
+			</documentation>
+		</annotation>
+		<sequence>
+			<choice>
+				<annotation>
+					<documentation>An existing Complete (non-Abbreviated) trial can be
+						identified by one of the three types of identifiers: an internal
+						CTRP PA identifier, NCI ID, or CTEP ID.
+					</documentation>
+				</annotation>
+				<element ref="tns:paTrialID" />
+				<element ref="tns:nciTrialID" />
+				<element ref="tns:ctepTrialID" />
+			</choice>
+			<element ref="tns:clinicalTrialsDotGovTrialID" minOccurs="0">
+				<annotation>
+					<documentation>
+						If the trial does not currently specify a
+						ClinicalTrials.Gov ID
+						(a.k.a NCT ID), you can provide one during
+						the update.
+						If the trial does have a ClinicalTrials.Gov ID already,
+						your update
+						will not be allowed to change it; an attempt to do so
+						will be ignored by CTRP.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="otherTrialID" minOccurs="0" maxOccurs="unbounded">
+				<annotation>
+					<documentation>Enter an additional trial identifier such as a
+						unique identifier from other registries, NIH grant numbers, or
+						protocol numbers assigned by the Review Board. Any values you
+						provide during a trial update will be
+						added to the list of the
+						existing trial's other identifiers.
+					</documentation>
+				</annotation>
+				<simpleType>
+					<restriction base="string">
+						<minLength value="1" />
+						<maxLength value="255" />
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="accrualDiseaseTerminology" type="tns:AccrualDiseaseTerminology"
+				minOccurs="0">
+				<annotation>
+					<documentation>A change to the trial's disease terminology
+						will be
+						ignored if the trial has
+						accrued study subjects with disease codes
+						under the existing terminology.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="grant" type="tns:Grant" minOccurs="0"
+				maxOccurs="unbounded">
+				<annotation>
+					<documentation>Grants specified during a trial update will be added
+						to the existing trial's grant list.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="trialStatus" type="tns:TrialStatusCode"
+				minOccurs="0" />
+			<element name="whyStopped" minOccurs="0">
+				<annotation>
+					<documentation>If the trial is Administratively Complete,
+						Withdrawn, or Temporarily Closed, enter the reason that the study
+						stopped.
+					</documentation>
+				</annotation>
+				<simpleType>
+					<restriction base="string">
+						<maxLength value="160" />
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="trialStatusDate" type="date" minOccurs="0" />
+			<element name="trialStartDate" type="tns:ActualOrAnticipatedDate"
+				minOccurs="0" />
+			<element name="primaryCompletionDate" type="tns:ActualOrAnticipatedDate"
+				minOccurs="0" />
+			<element name="completionDate" type="tns:ActualOrAnticipatedDate"
+				minOccurs="0" />
+			<element name="protocolDocument" type="tns:TrialDocument"
+				minOccurs="0">
+				<annotation>
+					<documentation>To ensure successful registration, upload a Protocol
+						document.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="irbApprovalDocument" type="tns:TrialDocument"
+				minOccurs="0">
+				<annotation>
+					<documentation>To ensure successful registration, upload a IRB
+						Approval document
+						document.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="participatingSitesDocument" type="tns:TrialDocument"
+				minOccurs="0">
+				<annotation>
+					<documentation>This document includes site recruitment status and
+						date, target accrual, and site principal investigators.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="informedConsentDocument" type="tns:TrialDocument"
+				minOccurs="0">
+				<annotation>
+					<documentation>If the Protocol document does not include the
+						Informed Consent and/or participating sites, upload the Informed
+						Consent document.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="otherDocument" type="tns:TrialDocument"
+				minOccurs="0" maxOccurs="unbounded">
+				<annotation>
+					<documentation>Any other trial-related document.
+					</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+
 	<complexType name="CompleteTrialRegistration">
 		<annotation>
 			<documentation>A request to register a Complete trial in CTRP.
@@ -848,14 +1011,7 @@
 					</restriction>
 				</simpleType>
 			</element>
-			<element name="clinicalTrialsDotGovTrialID" minOccurs="0">
-				<simpleType>
-					<restriction base="string">
-						<pattern value="NCT[0-9]{1,47}" />
-						<maxLength value="50" />
-					</restriction>
-				</simpleType>
-			</element>
+			<element ref="tns:clinicalTrialsDotGovTrialID" minOccurs="0" />
 			<element name="otherTrialID" minOccurs="0" maxOccurs="unbounded">
 				<annotation>
 					<documentation>Enter an additional trial identifier such as a

@@ -1904,10 +1904,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<StudySiteDTO> studySiteDTOs, Bl isBatchMode) throws PAException {
         // CHECKSTYLE:ON
 
-        StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);
-        String newNCT = null;
-        if (nctIdentifierDTO != null) {
-            newNCT = StConverter.convertToString(nctIdentifierDTO.getLocalStudyProtocolIdentifier());  
+        StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);        
+        if (nctIdentifierDTO != null) {              
             String nctValidationResultString = getPAServiceUtils().validateNCTIdentifier(
                    nctIdentifierDTO.getLocalStudyProtocolIdentifier().getValue(), studyProtocolDTO
                    .getIdentifier());
@@ -1919,13 +1917,16 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             TrialUpdatesRecorder.reset();
             
             Ii spIi = updateStudy(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
-                        studySiteAccrualStatusDTOs, studySiteDTOs);         
-            String existingNCT = getPAServiceUtils().getStudyIdentifier(studyProtocolDTO.getIdentifier(),
-                    PAConstants.NCT_IDENTIFIER_TYPE);                        
-            TrialUpdatesRecorder.isNctUpdated(existingNCT, newNCT);
+                        studySiteAccrualStatusDTOs, studySiteDTOs);  
             
-            //update nct number
+            String existingNCT = getPAServiceUtils().getStudyIdentifier(studyProtocolDTO.getIdentifier(),
+                    PAConstants.NCT_IDENTIFIER_TYPE);
             updateStudyIdentifiers(studyProtocolDTO.getIdentifier(), studyIdentifierDTOs);
+            PaHibernateUtil.getCurrentSession().flush();
+            String updatedNCT = getPAServiceUtils().getStudyIdentifier(studyProtocolDTO.getIdentifier(),
+                    PAConstants.NCT_IDENTIFIER_TYPE);
+            TrialUpdatesRecorder.isNctUpdated(existingNCT, updatedNCT);
+
             
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
                         
@@ -2033,7 +2034,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             // "updatedOtherIdentifiers.getItem()" set is Hibernate's PersistentSet, which made working with it
             // a bit tricky. 
             for (Ii ii : newOtherIdentifiers.getItem()) {
-                if (!containsIi(updatedOtherIdentifiers.getItem(),
+                if (!PAUtil.containsIi(updatedOtherIdentifiers.getItem(),
                         ii.getExtension(), ii.getRoot())) {
                     updatedOtherIdentifiers.getItem().add(ii);
                 }
@@ -2042,15 +2043,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         return updatedOtherIdentifiers;
     }
 
-    private boolean containsIi(Set<Ii> item, String extension, String root) {
-        for (Ii ii : item) {
-            if (StringUtils.equals(ii.getExtension(), extension)
-                    && StringUtils.equals(ii.getRoot(), root)) {
-                return true;
-            }
-        }
-        return false;
-    }
+   
 
     /**
      * {@inheritDoc}

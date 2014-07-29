@@ -6,7 +6,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.Grant;
 
 import java.util.ArrayList;
@@ -19,13 +18,13 @@ import java.util.List;
 public class StudyResourcingDTOBuilder {
 
     /**
-     * @param reg
-     *            CompleteTrialRegistration
+     * @param grants
+     *            List<Grant>
      * @return List<StudyResourcingDTO>
      */
-    public List<StudyResourcingDTO> build(CompleteTrialRegistration reg) {
+    public List<StudyResourcingDTO> build(List<Grant> grants) {
         List<StudyResourcingDTO> grantsDTOList = new ArrayList<StudyResourcingDTO>();
-        for (Grant dto : reg.getGrant()) {
+        for (Grant dto : grants) {
             StudyResourcingDTO isoDTO = new StudyResourcingDTO();
             isoDTO.setSummary4ReportedResourceIndicator(BlConverter
                     .convertToBl(Boolean.FALSE));
