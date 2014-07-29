@@ -95,6 +95,7 @@ public class PDQDiseaseNode implements Serializable {
     private String name;
     private Long parentId;
     private Boolean hasChildren;
+    private String [] alterNames;
 
     /**
      * @return the id
@@ -151,4 +152,22 @@ public class PDQDiseaseNode implements Serializable {
     public void setHasChildren(Boolean hasChildren) {
         this.hasChildren = hasChildren;
     }
+
+    /**
+     * Get synonyms
+     * @return alterNames
+     */
+    public String[] getAlterNames() {
+        return alterNames;
+    }
+
+    /**
+     * Set synonyms
+     * @param alterNames alterNames
+     */
+    public void setAlterNames(String[] alterNames) {
+        this.alterNames = alterNames;
+    }
+    
+    
 }

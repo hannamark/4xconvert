@@ -245,6 +245,15 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         node.setName(disease.getPreferredName());
         node.setParentId(parentId);
         node.setHasChildren(hasChildren);
+        // Set alternate names
+        List<PDQDiseaseAltername> alts = disease.getDiseaseAlternames();
+        if (alts != null &&  alts.size() > 0) {
+            String[] altNames = new String [alts.size()];
+            for (int i = 0; i < alts.size(); i++) {
+                altNames[i] = alts.get(i).getAlternateName().toLowerCase();
+            }
+            node.setAlterNames(altNames);
+        }
         return node;
     }
 
