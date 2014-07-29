@@ -85,7 +85,7 @@ function addDisease(diseaseid) {
          <table class="form-table" title="${tableTitle}" summary="${tableSummary}">
              <tr>
                  <td>
-                     <div class="selectwidget">
+                     <div class="selectDiseasewidget">
                          <div class="diseaserescol">
                              <fmt:message key="diseases.widget.searchHeader" var="searchHeader" />
                              <fmt:message key="diseases.widget.searchHeader.alt" var="alt" />
@@ -93,14 +93,13 @@ function addDisease(diseaseid) {
                                  <img src="${imagePath}/arrow_white_down.gif" width="9" height="9" alt="${alt}" style="vertical-align: middle;" />${searchHeader}
                              </h3>
                              <div class="quickresults">
-                                 <div class="quickresults_header">
+                                 <div class="dis_quickresults_header">
                                      <fmt:message key="diseases.widget.diseaseTitle" var="title" />
                                      <div class="ui-widget">
                                          <input type="text" class="hintTextbox" id="disease" name="disease" maxlength="255" size="30" title="${title}" value="${title}" />
-                                     </div>
-                                     <fmt:message key="diseases.widget.searchMagnifier.alt" var="title" />
-                                     <input type="image" src="${imagePath}/ico_magnifier.gif" alt="${title}" class="search_inner_button" />
-                                     <div class="quickresults_header_buttons right">
+                                     	<fmt:message key="diseases.widget.searchMagnifier.alt" var="title" />
+                                     	<input type="image" src="${imagePath}/ico_magnifier.gif" alt="${title}" class="search_inner_button" />
+                                     	<div class="quickresults_header_buttons right">
                                          <fmt:message key="diseases.widget.button.add.title" var="title" />
                                          <a id="add_all_disease" title="${title}" href="#"><fmt:message key="diseases.widget.button.add" /></a>
                                          <fmt:message key="diseases.widget.button.tree.title" var="title" />
@@ -110,10 +109,12 @@ function addDisease(diseaseid) {
                                          <a id="reset_disease" title="${title}" href="#">
                                          <fmt:message key="diseases.widget.button.reset" /></a>
                                          <div class="clear"></div>
+                                     	</div>
                                      </div>
                                      <div class="whiteline"></div>
-                                     <div class="quickresults_count">
-                                         <fmt:message key="diseases.widget.quickResultCount" />
+                                     <div>
+                                        <input type="checkbox" name="searchSynonym" value="true" id="searchSynonym"><label for="searchSynonym">Search Synonyms</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span class="quickresults_count"><fmt:message key="diseases.widget.quickResultCount" /></span>
                                      </div>
                                  </div>
                                  <div class="quickresults_body">

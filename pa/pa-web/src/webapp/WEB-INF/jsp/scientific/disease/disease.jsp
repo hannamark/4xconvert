@@ -25,7 +25,7 @@
             }
             
             function handleCreate() {
-            	showPopWin('${lookupUrl}', 985,500,refresh,'Diseases');
+            	showPopWin('${lookupUrl}', 1100,500,refresh,'Diseases');
             }
             
             function refresh() {

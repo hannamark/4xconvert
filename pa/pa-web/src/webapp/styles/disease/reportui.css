@@ -244,8 +244,14 @@
     padding: 0;
 }
 
-.diseaserescol, .interventionrescol {
+.interventionrescol {
     width: 556px;
+    float: left;
+    border-right: 1px solid #6d80a2;
+}
+
+.diseaserescol {
+    width: 706px;
     float: left;
     border-right: 1px solid #6d80a2;
 }
@@ -262,6 +268,20 @@
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     padding: 0 10px;
 }
+
+/* Disease Search Widgets */
+.selectDiseasewidget {
+    background: #8092b1;
+    border: 1px solid #6d80a2;
+    border-radius: 5px;
+    width: 1072px;
+    -moz-border-radius: 5px;
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    -webkit-border-radius: 5px;
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    padding: 0 10px;
+}
+
 
 .treecol {
     width: 374px;
@@ -303,15 +323,29 @@
 }
 
 .search_inner_button {
-    margin-top: 7px !important;
+    margin-top: 8px !important;
     margin-left: -20px !important;
-    float: left;
     display: inline;
     position: relative;
 }
 
 .quickresults_header {
     width: 528px;
+    background: #fcb040;
+    margin: 0;
+    padding: 7px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    -moz-border-radius-bottomleft: 0;
+    min-height: 26px;
+}
+
+.dis_quickresults_header {
+    width: 678px;
     background: #fcb040;
     margin: 0;
     padding: 7px;
@@ -392,7 +426,7 @@
 }
 
 #diseasesSection .quickresults_body {
-    width: 530px;
+    width: 680px;
 	padding: 10px 5px;
 }
 

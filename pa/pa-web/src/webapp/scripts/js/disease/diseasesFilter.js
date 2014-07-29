@@ -26,7 +26,8 @@ function setJstreeOperationReady(bReady) {
             var self = this;
             $('.ui-autocomplete').hide();
             var searchTerm = $('#diseasesSection .diseaserescol input[type="text"]').val().toLowerCase();
-            var searchResultsPDQ = FiveAmUtil.PDQPkg.searchPDQ( searchTerm );
+            var searchSynonym = $('#searchSynonym').is(':checked')
+            var searchResultsPDQ = FiveAmUtil.PDQPkg.searchPDQ( searchTerm, searchSynonym );
             var breadcrumbsPkg = FiveAmUtil.breadcrumbsPkg.createPackage( searchTerm, searchResultsPDQ, FiveAmUtil.PDQPkg.pdqData );
             $('#diseasebreadcrumbs').buildBreadcrumbs( breadcrumbsPkg );
             self.updateQuickresultsCount( searchTerm, false );
@@ -193,6 +194,7 @@ function setJstreeOperationReady(bReady) {
             self.updateQuickresultsCount('',true);
             $('#diseasesSection .selectionslist_body').empty();
             $('#pdqDiseases').empty();
+            $('#searchSynonym').prop('checked', false);
             self.updateSelectionCount();
         },
             
@@ -571,7 +573,11 @@ FiveAmUtil = {
             var bcItems = [];
             var populateBreadcrumbItem = function( bcItem, pdqData, pdqItemId, isFeatured, bcItems ) {
                 var pdqItem = pdqData[ pdqItemId ];
-                bcItem.push({'id':pdqItemId, 'name':pdqItem.name, 'hasChildren':pdqItem.hasChildren, 'isFeatured':isFeatured});
+                if(isFeatured){
+                	bcItem.push({'id':pdqItemId, 'name':pdqItem.name, 'hasChildren':pdqItem.hasChildren, 'isFeatured':isFeatured, 'alterNames':pdqItem.alterNames});
+            	}else{
+            		bcItem.push({'id':pdqItemId, 'name':pdqItem.name, 'hasChildren':pdqItem.hasChildren, 'isFeatured':isFeatured});
+            	}
                 if ( pdqItem.parentId != null && !(pdqItem.parentId.length==1 && pdqItem.parentId[0]==null) ) {
                     for (var i=0 ; i < pdqItem.parentId.length ; i++ ) {
                         populateBreadcrumbItem(FiveAmUtil.breadcrumbsPkg.clone(bcItem), pdqData, pdqItem.parentId[i], false, bcItems );
@@ -602,10 +608,17 @@ FiveAmUtil = {
                 if(!diseaseTree.hasOwnProperty(i))
                     continue;
                 var pdqItem = diseaseTree[i];
-                if( !this.pdqData.hasOwnProperty( pdqItem.id ))
-                    this.pdqData[pdqItem.id] = {'name':pdqItem.name.toLowerCase(), 'parentId':[pdqItem.parentId], 'hasChildren':pdqItem.hasChildren};
-                else
+                if( !this.pdqData.hasOwnProperty( pdqItem.id )){
+                	if(pdqItem.alterNames){
+                    		this.pdqData[pdqItem.id] = {'name':pdqItem.name.toLowerCase(), 'parentId':[pdqItem.parentId], 'hasChildren':pdqItem.hasChildren, 'alterNames':pdqItem.alterNames};
+                    		
+                    	}else{
+                    		this.pdqData[pdqItem.id] = {'name':pdqItem.name.toLowerCase(), 'parentId':[pdqItem.parentId], 'hasChildren':pdqItem.hasChildren, 'alterNames':[]};
+                    		
+                    	}
+                }else{
                     this.pdqData[pdqItem.id].parentId.push(pdqItem.parentId);
+                    }
             }
         },
         
@@ -630,14 +643,21 @@ FiveAmUtil = {
             this.initPdqDictionary();
         },  
 
-        searchPDQ : function(term) {
+        searchPDQ : function(term, synonym) {
             var results = new Array();
             for( var i in this.pdqData ) {
                 if(!this.pdqData.hasOwnProperty(i))
                     continue;
                 var pdqItem = this.pdqData[i];
-                if(pdqItem.name.indexOf(term)!=-1) {
+                if(pdqItem.name.indexOf(term)!=-1) {                	
                     results.push([pdqItem.name, i]);
+                }else if (synonym){
+                	// Search synonyms
+                	for (var j=0; j < pdqItem.alterNames.length; j++) {
+                		if(pdqItem.alterNames[j].indexOf(term)!=-1) {
+                		     results.push([pdqItem.name , i]);
+                		}
+                	}
                 }
             }
             var sortedResults = results.sort();
