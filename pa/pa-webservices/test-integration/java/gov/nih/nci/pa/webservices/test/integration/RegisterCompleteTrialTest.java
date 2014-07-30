@@ -14,7 +14,6 @@ import gov.nih.nci.pa.webservices.types.HolderType;
 import gov.nih.nci.pa.webservices.types.INDIDE;
 import gov.nih.nci.pa.webservices.types.NciDivisionProgramCode;
 import gov.nih.nci.pa.webservices.types.NihInstitutionCode;
-import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.Organization;
 import gov.nih.nci.pa.webservices.types.Person;
 import gov.nih.nci.pa.webservices.types.PrimaryPurpose;
@@ -30,34 +29,20 @@ import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.GregorianCalendar;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.namespace.QName;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -68,124 +53,83 @@ import org.xml.sax.SAXException;
  */
 public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
 
-    @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
-        super.setUp();
-        insertSecondaryPurposes();
+        super.setUp("/registration/complete");
+
     }
 
-    private void insertSecondaryPurposes() throws SQLException {
-        try {
-            QueryRunner runner = new QueryRunner();
-            String sql = "INSERT INTO secondary_purpose (name) VALUES ('Other')";
-            runner.update(connection, sql);
-        } catch (SQLException e) {
-            LOG.warning("Oops; 'Other' most likely is in secondary_purpose already; ignoring...");
-        }
-        try {
-            QueryRunner runner = new QueryRunner();
-            String sql = "INSERT INTO secondary_purpose (name) VALUES ('Ancillary-Correlative')";
-            runner.update(connection, sql);
-        } catch (SQLException e) {
-            LOG.warning("Oops; 'Ancillary-Correlative' most likely is in secondary_purpose already; ignoring...");
-        }
-    }
-
-    @SuppressWarnings("deprecation")
     @Test
     public void testInvalidCredentials() throws Exception {
-        Credentials credentials = new UsernamePasswordCredentials(
-                "nonexistentuserfortesting", "nonexistentuserfortesting");
-        httpClient.getCredentialsProvider().setCredentials(authScope,
-                credentials);
-        String url = baseURL + "/registration/complete";
-
-        HttpPost req = new HttpPost(url);
-        req.addHeader("Accept", APPLICATION_XML);
-        HttpResponse response = httpClient.execute(req);
-        assertEquals(401, getReponseCode(response));
-        assertNull(response.getFirstHeader("Set-Cookie"));
-
+        super.testInvalidCredentials();
     }
 
     @Test
     public void testValidCredentialsButNoRole() throws Exception {
-        Credentials credentials = new UsernamePasswordCredentials("curator",
-                "Coppa#12345");
-        httpClient.getCredentialsProvider().setCredentials(authScope,
-                credentials);
-        String url = baseURL + "/registration/complete";
-
-        HttpPost req = new HttpPost(url);
-        req.addHeader("Accept", APPLICATION_XML);
-        HttpResponse response = httpClient.execute(req);
-        assertEquals(401, getReponseCode(response));
-        assertNull(response.getFirstHeader("Set-Cookie"));
-
+        super.testValidCredentialsButNoRole();
     }
 
     @Test
-    public void testImportSuccess() throws Exception {
+    public void testRegisterSuccess() throws Exception {
         registerAndVerify("/integration_register_complete_success.xml");
     }
 
     @Test
-    public void testImportNonCtGov() throws Exception {
+    public void testRegisterNonCtGov() throws Exception {
         registerAndVerify("/integration_register_complete_nonCtGov_success.xml");
     }
 
     @Test
-    public void testImportNonInterventional() throws Exception {
+    public void testRegisterNonInterventional() throws Exception {
         registerAndVerify("/integration_register_complete_nonInt_success.xml");
     }
 
     @Test
-    public void testImportWithNewOrgsAndPersons() throws Exception {
+    public void testRegisterWithNewOrgsAndPersons() throws Exception {
         registerAndVerify("/integration_register_complete_new_orgs_persons_success.xml");
     }
 
     @Test
-    public void testImportWithOrgsAndPersonsIdentifiedByCtepID()
+    public void testRegisterWithOrgsAndPersonsIdentifiedByCtepID()
             throws Exception {
         registerAndVerify("/integration_register_complete_orgs_persons_ctepid.xml");
     }
 
     @Test
-    public void testImportResponsiblePartyPI() throws Exception {
+    public void testRegisterResponsiblePartyPI() throws Exception {
         registerAndVerify("/integration_register_complete_resp_party_pi.xml");
     }
 
     @Test
-    public void testImportResponsiblePartySI() throws Exception {
+    public void testRegisterResponsiblePartySI() throws Exception {
         registerAndVerify("/integration_register_complete_resp_party_si.xml");
     }
 
     @Test
-    public void testImportSchemaValidation() throws Exception {
+    public void testRegisterSchemaValidation() throws Exception {
         verifyFailureToRegister(
                 "/integration_register_complete_schema_violation.xml", 400,
                 "cvc-enumeration-valid");
     }
 
     @Test
-    public void testImportBusinessValidation() throws Exception {
+    public void testRegisterBusinessValidation() throws Exception {
         verifyFailureToRegister(
                 "/integration_register_complete_validation_error.xml", 400,
                 "Validation Exception");
     }
 
     @Test
-    public void testImportMinimalData() throws Exception {
+    public void testRegisterMinimalData() throws Exception {
         registerAndVerify("/integration_register_complete_minimal_dataset.xml");
     }
-    
+
     @Test
-    public void testImportFundedByNciGrant() throws Exception {
+    public void testRegisterFundedByNciGrant() throws Exception {
         registerAndVerify("/integration_register_complete_nci_grant.xml");
     }
 
     @Test
-    public void testImportRotateEnumValues() throws Exception {
+    public void testRegisterRotateEnumValues() throws Exception {
 
         for (TrialCategory v : TrialCategory.values()) {
             LOG.info("Rotating " + v.getClass() + ": " + v.name());
@@ -377,23 +321,6 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
         verifyTrialDocuments(reg, conf);
         verifyTrialDesign(reg, conf);
 
-    }
-
-    /**
-     * @param conf
-     */
-    private void logInFindAndAcceptTrial(TrialRegistrationConfirmation conf) {
-        logoutUser();
-        loginAsSuperAbstractor();
-
-        clickAndWait("id=trialSearchMenuOption");
-        selenium.type("id=identifier", conf.getNciTrialID());
-        selenium.select("id=identifierType", "NCI");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("One item found"));
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        acceptTrial();
-        verifyTrialAccepted();
     }
 
     private void verifyTrialDesign(CompleteTrialRegistration reg,
@@ -855,113 +782,5 @@ public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
 
     }
 
-    private String getTrialIdentificationTableCellValue(String label) {
-        for (int i = 1; i < 20; i++) {
-            String text = selenium
-                    .getText("xpath=//form//table[@class='form']//tr[" + i
-                            + "]//td[1]");
-            if (label.equalsIgnoreCase(StringUtils.trim(text))) {
-                return selenium
-                        .getText("xpath=//form//table[@class='form']//tr[" + i
-                                + "]//td[2]");
-            }
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private CompleteTrialRegistration readCompleteTrialRegistrationFromFile(
-            String string) throws JAXBException, SAXException {
-        JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
-        Unmarshaller u = jc.createUnmarshaller();
-        URL url = getClass().getResource(string);
-        CompleteTrialRegistration o = ((JAXBElement<CompleteTrialRegistration>) u
-                .unmarshal(url)).getValue();
-        return o;
-    }
-
-    @SuppressWarnings("unchecked")
-    private TrialRegistrationConfirmation registerTrialFromFile(String file)
-            throws ClientProtocolException, IOException, ParseException,
-            JAXBException, SQLException {
-        HttpResponse response = submitRegistrationAndReturnResponse(file);
-        return processResponseAndDoBasicVerification(response);
-
-    }
-
-    @SuppressWarnings("unchecked")
-    private TrialRegistrationConfirmation registerTrialFromJAXBElement(
-            CompleteTrialRegistration o) throws ClientProtocolException,
-            IOException, ParseException, JAXBException, SQLException {
-        JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
-        Marshaller m = jc.createMarshaller();
-        StringWriter out = new StringWriter();
-        m.marshal(new JAXBElement<CompleteTrialRegistration>(
-                new QName("gov.nih.nci.pa.webservices.types",
-                        "CompleteTrialRegistration"),
-                CompleteTrialRegistration.class, o), out);
-
-        StringEntity entity = new StringEntity(out.toString());
-        HttpResponse response = submitRegistrationAndReturnResponse(entity);
-        return processResponseAndDoBasicVerification(response);
-
-    }
-
-    /**
-     * @param response
-     * @return
-     * @throws JAXBException
-     * @throws ParseException
-     * @throws IOException
-     * @throws SQLException
-     */
-    private TrialRegistrationConfirmation processResponseAndDoBasicVerification(
-            HttpResponse response) throws JAXBException, ParseException,
-            IOException, SQLException {
-        HttpEntity resEntity = response.getEntity();
-        TrialRegistrationConfirmation conf = unmarshalTrialRegistrationConfirmation(resEntity);
-
-        assertEquals(200, getReponseCode(response));
-        assertEquals(APPLICATION_XML, getResponseContentType(response));
-        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
-        assertTrue(StringUtils.isNotBlank(conf.getNciTrialID()));
-        assertNotNull(conf.getPaTrialID());
-        assertEquals(getTrialIdByLeadOrgID("UPCC 34890534").longValue(),
-                conf.getPaTrialID());
-
-        LOG.info(ToStringBuilder.reflectionToString(conf));
-
-        return conf;
-    }
-
-    private HttpResponse submitRegistrationAndReturnResponse(String file)
-            throws UnsupportedEncodingException, IOException,
-            ClientProtocolException {
-        StringEntity orgEntity = new StringEntity(IOUtils.toString(getClass()
-                .getResourceAsStream(file), "UTF-8"));
-        return submitRegistrationAndReturnResponse(orgEntity);
-    }
-
-    /**
-     * @param file
-     * @return
-     * @throws UnsupportedEncodingException
-     * @throws IOException
-     * @throws ClientProtocolException
-     */
-    private HttpResponse submitRegistrationAndReturnResponse(
-            StringEntity orgEntity) throws UnsupportedEncodingException,
-            IOException, ClientProtocolException {
-        String url = baseURL + "/registration/complete";
-
-        HttpPost req = new HttpPost(url);
-        req.addHeader("Accept", APPLICATION_XML);
-        req.addHeader("Content-Type", APPLICATION_XML);
-        req.setEntity(orgEntity);
-
-        HttpResponse response = httpClient.execute(req);
-        LOG.info("Response code: " + getReponseCode(response));
-        return response;
-    }
-
+   
 }

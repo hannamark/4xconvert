@@ -37,4 +37,5 @@
 	</tns:protocolDocument>
 	<tns:irbApprovalDocument filename="irb.pdf">MA==
 	</tns:irbApprovalDocument>
+	<tns:trialOwner>submitter-ci@example.com</tns:trialOwner>
 </tns:CompleteTrialRegistration>
