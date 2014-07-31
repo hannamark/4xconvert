@@ -83,7 +83,7 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
-import gov.nih.nci.coppa.test.integration.test.AbstractPoWebTest.ENTITYTYPE;
+import gov.nih.nci.coppa.test.FixtureDataUtil;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Cd;
@@ -245,12 +245,17 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
    
 
-    public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullifyWithDuplicateId() throws Exception {
+public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullifyWithDuplicateId() throws Exception {
         
         /* create an org to serve as a duplicate */
-        Ii dupId = createNewOrgThenCurateAsActive();
-        Ii id = curateNewOrgThenCurateAfterRemoteUpdate();
+        Ii dupId = createNewOrg();
+        FixtureDataUtil.createOrgAliasesData(Long.parseLong(dupId.getExtension()));
+        Ii id = createNewOrg();
+        FixtureDataUtil.createOrgAliasesData(Long.parseLong(id.getExtension()));
 
+        loginAsCurator();
+        searchForOrgByPoId(id);
+        clickAndWait("org_id_" + id.getExtension());
         selenium.select("curateEntityForm.organization.statusCode", "label=NULLIFIED");
         /* wait for in-browser js to execute via select's onchange event */
         pause(1000);
@@ -280,6 +285,13 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
             assertEquals(id.getExtension(), nullifiedEntities.keySet().iterator().next().getExtension());
             assertEquals(dupId.getExtension(), nullifiedEntities.values().iterator().next().getExtension());
         }
+    }
+
+    private Ii createNewOrg() throws EntityValidationException, URISyntaxException, CurationException {
+        // create a new org via remote API.
+        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
+        Ii id = remoteCreateAndCatalog(create(name)); // 'createdBy' is set to 'curator' there
+        return id;
     }
 
     public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullifyWithNoDuplicateId() throws Exception {
@@ -464,7 +476,7 @@ public class CurateOrganizationTest extends AbstractPoWebTest {
 
         verifyTelecom();
         
-        verifyAlias();
+//        verifyAlias();
 
         saveAsActive(id);
         return id;

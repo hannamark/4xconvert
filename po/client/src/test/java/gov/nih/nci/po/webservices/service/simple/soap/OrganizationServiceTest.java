@@ -361,7 +361,6 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Organization createdOrg = response.getOrganization();
         
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(Organization.class, createdOrg.getId());
 
         // now change some attributes of this organization
@@ -669,7 +668,6 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Organization createdOrg = res.getOrganization();
 
         // now create Aliases for this organization
-        setUpOrganizationServiceData();
         createOrgAliasesData(createdOrg.getId());
 
         // search by OrganizationID ( & check that Alias is present in result)
@@ -1522,7 +1520,6 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertTrue(createdHCF instanceof HealthCareFacility);
         
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(HealthCareFacility.class, createdHCF.getId());
 
         // now update the HCF details
@@ -1660,7 +1657,6 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertTrue(createdRO instanceof ResearchOrganization);
         
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(ResearchOrganization.class, createdRO.getId());
 
         // now update the RO details
@@ -2129,8 +2125,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         OrganizationRole orgRole = response.getOrganizationRole();
         Assert.assertTrue(orgRole instanceof ResearchOrganization);
         
-        // create the alias for the RO
-        setUpOrganizationServiceData();        
+        // create the alias for the RO               
         createROAliasesData(orgRole.getId());
 
         // now change the status

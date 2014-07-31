@@ -705,7 +705,6 @@ public class OrganizationRESTServiceTest extends
         Organization createdOrg = createActiveOrganization();
         
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(Organization.class, createdOrg.getId());
 
         // now change some attributes of the newly created organization
@@ -743,7 +742,6 @@ public class OrganizationRESTServiceTest extends
         Organization createdOrg = createActiveOrganization();
         
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(Organization.class, createdOrg.getId());
 
         // now change some attributes of the newly created organization
@@ -1396,7 +1394,6 @@ public class OrganizationRESTServiceTest extends
         Organization createdOrg = createActiveOrganization();
 
         // now create Aliases for this organization
-        setUpOrganizationServiceData();
         createOrgAliasesData(createdOrg.getId());
 
         // search by OrganizationID ( & check that Alias is present in result)
@@ -1457,7 +1454,6 @@ public class OrganizationRESTServiceTest extends
         Organization createdOrg = createActiveOrganization();
 
         // now create Aliases for this organization
-        setUpOrganizationServiceData();
         createOrgAliasesData(createdOrg.getId());
 
         // search by OrganizationID ( & check that Alias is present in result)
@@ -3285,7 +3281,6 @@ public class OrganizationRESTServiceTest extends
         HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
 
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(HealthCareFacility.class, hcf.getId());
         
         // now update the HCF details
@@ -3322,7 +3317,6 @@ public class OrganizationRESTServiceTest extends
         HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
         
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(HealthCareFacility.class, hcf.getId());
 
         // now update the HCF details
@@ -3484,10 +3478,8 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleRO_create_ChangeRequest() throws Exception {
         // create OC first
         ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
-        System.out.println("created ro id -->"+ ro.getId());
         
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(ResearchOrganization.class, ro.getId());
 
         // now update the RO details
@@ -3532,7 +3524,6 @@ public class OrganizationRESTServiceTest extends
         ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
         
         // set Overridden by CTRPQATester1
-        setUpOrganizationServiceData();
         updateOverriddenBy(ResearchOrganization.class, ro.getId());
 
         // now update the OC details

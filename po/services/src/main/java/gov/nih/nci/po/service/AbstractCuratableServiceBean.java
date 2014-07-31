@@ -358,7 +358,7 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
 
         for (Alias alias : e.getAlias()) {
             if (!targetValues.contains(alias.getValue())) {
-                duplicateOf.getAlias().add(alias);
+                duplicateOf.getAlias().add(new Alias(alias.getValue()));
             }
         }
 
@@ -366,10 +366,8 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
 
         if (nameAlias != null
                 && !targetValues.contains(nameAlias.getValue())) {
-            duplicateOf.getAlias().add(nameAlias);
+            duplicateOf.getAlias().add(new Alias(nameAlias.getValue()));
         }
-
-
     }
 
     private Alias getNameAsAlias(Aliasable e) {
