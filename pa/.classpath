@@ -133,7 +133,7 @@
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-jaxrs-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxb-provider-2.3.7.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxrs-2.3.7.Final.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/httpclient-4.3.4.jar"/>
+	<classpathentry kind="var" path="PA_LIB/compile/httpclient-4.3.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/cglib-2.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/coppa-commons-test-1.3.7.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/hsqldb-1.8.0.10.jar"/>
@@ -142,7 +142,7 @@
 	<classpathentry kind="var" path="PA_LIB/test/slf4j-api-1.6.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/slf4j-log4j12-1.6.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-junit/junit-4.8.2.jar"/>
-        <classpathentry kind="var" path="PA_LIB/test-selenium/postgresql-9.2-1003-jdbc4.jar"/>
+	<classpathentry kind="var" path="PA_LIB/test-selenium/postgresql-9.2-1003-jdbc4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/phantomjsdriver-1.1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/bcpkix-jdk15on-1.48.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/bcprov-jdk15on-1.48.jar"/>
@@ -193,7 +193,7 @@
 	<classpathentry kind="var" path="PA_LIB/compile/spring-oxm-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jackson-mapper-asl-1.9.13.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/spring-test-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/httpcore-4.3.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/commons-codec-1.6.jar"/>
+	<classpathentry kind="var" path="PA_LIB/compile/httpcore-4.3.2.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
 	<classpathentry kind="src" path="services/src/java"/>
 	<classpathentry kind="src" path="services/test/resources"/>
@@ -76,5 +76,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/ognl-3.0.6.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/standard-1.1.2.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

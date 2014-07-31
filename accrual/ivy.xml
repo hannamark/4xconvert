@@ -61,6 +61,10 @@
     <dependency conf="ear->master" org="net.sf.opencsv" name="opencsv" rev="2.1"/> 
     <dependency conf="ear->master" org="org.apache.poi" name="poi" rev="3.2-FINAL"/>
     <dependency conf="ear->master" org="org.jdom" name="jdom" rev="1.1"/> 
+    <dependency conf="ear->master" org="org.springframework" name="spring-beans" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-context" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-expression" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-core" rev="3.2.2.RELEASE"/>
     
     <dependency conf="web->master" org="org.ajaxtags" name="ajaxtags" rev="1.3-beta-rc7"/> 
     <dependency conf="web->master" org="displaytag" name="displaytag" rev="1.2"/>

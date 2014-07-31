@@ -85,7 +85,8 @@
     <dependency conf="compile->master" org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13"/>
     <dependency conf="compile->master" org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.13"/>
     <dependency conf="compile->master" org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.4.1"/>
-    <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.3.4" />
+    <dependency conf="compile->master" org="org.apache.httpcomponents" name="httpclient" rev="4.3.4" />
+    <dependency conf="compile->master" org="org.apache.httpcomponents" name="httpcore" rev="4.3.2" />
     <dependency conf="compile->master" org="org.springframework" name="spring-oxm" rev="3.2.2.RELEASE"/>
     <dependency conf="compile->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
     <dependency conf="compile->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
@@ -122,7 +123,6 @@
     <dependency conf="ear->master" org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13"/>
     <dependency conf="ear->master" org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.13"/>
     <dependency conf="ear->master" org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.4.1"/>
-    <dependency conf="ear->master" org="commons-httpclient" name="commons-httpclient" rev="3.1"/>
     <dependency conf="ear->master" org="org.springframework" name="spring-oxm" rev="3.2.2.RELEASE"/>
     <dependency conf="ear->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
     <dependency conf="ear->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>

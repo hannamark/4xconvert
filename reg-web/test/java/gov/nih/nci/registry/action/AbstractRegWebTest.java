@@ -42,6 +42,7 @@ import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.test.util.MockPoServiceLocator;
 import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.webservices.rest.client.util.MockPoRestServiceLocator;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -133,6 +134,7 @@ public abstract class AbstractRegWebTest {
     public void setUpServices() {
         PaRegistry.getInstance().setServiceLocator(new RegistrationMockServiceLocator());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+        PoRegistry.getInstance().setPoResPoServiceLocator(new MockPoRestServiceLocator());
     }
     /**
      * Initialize the mock request.
