@@ -163,7 +163,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
 
     @Test
     public void testSchemaValidation() throws Exception {
-        HttpResponse response = updateTrialFromFile("/integration_update_complete_schema_violation.xml");
+        HttpResponse response = updateTrialFromFile("pa", "1",
+                "/integration_update_complete_schema_violation.xml");
         assertEquals(400, getReponseCode(response));
 
     }
@@ -184,7 +185,7 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
     public void testUpdateNoChanges() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
 
-        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_no_changes.xml");       
+        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_no_changes.xml");
         HttpResponse response = updateTrialFromJAXBElement("pa",
                 rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
@@ -390,13 +391,13 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    protected HttpResponse updateTrialFromFile(String file)
-            throws ClientProtocolException, IOException, ParseException,
-            JAXBException, SQLException {
+    protected HttpResponse updateTrialFromFile(String idType, String trialID,
+            String file) throws ClientProtocolException, IOException,
+            ParseException, JAXBException, SQLException {
         StringEntity entity = new StringEntity(IOUtils.toString(getClass()
                 .getResourceAsStream(file)));
         HttpResponse response = submitEntityAndReturnResponse(entity,
-                serviceURL);
+                serviceURL + "/" + idType + "/" + trialID);
         return response;
 
     }
