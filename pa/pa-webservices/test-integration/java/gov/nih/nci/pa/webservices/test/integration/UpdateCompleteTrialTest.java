@@ -54,8 +54,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
 
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
-        upd.setPaTrialID(rConf.getPaTrialID());
-        HttpResponse response = updateTrialFromJAXBElement(upd);
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
         assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
         assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
@@ -69,9 +69,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
 
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
-        upd.setPaTrialID(null);
-        upd.setNciTrialID(rConf.getNciTrialID());
-        HttpResponse response = updateTrialFromJAXBElement(upd);
+        HttpResponse response = updateTrialFromJAXBElement("nci",
+                rConf.getNciTrialID(), upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
         assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
         assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
@@ -89,10 +88,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         clickAndWait("id=otherIdbtnid");
 
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
-        upd.setPaTrialID(null);
-        upd.setNciTrialID(null);
-        upd.setCtepTrialID("CTEP00001");
-        HttpResponse response = updateTrialFromJAXBElement(upd);
+        HttpResponse response = updateTrialFromJAXBElement("ctep", "CTEP00001",
+                upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
         assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
         assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
@@ -111,8 +108,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         clickAndWait("id=otherIdbtnid");
 
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
-        upd.setPaTrialID(rConf.getPaTrialID());
-        HttpResponse response = updateTrialFromJAXBElement(upd);
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
         assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
         assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
@@ -134,8 +131,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
 
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_other_docs.xml");
-        upd.setPaTrialID(rConf.getPaTrialID());
-        HttpResponse response = updateTrialFromJAXBElement(upd);
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
         assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
         assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
@@ -152,8 +149,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
 
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_other_ids.xml");
-        upd.setPaTrialID(rConf.getPaTrialID());
-        HttpResponse response = updateTrialFromJAXBElement(upd);
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
         assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
         assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
@@ -176,8 +173,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
 
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_biz_validation.xml");
-        upd.setPaTrialID(rConf.getPaTrialID());
-        HttpResponse response = updateTrialFromJAXBElement(upd);
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
         assertEquals(400, getReponseCode(response));
         String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
         assertTrue(respBody.contains("Validation Exception"));
@@ -187,9 +184,9 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
     public void testUpdateNoChanges() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
 
-        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_no_changes.xml");
-        upd.setPaTrialID(rConf.getPaTrialID());
-        HttpResponse response = updateTrialFromJAXBElement(upd);
+        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_no_changes.xml");       
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
         assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
         assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
@@ -374,7 +371,8 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
     }
 
     @SuppressWarnings("unchecked")
-    protected HttpResponse updateTrialFromJAXBElement(CompleteTrialUpdate o)
+    protected HttpResponse updateTrialFromJAXBElement(String idType,
+            String trialID, CompleteTrialUpdate o)
             throws ClientProtocolException, IOException, ParseException,
             JAXBException, SQLException {
         JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
@@ -386,7 +384,7 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
 
         StringEntity entity = new StringEntity(out.toString());
         HttpResponse response = submitEntityAndReturnResponse(entity,
-                serviceURL);
+                serviceURL + "/" + idType + "/" + trialID);
         return response;
 
     }

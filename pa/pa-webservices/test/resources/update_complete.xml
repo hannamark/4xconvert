@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:CompleteTrialUpdate xmlns:tns="gov.nih.nci.pa.webservices.types"
 	xmlns:tns1="gov.nih.nci.po.webservices.types.trimmed" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="gov.nih.nci.pa.webservices.types C:\\Projects\\CTRP\\trunk\\code\\pa\\pa-webservices\\src\\resources\\ws.xsd ">
-	<tns:paTrialID>1</tns:paTrialID>
+	xsi:schemaLocation="gov.nih.nci.pa.webservices.types ../../src/resources/ws.xsd ">
+	
 	<tns:clinicalTrialsDotGovTrialID>NCT11111111111</tns:clinicalTrialsDotGovTrialID>
 	<tns:otherTrialID>ADDED01</tns:otherTrialID>
 	<tns:otherTrialID>ADDED02</tns:otherTrialID>

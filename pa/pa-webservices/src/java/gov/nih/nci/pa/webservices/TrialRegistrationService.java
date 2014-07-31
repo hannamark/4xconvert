@@ -163,16 +163,22 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
      * 
      * @param reg
      *            CompleteTrialRegistration
+     * @param trialID
+     *            trialID
+     * @param idType
+     *            idType
      * @return Response
      */
     @POST
-    @Path("/update/complete")
+    @Path("/update/complete/{idType}/{trialID}")
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
-    public Response updateCompleteTrial(@Validate CompleteTrialUpdate reg) {
+    public Response updateCompleteTrial(@PathParam("idType") String idType,
+            @PathParam("trialID") String trialID,
+            @Validate CompleteTrialUpdate reg) {
         try {
-            StudyProtocolDTO spDTO = findTrial(reg);
+            StudyProtocolDTO spDTO = findTrial(idType, trialID);
             Long paTrialID = IiConverter.convertToLong(spDTO.getIdentifier());
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
@@ -201,23 +207,20 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
 
     }
 
-    private StudyProtocolDTO findTrial(CompleteTrialUpdate reg)
+    private StudyProtocolDTO findTrial(String idType, String trialID)
             throws PAException {
-        return findTrialByAnyIdentifier(reg.getPaTrialID(),
-                reg.getNciTrialID(), reg.getCtepTrialID());
-    }
-
-    // Ugly method signature, I know. Sorry.
-    private StudyProtocolDTO findTrialByAnyIdentifier(Long paTrialID,
-            String nciTrialID, String ctepTrialID) throws PAException {
+        if (StringUtils.isBlank(trialID) || StringUtils.isBlank(idType)) {
+            throw new TrialDataException(
+                    "Please provide trial identifier type and value as described in the documentation.");
+        }
         Ii ii = new Ii();
-        if (paTrialID != null) {
-            ii = IiConverter.convertToStudyProtocolIi(paTrialID);
-        } else if (StringUtils.isNotBlank(nciTrialID)) {
-            ii.setExtension(nciTrialID);
+        if ("pa".equalsIgnoreCase(idType)) {
+            ii = IiConverter.convertToStudyProtocolIi(Long.valueOf(trialID));
+        } else if ("nci".equalsIgnoreCase(idType)) {
+            ii.setExtension(trialID);
             ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-        } else if (StringUtils.isNotBlank(ctepTrialID)) {
-            ii.setExtension(ctepTrialID);
+        } else if ("ctep".equalsIgnoreCase(idType)) {
+            ii.setExtension(trialID);
             ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
         }
         return PaRegistry.getStudyProtocolService().getStudyProtocol(ii);

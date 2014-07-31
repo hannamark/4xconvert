@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:CompleteTrialRegistration xmlns:tns="gov.nih.nci.pa.webservices.types"
 	xmlns:tns1="gov.nih.nci.po.webservices.types.trimmed" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="gov.nih.nci.pa.webservices.types ../../src/resources/ws.xsd ">
-	<tns:category>National</tns:category>
+	xsi:schemaLocation="gov.nih.nci.pa.webservices.types ../../src/resources/ws.xsd ">	
 	<tns:clinicalTrialsDotGovXmlRequired>false
 	</tns:clinicalTrialsDotGovXmlRequired>
 	<tns:leadOrgTrialID>UPCC 34890534</tns:leadOrgTrialID>
@@ -37,5 +36,6 @@
 	</tns:protocolDocument>
 	<tns:irbApprovalDocument filename="irb.pdf">MA==
 	</tns:irbApprovalDocument>
+	<tns:category>National</tns:category>
 	<tns:trialOwner>submitter-ci@example.com</tns:trialOwner>
 </tns:CompleteTrialRegistration>

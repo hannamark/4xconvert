@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:CompleteTrialRegistration xmlns:tns="gov.nih.nci.pa.webservices.types"
 	xmlns:tns1="gov.nih.nci.po.webservices.types.trimmed" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="gov.nih.nci.pa.webservices.types ../../src/resources/ws.xsd ">
-	<tns:category>Externally Peer-Reviewed</tns:category>
+	xsi:schemaLocation="gov.nih.nci.pa.webservices.types ../../src/resources/ws.xsd ">	
 	<tns:clinicalTrialsDotGovXmlRequired>true</tns:clinicalTrialsDotGovXmlRequired>
 	<tns:leadOrgTrialID>UPCC 34890534</tns:leadOrgTrialID>
 	<tns:clinicalTrialsDotGovTrialID>NCT01994850</tns:clinicalTrialsDotGovTrialID>
@@ -142,5 +141,6 @@
 		filename="sites.pdf">dGVzdA==</tns:participatingSitesDocument>
 	<tns:informedConsentDocument filename="consent.pdf">dGVzdA==</tns:informedConsentDocument>
 	<tns:otherDocument filename="other.pdf">dGVzdA==</tns:otherDocument>
+	<tns:category>Externally Peer-Reviewed</tns:category>
 	<tns:trialOwner>submitter-ci@example.com</tns:trialOwner>
 </tns:CompleteTrialRegistration>

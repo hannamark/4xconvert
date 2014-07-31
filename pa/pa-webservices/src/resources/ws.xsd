@@ -20,36 +20,6 @@
 	<import namespace="gov.nih.nci.po.webservices.types.trimmed"
 		schemaLocation="po.xsd" />
 
-	<element name="paTrialID" type="long">
-		<annotation>
-			<documentation>PA's internal trial identifier, which is a numerical
-				value. Immutable.
-			</documentation>
-		</annotation>
-	</element>
-
-	<element name="nciTrialID">
-		<annotation>
-			<documentation>NCI ID assigned to each newly registered trial. It
-				follows a specific format (e.g. NCI-2014-00672) and stays immutable
-				with a trial.
-			</documentation>
-		</annotation>
-		<simpleType>
-			<restriction base="string">
-				<pattern value="NCI-[0-9]{4}-[0-9]{1,8}" />
-			</restriction>
-		</simpleType>
-	</element>
-
-	<element name="ctepTrialID" type="string">
-		<annotation>
-			<documentation>A trial can have an optional identifier assigned by
-				CTEP. A string value of no strictly defined format.
-			</documentation>
-		</annotation>
-	</element>
-
 	<element name="clinicalTrialsDotGovTrialID">
 		<annotation>
 			<documentation>The format for the ClinicalTrials.gov registry number
@@ -81,8 +51,27 @@
 			</documentation>
 		</annotation>
 		<sequence>
-			<element ref="tns:paTrialID" />
-			<element ref="tns:nciTrialID" />
+			<element name="paTrialID" type="long">
+				<annotation>
+					<documentation>PA's internal trial identifier, which is a numerical
+						value. Immutable.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="nciTrialID">
+				<annotation>
+					<documentation>NCI ID assigned to each newly registered trial. It
+						follows a specific format (e.g. NCI-2014-00672) and stays
+						immutable
+						with a trial.
+					</documentation>
+				</annotation>
+				<simpleType>
+					<restriction base="string">
+						<pattern value="NCI-[0-9]{4}-[0-9]{1,8}" />
+					</restriction>
+				</simpleType>
+			</element>
 		</sequence>
 	</complexType>
 
@@ -839,6 +828,13 @@
 		</annotation>
 	</element>
 
+	<element name="CompleteTrialAmendment" type="tns:CompleteTrialAmendment">
+		<annotation>
+			<documentation>A request to amend a Complete trial in CTRP.
+			</documentation>
+		</annotation>
+	</element>
+
 	<element name="CompleteTrialUpdate" type="tns:CompleteTrialUpdate">
 		<annotation>
 			<documentation>A request to update a Complete trial in CTRP. An
@@ -850,7 +846,7 @@
 		</annotation>
 	</element>
 
-	<complexType name="CompleteTrialUpdate">
+	<complexType name="CompleteTrialUpdate" final="#all" block="#all">
 		<annotation>
 			<documentation>A request to update a Complete trial in CTRP. An
 				update permits trial owners to change a limited set
@@ -860,17 +856,6 @@
 			</documentation>
 		</annotation>
 		<sequence>
-			<choice>
-				<annotation>
-					<documentation>An existing Complete (non-Abbreviated) trial can be
-						identified by one of the three types of identifiers: an internal
-						CTRP PA identifier, NCI ID, or CTEP ID.
-					</documentation>
-				</annotation>
-				<element ref="tns:paTrialID" />
-				<element ref="tns:nciTrialID" />
-				<element ref="tns:ctepTrialID" />
-			</choice>
 			<element ref="tns:clinicalTrialsDotGovTrialID" minOccurs="0">
 				<annotation>
 					<documentation>
@@ -987,14 +972,91 @@
 		</sequence>
 	</complexType>
 
-
-	<complexType name="CompleteTrialRegistration">
+	<complexType name="CompleteTrialRegistration" final="#all"
+		block="#all">
 		<annotation>
-			<documentation>A request to register a Complete trial in CTRP.
+			<documentation>A request to register a new Complete trial in CTRP.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="tns:BaseTrialInformation">
+				<sequence>
+					<element name="category" type="tns:TrialCategory" />
+					<element name="trialOwner" minOccurs="0" maxOccurs="unbounded">
+						<annotation>
+							<documentation>
+								Identifies an owner of this trial by an email
+								address. Email address must be known to CTRP in order for the
+								ownership
+								to be established.
+							</documentation>
+						</annotation>
+						<simpleType>
+							<restriction base="string">
+								<maxLength value="254" />
+								<pattern
+									value="[_\-a-zA-Z0-9\.\+]+@[a-zA-Z0-9](\.?[\-a-zA-Z0-9]*[a-zA-Z0-9])*" />
+							</restriction>
+						</simpleType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="CompleteTrialAmendment" final="#all"
+		block="#all">
+		<annotation>
+			<documentation>A request to amend a Complete trial in CTRP.
+			</documentation>
+		</annotation>
+		<complexContent>
+			<extension base="tns:BaseTrialInformation">
+				<sequence>
+					<element name="amendmentNumber" minOccurs="0">
+						<simpleType>
+							<restriction base="string">
+								<maxLength value="200" />
+								<minLength value="1" />
+							</restriction>
+						</simpleType>
+					</element>
+					<element name="amendmentDate" type="date" />
+					<element name="ctepIdentifier" type="string" minOccurs="0" />
+					<element name="dcpIdentifier" type="string" minOccurs="0" />
+					<element name="changeMemoDocument" type="tns:TrialDocument"
+						minOccurs="0">
+						<annotation>
+							<documentation>Contains a summary of changes to the original, or
+								last amended, trial submission.One or the other of the Change
+								Memo and Protocol Highlight documents is required. You do not
+								have to submit both of these documents.
+							</documentation>
+						</annotation>
+					</element>
+					<element name="protocolHighlightDocument" type="tns:TrialDocument"
+						minOccurs="0">
+						<annotation>
+							<documentation>One or the other of the Change Memo and Protocol
+								Highlight documents is required. You do not have to submit both
+								of these documents.
+							</documentation>
+						</annotation>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+
+
+	<complexType name="BaseTrialInformation" abstract="true"
+		block="restriction" final="restriction">
+		<annotation>
+			<documentation>Trial information common to Registration and Amendment
+				requests.
 			</documentation>
 		</annotation>
 		<sequence>
-			<element name="category" type="tns:TrialCategory" />
 			<element name="clinicalTrialsDotGovXmlRequired" type="boolean">
 				<annotation>
 					<documentation>Indicates whether your trial needs to be submitted
@@ -1016,7 +1078,10 @@
 				<annotation>
 					<documentation>Enter an additional trial identifier such as a
 						unique identifier from other registries, NIH grant numbers, or
-						protocol numbers assigned by the Review Board.
+						protocol numbers assigned by the Review Board. In case of an
+						Amendment, the identifiers you specify will be
+						appended to the
+						existing ones.
 					</documentation>
 				</annotation>
 				<simpleType>
@@ -1061,6 +1126,9 @@
 				<annotation>
 					<documentation>A trial's design can be either Interventional or
 						Non-Interventional. Please provide corresponding design details.
+						Please note: an Amendment cannot change
+						a trial from Interventional
+						to Non-Interventional or vice versa.
 					</documentation>
 				</annotation>
 				<element name="interventionalDesign" type="tns:InterventionalTrialDesign" />
@@ -1158,23 +1226,6 @@
 					<documentation>Any other trial-related document.
 					</documentation>
 				</annotation>
-			</element>
-			<element name="trialOwner" minOccurs="0" maxOccurs="unbounded">
-				<annotation>
-					<documentation>
-						Identifies an owner of this trial by an email
-						address. Email address must be known to CTRP in order for the
-						ownership
-						to be established.
-					</documentation>
-				</annotation>
-				<simpleType>
-					<restriction base="string">
-						<maxLength value="254" />
-						<pattern
-							value="[_\-a-zA-Z0-9\.\+]+@[a-zA-Z0-9](\.?[\-a-zA-Z0-9]*[a-zA-Z0-9])*" />
-					</restriction>
-				</simpleType>
 			</element>
 		</sequence>
 	</complexType>

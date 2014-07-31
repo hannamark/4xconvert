@@ -166,9 +166,7 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
             SAXException, PAException, NullifiedEntityException {
         final String filename = "/update_complete.xml";
         CompleteTrialUpdate reg = readCompleteTrialUpdateFromFile(filename);
-        reg.setPaTrialID(null);
-        reg.setNciTrialID("NCI-2014-00001");
-        updateAndVerify(reg);
+        updateAndVerify("nci", "NCI-2014-00001", reg);
 
     }
 
@@ -178,9 +176,7 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
             SAXException, PAException, NullifiedEntityException {
         final String filename = "/update_complete.xml";
         CompleteTrialUpdate reg = readCompleteTrialUpdateFromFile(filename);
-        reg.setPaTrialID(null);
-        reg.setCtepTrialID("CTEP0000000001");
-        updateAndVerify(reg);
+        updateAndVerify("ctep", "CTEP0000000001", reg);
 
     }
 
@@ -204,12 +200,12 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
                         any(List.class), any(List.class), any(List.class),
                         any(Bl.class));
 
-        Response r = service.updateCompleteTrial(reg);
+        Response r = service.updateCompleteTrial("pa", "1", reg);
         assertEquals(Status.BAD_REQUEST.getStatusCode(), r.getStatus());
         assertEquals("Validation Exception: error.", r.getEntity().toString());
 
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public final void testUpdateTrialDataException() throws JAXBException,
@@ -217,20 +213,17 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
         final String filename = "/update_complete.xml";
         CompleteTrialUpdate reg = readCompleteTrialUpdateFromFile(filename);
 
-        doThrow(new TrialDataException("error"))
-                .when(trialRegistrationServiceLocal).update(
-                        any(StudyProtocolDTO.class),
-                        any(StudyOverallStatusDTO.class), any(List.class),
-                        any(List.class), any(List.class), any(List.class),
-                        any(StudyContactDTO.class),
-                        any(StudySiteContactDTO.class),
-                        any(OrganizationDTO.class),
-                        any(StudyResourcingDTO.class), any(Ii.class),
-                        any(StudyRegulatoryAuthorityDTO.class),
-                        any(List.class), any(List.class), any(List.class),
-                        any(Bl.class));
+        doThrow(new TrialDataException("error")).when(
+                trialRegistrationServiceLocal).update(
+                any(StudyProtocolDTO.class), any(StudyOverallStatusDTO.class),
+                any(List.class), any(List.class), any(List.class),
+                any(List.class), any(StudyContactDTO.class),
+                any(StudySiteContactDTO.class), any(OrganizationDTO.class),
+                any(StudyResourcingDTO.class), any(Ii.class),
+                any(StudyRegulatoryAuthorityDTO.class), any(List.class),
+                any(List.class), any(List.class), any(Bl.class));
 
-        Response r = service.updateCompleteTrial(reg);
+        Response r = service.updateCompleteTrial("pa", "1", reg);
         assertEquals(Status.BAD_REQUEST.getStatusCode(), r.getStatus());
         assertEquals("error", r.getEntity().toString());
 
@@ -256,7 +249,7 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
                         any(List.class), any(List.class), any(List.class),
                         any(Bl.class));
 
-        Response r = service.updateCompleteTrial(reg);
+        Response r = service.updateCompleteTrial("pa", "1", reg);
         assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                 r.getStatus());
         assertEquals("error", r.getEntity().toString());
@@ -280,7 +273,7 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
                 any(StudyRegulatoryAuthorityDTO.class), any(List.class),
                 any(List.class), any(List.class), any(Bl.class));
 
-        Response r = service.updateCompleteTrial(reg);
+        Response r = service.updateCompleteTrial("pa", "1", reg);
         assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(),
                 r.getStatus());
         assertEquals("error", r.getEntity().toString());
@@ -298,7 +291,7 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
             throws JAXBException, SAXException, PAException,
             NullifiedEntityException {
         CompleteTrialUpdate reg = readCompleteTrialUpdateFromFile(filename);
-        updateAndVerify(reg);
+        updateAndVerify("pa", "1", reg);
     }
 
     /**
@@ -307,9 +300,10 @@ public class TrialRegistrationServiceCompleteUpdateTest extends
      * @throws NullifiedEntityException
      */
     @SuppressWarnings("unchecked")
-    private void updateAndVerify(CompleteTrialUpdate reg) throws PAException,
+    private void updateAndVerify(String idType, String trialID,
+            CompleteTrialUpdate reg) throws PAException,
             NullifiedEntityException {
-        Response r = service.updateCompleteTrial(reg);
+        Response r = service.updateCompleteTrial(idType, trialID, reg);
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
         JAXBElement<TrialRegistrationConfirmation> el = (JAXBElement<TrialRegistrationConfirmation>) r
                 .getEntity();
