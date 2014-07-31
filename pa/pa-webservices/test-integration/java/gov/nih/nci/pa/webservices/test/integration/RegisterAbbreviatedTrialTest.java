@@ -26,7 +26,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
 
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
-        super.setUp();
+        super.setUp("/registration/abbreviated/");
     }
 
     @SuppressWarnings("deprecation")
