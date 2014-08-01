@@ -656,6 +656,7 @@ FiveAmUtil = {
                 	for (var j=0; j < pdqItem.alterNames.length; j++) {
                 		if(pdqItem.alterNames[j].indexOf(term)!=-1) {
                 		     results.push([pdqItem.name , i]);
+                		     break;
                 		}
                 	}
                 }
@@ -663,7 +664,7 @@ FiveAmUtil = {
             var sortedResults = results.sort();
             var ids=[];
             for (i=0;i<sortedResults.length;i++){
-                ids.push(sortedResults[i][1]);
+            	ids.push(sortedResults[i][1]);
             }
             return ids;
         },

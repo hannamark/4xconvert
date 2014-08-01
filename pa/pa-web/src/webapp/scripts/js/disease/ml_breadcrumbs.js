@@ -36,16 +36,19 @@
 			breadcrumbsContainer.empty();
 			var bcItems = localSettings.bcItems;
 			var term = localSettings.searchTerm;
-			if(showSynonyms){
-				breadcrumbsContainer.append('<div class="breadcrumbItemPane"><div style="float:left; width: 53%;"><h2>Preferred Term</h2></div><div style="margin-left:54%;"><h2>Alternate Terms</h2></div></div>')
-			}else{
-				breadcrumbsContainer.append('<div class="breadcrumbItemPane"><div style="float:left; width: 100%;"><h2>Preferred Term</h2></div></div>')
+			if(bcItems.length > 0){
+				if(showSynonyms){
+					breadcrumbsContainer.append('<div><div style="float:left; width: 53%;"><h2>Preferred Term</h2></div><div style="margin-left:54%;"><h2>Synonyms</h2></div></div>')
+				}else{
+					breadcrumbsContainer.append('<div><div style="float:left; width: 100%;"><h2>Preferred Term</h2></div></div>')
+				}
 			}
 			for( var i in bcItems ) {
 				if(!bcItems.hasOwnProperty(i))
 					continue;
 				var bcItem = bcItems[i];
-				
+
+				var featured;
 				var html = '<div class="breadcrumbItemPane"><div class="breadcrumbItemBox">';
 				if( bcItem[0].isFeatured ) {
 					html += '<div id="breadcrumb_box'+i+'_id'+bcItem[0].id+'" class="breadcrumbFeaturedElement">'+
@@ -53,13 +56,13 @@
 					if (bcItem[0].hasChildren)
 						html += '<div class="breadcrumbFeaturedElementImageLink"><a href="#" title="'+imageTip+'"><img src="'+imageFile+'"></img></a></div>';
 					html += '</div>';
+					featured =  bcItem[0];
 				} else {
 					html += '<div id="breadcrumb_box'+i+'_id'+bcItem[0].id+'" class="breadcrumbElement">'+
 							'<div class="breadcrumbElementText" title="'+textTip+'">' + bcItem[0].name + '</div>'+
 							'<div class="breadcrumbElementImageLink"><a href="#" title="'+imageTip+'"><img src="'+imageFile+'"></img></a></div>'+
 							'</div>';
 				}
-				var featured;
 				for( var j=1; j<bcItem.length; j++ ) {
 					html += '<div class="breadcrumbElementSeparator"> &gt; </div>';
 					if( bcItem[j].isFeatured ) {
@@ -85,7 +88,7 @@
 						html += '<div class="breadcrumbFeaturedElement"> <div class="breadcrumbSynonymElementText" title="Synonym">';
 						html += featured.alterNames[k];
 						html += '</div></div>';
-						if(k != featured.alterNames.length - 1 ){
+						if(k != featured.alterNames.length - 1 ){ // Insert a separator except for the last one
 						  html += '<div class="breadcrumbElementSeparator"> , </div>'
 						}
 					}

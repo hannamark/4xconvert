@@ -100,6 +100,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -230,8 +231,16 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
             if (CollectionUtils.isEmpty(disease.getDiseaseParents())) {
                 tree.add(getNode(disease, null, !CollectionUtils.isEmpty(disease.getDiseaseChildren())));
             } else {
+                // Get unique ACTIVE parent ids, there could be duplicates in the DB
+                HashSet<Long> parentIds = new HashSet<Long>();
                 for (PDQDiseaseParent parent : disease.getDiseaseParents()) {
-                    tree.add(getNode(disease, parent.getParentDisease().getId(),
+                    if (parent.getStatusCode() == ActiveInactiveCode.ACTIVE) {
+                        parentIds.add(parent.getParentDisease().getId());
+                    }
+                }
+                
+                for (Long parentId: parentIds) {
+                    tree.add(getNode(disease, parentId,
                             !CollectionUtils.isEmpty(disease.getDiseaseChildren())));
                 }
             }

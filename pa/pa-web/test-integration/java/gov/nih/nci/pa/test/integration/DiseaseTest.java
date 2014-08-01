@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -91,100 +93,82 @@ import org.junit.Test;
  */
 public class DiseaseTest extends AbstractPaSeleniumTest {
     
-    private static final String DISEASE1 = "cellular diagnosis, intraocular melanoma";
-    private static final String DISEASE2 = "ciliary body and choroid melanoma, small size";
-    private static final String ADD_BUTTON = "Add";
-    private static final String REMOVE_BUTTON = "Remove";
-    private static final String YES = "Yes";
-    private static final String NO = "No";
-    private static final String EMPTY = "";
-    
-    /**
-     * Test the create/remove diseases page with the following scenario
-     * 1. Start with a study protocol without disease
-     * 2. Add 2 diseases using the add/search popupand check that the buttons and include xml columns have changed 
-     *    accordingly
-     * 3. Go back to the main disease page and check that the 2 disease are there
-     * 4. Remove a disease from the add/search popup
-     * 5. Go back to the main disease page and check that only one disease is left
-     * 6. Remove the last disease from the main page.
-     */
-    @Test
-    public void testCreateAndRemoveDisease() {
+    @Before
+    @Override
+    public void setUp() throws Exception{
+        super.setUp();
+        TrialInfo trial = createSubmittedTrial();
+        
+        loginAsAdminAbstractor();
+        searchSelectAndAcceptTrial(trial.title, true, false);
+        
+        logoutUser();
+        
         loginAsScientificAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
-        verifyTrialAccepted();
-
+        searchAndSelectTrial(trial.title);
+        
+        checkOutTrialAsScientificAbstractor();
+       
+        logoutUser();
+        
+        loginAsScientificAbstractor();
+        searchAndSelectTrial(trial.title);
         clickAndWait("link=Disease/Condition");
         assertTrue(selenium.isTextPresent("Nothing found to display"));
-        
-        addAndSearch("melano");
-        assertDiseaseRowInSearchTable(2, DISEASE1, ADD_BUTTON, EMPTY);
-        assertDiseaseRowInSearchTable(5, DISEASE2, ADD_BUTTON, EMPTY);
-        
-        clickAndWaitAjax("//table[@id='row']/tbody/tr[2]/td[6]/a/span/span");
-        waitForElementById("row", 15);
-        assertDiseaseRowInSearchTable(2, DISEASE1, REMOVE_BUTTON, YES);
-        assertDiseaseRowInSearchTable(5, DISEASE2, ADD_BUTTON, EMPTY);
-        
-        selenium.click("id=includeXml");
-        clickAndWaitAjax("//table[@id='row']/tbody/tr[5]/td[6]/a/span/span");
-        waitForElementById("row", 15);
-        assertDiseaseRowInSearchTable(2, DISEASE1, REMOVE_BUTTON, YES);
-        assertDiseaseRowInSearchTable(5, DISEASE2, REMOVE_BUTTON, NO);
-        
-        clickAndWaitAjax("link=Close");
-        selenium.waitForPageToLoad("30000");
-        selenium.selectWindow("null");
-        assertTrue(selenium.isTextPresent("2 items found, displaying all items."));
-        assertDiseaseRowInMainTable(1,DISEASE1, YES);
-        assertDiseaseRowInMainTable(2, DISEASE2, NO);
-        
-        addAndSearch("melano");
-        assertDiseaseRowInSearchTable(2, DISEASE1, REMOVE_BUTTON, YES);
-        assertDiseaseRowInSearchTable(5, DISEASE2, REMOVE_BUTTON, NO);
-        
-        clickAndWaitAjax("//table[@id='row']/tbody/tr[5]/td[6]/a/span/span");
-        waitForElementById("row", 15);
-        assertDiseaseRowInSearchTable(2, DISEASE1, REMOVE_BUTTON, YES);
-        assertDiseaseRowInSearchTable(5, DISEASE2, ADD_BUTTON, EMPTY);
-        
-        clickAndWaitAjax("link=Close");
-        selenium.waitForPageToLoad("30000");
-        selenium.selectWindow("null");
-        assertTrue(selenium.isTextPresent("One item found."));
-        assertDiseaseRowInMainTable(1,DISEASE1, YES);
-        
-        clickAndWait("//table[@id='row']/tbody/tr[1]/td[9]/a/img");
-        selenium.getConfirmation();
-        selenium.waitForPageToLoad("30000");
-        selenium.selectWindow("null");
-        assertTrue(selenium.isTextPresent("Nothing found to display"));
-    }
-    
-    private void addAndSearch(String searchName) {
         clickAndWait("link=Add");
         selenium.selectFrame("popupFrame");
-        waitForElementById("searchName", 15);
-        selenium.type("id=searchName", searchName);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
+        waitForElementById("disease", 30);
+        assertTrue(selenium.isTextPresent("Search Synonyms"));        
     }
     
-    private void assertDiseaseRowInSearchTable(int row, String disease, String button, String included) {
-        assertEquals("Wrong disease in row " + row, disease,
-                     selenium.getText("//table[@id='row']/tbody/tr[" + row + "]/td[2]"));
-        assertEquals("Wrong button in row " + row, button,
-                     selenium.getText("//table[@id='row']/tbody/tr[" + row + "]/td[6]/a/span/span"));
-        assertEquals("Wrong included flag in row " + row, included,
-                     selenium.getText("//table[@id='row']/tbody/tr[" + row + "]/td[7]"));
+    @After
+    @Override
+    public void tearDown() throws Exception{
+        super.tearDown();
     }
     
-    private void assertDiseaseRowInMainTable(int row, String disease, String included) {
-        assertEquals("Wrong disease in row " + row, disease,
-                     selenium.getText("//table[@id='row']/tbody/tr[" + row + "]/td[1]"));
-        assertEquals("Wrong included flag in row " + row, included,
-                     selenium.getText("//table[@id='row']/tbody/tr[" + row + "]/td[7]"));
+    /**
+     * Search for non existing disease
+     */
+    @Test
+    public void testSearchNonExistingDisese(){
+        // Search for invalid d
+        searchDisease("invalid disease");
+        
+        assertTrue(selenium.isTextPresent("0 results for \"invalid disease\""));
+        assertFalse(selenium.isTextPresent("Preferred Term"));
+    }
+    
+    /**
+     * Search by Preferred term
+     */
+    @Test
+    public void testSearchDiseseByPreferredTerm(){
+        //Search for perferred term
+        searchDisease("lung cancer");
+        
+        assertTrue(selenium.isTextPresent("63 results for \"lung cancer\""));
+        assertTrue(selenium.isTextPresent("Preferred Term"));
+    }
+
+    /**
+     * Search by synonym
+     */
+    @Test
+    public void testSearchDiseseBySynonym(){
+        //Search synonyms
+        selenium.click("id=searchSynonym");
+        searchDisease("lung cancer");
+        
+        assertTrue(selenium.isTextPresent("63 results for \"lung cancer\""));
+        assertTrue(selenium.isTextPresent("Preferred Term"));
+        assertTrue(selenium.isTextPresent("Synonyms"));
+    }    
+    
+    private void searchDisease(String searchName) {
+        selenium.type("id=disease", searchName);
+        clickAndWaitAjax("alt=Search");
+        pause(10000);
     }
 
 }
