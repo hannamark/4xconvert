@@ -55,6 +55,19 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
             activateCtepRoles(e);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void curateWithoutCRProcessing(T e) throws JMSException {
+        cascadeStatusChange(e);
+        super.curateWithoutCRProcessing(e);
+        
+        if (e.getPriorEntityStatus() != e.getStatusCode() && e.getStatusCode() == EntityStatus.ACTIVE) {
+            activateCtepRoles(e);
+        }
+    }
 
     private void cascadeStatusChange(T e) throws JMSException {
         if (e.getPriorEntityStatus() != e.getStatusCode()) {
@@ -78,8 +91,6 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
                 x.setStatus(RoleStatus.SUSPENDED);
                 GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());
 
-
-
                 boolean needsOverride = handleRoleUpdateOverride(x);
 
                 if (needsOverride) {
@@ -87,9 +98,6 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
                 }
 
                 service.curate(x);
-
-
-
             }
         }
     }

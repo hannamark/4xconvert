@@ -463,5 +463,12 @@ public class NullifiedEntityInterceptorTest  extends AbstractServiceBeanTest {
                 throws EntityValidationException, JMSException {
             
         }
+
+        @Override
+        public void curateWithoutCRProcessing(Organization curatedOrg)
+                throws JMSException {
+           
+            
+        }
     }
 }

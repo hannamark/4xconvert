@@ -10,6 +10,7 @@ import gov.nih.nci.po.service.OrganizationalContactServiceLocal;
 import gov.nih.nci.po.service.OversightCommitteeServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
 import gov.nih.nci.security.SecurityServiceProvider;
@@ -145,7 +146,12 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
         }
         addCommentToOrg();
         try {
-            PoRegistry.getOrganizationService().curate(getOrganization());
+            if (isCRProcessingRequired(getOrganization())) {
+                PoRegistry.getOrganizationService().curate(getOrganization()); 
+            } else {
+                PoRegistry.getOrganizationService().curateWithoutCRProcessing(getOrganization()); 
+            }
+            
         } catch (EJBException e) {
             /*
              * we are catching the EJBException and then interrogating it for the root cause and if the root cause is
@@ -401,5 +407,15 @@ public class CurateOrganizationAction extends AbstractPoAction implements Addres
      */
     public void setShowNewStatusField(boolean showNewStatusField) {
         this.showNewStatusField = showNewStatusField;
+    }
+    
+    private boolean isCRProcessingRequired(Organization org) {
+        boolean flag = false;
+        if (PoServiceUtil.isOverriddenByCurrentUser(org) 
+                || (org.getOverriddenBy() == null && PoServiceUtil.isOrgCreatedByCurrentUser(org))) {
+            flag = true;
+        }
+        
+        return flag;
     }
 }

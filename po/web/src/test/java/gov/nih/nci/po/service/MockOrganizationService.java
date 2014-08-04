@@ -215,5 +215,12 @@ public class MockOrganizationService implements OrganizationServiceLocal {
             throws EntityValidationException, JMSException {   
     }
 
+    @Override
+    public void curateWithoutCRProcessing(Organization curatedOrg)
+            throws JMSException {
+        
+        
+    }
+
     
 }

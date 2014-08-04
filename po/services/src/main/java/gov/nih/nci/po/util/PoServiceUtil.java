@@ -189,8 +189,18 @@ public class PoServiceUtil {
      */
     public static boolean isCreatedByCurrentUser(AbstractRole role) {
         return role.getCreatedBy() != null
-                && StringUtils.equals(UsernameHolder.getUser(), role.getCreatedBy().getLoginName());
+                && StringUtils.equalsIgnoreCase(UsernameHolder.getUser(), role.getCreatedBy().getLoginName());
     }
+    
+    /**
+    *
+    * @param organization An organization.
+    * @return Returns true if the given organization is created by the current user, false otherwise.
+    */
+   public static boolean isOrgCreatedByCurrentUser(Organization organization) {
+       return organization.getCreatedBy() != null
+               && StringUtils.equalsIgnoreCase(UsernameHolder.getUser(), organization.getCreatedBy().getLoginName());
+   }
 
     /**
      *
@@ -199,6 +209,6 @@ public class PoServiceUtil {
      */
     public static boolean isOverriddenByCurrentUser(Overridable overridable) {
         return overridable.getOverriddenBy() != null
-                && StringUtils.equals(UsernameHolder.getUser(), overridable.getOverriddenBy().getLoginName());
+              && StringUtils.equalsIgnoreCase(UsernameHolder.getUser(), overridable.getOverriddenBy().getLoginName());
     }
 }

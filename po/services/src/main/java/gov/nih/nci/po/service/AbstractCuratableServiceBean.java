@@ -215,6 +215,24 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
         }
     }
     
+    /**
+     * Curates the object without processing its CR.
+     * @param curatable the object to curate.
+     * @throws JMSException any problems publishing announcements via JMS
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void curateWithoutCRProcessing(T curatable) throws JMSException {
+        final Session s = PoHibernateUtil.getCurrentSession();
+        T object = curatable;
+        if (object.getId() != null) {
+            object = loadAndMerge(object, s);
+            getPublisher().sendUpdate(getTypeArgument(), object);
+        } else {
+            s.save(PersistentObjectHelper.initialize(object));
+            getPublisher().sendCreate(getTypeArgument(), object);
+        }
+    }
+    
     
     /**
      * Curates the object by setting 'overriddenBy' attribute.

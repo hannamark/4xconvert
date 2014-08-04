@@ -339,4 +339,12 @@ public class OrganizationBoService implements OrganizationServiceLocal {
     }
 
 
+    @Override
+    public void curateWithoutCRProcessing(Organization curatedOrg)
+            throws JMSException {
+        PoRegistry.getOrganizationService().curateWithoutCRProcessing(curatedOrg);
+        
+    }
+
+
 }

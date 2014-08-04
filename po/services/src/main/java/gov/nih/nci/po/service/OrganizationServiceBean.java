@@ -230,8 +230,9 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
         
         // Step2: curate the organization
-        curate(org);        
+        super.curate(org);        
     }
+    
     
     /**
      * {@inheritDoc}

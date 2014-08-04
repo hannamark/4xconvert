@@ -455,6 +455,58 @@ public void testCurateNewOrgThenCurateAfterRemoteUpdateToNullifyWithDuplicateId(
         clickAndWait("save_button"); 
         logoutUser(); //'John Doe' logs out
     }
+    
+    /**
+     * Testcase for adding comment to an Org having a CR https://tracker.nci.nih.gov/browse/PO-7856
+     */
+    public void testAddCommentToOrgWithCRs() throws Exception {        
+        // create a new org via remote API.
+        String name = DataGeneratorUtil.words(DEFAULT_TEXT_COL_LENGTH, 'Y', 10);
+        Ii id = remoteCreateAndCatalog(create(name));
+
+        // create a CR
+        OrganizationDTO orgDTO = getOrgService().getOrganization(id);
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:another.email@example.com"));
+        orgDTO.getTelecomAddress().getItem().add(email);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI(TelPhone.SCHEME_TEL + ":123-456-7890"));
+        orgDTO.getTelecomAddress().getItem().add(phone);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone fax = new TelPhone();
+        fax.setValue(new URI(TelPhone.SCHEME_X_TEXT_FAX + ":234-567-8901"));
+        orgDTO.getTelecomAddress().getItem().add(fax);
+        getOrgService().updateOrganization(orgDTO);
+        TelPhone tty = new TelPhone();
+        tty.setValue(new URI(TelPhone.SCHEME_X_TEXT_TEL + ":345-678-9012"));
+        orgDTO.getTelecomAddress().getItem().add(tty);
+        getOrgService().updateOrganization(orgDTO);
+        
+        // Org not overridden, other curator (who didn't create the Org) logs in.
+        loginAsJohnDoe(); // some other curator
+        searchForOrgByPoId(id);         
+        clickAndWait("org_id_" + id.getExtension()); // click on item to curate
+        waitForPageToLoad();
+        verifyFalse(selenium.isElementPresent("curateEntityForm_organization_name")); // OrgName 'text box' shouldn't be present (Non Editable)
+        // Verify that CR is present
+        verifyTrue(selenium.isTextPresent("Change Request Information"));
+        verifyFalse(selenium.isTextPresent("Copy")); // copy button not present
+        
+        // add a comment
+        selenium.type("curateEntityForm.organization.commentsText", "test comment by John");     
+        clickAndWait("save_button"); 
+        logoutUser(); //'John Doe' logs out
+        
+        // logic again & access the Org. The CR should still be there.
+        loginAsJohnDoe(); // some other curator
+        searchForOrgByPoId(id);         
+        clickAndWait("org_id_" + id.getExtension()); // click on item to curate
+        waitForPageToLoad();
+        // Verify that CR is present
+        verifyTrue(selenium.isTextPresent("Change Request Information"));
+        logoutUser(); //'John Doe' logs out
+    }
 
     private Ii createNewOrgThenCurateAsActive() throws EntityValidationException, URISyntaxException, CurationException {
         // create a new org via remote API.
