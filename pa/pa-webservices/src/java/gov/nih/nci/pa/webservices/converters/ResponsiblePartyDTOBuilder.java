@@ -3,18 +3,18 @@
  */
 package gov.nih.nci.pa.webservices.converters;
 
-import org.apache.commons.lang.StringUtils;
-
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
+import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.ResponsibleParty;
 import gov.nih.nci.pa.webservices.types.ResponsiblePartyType;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author dkrylov
@@ -50,7 +50,7 @@ public class ResponsiblePartyDTOBuilder {
      * @throws NullifiedEntityException
      *             NullifiedEntityException
      */
-    public ResponsiblePartyDTO build(CompleteTrialRegistration reg)
+    public ResponsiblePartyDTO build(BaseTrialInformation reg)
             throws NullifiedEntityException, NullifiedRoleException,
             TooManyResultsException, PAException {
         ResponsiblePartyDTO partyDTO = new ResponsiblePartyDTO();
@@ -73,7 +73,7 @@ public class ResponsiblePartyDTOBuilder {
     }
 
     private void convertResponsiblePartyInvestigator(
-            ResponsiblePartyDTO partyDTO, CompleteTrialRegistration reg)
+            ResponsiblePartyDTO partyDTO, BaseTrialInformation reg)
             throws NullifiedEntityException, NullifiedRoleException,
             TooManyResultsException, PAException {
 

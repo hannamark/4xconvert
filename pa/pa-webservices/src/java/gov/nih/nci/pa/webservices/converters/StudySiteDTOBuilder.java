@@ -28,18 +28,53 @@ public class StudySiteDTOBuilder {
      */
     public StudySiteDTO buildClinicalTrialsGovIdAssigner(
             String clinicalTrialsDotGovTrialID) throws PAException {
+        final String type = PAConstants.NCT_IDENTIFIER_TYPE;
+        return buildIdAssignerSite(clinicalTrialsDotGovTrialID, type);
+    }
+
+    /**
+     * @param ctepID
+     *            ctepID
+     * @return StudySiteDTO
+     * @throws PAException
+     *             PAException
+     */
+    public StudySiteDTO buildCtepIdAssigner(String ctepID) throws PAException {
+        final String type = PAConstants.CTEP_IDENTIFIER_TYPE;
+        return buildIdAssignerSite(ctepID, type);
+    }
+
+    /**
+     * @param dcpID
+     *            dcpID
+     * @return StudySiteDTO
+     * @throws PAException
+     *             PAException
+     */
+    public StudySiteDTO buildDcpIdAssigner(String dcpID) throws PAException {
+        final String type = PAConstants.DCP_IDENTIFIER_TYPE;
+        return buildIdAssignerSite(dcpID, type);
+    }
+
+    /**
+     * @param value
+     * @param type
+     * @return
+     * @throws PAException
+     */
+    private StudySiteDTO buildIdAssignerSite(String value, final String type)
+            throws PAException {
         StudySiteDTO isoDto = new StudySiteDTO();
-        if (StringUtils.isNotEmpty(clinicalTrialsDotGovTrialID)) {
+        if (StringUtils.isNotEmpty(value)) {
             String poOrgId = PaRegistry.getOrganizationCorrelationService()
-                    .getPOOrgIdentifierByIdentifierType(
-                            PAConstants.NCT_IDENTIFIER_TYPE);
+                    .getPOOrgIdentifierByIdentifierType(type);
             Ii nctROIi = PaRegistry.getOrganizationCorrelationService()
                     .getPoResearchOrganizationByEntityIdentifier(
                             IiConverter.convertToPoOrganizationIi(String
                                     .valueOf(poOrgId)));
             isoDto.setResearchOrganizationIi(nctROIi);
             isoDto.setLocalStudyProtocolIdentifier(StConverter
-                    .convertToSt(clinicalTrialsDotGovTrialID));
+                    .convertToSt(value));
         }
         return isoDto;
     }

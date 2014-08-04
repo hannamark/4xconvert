@@ -36,6 +36,7 @@ import gov.nih.nci.pa.webservices.converters.StudyProtocolDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.StudyRegulatoryAuthorityDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.StudyResourcingDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.StudySiteDTOBuilder;
+import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
@@ -60,6 +61,7 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
@@ -200,6 +202,94 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
                     studyResourcingDTOs, documentDTOs, null, null, null, null,
                     null, null, null, null, null,
                     BlConverter.convertToBl(Boolean.FALSE));
+            return buildTrialRegConfirmationResponse(paTrialID);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+
+    }
+
+    /**
+     * Updates a complete trial.
+     * 
+     * @param reg
+     *            CompleteTrialRegistration
+     * @param trialID
+     *            trialID
+     * @param idType
+     *            idType
+     * @return Response
+     */
+    @POST
+    @Path("/amend/complete/{idType}/{trialID}")
+    @Consumes({ APPLICATION_XML })
+    @Produces({ APPLICATION_XML })
+    @NoCache
+    public Response amendCompleteTrial(@PathParam("idType") String idType,
+            @PathParam("trialID") String trialID,
+            @Validate CompleteTrialAmendment reg) {
+        try {
+            StudyProtocolDTO studyProtocolDTO = findTrial(idType, trialID);
+
+            new StudyProtocolDTOBuilder().build(studyProtocolDTO, reg);
+            StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTOBuilder()
+                    .build(reg);
+            List<StudyIndldeDTO> studyIndldeDTOs = new StudyIndldeDTOBuilder()
+                    .build(reg);
+            List<StudyResourcingDTO> studyResourcingDTOs = new StudyResourcingDTOBuilder()
+                    .build(reg.getGrant());
+            List<DocumentDTO> documentDTOs = new DocumentDTOBuilder()
+                    .build(reg);
+            OrganizationDTO leadOrgDTO = new OrganizationDTOBuilder().build(reg
+                    .getLeadOrganization());
+            PersonDTO principalInvestigatorDTO = new PersonDTOBuilder()
+                    .build(reg.getPi());
+            OrganizationDTO sponsorOrgDTO = reg
+                    .isClinicalTrialsDotGovXmlRequired() ? new OrganizationDTOBuilder()
+                    .build(reg.getSponsor()) : null;
+            ResponsiblePartyDTO partyDTO = new ResponsiblePartyDTOBuilder(
+                    principalInvestigatorDTO, sponsorOrgDTO).build(reg);
+
+            StudySiteDTO leadOrgSiteIdDTO = new StudySiteDTO();
+            leadOrgSiteIdDTO.setLocalStudyProtocolIdentifier(StConverter
+                    .convertToSt(reg.getLeadOrgTrialID()));
+
+            List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
+            studyIdentifierDTOs.add(new StudySiteDTOBuilder()
+                    .buildClinicalTrialsGovIdAssigner(reg
+                            .getClinicalTrialsDotGovTrialID()));
+            studyIdentifierDTOs.add(new StudySiteDTOBuilder()
+                    .buildCtepIdAssigner(reg.getCtepIdentifier()));
+            studyIdentifierDTOs.add(new StudySiteDTOBuilder()
+                    .buildDcpIdAssigner(reg.getDcpIdentifier()));
+
+            List<OrganizationDTO> summary4orgDTO = new OrganizationDTOBuilder()
+                    .build(reg.getSummary4FundingSponsor());
+
+            StudyResourcingDTO summary4studyResourcingDTO = new StudyResourcingDTO();
+            List<StudyResourcingDTO> existingStudyResourcingDTOs = PaRegistry
+                    .getStudyResourcingService().getSummary4ReportedResourcing(
+                            studyProtocolDTO.getIdentifier());
+            if (CollectionUtils.isNotEmpty(existingStudyResourcingDTOs)
+                    && existingStudyResourcingDTOs.get(0).getTypeCode() != null) {
+                summary4studyResourcingDTO
+                        .setTypeCode(existingStudyResourcingDTOs.get(0)
+                                .getTypeCode());
+            }
+
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO = reg
+                    .isClinicalTrialsDotGovXmlRequired() ? new StudyRegulatoryAuthorityDTOBuilder()
+                    .build(reg) : null;
+
+            Ii amendId = PaRegistry.getTrialRegistrationService().amend(
+                    studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                    studyResourcingDTOs, documentDTOs, leadOrgDTO,
+                    principalInvestigatorDTO, sponsorOrgDTO, partyDTO,
+                    leadOrgSiteIdDTO, studyIdentifierDTOs, summary4orgDTO,
+                    summary4studyResourcingDTO, studyRegAuthDTO,
+                    BlConverter.convertToBl(Boolean.FALSE),
+                    BlConverter.convertToBl(Boolean.TRUE));
+            Long paTrialID = IiConverter.convertToLong(amendId);
             return buildTrialRegConfirmationResponse(paTrialID);
         } catch (Exception e) {
             return handleException(e);

@@ -1184,7 +1184,7 @@
 				minOccurs="0">
 				<annotation>
 					<documentation>Regulatory Information is required if
-						clinicalTrialsDotGovXmlRequired is true.
+						clinicalTrialsDotGovXmlRequired is true and should not be specified otherwise.
 					</documentation>
 				</annotation>
 			</element>

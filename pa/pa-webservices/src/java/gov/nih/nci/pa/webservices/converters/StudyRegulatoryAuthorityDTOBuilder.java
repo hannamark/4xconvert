@@ -10,7 +10,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.webservices.TrialDataException;
-import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
+import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.RegulatoryInformation;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -29,7 +29,7 @@ public class StudyRegulatoryAuthorityDTOBuilder {
      * @throws PAException
      *             PAException
      */
-    public StudyRegulatoryAuthorityDTO build(CompleteTrialRegistration reg)
+    public StudyRegulatoryAuthorityDTO build(BaseTrialInformation reg)
             throws PAException {
         final RegulatoryInformation regInfo = reg.getRegulatoryInformation();
         if (regInfo == null) {

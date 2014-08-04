@@ -3,8 +3,6 @@
  */
 package gov.nih.nci.pa.webservices.converters;
 
-import org.apache.commons.lang.StringUtils;
-
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -13,8 +11,10 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
+import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
+
+import org.apache.commons.lang.StringUtils;
 
 
 
@@ -29,7 +29,7 @@ public class StudyOverallStatusDTOBuilder {
      *            CompleteTrialRegistration
      * @return StudyOverallStatusDTO
      */
-    public StudyOverallStatusDTO build(CompleteTrialRegistration reg) {
+    public StudyOverallStatusDTO build(BaseTrialInformation reg) {
         StudyOverallStatusDTO isoDto = new StudyOverallStatusDTO();
         isoDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode
                 .getByCode(reg.getTrialStatus().value())));

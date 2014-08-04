@@ -9,7 +9,7 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
+import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.HolderType;
 import gov.nih.nci.pa.webservices.types.INDIDE;
 
@@ -27,7 +27,7 @@ public final class StudyIndldeDTOBuilder {
      *            CompleteTrialRegistration
      * @return List<StudyIndldeDTO>
      */
-    public List<StudyIndldeDTO> build(CompleteTrialRegistration reg) {
+    public List<StudyIndldeDTO> build(BaseTrialInformation reg) {
         List<StudyIndldeDTO> studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
 
         for (INDIDE ind : reg.getInd()) {

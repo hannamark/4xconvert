@@ -478,6 +478,7 @@
                 <fileset dir="${pa-webservices.build.testDir.0}">
                     <include name="**/*Test.java"/>
                     <exclude name="**/*Abstract*Test.java"/>
+                	<exclude name="**/BaseTrialRegistrationServiceTest.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -524,6 +525,7 @@
                     <include name="**/*Test.java"/>
                     <exclude name="**/AbstractM*Test.java"/>
                     <exclude name="**/AbstractPa*Test.java"/>
+                	<exclude name="**/BaseTrialRegistrationServiceTest.java"/>
                 </fileset>
             </batchtest>
         </junit>

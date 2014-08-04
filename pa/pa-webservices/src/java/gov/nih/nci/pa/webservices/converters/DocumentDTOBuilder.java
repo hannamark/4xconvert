@@ -13,6 +13,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
+import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.TrialDocument;
@@ -30,11 +32,42 @@ public class DocumentDTOBuilder {
      * @param reg
      *            CompleteTrialRegistration
      * @return List<DocumentDTO>
-     * @throws PAException PAException
+     * @throws PAException
+     *             PAException
      */
     public List<DocumentDTO> build(CompleteTrialRegistration reg)
             throws PAException {
         List<DocumentDTO> list = new ArrayList<>();
+        convertDocumentsCommonToAmendmentAndRegistration(reg, list);
+        return list;
+    }
+
+    /**
+     * @param reg
+     *            CompleteTrialAmendment
+     * @return List<DocumentDTO>
+     * @throws PAException
+     *             PAException
+     */
+    public List<DocumentDTO> build(CompleteTrialAmendment reg)
+            throws PAException {
+        List<DocumentDTO> list = new ArrayList<>();
+        convertDocumentsCommonToAmendmentAndRegistration(reg, list);
+        convertAndStore(list, reg.getChangeMemoDocument(),
+                DocumentTypeCode.CHANGE_MEMO_DOCUMENT, null);
+        convertAndStore(list, reg.getProtocolHighlightDocument(),
+                DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT, null);
+        return list;
+    }
+
+    /**
+     * @param reg
+     * @param list
+     * @throws PAException
+     */
+    private void convertDocumentsCommonToAmendmentAndRegistration(
+            BaseTrialInformation reg, List<DocumentDTO> list)
+            throws PAException {
         convertAndStore(list, reg.getProtocolDocument(),
                 DocumentTypeCode.PROTOCOL_DOCUMENT, null);
         convertAndStore(list, reg.getIrbApprovalDocument(),
@@ -46,7 +79,6 @@ public class DocumentDTOBuilder {
         for (TrialDocument doc : reg.getOtherDocument()) {
             convertAndStore(list, doc, DocumentTypeCode.OTHER, null);
         }
-        return list;
     }
 
     private void convertAndStore(List<DocumentDTO> list, TrialDocument doc,
@@ -81,7 +113,8 @@ public class DocumentDTOBuilder {
      * @param reg
      *            CompleteTrialUpdate
      * @return List<DocumentDTO>
-     * @throws PAException PAException
+     * @throws PAException
+     *             PAException
      */
     public List<DocumentDTO> build(StudyProtocolDTO spDTO,
             CompleteTrialUpdate reg) throws PAException {

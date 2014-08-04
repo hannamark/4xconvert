@@ -22,6 +22,9 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.webservices.TrialDataException;
+import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
+import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.InterventionalTrialDesign;
@@ -52,7 +55,23 @@ public final class StudyProtocolDTOBuilder {
      */
     public StudyProtocolDTO build(CompleteTrialRegistration reg) {
         StudyProtocolDTO dto = instantitateStudyProtocolDTO(reg);
+        dto.setStudyProtocolType(StConverter
+                .convertToSt(dto instanceof InterventionalStudyProtocolDTO ? PAConstants.INTERVENTIONAL
+                        : PAConstants.NON_INTERVENTIONAL));
+        convertOtherIdentifiers(reg.getOtherTrialID(), dto);
+        dto.setAccrualDiseaseCodeSystem(StConverter.convertToSt(reg
+                .getAccrualDiseaseTerminology().value()));
 
+        convertFieldsCommonToAmendmentAndRegistration(reg, dto);
+        return dto;
+    }
+
+    /**
+     * @param reg
+     * @param dto
+     */
+    private void convertFieldsCommonToAmendmentAndRegistration(
+            BaseTrialInformation reg, StudyProtocolDTO dto) {
         if (StringUtils.isNotEmpty(reg.getTitle())) {
             dto.setOfficialTitle(StConverter.convertToSt(reg.getTitle()));
         }
@@ -63,24 +82,16 @@ public final class StudyProtocolDTOBuilder {
         convertPrimaryPurpose(reg, dto);
         convertTrialDates(reg, dto);
 
-        dto.setStudyProtocolType(StConverter
-                .convertToSt(dto instanceof InterventionalStudyProtocolDTO ? PAConstants.INTERVENTIONAL
-                        : PAConstants.NON_INTERVENTIONAL));
         dto.setProgramCodeText(StConverter.convertToSt(reg.getProgramCode()));
         dto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(reg
                 .isClinicalTrialsDotGovXmlRequired()));
 
         convertRegulatoryInfo(reg, dto);
-        convertOtherIdentifiers(reg.getOtherTrialID(), dto);
-
-        dto.setAccrualDiseaseCodeSystem(StConverter.convertToSt(reg
-                .getAccrualDiseaseTerminology().value()));
 
         convertStudyDesignSpecifics(reg, dto);
         dto.setStudySource(CdConverter
                 .convertToCd(StudySourceCode.REST_SERVICE));
         setUser(dto);
-        return dto;
     }
 
     /**
@@ -101,6 +112,42 @@ public final class StudyProtocolDTOBuilder {
         }
         convertTrialDates(upd, spDTO);
         setUser(spDTO);
+    }
+
+    /**
+     * @param spDTO
+     *            StudyProtocolDTO
+     * @param upd
+     *            CompleteTrialUpdate
+     */
+    public void build(StudyProtocolDTO spDTO, CompleteTrialAmendment upd) {
+        verifyNoAttemptToChangeDesignType(spDTO, upd);
+        addAdditionalOtherIdentifiers(upd.getOtherTrialID(), spDTO);
+        if (upd.getAccrualDiseaseTerminology() != null
+                && PaRegistry
+                        .getAccrualDiseaseTerminologyService()
+                        .canChangeCodeSystem(
+                                IiConverter.convertToLong(spDTO.getIdentifier()))) {
+            spDTO.setAccrualDiseaseCodeSystem(StConverter.convertToSt(upd
+                    .getAccrualDiseaseTerminology().value()));
+        }
+        spDTO.setAmendmentNumber(StConverter.convertToSt(upd
+                .getAmendmentNumber()));
+        spDTO.setAmendmentDate(TsConverter.convertToTs((upd.getAmendmentDate()
+                .toGregorianCalendar().getTime())));
+        convertFieldsCommonToAmendmentAndRegistration(upd, spDTO);
+
+    }
+
+    private void verifyNoAttemptToChangeDesignType(StudyProtocolDTO spDTO,
+            CompleteTrialAmendment upd) {
+        if ((spDTO instanceof InterventionalStudyProtocolDTO && upd
+                .getNonInterventionalDesign() != null)
+                || (spDTO instanceof NonInterventionalStudyProtocolDTO && upd
+                        .getInterventionalDesign() != null)) {
+            throw new TrialDataException(
+                    "An amendment cannot change a trial from Interventional to Non-Interventional or vice versa.");
+        }
     }
 
     private void addAdditionalOtherIdentifiers(List<String> otherIDList,
@@ -136,7 +183,7 @@ public final class StudyProtocolDTOBuilder {
      * @param reg
      * @param dto
      */
-    private void convertRegulatoryInfo(CompleteTrialRegistration reg,
+    private void convertRegulatoryInfo(BaseTrialInformation reg,
             StudyProtocolDTO dto) {
         if (reg.getRegulatoryInformation() != null) {
             dto.setFdaRegulatedIndicator(BlConverter.convertToBl(reg
@@ -148,6 +195,11 @@ public final class StudyProtocolDTOBuilder {
             dto.setDataMonitoringCommitteeAppointedIndicator(BlConverter
                     .convertToBl(reg.getRegulatoryInformation()
                             .isDataMonitoringCommitteeAppointed()));
+        } else {
+            dto.setFdaRegulatedIndicator(null);
+            dto.setSection801Indicator(null);
+            dto.setDelayedpostingIndicator(null);
+            dto.setDataMonitoringCommitteeAppointedIndicator(null);
         }
     }
 
@@ -155,7 +207,7 @@ public final class StudyProtocolDTOBuilder {
      * @param reg
      * @param dto
      */
-    private void convertTrialDates(CompleteTrialRegistration reg,
+    private void convertTrialDates(BaseTrialInformation reg,
             StudyProtocolDTO dto) {
         dto.setStartDate(TsConverter.convertToTs(reg.getTrialStartDate()
                 .getValue().toGregorianCalendar().getTime()));
@@ -175,6 +227,9 @@ public final class StudyProtocolDTOBuilder {
             dto.setCompletionDateTypeCode(CdConverter
                     .convertToCd(ActualAnticipatedTypeCode.getByCode(reg
                             .getCompletionDate().getType())));
+        } else {
+            dto.setCompletionDate(null);
+            dto.setCompletionDateTypeCode(null);
         }
     }
 
@@ -212,8 +267,7 @@ public final class StudyProtocolDTOBuilder {
      * @param reg
      * @param dto
      */
-    private void convertPhase(CompleteTrialRegistration reg,
-            StudyProtocolDTO dto) {
+    private void convertPhase(BaseTrialInformation reg, StudyProtocolDTO dto) {
         dto.setPhaseCode(CdConverter.convertToCd(PhaseCode.getByCode(reg
                 .getPhase())));
         dto.setPhaseAdditionalQualifierCode(CdConverter
@@ -222,7 +276,7 @@ public final class StudyProtocolDTOBuilder {
                                 : "")));
     }
 
-    private void convertStudyDesignSpecifics(CompleteTrialRegistration reg,
+    private void convertStudyDesignSpecifics(BaseTrialInformation reg,
             StudyProtocolDTO dto) {
         if (reg.getInterventionalDesign() != null) {
             convertInterventionalDesign(reg.getInterventionalDesign(),
@@ -256,10 +310,14 @@ public final class StudyProtocolDTOBuilder {
                     .asList(design.getSecondaryPurpose().value())));
             dto.setSecondaryPurposeOtherText(StConverter.convertToSt(design
                     .getSecondaryPurposeOtherDescription()));
+        } else {
+            dto.setSecondaryPurposes(DSetConverter
+                    .convertListStToDSet(new ArrayList<String>()));
+            dto.setSecondaryPurposeOtherText(null);
         }
     }
 
-    private void convertPrimaryPurpose(CompleteTrialRegistration reg,
+    private void convertPrimaryPurpose(BaseTrialInformation reg,
             StudyProtocolDTO dto) {
         dto.setPrimaryPurposeCode(CdConverter.convertStringToCd((reg
                 .getPrimaryPurpose().value())));
@@ -268,12 +326,15 @@ public final class StudyProtocolDTOBuilder {
                     .getPrimaryPurposeOtherDescription()));
             dto.setPrimaryPurposeAdditionalQualifierCode(CdConverter
                     .convertToCd(PrimaryPurposeAdditionalQualifierCode.OTHER));
+        } else {
+            dto.setPrimaryPurposeOtherText(null);
+            dto.setPrimaryPurposeAdditionalQualifierCode(null);
         }
 
     }
 
     private StudyProtocolDTO instantitateStudyProtocolDTO(
-            CompleteTrialRegistration reg) {
+            BaseTrialInformation reg) {
         return reg.getInterventionalDesign() != null ? new InterventionalStudyProtocolDTO()
                 : new NonInterventionalStudyProtocolDTO();
     }
