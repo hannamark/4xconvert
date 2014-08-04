@@ -92,11 +92,11 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.cadsr.domain.DataElement;
+import gov.nih.nci.cadsr.domain.Designation;
 import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
 import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
@@ -108,8 +108,9 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.CsmHelper;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.system.applicationservice.ApplicationException;
 import gov.nih.nci.system.applicationservice.ApplicationService;
+import gov.nih.nci.system.query.hibernate.HQLCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,6 +127,7 @@ import org.junit.Test;
 public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
     private PlannedMarkerPopupAction plannedMarkerAction;
     ProtocolQueryServiceBean protocolQrySrv = new ProtocolQueryServiceBean();
+    ApplicationService appService = mock(ApplicationService.class);
     
     @Before
     public void setUp() throws Exception {
@@ -146,11 +148,12 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         List<Object> deResults = new ArrayList<Object>();
         deResults.add(de);
 
-        ApplicationService appService = mock(ApplicationService.class);
+
         when(appService.search(eq(DataElement.class), any(DataElement.class))).thenReturn(deResults);
 
         PermissibleValue pv = new PermissibleValue();
         pv.setValue("N-Cadherin");
+        
 
         ValueMeaning vm = new ValueMeaning();
         vm.setLongName("N-Cadherin");
@@ -161,9 +164,9 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
         vdpv.setPermissibleValue(pv);
         vdpv.setId("1");
-
+        
         List<Object> results = new ArrayList<Object>();
-        results.add(vdpv);
+        results.add(vm);
 
         when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
 
@@ -173,9 +176,10 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
 
     /**
      * Tests lookup of marker's via caDSR
+     * @throws ApplicationException 
      */
-//    @Test
-    public void testLookup() {
+    @Test
+    public void testLookup() throws ApplicationException {
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNotNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
 
@@ -199,12 +203,45 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
        
        getRequest().clearAttributes();
+       Designation designation = new Designation();
+       designation.setId("1L");
+       designation.setName("Bivinyl");
+       designation.setType("Biomarker Synonym");
+       
+       Designation designation1 = new Designation();
+       designation1.setId("2L");
+       designation1.setName("N-Cadherin");
+       designation1.setType("Biomarker Marker");
+       
+       List<Object> desgs = new ArrayList<Object>();
+       desgs.add(designation);
+       desgs.add(designation1);
+       when(appService.query(any(HQLCriteria.class))).thenReturn(desgs);
        plannedMarkerAction.setName(null);
-       plannedMarkerAction.setMeaning("lyco");
+       plannedMarkerAction.setMeaning("Biv");
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       assertEquals("N-Cadherin (Bivinyl)", plannedMarkerAction.getMarkers().get(2).getVmName());
+       assertEquals("Bivinyl" , plannedMarkerAction.getMarkers().get(2).getAltNames().get(0));
 
+       getRequest().clearAttributes();
+       Designation designation2 = new Designation();
+       designation2.setId("3L");
+       designation2.setName("alpha");
+       designation2.setType("Biomarker Synonym");
+       desgs.add(designation2);
+       when(appService.query(any(HQLCriteria.class))).thenReturn(desgs);
+       plannedMarkerAction.setMeaning("aplha");
+       plannedMarkerAction.setDescription("lyco");
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       assertEquals("N-Cadherin (Bivinyl; alpha)", plannedMarkerAction.getMarkers().get(3).getVmName());
+       assertEquals("Bivinyl" , plannedMarkerAction.getMarkers().get(3).getAltNames().get(0));
+       assertEquals("alpha" , plannedMarkerAction.getMarkers().get(3).getAltNames().get(1));
+       assertFalse(plannedMarkerAction.getMarkers().get(3).getAltNames().get(0).equals("N-Cadherin"));
+       
        getRequest().clearAttributes();
        plannedMarkerAction.setMeaning(null);
        plannedMarkerAction.setDescription("lyco");

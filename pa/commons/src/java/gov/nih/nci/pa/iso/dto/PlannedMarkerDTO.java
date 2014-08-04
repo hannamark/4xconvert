@@ -119,6 +119,7 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     private Ii cadsrId;
     private Ts dateLastCreated;
     private Ts dateEmailSent;
+    private List<String> synonymNames;
     /**
      * @return the name
      */
@@ -419,5 +420,20 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     public void setDateEmailSent(Ts dateEmailSent) {
         this.dateEmailSent = dateEmailSent;
     }
+    /**
+     * 
+     * @return synonymNames synonymNames
+     */
+    public List<String> getSynonymNames() {
+        return synonymNames;
+    }
+    /**
+     * 
+     * @param synonymNames synonymNames
+     */
+    public void setSynonymNames(List<String> synonymNames) {
+        this.synonymNames = synonymNames;
+    }
+    
     
 }

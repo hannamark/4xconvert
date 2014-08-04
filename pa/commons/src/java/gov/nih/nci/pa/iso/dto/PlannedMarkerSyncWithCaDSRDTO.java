@@ -15,6 +15,7 @@ public class PlannedMarkerSyncWithCaDSRDTO extends BaseDTO {
     private St description;
     private Ii caDSRId;
     private Cd statusCode;
+    private St ntTermIdentifier;
     /**
      * 
      * @return name
@@ -85,6 +86,17 @@ public class PlannedMarkerSyncWithCaDSRDTO extends BaseDTO {
     public void setStatusCode(Cd statusCode) {
         this.statusCode = statusCode;
     }
-    
+    /**
+     * @return the ntTermIdentifier
+     */
+    public St getNtTermIdentifier() {
+        return ntTermIdentifier;
+    }
+    /**
+     * @param ntTermIdentifier the ntTermIdentifier to set
+     */
+    public void setNtTermIdentifier(St ntTermIdentifier) {
+        this.ntTermIdentifier = ntTermIdentifier;
+    }
     
 }

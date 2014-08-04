@@ -80,6 +80,7 @@ package gov.nih.nci.pa.dto;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Generic DTO class for displaying caDSR information.
@@ -96,6 +97,7 @@ public class CaDSRWebDTO implements Serializable {
     private String vmName;
     private String vmMeaning;
     private String vmDescription;
+    private List<String> altNames;
 
     /**
      * @return the preferredQuestion
@@ -194,5 +196,20 @@ public class CaDSRWebDTO implements Serializable {
     public void setVmDescription(String description) {
         this.vmDescription = description;
     }
-
+    /**
+     * 
+     * @return altNames altNames
+     */
+    public List<String> getAltNames() {
+        return altNames;
+    }
+    /**
+     * 
+     * @param altNames altNames
+     */
+    public void setAltNames(List<String> altNames) {
+        this.altNames = altNames;
+    }
+    
+    
 }

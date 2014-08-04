@@ -77,7 +77,8 @@ public interface PlannedMarkerSyncWithCaDSRServiceRemote {
      * @param meaning meaning
      * @param description description
      * @param statusCode statusCode
+     * @param ntTermId ntTermId
      */
     void insertValues(Long caDSRId, String name, String meaning,
-            String description, String statusCode);
+            String description, String ntTermId, String statusCode);
 }

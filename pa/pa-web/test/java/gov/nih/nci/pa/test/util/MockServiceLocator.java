@@ -134,6 +134,7 @@ import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSynonymsServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupBeanLocal;
@@ -1031,6 +1032,10 @@ public class MockServiceLocator implements ServiceLocator {
     @Override
     public AccrualUtilityService getAccrualUtilityService() {
         return Mockito.mock(AccrualUtilityService.class);
+    }
+    @Override
+    public PlannedMarkerSynonymsServiceLocal getPMSynonymService() {
+        return Mockito.mock(PlannedMarkerSynonymsServiceLocal.class);
     }  
     
 }

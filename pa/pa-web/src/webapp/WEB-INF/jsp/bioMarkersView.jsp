@@ -27,7 +27,7 @@
             function accept(selectedId) {
             	var caDsrIdValue = jQuery('#caDsrId_'+selectedId).val();
                 var updatedUrl ='/pa/protected/popupPlannedMarkeraccept.action?selectedRowIdentifier='+selectedId+'&caDsrId='+caDsrIdValue;
-                showPopWin(updatedUrl, 950, 200, '', 'Marker Search in caDSR');
+                showPopWin(updatedUrl, 950, 300, '', 'Marker Search in caDSR');
             }
             function termRequestForm(pId, markerName,markerId) {
             	var markerName1 = markerName.split("(").join("%28");

@@ -9,6 +9,7 @@
     <s:hidden name="plannedMarker.meaning" id="meaning"/>
     <s:hidden name="plannedMarker.description" id="description"/>
     <s:hidden name="plannedMarker.dateEmailSent" id="dateEmailSent"/>
+    <s:hidden name="plannedMarker.synonymNames" id="synonymNames"/>
     <tr>
         <td class="label">
             <label for="name"><fmt:message key="plannedMarker.name" />:</label><span class="required">*</span>

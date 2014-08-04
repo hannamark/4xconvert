@@ -246,7 +246,7 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         vdpv.setPermissibleValue(pv);
         vdpv.setId("1");
         List<Object> results = new ArrayList<Object>();
-        results.add(vdpv);
+        results.add(vm);
         when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
         bioMarkersQueryAction.setAppService(appService);
         assertEquals(bioMarkersQueryAction.accept(), "success");

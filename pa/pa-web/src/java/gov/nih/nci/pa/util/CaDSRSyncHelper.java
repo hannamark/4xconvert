@@ -121,8 +121,7 @@ public class CaDSRSyncHelper {
             appService = ApplicationServiceProvider.getApplicationService();
             try {
                 DetachedCriteria detachedCrit = DetachedCriteria.forClass(DataElement.class).add(Property
-                        .forName("publicID").eq(publicId)).add(Property.forName("latestVersionIndicator")
-                        .eq("Yes"));
+                        .forName("publicID").eq(publicId)).add(Property.forName("version").eq(version));
                 detachedCrit.setFetchMode("valueDomain", FetchMode.JOIN);
                 List<DataElement> results = (List<DataElement>) (List<?>) appService.query(detachedCrit);
                 if (results.size() < 1) {

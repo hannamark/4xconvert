@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.cadsr.domain.DataElement;
+import gov.nih.nci.cadsr.domain.Designation;
 import gov.nih.nci.cadsr.domain.ValueDomain;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
@@ -14,6 +15,7 @@ import gov.nih.nci.system.client.ApplicationServiceProvider;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
@@ -26,6 +28,7 @@ import org.hibernate.criterion.Property;
  * @author Reshma Koganti
  * 
  */
+@SuppressWarnings("PMD.CyclomaticComplexity")
 public class CaDSRPVSyncJobHelper {
     private ApplicationService appService;
     /** The CDE public Id for Assay Type Attribute. */
@@ -36,6 +39,10 @@ public class CaDSRPVSyncJobHelper {
             .getLogger(CaDSRPVSyncJobHelper.class);
     private PlannedMarkerServiceLocal plannedMarkerService;
     private PlannedMarkerSyncWithCaDSRServiceLocal permissibleService;
+    /** 
+     * Public id 
+     */
+    private static final String PUBLIC_ID = "vm.publicID";
     /**
      * updates the planned marker sync table
      * @throws PAException exception
@@ -45,6 +52,7 @@ public class CaDSRPVSyncJobHelper {
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
         List<CaDSRDTO> values = getAllValuesFromCaDSR();
         permissibleService.syncTableWithCaDSR(values);
+
     }
 
     /**
@@ -74,7 +82,7 @@ public class CaDSRPVSyncJobHelper {
 
             DetachedCriteria dc = constructBaseCriteria(vdId);
             ProjectionList proj = Projections.projectionList();
-            proj.add(Projections.min("vm.publicID"));
+            proj.add(Projections.min(PUBLIC_ID));
             proj.add(Projections.groupProperty("enumeratedValueDomain.id"));
             dc.setProjection(proj);
             List<Object> qRslt = appService.query(dc);
@@ -82,7 +90,7 @@ public class CaDSRPVSyncJobHelper {
 
             dc = constructBaseCriteria(vdId);
             proj = Projections.projectionList();
-            proj.add(Projections.max("vm.publicID"));
+            proj.add(Projections.max(PUBLIC_ID));
             proj.add(Projections.groupProperty("enumeratedValueDomain.id"));
             dc.setProjection(proj);
             qRslt = appService.query(dc);
@@ -91,8 +99,8 @@ public class CaDSRPVSyncJobHelper {
             List<Object> result = new ArrayList<Object>();
             for (Long id = minId; id <= maxId; id += CHUNK_SIZE) {
                 dc = constructBaseCriteria(vdId);
-                dc.add(Property.forName("vm.publicID").ge(id));
-                dc.add(Property.forName("vm.publicID").lt(id + CHUNK_SIZE));
+                dc.add(Property.forName(PUBLIC_ID).ge(id));
+                dc.add(Property.forName(PUBLIC_ID).lt(id + CHUNK_SIZE));
                 List<Object> permissibleValues = appService.query(dc);
                 result.addAll(new ArrayList<Object>(permissibleValues));
             }
@@ -121,8 +129,10 @@ public class CaDSRPVSyncJobHelper {
     private DetachedCriteria constructBaseCriteria(String vdId) {
         DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class);
         criteria.add(Property.forName("enumeratedValueDomain.id").eq(vdId));
-        criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
-        criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
+        criteria.setFetchMode("permissibleValue", FetchMode.EAGER);
+        criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.EAGER);
+        criteria.setFetchMode("permissibleValue.valueMeaning.designationCollection", FetchMode.EAGER);
+        criteria.setFetchMode("permissibleValue.valueMeaning.conceptDerivationRule", FetchMode.EAGER);
         criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
         return criteria;
     }
@@ -135,20 +145,54 @@ public class CaDSRPVSyncJobHelper {
     protected List<CaDSRDTO> getSearchResults(
             List<Object> permissibleValues) {
         List<CaDSRDTO> resultsList = new ArrayList<CaDSRDTO>();
+        List<Long> publicids = new ArrayList<Long>();
         for (Object obj : permissibleValues) {
             ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) obj;
             CaDSRDTO dto = new CaDSRDTO();
             ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
+          if (!publicids.contains(vm.getPublicID())) {
+            setCaDSRDTO(vm, dto);
             dto.setId(vdpv.getId());
-            dto.setVmName(vdpv.getPermissibleValue().getValue());
-            dto.setVmMeaning(vm.getLongName());
-            dto.setVmDescription(vm.getDescription());
-            dto.setPublicId(vm.getPublicID());
+            publicids.add(vm.getPublicID());
             resultsList.add(dto);  
+        }
         }
         return resultsList;
     }
 
+    private CaDSRDTO setCaDSRDTO(ValueMeaning vm, CaDSRDTO dto) {
+        List<String> altNames = new ArrayList<String>();
+        StringBuffer synonymName = new StringBuffer();
+        List<Designation> alternativeNames = new ArrayList<Designation>();
+        if (vm.getDesignationCollection() != null && !vm.getDesignationCollection().isEmpty()) {
+            alternativeNames.addAll(vm.getDesignationCollection());
+            for (Designation designation : alternativeNames) {
+                if (StringUtils.equalsIgnoreCase(designation.getType(), "Biomarker Synonym")) {
+                     if (synonymName.length() == 0) {
+                          synonymName.append(designation.getName());
+                     } else {
+                          synonymName.append("; ");
+                          synonymName.append(designation.getName());
+                     }
+                     altNames.add(designation.getName());
+                }
+            }
+        }
+        if (synonymName.length() != 0) {
+            dto.setVmName(vm.getLongName() + " (" +  synonymName.toString() + ")");
+        } else {
+            dto.setVmName(vm.getLongName());
+        }
+        dto.setAltNames(altNames);
+
+        dto.setVmMeaning(vm.getLongName());
+        dto.setVmDescription(vm.getDescription());
+        dto.setPublicId(vm.getPublicID());
+        if (vm.getConceptDerivationRule() != null) {
+            dto.setNtTermIdentifier(vm.getConceptDerivationRule().getName());
+        }
+        return dto;
+    }
     /**
      * @return the appService
      */

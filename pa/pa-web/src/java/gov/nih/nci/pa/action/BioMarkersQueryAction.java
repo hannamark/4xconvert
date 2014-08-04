@@ -82,9 +82,7 @@
  */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.cadsr.domain.DataElement;
-import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
-import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
+import gov.nih.nci.cadsr.domain.Designation;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
@@ -102,19 +100,21 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSynonymsServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.system.applicationservice.ApplicationException;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
+import gov.nih.nci.system.query.hibernate.HQLCriteria;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -123,8 +123,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.Map;
 
@@ -162,6 +165,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private StudyProtocolService studyProtocolService;
     private PlannedMarkerSyncWithCaDSRServiceLocal permissibleService;
+    private PlannedMarkerSynonymsServiceLocal pmSynonymService;
     private ApplicationService appService;
     private String selectedRowIdentifier;
     private String selectedRowDocument;
@@ -169,6 +173,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private String markerName;
     private Long id = null;
     private String caDsrId;
+    private static final String PERMISSIBLE = "permissibleValueCollection";
     
     @Override
     public void prepare() {
@@ -176,6 +181,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         permissibleService = PaRegistry.getPMWithCaDSRService();
+        pmSynonymService = PaRegistry.getPMSynonymService();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
@@ -368,8 +374,10 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
      * Changes marker status to ACTIVE.
      * @return string
      * @throws PAException exception
+     * @throws ApplicationException 
      */
-    public String accept() throws PAException {
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
+    public String accept() throws PAException, ApplicationException {
         PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
         .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         String newcaDsrId = getCaDsrId();
@@ -393,9 +401,13 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
             if (!permissibleValues.isEmpty()) {
                   CaDSRWebDTO caDsrdto = getSearchResults(permissibleValues.get(0));
                   permissibleService.insertValues(caDsrdto.getPublicId(), caDsrdto.getVmName()
-                    , caDsrdto.getVmMeaning(), caDsrdto.getVmDescription()
+                    , caDsrdto.getVmMeaning(), caDsrdto.getVmDescription(), null
                     , ActiveInactivePendingCode.ACTIVE.getName());
                List<Number> insertedPvId = permissibleService.getIdentifierByCadsrId(Long.parseLong(newcaDsrId));
+               if (caDsrdto.getAltNames() != null && !caDsrdto.getAltNames().isEmpty()) {
+                  pmSynonymService.insertValues(insertedPvId.get(0).longValue(), 
+                    caDsrdto.getAltNames(), ActiveInactivePendingCode.ACTIVE.getName());
+               }
                for (PlannedMarkerDTO markerDTO : markerDTOs) {
                    markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                    if (!insertedPvId.isEmpty()) {
@@ -422,16 +434,21 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private List<Object> caDsrLookUp(String newcaDsrId) {
         List<Object> permissibleValues = new ArrayList<Object>();
         try {
-            DataElement dataElement = new DataElement();
-            dataElement.setPublicID(CDE_PUBLIC_ID);
-            dataElement.setLatestVersionIndicator("Yes");
-            Collection<Object> results = appService.search(DataElement.class, dataElement);
-            DataElement de = (DataElement) results.iterator().next();
-            String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
-            DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class, "vdpv");
-            criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
-            criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
-            criteria.add(Expression.eq("vm.publicID", Long.valueOf(newcaDsrId)));
+            DetachedCriteria criteria = DetachedCriteria.forClass(ValueMeaning.class)
+            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            criteria.setFetchMode(PERMISSIBLE, FetchMode.JOIN);
+            criteria.setFetchMode(PERMISSIBLE
+                  + ".valueDomainPermissibleValueCollection", FetchMode.JOIN);
+            criteria.setFetchMode(PERMISSIBLE
+                  + ".valueDomainPermissibleValueCollection.enumeratedValueDomain", FetchMode.JOIN);
+            criteria.setFetchMode(PERMISSIBLE
+                  + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", 
+                  FetchMode.JOIN);
+            criteria.createAlias(PERMISSIBLE
+                  + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", "de");
+            criteria.add(Restrictions.eq("de.publicID", CDE_PUBLIC_ID));
+            criteria.add(Restrictions.eq("de.latestVersionIndicator", "Yes"));
+            criteria.add(Expression.eq("publicID", Long.valueOf(newcaDsrId)));
             permissibleValues = appService.query(criteria);
             
         } catch (Exception e) {
@@ -441,15 +458,43 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         return permissibleValues;
     }
     
-    private CaDSRWebDTO getSearchResults(Object permissibleValue) {
-        ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) permissibleValue;
+    private CaDSRWebDTO getSearchResults(Object permissibleValue) throws ApplicationException {
+        ValueMeaning vm = (ValueMeaning) permissibleValue;
         CaDSRWebDTO dto = new CaDSRWebDTO();
-        ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
-        dto.setId(vdpv.getId());
-        dto.setVmName(vdpv.getPermissibleValue().getValue());
-        dto.setVmMeaning(vm.getLongName());
-        dto.setVmDescription(vm.getDescription());
-        dto.setPublicId(vm.getPublicID());
+        setCaDSRWebDTO(vm, dto);
+        return dto;
+    }
+    
+    private CaDSRWebDTO setCaDSRWebDTO(ValueMeaning vm, CaDSRWebDTO dto) 
+            throws ApplicationException {
+         List<String> altNames = new ArrayList<String>();
+         StringBuffer synonymName = new StringBuffer();
+         String hql = "select vm.designationCollection from ValueMeaning vm where vm.id='"
+              + vm.getId() + "'";
+         HQLCriteria criteria = new HQLCriteria(hql);
+         List<Object> desgs = appService.query(criteria);
+         for (int j = 0; j < desgs.size(); j++) {
+            Designation designation = (Designation) desgs.get(j);
+            if (StringUtils.equalsIgnoreCase(designation.getType(), "Biomarker Synonym")) {
+                if (synonymName.length() == 0) {
+                   synonymName.append(designation.getName());
+                } else {
+                    synonymName.append("; ");
+                    synonymName.append(designation.getName());
+                  }
+                  altNames.add(designation.getName());
+            }
+         }
+         if (synonymName.length() != 0) {
+            dto.setVmName(vm.getLongName() + " (" +  synonymName.toString() + ")");
+         } else {
+             dto.setVmName(vm.getLongName());
+         }
+         dto.setVmMeaning(vm.getLongName());
+         dto.setAltNames(altNames);
+         dto.setVmDescription(vm.getDescription());
+         dto.setPublicId(vm.getPublicID());
+         dto.setId(vm.getId());
         return dto;
     }
     /**
@@ -758,5 +803,14 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
      */
     public void setAppService(ApplicationService appService) {
         this.appService = appService;
+    }
+    
+    /**
+     * 
+     * @param pmSynonymService pmSynonymService
+     */
+    public void setPmSynonymService(
+            PlannedMarkerSynonymsServiceLocal pmSynonymService) {
+        this.pmSynonymService = pmSynonymService;
     }
 }

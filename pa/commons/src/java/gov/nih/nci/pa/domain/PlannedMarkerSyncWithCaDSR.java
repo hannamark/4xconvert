@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
+import gov.nih.nci.pa.util.CommonsConstant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -36,6 +38,7 @@ public class PlannedMarkerSyncWithCaDSR extends AbstractEntity  implements Audit
     private String description;
     private Long caDSRId;
     private ActiveInactivePendingCode statusCode;
+    private String ntTermIdentifier;
     private List<PlannedMarker> plannedMarkers = new ArrayList<PlannedMarker>();
     /**
      * @return the name
@@ -137,5 +140,20 @@ public class PlannedMarkerSyncWithCaDSR extends AbstractEntity  implements Audit
    */
   public void setPlannedMarkers(List<PlannedMarker> plannedMarkers) {
       this.plannedMarkers = plannedMarkers;
+  }
+  
+  /**
+   * @return the ntTermIdentifier
+   */
+  @Column(name = "NT_TERM_IDENTIFIER")
+  @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+  public String getNtTermIdentifier() {
+      return ntTermIdentifier;
+  }
+  /**
+   * @param ntTermIdentifier the ntTermIdentifier to set
+   */
+  public void setNtTermIdentifier(String ntTermIdentifier) {
+      this.ntTermIdentifier = ntTermIdentifier;
   }
 }

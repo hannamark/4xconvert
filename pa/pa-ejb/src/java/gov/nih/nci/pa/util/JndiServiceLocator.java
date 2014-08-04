@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerSynonymsServiceLocal;
 import gov.nih.nci.pa.service.PlannedSubstanceAdministrationServiceRemote;
 import gov.nih.nci.pa.service.ProprietaryTrialManagementServiceLocal;
 import gov.nih.nci.pa.service.StratumGroupServiceLocal;
@@ -743,5 +744,11 @@ public class JndiServiceLocator implements ServiceLocator {
             LOG.error(e);
         }
         return svc;
+    }
+
+    @Override
+    public PlannedMarkerSynonymsServiceLocal getPMSynonymService() {
+        return lookup("PlannedMarkerSynonymsBeanLocal"
+                + "!gov.nih.nci.pa.service.PlannedMarkerSynonymsServiceLocal");
     }
 }

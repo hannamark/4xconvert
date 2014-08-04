@@ -1616,4 +1616,8 @@
         <comment>Update study_checkout comments column size</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7263.sql"/>
      </changeSet>
+    <changeSet id="PO-6893" author="Reshma">
+        <comment>Create a new table for planned_marker_synonyms</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-6893.sql"/>
+     </changeSet>
 </databaseChangeLog>

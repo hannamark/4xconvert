@@ -109,13 +109,13 @@ background-color:yellow;
                     </tr>
                     <tr>
                         <td scope="row" class="label">
-                            <label for="searchName"><fmt:message key="plannedMarker.lookup.permissibleValue"/>:</label>
+                            <label for="searchName"><fmt:message key="plannedMarker.lookup.name"/>:</label>
                         </td>
                         <td>
                             <s:textfield id="searchName" name="searchName" maxlength="60" size="60" cssStyle="width:200px"/>
                         </td>
                         <td scope="row" class="label">
-                            <label for="searchMeaning"><fmt:message key="plannedMarker.lookup.meaning"/>:</label>
+                            <label for="searchMeaning"><fmt:message key="plannedMarker.lookup.synonyms"/>:</label>
                         </td>
                         <td>
                             <s:textfield id="searchMeaning" name="searchMeaning" maxlength="60" size="60" cssStyle="width:200px"/>

@@ -53,6 +53,7 @@ public class PlannedMarkerSyncWithCaDSRConverter
                dto.setStatusCode(CdConverter.convertStringToCd(bo.getStatusCode().getName()));
            }
            dto.setCaDSRId(IiConverter.convertToIi(bo.getCaDSRId()));
+           dto.setNtTermIdentifier(StConverter.convertToSt(bo.getNtTermIdentifier()));
        }
        return dto;
    }
@@ -68,5 +69,6 @@ public class PlannedMarkerSyncWithCaDSRConverter
        bo.setDescription(StConverter.convertToString(dto.getDescription()));
        bo.setCaDSRId(IiConverter.convertToLong(dto.getCaDSRId()));
        bo.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
+       bo.setNtTermIdentifier(StConverter.convertToString(dto.getNtTermIdentifier()));
    }
 }

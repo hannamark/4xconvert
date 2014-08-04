@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.iso.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 
@@ -15,6 +16,8 @@ public class CaDSRDTO implements Serializable {
     private String vmName;
     private String vmMeaning;
     private String vmDescription;
+    private List<String> altNames;
+    private String ntTermIdentifier;
 
     /**
      * @return the preferredQuestion
@@ -113,4 +116,34 @@ public class CaDSRDTO implements Serializable {
     public void setVmDescription(String description) {
         this.vmDescription = description;
     }
+    /**
+     * 
+     * @return altNames altNames
+     */
+    public List<String> getAltNames() {
+        return altNames;
+    }
+    /**
+     * 
+     * @param altNames altNames
+     */
+    public void setAltNames(List<String> altNames) {
+        this.altNames = altNames;
+    }
+    /**
+     * 
+     * @return ntTermIdentifier ntTermIdentifier
+     */
+    public String getNtTermIdentifier() {
+        return ntTermIdentifier;
+    }
+    /**
+     * 
+     * @param ntTermIdentifier ntTermIdentifier
+     */
+    public void setNtTermIdentifier(String ntTermIdentifier) {
+        this.ntTermIdentifier = ntTermIdentifier;
+    }
+    
+    
 }

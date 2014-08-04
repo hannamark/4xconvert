@@ -410,7 +410,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         prop = new PAProperties();
         prop.setName("CDE_REQUEST_TO_EMAIL");
-        prop.setValue("to@example.com");
+        prop.setValue("to@example.com, to1@example.com, test@gmail.com");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
@@ -812,15 +812,51 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void testsendMarkerAcceptanceMailToCDE() throws PAException {
-        String nciIdentifier = "nciIdentifier";
-        String from = "from@example.com";
+         sut = createMailManagerServiceMock();
+         String nciIdentifier = "nciIdentifier";
+         String from = "from@example.com";
+         PAProperties prop = new PAProperties();
+         prop.setName("CDE_REQUEST_TO_EMAIL");
+         prop.setValue("to@example.com, to1@example.com, test@gmail.com");
+         PlannedMarkerDTO dto = new PlannedMarkerDTO();
+         dto.setName(StConverter.convertToSt("Marker #1"));
+         dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
+         dto.setUserLastCreated(StConverter.convertToSt("1"));
 
-        PlannedMarkerDTO dto = new PlannedMarkerDTO();
-        dto.setName(StConverter.convertToSt("Marker #1"));
-        dto.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO"));
-        dto.setUserLastCreated(StConverter.convertToSt("1"));
+         doCallRealMethod().when(sut).sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
+         when(lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL"))
+                 .thenReturn("to@example.com,to1@example.com,test@gmail.com");
+         when(lookUpTableService.getPropertyValue("fromaddress"))
+         .thenReturn("fromAddress@example.com");
+         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+         
+         sut.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
+         File[] file = null;
+         List<String> copyList = new ArrayList<String>();
+         copyList.add("to1@example.com");
+         copyList.add("test@gmail.com");
+         ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
+                 .forClass(String.class);
+         ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
+                 .forClass(String.class);
+         verify(sut).sendMailWithAttachment(eq("to@example.com"), 
+             eq("from@example.com"), eq(copyList), 
+             mailSubjectCaptor.capture(), mailBodyCaptor.capture(), eq(file),
+              eq(false));
 
-        bean.sendMarkerAcceptanceMailToCDE(nciIdentifier, from, dto);
+         assertEquals("Mail subject",
+                 "Accepted New biomarker Marker #1,HUGO code:HUGO in CTRP PA",
+                 mailSubjectCaptor.getValue());
+         assertEquals("Mail body",
+                 "Dear caDSR," + "\n\n"
+                + "This is just to notify you that a marker 'Marker #1,HUGO code:HUGO' has been "
+                + "accepted in the CTRP Protocol Abstraction  on " + dateFormat.format(new Date()) 
+                + ". However, this marker may still "
+                + "need to be added into the caDSR repository."
+                + "\n\n"
+                + "Thank you"
+                + "\n"
+                + "NCI Clinical Trials Reporting Program", mailBodyCaptor.getValue().trim());
     }
 
     @Test

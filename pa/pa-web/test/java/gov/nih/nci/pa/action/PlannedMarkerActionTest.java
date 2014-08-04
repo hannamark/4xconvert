@@ -86,10 +86,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.cadsr.domain.Designation;
 import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
@@ -107,6 +109,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.criterion.DetachedCriteria;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -116,6 +119,8 @@ import org.junit.Test;
 public class PlannedMarkerActionTest extends AbstractPaActionTest {
     private PlannedMarkerAction plannedMarkerAction;
     private PlannedMarkerServiceLocal plannedMarkerService;
+    ApplicationService appService = mock(ApplicationService.class);
+    ValueMeaning vm = new ValueMeaning();
 
     @Before
     public void setUp() throws Exception {
@@ -127,7 +132,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         PermissibleValue pv = new PermissibleValue();
         pv.setValue("N-Cadherin");
 
-        ValueMeaning vm = new ValueMeaning();
+        
         vm.setLongName("N-Cadherin");
         vm.setDescription("cadherin");
         pv.setValueMeaning(vm);
@@ -136,11 +141,11 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         vdpv.setPermissibleValue(pv);
 
         List<Object> results = new ArrayList<Object>();
-        results.add(vdpv);
+        results.add(vm);
 
-        ApplicationService appService = mock(ApplicationService.class);
-        when(appService.search(eq(ValueDomainPermissibleValue.class), any(ValueDomainPermissibleValue.class))).thenReturn(results);
         
+        when(appService.search(eq(ValueDomainPermissibleValue.class), any(ValueDomainPermissibleValue.class))).thenReturn(results);
+        when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
         plannedMarkerAction.setAppService(appService);
         PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);PlannedMarkerDTO oldValue = new PlannedMarkerDTO();
         oldValue.setAssayTypeCode(CdConverter.convertStringToCd("Microarray"));
@@ -156,7 +161,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
 
     @Test
     public void testAdd() throws PAException {
-    	assertNotNull(plannedMarkerAction.getAppService());
+        assertNotNull(plannedMarkerAction.getAppService());
         PlannedMarkerDTO oldValue = new PlannedMarkerDTO();
         oldValue.setAssayTypeCode(CdConverter.convertStringToCd("Microarray"));
         oldValue.setAssayPurposeCode(CdConverter.convertStringToCd("Stratification Factor"));
@@ -292,9 +297,10 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         assertEquals(plannedMarkerAction.delete(), "list");
     }
 
-//    @Test
+    @Test
     public void testDisplaySelectedCDE() {
         //CDE ID for the N-Cadherin Marker
+
         plannedMarkerAction.setCdeId("6C28341E-9EF6-6D9E-E040-BB89AD435B0F");
         assertNull(plannedMarkerAction.getPlannedMarker().getName());
         assertNull(plannedMarkerAction.getPlannedMarker().getDescription());
@@ -303,6 +309,37 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         assertEquals(plannedMarkerAction.displaySelectedCDE(), "edit");
         assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin");
         assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
+        assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
+        
+        Designation designation = new Designation();
+        designation.setId("1L");
+        designation.setName("Bivinyl");
+        designation.setType("Biomarker Synonym");
+        List<Designation> desgs = new ArrayList<Designation>();
+        desgs.add(designation);
+        vm.setDesignationCollection(desgs);
+        assertEquals(plannedMarkerAction.displaySelectedCDE(), "edit");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin (Bivinyl)");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getSynonymNames(), "Bivinyl");
+        assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
+        
+        Designation designation1 = new Designation();
+        designation1.setId("2L");
+        designation1.setName("alpha");
+        designation1.setType("Biomarker Synonym");
+        desgs.add(designation1);
+        Designation designation2 = new Designation();
+        designation2.setId("3L");
+        designation2.setName("N-Cadherin");
+        designation2.setType("Biomarker Marker");
+        desgs.add(designation2);
+        vm.setDesignationCollection(desgs);
+        assertEquals(plannedMarkerAction.displaySelectedCDE(), "edit");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin (Bivinyl; alpha)");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getSynonymNames(), "Bivinyl; alpha");
+        assertFalse(plannedMarkerAction.getPlannedMarker().getSynonymNames().equals("Bivinyl; alpha; N-Cadherin"));
         assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
     }
     

@@ -127,6 +127,7 @@ public class PlannedMarkerWebDTO implements Serializable {
     private Long cadsrId;
     private Date creationDate;
     private Date dateEmailSent;
+    private String synonymNames;
     /**
      * @return the id
      */
@@ -592,6 +593,20 @@ public class PlannedMarkerWebDTO implements Serializable {
      */
     public void setDateEmailSent(Date dateEmailSent) {
         this.dateEmailSent = dateEmailSent;
+    }
+    /**
+     * 
+     * @return synonymNames synonymNames
+     */
+    public String getSynonymNames() {
+        return synonymNames;
+    }
+    /**
+     * 
+     * @param synonymNames synonymNames
+     */
+    public void setSynonymNames(String synonymNames) {
+        this.synonymNames = synonymNames;
     }
     
 }

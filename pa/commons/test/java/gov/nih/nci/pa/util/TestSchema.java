@@ -113,6 +113,7 @@ import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR;
+import gov.nih.nci.pa.domain.PlannedMarkerSynonyms;
 import gov.nih.nci.pa.domain.PlannedProcedure;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -775,6 +776,12 @@ public class TestSchema {
         addUpdObject(pmSync1);
         marker01.setPermissibleValue(pmSync1);
         addUpdObject(marker01);
+        
+        PlannedMarkerSynonyms synonyms = new PlannedMarkerSynonyms();
+        synonyms.setAlternativeName("alpha");
+        synonyms.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        synonyms.setPermissibleValue(pmSync1);
+        addUpdObject(synonyms);
 
         PlannedMarker marker02 = new PlannedMarker();
         marker02.setStudyProtocol(sp);
@@ -801,7 +808,12 @@ public class TestSchema {
         marker02.setPermissibleValue(pmSync2);
         addUpdObject(pmSync2);
         addUpdObject(marker02);
-
+        PlannedMarkerSynonyms synonyms2 = new PlannedMarkerSynonyms();
+        synonyms2.setAlternativeName("beta");
+        synonyms2.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        synonyms2.setPermissibleValue(pmSync2);
+        addUpdObject(synonyms2);
+        
         AccrualDisease sdc01 = TestSchema.createAccrualDisease("SDC", "SDC01",
                 "Toe Cancer");
         addUpdObject(sdc01);

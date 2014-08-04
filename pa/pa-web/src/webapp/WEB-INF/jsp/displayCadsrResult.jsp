@@ -31,6 +31,12 @@
     <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" uid="row" name="markers" export="false">
         <display:column escapeXml="true" titleKey="plannedMarker.lookup.permissibleValue" property="vmName" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="plannedMarker.lookup.meaning" property="vmMeaning" headerClass="sortable" />
+        <display:column escapeXml="false" titleKey="plannedMarker.lookup.synonym">
+             <c:forEach var="item" items="${row.altNames}">
+                  <c:out escapeXml="false" value="${item}"/>
+             <br>
+             </c:forEach>
+        </display:column>
         <display:column escapeXml="true" titleKey="plannedMarker.lookup.description" property="vmDescription" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="plannedMarker.lookup.publicId" property="publicId" headerClass="sortable" />
     </display:table>

@@ -86,6 +86,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.PlannedProcedure" />
         <mapping class="gov.nih.nci.pa.domain.PlannedMarker" />
         <mapping class="gov.nih.nci.pa.domain.PlannedMarkerSyncWithCaDSR" />
+        <mapping class="gov.nih.nci.pa.domain.PlannedMarkerSynonyms" />
         <mapping class="gov.nih.nci.pa.domain.AssayType" />
         <mapping class="gov.nih.nci.pa.domain.BiomarkerPurpose" />
         <mapping class="gov.nih.nci.pa.domain.BiomarkerUse" />

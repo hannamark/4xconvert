@@ -1061,6 +1061,18 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             + "NCI Clinical Trials Reporting Program");
             String body = String.valueOf(bodyB);
             String toAddress = lookUpTableService.getPropertyValue(CDE_REQUEST_TO_EMAIL);
+            List<String> toList = new ArrayList<String>();
+            StringTokenizer st = new StringTokenizer(toAddress, ",");
+            while (st.hasMoreElements()) {
+                toList.add((String) st.nextElement());
+            }
+            toAddress = toList.get(0);
+            List<String> copyList = new ArrayList<String>();
+            for (String to : toList) {
+                if (!StringUtils.equals(to, toAddress)) {
+                     copyList.add(to);
+                }
+            }
             String subject = "Accepted New biomarker " 
                 + StConverter.convertToString(marker.getName()) 
                 + ",HUGO code:" + hugoCode + " in CTRP PA";
@@ -1074,7 +1086,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
                         from = registryUser.getEmailAddress();  
                  }
             }
-            sendMailWithAttachment(toAddress, from, null, subject, body, null, false);
+            sendMailWithAttachment(toAddress, from, copyList, subject, body, null, false);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
