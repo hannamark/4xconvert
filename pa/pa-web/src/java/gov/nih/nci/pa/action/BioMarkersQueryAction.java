@@ -418,16 +418,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                  permissibleService.deleteById(oldPvId); 
             }
         }
-        //send acceptance email
-        if (!hasActionErrors()) {
-            marker.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-            try {            
-                PaRegistry.getMailManagerService().sendMarkerAcceptanceMailToCDE(
-                        webDTO.getNciIdentifier(), webDTO.getCsmUserEmailId(), marker);
-            } catch (PAException e) {
-                addActionError(e.getMessage());
-            }
-        }
+        //send acceptance email commented as part of PO-7862
         return execute();
     }        
     
