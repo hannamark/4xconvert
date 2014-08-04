@@ -37,6 +37,7 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
         super.setUp("/update/complete");
+        deactivateAllTrials();
     }
 
     @Test
@@ -221,7 +222,7 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
 
     }
 
-    private void verifyDocument(TrialDocument doc, String type) {
+    protected void verifyDocument(TrialDocument doc, String type) {
         if (doc != null) {
             String file = doc.getFilename();
             for (int i = 1; i < 20; i++) {

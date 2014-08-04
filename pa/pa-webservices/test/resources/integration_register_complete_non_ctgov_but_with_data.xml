@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tns:CompleteTrialAmendment xmlns:tns="gov.nih.nci.pa.webservices.types"
+<tns:CompleteTrialRegistration xmlns:tns="gov.nih.nci.pa.webservices.types"
 	xmlns:tns1="gov.nih.nci.po.webservices.types.trimmed" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="gov.nih.nci.pa.webservices.types ../../src/resources/ws.xsd ">	
-	<tns:clinicalTrialsDotGovXmlRequired>true</tns:clinicalTrialsDotGovXmlRequired>
+	<tns:clinicalTrialsDotGovXmlRequired>false</tns:clinicalTrialsDotGovXmlRequired>
 	<tns:leadOrgTrialID>UPCC 34890534</tns:leadOrgTrialID>
-	<tns:clinicalTrialsDotGovTrialID>NCT019948501</tns:clinicalTrialsDotGovTrialID>
+	<tns:clinicalTrialsDotGovTrialID>NCT01994850</tns:clinicalTrialsDotGovTrialID>
 	<tns:otherTrialID>818280234</tns:otherTrialID>
 	<tns:title>A Phase I/II Study Of Brentuximab Vedotin In Combination With Multi-Agent Chemotherapy</tns:title>
 	<tns:phase>I</tns:phase>
@@ -18,17 +18,17 @@
 	</tns:interventionalDesign>
 	<tns:leadOrganization>
 		<tns:existingOrganization>
-			<tns:poID>214122</tns:poID>
+			<tns:poID>1</tns:poID>
 		</tns:existingOrganization>
 	</tns:leadOrganization>
 	<tns:pi>
 		<tns:existingPerson>
-			<tns:poID>34115658</tns:poID>
+			<tns:poID>1</tns:poID>
 		</tns:existingPerson>
 	</tns:pi>
 	<tns:sponsor>
 		<tns:existingOrganization>
-			<tns:poID>214122</tns:poID>
+			<tns:poID>2</tns:poID>
 		</tns:existingOrganization>
 	</tns:sponsor>
 	<tns:responsibleParty>
@@ -36,7 +36,7 @@
 	</tns:responsibleParty>
 	<tns:summary4FundingSponsor>
 		<tns:existingOrganization>
-			<tns:poID>214122</tns:poID>
+			<tns:poID>3</tns:poID>
 		</tns:existingOrganization>
 	</tns:summary4FundingSponsor>
 	<tns:programCode>PG00001</tns:programCode>
@@ -48,7 +48,7 @@
 		<tns:nciDivisionProgramCode>CCR</tns:nciDivisionProgramCode>
 		<tns:fundingPercentage>100.0</tns:fundingPercentage>
 	</tns:grant>
-	<tns:trialStatus>Active</tns:trialStatus>
+	<tns:trialStatus>In Review</tns:trialStatus>
 	<tns:whyStopped></tns:whyStopped>
 	<tns:trialStatusDate>2014-07-15</tns:trialStatusDate>
 	<tns:trialStartDate type="Actual">2014-07-15</tns:trialStartDate>
@@ -86,10 +86,6 @@
 		filename="sites.pdf">dGVzdA==</tns:participatingSitesDocument>
 	<tns:informedConsentDocument filename="consent.pdf">dGVzdA==</tns:informedConsentDocument>
 	<tns:otherDocument filename="other.pdf">dGVzdA==</tns:otherDocument>
-	<tns:amendmentNumber>99</tns:amendmentNumber>
-	<tns:amendmentDate>2014-08-01</tns:amendmentDate>
-	<tns:ctepIdentifier>CTEP99999999</tns:ctepIdentifier>	
-	<tns:dcpIdentifier>DCP999999999999</tns:dcpIdentifier>
-	<tns:changeMemoDocument filename="memo.pdf">dGVzdA==</tns:changeMemoDocument>
-	<tns:protocolHighlightDocument filename="high.pdf">dGVzdA==</tns:protocolHighlightDocument>
-</tns:CompleteTrialAmendment>
+	<tns:category>Externally Peer-Reviewed</tns:category>
+	<tns:trialOwner>submitter-ci@example.com</tns:trialOwner>
+</tns:CompleteTrialRegistration>

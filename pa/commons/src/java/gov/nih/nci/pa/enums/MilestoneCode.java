@@ -153,7 +153,10 @@ public enum MilestoneCode implements CodedEnum<String> {
     private boolean allowedIfOnhold;
     private boolean allowedInInBox;
     private static final Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> ALLOWED_DWF_STATUSES;
-    private static final Set<MilestoneCode> TRS_AND_ABOVE = EnumSet.of(MilestoneCode.TRIAL_SUMMARY_REPORT,
+    /**
+     * TRS_AND_ABOVE.
+     */
+    public static final Set<MilestoneCode> TRS_AND_ABOVE = EnumSet.of(MilestoneCode.TRIAL_SUMMARY_REPORT,
                                                                        MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
                                                                        MilestoneCode.INITIAL_ABSTRACTION_VERIFY,
                                                                        MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);

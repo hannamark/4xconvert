@@ -400,6 +400,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isElementPresent("link=Save"));
         assertTrue(selenium.isElementPresent("link=Accept"));
         assertTrue(selenium.isElementPresent("link=Reject"));
+
+        if (selenium.isElementPresent("id=amendmentReasonCode")) {
+            selenium.select("id=amendmentReasonCode", "label=Both");
+        }
+
         clickAndWait("link=Accept");
     }
 
@@ -576,13 +581,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         info.uuid = UUID.randomUUID().toString();
         info.title = "Title " + info.uuid;
 
-        QueryRunner runner = new QueryRunner();
+        pickUsers(info);
 
-        final Object[] regUserResults = runner.query(connection,
-                "select identifier, csm_user_id from registry_user limit 1",
-                new ArrayHandler());
-        info.registryUserID = (Long) regUserResults[0];
-        info.csmUserID = (Long) regUserResults[1];
+        QueryRunner runner = new QueryRunner();
 
         String protocolInsertSQL = "INSERT INTO study_protocol "
                 + "(identifier,accr_rept_meth_code,acronym,accept_healthy_volunteers_indicator,data_monty_comty_apptn_indicator,"
@@ -633,6 +634,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         LOG.info("Registered a new trial: " + info);
         return info;
 
+    }
+
+    /**
+     * @param info
+     * @throws SQLException
+     */
+    protected void pickUsers(TrialInfo info) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final Object[] regUserResults = runner.query(connection,
+                "select identifier, csm_user_id from registry_user limit 1",
+                new ArrayHandler());
+        info.registryUserID = (Long) regUserResults[0];
+        info.csmUserID = (Long) regUserResults[1];
     }
 
     protected Number createStudyInbox(TrialInfo trial) throws SQLException {
@@ -731,7 +745,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return info;
     }
 
-    private void addSOS(TrialInfo info, String code) throws SQLException {
+    protected void addSOS(TrialInfo info, String code) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO study_overall_status (identifier,comment_text,status_code,status_date,"
                 + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,"
@@ -759,7 +773,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return "{ts '2000-01-02 00:00:00.000'}";
     }
 
-    private void addMilestone(TrialInfo info, String code) throws SQLException {
+    protected void addMilestone(TrialInfo info, String code)
+            throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO study_milestone (identifier,comment_text,milestone_code,milestone_date,"
                 + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,user_last_updated_id,"
@@ -942,11 +957,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         QueryRunner runner = new QueryRunner();
         return (Number) runner
                 .query(connection,
-                        "select study_protocol_identifier from rv_lead_organization where local_sp_indentifier='"
+                        "select study_protocol_identifier from rv_lead_organization inner join study_protocol on "
+                                + "study_protocol.identifier=study_protocol_identifier "
+                                + " where study_protocol.status_code='ACTIVE' and local_sp_indentifier='"
                                 + loID + "'", new ArrayHandler())[0];
     }
 
-    private void addDWS(TrialInfo info, String status) throws SQLException {
+    protected void addDWS(TrialInfo info, String status) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO document_workflow_status (identifier,status_code,comment_text,status_date_range_low,"
                 + "study_protocol_identifier,date_last_created,date_last_updated,status_date_range_high,"
@@ -1000,6 +1017,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 "delete from study_site where functional_code='LEAD_ORGANIZATION' and local_sp_indentifier='"
                         + StringEscapeUtils.escapeSql(leadOrgID) + "'");
         LOG.info("De-activated trial with Lead Org ID of " + leadOrgID);
+    }
+
+    protected void deactivateAllTrials() throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "update study_protocol set status_code='INACTIVE'";
+        runner.update(connection, sql);
+
+        runner.update(connection,
+                "update study_site set local_sp_indentifier='"
+                        + UUID.randomUUID().toString()
+                        + "' where local_sp_indentifier is not null");
     }
 
     public static final class TrialInfo {
