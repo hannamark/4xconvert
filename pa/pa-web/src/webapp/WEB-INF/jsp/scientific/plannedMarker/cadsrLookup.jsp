@@ -45,6 +45,7 @@
              function loadResults() {     
             	 var caseValue = document.forms[0].caseTypetrue.checked;
                  var highlightValue = document.forms[0].highlightRequiredtrue.checked;
+                 var searchBothTermsValue = document.forms[0].searchBothTermstrue.checked;
                  var url= '/pa/protected/popupPlannedMarkerlookup.action';
                  var params = {
                          description: $('searchDescription').value,
@@ -53,6 +54,7 @@
                          publicId: $('searchPublicId').value, 
                          caseType :caseValue,
                          highlightRequired :highlightValue,
+                         searchBothTerms : searchBothTermsValue,
                          showActionColumn:$('showActionColumn').value
                  };
                  var div = $('getCaDSR');
@@ -105,6 +107,15 @@ background-color:yellow;
                         </td>
                         <td nowrap="nowrap"> 
                           <s:radio name="highlightRequired" id="highlightRequired" value='highlightRequired' list="#{'true':'Yes', 'false':'No'}"></s:radio>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td scope="row" class="label">
+                            <label for="searchBothTerms"><fmt:message key="plannedMarker.lookup.searchBothTerms"/>:</label>
+                        </td>
+                        <td nowrap="nowrap"> 
+                          <s:radio name="searchBothTerms" id="searchBothTerms" value='true' list="#{'true':'Yes', 'false':'No'}"></s:radio>
                         </td>
                     </tr>
                     <tr>

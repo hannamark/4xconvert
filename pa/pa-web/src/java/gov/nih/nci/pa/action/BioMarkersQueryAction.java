@@ -383,7 +383,6 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         String newcaDsrId = getCaDsrId();
         Long oldPvId = IiConverter.convertToLong(marker.getPermissibleValue());
         List<PlannedMarkerDTO> markerDTOs = plannedMarkerService.getPendingPlannedMarkerWithSyncID(oldPvId);
-        PlannedMarkerWebDTO webDTO = populateWebDTO(marker, null, null, null);
         // already present in planned_marker_sync_cadsr table?
         List<Number> newPvId = permissibleService.getIdentifierByCadsrId(Long.parseLong(newcaDsrId));
         if (!newPvId.isEmpty()) { 

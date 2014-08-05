@@ -151,6 +151,8 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private static final String DESCRIPTION = "description";
     private static final String DESIGNATION = "designationCollection";
     private static final String PERMISSIBLE = "permissibleValueCollection";
+    private static final String DESIGNATION_NAME = "dc.name";
+    private static final String SYNONYM = "Biomarker Synonym";
     
     private static final String TRUE = "true";
     private String name;
@@ -169,6 +171,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private String caDsrId;
     private String caseType;
     private String highlightRequired;
+    private String searchBothTerms;
     private String showActionColumn; 
     private String fromNewRequestPage;
     private String nciIdentifier;
@@ -199,9 +202,15 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         try {
             DetachedCriteria detachedCrit = DetachedCriteria.forClass(ValueMeaning.class)
                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            
+            DetachedCriteria detachedCritName = DetachedCriteria.forClass(ValueMeaning.class)
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+             
             List<Object> permissibleValues = (List<Object>) (List<?>) appService
                    .query(constructSearchCriteria(detachedCrit));
+            if (StringUtils.equals(TRUE, getSearchBothTerms())) {
+              permissibleValues.addAll((List<Object>) (List<?>) appService
+                      .query(constructNameSearchCriteria(detachedCritName)));
+            }
             List<CaDSRWebDTO> values = getSearchResults(new ArrayList<Object>(permissibleValues));
             markers.addAll(values);
         } catch (Exception e) {
@@ -364,18 +373,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     @SuppressWarnings({ "PMD.CyclomaticComplexity" })
     private DetachedCriteria constructSearchCriteria(DetachedCriteria criteria) {
-        criteria.setFetchMode(PERMISSIBLE, FetchMode.JOIN);
-        criteria.setFetchMode(PERMISSIBLE
-              + ".valueDomainPermissibleValueCollection", FetchMode.JOIN);
-        criteria.setFetchMode(PERMISSIBLE
-              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain", FetchMode.JOIN);
-        criteria.setFetchMode(PERMISSIBLE
-              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", 
-              FetchMode.JOIN);
-        criteria.createAlias(PERMISSIBLE
-              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", "de");
-        criteria.add(Restrictions.eq("de.publicID", CDE_PUBLIC_ID));
-        criteria.add(Restrictions.eq("de.latestVersionIndicator", "Yes"));
+        commonCriteria(criteria);
         //If public id is specified we only want to search using that.
         if (StringUtils.isNotEmpty(getPublicId())) {
             criteria.add(Expression.eq("publicID", Long.valueOf(getPublicId())));
@@ -389,7 +387,8 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
              if (StringUtils.isNotEmpty(getMeaning())) {
                  criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
                  criteria.createAlias(DESIGNATION, "dc");
-                criteria.add(Restrictions.like("dc.name", getMeaning(), MatchMode.ANYWHERE));
+                criteria.add(Restrictions.like(DESIGNATION_NAME, getMeaning(), MatchMode.ANYWHERE));
+                criteria.add(Expression.eq("dc.type", SYNONYM));
              }
              if (StringUtils.isNotEmpty(getDescription())) {
                 criteria.add(Expression.like(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
@@ -402,7 +401,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
              if (StringUtils.isNotEmpty(getMeaning())) {
                  criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
                  criteria.createAlias(DESIGNATION, "dc");
-                 criteria.add(Restrictions.like("dc.name", getMeaning(), MatchMode.ANYWHERE));
+                 criteria.add(Restrictions.like(DESIGNATION_NAME, getMeaning(), MatchMode.ANYWHERE));
              }
              if (StringUtils.isNotEmpty(getDescription())) {
                 criteria.add(Expression.ilike(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
@@ -410,7 +409,46 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         }
         return criteria;
     }
-
+    
+    /**
+     * Constructs the appropriate search criteria based on the given search parameters.
+     * @param vdId the id of the value domain to search
+     * @return the constructed criteria
+     */
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" })
+    private DetachedCriteria constructNameSearchCriteria(DetachedCriteria criteria) {
+        commonCriteria(criteria);
+        if (StringUtils.equals(TRUE, getCaseType())) {
+            criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
+            criteria.createAlias(DESIGNATION, "dc");
+            criteria.add(Restrictions.like(DESIGNATION_NAME, getName(), MatchMode.ANYWHERE));
+            criteria.add(Expression.eq("dc.type", SYNONYM));
+        } else {
+            criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
+            criteria.createAlias(DESIGNATION, "dc");
+            criteria.add(Restrictions.ilike(DESIGNATION_NAME, getName(), MatchMode.ANYWHERE));
+            criteria.add(Expression.eq("dc.type", SYNONYM));
+        }
+        return criteria;
+    }
+    
+    private DetachedCriteria commonCriteria(DetachedCriteria criteria) {
+        criteria.setFetchMode(PERMISSIBLE, FetchMode.JOIN);
+        criteria.setFetchMode(PERMISSIBLE
+              + ".valueDomainPermissibleValueCollection", FetchMode.JOIN);
+        criteria.setFetchMode(PERMISSIBLE
+              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain", FetchMode.JOIN);
+        criteria.setFetchMode(PERMISSIBLE
+              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", 
+              FetchMode.JOIN);
+        criteria.createAlias(PERMISSIBLE
+              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", "de");
+        criteria.add(Restrictions.eq("de.publicID", CDE_PUBLIC_ID));
+        criteria.add(Restrictions.eq("de.latestVersionIndicator", "Yes"));
+        return criteria;
+    }
+    
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     private List<CaDSRWebDTO> getSearchResults(List<Object> permissibleValues) throws ApplicationException {
         List<CaDSRWebDTO> results = new ArrayList<CaDSRWebDTO>();
         List<CaDSRWebDTO> resultsMain = new ArrayList<CaDSRWebDTO>();
@@ -423,27 +461,38 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         }
         List<CaDSRWebDTO> output = new ArrayList<CaDSRWebDTO>();
         if (getName() != null && !getName().isEmpty()) {
-            // Sort the results as per PO-6898
+             // Sort the results as per PO-6898
             output = RankBasedSorterUtils.sortCaDSRResults(
                results, getName(), new Serializer<CaDSRWebDTO>() {
-                public String serialize(CaDSRWebDTO object) {
-                  return object.getVmMeaning();
-               }
-           });
+                 public String serialize(CaDSRWebDTO object) {
+                   return object.getVmMeaning();
+                 }
+            });
         } else {
-            output = results;
+           output = results;
         }
            // add the highlight to the search text
         if (StringUtils.equals(TRUE, getHighlightRequired())) {
               for (CaDSRWebDTO dto : output) {
                    dto.setId(dto.getId());
-                   dto.setVmName(dto.getVmName());
+                   if (StringUtils.equals(TRUE, getSearchBothTerms())) {
+                     dto.setVmName(replaceWithHighlightText(
+                       replaceHTMLCharacters(dto.getVmName()), getName()));
+                   } else {
+                      dto.setVmName(dto.getVmName());
+                   }
                    dto.setVmMeaning(replaceWithHighlightText(
                     replaceHTMLCharacters(dto.getVmMeaning()), getName()));
                    dto.setVmDescription(replaceWithHighlightText(
                     replaceHTMLCharacters(dto.getVmDescription()), getDescription()));
                    dto.setPublicId(dto.getPublicId());
-                   dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames(), getMeaning()));
+                   if (StringUtils.equals(TRUE, getSearchBothTerms())) {
+                      dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames()
+                          , getName()));
+                   } else {
+                      dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames()
+                          , getMeaning()));
+                   }
                    resultsMain.add(dto);
                }
         } else {
@@ -462,7 +511,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
          List<Object> desgs = appService.query(criteria);
          for (int j = 0; j < desgs.size(); j++) {
             Designation designation = (Designation) desgs.get(j);
-            if (StringUtils.equalsIgnoreCase(designation.getType(), "Biomarker Synonym")) {
+            if (StringUtils.equalsIgnoreCase(designation.getType(), SYNONYM)) {
                 if (synonymName.length() == 0) {
                    synonymName.append(designation.getName());
                 } else {
@@ -799,4 +848,19 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             PlannedMarkerSyncWithCaDSRServiceLocal permissibleService) {
         this.permissibleService = permissibleService;
     }
+    /**
+     * 
+     * @return searchBothTerms searchBothTerms
+     */
+    public String getSearchBothTerms() {
+        return searchBothTerms;
+    }
+    /**
+     * 
+     * @param searchBothTerms searchBothTerms
+     */
+    public void setSearchBothTerms(String searchBothTerms) {
+        this.searchBothTerms = searchBothTerms;
+    }
+    
 }
