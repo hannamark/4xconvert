@@ -305,7 +305,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Search");
         try {
             Thread.sleep(2000L);
-        } catch (InterruptedException e) {           
+        } catch (InterruptedException e) {
         }
         assertTrue(selenium.isTextPresent("One item found"));
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
@@ -524,17 +524,20 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         if (doc != null) {
             String file = doc.getFilename();
             for (int i = 1; i < 20; i++) {
-                String text = selenium
+                String currentType = selenium
                         .getText("xpath=//form//table[@id='row']//tr[" + i
                                 + "]//td[2]");
-                if (type.equalsIgnoreCase(StringUtils.trim(text))) {
-                    assertEquals(
-                            file,
-                            selenium.getText("xpath=//form//table[@id='row']//tr["
-                                    + i + "]//td[1]"));
-                    break;
+                if (type.equalsIgnoreCase(StringUtils.trim(currentType))) {
+                    final String currentFilename = selenium
+                            .getText("xpath=//form//table[@id='row']//tr[" + i
+                                    + "]//td[1]");
+                    if (file.equals(currentFilename)) {
+                        return;
+                    }
+
                 }
             }
+            fail();
         }
     }
 
@@ -885,4 +888,43 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                 new ArrayHandler())[0];
     }
 
+    protected TrialRegistrationConfirmation register(String file)
+            throws JAXBException, SAXException, SQLException,
+            ClientProtocolException, ParseException, IOException {
+        CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile(file);
+        deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
+        TrialRegistrationConfirmation conf = registerTrialFromFile(file);
+        logInFindAndAcceptTrial(conf);
+        return conf;
+
+    }
+
+    @SuppressWarnings("unchecked")
+    protected HttpResponse updateTrialFromFile(String idType, String trialID,
+            String file) throws ClientProtocolException, IOException,
+            ParseException, JAXBException, SQLException {
+        StringEntity entity = new StringEntity(IOUtils.toString(getClass()
+                .getResourceAsStream(file)));
+        HttpResponse response = submitEntityAndReturnResponse(entity,
+                serviceURL + "/" + idType + "/" + trialID);
+        return response;
+
+    }
+
+    protected void makeAbbreviated(TrialRegistrationConfirmation rConf)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "update study_protocol set proprietary_trial_indicator=true where identifier="
+                + rConf.getPaTrialID();
+        runner.update(connection, sql);
+
+    }
+
+    protected void removeOwners(TrialRegistrationConfirmation rConf)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "delete from study_owner where study_id="
+                + rConf.getPaTrialID();
+        runner.update(connection, sql);
+    }
 }

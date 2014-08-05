@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.webservices.test.integration;
 
-import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.Grant;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
@@ -17,7 +16,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.http.HttpResponse;
@@ -26,7 +24,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 /**
  * @author Denis G. Krylov
@@ -180,6 +177,35 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         assertEquals(400, getReponseCode(response));
         String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
         assertTrue(respBody.contains("Validation Exception"));
+    }
+
+    @Test
+    public void testUpdateRestrictedToCompleteTrials() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+
+        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_no_changes.xml");
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        assertEquals(400, getReponseCode(response));
+        String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
+        assertTrue(respBody
+                .contains("Update to Proprietary trial is not supported"));
+    }
+
+    @Test
+    public void testUpdateRestrictedToOwners() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        removeOwners(rConf);
+
+        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_no_changes.xml");
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        assertEquals(400, getReponseCode(response));
+        String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
+        assertTrue(respBody
+                .contains("Update to the trial can only be submitted by either "
+                        + "an owner of the trial or a lead organization admin"));
     }
 
     @Test
@@ -361,17 +387,6 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
 
     }
 
-    private TrialRegistrationConfirmation register(String file)
-            throws JAXBException, SAXException, SQLException,
-            ClientProtocolException, ParseException, IOException {
-        CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile(file);
-        deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
-        TrialRegistrationConfirmation conf = registerTrialFromFile(file);
-        logInFindAndAcceptTrial(conf);
-        return conf;
-
-    }
-
     @SuppressWarnings("unchecked")
     protected HttpResponse updateTrialFromJAXBElement(String idType,
             String trialID, CompleteTrialUpdate o)
@@ -385,18 +400,6 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
                 CompleteTrialUpdate.class, o), out);
 
         StringEntity entity = new StringEntity(out.toString());
-        HttpResponse response = submitEntityAndReturnResponse(entity,
-                serviceURL + "/" + idType + "/" + trialID);
-        return response;
-
-    }
-
-    @SuppressWarnings("unchecked")
-    protected HttpResponse updateTrialFromFile(String idType, String trialID,
-            String file) throws ClientProtocolException, IOException,
-            ParseException, JAXBException, SQLException {
-        StringEntity entity = new StringEntity(IOUtils.toString(getClass()
-                .getResourceAsStream(file)));
         HttpResponse response = submitEntityAndReturnResponse(entity,
                 serviceURL + "/" + idType + "/" + trialID);
         return response;

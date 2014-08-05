@@ -195,6 +195,39 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                 .contains("An amendment cannot change a trial from Interventional to Non-Interventional or vice versa"));
 
     }
+    
+    @Test
+    public void testAmendmentsByOwnersOnly() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
+        prepareTrialForAmendment(rConf);
+        removeOwners(rConf);
+
+        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
+        HttpResponse response = amendTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        assertEquals(400, getReponseCode(response));
+        String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
+        assertTrue(respBody
+                .contains("Amendment to the trial can only be submitted by either an owner of the trial "
+                        + "or a lead organization admin"));
+
+    }
+    
+    @Test
+    public void testAmendmentsProhibitedForAbbreviatedTrials() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
+        prepareTrialForAmendment(rConf);
+        makeAbbreviated(rConf);
+
+        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
+        HttpResponse response = amendTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        assertEquals(400, getReponseCode(response));
+        String respBody = EntityUtils.toString(response.getEntity(), "utf-8");
+        assertTrue(respBody
+                .contains("Amendment to Proprietary trial is not supported"));
+
+    }
 
     @Test
     public void testAmendByNciId() throws Exception {
@@ -293,17 +326,6 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         HttpResponse response = amendTrialFromFile("pa", "1",
                 "/integration_amend_schema_violation.xml");
         assertEquals(400, getReponseCode(response));
-
-    }
-
-    private TrialRegistrationConfirmation register(String file)
-            throws JAXBException, SAXException, SQLException,
-            ClientProtocolException, ParseException, IOException {
-        CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile(file);
-        deactivateTrialByLeadOrgId(reg.getLeadOrgTrialID());
-        TrialRegistrationConfirmation conf = registerTrialFromFile(file);
-        logInFindAndAcceptTrial(conf);
-        return conf;
 
     }
 

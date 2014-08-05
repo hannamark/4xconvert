@@ -142,6 +142,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceBean;
@@ -479,7 +480,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                             .convertToLong(spIi));
             sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>(), EMPTY_STR);
             return studyProtocolDTO.getIdentifier();
+        } catch (PAException e) { 
+            LOG.error(e, e);
+            throw e;
         } catch (Exception e) {
+            LOG.error(e, e);
             throw new PAException(e.getMessage(), e);
         }
     }
@@ -1939,6 +1944,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(spIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(spIi);
             sendTSRXML(spIi, smDto.getMilestoneCode(), inbox);
+        } catch (PAValidationException e) {
+            LOG.error(e, e);
+            throw e;
         } catch (Exception e) {
             LOG.error(e, e);
             throw new PAException(e.getMessage(), e);
@@ -2009,7 +2017,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         }
         if (!ISOUtil.isBlNull(dto.getProprietaryTrialIndicator())
                 && dto.getProprietaryTrialIndicator().getValue().booleanValue()) {
-            throw new PAException(operation + " to Proprietary trial is not supported. ");
+            throw new PAValidationException(operation + " to Proprietary trial is not supported. ");
         }
         return dto;
     }
