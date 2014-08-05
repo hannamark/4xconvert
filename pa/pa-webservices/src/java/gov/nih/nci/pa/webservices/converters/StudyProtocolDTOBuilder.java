@@ -23,6 +23,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.webservices.TrialDataException;
+import gov.nih.nci.pa.webservices.types.AbbreviatedTrialUpdate;
 import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
@@ -347,6 +348,14 @@ public final class StudyProtocolDTOBuilder {
         St loggedInUser = new St();
         loggedInUser.setValue(identity);
         dto.setUserLastCreated(loggedInUser);
+    }
+
+    /**
+     * @param spDTO StudyProtocolDTO
+     * @param reg AbbreviatedTrialUpdate
+     */
+    public void build(StudyProtocolDTO spDTO, AbbreviatedTrialUpdate reg) {
+        setUser(spDTO);
     }
 
 }

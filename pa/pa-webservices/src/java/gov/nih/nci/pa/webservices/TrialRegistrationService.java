@@ -5,6 +5,7 @@ package gov.nih.nci.pa.webservices;
 
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -14,6 +15,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -24,6 +26,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.webservices.converters.DocumentDTOBuilder;
@@ -36,6 +39,7 @@ import gov.nih.nci.pa.webservices.converters.StudyProtocolDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.StudyRegulatoryAuthorityDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.StudyResourcingDTOBuilder;
 import gov.nih.nci.pa.webservices.converters.StudySiteDTOBuilder;
+import gov.nih.nci.pa.webservices.types.AbbreviatedTrialUpdate;
 import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
 import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
@@ -202,6 +206,50 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
                     studyResourcingDTOs, documentDTOs, null, null, null, null,
                     null, null, null, null, null,
                     BlConverter.convertToBl(Boolean.FALSE));
+            return buildTrialRegConfirmationResponse(paTrialID);
+        } catch (Exception e) {
+            return handleException(e);
+        }
+
+    }
+
+    /**
+     * Updates an abbreviated trial.
+     * 
+     * @param reg
+     *            AbbreviatedTrialUpdate
+     * @param trialID
+     *            trialID
+     * @param idType
+     *            idType
+     * @return Response
+     */
+    @POST
+    @Path("/update/abbreviated/{idType}/{trialID}")
+    @Consumes({ APPLICATION_XML })
+    @Produces({ APPLICATION_XML })
+    @NoCache
+    public Response updateAbbreviatedTrial(@PathParam("idType") String idType,
+            @PathParam("trialID") String trialID,
+            @Validate AbbreviatedTrialUpdate reg) {
+        try {
+            StudyProtocolDTO spDTO = findTrial(idType, trialID);
+            Long paTrialID = IiConverter.convertToLong(spDTO.getIdentifier());
+
+            St nctIdentifier = StConverter.convertToSt(paServiceUtils
+                    .getStudyIdentifier(spDTO.getIdentifier(),
+                            PAConstants.NCT_IDENTIFIER_TYPE));
+            if (ISOUtil.isStNull(nctIdentifier)) {
+                nctIdentifier = StConverter.convertToSt(reg
+                        .getClinicalTrialsDotGovTrialID());
+            }
+            new StudyProtocolDTOBuilder().build(spDTO, reg);
+            List<DocumentDTO> documentDTOs = new DocumentDTOBuilder().build(
+                    spDTO, reg);
+            PaRegistry.getProprietaryTrialService().update(spDTO, null, null,
+                    null, nctIdentifier, null, documentDTOs,
+                    new ArrayList<StudySiteDTO>(),
+                    new ArrayList<StudySiteAccrualStatusDTO>());
             return buildTrialRegConfirmationResponse(paTrialID);
         } catch (Exception e) {
             return handleException(e);

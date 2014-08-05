@@ -525,7 +525,7 @@ public class ProprietaryTrialManagementBeanTest extends
 
         OrganizationDTO leadOrganizationDTO = null;
         OrganizationDTO summary4Org = getSummary4Org();
-        St leadOrganizationIdentifier = StConverter.convertToSt("");
+        St leadOrganizationIdentifier = StConverter.convertToSt("NEW_LEAD_ID");
         St nctIdentifier = StConverter.convertToSt("");
         Cd summary4TypeCode = CdConverter
                 .convertToCd(SummaryFourFundingCategoryCode.INDUSTRIAL);
@@ -546,9 +546,7 @@ public class ProprietaryTrialManagementBeanTest extends
             e.printStackTrace();
             String msg = e.getMessage();
             Assert.assertTrue(msg
-                    .contains("Lead Organization DTO cannot be null"));
-            Assert.assertTrue(msg
-                    .contains("Lead Organization identifier cannot be null"));
+                    .contains("Lead Organization DTO cannot be null"));           
             Assert.assertTrue(msg.contains("Official Title cannot be null"));
             Assert.assertTrue(msg.contains("Purpose cannot be null"));
             Assert.assertTrue(msg.contains("Phase cannot be null"));

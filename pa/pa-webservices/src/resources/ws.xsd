@@ -846,6 +846,79 @@
 		</annotation>
 	</element>
 
+	<element name="AbbreviatedTrialUpdate" type="tns:AbbreviatedTrialUpdate">
+		<annotation>
+			<documentation>A request to update an Abbreviated trial in CTRP. An
+				update permits trial owners to change a very limited set
+				of data
+				element
+				of an Abbreviated trial. Most of the elements are optional;
+				if you
+				omit an
+				element, corresponding trial data will remain
+				unchanged.
+			</documentation>
+		</annotation>
+	</element>
+
+	<complexType name="AbbreviatedTrialUpdate" final="#all"
+		block="#all">
+		<annotation>
+			<documentation>A request to update an Abbreviated trial in CTRP. An
+				update permits trial owners to change a very limited set
+				of data
+				element
+				of an Abbreviated trial. Most of the elements are optional;
+				if you
+				omit an
+				element, corresponding trial data will remain
+				unchanged.
+			</documentation>
+		</annotation>
+		<sequence>
+			<element ref="tns:clinicalTrialsDotGovTrialID" minOccurs="0">
+				<annotation>
+					<documentation>
+						If the trial does not currently specify a
+						ClinicalTrials.Gov ID
+						(a.k.a NCT ID), you can provide one during
+						the update.
+						If the trial does have a ClinicalTrials.Gov ID already,
+						your update
+						will not be allowed to change it; an attempt to do so
+						will be ignored by CTRP.
+					</documentation>
+				</annotation>
+			</element>
+			<element name="irbApprovalDocument" type="tns:TrialDocument"
+				minOccurs="0">
+				<annotation>
+					<documentation>To ensure successful registration, upload a IRB
+						Approval document
+						document. 
+					</documentation>
+				</annotation>
+			</element>
+			<element name="informedConsentDocument" type="tns:TrialDocument"
+				minOccurs="0">
+				<annotation>
+					<documentation>If the Protocol document does not include the
+						Informed Consent and/or participating sites, upload the Informed
+						Consent document. 
+					</documentation>
+				</annotation>
+			</element>
+			<element name="otherDocument" type="tns:TrialDocument"
+				minOccurs="0" maxOccurs="unbounded">
+				<annotation>
+					<documentation>Any other trial-related document.
+					</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+
 	<complexType name="CompleteTrialUpdate" final="#all" block="#all">
 		<annotation>
 			<documentation>A request to update a Complete trial in CTRP. An
@@ -1184,7 +1257,8 @@
 				minOccurs="0">
 				<annotation>
 					<documentation>Regulatory Information is required if
-						clinicalTrialsDotGovXmlRequired is true and should not be specified otherwise.
+						clinicalTrialsDotGovXmlRequired is true and should not be
+						specified otherwise.
 					</documentation>
 				</annotation>
 			</element>

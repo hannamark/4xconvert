@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.webservices.converters;
 
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -13,6 +14,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.webservices.types.AbbreviatedTrialUpdate;
 import gov.nih.nci.pa.webservices.types.BaseTrialInformation;
 import gov.nih.nci.pa.webservices.types.CompleteTrialAmendment;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
@@ -21,6 +23,10 @@ import gov.nih.nci.pa.webservices.types.TrialDocument;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author dkrylov
@@ -132,6 +138,53 @@ public class DocumentDTOBuilder {
             convertAndStore(list, doc, DocumentTypeCode.OTHER, null);
         }
         return list;
+    }
+
+    /**
+     * @param spDTO
+     *            StudyProtocolDTO
+     * @param reg
+     *            AbbreviatedTrialUpdate
+     * @return List<DocumentDTO>
+     * @throws PAException
+     *             PAException
+     */
+    public List<DocumentDTO> build(StudyProtocolDTO spDTO,
+            AbbreviatedTrialUpdate reg) throws PAException {
+        List<DocumentDTO> list = new ArrayList<>();
+        convertAndStore(list, reg.getIrbApprovalDocument(),
+                DocumentTypeCode.IRB_APPROVAL_DOCUMENT, null);
+        convertAndStore(list, reg.getInformedConsentDocument(),
+                DocumentTypeCode.INFORMED_CONSENT_DOCUMENT, null);
+
+        // ProprietaryTrialManagementBeanLocal.update has an odd way of handling
+        // the documents.
+        List<DocumentDTO> existingDocs = PaRegistry.getDocumentService()
+                .getDocumentsByStudyProtocol(spDTO.getIdentifier());
+        for (DocumentDTO doc : existingDocs) {
+            if (!hasDocOfType(list, doc.getTypeCode())
+                    || DocumentTypeCode.OTHER == CdConverter.convertCdToEnum(
+                            DocumentTypeCode.class, doc.getTypeCode())) {
+                list.add(doc);
+            }
+        }
+
+        for (TrialDocument doc : reg.getOtherDocument()) {
+            convertAndStore(list, doc, DocumentTypeCode.OTHER, null);
+        }
+
+        return list;
+    }
+
+    private boolean hasDocOfType(final List<DocumentDTO> list, final Cd cd) {
+        return CollectionUtils.find(list, new Predicate() {
+            @Override
+            public boolean evaluate(Object o) {
+                DocumentDTO doc = (DocumentDTO) o;
+                return StringUtils.equals(cd.getCode(), doc.getTypeCode()
+                        .getCode());
+            }
+        }) != null;
     }
 
 }

@@ -179,8 +179,14 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             } else {
                 studyProtocolService.updateStudyProtocol(spDto);
             }
-            updateLeadOrganization(paServiceUtils.findOrCreateEntity(leadOrganizationDTO), leadOrganizationIdentifier,
-                    studyProtocolIi);
+            
+            if (leadOrganizationDTO != null
+                    && !ISOUtil.isStNull(leadOrganizationIdentifier)) {
+                updateLeadOrganization(
+                        paServiceUtils.findOrCreateEntity(leadOrganizationDTO),
+                        leadOrganizationIdentifier, studyProtocolIi);
+            }
+            
             updateNctIdentifier(nctIdentifier, studyProtocolIi);
             /*StudyResourcingDTO srDto = null;
             if (!ISOUtil.isCdNull(summary4TypeCode)) {
@@ -258,6 +264,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     private void updateLeadOrganization(OrganizationDTO leadOrg, St leadOrganizationIdentifier, Ii studyProtocolIi)
             throws PAException {
         StudySiteDTO ssCriteriaDTO = new StudySiteDTO();
@@ -453,15 +460,15 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
      * @param errorMsg
      * @throws PAException
      */
-    private void notNullCheck(StudyProtocolDTO studyProtocolDTO, OrganizationDTO leadOrganizationDTO,
+    private void notNullCheck(StudyProtocolDTO studyProtocolDTO, OrganizationDTO leadOrganizationDTO, // NOPMD
             St leadOrganizationIdentifier, St nctIdentifier, StringBuffer errorMsg) throws PAException {
         if (studyProtocolDTO == null) {
             errorMsg.append("Study Protocol DTO cannot be null , ");
         }
-        if (leadOrganizationDTO == null) {
+        if (leadOrganizationDTO == null && !ISOUtil.isStNull(leadOrganizationIdentifier)) {
             errorMsg.append("Lead Organization DTO cannot be null , ");
         }
-        if (ISOUtil.isStNull(leadOrganizationIdentifier)) {
+        if (ISOUtil.isStNull(leadOrganizationIdentifier) && leadOrganizationDTO != null) {
             errorMsg.append("Lead Organization identifier cannot be null , ");
         }
         if (studyProtocolDTO != null) {
