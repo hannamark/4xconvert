@@ -97,6 +97,7 @@ public class DiseaseTest extends AbstractPaSeleniumTest {
     @Override
     public void setUp() throws Exception{
         super.setUp();
+        logoutUser();
         TrialInfo trial = createSubmittedTrial();
         
         loginAsAdminAbstractor();
