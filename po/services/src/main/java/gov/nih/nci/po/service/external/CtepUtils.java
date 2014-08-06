@@ -10,13 +10,16 @@ import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
 import gov.nih.nci.po.data.bo.AbstractOversightCommittee;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.services.CorrelationDto;
 import gov.nih.nci.services.correlation.AbstractBaseEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.TransformerUtils;
@@ -33,6 +36,7 @@ import java.util.Set;
  * Utility class for CTEP-related work.
  *
  * @author smatyas
+ * @author Rohit Gupta
  *
  */
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
@@ -115,7 +119,7 @@ public final class CtepUtils {
      * @param localOrg current local organization (not nullable)
      * @return true if the ctep org has different data than localOrg
      */
-    static boolean isDifferent(Organization ctepOrg, Organization localOrg) {
+    static boolean isOrganizationDifferent(Organization ctepOrg, Organization localOrg) {
         if (isDifferentHelper(ctepOrg, localOrg)) {
             return true;
         }
@@ -124,6 +128,24 @@ public final class CtepUtils {
         Address localAddr = localOrg.getPostalAddress() == null ? new Address() : localOrg.getPostalAddress();
 
         return !localAddr.contentEquals(ctepAddr);
+    }
+    
+    /**
+     * Determines whether or not a ctep organization represents an update to Only 'name'/Alias of an existing org.
+     *
+     * @param ctepOrg ctep organization (not nullable)
+     * @param localOrg current local organization (not nullable)
+     * @return true if the ctep org has different data than localOrg
+     */
+    static boolean isOnlyOrgNameAliasDifferent(Organization ctepOrg, Organization localOrg) {
+        Address ctepAddr = ctepOrg.getPostalAddress() == null ? new Address() : ctepOrg.getPostalAddress();
+        Address localAddr = localOrg.getPostalAddress() == null ? new Address() : localOrg.getPostalAddress();
+        
+        return hasOrgNameOrAliasChanged(localOrg, ctepOrg)
+                && areEmailListsEqual(localOrg.getEmail(), ctepOrg.getEmail())
+                && arePhoneNumberListsEqual(localOrg.getPhone(), ctepOrg.getPhone())
+                && ObjectUtils.equals(localOrg.getStatusCode(), ctepOrg.getStatusCode()) 
+                && localAddr.contentEquals(ctepAddr);
     }
     
     private static boolean isDifferentHelper(Organization ctepOrg, Organization localOrg) {
@@ -143,6 +165,22 @@ public final class CtepUtils {
             return true;
         }
         return false;
+    }
+    
+    private static boolean hasOrgNameOrAliasChanged(Organization poOrg, Organization ctepOrg) {
+        return !StringUtils.equalsIgnoreCase(poOrg.getName(), ctepOrg.getName()) 
+                || hasAliasChanged(poOrg.getAlias(), ctepOrg.getAlias());
+    }
+    
+    private static boolean hasAliasChanged(List<Alias> poAliasList, List<Alias> ctepAliasList) {
+        boolean result = false;
+        for (Alias ctepAlias : ctepAliasList) {
+            if (PoServiceUtil.aliasIsNotPresent(poAliasList, ctepAlias.getValue())) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
     /**

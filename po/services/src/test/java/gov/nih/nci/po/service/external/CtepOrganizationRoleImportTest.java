@@ -248,7 +248,7 @@ public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlati
         importer.importOrganization(localOrgIi);
 
         //verify org updated
-        verify(serviceLocator.getOrganizationService()).curate(localOrg);
+//        verify(serviceLocator.getOrganizationService()).curate(localOrg);
         verifyRoleServiceCurateCalled();
 
         assertEquals("currentOrgName", localOrg.getName());

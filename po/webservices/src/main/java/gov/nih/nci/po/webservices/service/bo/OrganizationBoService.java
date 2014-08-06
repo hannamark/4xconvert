@@ -13,6 +13,7 @@ import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationServiceLocal;
 import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.security.SecurityServiceProvider;
@@ -40,6 +41,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * for web services without breaking legacy code contracts.
  *
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
+ * @author Rohit Gupta
  */
 @Service("organizationBoService")
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.TooManyMethods", "PMD.AvoidThrowingRawExceptionTypes" })
@@ -294,7 +296,7 @@ public class OrganizationBoService implements OrganizationServiceLocal {
         if (CollectionUtils.isNotEmpty(currentInstance.getAlias())) {
             for (int i = 0; i < currentInstance.getAlias().size(); i++) {
                 Alias alias = currentInstance.getAlias().get(i);
-                if (aliasIsNotPresent(updatedInstance.getAlias(), alias.getValue())) {                    
+                if (PoServiceUtil.aliasIsNotPresent(updatedInstance.getAlias(), alias.getValue())) {                    
                     updatedInstance.getAlias().add(alias);
                 }            
             }            
@@ -302,7 +304,7 @@ public class OrganizationBoService implements OrganizationServiceLocal {
 
         // check if existing Org name or aliases has the incoming name
         if (nameHasChanged(currentInstance, updatedInstance)
-                && aliasIsNotPresent(currentInstance.getAlias(), updatedInstance.getName())) {
+                && PoServiceUtil.aliasIsNotPresent(currentInstance.getAlias(), updatedInstance.getName())) {
             // if not then add it new name to the list of org aliases
             updatedInstance.getAlias().add(
                     new gov.nih.nci.po.data.bo.Alias(updatedInstance.getName()));
@@ -316,26 +318,6 @@ public class OrganizationBoService implements OrganizationServiceLocal {
 
     private boolean nameHasChanged(Organization currentInstance, Organization updatedInstance) {
         return !StringUtils.equalsIgnoreCase(currentInstance.getName(), updatedInstance.getName());
-    }
-
-
-    /**
-     * This method is used to check if the Alias list contains the name(case
-     * insensitive).
-     *
-     * @return true if the name if not present in the list.
-     */
-    private boolean aliasIsNotPresent(List<Alias> aliasList, String name) {
-        boolean result = true;
-
-        for (Alias alias : aliasList) {
-            if (alias.getValue().equalsIgnoreCase(name)) {
-                result = false;
-                break;
-            }
-        }
-
-        return result;
     }
 
 

@@ -2,8 +2,10 @@ package gov.nih.nci.po.util;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.AbstractRole;
+import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Overridable;
@@ -12,6 +14,7 @@ import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -210,5 +213,22 @@ public class PoServiceUtil {
     public static boolean isOverriddenByCurrentUser(Overridable overridable) {
         return overridable.getOverriddenBy() != null
               && StringUtils.equalsIgnoreCase(UsernameHolder.getUser(), overridable.getOverriddenBy().getLoginName());
+    }
+    
+    /**
+     * This method is used to check if the Alias list contains the name(case insensitive).
+     * @param aliasList AliasList
+     * @param name AliasName
+     * @return true if the name if not present in the list.
+     */
+    public static boolean aliasIsNotPresent(List<Alias> aliasList, String name) {
+        boolean result = true;
+        for (Alias alias : aliasList) {
+            if (alias.getValue().equalsIgnoreCase(name)) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 }

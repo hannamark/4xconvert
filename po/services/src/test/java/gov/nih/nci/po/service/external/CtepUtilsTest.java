@@ -9,7 +9,6 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
-import gov.nih.nci.po.data.bo.AbstractOversightCommittee;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
@@ -42,17 +41,17 @@ public class CtepUtilsTest {
 
     @Test(expected = Exception.class)
     public void testNeedsCRNullCtep() {
-        CtepUtils.isDifferent(null, new Organization());
+        CtepUtils.isOrganizationDifferent(null, new Organization());
     }
 
     @Test(expected = Exception.class)
     public void testNeedsCRNullLocal() {
-        CtepUtils.isDifferent(new Organization(), null);
+        CtepUtils.isOrganizationDifferent(new Organization(), null);
     }
 
     @Test
     public void testNeedsCRBothEmpty() {
-        assertFalse(CtepUtils.isDifferent(new Organization(), new Organization()));
+        assertFalse(CtepUtils.isOrganizationDifferent(new Organization(), new Organization()));
     }
 
     @Test
@@ -61,26 +60,26 @@ public class CtepUtilsTest {
         Organization o2 = new Organization();
 
         o1.setName("");
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         o2.setName("");
-        assertFalse(CtepUtils.isDifferent(o1, o2));
-        assertFalse(CtepUtils.isDifferent(o2, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertFalse(CtepUtils.isOrganizationDifferent(o2, o1));
 
         o1.setName(" ");
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         o1.setName("foo");
         o2.setName("Foo");
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         o1.setName("Acme, Inc.");
         o2.setName("Acme, Inc.");
-        assertFalse(CtepUtils.isDifferent(o1, o2));
-        assertFalse(CtepUtils.isDifferent(o2, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertFalse(CtepUtils.isOrganizationDifferent(o2, o1));
     }
 
     @Test
@@ -89,26 +88,26 @@ public class CtepUtilsTest {
         Organization o2 = new Organization();
 
         o1.setPostalAddress(new Address());
-        assertFalse(CtepUtils.isDifferent(o1, o2)); // Blank & null address can be treated the same
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o2)); // Blank & null address can be treated the same
 
-        assertFalse(CtepUtils.isDifferent(o1, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
 
         o2.setPostalAddress(new Address());
-        assertFalse(CtepUtils.isDifferent(o1, o2));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o2));
 
         // addresses can be different in a lot of ways, but we only test a couple here because
         // the implementation dispatches to Address.contentEquals, which is tested elsewhere
         o1.getPostalAddress().setPostalCode("12345");
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         o2.getPostalAddress().setPostalCode("12345");
         o2.getPostalAddress().setCityOrMunicipality("City");
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         o1.getPostalAddress().setCityOrMunicipality("City");
-        assertFalse(CtepUtils.isDifferent(o1, o2));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o2));
     }
 
     @Test
@@ -118,24 +117,24 @@ public class CtepUtilsTest {
 
         Email e1 = new Email();
         o1.getEmail().add(e1);
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         Email e2 = new Email();
         o2.getEmail().add(e2);
-        assertFalse(CtepUtils.isDifferent(o1, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
 
         e1.setValue("test@example.com");
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         e2.setValue("test@example.com");
-        assertFalse(CtepUtils.isDifferent(o1, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
 
         Email e3 = new Email();
         e3.setValue("test2@example.com");
         o1.getEmail().add(e3);
-        assertFalse(CtepUtils.isDifferent(o1, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
     }
     
     @Test
@@ -145,24 +144,24 @@ public class CtepUtilsTest {
 
         PhoneNumber e1 = new PhoneNumber();
         o1.getPhone().add(e1);
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         PhoneNumber e2 = new PhoneNumber();
         o2.getPhone().add(e2);
-        assertFalse(CtepUtils.isDifferent(o1, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
 
         e1.setValue("111-222-3333");
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         e2.setValue("111-222-3333");
-        assertFalse(CtepUtils.isDifferent(o1, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
 
         PhoneNumber e3 = new PhoneNumber();
         e3.setValue("444-555-6666");
         o1.getPhone().add(e3);
-        assertFalse(CtepUtils.isDifferent(o1, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
     }
 
     @Test
@@ -175,19 +174,19 @@ public class CtepUtilsTest {
         o1.getEmail().get(0).setValue("test@example.com");
 
         Organization o2 = new Organization();
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
 
         o2.setName("name");
         o2.setPostalAddress(new Address());
         o2.getPostalAddress().setCityOrMunicipality("city");
         o2.getEmail().add(new Email());
         o2.getEmail().get(0).setValue("test@example.com");
-        assertFalse(CtepUtils.isDifferent(o1, o1));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
 
         o2.setName("name2");
-        assertTrue(CtepUtils.isDifferent(o1, o2));
-        assertTrue(CtepUtils.isDifferent(o2, o1));
+        assertTrue(CtepUtils.isOrganizationDifferent(o1, o2));
+        assertTrue(CtepUtils.isOrganizationDifferent(o2, o1));
     }
 
     @Test
@@ -207,7 +206,7 @@ public class CtepUtilsTest {
         o1.getOversightCommittees().add(new OversightCommittee());
         o1.getResearchOrganizations().add(new ResearchOrganization());
 
-        assertFalse(CtepUtils.isDifferent(o1, o2));
+        assertFalse(CtepUtils.isOrganizationDifferent(o1, o2));
     }
 
     @Test(expected = Exception.class)

@@ -4,11 +4,10 @@ import gov.nih.nci.po.data.bo.AbstractEnhancedOrganizationRole;
 import gov.nih.nci.po.data.bo.Alias;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.util.PoServiceUtil;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
 
 /**
  * This looks a bit wonky, but given the way that the type system is set up it's
@@ -17,6 +16,7 @@ import java.util.List;
  * @param <TYPE>    The Correlation BO type.
  * @param <CR_TYPE> The CR Type for the BO type.
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
+ * @author Rohit Gupta
  */
 public class AliasFilter<TYPE extends Correlation, CR_TYPE extends ChangeRequest<TYPE>>
         implements RoleUpdateFilter<TYPE>,
@@ -55,7 +55,7 @@ public class AliasFilter<TYPE extends Correlation, CR_TYPE extends ChangeRequest
         if (CollectionUtils.isNotEmpty(currentInstance.getAlias())) {
             for (int i = 0; i < currentInstance.getAlias().size(); i++) {
                 Alias alias = currentInstance.getAlias().get(i);
-                if (aliasIsNotPresent(updatedInstance.getAlias(), alias.getValue())) {
+                if (PoServiceUtil.aliasIsNotPresent(updatedInstance.getAlias(), alias.getValue())) {
                     updatedInstance.getAlias().add(alias);
                 }            
             }            
@@ -63,7 +63,7 @@ public class AliasFilter<TYPE extends Correlation, CR_TYPE extends ChangeRequest
 
         // check if existing Org name or aliases has the incoming name
         if (nameHasChanged(currentInstance, updatedInstance)
-                && aliasIsNotPresent(currentInstance.getAlias(), updatedInstance.getName())) {
+                && PoServiceUtil.aliasIsNotPresent(currentInstance.getAlias(), updatedInstance.getName())) {
             // if not then add it new name to the list of org aliases
             updatedInstance.getAlias().add(
                     new gov.nih.nci.po.data.bo.Alias(updatedInstance.getName()));
@@ -79,25 +79,6 @@ public class AliasFilter<TYPE extends Correlation, CR_TYPE extends ChangeRequest
         return !StringUtils.equalsIgnoreCase(currentInstance.getName(), updatedInstance.getName());
     }
 
-
-    /**
-     * This method is used to check if the Alias list contains the name(case
-     * insensitive).
-     *
-     * @return true if the name if not present in the list.
-     */
-    private boolean aliasIsNotPresent(List<Alias> aliasList, String name) {
-        boolean result = true;
-
-        for (Alias alias : aliasList) {
-            if (alias.getValue().equalsIgnoreCase(name)) {
-                result = false;
-                break;
-            }
-        }
-
-        return result;
-    }
 
     private boolean isNotAcceptableType(TYPE currentInstance) {
         return !(currentInstance instanceof AbstractEnhancedOrganizationRole);
