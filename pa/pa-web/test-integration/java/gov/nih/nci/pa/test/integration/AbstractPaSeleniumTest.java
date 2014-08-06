@@ -562,7 +562,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out
+                System.err
                         .println("PhantomJS stuck in 'get' (an odd issue on Linux); restarting and trying again. Attempt # "
                                 + tries);
             }
