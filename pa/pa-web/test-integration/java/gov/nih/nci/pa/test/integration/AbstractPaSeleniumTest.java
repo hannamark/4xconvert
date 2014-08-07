@@ -166,6 +166,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     @Override
     public void setUp() throws Exception {
+        setUpSelenium();
+        openDbConnection();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private void setUpSelenium() throws Exception {
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setDriverClass(TestProperties.getDriverClass());
@@ -174,8 +182,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 TestProperties.getPhantomJsPath());
         super.setUp();
         selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
-
-        openDbConnection();
     }
 
     private void openDbConnection() {
@@ -242,7 +248,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected void reInitializeWebDriver() throws Exception {
         closeBrowser();
         super.tearDown();
-        setUp();
+        setUpSelenium();
     }
 
     /**

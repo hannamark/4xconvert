@@ -30,13 +30,8 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -302,71 +297,19 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
      */
     protected void logInFindAndAcceptTrial(TrialRegistrationConfirmation conf) {
 
-        if (!isPhantomJS()) {
-            logOutInAndSearchForTrial(conf);
-        } else {
-            logOutInAndSearchForTrialPhantomJS(conf);
-        }
-
-        assertTrue(selenium.isTextPresent("One item found"));
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        acceptTrial();
-        verifyTrialAccepted();
-    }
-
-    private void logOutInAndSearchForTrialPhantomJS(
-            final TrialRegistrationConfirmation conf) {
-        int tries = 0;
-        while (tries < 3) {
-            tries++;
-            try {
-                logOutInAndSearchForTrial(conf);
-                return;
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.err
-                        .println("PhantomJS stuck in 'logOutInAndSearchForTrial' (an odd issue on Linux); "
-                                + "restarting and trying again. Attempt # "
-                                + tries);
-            }
-            try {
-                this.reInitializeWebDriver();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    /**
-     * @param conf
-     */
-    private void logOutInAndSearchForTrial(TrialRegistrationConfirmation conf) {
         logoutUser();
         loginAsSuperAbstractor();
 
-        takeScreenShot(getClass().getSimpleName()
-                + "_BeforeClickingOnTrialSearchMenuLink_"
-                + new Timestamp(System.currentTimeMillis()).toString()
-                        .replaceAll("\\D+", "_") + ".png");
-        
         clickAndWait("id=trialSearchMenuOption");
         selenium.type("id=identifier", conf.getNciTrialID());
         selenium.select("id=identifierType", "NCI");
-        
-        takeScreenShot(getClass().getSimpleName()
-                + "_BeforeClickingSearchBtn_"
-                + new Timestamp(System.currentTimeMillis()).toString()
-                        .replaceAll("\\D+", "_") + ".png");
-        
         clickAndWait("link=Search");
-        
-        takeScreenShot(getClass().getSimpleName()
-                + "_RightAfterSearchBtn_"
-                + new Timestamp(System.currentTimeMillis()).toString()
-                        .replaceAll("\\D+", "_") + ".png");
-        
         waitForElementById("row", 30);
+        assertTrue(selenium.isTextPresent("One item found"));
+
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        acceptTrial();
+        verifyTrialAccepted();
     }
 
     protected String getTrialIdentificationTableCellValue(String label) {
