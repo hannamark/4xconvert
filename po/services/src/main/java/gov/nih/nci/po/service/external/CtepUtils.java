@@ -185,27 +185,30 @@ public final class CtepUtils {
 
     /**
      * @param ctepOrg data from CTEP
-     * @param localOrg local data, either org or change request
+     * @param poOrg local data, either org or change request
      * @param update if true, localOrg is modified
      * @return true if data was different, false if all data was already the same
      */
-    static void copy(Organization ctepOrg, AbstractOrganization localOrg) {
+    static void copyOrganization(Organization ctepOrg, AbstractOrganization poOrg) {
         // doing this here instead of a 'copy' method in the org itself because all
         // of the relationships are not copied (change requests, roles, etc) The org
         // we are copying from is just the base fields. Also, the org from ctep
         // does not provide fax, phone, tty, url, so those fields are skipped.
-        if (!StringUtils.equals(localOrg.getName(), ctepOrg.getName())) {
-            localOrg.setName(ctepOrg.getName());
+        
+        // don't directly update the name, instead add an Alias if required
+        if (!StringUtils.equals(poOrg.getName(), ctepOrg.getName()) 
+                && PoServiceUtil.aliasIsNotPresent(poOrg.getAlias(), ctepOrg.getName())) {           
+                poOrg.getAlias().add(new Alias(ctepOrg.getName()));            
         }
 
-        if (ObjectUtils.notEqual(localOrg.getStatusCode(), ctepOrg.getStatusCode())) {
-            localOrg.setStatusCode(ctepOrg.getStatusCode());
+        if (ObjectUtils.notEqual(poOrg.getStatusCode(), ctepOrg.getStatusCode())) {
+            poOrg.setStatusCode(ctepOrg.getStatusCode());
         }
-        CtepUtils.copyAddress(ctepOrg, localOrg);
+        CtepUtils.copyAddress(ctepOrg, poOrg);
 
-        if (!areEmailListsEqual(localOrg.getEmail(), ctepOrg.getEmail())) {
-            localOrg.getEmail().clear();
-            localOrg.getEmail().addAll(ctepOrg.getEmail());
+        if (!areEmailListsEqual(poOrg.getEmail(), ctepOrg.getEmail())) {
+            poOrg.getEmail().clear();
+            poOrg.getEmail().addAll(ctepOrg.getEmail());
         }
     }
 

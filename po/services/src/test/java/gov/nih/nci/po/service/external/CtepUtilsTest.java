@@ -22,6 +22,7 @@ import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.URL;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.services.correlation.AbstractBaseEnhancedOrganizationRoleDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 
@@ -211,12 +212,12 @@ public class CtepUtilsTest {
 
     @Test(expected = Exception.class)
     public void testCopyFromNull() {
-        CtepUtils.copy(null, new OrganizationCR());
+        CtepUtils.copyOrganization(null, new OrganizationCR());
     }
 
     @Test(expected = Exception.class)
     public void testCopyToNull() {
-        CtepUtils.copy(new Organization(), null);
+        CtepUtils.copyOrganization(new Organization(), null);
     }
 
     @Test
@@ -243,9 +244,9 @@ public class CtepUtilsTest {
         o1.getResearchOrganizations().add(new ResearchOrganization());
 
         OrganizationCR o2 = new OrganizationCR();
-        CtepUtils.copy(o1, o2);
+        CtepUtils.copyOrganization(o1, o2);
 
-        assertEquals(o1.getName(), o2.getName());
+        assertFalse(PoServiceUtil.aliasIsNotPresent(o2.getAlias(), o1.getName()));
         assertEquals(o1.getEmail().get(0).getValue(), o2.getEmail().get(0).getValue());
         assertEquals(o1.getPostalAddress().getCityOrMunicipality(), o2.getPostalAddress().getCityOrMunicipality());
         assertNull(o2.getId());
