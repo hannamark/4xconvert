@@ -203,11 +203,20 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     private void takeScreenShot() {
+        final String screenShotFileName = getClass().getSimpleName()
+                + "_ScreenShot_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png";
+        takeScreenShot(screenShotFileName);
+
+    }
+
+    /**
+     * @param screenShotFileName
+     */
+    protected void takeScreenShot(final String screenShotFileName) {
         try {
-            final String screenShotFileName = getClass().getSimpleName()
-                    + "_ScreenShot_"
-                    + new Timestamp(System.currentTimeMillis()).toString()
-                            .replaceAll("\\D+", "_") + ".png";
+
             File destFile = new File(SystemUtils.JAVA_IO_TMPDIR,
                     screenShotFileName);
 
@@ -219,7 +228,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void closeBrowser() {

@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -344,10 +345,27 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         logoutUser();
         loginAsSuperAbstractor();
 
+        takeScreenShot(getClass().getSimpleName()
+                + "_BeforeClickingOnTrialSearchMenuLink_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+        
         clickAndWait("id=trialSearchMenuOption");
         selenium.type("id=identifier", conf.getNciTrialID());
         selenium.select("id=identifierType", "NCI");
+        
+        takeScreenShot(getClass().getSimpleName()
+                + "_BeforeClickingSearchBtn_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+        
         clickAndWait("link=Search");
+        
+        takeScreenShot(getClass().getSimpleName()
+                + "_RightAfterSearchBtn_"
+                + new Timestamp(System.currentTimeMillis()).toString()
+                        .replaceAll("\\D+", "_") + ".png");
+        
         waitForElementById("row", 30);
     }
 
