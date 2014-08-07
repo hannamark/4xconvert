@@ -6,6 +6,9 @@ package gov.nih.nci.pa.util.pomock;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.AdxpCnt;
+import gov.nih.nci.iso21090.AdxpCty;
+import gov.nih.nci.iso21090.AdxpZip;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnOn;
@@ -59,12 +62,11 @@ public class MockOrganizationEntityService implements
     static {
         reset(1, true);
     }
-    
-    
+
     /**
      * @param startingCounter
      */
-    public static final void reset(int startingCounter, boolean createROs) {     
+    public static final void reset(int startingCounter, boolean createROs) {
         MockResearchOrganizationCorrelationService.reset(startingCounter);
         PO_ID_SEQ = startingCounter;
         STORE.clear();
@@ -80,31 +82,39 @@ public class MockOrganizationEntityService implements
             OrganizationDTO org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CTGOV_ORG_NAME));
             createOrg(org);
-            if (createROs) createRO(org);
+            if (createROs)
+                createRO(org);
             CT_GOV_ID = IiConverter.convertToLong(org.getIdentifier());
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CTEP_ORG_NAME));
             createOrg(org);
-            if (createROs) createRO(org);
-            PO_ID_TO_CTEP_ID.put(IiConverter.convertToString(org.getIdentifier()), "CTEP");
+            if (createROs)
+                createRO(org);
+            PO_ID_TO_CTEP_ID.put(
+                    IiConverter.convertToString(org.getIdentifier()), "CTEP");
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.DCP_ORG_NAME));
             createOrg(org);
-            if (createROs) createRO(org);
-            PO_ID_TO_CTEP_ID.put(IiConverter.convertToString(org.getIdentifier()), "DCP");
+            if (createROs)
+                createRO(org);
+            PO_ID_TO_CTEP_ID.put(
+                    IiConverter.convertToString(org.getIdentifier()), "DCP");
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.NCI_ORG_NAME));
             createOrg(org);
-            if (createROs) createRO(org);
-            PO_ID_TO_CTEP_ID.put(IiConverter.convertToString(org.getIdentifier()), "NCI");
-            
+            if (createROs)
+                createRO(org);
+            PO_ID_TO_CTEP_ID.put(
+                    IiConverter.convertToString(org.getIdentifier()), "NCI");
+
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CCR_ORG_NAME));
             createOrg(org);
-            if (createROs) createRO(org);
+            if (createROs)
+                createRO(org);
 
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD
@@ -143,7 +153,7 @@ public class MockOrganizationEntityService implements
         orgDTO.setStatusCode(CdConverter.convertToCd(EntityStatusCode.PENDING));
 
         final Ad ad = getAddress();
-        if (orgDTO.getPostalAddress()==null) {
+        if (orgDTO.getPostalAddress() == null) {
             orgDTO.setPostalAddress(ad);
         }
         if (orgDTO.getTelecomAddress() == null) {
@@ -174,6 +184,10 @@ public class MockOrganizationEntityService implements
         if (dto == null) {
             return null;
         }
+        if (CdConverter.convertCdToEnum(EntityStatusCode.class,
+                dto.getStatusCode()) == EntityStatusCode.NULLIFIED) {
+            throw new NullifiedEntityException(ii);
+        }
         return dto;
     }
 
@@ -189,7 +203,7 @@ public class MockOrganizationEntityService implements
         try {
             return search(arg0, new LimitOffset(500, 0));
         } catch (TooManyResultsException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // NOPMD
             throw new RuntimeException(e); // NOPMD
         }
     }
@@ -246,6 +260,31 @@ public class MockOrganizationEntityService implements
             }
             if (StringUtils.isNotBlank(c.getIdentifier())) {
                 match = match && poid.equals(c.getIdentifier());
+            }
+            if (StringUtils.isNotBlank(c.getCity())) {
+                match = match
+                        &&
+
+                        AddressConverterUtil
+                                .convertToAddressBo(org.getPostalAddress())
+                                .get(AdxpCty.class.getName()).toLowerCase()
+                                .contains(c.getCity().toLowerCase());
+            }
+            if (StringUtils.isNotBlank(c.getZip())) {
+                match = match
+                        &&
+
+                        AddressConverterUtil
+                                .convertToAddressBo(org.getPostalAddress())
+                                .get(AdxpZip.class.getName()).toLowerCase()
+                                .contains(c.getZip().toLowerCase());
+            }
+            if (StringUtils.isNotBlank(c.getCountry())) {
+                match = match
+                        && c.getCountry().equals(
+                                AddressConverterUtil.convertToAddressBo(
+                                        org.getPostalAddress()).get(
+                                        AdxpCnt.class.getName()));
             }
             if (match) {
                 list.add(org);

@@ -3,11 +3,15 @@
  */
 package gov.nih.nci.pa.webservices.converters;
 
+import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.trim;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelUrl;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -47,7 +51,8 @@ import org.apache.log4j.Logger;
  */
 public class OrganizationDTOBuilder {
 
-    private static final Logger LOG = Logger.getLogger(PersonDTOBuilder.class);
+    private static final Logger LOG = Logger
+            .getLogger(OrganizationDTOBuilder.class);
 
     /**
      * @param org
@@ -71,17 +76,22 @@ public class OrganizationDTOBuilder {
         if (org.getExistingOrganization() != null) {
             return locateExistingOrg(org.getExistingOrganization());
         } else {
-            return createNewOrg(org.getNewOrganization());
+            return createNewOrgOrFindExactMatch(org.getNewOrganization());
         }
 
     }
 
-    private OrganizationDTO createNewOrg(
+    private OrganizationDTO createNewOrgOrFindExactMatch(
             gov.nih.nci.po.webservices.types.Organization newOrg) {
+        OrganizationDTO match = findExactMatchInPo(newOrg);
+        if (match != null) {
+            return match;
+        }
         try {
             OrganizationDTO orgDto = new OrganizationDTO();
             orgDto.setName(EnOnConverter.convertToEnOn(newOrg.getName()));
-            orgDto.setStatusCode(CdConverter.convertStringToCd(EntityStatusCode.PENDING.name()));
+            orgDto.setStatusCode(CdConverter
+                    .convertStringToCd(EntityStatusCode.PENDING.name()));
 
             final Address addr = newOrg.getAddress();
             orgDto.setPostalAddress(AddressConverterUtil.create(
@@ -143,6 +153,74 @@ public class OrganizationDTOBuilder {
                             + " Additional information: " + e.getMessage());
 
         }
+    }
+
+    private OrganizationDTO findExactMatchInPo(
+            gov.nih.nci.po.webservices.types.Organization newOrg) {
+        if (StringUtils.isBlank(newOrg.getName())) {
+            return null;
+        }
+        try {
+            OrganizationSearchCriteriaDTO criteria = turnIntoSearchCriteria(newOrg);
+            List<OrganizationDTO> orgList = PADomainUtils
+                    .searchPoOrganizations(criteria);
+            return findExactMatchAmongSearchResults(orgList, newOrg);
+        } catch (Exception e) {
+            LOG.warn("Attempt to find an exact match in PO for organization "
+                    + newOrg.getName() + " failed. Assuming no match.");
+            LOG.warn(e, e);
+            return null;
+        }
+    }
+
+    private OrganizationDTO findExactMatchAmongSearchResults(
+            List<OrganizationDTO> list,
+            gov.nih.nci.po.webservices.types.Organization newOrg)
+            throws NullifiedEntityException {
+        for (OrganizationDTO dto : list) {
+            if (isExactMatch(dto, newOrg)) {
+                return PoRegistry.getOrganizationEntityService()
+                        .getOrganization(dto.getIdentifier());
+            }
+        }
+        return null;
+    }
+
+    private boolean isExactMatch(OrganizationDTO poOrg,
+            gov.nih.nci.po.webservices.types.Organization newOrg) {
+        boolean nameOK = equalsIgnoreCase(trim(newOrg.getName()),
+                trim(EnOnConverter.convertEnOnToString(poOrg.getName())));
+
+        PaOrganizationDTO paDTO = new PaOrganizationDTO();
+        PADomainUtils.setPostalAddressFields(null, paDTO,
+                poOrg.getPostalAddress());
+
+        boolean address1OK = equalsIgnoreCase(trim(newOrg.getAddress()
+                .getLine1()), trim(paDTO.getAddress1()));
+        boolean address2OK = equalsIgnoreCase(trim(defaultString(newOrg
+                .getAddress().getLine2())),
+                trim(defaultString(paDTO.getAddress2())));
+        boolean cityOK = equalsIgnoreCase(trim(newOrg.getAddress().getCity()),
+                trim(paDTO.getCity()));
+        boolean stateOK = equalsIgnoreCase(trim(defaultString(newOrg
+                .getAddress().getStateOrProvince())),
+                trim(defaultString(paDTO.getState())));
+        boolean countryOK = equalsIgnoreCase(trim(newOrg.getAddress()
+                .getCountry().name()), trim(paDTO.getCountry()));
+        boolean zipOK = equalsIgnoreCase(trim(defaultString(newOrg.getAddress()
+                .getPostalcode())), trim(defaultString(paDTO.getZip())));
+        return nameOK && address1OK && address2OK && cityOK && stateOK
+                && countryOK && zipOK;
+    }
+
+    private OrganizationSearchCriteriaDTO turnIntoSearchCriteria(
+            gov.nih.nci.po.webservices.types.Organization newOrg) {
+        OrganizationSearchCriteriaDTO criteria = new OrganizationSearchCriteriaDTO();
+        criteria.setName(trim(newOrg.getName()));
+        criteria.setCity(trim(newOrg.getAddress().getCity()));
+        criteria.setZip(trim(newOrg.getAddress().getPostalcode()));
+        criteria.setCountry(newOrg.getAddress().getCountry().name());
+        return criteria;
     }
 
     private String getContact(

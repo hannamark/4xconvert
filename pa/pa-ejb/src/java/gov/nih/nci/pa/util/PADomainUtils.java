@@ -383,11 +383,11 @@ public class PADomainUtils {
     }
 
     /**
-     * @param countryList
-     * @param paOrgDTO
-     * @param postalAddress
+     * @param countryList List<Country>
+     * @param paOrgDTO PaOrganizationDTO
+     * @param postalAddress postalAddress
      */
-    private static void setPostalAddressFields(List<Country> countryList, // NOPMD
+    public static void setPostalAddressFields(List<Country> countryList, // NOPMD
             PaOrganizationDTO paOrgDTO, final Ad postalAddress) {
         paOrgDTO.setAddress1(null);
         paOrgDTO.setAddress2(null);

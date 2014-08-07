@@ -8,29 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import junit.framework.Assert;
-
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
-import org.apache.log4j.SimpleLayout;
-import org.mockito.ArgumentCaptor;
-import org.xml.sax.SAXException;
-
 import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EntityNamePartType;
-import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
@@ -58,7 +37,6 @@ import gov.nih.nci.pa.webservices.types.Grant;
 import gov.nih.nci.pa.webservices.types.INDIDE;
 import gov.nih.nci.pa.webservices.types.InterventionalTrialDesign;
 import gov.nih.nci.pa.webservices.types.NonInterventionalTrialDesign;
-import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.Organization;
 import gov.nih.nci.pa.webservices.types.Person;
 import gov.nih.nci.pa.webservices.types.ResponsibleParty;
@@ -67,6 +45,17 @@ import gov.nih.nci.pa.webservices.types.TrialDocument;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
+
+import java.util.List;
+import java.util.Map;
+
+import junit.framework.Assert;
+
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+import org.apache.log4j.SimpleLayout;
+import org.mockito.ArgumentCaptor;
 
 /**
  * @author dkrylov
