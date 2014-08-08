@@ -100,6 +100,7 @@ public class PaPersonDTO implements Serializable {
     private String fullName;
     //these fields are used for creating the person
     private String preFix;
+    private String suffix;
     private String streetAddress;
     private String streetAddress2;
     private String city;
@@ -571,5 +572,19 @@ public class PaPersonDTO implements Serializable {
      */
     public void setStatusDate(String statusDate) {
         this.statusDate = statusDate;
+    }
+
+    /**
+     * @return the suffix
+     */
+    public String getSuffix() {
+        return suffix;
+    }
+
+    /**
+     * @param suffix the suffix to set
+     */
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
     }
 }

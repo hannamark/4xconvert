@@ -3,6 +3,10 @@
  */
 package gov.nih.nci.pa.webservices.converters;
 
+import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang.StringUtils.trim;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
@@ -17,6 +21,7 @@ import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.webservices.PoEntityCannotBeCreatedException;
@@ -35,6 +40,7 @@ import gov.nih.nci.services.person.PersonSearchCriteriaDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -63,11 +69,16 @@ public class PersonDTOBuilder {
         if (p.getExistingPerson() != null) {
             return locateExistingPerson(p.getExistingPerson());
         } else {
-            return createNewPerson(p.getNewPerson());
+            return createNewPersonOrFindExactMatch(p.getNewPerson());
         }
     }
 
-    private PersonDTO createNewPerson(gov.nih.nci.po.webservices.types.Person p) {
+    private PersonDTO createNewPersonOrFindExactMatch(
+            gov.nih.nci.po.webservices.types.Person p) {
+        PersonDTO match = findExactMatchInPo(p);
+        if (match != null) {
+            return match;
+        }
         try {
             PersonDTO dto = new PersonDTO();
             dto.setName(new EnPn());
@@ -131,7 +142,8 @@ public class PersonDTOBuilder {
             dto.setPostalAddress(AddressConverterUtil.create(addr.getLine1(),
                     addr.getLine2(), addr.getCity(), addr.getStateOrProvince(),
                     addr.getPostalcode(), addr.getCountry().value()));
-            dto.setStatusCode(CdConverter.convertStringToCd(EntityStatusCode.PENDING.name()));
+            dto.setStatusCode(CdConverter
+                    .convertStringToCd(EntityStatusCode.PENDING.name()));
             return PoRegistry.getPersonEntityService().getPerson(
                     PoRegistry.getPersonEntityService().createPerson(dto));
         } catch (NullifiedEntityException e) {
@@ -155,6 +167,80 @@ public class PersonDTOBuilder {
                             + " Additional information: " + e.getMessage());
 
         }
+    }
+
+    private PersonDTO findExactMatchInPo(
+            gov.nih.nci.po.webservices.types.Person p) {
+        try {
+            PersonSearchCriteriaDTO criteria = turnIntoSearchCriteria(p);
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS,
+                    0);
+            List<PersonDTO> personDTOs = PoRegistry.getPersonEntityService()
+                    .search(criteria, limit);
+            List<PaPersonDTO> paPersonDTOs = new ArrayList<PaPersonDTO>();
+            for (PersonDTO dto : personDTOs) {
+                paPersonDTOs.add(PADomainUtils.convertToPaPersonDTO(dto));
+            }
+            return findExactMatchAmongSearchResults(paPersonDTOs, p);
+        } catch (Exception e) {
+            LOG.warn("Attempt to find an exact match in PO for person "
+                    + p.getFirstName() + " " + p.getLastName()
+                    + " failed. Assuming no match.");
+            LOG.warn(e, e);
+            return null;
+        }
+    }
+
+    private PersonDTO findExactMatchAmongSearchResults(List<PaPersonDTO> list,
+            gov.nih.nci.po.webservices.types.Person p)
+            throws NullifiedEntityException {
+        for (PaPersonDTO dto : list) {
+            if (isExactMatch(dto, p)) {
+                return PoRegistry.getPersonEntityService()
+                        .getPerson(
+                                IiConverter.convertToPoPersonIi(dto.getId()
+                                        .toString()));
+            }
+        }
+        return null;
+    }
+
+    private boolean isExactMatch(PaPersonDTO dto,
+            gov.nih.nci.po.webservices.types.Person p) {
+        boolean nameOK = equalsIgnoreCase(trim(defaultString(dto.getPreFix())),
+                trim(defaultString(p.getPrefix())))
+                && equalsIgnoreCase(trim(defaultString(dto.getFirstName())),
+                        trim(defaultString(p.getFirstName())))
+                && equalsIgnoreCase(trim(defaultString(dto.getMiddleName())),
+                        trim(defaultString(p.getMiddleName())))
+                && equalsIgnoreCase(trim(defaultString(dto.getLastName())),
+                        trim(defaultString(p.getLastName())))
+                && equalsIgnoreCase(trim(defaultString(dto.getSuffix())),
+                        trim(defaultString(p.getSuffix())));
+        boolean addressOK = equalsIgnoreCase(
+                trim(defaultString(dto.getStreetAddress())),
+                trim(defaultString(p.getAddress().getLine1())))
+                && equalsIgnoreCase(
+                        trim(defaultString(dto.getStreetAddress2())),
+                        trim(defaultString(p.getAddress().getLine2())))
+                && equalsIgnoreCase(
+                        trim(defaultString(dto.getState())),
+                        trim(defaultString(p.getAddress().getStateOrProvince())))
+                && equalsIgnoreCase(trim(defaultString(dto.getCity())),
+                        trim(defaultString(p.getAddress().getCity())))
+                && equalsIgnoreCase(trim(defaultString(dto.getCountry())),
+                        trim(defaultString(p.getAddress().getCountry().name())))
+                && equalsIgnoreCase(trim(defaultString(dto.getZip())),
+                        trim(defaultString(p.getAddress().getPostalcode())));
+        return nameOK && addressOK;
+    }
+
+    private PersonSearchCriteriaDTO turnIntoSearchCriteria(
+            gov.nih.nci.po.webservices.types.Person p) {
+        PersonSearchCriteriaDTO criteria = new PersonSearchCriteriaDTO();
+        criteria.setFirstName(trim(p.getFirstName()));
+        criteria.setLastName(trim(p.getLastName()));
+        return criteria;
     }
 
     private PersonDTO locateExistingPerson(OrganizationOrPersonID id) {

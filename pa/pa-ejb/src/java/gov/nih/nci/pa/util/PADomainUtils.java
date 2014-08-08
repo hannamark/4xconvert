@@ -315,7 +315,9 @@ public class PADomainUtils {
             Enxp part = nameIte.next();
             if (EntityNamePartType.PFX == part.getType()) {
                 personDTO.setPreFix(part.getValue());
-            }            
+            } else if (EntityNamePartType.SFX == part.getType()) {
+                personDTO.setSuffix(part.getValue());
+            }
             if (EntityNamePartType.FAM == part.getType()) {
                 personDTO.setLastName(part.getValue());
             } else if (EntityNamePartType.GIV == part.getType()) {
