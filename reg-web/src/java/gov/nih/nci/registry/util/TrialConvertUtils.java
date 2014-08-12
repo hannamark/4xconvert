@@ -234,7 +234,7 @@ public class TrialConvertUtils {
                 .convertStringToCd(trialDTO.getConsortiaTrialCategoryCode()));
         if (trialDTO instanceof TrialDTO) {
             convertToStudyProtocolDTO((TrialDTO) trialDTO, isoDto);
-        }      
+        }
     }
 
     /**

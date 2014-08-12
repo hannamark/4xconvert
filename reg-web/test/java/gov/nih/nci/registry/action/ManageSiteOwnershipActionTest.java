@@ -92,27 +92,6 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void testAssignOwnership() throws PAException {
-        action = new ManageSiteOwnershipAction();
-        action.setParticipatingSiteService(participatingSiteServiceLocal);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser("RegUser");
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-        action.search();
-        request.getSession().setAttribute("regUsersList", new ArrayList<SelectedRegistryUser>());
-        request.getSession().setAttribute("studyProtocolsList", new ArrayList<SelectedStudyProtocol>());
-        assertEquals("viewResults", action.assignOwnership());
-        action.search();
-        action.getRegistryUsers().get(0).setSelected(true);
-        action.getStudyProtocols().get(0).setSelected(true);
-        request.getSession().setAttribute("regUsersList", action.getRegistryUsers());
-        request.getSession().setAttribute("studyProtocolsList", action.getStudyProtocols());
-        assertEquals("viewResults", action.assignOwnership());
-    }
-
-    @Test
     public void testUnAssignOwnershipException() throws PAException {
         action = new ManageSiteOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -129,24 +108,4 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
         }
     }
 
-    @Test
-    public void testUnAssignOwnership() throws PAException {
-        action = new ManageSiteOwnershipAction();
-        action.setParticipatingSiteService(participatingSiteServiceLocal);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser("RegUser");
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-        action.search();
-        request.getSession().setAttribute("regUsersList", new ArrayList<SelectedRegistryUser>());
-        request.getSession().setAttribute("studyProtocolsList", new ArrayList<SelectedStudyProtocol>());
-        assertEquals("viewResults", action.unassignOwnership());
-        action.search();
-        action.getRegistryUsers().get(0).setSelected(true);
-        action.getStudyProtocols().get(0).setSelected(true);
-        request.getSession().setAttribute("regUsersList", action.getRegistryUsers());
-        request.getSession().setAttribute("studyProtocolsList", action.getStudyProtocols());
-        assertEquals("viewResults", action.unassignOwnership());
-    }
 }

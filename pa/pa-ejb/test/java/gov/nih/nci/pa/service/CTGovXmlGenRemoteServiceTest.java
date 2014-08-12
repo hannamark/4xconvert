@@ -26,6 +26,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import org.junit.Before;
 import org.junit.Test;
+
 public class CTGovXmlGenRemoteServiceTest extends AbstractHibernateTestCase {
 
     private final CTGovXmlGeneratorServiceBean bean = new CTGovXmlGeneratorServiceBean() {

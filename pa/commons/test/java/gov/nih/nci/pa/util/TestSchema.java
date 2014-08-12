@@ -1855,6 +1855,9 @@ public class TestSchema {
         sp.getStudyOwners().add(newUser);
         addUpdObject(newUser.getCsmUser());
         addUpdObject(newUser);
+        Organization org = createOrganizationObj(newUser.getCsmUser());
+        sp.setSubmitingOrganization(org);
+        addUpdObject(org);
 
         RegistryUser newUser2 = getRegistryUserObj();
         newUser2.getStudyProtocols().add(sp);

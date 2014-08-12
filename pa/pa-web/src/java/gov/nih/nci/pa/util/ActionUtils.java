@@ -5,7 +5,6 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyIdentifierDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.StudyIdentifierType;
@@ -228,18 +227,9 @@ public final class ActionUtils {
                     .getStudyIdentifier(spID,
                             PAConstants.CTEP_IDENTIFIER_TYPE));
         }
-        String user = studyProtocolQueryDTO.getLastCreated().getUserLastCreated();
-        String trialSubmitterOrg = "";
-        RegistryUser userInfo = PaRegistry.getRegistryUserService().getUser(user);
-        if (userInfo.getAffiliatedOrganizationId() != null) {
-            PAServiceUtils servUtil = new PAServiceUtils();
-            trialSubmitterOrg = servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
-                    .valueOf(userInfo.getAffiliatedOrganizationId())));
-            session.setAttribute(Constants.TRIAL_SUBMITTER_ORG_PO_ID, userInfo.getAffiliatedOrganizationId());
-        } else {
-            trialSubmitterOrg = userInfo.getAffiliateOrg();
-        }
-        session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, trialSubmitterOrg);
+        System.err.println("Dirk: Processing PO id; " + studyProtocolQueryDTO.getSubmitterOrgId());
+        session.setAttribute(Constants.TRIAL_SUBMITTER_ORG_PO_ID, studyProtocolQueryDTO.getSubmitterOrgId());
+        session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, studyProtocolQueryDTO.getSubmitterOrgName());
         
         final List<StudyIdentifierDTO> studyIdentifiers = PaRegistry
                 .getStudyIdentifiersService().getStudyIdentifiers(spID);

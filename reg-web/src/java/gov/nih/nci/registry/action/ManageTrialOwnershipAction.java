@@ -85,6 +85,8 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -101,6 +103,8 @@ import org.apache.struts2.ServletActionContext;
  */
 public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
 
+    private PAOrganizationServiceRemote paOrganizationService;
+    
     /**
      * 
      */
@@ -116,12 +120,18 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
     @Override
     public List<StudyProtocol> getStudyProtocols(Long affiliatedOrgId)
             throws PAException {
-        List<StudyProtocol> trials = PaRegistry.getProtocolQueryService()
-                .getStudyProtocolByOrgIdentifier(affiliatedOrgId);
         List<StudyProtocol> result = new ArrayList<StudyProtocol>();
-        for (StudyProtocol sp : trials) {
-            if (!sp.getProprietaryTrialIndicator()) {
-                result.add(sp);
+        List<StudyProtocol> trials;
+        
+        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(affiliatedOrgId);
+
+        for (long siteId : siblings) {
+            trials = PaRegistry.getProtocolQueryService().getStudyProtocolByOrgIdentifier(siteId);
+
+            for (StudyProtocol sp : trials) {
+                if (!sp.getProprietaryTrialIndicator()) {
+                    result.add(sp);
+                }
             }
         }
         return result;
@@ -134,7 +144,7 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
         ServletActionContext
         .getRequest()
         .getSession()
-        .setAttribute(TRIAL_OWENERSHIP_LIST, getTrialOwnershipInfo());
+        .setAttribute(TRIAL_OWNERSHIP_LIST, getTrialOwnershipInfo());
     }
   
     @Override

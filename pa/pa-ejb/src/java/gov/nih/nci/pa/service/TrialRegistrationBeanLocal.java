@@ -90,6 +90,7 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -140,6 +141,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.exception.PAValidationException;
@@ -163,6 +165,7 @@ import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -1605,6 +1608,44 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         createStudyProtocolDTO.setCtroOverride(studyProtocolDTO.getCtroOverride());
         createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         createStudyProtocolDTO.setAccrualDiseaseCodeSystem(studyProtocolDTO.getAccrualDiseaseCodeSystem());
+
+        if (studyProtocolDTO.getSubmitingOgranization() == null) {
+            RegistryUser usr = registryUserServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
+                    .getUserLastCreated()));
+            if (usr != null && usr.getAffiliatedOrganizationId() != null) {
+                CorrelationUtils corUtil = new CorrelationUtils();
+                Organization org = corUtil.getPAOrganizationByIi(
+                        IiConverter.convertToPoOrganizationIi(
+                        String.valueOf(usr.getAffiliatedOrganizationId())));
+                if (org == null || org.getId() == null) {
+                    LOG.warn("User not belonging to a valid organization is attemptring to create a"
+                            + " trial. Creating Org.");
+                    OrganizationDTO poOrg = null;
+                    try {
+                        poOrg = PoRegistry.getOrganizationEntityService().
+                            getOrganization(IiConverter.convertToPoOrganizationIi(
+                            String.valueOf(usr.getAffiliatedOrganizationId())));
+                    } catch (NullifiedEntityException e) {
+                       throw new PAException(PAExceptionConstants.NULLIFIED_ORG, e);
+                    }
+                    if (poOrg != null) {
+                        org = corUtil.createPAOrganization(poOrg);
+                    }
+                }
+                
+                if (org != null) {
+                    createStudyProtocolDTO.setSubmitingOgranization(
+                        IiConverter.convertToPaOrganizationIi(org.getId()));
+                } else {
+                    LOG.error("Failed to create Organization, should only happen during unit tests.");
+                }
+            } else {
+                LOG.error("User not assinged to an organization is attemptring to create a trial.");
+            }
+        } else {
+            createStudyProtocolDTO.setSubmitingOgranization(studyProtocolDTO.getSubmitingOgranization());
+        }
+        
         if (!BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator())) {
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator() == null) {
                 createStudyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.TRUE));

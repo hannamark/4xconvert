@@ -129,11 +129,11 @@
 	      <p><strong>Manage trial record ownership for:</strong> (select one)</p>
 	      <div class="radio">
 	          <label><input type="radio" name="siteOpts" id="optionsOrg" value="org" onchange="siteOptsChange()" <s:if test="%{#attr.topicValue == 'manageownership'}">checked</s:if>>
-	          Trials where this site is the <strong>Lead Organization</strong> (includes only Complete trials)</label>
+	          Trials where the <strong>Lead Organization</strong> is from affiliated Organization's family. (includes only Complete trials)</label>
 	      </div>
 	      <div class="radio">
 	          <label><input type="radio" name="siteOpts" id="optionsSite" value="site"  onchange="siteOptsChange()" <s:if test="%{#attr.topicValue== 'managesiteownership'}">checked</s:if>>
-	          Trials where this site is listed as a <strong>Participating Site</strong> (includes only Abbreviated trials) </label>
+	          Trials where a <strong>Participating Site</strong> is from affiliated Organization's family. (includes only Abbreviated trials) </label>
 	      </div>
 	      <br/><br/><br/>
          <s:hidden name="checked" id="checked"/>

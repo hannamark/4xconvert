@@ -63,14 +63,9 @@
 		</div>
 		<div class="row">
             <span class="label"><fmt:message key="last.submitter.organization"/>:</span>
-            <c:if test="${sessionScope.trialSubmitterOrgPOId == null }">
-                <span class="value"><c:out value="${sessionScope.trialSubmitterOrg}"/></span>
-            </c:if>
-            <c:if test="${sessionScope.trialSubmitterOrgPOId != null }">
              <span class="value"><a href="javascript:void(0);"
                 onclick="javascript:displayOrgDetails(<c:out value="${sessionScope.trialSubmitterOrgPOId}"/>);">
                     <c:out value="${sessionScope.trialSubmitterOrg}" /></a></span>
-            </c:if>
         </div>
 	    <c:if test="${sessionScope.trialSummary.amendmentDate != null}">
             <div class="row">

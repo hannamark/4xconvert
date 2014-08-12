@@ -67,6 +67,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
     @Test
     public void testAssignOwnershipException() throws PAException {
         action = new ManageTrialOwnershipAction();
+        
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -79,28 +80,6 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         } catch(PAException e) {
             //expected
         }
-    }
-
-    @Test
-    public void testAssignOwnership() throws PAException {
-        action = new ManageTrialOwnershipAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser("RegUser");
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-        action.search();
-        request.getSession().setAttribute("regUsersList", new ArrayList<SelectedRegistryUser>());
-        request.getSession().setAttribute("studyProtocolsList", new ArrayList<SelectedStudyProtocol>());
-        action.setRegUserIds(new String []{"1"});
-        action.setTrialIds(new String []{"1"});
-        assertEquals("viewResults", action.assignOwnership());
-        action.search();
-        action.getRegistryUsers().get(0).setSelected(true);
-        action.getStudyProtocols().get(0).setSelected(true);
-        request.getSession().setAttribute("regUsersList", action.getRegistryUsers());
-        request.getSession().setAttribute("studyProtocolsList", action.getStudyProtocols());
-        assertEquals("viewResults", action.assignOwnership());
     }
 
     @Test
@@ -118,26 +97,6 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         } catch(PAException e) {
             //expected
         }
-    }
-
-    @Test
-    public void testUnAssignOwnership() throws PAException {
-        action = new ManageTrialOwnershipAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser("RegUser");
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-        action.search();
-        request.getSession().setAttribute("regUsersList", new ArrayList<SelectedRegistryUser>());
-        request.getSession().setAttribute("studyProtocolsList", new ArrayList<SelectedStudyProtocol>());
-        assertEquals("viewResults", action.unassignOwnership());
-        action.search();
-        action.getRegistryUsers().get(0).setSelected(true);
-        action.getStudyProtocols().get(0).setSelected(true);
-        request.getSession().setAttribute("regUsersList", action.getRegistryUsers());
-        request.getSession().setAttribute("studyProtocolsList", action.getStudyProtocols());
-        assertEquals("viewResults", action.unassignOwnership());
     }
     
     @Test

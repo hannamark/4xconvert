@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.SecondaryPurpose;
 import gov.nih.nci.pa.domain.StudyAlternateTitle;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -201,7 +202,10 @@ public class StudyProtocolConverter {
         studyProtocolDTO.setAmendmentReasonCode(CdConverter.convertToCd(studyProtocol.getAmendmentReasonCode()));
         studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(studyProtocol.getAmendmentDate()));
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(studyProtocol.getSubmissionNumber()));
-        
+        if (studyProtocol.getSubmitingOrganization() != null) {
+            studyProtocolDTO.setSubmitingOgranization(IiConverter.convertToPaOrganizationIi(
+                studyProtocol.getSubmitingOrganization().getId()));
+        }
         studyProtocolDTO.setComments(StConverter.convertToSt(studyProtocol
                 .getComments()));
         studyProtocolDTO.setProcessingPriority(IntConverter
@@ -302,7 +306,13 @@ public class StudyProtocolConverter {
             studyProtocol.setAssignedUser(null);
         }
        studyProtocol.setNciGrant(BlConverter.convertToBoolean(studyProtocolDTO.getNciGrant()));
-       convertStudyAlternateTitlesToDomain(studyProtocolDTO, studyProtocol); 
+       convertStudyAlternateTitlesToDomain(studyProtocolDTO, studyProtocol);
+       if (!ISOUtil.isIiNull(studyProtocolDTO.getSubmitingOgranization())) {
+           Organization org = new Organization();
+           org.setId(IiConverter.convertToLong(studyProtocolDTO.getSubmitingOgranization()));
+           studyProtocol.setSubmitingOrganization(org);
+       }
+       
        return studyProtocol;
    }
 

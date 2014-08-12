@@ -134,6 +134,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Bl nciGrant;
     private Set<StudyAlternateTitleDTO> studyAlternateTitles;
     private Cd studySource;
+    private Ii submitingOgranization;
 
     /**
      *
@@ -587,5 +588,19 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setStudySource(Cd source) {
         studySource = source;
+    }
+
+    /**
+     * @return the submitingOgranization
+     */
+    public Ii getSubmitingOgranization() {
+        return submitingOgranization;
+    }
+    
+    /**
+     * @param submitingOgranization the submitingOgranization to set
+     */
+    public void setSubmitingOgranization(Ii submitingOgranization) {
+        this.submitingOgranization = submitingOgranization;
     }
 }

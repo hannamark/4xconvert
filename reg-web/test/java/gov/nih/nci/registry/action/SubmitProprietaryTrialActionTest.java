@@ -12,6 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
@@ -23,6 +24,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
@@ -345,6 +348,32 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
                 .contains(
                         "A study with the given identifier already exists in CTRP."
                         + " To find this trial in CTRP, go to the Search Trials page."));
+    }
+    
+    @Test
+    public void checkSumary4() {
+        HttpSession sess = new MockHttpSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(sess);
+        ServletActionContext.setRequest(request);
+        ProprietaryTrialDTO trial = getMockProprietaryTrialDTO();
+        trial.setSummaryFourFundingCategoryCode(null);
+        action.setTrialDTO(trial);
+        
+        action.checkSummary4Funding();
+        Map<String, List<String>> errs = action.getFieldErrors();
+        
+        assertTrue(errs.containsKey("trialDTO.summaryFourFundingCategoryCode"));
+        
+        trial = getMockProprietaryTrialDTO();
+        trial.setSummaryFourOrgIdentifiers(null);
+        action.setTrialDTO(trial);
+        
+        action.checkSummary4Funding();
+        errs = action.getFieldErrors();
+        
+        assertTrue(errs.containsKey("summary4FundingSponsor"));
+        
     }
     
 }

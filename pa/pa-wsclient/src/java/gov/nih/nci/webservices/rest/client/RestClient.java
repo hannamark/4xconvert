@@ -8,12 +8,10 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -24,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
  * @author vinodh
  * 
  */
-@Component
 public class RestClient {
 
     private static final Logger LOG = Logger.getLogger(RestClient.class);
@@ -63,7 +60,6 @@ public class RestClient {
      * @param authScope
      *            - Authentication scope for the credentials
      */
-    @Autowired
     public RestClient(RestTemplate template,
             RestClientProperties restClientProperties, Credentials credentials,
             AuthScope authScope) {

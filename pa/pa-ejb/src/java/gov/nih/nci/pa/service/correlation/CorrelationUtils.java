@@ -117,6 +117,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.interceptor.Interceptors;
@@ -443,7 +444,14 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery("select org from Organization org  where org.identifier = :poOrg");
         query.setParameter("poOrg", organization.getIdentifier());
-        returnVal = (Organization) query.uniqueResult();
+        Iterator<Organization> iter = query.iterate();
+        if (iter.hasNext()) {
+            returnVal = iter.next();
+        }
+        if (iter.hasNext()) {
+            LOG.error("Error: The Organization PO ID '" + organization.getIdentifier()
+                    + "' does not return a unique result.");
+        }
         if (returnVal == null) {
             session.saveOrUpdate(organization);
             session.flush();

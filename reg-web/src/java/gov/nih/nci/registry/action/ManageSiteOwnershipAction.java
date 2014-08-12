@@ -91,8 +91,10 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -123,7 +125,8 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
     @Override
     public List<StudyProtocol> getStudyProtocols(Long participatingSiteId)
             throws PAException {
-        
+        List<StudyProtocol> spList = new LinkedList<>();
+        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(participatingSiteId);
         Organization org = new Organization();
         org.setIdentifier(participatingSiteId.toString());
         org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(org);
@@ -131,8 +134,13 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
         if (org == null) {
             throw new PAException(
                     "We are unable to determine your affiliation with an organization.");
-        }        
-        return PaRegistry.getRegistryUserService().getTrialsByParticipatingSite(participatingSiteId);
+        }
+        
+        for (long siteId : siblings) {
+            spList.addAll(PaRegistry.getRegistryUserService().getTrialsByParticipatingSite(siteId));
+        }
+        
+        return spList;
     }
 
   
@@ -142,7 +150,7 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
         ServletActionContext
         .getRequest()
         .getSession()
-        .setAttribute(TRIAL_OWENERSHIP_LIST, getTrialOwnershipInfo());
+        .setAttribute(TRIAL_OWNERSHIP_LIST, getTrialOwnershipInfo());
     }
     
     @Override

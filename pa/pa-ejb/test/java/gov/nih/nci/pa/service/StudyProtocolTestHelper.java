@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -105,6 +106,7 @@ import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -127,8 +129,17 @@ public class StudyProtocolTestHelper {
         user.setLastName("Smith");
         user.setUpdateDate(new Date());
         session.saveOrUpdate(user);
+        
+        Organization org = new Organization();
+        org.setName("Mayo University");
+        org.setUserLastUpdated(user);
+        org.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        org.setIdentifier("1");
+        org.setStatusCode(EntityStatusCode.PENDING);
+        session.saveOrUpdate(org);
 
         StudyProtocol sp = new InterventionalStudyProtocol();
+        sp.setSubmitingOrganization(org);
         sp.setOfficialTitle("cancer for THOLA");
         StudyProtocolDates dates = sp.getDates();
         dates.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));

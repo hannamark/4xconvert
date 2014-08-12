@@ -107,7 +107,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
         "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength" })
 public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO implements Serializable {
 
-    private static final long serialVersionUID = 8200069337460780484L;
+    private static final long serialVersionUID = 8200069337460780488L;
     
     private boolean viewTSR;
     private boolean proprietaryTrial;
@@ -160,6 +160,8 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private boolean currentUserIsSiteOwner;
     
     private Date primaryCompletionDate;
+
+    private Long poOrganizationId;
     
     
     /**
@@ -820,6 +822,22 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     public void setAccrualDiseaseCode(String accrualDiseaseCode) {
         this.accrualDiseaseCode = accrualDiseaseCode;
+    }
+
+    /**
+     * This sets the PO id of the Submiting organization.
+     * @param poOrgId the PO id for the organization.
+     */
+    public void setSubmitterOrgId(Long poOrgId) {
+        this.poOrganizationId = poOrgId;
+    }
+
+    /**
+     * Returns the PO ID for the submiting organization.
+     * @return the PO ID for the organization.
+     */
+    public Long getSubmitterOrgId() {
+        return poOrganizationId;
     }
     
 }

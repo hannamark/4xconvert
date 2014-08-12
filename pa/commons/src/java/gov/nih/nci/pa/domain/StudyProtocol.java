@@ -181,6 +181,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Boolean ctroOverride;
     private Boolean nciGrant;
     private StudySourceCode studySource;
+    private Organization submitingOrganization;
 
     private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(new LastCreatedComparator());
     private Set<DocumentWorkflowStatus> documentWorkflowStatuses =
@@ -202,6 +203,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private Set<StudyAlternateTitle> studyAlternateTitles = new TreeSet<StudyAlternateTitle>(
             new StudyAlternateTitleComparator());
     private String secondaryPurposeOtherText;
+    
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
 
@@ -1018,5 +1020,20 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
         return super.getAccrualDiseaseCodeSystem();
     }
 
+    /**
+     * @return the submitingOrganization
+     */
+    @ManyToOne
+    @JoinColumn(name = "submitting_organization_id") 
+    @Searchable
+    public Organization getSubmitingOrganization() {
+        return submitingOrganization;
+    }
     
+    /**
+     * @param submitingOrganization the submitingOrganization to set
+     */
+    public void setSubmitingOrganization(Organization submitingOrganization) {
+        this.submitingOrganization = submitingOrganization;
+    }    
 }

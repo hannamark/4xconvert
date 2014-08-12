@@ -39,7 +39,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
     /**
      * Trial ownership records session param name
      */
-    protected static final String TRIAL_OWENERSHIP_LIST = "trialOwnershipInfo";
+    protected static final String TRIAL_OWNERSHIP_LIST = "trialOwnershipInfo";
     private static final String VIEW_RESULTS = "viewResults";
     private static final String SITE_NAME = "siteName";
     
@@ -303,7 +303,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
     @SuppressWarnings("unchecked")
     private void updateEmailPreferenceForOrg() throws PAException {
         trialOwnershipInfo = (List<DisplayTrialOwnershipInformation>) ServletActionContext.getRequest().getSession()
-                .getAttribute(TRIAL_OWENERSHIP_LIST);
+                .getAttribute(TRIAL_OWNERSHIP_LIST);
         for (Iterator iterator = trialOwnershipInfo.iterator(); iterator.hasNext();) {
             DisplayTrialOwnershipInformation ownership = (DisplayTrialOwnershipInformation) iterator.next();
             PaRegistry.getRegistryUserService().setEmailNotificationsPreference(Long.parseLong(ownership.getUserId()),
@@ -334,7 +334,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
         siteName = (String) ServletActionContext.getRequest().getSession()
                     .getAttribute(SITE_NAME);
         trialOwnershipInfo = (List<DisplayTrialOwnershipInformation>) ServletActionContext.getRequest().getSession()
-                                .getAttribute(TRIAL_OWENERSHIP_LIST);
+                                .getAttribute(TRIAL_OWNERSHIP_LIST);
         if (ServletActionContext.getRequest().getSession().getAttribute(CHECKED_VALUE) != null) {
             checked = (Boolean) ServletActionContext.getRequest().getSession().getAttribute(CHECKED_VALUE); 
         }

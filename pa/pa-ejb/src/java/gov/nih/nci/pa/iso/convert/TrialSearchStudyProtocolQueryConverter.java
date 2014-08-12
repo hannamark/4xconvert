@@ -182,6 +182,10 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
                 .convertToStudyProtocolIi(studyProtocol.getId()), PAConstants.NCT_IDENTIFIER_TYPE);
         studyProtocolDto.setNctNumber(nctNumber);
         studyProtocolDto.setStudySource(studyProtocol.getStudySource());
+        if (studyProtocol.getSubmitingOrganization() != null) {
+            studyProtocolDto.setSubmitterOrgId(Long.valueOf(studyProtocol.getSubmitingOrganization().getIdentifier()));
+            studyProtocolDto.setSubmitterOrgName(studyProtocol.getSubmitingOrganization().getName());
+        }
         return studyProtocolDto;
     }
 
