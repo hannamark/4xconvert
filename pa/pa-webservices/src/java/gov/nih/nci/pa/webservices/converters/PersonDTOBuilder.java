@@ -25,7 +25,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.webservices.PoEntityCannotBeCreatedException;
-import gov.nih.nci.pa.webservices.PoEntityNotFoundException;
+import gov.nih.nci.pa.webservices.EntityNotFoundException;
 import gov.nih.nci.pa.webservices.types.OrganizationOrPersonID;
 import gov.nih.nci.pa.webservices.types.Person;
 import gov.nih.nci.po.data.CurationException;
@@ -266,10 +266,10 @@ public class PersonDTOBuilder {
             });
 
             if (CollectionUtils.isEmpty(persons)) {
-                throw new PoEntityNotFoundException("Person with CTEP ID of "
+                throw new EntityNotFoundException("Person with CTEP ID of "
                         + ctepID + " cannot be found in PO.");
             } else if (persons.size() > 1) {
-                throw new PoEntityNotFoundException(
+                throw new EntityNotFoundException(
                         "It appears there are "
                                 + persons.size()
                                 + " persons with CTEP ID of "
@@ -280,7 +280,7 @@ public class PersonDTOBuilder {
             }
         } catch (NullifiedRoleException | PAException | TooManyResultsException e) {
             LOG.error(e, e);
-            throw new PoEntityNotFoundException(
+            throw new EntityNotFoundException(
                     "Person with CTEP ID of "
                             + ctepID
                             + " cannot be found in PO due to an internal error. Details: "
@@ -304,12 +304,12 @@ public class PersonDTOBuilder {
             PersonDTO p = PoRegistry.getPersonEntityService().getPerson(
                     IiConverter.convertToPoPersonIi(poID.toString()));
             if (p == null) {
-                throw new PoEntityNotFoundException("Person with PO ID of "
+                throw new EntityNotFoundException("Person with PO ID of "
                         + poID + " cannot be found in PO.");
             }
             return p;
         } catch (NullifiedEntityException e) {
-            throw new PoEntityNotFoundException(// NOPMD
+            throw new EntityNotFoundException(// NOPMD
                     "Person with PO ID of "
                             + poID
                             + " appears to have NULLIFIED status in PO and thus cannot be used.");

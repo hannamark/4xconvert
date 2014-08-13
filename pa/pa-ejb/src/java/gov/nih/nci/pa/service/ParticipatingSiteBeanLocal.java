@@ -86,6 +86,8 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
+import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -97,10 +99,13 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.ParticipatingSiteConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -108,11 +113,13 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -138,8 +145,10 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 
 /**
@@ -149,11 +158,194 @@ import org.hibernate.exception.ConstraintViolationException;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
-public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
-implements ParticipatingSiteServiceLocal {
+public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean // NOPMD
+implements ParticipatingSiteServiceLocal { // NOPMD
     
     private static final Logger LOG = Logger.getLogger(ParticipatingSiteBeanLocal.class);
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ParticipatingSiteDTO> getParticipatingSitesByStudyProtocol(Ii studyProtocolIi) throws PAException {
+        StudyProtocolDTO studyProtocolDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
 
+        StudySiteDTO criteria = new StudySiteDTO();
+        criteria.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+        criteria.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        try {
+            List<StudySiteDTO> results = getStudySiteService().search(criteria, limit);
+            return convertStudySiteDTOsToParticipatingSiteDTOs(results);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Convert the given list of StudySiteDTO into a list of ParticipatingSiteDTO.
+     * @param dtos The list of StudySiteDTO to convert
+     * @return The list of ParticipatingSiteDTO
+     * @throws PAException if an error occurs
+     */
+    @SuppressWarnings("unchecked")
+    List<ParticipatingSiteDTO> convertStudySiteDTOsToParticipatingSiteDTOs(List<StudySiteDTO> dtos)
+            throws PAException {
+        List<Long> ids = new ArrayList<Long>();
+        List<StudySite> results = new ArrayList<StudySite>();
+        if (CollectionUtils.isNotEmpty(dtos)) {
+            for (StudySiteDTO dto : dtos) {
+                ids.add(IiConverter.convertToLong(dto.getIdentifier()));
+            }
+            Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
+            criteria.add(Restrictions.in("id", ids));
+            results = criteria.list();
+        }
+        ParticipatingSiteConverter converter = new ParticipatingSiteConverter();
+        return converter.convertFromDomainToDtos(results);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO,
+            List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
+        checkStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
+        ParticipatingSiteDTO participatingSiteDTO = createStudySiteParticipant(studySiteDTO, currentStatusDTO, orgDTO,
+                                                                               hcfDTO);
+        updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
+        return getParticipatingSite(participatingSiteDTO.getIdentifier());
+    }
+
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO,
+            List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
+        StudySiteDTO currentSite = getStudySiteDTO(studySiteDTO.getIdentifier());
+        checkStudyProtocol(currentSite.getStudyProtocolIdentifier());
+        ParticipatingSiteDTO participatingSiteDTO = updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
+        updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
+        return getParticipatingSite(participatingSiteDTO.getIdentifier());
+    }
+   
+
+    
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
+            List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
+        checkStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
+        ParticipatingSiteDTO participatingSiteDTO = createStudySiteParticipant(studySiteDTO, currentStatusDTO, poHcfIi);
+        updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
+        return getParticipatingSite(participatingSiteDTO.getIdentifier());
+    }
+   
+    /**
+     * Gets the Participating site with the given Ii.
+     * @param studySiteIi The study site Ii
+     * @return The Participating site with the given Ii.
+     * @throws PAException if an error occurs
+     */
+    ParticipatingSiteDTO getParticipatingSite(Ii studySiteIi) throws PAException {
+        ParticipatingSiteDTO participatingSiteDTO = new ParticipatingSiteConverter()
+            .convertFromDomainToDto(getStudySite(studySiteIi));
+        // we should be able just to do a participatingSiteDTO.getStudySiteContacts() to fetch the StudySiteContactlist,
+        // but it doesn't appear to be working properly. PO-2911 created to address that.
+        participatingSiteDTO.setStudySiteContacts(getStudySiteContactService().getByStudySite(studySiteIi));
+        return participatingSiteDTO;
+    }
+    
+    /**
+     * Check that the study protocol with the given Ii exist and that the current user can access it.
+     * @param studyProtocolIi The study protocil Ii
+     * @throws PAException if the study protocol does not exist or the user can not access it
+     */
+    void checkStudyProtocol(Ii studyProtocolIi) throws PAException {
+        StudyProtocolDTO studyProtocolDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        if (studyProtocolDTO == null || ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
+            throw new PAException("Trial id " + studyProtocolIi.getExtension() + " does not exist.");
+        }
+        PAUtil.checkUserIsTrialOwnerOrAbstractor(studyProtocolDTO);
+    }
+    
+    
+    /**
+     * Update the contacts of a given study site.
+     * @param participatingSiteContactDTOList The new contacts
+     * @param participatingSiteDTO The participating site to update
+     * @throws PAException if an error occurs
+     */
+    void updateStudySiteContacts(List<ParticipatingSiteContactDTO> participatingSiteContactDTOList,
+            ParticipatingSiteDTO participatingSiteDTO) throws PAException {
+        StudySiteContactService studySiteContactService = getStudySiteContactService();
+        for (StudySiteContactDTO dto : studySiteContactService.getByStudySite(participatingSiteDTO.getIdentifier())) {
+            studySiteContactService.delete(dto.getIdentifier());
+        }
+        for (ParticipatingSiteContactDTO participatingSiteContactDTO : participatingSiteContactDTOList) {
+            addStudySiteContact(participatingSiteDTO, participatingSiteContactDTO);
+        }
+    }
+    
+    private void addStudySiteContact(ParticipatingSiteDTO participatingSiteDTO,
+            ParticipatingSiteContactDTO participatingSiteContactDTO) throws PAException {
+        StudySiteContactDTO studySiteContactDTO = participatingSiteContactDTO.getStudySiteContactDTO();
+        PersonDTO personDTO = participatingSiteContactDTO.getPersonDTO();
+        AbstractPersonRoleDTO personRoleDTO = participatingSiteContactDTO.getAbstractPersonRoleDTO();
+        String roleCode = getRoleCode(studySiteContactDTO.getRoleCode());
+        Boolean isPrimary = getPrimaryIndicator(studySiteContactDTO.getPrimaryIndicator());
+
+        if (personRoleDTO instanceof ClinicalResearchStaffDTO) {
+            this.addStudySiteInvestigator(participatingSiteDTO.getIdentifier(),
+                                          (ClinicalResearchStaffDTO) personRoleDTO, null, personDTO, roleCode);
+            if (isPrimary) {
+                this.addStudySitePrimaryContact(participatingSiteDTO.getIdentifier(),
+                                                (ClinicalResearchStaffDTO) personRoleDTO, null, personDTO,
+                                                studySiteContactDTO.getTelecomAddresses());
+            }
+        } else if (personRoleDTO instanceof HealthCareProviderDTO) {
+            this.addStudySiteInvestigator(participatingSiteDTO.getIdentifier(), null,
+                                          (HealthCareProviderDTO) personRoleDTO, personDTO, roleCode);
+            if (isPrimary) {
+                this.addStudySitePrimaryContact(participatingSiteDTO.getIdentifier(), null,
+                                                (HealthCareProviderDTO) personRoleDTO, personDTO,
+                                                studySiteContactDTO.getTelecomAddresses());
+            }
+        } else if (personRoleDTO instanceof OrganizationalContactDTO) {
+            this.addStudySiteGenericContact(participatingSiteDTO.getIdentifier(),
+                                            (OrganizationalContactDTO) personRoleDTO, isPrimary,
+                                            studySiteContactDTO.getTelecomAddresses());
+        }
+    }
+
+    
+    private Boolean getPrimaryIndicator(Bl primInd) throws PAException {
+        Boolean isPrimary = BlConverter.convertToBoolean(primInd);
+        if (isPrimary == null) {
+            throw new PAException("Primary indicator must be set on all study site contacts.");
+        }
+        return isPrimary;
+    }
+
+    private String getRoleCode(Cd cdCode) throws PAException {
+        String code = CdConverter.convertCdToString(cdCode);
+        if (code == null) {
+            throw new PAException("Role Code must be set on all study site contacts.");
+        }
+        return code;
+    }
+    
     /**
      * {@inheritDoc}
      */

@@ -21,7 +21,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.webservices.PoEntityCannotBeCreatedException;
-import gov.nih.nci.pa.webservices.PoEntityNotFoundException;
+import gov.nih.nci.pa.webservices.EntityNotFoundException;
 import gov.nih.nci.pa.webservices.types.Organization;
 import gov.nih.nci.pa.webservices.types.OrganizationOrPersonID;
 import gov.nih.nci.po.data.CurationException;
@@ -240,12 +240,18 @@ public class OrganizationDTOBuilder {
         if (existingOrganization.getPoID() != null) {
             return locateExistingOrgByPOID(existingOrganization.getPoID());
         } else {
-            return locateExistingOrgByCtepID(existingOrganization.getCtepID());
+            return build(existingOrganization.getCtepID());
         }
 
     }
 
-    private OrganizationDTO locateExistingOrgByCtepID(final String ctepID)
+    /**
+     * @param ctepID ctepID
+     * @return OrganizationDTO
+     * @throws TooManyResultsException TooManyResultsException
+     * @throws PAException PAException
+     */
+    public OrganizationDTO build(final String ctepID)
             throws TooManyResultsException, PAException {
         try {
             OrganizationSearchCriteriaDTO orgSearchCriteria = new OrganizationSearchCriteriaDTO();
@@ -271,11 +277,11 @@ public class OrganizationDTOBuilder {
             });
 
             if (CollectionUtils.isEmpty(orgList)) {
-                throw new PoEntityNotFoundException(
+                throw new EntityNotFoundException(
                         "Organization with CTEP ID of " + ctepID
                                 + " cannot be found in PO.");
             } else if (orgList.size() > 1) {
-                throw new PoEntityNotFoundException(
+                throw new EntityNotFoundException(
                         "It appears there are "
                                 + orgList.size()
                                 + " organizations with CTEP ID of "
@@ -285,7 +291,7 @@ public class OrganizationDTOBuilder {
                 return orgList.get(0);
             }
         } catch (NullifiedEntityException | NullifiedRoleException ex) {
-            throw new PoEntityNotFoundException(
+            throw new EntityNotFoundException(
                     "Organization with CTEP ID of "
                             + ctepID
                             + " appears to have NULLIFIED status in PO and thus cannot be used.");
@@ -299,13 +305,12 @@ public class OrganizationDTOBuilder {
                             IiConverter.convertToPoOrganizationIi(poID
                                     .toString()));
             if (organization == null) {
-                throw new PoEntityNotFoundException(
-                        "Organization with PO ID of " + poID
-                                + " cannot be found in PO.");
+                throw new EntityNotFoundException("Organization with PO ID of "
+                        + poID + " cannot be found in PO.");
             }
             return organization;
         } catch (NullifiedEntityException e) {
-            throw new PoEntityNotFoundException(
+            throw new EntityNotFoundException(
                     "Organization with PO ID of "
                             + poID
                             + " appears to have NULLIFIED status in PO and thus cannot be used.");

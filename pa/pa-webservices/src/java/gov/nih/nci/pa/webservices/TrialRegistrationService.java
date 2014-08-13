@@ -23,9 +23,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -60,15 +58,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
+import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
 /**
  * @author dkrylov
@@ -76,15 +72,10 @@ import org.jboss.resteasy.annotations.cache.NoCache;
  */
 @Path("/")
 @Provider
-public class TrialRegistrationService implements ContextResolver<JAXBContext> {
-
-    private static final String APPLICATION_XML = "application/xml";
-    private static final String TXT_PLAIN = "text/plain";
+public class TrialRegistrationService extends BaseRestService {
 
     private static final Logger LOG = Logger
             .getLogger(TrialRegistrationService.class);
-
-    private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     /**
      * Registers an complete trial.
@@ -98,6 +89,7 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
+    @Formatted
     public Response registerCompleteTrial(
             @Validate CompleteTrialRegistration reg) {
         try {
@@ -180,6 +172,7 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
+    @Formatted
     public Response updateCompleteTrial(@PathParam("idType") String idType,
             @PathParam("trialID") String trialID,
             @Validate CompleteTrialUpdate reg) {
@@ -188,7 +181,7 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
             Long paTrialID = IiConverter.convertToLong(spDTO.getIdentifier());
 
             List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-            if (StringUtils.isBlank(paServiceUtils.getStudyIdentifier(
+            if (StringUtils.isBlank(getPaServiceUtils().getStudyIdentifier(
                     spDTO.getIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE))) {
                 studyIdentifierDTOs.add(new StudySiteDTOBuilder()
                         .buildClinicalTrialsGovIdAssigner(reg
@@ -229,6 +222,7 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
+    @Formatted
     public Response updateAbbreviatedTrial(@PathParam("idType") String idType,
             @PathParam("trialID") String trialID,
             @Validate AbbreviatedTrialUpdate reg) {
@@ -236,7 +230,7 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
             StudyProtocolDTO spDTO = findTrial(idType, trialID);
             Long paTrialID = IiConverter.convertToLong(spDTO.getIdentifier());
 
-            St nctIdentifier = StConverter.convertToSt(paServiceUtils
+            St nctIdentifier = StConverter.convertToSt(getPaServiceUtils()
                     .getStudyIdentifier(spDTO.getIdentifier(),
                             PAConstants.NCT_IDENTIFIER_TYPE));
             if (ISOUtil.isStNull(nctIdentifier)) {
@@ -273,6 +267,7 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
+    @Formatted
     public Response amendCompleteTrial(@PathParam("idType") String idType,
             @PathParam("trialID") String trialID,
             @Validate CompleteTrialAmendment reg) {
@@ -345,51 +340,9 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
 
     }
 
-    private StudyProtocolDTO findTrial(String idType, String trialID)
-            throws PAException {
-        if (StringUtils.isBlank(trialID) || StringUtils.isBlank(idType)) {
-            throw new TrialDataException(
-                    "Please provide trial identifier type and value as described in the documentation.");
-        }
-        Ii ii = new Ii();
-        if ("pa".equalsIgnoreCase(idType)) {
-            ii = IiConverter.convertToStudyProtocolIi(Long.valueOf(trialID));
-        } else if ("nci".equalsIgnoreCase(idType)) {
-            ii.setExtension(trialID);
-            ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-        } else if ("ctep".equalsIgnoreCase(idType)) {
-            ii.setExtension(trialID);
-            ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
-        }
-        return PaRegistry.getStudyProtocolService().getStudyProtocol(ii);
-    }
-
-    private Response handleException(Exception e) {
-        if (e instanceof PoEntityNotFoundException) {
-            return logErrorAndPrepareResponse(Status.NOT_FOUND, e);
-        } else if (e instanceof TrialDataException
-                || e instanceof PoEntityCannotBeCreatedException
-                || e instanceof PAValidationException) {
-            return logErrorAndPrepareResponse(Status.BAD_REQUEST, e);
-        } else if (e instanceof PAException) {
-            return StringUtils.startsWithIgnoreCase(e.getMessage(),
-                    "Validation Exception") ? logErrorAndPrepareResponse(
-                    Status.BAD_REQUEST, e) : logErrorAndPrepareResponse(
-                    Status.INTERNAL_SERVER_ERROR, e);
-        } else {
-            return logErrorAndPrepareResponse(Status.INTERNAL_SERVER_ERROR, e);
-        }
-    }
-
-    private Response logErrorAndPrepareResponse(Status status, Exception e) {
-        LOG.error(e, e);
-        return Response.status(status).entity(e.getMessage()).type(TXT_PLAIN)
-                .build();
-    }
-
     private Response buildTrialRegConfirmationResponse(long paTrialID) {
         TrialRegistrationConfirmation conf = new TrialRegistrationConfirmation();
-        conf.setNciTrialID(paServiceUtils.getTrialNciId(paTrialID));
+        conf.setNciTrialID(getPaServiceUtils().getTrialNciId(paTrialID));
         conf.setPaTrialID(paTrialID);
         return Response.ok(
                 new ObjectFactory().createTrialRegistrationConfirmation(conf))
@@ -407,6 +360,7 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
     @Path("/registration/abbreviated/{nct}")
     @Produces({ APPLICATION_XML })
     @NoCache
+    @Formatted
     public Response registerAbbreviatedTrial(@PathParam("nct") String nct) {
         CTGovSyncServiceLocal ctGovSyncService = PaRegistry
                 .getCTGovSyncService();
@@ -459,24 +413,6 @@ public class TrialRegistrationService implements ContextResolver<JAXBContext> {
 
         }
         return null;
-    }
-
-    @Override
-    public JAXBContext getContext(Class<?> arg0) {
-        try {
-            return JAXBContext.newInstance(ObjectFactory.class);
-        } catch (JAXBException e) {
-            LOG.error(e, e);
-            throw new RuntimeException(e); // NOPMD
-        }
-    }
-
-    /**
-     * @param paServiceUtils
-     *            the paServiceUtils to set
-     */
-    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
-        this.paServiceUtils = paServiceUtils;
     }
 
 }

@@ -7,7 +7,7 @@ package gov.nih.nci.pa.webservices;
  * @author dkrylov
  * 
  */
-public class PoEntityNotFoundException extends RuntimeException {
+public class EntityNotFoundException extends RuntimeException {
 
     /**
      * 
@@ -17,7 +17,7 @@ public class PoEntityNotFoundException extends RuntimeException {
     /**
      * @param message String
      */
-    public PoEntityNotFoundException(String message) {
+    public EntityNotFoundException(String message) {
         super(message);
     }
 

@@ -149,6 +149,9 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
             site.setStatusCode(studySite.getStatusCode());
             site.setTargetAccrualNumber(studySite.getTargetAccrualNumber());
             site.setProgramCodeText(studySite.getProgramCodeText());
+            site.setLocalProtocolIdentifier(studySite.getLocalStudyProtocolIdentifier());            
+            site.setDateOpenedForAccrual(studySite.getAccrualDateRangeLow());
+            site.setDateClosedForAccrual(studySite.getAccrualDateRangeHigh());            
             result.add(site);
             studySiteIds.add(site.getStudySiteId());
         }

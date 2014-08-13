@@ -5,6 +5,8 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,9 +26,13 @@ public class ParticipatingOrgDTO implements Serializable {
     private Timestamp recruitmentStatusDate;
     private Integer targetAccrualNumber;
     private String programCodeText;
-    private List<PaPersonDTO> primaryContacts;
-    private List<PaPersonDTO> principalInvestigators;
-    private List<PaPersonDTO> subInvestigators;
+    private String localProtocolIdentifier;
+    private List<PaPersonDTO> primaryContacts = new ArrayList<>();
+    private List<PaPersonDTO> principalInvestigators = new ArrayList<>();
+    private List<PaPersonDTO> subInvestigators = new ArrayList<>();
+    
+    private Date dateOpenedForAccrual;
+    private Date dateClosedForAccrual;
 
     /**
      * @return the studySiteId
@@ -194,5 +200,47 @@ public class ParticipatingOrgDTO implements Serializable {
      */
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
+    }
+
+    /**
+     * @return the localProtocolIdentifier
+     */
+    public String getLocalProtocolIdentifier() {
+        return localProtocolIdentifier;
+    }
+
+    /**
+     * @param localProtocolIdentifier the localProtocolIdentifier to set
+     */
+    public void setLocalProtocolIdentifier(String localProtocolIdentifier) {
+        this.localProtocolIdentifier = localProtocolIdentifier;
+    }
+
+    /**
+     * @return the dateOpenedForAccrual
+     */
+    public Date getDateOpenedForAccrual() {
+        return dateOpenedForAccrual;
+    }
+
+    /**
+     * @param dateOpenedForAccrual the dateOpenedForAccrual to set
+     */
+    public void setDateOpenedForAccrual(Date dateOpenedForAccrual) {
+        this.dateOpenedForAccrual = dateOpenedForAccrual;
+    }
+
+    /**
+     * @return the dateClosedForAccrual
+     */
+    public Date getDateClosedForAccrual() {
+        return dateClosedForAccrual;
+    }
+
+    /**
+     * @param dateClosedForAccrual the dateClosedForAccrual to set
+     */
+    public void setDateClosedForAccrual(Date dateClosedForAccrual) {
+        this.dateClosedForAccrual = dateClosedForAccrual;
     }
 }

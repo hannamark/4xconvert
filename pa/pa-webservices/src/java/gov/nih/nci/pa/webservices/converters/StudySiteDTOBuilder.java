@@ -4,12 +4,19 @@
 package gov.nih.nci.pa.webservices.converters;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.webservices.types.BaseParticipatingSite;
+
+import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -77,6 +84,34 @@ public class StudySiteDTOBuilder {
                     .convertToSt(value));
         }
         return isoDto;
+    }
+
+    /**
+     * @param ps
+     *            ParticipatingSite
+     * @return StudySiteDTO
+     */
+    public StudySiteDTO build(BaseParticipatingSite ps) {
+        StudySiteDTO studySiteDTO = new StudySiteDTO();
+        studySiteDTO.setStatusCode(CdConverter
+                .convertToCd(FunctionalRoleStatusCode.PENDING));
+        studySiteDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
+                new Timestamp(ps.getRecruitmentStatusDate()
+                        .toGregorianCalendar().getTimeInMillis()), null));
+        studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(ps
+                .getLocalTrialIdentifier()));
+        studySiteDTO.setProgramCodeText(StConverter.convertToSt(ps
+                .getProgramCode()));
+        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(
+                ps.getOpenedForAccrual() != null ? ps.getOpenedForAccrual()
+                        .toGregorianCalendar().getTime() : null,
+                ps.getClosedForAccrual() != null ? ps.getClosedForAccrual()
+                        .toGregorianCalendar().getTime() : null));
+        if (ps.getTargetAccrualNumber() != null) {
+            studySiteDTO.setTargetAccrualNumber(IntConverter.convertToInt(ps
+                    .getTargetAccrualNumber().intValue()));
+        }
+        return studySiteDTO;
     }
 
 }

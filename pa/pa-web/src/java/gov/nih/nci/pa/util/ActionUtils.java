@@ -227,7 +227,7 @@ public final class ActionUtils {
                     .getStudyIdentifier(spID,
                             PAConstants.CTEP_IDENTIFIER_TYPE));
         }
-        System.err.println("Dirk: Processing PO id; " + studyProtocolQueryDTO.getSubmitterOrgId());
+        
         session.setAttribute(Constants.TRIAL_SUBMITTER_ORG_PO_ID, studyProtocolQueryDTO.getSubmitterOrgId());
         session.setAttribute(Constants.TRIAL_SUBMITTER_ORG, studyProtocolQueryDTO.getSubmitterOrgName());
         
