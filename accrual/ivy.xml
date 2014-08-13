@@ -65,6 +65,16 @@
     <dependency conf="ear->master" org="org.springframework" name="spring-context" rev="3.2.2.RELEASE"/>
     <dependency conf="ear->master" org="org.springframework" name="spring-expression" rev="3.2.2.RELEASE"/>
     <dependency conf="ear->master" org="org.springframework" name="spring-core" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-mock" rev="2.0.8"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-oxm" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
+    <dependency conf="ear->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
+    <dependency conf="ear->master" org="org.apache.httpcomponents" name="httpclient" rev="4.3.4" />
+    <dependency conf="ear->master" org="org.apache.httpcomponents" name="httpcore" rev="4.3.2" />
+    <dependency conf="ear->master" org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13"/>
+    <dependency conf="ear->master" org="org.codehaus.jackson" name="jackson-mapper-asl" rev="1.9.13"/>
+    <dependency conf="ear->master" org="commons-codec" name="commons-codec" rev="1.6"/>
+    
     
     <dependency conf="web->master" org="org.ajaxtags" name="ajaxtags" rev="1.3-beta-rc7"/> 
     <dependency conf="web->master" org="displaytag" name="displaytag" rev="1.2"/>
