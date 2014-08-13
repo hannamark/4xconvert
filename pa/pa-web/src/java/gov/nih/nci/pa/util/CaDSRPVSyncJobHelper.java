@@ -51,8 +51,9 @@ public class CaDSRPVSyncJobHelper {
         permissibleService = PaRegistry.getPMWithCaDSRService();
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
         List<CaDSRDTO> values = getAllValuesFromCaDSR();
-        permissibleService.syncTableWithCaDSR(values);
-
+        if (!values.isEmpty()) {
+           permissibleService.syncTableWithCaDSR(values);
+        }
     }
 
     /**

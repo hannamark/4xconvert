@@ -54,6 +54,7 @@ public class PlannedMarkerSyncWithCaDSRConverter
            }
            dto.setCaDSRId(IiConverter.convertToIi(bo.getCaDSRId()));
            dto.setNtTermIdentifier(StConverter.convertToSt(bo.getNtTermIdentifier()));
+           dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
        }
        return dto;
    }

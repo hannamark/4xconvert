@@ -402,6 +402,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
                  criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
                  criteria.createAlias(DESIGNATION, "dc");
                  criteria.add(Restrictions.like(DESIGNATION_NAME, getMeaning(), MatchMode.ANYWHERE));
+                 criteria.add(Expression.eq("dc.type", SYNONYM));
              }
              if (StringUtils.isNotEmpty(getDescription())) {
                 criteria.add(Expression.ilike(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));

@@ -6,6 +6,7 @@ import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.convert.PlannedMarkerSyncWithCaDSRConverter;
 import gov.nih.nci.pa.iso.dto.CaDSRDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -18,6 +19,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -87,7 +89,18 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
                 Long newId = idList.get(0).longValue();
                 List<Number> nameList = getIdentifierByMeaning(meaning);
                 if (!nameList.isEmpty()) {
-                    Long oldId = nameList.get(0).longValue();
+                  Long oldId = nameList.get(0).longValue();
+                   if (nameList.size() > 1) {
+                      // to avoid unique name constraint  
+                     for (int i = 0; i < nameList.size(); i++) {
+                      List<PlannedMarkerSyncWithCaDSRDTO> dtoList = 
+                             getValuesById(nameList.get(i).longValue());
+                        if (StringUtils.equalsIgnoreCase(dtoList.get(0)
+                          .getStatusCode().getCode(), "Pending")) {
+                            oldId = IiConverter.convertToLong(dtoList.get(0).getIdentifier());
+                        }
+                      }
+                   }
                     if (!newId.equals(oldId)) {
                         pmSynonymService.deleteBySyncId(oldId);
                         deleteById(oldId);
@@ -107,6 +120,7 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
                 }
                 updateValues(caDSRId, name, meaning, description, ntTermId, 
                         ActiveInactivePendingCode.ACTIVE.getName());
+                
             } else {
                 // for checking if the name is in pending status or not.
                 Long newPMID = null;

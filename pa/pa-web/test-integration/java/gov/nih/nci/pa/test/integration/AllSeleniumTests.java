@@ -104,8 +104,9 @@ import org.junit.runners.Suite.SuiteClasses;
         CtGovImportTest.class,
         OutOfScopeAccrualsTest.class,
         CtGovImportLogTest.class,
-        DiseaseTest.class
-//        PlannedMarkerTest.class,
+        DiseaseTest.class,
+        TrialCheckInOutTest.class,
+        PlannedMarkerTest.class
 //        DuplicateTrialEditTest.class,
 //        LookupWithApostropheTest.class,
 //        DiseaseTest.class,
