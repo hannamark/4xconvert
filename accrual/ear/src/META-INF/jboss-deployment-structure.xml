@@ -15,6 +15,7 @@
 			<module name="org.cagrid" export="TRUE" />
 			<module name="org.apache.xalan" export="TRUE" />
 			<module name="org.apache.santuario.xmlsec" export="TRUE" />
+			<module name="org.jboss.resteasy.resteasy-jaxrs" export="TRUE" />
 		</dependencies>
 		<exclusions>
 			<module name="org.hibernate" />
@@ -25,4 +26,5 @@
 	</deployment>
 	<sub-deployment name="accrual-services.jar" />
 	<sub-deployment name="accrual.war" />
+	<sub-deployment name="webservices.war" />
 </jboss-deployment-structure>

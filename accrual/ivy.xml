@@ -5,6 +5,7 @@
     <conf name="compile"/>
     <conf name="ear"/>
     <conf name="web"/>
+    <conf name="webservices"/>
     <conf name="test"/>
     <conf name="test-checkstyle"/>
     <conf name="test-cobertura"/>
@@ -39,6 +40,10 @@
     <dependency conf="compile->master" org="org.jboss.spec.javax.servlet.jsp" name="jboss-jsp-api_2.2_spec" rev="1.0.1.Final"/>
     <dependency conf="compile->master" org="org.jboss.spec.javax.transaction" name="jboss-transaction-api_1.1_spec" rev="1.0.1.Final"/>
     <dependency conf="compile->master" org="org.jboss.spec.javax.xml.rpc" name="jboss-jaxrpc-api_1.1_spec" rev="1.0.1.Final"/>
+    <dependency conf="compile->master" org="org.jboss.spec.javax.ws.rs" name="jboss-jaxrs-api_1.1_spec" rev="1.0.1.Final"/>
+    <dependency conf="compile->master" org="org.jboss.resteasy" name="resteasy-jaxrs" rev="2.3.7.Final"/>
+    <dependency conf="compile->master" org="org.jboss.resteasy" name="resteasy-jaxb-provider" rev="2.3.7.Final"/>
+    
 
     <dependency conf="ear->master" org="antlr" name="antlr" rev="2.7.7"/>
     <dependency conf="ear->master" org="commons-beanutils" name="commons-beanutils" rev="1.8.0"/>
@@ -52,7 +57,7 @@
     <dependency conf="ear->master" org="commons-validator" name="commons-validator" rev="1.3.1"/>
     <dependency conf="ear->master" org="de.jollyday" name="jollyday" rev="0.4.5"/>
     <dependency conf="ear->master" org="dom4j" name="dom4j" rev="1.6.1"/>
-    <dependency conf="ear->master" org="gov.nih.nci.coppa" name="coppa-commons" rev="1.3.10.1-SNAPSHOT" changing="true"/>
+    <dependency conf="ear->master" org="gov.nih.nci.coppa" name="coppa-commons" rev="1.3.10.2-SNAPSHOT" changing="true"/>
     <dependency conf="ear->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-core" rev="1.4.10.1-SNAPSHOT"/>
     <dependency conf="ear->master" org="gov.nih.nci.coppa.po" name="po-services-client" rev="3.10.0-SNAPSHOT"/>
     <dependency conf="ear->master" org="gov.nih.nci.iso-datatypes" name="iso-datatypes" rev="2.0.0-alpha1"/> 
@@ -91,6 +96,8 @@
     <dependency conf="web->master" org="org.apache.struts.xwork" name="xwork-core" rev="2.3.16.3"/>
     <dependency conf="web->master" org="org.freemarker" name="freemarker" rev="2.3.19"/>
     <dependency conf="web->master" org="taglibs" name="standard" rev="1.1.2"/>
+    
+     <dependency conf="webservices->master" org="commons-io" name="commons-io" rev="2.4"/>
 
     <!-- test -->
     <dependency conf="test->master" org="org.hsqldb" name="hsqldb" rev="1.8.0.10"/>

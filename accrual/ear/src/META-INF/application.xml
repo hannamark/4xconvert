@@ -11,6 +11,12 @@
     </web>
   </module>
   <module>
+    <web>
+      <web-uri>webservices.war</web-uri>
+      <context-root>/accrual-services</context-root>
+    </web>
+  </module>
+  <module>
     <ejb>accrual-services.jar</ejb>
   </module>
   <library-directory>lib</library-directory>

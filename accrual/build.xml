@@ -63,6 +63,7 @@
 
     <target name="run-selenium-tests" depends="build-notest" description="Runs integration tests against an already deployed application">
         <ant target="run-selenium-tests" dir="accrual-web" inheritAll="false" inheritrefs="false"/>
+    	<ant target="run-selenium-tests" dir="webservices" inheritAll="false" inheritrefs="false"/>
     </target>
 
     <!-- ====================================================================== -->
@@ -80,7 +81,7 @@
         <ivy:settings file="${common.dir}/ivysettings.xml"/>
     </target>
 
-    <target name="ivy-get" depends="ivy-clean,ivy-build,ivy-compile,ivy-ear,ivy-web,ivy-test"/>
+    <target name="ivy-get" depends="ivy-clean,ivy-build,ivy-compile,ivy-ear,ivy-web,ivy-webservices,ivy-test"/>
 
     <target name="ivy-clean" description="Delete jars.">
         <delete dir="${lib.dir}" failonerror="false"/>
@@ -117,6 +118,12 @@
         <ivy:resolve refresh="true" conf="web"/>
         <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="web"/>
     </target>
+	
+    <target name="ivy-webservices" depends="ivy-init">
+        <ivy:resolve refresh="true" conf="webservices"/>
+        <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="webservices"/>
+    </target>
+
  
     <target name="ivy-test" depends="ivy-init">
         <ivy:resolve refresh="true" conf="test"/>
@@ -148,6 +155,9 @@
        <ant target="war-notest" dir="accrual-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+        <ant target="war-notest" dir="webservices" inheritAll="false">
+             <property name="tier" value="${tier}"/>
+        </ant>    	
     </target>
 
     <target name="package-subs" depends="clean" description="Package and test the sub-projects">
@@ -157,6 +167,9 @@
        <ant target="war" dir="accrual-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+    	<ant target="war" dir="webservices" inheritAll="false">
+    	            <property name="tier" value="${tier}"/>
+    	</ant>
     </target>
 
     <target name="test" depends="clean">
@@ -166,6 +179,9 @@
        <ant target="test-dynamic-analysis" dir="accrual-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+    	<ant target="test-dynamic-analysis" dir="webservices" inheritAll="false">
+    	    <property name="tier" value="${tier}"/>
+    	</ant>
     </target>
 
     <target name="ear" description="Build the ear">
@@ -179,6 +195,7 @@
         </copy>
 		<copy file="services/target/accrual-services.jar" todir="${ear.dir}"/>
 		<copy file="accrual-web/target/accrual.war" todir="${ear.dir}"/>
+    	<copy file="webservices/target/webservices.war" todir="${ear.dir}"/>
         <ear destfile="${ear.file}"
              basedir="${ear.dir}"
              compress="false"
@@ -196,6 +213,10 @@
         <ant target="clean" dir="accrual-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+        <ant target="clean" dir="webservices" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+    	
     </target>
 
     <!-- Maven management targets -->
@@ -220,9 +241,17 @@
         <ant target="generate-javadoc" dir="accrual-web" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
+        <ant target="generate-javadoc" dir="webservices" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+        </ant>
+    	
         <copy todir="javadoc/accrual-web">
             <fileset dir="accrual-web/javadoc" />
         </copy>
+        <copy todir="javadoc/webservices">
+            <fileset dir="webservices/javadoc" />
+        </copy>
+    	
 
         <ant target="generate-javadoc" dir="services" inheritAll="false">
             <property name="tier" value="${tier}"/>
