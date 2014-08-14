@@ -94,13 +94,14 @@ import com.fiveamsolutions.nci.commons.search.SearchableUtils;
  * @author Abraham J. Evans-EL
  * @param <T> the type
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class InterventionBeanSearchCriteria<T extends AbstractEntityWithStatusCode<?>>
     extends AnnotatedBeanSearchCriteria<T> {
 
     private final boolean includeSynonyms;
     private final boolean exactMatch;
     private final String name;
-
+    private final String ntTermIdentifier;
     /**
      * Default constructor.
      * @param o the example
@@ -113,16 +114,35 @@ public class InterventionBeanSearchCriteria<T extends AbstractEntityWithStatusCo
         this.includeSynonyms = includeSynonyms;
         this.exactMatch = exactMatch;
         this.name = name;
+        ntTermIdentifier = null;
     }
 
+    /**
+     * Constructor.
+     * @param o the example
+     * @param ntTermIdentifier ntTermIdentifier
+     */
+    public InterventionBeanSearchCriteria(T o,  String ntTermIdentifier) {
+        super(o);
+        this.includeSynonyms = false;
+        this.exactMatch = true;
+        this.ntTermIdentifier = ntTermIdentifier;
+        this.name = null;
+    }
     /**
      * {@inheritDoc}
      */
     @Override
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty, getSession(),
-                                                          new InterventionSynonymHelper(includeSynonyms, exactMatch,
+        if (name != null) {
+            return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
+                    getSession(), new InterventionSynonymHelper(includeSynonyms, exactMatch,
                                                                   name));
+        } else {
+            return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
+                    getSession(),  new InterventionSynonymHelper(ntTermIdentifier));
+    
+        }
     }
 
     /**
@@ -130,8 +150,13 @@ public class InterventionBeanSearchCriteria<T extends AbstractEntityWithStatusCo
      */
     @Override
     public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
-        return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
+        if (name != null) {
+            return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
                 leftJoinClause, getSession(), new InterventionSynonymHelper(includeSynonyms, exactMatch, name));
+        } else {
+            return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
+                    leftJoinClause, getSession(), new InterventionSynonymHelper(ntTermIdentifier));
+        }
     }
 
     /**
@@ -139,14 +164,24 @@ public class InterventionBeanSearchCriteria<T extends AbstractEntityWithStatusCo
      */
     private static class InterventionSynonymHelper implements SearchableUtils.AfterIterationHelper {
         private static final String INTERVENTION_NAME_PARAM = "interventionNameParam";
+        private static final String INTERVENTION_NCITID_PARAM = "interventionNcitIdParam";
         private final boolean includeSynonyms;
         private final boolean exactMatch;
         private final String name;
-
+        private final String ntTermIdentifier;
+        
         public InterventionSynonymHelper(boolean includeSynonyms, boolean exactMatch, String name) {
             this.name = name;
+            this.ntTermIdentifier = null;
             this.includeSynonyms = includeSynonyms;
             this.exactMatch = exactMatch;
+        }
+        
+        public InterventionSynonymHelper(String ntTermIdentifier) {
+            this.name = null;
+            this.ntTermIdentifier = ntTermIdentifier;
+            this.includeSynonyms = false;
+            this.exactMatch = true;
         }
 
         /**
@@ -154,24 +189,34 @@ public class InterventionBeanSearchCriteria<T extends AbstractEntityWithStatusCo
          */
         public void afterIteration(Object obj, boolean isCountOnly, StringBuffer whereClause,
                 Map<String, Object> params) {
-            if (includeSynonyms && !exactMatch)  {
-                whereClause.append(String.format("and (upper(%s.name) like upper(:%s) or "
-                        + "upper(%s_interventionAlternateNames.name) like upper(:%s))", SearchableUtils.ROOT_OBJ_ALIAS,
-                        INTERVENTION_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, INTERVENTION_NAME_PARAM));
-                params.put(INTERVENTION_NAME_PARAM, "%" + this.name + "%");
-            } else if (!includeSynonyms && exactMatch) {
-                whereClause.append(String.format("and upper(%s.name) like upper(:%s)", SearchableUtils.ROOT_OBJ_ALIAS,
-                        INTERVENTION_NAME_PARAM));
-                params.put(INTERVENTION_NAME_PARAM, this.name);
-            } else if (includeSynonyms && exactMatch) {
-                whereClause.append(String.format("and (upper(%s.name) like upper(:%s) or "
-                        + "upper(%s_interventionAlternateNames.name) like upper(:%s))", SearchableUtils.ROOT_OBJ_ALIAS,
-                        INTERVENTION_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, INTERVENTION_NAME_PARAM));
-                params.put(INTERVENTION_NAME_PARAM, this.name);
-            } else if (!includeSynonyms && !exactMatch) {
-                whereClause.append(String.format("and upper(%s.name) like upper(:%s)", SearchableUtils.ROOT_OBJ_ALIAS,
-                        INTERVENTION_NAME_PARAM));
-                params.put(INTERVENTION_NAME_PARAM, "%" + this.name + "%");
+            if (name != null) {
+                if (includeSynonyms && !exactMatch)  {
+                    whereClause.append(String.format("and (upper(%s.name) like upper(:%s) or "
+                    + "upper(%s_interventionAlternateNames.name) like upper(:%s))", SearchableUtils.ROOT_OBJ_ALIAS,
+                            INTERVENTION_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, INTERVENTION_NAME_PARAM));
+                    params.put(INTERVENTION_NAME_PARAM, "%" + this.name + "%");
+                } else if (!includeSynonyms && exactMatch) {
+                    whereClause.append(String.format("and upper(%s.name) like upper(:%s)",
+                            SearchableUtils.ROOT_OBJ_ALIAS,
+                            INTERVENTION_NAME_PARAM));
+                    params.put(INTERVENTION_NAME_PARAM, this.name);
+                } else if (includeSynonyms && exactMatch) {
+                    whereClause.append(String.format("and (upper(%s.name) like upper(:%s) or "
+                            + "upper(%s_interventionAlternateNames.name) like upper(:%s))",
+                            SearchableUtils.ROOT_OBJ_ALIAS,
+                            INTERVENTION_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, INTERVENTION_NAME_PARAM));
+                    params.put(INTERVENTION_NAME_PARAM, this.name);
+                } else if (!includeSynonyms && !exactMatch) {
+                    whereClause.append(String.format("and upper(%s.name) like upper(:%s)",
+                            SearchableUtils.ROOT_OBJ_ALIAS,
+                            INTERVENTION_NAME_PARAM));
+                    params.put(INTERVENTION_NAME_PARAM, "%" + this.name + "%");
+                }
+            } else {
+                whereClause.append(String.format("and upper(%s.ntTermIdentifier) = upper(:%s)",
+                        SearchableUtils.ROOT_OBJ_ALIAS,
+                        INTERVENTION_NCITID_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, INTERVENTION_NCITID_PARAM));
+                params.put(INTERVENTION_NCITID_PARAM,  this.ntTermIdentifier);
             }
         }
     }

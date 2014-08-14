@@ -94,12 +94,14 @@ import com.fiveamsolutions.nci.commons.search.SearchableUtils;
  * @author Abraham J. Evans-EL
  * @param <T> the type
  */
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PDQDiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode<?>>
     extends AnnotatedBeanSearchCriteria<T> {
 
     private final boolean includeSynonyms;
     private final boolean exactMatch;
     private final String name;
+    private final String ntTermIdentifier;
 
     /**
      * Default constructor.
@@ -113,6 +115,20 @@ public class PDQDiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode
         this.includeSynonyms = includeSynonyms;
         this.exactMatch = exactMatch;
         this.name = name;
+        this.ntTermIdentifier = null;
+    }
+    
+    /**
+     * Constructor.
+     * @param o the example
+     * @param ntTermIdentifier NCIt term identifier
+     */
+    public PDQDiseaseBeanSearchCriteria(T o, String ntTermIdentifier) {
+        super(o);
+        this.includeSynonyms = false;
+        this.exactMatch = true;
+        this.name = null;
+        this.ntTermIdentifier = ntTermIdentifier;
     }
 
     /**
@@ -121,7 +137,7 @@ public class PDQDiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode
     @Override
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty, getSession(),
-                                                          new DiseaseSynonymHelper(includeSynonyms, exactMatch, name));
+           new DiseaseSynonymHelper(includeSynonyms, exactMatch, name, ntTermIdentifier));
     }
 
     /**
@@ -130,7 +146,8 @@ public class PDQDiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode
     @Override
     public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
-                leftJoinClause, getSession(), new DiseaseSynonymHelper(includeSynonyms, exactMatch, name));
+                leftJoinClause, getSession(), 
+                new DiseaseSynonymHelper(includeSynonyms, exactMatch, name, ntTermIdentifier));
     }
 
     /**
@@ -138,14 +155,17 @@ public class PDQDiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode
      */
     private static class DiseaseSynonymHelper implements SearchableUtils.AfterIterationHelper {
         private static final String DISEASE_NAME_PARAM = "diseaseNameParam";
+        private static final String DISEASE_NTTERM_PARAM = "diseaseNtTermParam";
         private final boolean includeSynonyms;
         private final boolean exactMatch;
         private final String name;
+        private final String ntTermIdentifier;
 
-        public DiseaseSynonymHelper(boolean includeSynonyms, boolean exactMatch, String name) {
+        public DiseaseSynonymHelper(boolean includeSynonyms, boolean exactMatch, String name, String ntTermIdentifier) {
             this.name = name;
             this.includeSynonyms = includeSynonyms;
             this.exactMatch = exactMatch;
+            this.ntTermIdentifier = ntTermIdentifier;
         }
 
         /**
@@ -153,24 +173,32 @@ public class PDQDiseaseBeanSearchCriteria<T extends AbstractEntityWithStatusCode
          */
         public void afterIteration(Object obj, boolean isCountOnly, StringBuffer whereClause,
                 Map<String, Object> params) {
-            if (includeSynonyms && !exactMatch)  {
-                whereClause.append(String.format("and (upper(%s.preferredName) like upper(:%s) or "
-                        + "upper(%s_diseaseAlternames.alternateName) like upper(:%s))", SearchableUtils.ROOT_OBJ_ALIAS,
-                        DISEASE_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
-                params.put(DISEASE_NAME_PARAM, "%" + this.name + "%");
-            } else if (!includeSynonyms && exactMatch) {
-                whereClause.append(String.format("and upper(%s.preferredName) like upper(:%s)",
-                        SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
-                params.put(DISEASE_NAME_PARAM, this.name);
-            } else if (includeSynonyms && exactMatch) {
-                whereClause.append(String.format("and (upper(%s.preferredName) like upper(:%s) or "
-                        + "upper(%s_diseaseAlternames.alternateName) like upper(:%s))", SearchableUtils.ROOT_OBJ_ALIAS,
-                        DISEASE_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
-                params.put(DISEASE_NAME_PARAM, this.name);
-            } else if (!includeSynonyms && !exactMatch) {
-                whereClause.append(String.format("and upper(%s.preferredName) like upper(:%s)",
-                        SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
-                params.put(DISEASE_NAME_PARAM, "%" + this.name + "%");
+            if (name != null) {
+                if (includeSynonyms && !exactMatch)  {
+                    whereClause.append(String.format("and (upper(%s.preferredName) like upper(:%s) or "
+                            + "upper(%s_diseaseAlternames.alternateName) like upper(:%s))",
+                            SearchableUtils.ROOT_OBJ_ALIAS,
+                            DISEASE_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
+                    params.put(DISEASE_NAME_PARAM, "%" + this.name + "%");
+                } else if (!includeSynonyms && exactMatch) {
+                    whereClause.append(String.format("and upper(%s.preferredName) like upper(:%s)",
+                            SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
+                    params.put(DISEASE_NAME_PARAM, this.name);
+                } else if (includeSynonyms && exactMatch) {
+                    whereClause.append(String.format("and (upper(%s.preferredName) like upper(:%s) or "
+                            + "upper(%s_diseaseAlternames.alternateName) like upper(:%s))",
+                            SearchableUtils.ROOT_OBJ_ALIAS,
+                            DISEASE_NAME_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
+                    params.put(DISEASE_NAME_PARAM, this.name);
+                } else if (!includeSynonyms && !exactMatch) {
+                    whereClause.append(String.format("and upper(%s.preferredName) like upper(:%s)",
+                            SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NAME_PARAM));
+                    params.put(DISEASE_NAME_PARAM, "%" + this.name + "%");
+                }
+            } else {
+                whereClause.append(String.format("and upper(%s.ntTermIdentifier) = upper(:%s)",
+                        SearchableUtils.ROOT_OBJ_ALIAS, DISEASE_NTTERM_PARAM));
+                params.put(DISEASE_NTTERM_PARAM,  this.ntTermIdentifier);
             }
         }
     }

@@ -158,6 +158,7 @@ function handleCreate(){
                 <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected intervention(s) from the study. Cancel to abort.', 'trialInterventionsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected intervention(s) from the study. Cancel to abort.', 'trialInterventionsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                 <li><pa:toggleDeleteBtn/></li>
             </s:if>            
+            <li><s:a href="manageTerms.action" cssClass="btn"><span class="btn_img"><span class=edit>Manage NCIt Terms</span></span></s:a></li>
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>

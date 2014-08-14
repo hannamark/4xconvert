@@ -119,6 +119,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class InterventionBeanLocal extends AbstractBaseIsoService<InterventionDTO, Intervention, InterventionConverter>
         implements InterventionServiceLocal {
 
@@ -133,15 +134,15 @@ public class InterventionBeanLocal extends AbstractBaseIsoService<InterventionDT
             throw new PAException("Must pass in search criteria when calling search().");
         }
 
-        if (searchCriteria.getName() == null) {
-            throw new PAException("Must pass in a name when calling search().");
+        if (searchCriteria.getName() == null && searchCriteria.getNtTermIdentifier() == null) {
+            throw new PAException("Must pass in a name or NCI term identifier when calling search().");
         }
 
         boolean includeSynonyms =
             BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()));
         boolean exactMatch = BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()));
         String name = StConverter.convertToString(searchCriteria.getName());
-
+        String ntTermIdentifier = StConverter.convertToString(searchCriteria.getNtTermIdentifier());
         Intervention criteria = new Intervention();
         if (includeSynonyms) {
             criteria.setInterventionAlternateNames(new ArrayList<InterventionAlternateName>());
@@ -149,11 +150,13 @@ public class InterventionBeanLocal extends AbstractBaseIsoService<InterventionDT
             alt.setStatusCode(ActiveInactiveCode.ACTIVE);
             criteria.getInterventionAlternateNames().add(alt);
         }
-
-        if (StringUtils.isNotEmpty(name)) {
-            criteria.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        
+        if (StringUtils.isNotEmpty(ntTermIdentifier)) {
+            criteria.setNtTermIdentifier(ntTermIdentifier);
         }
-
+        
+        criteria.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        
         if (exactMatch) {
             name = stringToSearch(name);
         } else {
@@ -161,15 +164,19 @@ public class InterventionBeanLocal extends AbstractBaseIsoService<InterventionDT
         }
 
         PageSortParams<Intervention> params = new PageSortParams<Intervention>(PAConstants.MAX_SEARCH_RESULTS, 0,
-                InterventionSortCriterion.INTERVENTION_NAME, false);
-        InterventionBeanSearchCriteria<Intervention> crit =
-            new InterventionBeanSearchCriteria<Intervention>(criteria, includeSynonyms, exactMatch, name);
+               InterventionSortCriterion.INTERVENTION_NAME, false);
+        InterventionBeanSearchCriteria<Intervention> crit;
+        if (name != null && name.length() != 0) {
+            crit = new InterventionBeanSearchCriteria<Intervention>(criteria, includeSynonyms, exactMatch, name);
+        } else {
+            crit = new InterventionBeanSearchCriteria<Intervention>(criteria, ntTermIdentifier);
+        }
         List<Intervention> results = search(crit, params);
 
         if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Too many interventions found.  Please narrow search.");
         }
-        return convertFromDomainToDTOs(results);
+        return convertFromDomainToDTOs(results); 
     }
 
     /**

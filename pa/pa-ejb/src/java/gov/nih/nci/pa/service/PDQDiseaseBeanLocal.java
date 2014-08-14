@@ -123,6 +123,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQDisease, PDQDiseaseConverter>
     implements PDQDiseaseServiceLocal {
 
@@ -138,7 +139,8 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
                 BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()));
         boolean exactMatch = BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()));
         String preferredName = StConverter.convertToString(searchCriteria.getPreferredName());
-
+        String ntTermIdentifier = StConverter.convertToString(searchCriteria.getNtTermIdentifier());
+        
         PDQDisease criteria = new PDQDisease();
         if (includeSynonyms) {
             criteria.setDiseaseAlternames(new ArrayList<PDQDiseaseAltername>());
@@ -147,21 +149,29 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
             criteria.getDiseaseAlternames().add(alt);
         }
 
-        if (StringUtils.isNotEmpty(preferredName)) {
-            criteria.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        
+        criteria.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        if (StringUtils.isNotEmpty(ntTermIdentifier)) {
+            criteria.setNtTermIdentifier(ntTermIdentifier);
         }
-
-        if (exactMatch) {
-            preferredName = stringToSearch(preferredName);
-        } else {
-            preferredName = PAUtil.wildcardCriteria(preferredName);
+        
+        if (StringUtils.isNotEmpty(preferredName)) {
+            if (exactMatch) {
+                preferredName = stringToSearch(preferredName);
+            } else {
+                preferredName = PAUtil.wildcardCriteria(preferredName);
+            }
         }
 
         PageSortParams<PDQDisease> params =
                 new PageSortParams<PDQDisease>(PAConstants.MAX_SEARCH_RESULTS, 0,
-                        PDQDiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
-        PDQDiseaseBeanSearchCriteria<PDQDisease> crit =
-                new PDQDiseaseBeanSearchCriteria<PDQDisease>(criteria, includeSynonyms, exactMatch, preferredName);
+                       PDQDiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
+        PDQDiseaseBeanSearchCriteria<PDQDisease> crit;
+        if (StringUtils.isNotEmpty(preferredName)) {
+            crit = new PDQDiseaseBeanSearchCriteria<PDQDisease>(criteria, includeSynonyms, exactMatch, preferredName);
+        } else {
+            crit = new PDQDiseaseBeanSearchCriteria<PDQDisease>(criteria, ntTermIdentifier);
+        }
         List<PDQDisease> results = search(crit, params);
         if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Too many diseases found.  Please narrow search.");
@@ -174,8 +184,8 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         if (searchCriteria == null) {
             throw new PAException("Must pass in search criteria when calling search().");
         }
-        if (searchCriteria.getPreferredName() == null) {
-            throw new PAException("Must pass in a name when calling search().");
+        if (searchCriteria.getPreferredName() == null && searchCriteria.getNtTermIdentifier() == null) {
+            throw new PAException("Must pass in a name or NCIt Identifier when calling search().");
         }
     }
 
@@ -256,7 +266,7 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         node.setHasChildren(hasChildren);
         // Set alternate names
         List<PDQDiseaseAltername> alts = disease.getDiseaseAlternames();
-        if (alts != null &&  alts.size() > 0) {
+        if (alts != null &&  !alts.isEmpty()) {
             String[] altNames = new String [alts.size()];
             for (int i = 0; i < alts.size(); i++) {
                 altNames[i] = alts.get(i).getAlternateName().toLowerCase();

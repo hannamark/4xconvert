@@ -119,7 +119,8 @@
 		                        <s:if test="%{diseaseList != null && !diseaseList.isEmpty()}">
 		                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected disease(s) from the study. Cancel to abort.', 'diseasedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected disease(s) from the study. Cancel to abort.', 'diseasedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
 		                            <li><pa:toggleDeleteBtn/></li>
-		                        </s:if>                                
+		                        </s:if>                           
+		                        <li><s:a href="manageTerms.action" cssClass="btn"><span class="btn_img"><span class=edit>Manage NCIt Terms</span></span></s:a></li>     
                             </pa:scientificAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>

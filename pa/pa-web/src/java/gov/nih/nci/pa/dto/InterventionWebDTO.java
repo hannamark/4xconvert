@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -96,7 +98,9 @@ public class InterventionWebDTO implements Serializable {
     private String type;
     private Boolean armAssignment;
     private String ctGovType;
-
+    private String ntTermIdentifier;
+    private List<String> alterNames = new ArrayList<String>();
+    
     //DRUG & RADIATION Attributes
 
     private String minDoseValue;
@@ -435,5 +439,29 @@ public class InterventionWebDTO implements Serializable {
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
     }
+    /**
+     * @return the ntTermIdentifier
+     */
+     public String getNtTermIdentifier() {
+       return ntTermIdentifier;
+     }
+    /**
+     * @param ntTermIdentifier the ntTermIdentifier to set
+     */
+     public void setNtTermIdentifier(String ntTermIdentifier) {
+       this.ntTermIdentifier = ntTermIdentifier;
+     }
 
+     /**
+      * @return the alterNames
+      */
+      public List<String> getAlterNames() {
+        return alterNames;
+      }
+     /**
+      * @param alterNames the alterNames to set
+      */
+      public void setAlterNames(List<String> alterNames) {
+        this.alterNames = alterNames;
+      }
 }

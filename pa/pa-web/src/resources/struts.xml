@@ -730,6 +730,18 @@
             <result name="error">/WEB-INF/jsp/outOfScopeAccruals.jsp</result>
             <result name="success">/WEB-INF/jsp/outOfScopeAccruals.jsp</result>            
         </action> 
+        <action name="manageTerms*" class="gov.nih.nci.pa.action.ManageTermsAction" method="{1}">
+            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />   
+            <result name="success">/WEB-INF/jsp/manageTerms.jsp</result> 
+                       
+            <result name="intervention">/WEB-INF/jsp/createImportIntrv.jsp</result>
+            <result name="searchIntervention">/WEB-INF/jsp/searchIntervention.jsp</result>
+            <result name="syncIntervention">/WEB-INF/jsp/syncIntervention.jsp</result>
+            
+            <result name="disease">/WEB-INF/jsp/createImportDisease.jsp</result>
+            <result name="searchDisease">/WEB-INF/jsp/searchDisease.jsp</result>
+            <result name="syncDisease">/WEB-INF/jsp/syncDisease.jsp</result>
+        </action>
     </package>
     
     <package name="bare" namespace="/bare" extends="protected"/> 

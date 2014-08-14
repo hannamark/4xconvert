@@ -79,11 +79,12 @@
 package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
-
-
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Web DTO class for displaying list of diseases associated with SP.
+ * 
  * @author Hugh Reinhart
  * @since 12/02/2008 copyright NCI 2008. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
@@ -102,6 +103,11 @@ public class DiseaseWebDTO implements Serializable {
     private String ctGovXmlIndicator;
     private boolean selected;
 
+    private String ntTermIdentifier;
+    private List<String> alterNameList = new ArrayList<String>();
+    private List<String> parentTermList = new ArrayList<String>();
+    private List<String> childTermList = new ArrayList<String>();
+
     /**
      * @return the studyDiseaseIdentifier
      */
@@ -110,7 +116,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param studyDiseaseIdentifier the studyDiseaseIdentifier to set
+     * @param studyDiseaseIdentifier
+     *            the studyDiseaseIdentifier to set
      */
     public void setStudyDiseaseIdentifier(String studyDiseaseIdentifier) {
         this.studyDiseaseIdentifier = studyDiseaseIdentifier;
@@ -124,7 +131,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param diseaseIdentifier the diseaseIdentifier to set
+     * @param diseaseIdentifier
+     *            the diseaseIdentifier to set
      */
     public void setDiseaseIdentifier(String diseaseIdentifier) {
         this.diseaseIdentifier = diseaseIdentifier;
@@ -138,7 +146,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param preferredName the preferredName to set
+     * @param preferredName
+     *            the preferredName to set
      */
     public void setPreferredName(String preferredName) {
         this.preferredName = preferredName;
@@ -152,7 +161,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param code the code to set
+     * @param code
+     *            the code to set
      */
     public void setCode(String code) {
         this.code = code;
@@ -166,7 +176,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param conceptId the conceptId to set
+     * @param conceptId
+     *            the conceptId to set
      */
     public void setConceptId(String conceptId) {
         this.conceptId = conceptId;
@@ -180,7 +191,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param menuDisplayName the menuDisplayName to set
+     * @param menuDisplayName
+     *            the menuDisplayName to set
      */
     public void setMenuDisplayName(String menuDisplayName) {
         this.menuDisplayName = menuDisplayName;
@@ -194,7 +206,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param parentPreferredName the parentPreferredName to set
+     * @param parentPreferredName
+     *            the parentPreferredName to set
      */
     public void setParentPreferredName(String parentPreferredName) {
         this.parentPreferredName = parentPreferredName;
@@ -208,7 +221,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param alternames the alternames to set
+     * @param alternames
+     *            the alternames to set
      */
     public void setAlternames(String alternames) {
         this.alternames = alternames;
@@ -222,7 +236,8 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param ctGovXmlIndicator the ctGovXmlIndicator to set
+     * @param ctGovXmlIndicator
+     *            the ctGovXmlIndicator to set
      */
     public void setCtGovXmlIndicator(String ctGovXmlIndicator) {
         this.ctGovXmlIndicator = ctGovXmlIndicator;
@@ -236,10 +251,69 @@ public class DiseaseWebDTO implements Serializable {
     }
 
     /**
-     * @param selected the selected to set
+     * @param selected
+     *            the selected to set
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
 
+    /**
+     * @return altername list
+     */
+    public List<String> getAlterNameList() {
+        return alterNameList;
+    }
+
+    /**
+     * @param alterNameList
+     *            altername list
+     */
+    public void setAlterNameList(List<String> alterNameList) {
+        this.alterNameList = alterNameList;
+    }
+
+    /**
+     * @return the parentTermList
+     */
+    public List<String> getParentTermList() {
+        return parentTermList;
+    }
+
+    /**
+     * @param parentTermList the parentTermList to set
+     */
+    public void setParentTermList(List<String> parentTermList) {
+        this.parentTermList = parentTermList;
+    }
+
+    /**
+     * @return the childTermList
+     */
+    public List<String> getChildTermList() {
+        return childTermList;
+    }
+
+    /**
+     * @param childTermList the childTermList to set
+     */
+    public void setChildTermList(List<String> childTermList) {
+        this.childTermList = childTermList;
+    }
+
+    /**
+     * @return the ntTermIdentifier
+     */
+    public String getNtTermIdentifier() {
+        return ntTermIdentifier;
+    }
+
+    /**
+     * @param ntTermIdentifier the ntTermIdentifier to set
+     */
+    public void setNtTermIdentifier(String ntTermIdentifier) {
+        this.ntTermIdentifier = ntTermIdentifier;
+    }
+
+    
 }
