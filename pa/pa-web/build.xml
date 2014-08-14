@@ -280,7 +280,7 @@
 
     <target name="test-checkstyle">
         <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
-        <checkstyle config="${pa.checkstyle.url}" failOnViolation="true">
+        <checkstyle config="${pa.checkstyle.url}" failOnViolation="false">
             <classpath>
                 <path refid="ejb.package.classpath"/>
                 <path refid="compile.classpath"/>

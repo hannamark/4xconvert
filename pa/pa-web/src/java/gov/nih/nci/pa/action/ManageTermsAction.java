@@ -589,7 +589,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                         for (Iterator<PDQDiseaseParentDTO> iterator = children.iterator(); iterator.hasNext();) {
                             PDQDiseaseDTO child = diseaseService.get(iterator.next().getDiseaseIdentifier());
                             currentDisease.getChildTermList().add(
-                                    child.getNtTermIdentifier().getValue() + ": " + child.getPreferredName().getValue());
+                                    child.getNtTermIdentifier().getValue() + ": " 
+                                            + child.getPreferredName().getValue());
                         }
 
                     }
@@ -632,7 +633,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      * from NCIt
      * 
      * @return view
-     * @throws PAException PAException
      */
     public String syncDisease() {
         DiseaseWebDTO newDisease = (DiseaseWebDTO) ServletActionContext.getRequest().getSession()
@@ -831,7 +831,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      * @throws LEXEVSLookupException
      * @throws PAException
      */
-    private PDQDiseaseDTO retrieveAndSaveMissingTerm(String ncitCode) throws LEXEVSLookupException, PAException{
+    private PDQDiseaseDTO retrieveAndSaveMissingTerm(String ncitCode) throws LEXEVSLookupException, PAException {
         DiseaseWebDTO disc = new NCItTermsLookup().lookupDisease(ncitCode);
         PDQDiseaseDTO diseaseDto = new PDQDiseaseDTO();
         diseaseDto.setDiseaseCode(StConverter.convertToSt(""));
