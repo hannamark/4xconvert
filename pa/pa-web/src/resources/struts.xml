@@ -741,6 +741,11 @@
             <result name="disease">/WEB-INF/jsp/createImportDisease.jsp</result>
             <result name="searchDisease">/WEB-INF/jsp/searchDisease.jsp</result>
             <result name="syncDisease">/WEB-INF/jsp/syncDisease.jsp</result>
+            
+            <result name="ajaxResponse" type="stream">
+                <param name="inputName">ajaxResponseStream</param>
+            </result>
+            
         </action>
     </package>
     

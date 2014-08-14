@@ -21,6 +21,7 @@
 	</h1>
 	<pa:sucessMessage />
 	<pa:failureMessage />
+
 	<div class="actionsrow">
 		<del class="btnwrapper">
 			<h4>Intervention</h4>
@@ -32,10 +33,6 @@
 				<li><a href="manageTermssearchIntervention.action?searchStart=true" class="btn">
 						<span class="btn_img"><span class="copy"><fmt:message
 									key="manageTerms.button.import" /></span></span>
-				</a></li>
-				<li><a href="manageTermssearchIntervention.action?searchStart=true" class="btn">
-						<span class="btn_img"><span class="copy"><fmt:message
-									key="manageTerms.button.sync" /></span></span>
 				</a></li>
 				<li><a href="http://ncitermform.nci.nih.gov/ncitermform/"
 					class="btn" target="_blank"> <span class="btn_img"><span
@@ -55,10 +52,6 @@
 							class="copy"><fmt:message
 									key="manageTerms.button.import" /></span></span>
 				</a></li>
-				<li><a href="manageTermssearchDisease.action?searchStart=true" class="btn">
-						<span class="btn_img"><span class="copy"><fmt:message
-									key="manageTerms.button.sync" /></span></span>
-				</a></li>
 				<li><a href="http://ncitermform.nci.nih.gov/ncitermform/"
 					class="btn" target="_blank"> <span class="btn_img"><span
 							class="upload"><fmt:message
@@ -66,6 +59,6 @@
 				</a></li>
 			</ul>
 		</del>
-	</div>
+	</div> 
 </body>
 </html>

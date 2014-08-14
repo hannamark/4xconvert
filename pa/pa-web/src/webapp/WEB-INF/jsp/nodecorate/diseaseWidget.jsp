@@ -64,7 +64,7 @@ function addDisease(diseaseid) {
     var domelts = jQuery('#pdqDiseases option');
     // next translate that into an array of just the values
     var values = jQuery.map(domelts, function(elt, i) { return jQuery(elt).val();});
-    
+    jQuery("#returnVal").val(values);
     var url = '<%=request.getContextPath()%>/protected/popupDisaddDiseases.action?selectedDiseaseIds='+values;
     jQuery.get(url, function(data) {
         window.top.hidePopWin(true);
@@ -79,6 +79,7 @@ function addDisease(diseaseid) {
     </h2>
     
      <div id="diseasesSection">
+         <input type="hidden" id="returnVal" name="returnVal" />
          <fmt:message key="diseases.widget.tableTitle" var="tableTitle" />
          <fmt:message key="diseases.widget.tableSummary" var="tableSummary" />
          
@@ -154,11 +155,9 @@ function addDisease(diseaseid) {
      <div class="actionsrow">
          <del class="btnwrapper">
              <ul class="btnrow">
-                 <pa:scientificAbstractorDisplayWhenCheckedOut>
-                      <a href="javascript:void(0)" class="btn" onclick="addDisease()">
-                          <span class="btn_img"><span class="add">Add</span></span>
-                      </a>                                
-                 </pa:scientificAbstractorDisplayWhenCheckedOut>
+                  <a href="javascript:void(0)" class="btn" onclick="addDisease()">
+                      <span class="btn_img"><span class="add">Add</span></span>
+                  </a>                                
              </ul>
          </del>
      </div>        

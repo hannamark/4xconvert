@@ -9,6 +9,7 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
@@ -23,6 +24,8 @@ import gov.nih.nci.pa.util.NCItTermsLookup;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +44,7 @@ import com.opensymphony.xwork2.Preparable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings ({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
 public class ManageTermsAction extends ActionSupport implements Preparable {
 
     private static final String ALTNAME_TYPECODE_SYNONYM = "Synonym";
@@ -54,9 +57,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private static final String SEARCH_INTERVENTION = "searchIntervention";
     private static final String SYNC_INTERVENTION = "syncIntervention";
 
-    private static final String DISEASE = "disease"; //NOPMD
+    private static final String DISEASE = "disease"; // NOPMD
     private static final String SEARCH_DISEASE = "searchDisease";
     private static final String SYNC_DISEASE = "syncDisease";
+    
+    private static final String  AJAX_RESPONSE = "ajaxResponse";
 
     private InterventionServiceLocal interventionService;
     private InterventionAlternateNameServiceLocal interventionAltNameService;
@@ -70,6 +75,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private DiseaseWebDTO currentDisease = new DiseaseWebDTO();
 
     private boolean importTerm = false;
+    
+    private InputStream ajaxResponseStream;
 
     /**
      * {@inheritDoc}
@@ -88,6 +95,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Deafult action
+     * 
      * @return res
      * @throws PAException
      *             exception
@@ -98,16 +106,18 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * Create intervention 
+     * Create intervention
+     * 
      * @return view
      */
     public String createIntervention() {
         importTerm = false;
         return INTERVENTION;
     }
-    
+
     /**
-     * Import intervention 
+     * Import intervention
+     * 
      * @return view
      */
     public String importIntervention() {
@@ -116,7 +126,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * Create Disease 
+     * Create Disease
+     * 
      * @return view
      */
     public String createDisease() {
@@ -125,7 +136,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * Import Disease 
+     * Import Disease
+     * 
      * @return view
      */
     public String importDisease() {
@@ -223,10 +235,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     if (altNames != null && !altNames.isEmpty()) {
                         for (Iterator<InterventionAlternateNameDTO> iterator = altNames.iterator();
                                 iterator.hasNext();) {
-                            InterventionAlternateNameDTO interventionAlternateNameDTO =  iterator
-                                    .next();
-                            if (ALTNAME_TYPECODE_SYNONYM.equals(interventionAlternateNameDTO
-                                    .getNameTypeCode().getValue())) {
+                            InterventionAlternateNameDTO interventionAlternateNameDTO = iterator.next();
+                            if (ALTNAME_TYPECODE_SYNONYM.equals(interventionAlternateNameDTO.getNameTypeCode()
+                                    .getValue())) {
                                 currentintervention.getAlterNames().add(
                                         interventionAlternateNameDTO.getName().getValue());
                             }
@@ -234,14 +245,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                         }
                     }
                     ServletActionContext.getRequest().getSession().setAttribute("intervention", intervention);
-                    ServletActionContext
-                            .getRequest()
-                            .setAttribute(
-                                    Constants.FAILURE_MESSAGE,
-                                    "Intervention with NCIt code '"
-                                            + ncitCode
-                                            + "' already present in CTRP, compare the values below and click "
-                                            + "'Sync Term' to update the CTRP term with values from NCIt");
+                    ServletActionContext.getRequest().setAttribute(
+                            Constants.FAILURE_MESSAGE,
+                            "Intervention with NCIt code '" + ncitCode
+                                    + "' already present in CTRP, compare the values below and click "
+                                    + "'Sync Term' to update the CTRP term with values from NCIt");
                     return SYNC_INTERVENTION;
                 }
             } else {
@@ -270,7 +278,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      * from NCIt
      * 
      * @return view
-     * @throws PAException PAException
+     * @throws PAException
+     *             PAException
      */
     public String syncIntervention() throws PAException {
         InterventionWebDTO newIntervention = (InterventionWebDTO) ServletActionContext.getRequest().getSession()
@@ -367,7 +376,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         return valid;
     }
 
-
     /**
      * @return the intervention
      */
@@ -376,7 +384,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @param intervention the intervention to set
+     * @param intervention
+     *            the intervention to set
      */
     public void setIntervention(InterventionWebDTO intervention) {
         this.intervention = intervention;
@@ -390,7 +399,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @param currentintervention the currentintervention to set
+     * @param currentintervention
+     *            the currentintervention to set
      */
     public void setCurrentintervention(InterventionWebDTO currentintervention) {
         this.currentintervention = currentintervention;
@@ -404,12 +414,12 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @param importTerm the importTerm to set
+     * @param importTerm
+     *            the importTerm to set
      */
     public void setImportTerm(boolean importTerm) {
         this.importTerm = importTerm;
     }
-    
 
     // Disease actions and methods
 
@@ -439,7 +449,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     if (parent == null) {
                         missingTerms.add(parentCode);
                         parent = retrieveAndSaveMissingTerm(parentCode);
-                    } 
+                    }
                     PDQDiseaseParentDTO p = new PDQDiseaseParentDTO();
                     p.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
                     p.setParentDiseaseIdentifier(parent.getIdentifier());
@@ -455,7 +465,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     if (child == null) {
                         missingTerms.add(childCode);
                         child = retrieveAndSaveMissingTerm(childCode);
-                    } 
+                    }
                     PDQDiseaseParentDTO c = new PDQDiseaseParentDTO();
                     c.setDiseaseIdentifier(child.getIdentifier());
                     c.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
@@ -502,16 +512,12 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
                 if (!missingTerms.isEmpty()) {
                     String errorMsg = createTermsMissingErrorMessage(missingTerms);
-                    ServletActionContext
-                            .getRequest()
-                            .setAttribute(
-                                    Constants.SUCCESS_MESSAGE,
-                                    "New Disease "
-                                            + disease.getNtTermIdentifier()
-                                            + " added successfully. Some parent/child terms were also created in CTRP"
-                                            + " as they were not present in CTRP already. "
-                                            + " Here are the list of term that were created additionally: "
-                                            + errorMsg);
+                    ServletActionContext.getRequest().setAttribute(
+                            Constants.SUCCESS_MESSAGE,
+                            "New Disease " + disease.getNtTermIdentifier()
+                                    + " added successfully. Some parent/child terms were also created in CTRP"
+                                    + " as they were not present in CTRP already. "
+                                    + " Here are the list of term that were created additionally: " + errorMsg);
                 } else {
                     ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                             "New Disease " + disease.getNtTermIdentifier() + " added successfully");
@@ -521,7 +527,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                         "Disease with NCIt code " + disease.getNtTermIdentifier() + " already exists!");
                 return DISEASE;
             }
-        } catch (PAException  e) {
+        } catch (PAException e) {
             LOG.error("Error saving disease", e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             return DISEASE;
@@ -570,41 +576,16 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
                         }
                     }
-                    // Get parent & children terms
-                    List<PDQDiseaseParentDTO> parents = diseaseParentService.getByChildDisease(existingDiseaseDto
-                            .getIdentifier());
-                    if (parents != null && !parents.isEmpty()) {
-                        for (Iterator<PDQDiseaseParentDTO> iterator = parents.iterator(); iterator.hasNext();) {
-                            PDQDiseaseDTO parent = diseaseService.get(iterator.next().getParentDiseaseIdentifier());
-                            currentDisease.getParentTermList().add(
-                                    parent.getNtTermIdentifier().getValue() + ": "
-                                            + parent.getPreferredName().getValue());
-                        }
 
-                    }
-
-                    List<PDQDiseaseParentDTO> children = diseaseParentService.getByParentDisease(existingDiseaseDto
-                            .getIdentifier());
-                    if (parents != null && !children.isEmpty()) {
-                        for (Iterator<PDQDiseaseParentDTO> iterator = children.iterator(); iterator.hasNext();) {
-                            PDQDiseaseDTO child = diseaseService.get(iterator.next().getDiseaseIdentifier());
-                            currentDisease.getChildTermList().add(
-                                    child.getNtTermIdentifier().getValue() + ": " 
-                                            + child.getPreferredName().getValue());
-                        }
-
-                    }
+                    getExistingParentsAndChildrenForDisease(existingDiseaseDto, currentDisease);
 
                     ServletActionContext.getRequest().getSession().setAttribute("disease", disease);
                     ServletActionContext.getRequest().getSession().setAttribute("currentDisease", currentDisease);
-                    ServletActionContext
-                            .getRequest()
-                            .setAttribute(
-                                    Constants.FAILURE_MESSAGE,
-                                    "Disease with NCIt code '"
-                                            + ncitCode
-                                            + "' already present in CTRP, compare the values below and click"
-                                            + " 'Sync Term' to update the CTRP term with values from NCIt");
+                    ServletActionContext.getRequest().setAttribute(
+                            Constants.FAILURE_MESSAGE,
+                            "Disease with NCIt code '" + ncitCode
+                                    + "' already present in CTRP, compare the values below and click"
+                                    + " 'Sync Term' to update the CTRP term with values from NCIt");
                     return SYNC_DISEASE;
                 }
             } else {
@@ -631,7 +612,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     /**
      * Synchronize an existing CTRP intervention with intervention retrieved
      * from NCIt
-     * 
      * @return view
      */
     public String syncDisease() {
@@ -648,47 +628,66 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         PDQDiseaseDTO currDisease = getExistingDisease(disease.getNtTermIdentifier());
         if (currDisease != null) {
 
+            //Get existing parent and children terms 
+            
             List<String> missingTerms = new ArrayList<String>();
             List<PDQDiseaseParentDTO> parentDtos = new ArrayList<PDQDiseaseParentDTO>();
             List<PDQDiseaseParentDTO> childDtos = new ArrayList<PDQDiseaseParentDTO>();
 
+            List<String> existingParentCodes = new ArrayList<String>();
+            for (Iterator<String> iterator = currentDisease.getParentTermList().iterator(); iterator.hasNext();) {
+                existingParentCodes.add(iterator.next().split(":")[0]);
+            }
+            
+           
+            
             // Check if all the new parent and children terms exists in CTRP
             for (Iterator<String> iterator = disease.getParentTermList().iterator(); iterator.hasNext();) {
                 String parentTerm = iterator.next();
                 String parentCode = parentTerm.split(":")[0];
-                PDQDiseaseDTO parent = getExistingDisease(parentCode);
-
-                // If term does not exists retrieve it
-                if (parent == null) {
-                    missingTerms.add(parentCode);
-                    parent = retrieveAndSaveMissingTerm(parentCode);
-                } 
-                
-                PDQDiseaseParentDTO p = new PDQDiseaseParentDTO();
-                p.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
-                p.setParentDiseaseIdentifier(parent.getIdentifier());
-                p.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                p.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
-                parentDtos.add(p);
+                if (!existingParentCodes.contains(parentCode)) {                   
+                    PDQDiseaseDTO parent = getExistingDisease(parentCode);
+    
+                    // If term does not exists retrieve it
+                    if (parent == null) {
+                        missingTerms.add(parentCode);
+                        parent = retrieveAndSaveMissingTerm(parentCode);
+                    } 
+                    
+                    PDQDiseaseParentDTO p = new PDQDiseaseParentDTO();
+                    p.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
+                    p.setParentDiseaseIdentifier(parent.getIdentifier());
+                    p.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                    p.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
+                    parentDtos.add(p);
+                }
             }
 
+
+            List<String> existingChildCodes = new ArrayList<String>();
+            for (Iterator<String> iterator = currentDisease.getChildTermList().iterator(); iterator.hasNext();) {
+                existingChildCodes.add(iterator.next().split(":")[0]);
+            }
             for (Iterator<String> iterator = disease.getChildTermList().iterator(); iterator.hasNext();) {
                 String childTerm = iterator.next();
                 String childCode = childTerm.split(":")[0];
-                PDQDiseaseDTO child = getExistingDisease(childCode);
+                if (!existingChildCodes.contains(childCode)) {
+                    
+                    PDQDiseaseDTO child = getExistingDisease(childCode);
+                    
+                    // If term does not exists retrieve it
+                    if (child == null) {
+                        missingTerms.add(childCode);
+                        child = retrieveAndSaveMissingTerm(childCode);
+                    } 
                 
-                // If term does not exists retrieve it
-                if (child == null) {
-                    missingTerms.add(childCode);
-                    child = retrieveAndSaveMissingTerm(childCode);
-                } 
-            
-                PDQDiseaseParentDTO c = new PDQDiseaseParentDTO();
-                c.setDiseaseIdentifier(child.getIdentifier());
-                c.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
-                c.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                c.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
-                childDtos.add(c);
+                    PDQDiseaseParentDTO c = new PDQDiseaseParentDTO();
+                    c.setDiseaseIdentifier(child.getIdentifier());
+                    c.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
+                    c.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                    c.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
+                    childDtos.add(c);
+                }
             }
 
             currDisease.setPreferredName(StConverter.convertToSt(disease.getPreferredName()));
@@ -762,6 +761,40 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
+     * Get the list of existing parents and children
+     * 
+     * @param existingDiseaseDto
+     * @throws PAException
+     */
+    private void getExistingParentsAndChildrenForDisease(PDQDiseaseDTO existingDiseaseDto, DiseaseWebDTO disc)
+            throws PAException {
+        // Get parent & children terms
+        List<PDQDiseaseParentDTO> parents = diseaseParentService.getByChildDisease(existingDiseaseDto.getIdentifier());
+        if (parents != null && !parents.isEmpty()) {
+            disc.getParentTermList().clear();
+            for (Iterator<PDQDiseaseParentDTO> iterator = parents.iterator(); iterator.hasNext();) {
+                PDQDiseaseDTO parent = diseaseService.get(iterator.next().getParentDiseaseIdentifier());
+                disc.getParentTermList().add(
+                        parent.getNtTermIdentifier().getValue() + ": " + parent.getPreferredName().getValue());
+            }
+
+        }
+
+        List<PDQDiseaseParentDTO> children = diseaseParentService
+                .getByParentDisease(existingDiseaseDto.getIdentifier());
+        if (parents != null && !children.isEmpty()) {
+            disc.getChildTermList().clear();
+            for (Iterator<PDQDiseaseParentDTO> iterator = children.iterator(); iterator.hasNext();) {
+                PDQDiseaseDTO child = diseaseService.get(iterator.next().getDiseaseIdentifier());
+                disc.getChildTermList().add(
+                        child.getNtTermIdentifier().getValue() + ": " + child.getPreferredName().getValue());
+            }
+
+        }
+
+    }
+
+    /**
      * Validate data entered in the disease form
      */
     private boolean validateDisease() {
@@ -825,11 +858,13 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * Retrieve and save a term into CTRP. This terms relationships wont be saved.
+     * Retrieve and save a term into CTRP. This terms relationships wont be
+     * saved.
+     * 
      * @param ncitCode
      * @return created disease term reference
-     * @throws LEXEVSLookupException
      * @throws PAException
+     * @throws LEXEVSLookupException
      */
     private PDQDiseaseDTO retrieveAndSaveMissingTerm(String ncitCode) throws LEXEVSLookupException, PAException {
         DiseaseWebDTO disc = new NCItTermsLookup().lookupDisease(ncitCode);
@@ -847,15 +882,14 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 PDQDiseaseAlternameDTO altDto = new PDQDiseaseAlternameDTO();
                 altDto.setAlternateName(StConverter.convertToSt(altName));
                 altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil
-                        .today())));
+                altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
                 altDto.setDiseaseIdentifier(diseaseDto.getIdentifier());
                 diseaseAltNameService.create(altDto);
             }
         }
         return diseaseDto;
     }
-    
+
     /**
      * @return the disease
      */
@@ -864,7 +898,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @param disease the disease to set
+     * @param disease
+     *            the disease to set
      */
     public void setDisease(DiseaseWebDTO disease) {
         this.disease = disease;
@@ -878,11 +913,54 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @param currentDisease the currentDisease to set
+     * @param currentDisease
+     *            the currentDisease to set
      */
     public void setCurrentDisease(DiseaseWebDTO currentDisease) {
         this.currentDisease = currentDisease;
     }
 
- 
+    
+    //Ajax actions
+
+    /**
+     * Get disease details ajax action
+     * @return view 
+     * @throws PAException PAException
+     */
+    public String ajaxGetDiseases() throws PAException {
+        String ids = ServletActionContext.getRequest().getParameter("diseaseIds");
+        StringBuilder result = new StringBuilder();
+        if (ids != null && ids.length() != 0) {
+            String[] diseaseIds = ids.split(",");
+            for (int i = 0; i < diseaseIds.length; i++) {
+                PDQDiseaseDTO dis = diseaseService.get(IiConverter.convertToIi(Long.parseLong(diseaseIds[i])));
+                if (dis != null) {
+                    result.append(dis.getNtTermIdentifier().getValue() + ": " + dis.getPreferredName().getValue());
+                    if (i != diseaseIds.length) {
+                       result.append('\n'); 
+                    }
+                }
+            }
+        }
+        ajaxResponseStream = new ByteArrayInputStream(result.toString().getBytes());
+        return AJAX_RESPONSE;
+    }
+
+    /**
+     * @return the ajaxResponseStream
+     */
+    public InputStream getAjaxResponseStream() {
+        return ajaxResponseStream;
+    }
+
+    /**
+     * @param ajaxResponseStream the ajaxResponseStream to set
+     */
+    public void setAjaxResponseStream(InputStream ajaxResponseStream) {
+        this.ajaxResponseStream = ajaxResponseStream;
+    }
+
+
+    
 }

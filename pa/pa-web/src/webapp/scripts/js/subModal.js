@@ -220,7 +220,7 @@ function hidePopWin(callReturnFunc) {
     if (callReturnFunc == true && gReturnFunc != null) {
         // Set the return code to run in a timeout.
         // Was having issues using with an Ajax.Request();
-        gReturnVal = window.frames["popupFrame"].returnVal;
+        gReturnVal = window.frames["popupFrame"].returnVal.value;
         window.setTimeout('gReturnFunc(gReturnVal);', 1);
     }
     gPopFrame.src = gDefaultPage;

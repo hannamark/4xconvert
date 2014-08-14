@@ -2,7 +2,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html>
 <head>
-<c:url value="/protected/popupDisdisplayDiseaseWidget.action" var="lookupUrl" />
+<c:url value="/protected/popupDisdisplayDiseaseWidget.action"
+	var="lookupUrl" />
+<c:url value="/protected/manageTermsajaxGetDiseases.action?diseaseIds="
+	var="diseaseAjaxURL" />
 <script type="text/javascript">
 	function saveDisease() {
 		selectAllListItems();
@@ -15,14 +18,45 @@
 		document.forms[0].action = "manageTermssaveDisease.action";
 		document.forms[0].submit();
 	}
-	
-	 function lookupDisease() {
-         showPopWin('${lookupUrl}', 1100,500,refresh,'Diseases');
-     }
 
-	 function refresh() {
-         alert("refresh")
-     }
+	function lookupParentDisease() {
+		showPopWin('${lookupUrl}', 1100, 500, addToParentList,
+				'Lookup Parent Diseases');
+	}
+
+	function lookupChildDisease() {
+		showPopWin('${lookupUrl}', 1100, 500, addToChildList,
+				'Lookup Child Diseases');
+	}
+
+	function addToParentList(retValue) {
+		if(retValue != '') {
+			jQuery.get('${diseaseAjaxURL}' + retValue, function(value) {
+				addDiseaseToList(value, 'parentTerms')
+			});
+		}
+	}
+
+	function addToChildList(retValue) {
+		if(retValue != '') {
+			jQuery.get('${diseaseAjaxURL}' + retValue, function(value) {
+				addDiseaseToList(value, 'childTerms')
+			});
+		}
+	}
+
+	function addDiseaseToList(values, listName) {
+		values = values.split('\n');
+		for (var i = 0; i < values.length; i++) {
+			var value = values[i];
+			if (value != ''
+					&& jQuery('#' + listName + ' option[value="' + value + '"]').length == 0) {
+				var option = new Option(value, value, 'selected');
+				jQuery('#' + listName).append(option);
+			}
+		}
+	}
+
 	function selectAllListItems() {
 		jQuery('#alterNames option').prop('selected', true);
 		jQuery('#parentTerms option').prop('selected', true);
@@ -127,45 +161,48 @@
 			<tr>
 				<td scope="row" class="label"><label for="typeCode">Parent
 						Term NCIt Ids </label></td>
-				<td><s:textfield id="parentId" name="parentId" maxlength="50"
-						size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
-				<td><s:a href="javascript:void(0)" cssClass="btn"
-				onClick="addToList('parentTerms','parentId')">
-						<span class="btn_img"><span class="add">Add</span></span>
-					</s:a></td>
-			</tr>
-			<tr>
-				<td />
-				<td><s:select id="parentTerms" size="4"
+				<td><s:select id="parentTerms" size="6"
 						name="disease.parentTermList" cssStyle="width:400px"
 						list="disease.parentTermList" multiple="true"
 						readonly="%{importTerm}" /></td>
-				<td><s:a href="javascript:void(0)" cssClass="btn"
-						onclick="removeFromList('parentTerms')">
-						<span class="btn_img"><span class="delete">Remove</span></span>
-					</s:a></td>
+				<td><div style="float: left; width: 100%;">
+						<s:a href="javascript:void(0)" cssClass="btn"
+							onClick="lookupParentDisease()">
+							<span class="btn_img"><span class="add">LookUp &
+									Add</span></span>
+						</s:a>
+					</div>
+					<br/><br/>
+				<div style="float: left; width: 100%;">
+						<s:a href="javascript:void(0)" cssClass="btn"
+							onclick="removeFromList('parentTerms')">
+							<span class="btn_img"><span class="delete">Remove</span></span>
+						</s:a>
+					</div></td>
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="typeCode">Child
 						Term NCIt Ids </label></td>
-				<td><s:textfield id="childId" name="childId" maxlength="50"
-						size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
-				<td><s:a href="javascript:void(0)" cssClass="btn"
-						onclick="addToList('chlildTerms','childId')">
-						<span class="btn_img"><span class="add">Add</span></span>
-					</s:a></td>
-			</tr>
-			<tr>
-				<td />
-				<td><s:select id="chlildTerms" size="4"
+				<td><s:select id="childTerms" size="6"
 						name="disease.childTermList" cssStyle="width:400px"
 						list="disease.childTermList" multiple="true"
 						readonly="%{importTerm}" /></td>
-				<td><s:a href="javascript:void(0)" cssClass="btn"
-						onclick="removeFromList('chlildTerms')">
-						<span class="btn_img"><span class="delete">Remove</span></span>
-					</s:a></td>
+				<td><div style="float: left; width: 100%;">
+						<s:a href="javascript:void(0)" cssClass="btn"
+							onclick="lookupChildDisease()">
+							<span class="btn_img"><span class="add">LookUp &
+									Add</span></span>
+						</s:a>
+					</div>
+					<br/><br/>
+					<div style="float: left; width: 100%;">
+						<s:a href="javascript:void(0)" cssClass="btn"
+							onclick="removeFromList('childTerms')">
+							<span class="btn_img"><span class="delete">Remove</span></span>
+						</s:a>
+					</div></td>
 			</tr>
+
 		</table>
 		<div class="actionsrow">
 			<del class="btnwrapper">

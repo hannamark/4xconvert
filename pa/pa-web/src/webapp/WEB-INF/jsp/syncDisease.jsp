@@ -93,7 +93,7 @@
 					</strong>
 					</font>
 				</s:if></td>
-			<td><s:iterator value="currentDisease.parentTermList"
+			<td><s:iterator value="disease.parentTermList"
 					status="parent">
 					<s:property />
 					<s:if test="!#parent.last">
