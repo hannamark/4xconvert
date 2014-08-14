@@ -258,7 +258,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      *
      * @throws Exception
      */
-//    @Test
+    @Test
     public void testHCFImportAndUpdateWithRoleAddressChange() throws Exception {
         // feed the proper CTEP service stub into our importer
         CTEPOrganizationServiceStub service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFStub();
@@ -303,8 +303,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
                 .getHCFService());
 
         // redo import should cause an update message to go out on HCF
-        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFWithAddedAddressStub(hcfPOID, "mystreet", "mycity",
-                "mystate", "mypostal", getDefaultCountry());
+        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateHCFWithNameUpdateStub(hcfPOID);
         importer.setCtepOrgService(service);
         org = service.getOrg();
         // MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHcfService());
@@ -319,7 +318,7 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
      *
      * @throws Exception
      */
-//    @Test
+    @Test
     public void testROImportAndUpdateWithRoleAddressChange() throws Exception {
 
         // feed the proper CTEP service stub into our importer
@@ -364,9 +363,8 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         MessageProducerTest.assertNoMessageCreated(persistedRO, (ResearchOrganizationServiceBean) importer
                 .getROService());
 
-        // redo import should cause an update message to go out on HCF
-        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROWithAddedAddressStub(roPOID, "mystreet", "mycity",
-                "mystate", "mypostal", getDefaultCountry());
+        // redo import should cause an update message to go out on RO
+        service = CTEPOrgServiceStubBuilder.INSTANCE.buildCreateROWithNameUpdateStub(roPOID);
         importer.setCtepOrgService(service);
         org = service.getOrg();
         // MessageProducerTest.clearMessages((HealthCareFacilityServiceBean) importer.getHcfService());
@@ -374,8 +372,6 @@ public class CtepOrganizationImporterTest extends AbstractServiceBeanTest {
         ros = roSvc.getByPlayerIds(new Long[] { importedOrg.getId() });
         assertEquals(1, ros.size());
         MessageProducerTest.assertNoMessageCreated(importedOrg, (OrganizationServiceBean) importer.getOrgService());
-        MessageProducerTest.assertMessageCreated(persistedRO,
-                (ResearchOrganizationServiceBean) importer.getROService(), false);
     }
 
     @After

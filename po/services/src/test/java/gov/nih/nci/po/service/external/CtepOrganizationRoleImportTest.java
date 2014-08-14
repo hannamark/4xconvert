@@ -38,6 +38,8 @@ import gov.nih.nci.po.service.ResearchOrganizationServiceBean;
 import gov.nih.nci.po.service.external.stubs.CTEPOrgServiceStubBuilder;
 import gov.nih.nci.po.service.external.stubs.CTEPOrganizationServiceStub;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
@@ -99,6 +101,9 @@ public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlati
 
     private User ctepUser;
     private User nonCtepUser;
+    
+    private Session mSession;
+    private Transaction mTransaction; 
 
     @Before
     public void setup() throws CTEPEntException {
@@ -198,6 +203,8 @@ public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlati
 
         localRole = getRoleUnderTest();
 
+        mSession = PoHibernateUtil.getCurrentSession();              
+        mTransaction = mSession.beginTransaction(); 
     }
 
     private Address getAddress() {
@@ -217,22 +224,11 @@ public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlati
     protected abstract void verifyRoleChangeRequestCreated() throws EntityValidationException;
     protected abstract void verifyRoleServiceCurateNotCalled() throws EntityValidationException, JMSException;
     
-  // TODO:: remove this test -- added to have atleast one 'runnable methods'  
-  @Test
-  public void testNameUpdate() throws EntityValidationException, JMSException, CtepImportException {
 
-      //setup role
-      //localRole is CTEP generated
-      localRole.setCreatedBy(ctepUser);
-      localRole.getOtherIdentifiers().add(ctepId);
-      assertTrue(localRole.isCtepOwned());
-
-     
-  }
-
-//    @Test
+    @Test
     public void testNameUpdatePersistsToOrganization() throws EntityValidationException, JMSException, CtepImportException {
 
+        mTransaction.begin();
         //setup role
         //localRole is CTEP generated
         localRole.setCreatedBy(ctepUser);
@@ -276,7 +272,7 @@ public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlati
     protected abstract AbstractEnhancedOrganizationRoleDTO getCtepDto();
 
 
-//    @Test
+    @Test
     public void testNameUpdatePersistsToOrganizationForOverriddenRole() throws JMSException, EntityValidationException, CtepImportException {
 
 
@@ -325,10 +321,7 @@ public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlati
     }
 
 
-
-
-
-//    @Test
+    @Test
     public void testNameUpdatePersistsToOverriddenOrganization() throws EntityValidationException, JMSException, CtepImportException {
         //localRole is CTEP generated
         localRole.setCreatedBy(ctepUser);
