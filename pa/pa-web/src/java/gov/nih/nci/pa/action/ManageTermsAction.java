@@ -359,11 +359,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             valid = false;
         }
 
-        if (StringUtils.isEmpty(intervention.getIdentifier())) {
-            addFieldError("intervention.identifier", getText("manageTerms.fieldError.identifier"));
-            valid = false;
-        }
-
         if (StringUtils.isEmpty(intervention.getName())) {
             addFieldError("intervention.name", getText("manageTerms.fieldError.name"));
             valid = false;
@@ -801,11 +796,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         boolean valid = true;
         if (StringUtils.isEmpty(disease.getNtTermIdentifier())) {
             addFieldError("disease.ntTermIdentifier", getText("manageTerms.fieldError.ntTermIdentifier"));
-            valid = false;
-        }
-
-        if (StringUtils.isEmpty(disease.getCode())) {
-            addFieldError("disease.code", getText("manageTerms.fieldError.identifier"));
             valid = false;
         }
 

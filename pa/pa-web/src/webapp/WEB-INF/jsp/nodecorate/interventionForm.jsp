@@ -63,7 +63,7 @@
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="pdqTermIdentifier">CDR
-						Identifier</label><span class="required">*</span></td>
+						Identifier</label></td>
 				<td><s:textfield id="pdqTermIdentifier"
 						name="intervention.identifier" maxlength="15" size="15"
 						cssStyle="width:150px" />

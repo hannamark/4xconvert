@@ -109,7 +109,7 @@
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="code">CDR
-						Identifier</label><span class="required">*</span></td>
+						Identifier</label></td>
 				<td><s:textfield id="code" name="disease.code" maxlength="15"
 						size="15" cssStyle="width:150px" /> <span class="formErrorMsg">
 						<s:fielderror>
