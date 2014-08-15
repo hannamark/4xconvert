@@ -29,7 +29,8 @@
 				'Lookup Child Diseases');
 	}
 
-	function addToParentList(retValue) {
+	function addToParentList(ret) {
+		var retValue = ret.value;
 		if(retValue != '') {
 			jQuery.get('${diseaseAjaxURL}' + retValue, function(value) {
 				addDiseaseToList(value, 'parentTerms')
@@ -37,7 +38,8 @@
 		}
 	}
 
-	function addToChildList(retValue) {
+	function addToChildList(ret) {
+		var retValue = ret.value;
 		if(retValue != '') {
 			jQuery.get('${diseaseAjaxURL}' + retValue, function(value) {
 				addDiseaseToList(value, 'childTerms')
