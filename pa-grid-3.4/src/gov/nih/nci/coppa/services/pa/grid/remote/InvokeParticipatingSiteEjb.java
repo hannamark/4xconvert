@@ -166,4 +166,10 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+
+    @Override
+    public StudySiteDTO getParticipatingSite(Ii studyProtocolID, String orgPoId)
+            throws PAException {      
+        return null;
+    }
 }

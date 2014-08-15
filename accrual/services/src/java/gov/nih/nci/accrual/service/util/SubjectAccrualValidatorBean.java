@@ -223,7 +223,8 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
             errMsg.append(String.format(REQUIRED_MSG, "Country Code"));
         } else if (countryService.getByCode(code) == null) {
             errMsg.append(String.format(INVALID_VALUE, code, "Country Code"));
-        } else if (StringUtils.equals("US", code) && ISOUtil.isStNull(dto.getZipCode())) {
+        } else if ((StringUtils.equals("US", code) || StringUtils.equals("USA",
+                code)) && ISOUtil.isStNull(dto.getZipCode())) {
             errMsg.append("Zip Code must be specified when the subject's country is the US.\n");
         }
     }

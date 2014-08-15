@@ -19,6 +19,9 @@ public class MockPoServiceLocator implements PoServiceLocator {
     private final HealthCareFacilityCorrelationServiceRemote healthCareCorrelationSvc =
         mock(HealthCareFacilityCorrelationServiceRemote.class);
     
+    private final IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationServiceRemote = 
+            mock(IdentifiedOrganizationCorrelationServiceRemote.class);
+    
     /**
      * {@inheritDoc}
      */
@@ -52,5 +55,10 @@ public class MockPoServiceLocator implements PoServiceLocator {
      */
     public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
         return healthCareCorrelationSvc;
+    }
+
+    @Override
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {        
+        return identifiedOrganizationCorrelationServiceRemote;
     }
 }

@@ -76,6 +76,7 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
@@ -133,4 +134,9 @@ public interface ServiceLocatorPaInterface {
      * @return AccrualUtilityServiceRemote
      */
     AccrualUtilityServiceRemote getAccrualUtilityService();
+    
+    /**
+     * @return ParticipatingSiteServiceRemote
+     */
+    ParticipatingSiteServiceRemote getParticipatingSiteServiceRemote();
 }

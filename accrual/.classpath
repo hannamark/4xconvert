@@ -3,6 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
 	<classpathentry kind="src" path="services/src/java"/>
+	<classpathentry kind="src" path="webservices/target/generated-src"/>
 	<classpathentry kind="src" path="webservices/src/java"/>
 	<classpathentry kind="src" path="webservices/test-integration/java"/>
 	<classpathentry kind="src" path="webservices/test/java"/>

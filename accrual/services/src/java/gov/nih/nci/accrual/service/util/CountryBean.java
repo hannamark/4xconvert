@@ -110,6 +110,7 @@ import org.hibernate.criterion.Restrictions;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class CountryBean implements CountryService {
 
+    private static final int N_3 = 3;
     private static final List<String> COUNTRY_ALPHA_2 = Collections.synchronizedList(new ArrayList<String>());
 
 
@@ -152,7 +153,8 @@ public class CountryBean implements CountryService {
      */
     public Country getByCode(String code) throws PAException {
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(Country.class);
-        criteria.add(Restrictions.eq("alpha2", code));
+        criteria.add(Restrictions.eq(StringUtils.length(code) == N_3 ? "alpha3"
+                : "alpha2", code));
         return (Country) criteria.uniqueResult();
     }
 

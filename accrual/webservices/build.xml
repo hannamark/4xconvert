@@ -25,6 +25,7 @@
     <property name="web.build.outputDir" value="${web.build.dir}/classes"/>
     <property name="web.build.webappDir" value="${web.build.dir}/webapp"/>
     <property name="web.build.srcDir" value="${basedir}/src/java"/>
+	<property name="web.build.srcgenDir" value="${web.build.dir}/generated-src"/>
     <property name="web.build.utilDir" value="${web.build.srcDir}/gov/nih/nci/pa/util"/>
     <property name="web.build.javadoc" value="${basedir}/javadoc"/>
     <property name="web.build.resourceDir" value="${basedir}/src/resources"/>
@@ -110,12 +111,21 @@
     <!-- Compile target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="compile"  depends="determine-build-version" description="Compiles the subproject">
+	<target name="run-xjc" description="Generates JAXB classes">
+	        <taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task" classpathref="build.classpath"/>
+	        <mkdir dir="${web.build.srcgenDir}"/>
+	        <xjc destdir="${web.build.srcgenDir}" extension="true">
+	              <schema  dir="${web.build.resourceDir}" includes="ws.xsd"/>          
+	        </xjc>
+    </target>
+	
+    <target name="compile"  depends="determine-build-version, run-xjc" description="Compiles the subproject">
         <mkdir dir="${web.build.outputDir}"/>
         <javac destdir="${web.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
             <src>
                 <pathelement location="${web.build.srcDir}"/>
+            	<pathelement location="${web.build.srcgenDir}"/>
             </src>
             <classpath>
                 <path refid="compile.classpath"/>

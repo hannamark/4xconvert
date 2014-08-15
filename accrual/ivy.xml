@@ -17,6 +17,20 @@
   <dependencies>
     <dependency conf="build->master" org="ant-contrib" name="ant-contrib" rev="1.0b3"/>
     <dependency conf="build->master" org="org.apache.maven" name="maven-ant-tasks" rev="2.1.3"/>
+    <dependency conf="build->master" org="com.sun.xml.bind" name="jaxb-impl" rev="2.2.6"/>
+    <dependency conf="build->master" org="com.sun.xml.bind" name="jaxb-xjc" rev="2.2.6"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics-ant" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics-tools" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics-runtime" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-basics-annotate" rev="0.6.0"/>
+    <dependency conf="build->master" org="org.jvnet.jaxb2_commons" name="jaxb2-fluent-api" rev="3.0"/>
+    <dependency conf="build->master" org="org.codehaus.jackson" name="jackson-core-asl" rev="1.9.13"/>
+    <dependency conf="build->master" org="org.jvnet.annox" name="annox" rev="0.5.1"/>
+    <dependency conf="build->master" org="commons-logging" name="commons-logging" rev="1.1.3"/>
+    <dependency conf="build->master" org="commons-lang" name="commons-lang" rev="2.6"/>
+   
+    
 
     <dependency conf="compile->master" org="cglib" name="cglib" rev="2.2"/>
     <dependency conf="compile->master" org="commons-codec" name="commons-codec" rev="1.4"/>

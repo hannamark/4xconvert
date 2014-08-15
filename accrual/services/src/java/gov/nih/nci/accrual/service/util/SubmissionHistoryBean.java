@@ -40,6 +40,7 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -320,7 +321,7 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
         return (TrialData) element.getValue();
     }
 
-    private List<HistoricalSubmissionDto> searchBatchSubmissions(Timestamp from, Timestamp to, 
+    private List<HistoricalSubmissionDto> searchBatchSubmissions(Timestamp from, Timestamp to, // NOPMD
             Map<Long, String> trials, Map<Long, UserData> users) throws PAException {
         List<HistoricalSubmissionDto> result = new ArrayList<HistoricalSubmissionDto>();
         Session session = PaHibernateUtil.getCurrentSession();
@@ -345,8 +346,10 @@ public class SubmissionHistoryBean implements SubmissionHistoryService {
             row.setSubmissionType(bf.getSubmissionTypeCode());
             row.setRegistryUserId(bf.getUserLastCreated() == null ? null : bf.getUserLastCreated().getUserId());
             UserData userData = getRegistryUserData(users, row.getRegistryUserId());
-            row.setUsername(userData.name);
-            row.setUserAffiliatedOrgId(userData.organization);
+            row.setUsername(userData != null ? userData.name
+                    : StringUtils.EMPTY);
+            row.setUserAffiliatedOrgId(userData != null ? userData.organization
+                    : 0);
             result.add(row);
         }
         return result;

@@ -151,4 +151,13 @@ public interface ParticipatingSiteServiceRemote {
      * @throws PAException on error
      */
     List<ParticipatingSiteDTO> getParticipatingSitesByStudyProtocol(Ii studyProtocolIi) throws PAException;
+    
+    /**
+     * Returns participating site of the given PO Org on the given trial.
+     * @param studyProtocolID studyProtocolID
+     * @param orgPoId orgPoId
+     * @return StudySiteDTO or null
+     * @throws PAException PAException
+     */
+    StudySiteDTO getParticipatingSite(Ii studyProtocolID, String orgPoId)  throws PAException;
 }

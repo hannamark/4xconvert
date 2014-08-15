@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
@@ -122,6 +123,7 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
     private final StudyResourcingServiceRemote studyResourcingSvc = mock(StudyResourcingServiceRemote.class);
     private final LookUpTableServiceRemote lookUpTableSvc = mock(LookUpTableServiceRemote.class);
     private final StudySiteAccrualStatusServiceRemote accrualStatusSvc = mock(StudySiteAccrualStatusServiceRemote.class);
+    private final ParticipatingSiteServiceRemote participatingSiteServiceRemote = mock(ParticipatingSiteServiceRemote.class);
 
     private static Map<Long, StudyProtocolDTO> studyDtos;
 
@@ -213,5 +215,10 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
     @Override
     public AccrualUtilityServiceRemote getAccrualUtilityService() {       
         return mock(AccrualUtilityServiceRemote.class);
+    }
+
+    @Override
+    public ParticipatingSiteServiceRemote getParticipatingSiteServiceRemote() {       
+        return participatingSiteServiceRemote;
     }    
 }

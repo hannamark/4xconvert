@@ -367,7 +367,8 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientListDto>
         if (loadusername && ss.getUserLastCreated() != null) {
             RegistryUser regUser = PaServiceLocator.getInstance()
                     .getRegistryUserService().getUser(ss.getUserLastCreated().getLoginName());
-            patient.setUserCreated(regUser.getFirstName() + " " + regUser.getLastName());
+            patient.setUserCreated(regUser != null ? regUser.getFirstName()
+                    + " " + regUser.getLastName() : "");
         }
     }
 

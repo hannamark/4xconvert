@@ -93,4 +93,10 @@ public class PoJndiServiceLocator implements PoServiceLocator {
         }
         return svc;
     }
+
+    @Override
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
+        return lookup("IdentifiedOrganizationCorrelationServiceBean"
+                + "!gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote");
+    }
 }

@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
@@ -138,6 +139,14 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
         return lookup("StudySiteServiceBean!gov.nih.nci.pa.service.StudySiteServiceRemote");
     }
     
+
+    /**
+     * {@inheritDoc}
+     */
+    public ParticipatingSiteServiceRemote getParticipatingSiteServiceRemote() {
+        return lookup("ParticipatingSiteServiceBean!gov.nih.nci.pa.service.ParticipatingSiteServiceRemote");
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -187,4 +196,5 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
         }
         return ctx;
     }
+
 }

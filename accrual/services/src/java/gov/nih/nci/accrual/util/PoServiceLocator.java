@@ -39,4 +39,9 @@ public interface PoServiceLocator {
      * @return the health care facility correlation service
      */
     HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService();
+
+    /**
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */
+    IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService();
 }

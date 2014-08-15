@@ -81,4 +81,11 @@ public final class PoRegistry {
     public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
         return getInstance().getPoServiceLocator().getHealthCareFacilityCorrelationService();
     }
+    
+    /**
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
+        return getInstance().getPoServiceLocator().getIdentifiedOrganizationEntityService();
+    }
 }

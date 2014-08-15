@@ -3,9 +3,9 @@
  */
 package gov.nih.nci.accrual.webservices.interceptors;
 
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaRegistry;
 
 import java.lang.reflect.Method;
 
@@ -51,7 +51,7 @@ public final class RegistryAccountRequiredInterceptor implements
         try {
             String userName = UsernameHolder.getUser();
             if (StringUtils.isNotBlank(userName)) {
-                RegistryUser registryUser = PaRegistry.getRegistryUserService()
+                RegistryUser registryUser = PaServiceLocator.getInstance().getRegistryUserService()
                         .getUser(userName);
                 if (registryUser == null) {
                     return new ServerResponse(

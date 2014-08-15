@@ -173,6 +173,8 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  * Implementation of the subject accrual service.
  *
@@ -307,7 +309,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                 }
 
                 Long userId = AccrualCsmUtil.getInstance().getCSMUser(
-                        CaseSensitiveUsernameHolder.getUser()).getUserId();
+                        UsernameHolder.getUser()).getUserId();
                 Long[] ids;
                 if (ISOUtil.isIiNull(subject.getIdentifier())) {
                     ids = create(subject, participatingSite.getStudyProtocolIdentifier(), userId);
@@ -317,6 +319,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                     Long[] currentIds = {ssub.getId(), ssub.getPatient().getId()};
                     ids = update(subject, participatingSite.getStudyProtocolIdentifier(), userId, currentIds);
                 }
+                PaHibernateUtil.getCurrentSession().flush();
                 PaHibernateUtil.getCurrentSession().clear();
                 StudySubject ssub = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, ids[0]);
                 results.add(Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(ssub));
