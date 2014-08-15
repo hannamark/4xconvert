@@ -280,11 +280,12 @@
 
     <target name="test-checkstyle">
         <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
-        <checkstyle config="${pa.checkstyle.url}" failOnViolation="false">
+        <checkstyle config="${pa.checkstyle.url}" failOnViolation="true">
             <classpath>
                 <path refid="ejb.package.classpath"/>
                 <path refid="compile.classpath"/>
                 <path refid="common.package.classpath"/>
+                <pathelement path="${pa-web.build.outputDir}"/>
             </classpath>
             <fileset dir="src" includes="**/*.java" />
             <formatter type="plain"/>
