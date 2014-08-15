@@ -93,10 +93,10 @@
 				</label></td>
 				<td><s:textfield id="altName" name="altName" maxlength="200"
 						size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
-				<td><s:a href="javascript:void(0)" cssClass="btn"
+				<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
 						onclick="addSyn()">
 						<span class="btn_img"><span class="add">Add</span></span>
-					</s:a></td>
+					</s:a></s:if></td>
 			</tr>
 			<tr>
 				<td />
@@ -104,10 +104,10 @@
 						name="intervention.alterNames" cssStyle="width:400px"
 						list="intervention.alterNames" multiple="true"
 						readonly="%{importTerm}" /></td>
-				<td><s:a href="javascript:void(0)" cssClass="btn"
+				<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
 						onclick="removeSyn()">
 						<span class="btn_img"><span class="delete">Remove</span></span>
-					</s:a></td>
+					</s:a></s:if></td>
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="typeCode">PDQ

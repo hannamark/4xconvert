@@ -176,6 +176,11 @@ public class NCItTermsLookup {
     private NCItTerm retrieveNCItDiseaseTermViaLexEVSCTS(String ncitCode, boolean getParent) 
             throws LEXEVSLookupException {
         Element termEl = invokeWebService(LEXVSCTSURL + ncitCode);
+        
+        if (termEl == null) { // Term not found
+            return null;
+        }
+        
         NCItTerm term = new NCItTerm();
         term.ncitCode = ncitCode;
         try {
@@ -234,6 +239,10 @@ public class NCItTermsLookup {
         List<NCItTerm> children = new ArrayList<NCItTerm>();
 
         Element termEl = invokeWebService(LEXVSCTSURL + ncitCode + "/children");
+        if (termEl == null) {
+            return children;
+        }
+        
         try {
         List<Element> entries = getChildElementsByName(termEl, "entry");
 
@@ -269,7 +278,13 @@ public class NCItTermsLookup {
      *             if there were errors invoking the web service
      */
     private NCItTerm retrieveNCItTermViaLexEVS(String ncitCode) throws LEXEVSLookupException {
+        
         Element termEl = invokeWebService(LEXEVSAPIURL.replace("{CODE}", ncitCode));
+        
+        if (termEl == null) {
+            return null;
+        }
+        
         NCItTerm term = new NCItTerm();
         term.ncitCode = ncitCode;
 
@@ -405,6 +420,8 @@ public class NCItTermsLookup {
                 IOUtils.copy(entity.getContent(), writer);
                 Document document = builder.parse(new InputSource(new StringReader(writer.toString())));
                 return document.getDocumentElement();
+            } else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                return null; // term not found
             } else {
                 throw new Exception("Error making LexEVS request: " + response.getStatusLine());
             }

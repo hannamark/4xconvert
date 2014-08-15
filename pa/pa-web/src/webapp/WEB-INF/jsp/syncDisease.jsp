@@ -30,8 +30,7 @@
 			<td width="150px"><s:property value="disease.ntTermIdentifier" /></td>
 		</tr>
 		<tr>
-			<td scope="row" class="label">CDR Identifier:<span
-				class="required">*</span></td>
+			<td scope="row" class="label">CDR Identifier:</td>
 			<td><s:property value="currentDisease.code" /></td>
 			<td><s:property value="disease.code" /></td>
 		</tr>
@@ -51,7 +50,7 @@
 			<td><s:property value="disease.preferredName" /></td>
 		</tr>
 		<tr>
-			<td scope="row" class="label">Menu Display Name:<span
+			<td scope="row" class="label">Display Name:<span
 				class="required">*</span></td>
 			<td><s:property value="currentDisease.menuDisplayName" /></td>
 			<td><s:property value="disease.menuDisplayName" /></td>

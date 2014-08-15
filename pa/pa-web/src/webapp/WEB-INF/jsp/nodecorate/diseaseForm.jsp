@@ -28,7 +28,24 @@
 		showPopWin('${lookupUrl}', 1100, 500, addToChildList,
 				'Lookup Child Diseases');
 	}
+	
+	function lookupDisplayName() {
+        showPopWin('${lookupUrl}', 1100, 500, setDisplayName,
+                'Lookup Disease Display Name (Select only one term)');
+    }
 
+	function setDisplayName(ret){
+        var retValue = ret.value;
+        if(retValue != '') {
+        	 // select only the first term if more than one term was selected
+        	var retValue = retValue.split(',')[0];
+        	jQuery.get('${diseaseAjaxURL}' + retValue, function(value) {
+        		var name = value.split(':')[1];
+                jQuery('#menuDisplayName').val(name);
+            });
+        } 
+    }
+	
 	function addToParentList(ret) {
 		var retValue = ret.value;
 		if(retValue != '') {
@@ -130,24 +147,38 @@
 				</span></td>
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="menuDisplayName">Menu
-						Display Name</label><span class="required">*</span></td>
-				<td><s:textfield id="menuDisplayName"
+				<td scope="row" class="label"><label for="menuDisplayName">Display 
+				Name</label><span class="required">*</span></td>
+				<td><s:if test="%{importTerm && disease.menuDisplayName == null}">
+				        <s:textfield id="menuDisplayName"
 						name="disease.menuDisplayName" maxlength="200" size="100"
-						cssStyle="width:400px" /> <span class="formErrorMsg"> <s:fielderror>
-							<s:param>disease.menuDisplayName</s:param>
-						</s:fielderror>
+						cssStyle="width:400px" value="%{disease.preferredName}"/>
+					</s:if>
+					<s:else>
+							<s:textfield id="menuDisplayName"
+	                        name="disease.menuDisplayName" maxlength="200" size="100"
+	                        cssStyle="width:400px"/>
+					</s:else>
+					 <span class="formErrorMsg"> <s:fielderror>
+						<s:param>disease.menuDisplayName</s:param>
+					</s:fielderror>
 				</span></td>
+				<td><div style="float: left; width: 100%;">
+                        <s:a href="javascript:void(0)" cssClass="btn"
+                            onClick="lookupDisplayName()">
+                            <span class="btn_img"><span class="add">LookUp</span></span>
+                        </s:a></div>
+                </td>
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="typeCode">Synonyms
 				</label></td>
 				<td><s:textfield id="altName" name="altName" maxlength="200"
 						size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
-				<td><s:a href="javascript:void(0)" cssClass="btn"
+				<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
 						onclick="addToList('alterNames','altName')">
 						<span class="btn_img"><span class="add">Add</span></span>
-					</s:a></td>
+					</s:a></s:if></td>
 			</tr>
 			<tr>
 				<td />
@@ -155,10 +186,10 @@
 						name="disease.alterNameList" cssStyle="width:400px"
 						list="disease.alterNameList" multiple="true"
 						readonly="%{importTerm}" /></td>
-				<td><s:a href="javascript:void(0)" cssClass="btn"
+				<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
 						onclick="removeFromList('alterNames')">
 						<span class="btn_img"><span class="delete">Remove</span></span>
-					</s:a></td>
+					</s:a></s:if></td>
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="typeCode">Parent
@@ -167,7 +198,7 @@
 						name="disease.parentTermList" cssStyle="width:400px"
 						list="disease.parentTermList" multiple="true"
 						readonly="%{importTerm}" /></td>
-				<td><div style="float: left; width: 100%;">
+				<td><s:if test="%{!importTerm}"><div style="float: left; width: 100%;">
 						<s:a href="javascript:void(0)" cssClass="btn"
 							onClick="lookupParentDisease()">
 							<span class="btn_img"><span class="add">LookUp &
@@ -180,7 +211,7 @@
 							onclick="removeFromList('parentTerms')">
 							<span class="btn_img"><span class="delete">Remove</span></span>
 						</s:a>
-					</div></td>
+					</div></s:if></td>
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="typeCode">Child
@@ -189,7 +220,7 @@
 						name="disease.childTermList" cssStyle="width:400px"
 						list="disease.childTermList" multiple="true"
 						readonly="%{importTerm}" /></td>
-				<td><div style="float: left; width: 100%;">
+				<td><s:if test="%{!importTerm}"><div style="float: left; width: 100%;">
 						<s:a href="javascript:void(0)" cssClass="btn"
 							onclick="lookupChildDisease()">
 							<span class="btn_img"><span class="add">LookUp &
@@ -202,7 +233,7 @@
 							onclick="removeFromList('childTerms')">
 							<span class="btn_img"><span class="delete">Remove</span></span>
 						</s:a>
-					</div></td>
+					</div></s:if></td>
 			</tr>
 
 		</table>

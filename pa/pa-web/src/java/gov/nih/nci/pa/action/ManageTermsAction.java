@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -66,7 +67,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private InterventionServiceLocal interventionService;
     private InterventionAlternateNameServiceLocal interventionAltNameService;
     private InterventionWebDTO intervention = new InterventionWebDTO();
-    private InterventionWebDTO currentintervention = new InterventionWebDTO();
+    private InterventionWebDTO currentIntervention = new InterventionWebDTO();
 
     private PDQDiseaseParentServiceRemote diseaseParentService;
     private PDQDiseaseServiceLocal diseaseService;
@@ -217,19 +218,19 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             return SEARCH_INTERVENTION;
         }
         try {
+            ncitCode = ncitCode.toUpperCase(Locale.getDefault());
             InterventionWebDTO temp = new NCItTermsLookup().lookupIntervention(ncitCode);
             if (temp != null) {
                 intervention = temp;
                 // Check if the term already exists
                 InterventionDTO existingIntrvDto = getExistingIntervention(intervention.getNtTermIdentifier());
                 if (existingIntrvDto != null) {
-
-                    currentintervention = new InterventionWebDTO();
-                    currentintervention.setIdentifier(existingIntrvDto.getPdqTermIdentifier().getValue());
-                    currentintervention.setNtTermIdentifier(existingIntrvDto.getNtTermIdentifier().getValue());
-                    currentintervention.setName(existingIntrvDto.getName().getValue());
-                    currentintervention.setCtGovType(existingIntrvDto.getCtGovTypeCode().getDisplayName().getValue());
-                    currentintervention.setType(existingIntrvDto.getTypeCode().getDisplayName().getValue());
+                    currentIntervention = new InterventionWebDTO();
+                    currentIntervention.setIdentifier(existingIntrvDto.getPdqTermIdentifier().getValue());
+                    currentIntervention.setNtTermIdentifier(existingIntrvDto.getNtTermIdentifier().getValue());
+                    currentIntervention.setName(existingIntrvDto.getName().getValue());
+                    currentIntervention.setCtGovType(existingIntrvDto.getCtGovTypeCode().getDisplayName().getValue());
+                    currentIntervention.setType(existingIntrvDto.getTypeCode().getDisplayName().getValue());
                     List<InterventionAlternateNameDTO> altNames = interventionAltNameService
                             .getByIntervention(existingIntrvDto.getIdentifier());
                     if (altNames != null && !altNames.isEmpty()) {
@@ -238,7 +239,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                             InterventionAlternateNameDTO interventionAlternateNameDTO = iterator.next();
                             if (ALTNAME_TYPECODE_SYNONYM.equals(interventionAlternateNameDTO.getNameTypeCode()
                                     .getValue())) {
-                                currentintervention.getAlterNames().add(
+                                currentIntervention.getAlterNames().add(
                                         interventionAlternateNameDTO.getName().getValue());
                             }
 
@@ -389,16 +390,16 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     /**
      * @return the currentintervention
      */
-    public InterventionWebDTO getCurrentintervention() {
-        return currentintervention;
+    public InterventionWebDTO getCurrentIntervention() {
+        return currentIntervention;
     }
 
     /**
-     * @param currentintervention
-     *            the currentintervention to set
+     * @param currentIntervention
+     *            the currentIntervention to set
      */
-    public void setCurrentintervention(InterventionWebDTO currentintervention) {
-        this.currentintervention = currentintervention;
+    public void setCurrentIntervention(InterventionWebDTO currentIntervention) {
+        this.currentIntervention = currentIntervention;
     }
 
     /**
@@ -550,6 +551,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             return SEARCH_DISEASE;
         }
         try {
+            ncitCode = ncitCode.toUpperCase(Locale.getDefault());
             DiseaseWebDTO temp = new NCItTermsLookup().lookupDisease(ncitCode);
             if (temp != null) {
                 disease = temp;

@@ -33,8 +33,7 @@
 					value="intervention.ntTermIdentifier" /></td>
 		</tr>
 		<tr>
-			<td scope="row" class="label">CDR Identifier:<span
-				class="required">*</span></td>
+			<td scope="row" class="label">CDR Identifier:</td>
             <td><s:property value="currentIntervention.identifier" /></td>
 			<td><s:property value="intervention.identifier" /></td>
 		</tr>
