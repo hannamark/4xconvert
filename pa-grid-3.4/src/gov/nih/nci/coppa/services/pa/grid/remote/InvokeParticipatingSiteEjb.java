@@ -167,7 +167,9 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
         }
     }
 
-    
+    /**
+     * {@inheritDoc}
+     */
     public StudySiteDTO getParticipatingSite(Ii studyProtocolID, String orgPoId)
             throws PAException {      
         return null;
