@@ -12,6 +12,19 @@
         <c:url value="/protected/popupDisdisplayDiseaseWidget.action" var="lookupUrl" />
         
         <script language="javascript" type="text/javascript">
+	        jQuery(document).ready(function() {
+	
+	            jQuery('#nav li').hover(function() {
+	                //show its submenu
+	                jQuery('ul', this).slideDown(100);
+	
+	            }, function() {
+	                //hide its submenu
+	                jQuery('ul', this).slideUp(100);
+	            });
+	
+	        });
+        
             function handleView(diseaseId) {
                 var url = "<%=request.getContextPath()%>/protected/popupDiseaseDetails.action?diseaseId=" + diseaseId;
                 showPopup(url, null, 'Disease');
@@ -120,7 +133,25 @@
 		                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected disease(s) from the study. Cancel to abort.', 'diseasedelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected disease(s) from the study. Cancel to abort.', 'diseasedelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
 		                            <li><pa:toggleDeleteBtn/></li>
 		                        </s:if>                           
-		                        <li><s:a href="manageTerms.action" cssClass="btn"><span class="btn_img"><span class=edit>Manage NCIt Terms</span></span></s:a></li>     
+					             <li><ul id="nav">
+					                  <li  class='root'><span class="btn_img">Manage
+					                          NCIt Terms &nabla;</span>
+					                      <ul>
+					                          <li class="action"><a
+					                              href="manageTermscreateDisease.action"> <fmt:message
+					                                      key="manageTerms.button.create" />
+					                          </a></li>
+					                          <li class="action"><a
+					                              href="manageTermssearchDisease.action?searchStart=true"> <fmt:message
+					                                      key="manageTerms.button.import" />
+					                          </a></li>
+					                          <li class="action"><a
+					                              href="http://ncitermform.nci.nih.gov/ncitermform/"
+					                              target="_blank"><fmt:message
+					                                      key="manageTerms.button.requestForm" /> </a></li>
+					                      </ul>
+					                  </li>
+					              </ul></li> 
                             </pa:scientificAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>

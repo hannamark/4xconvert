@@ -11,6 +11,19 @@
 <pa:scientificAbstractorDisplayWhenCheckedOut>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery.tablednd.js"/>"></script>
     <script type="text/javascript">
+	    jQuery(document).ready(function() {
+	        
+	        jQuery('#nav li').hover(function() {
+	            //show its submenu
+	            jQuery('ul', this).slideDown(100);
+	
+	        }, function() {
+	            //hide its submenu
+	            jQuery('ul', this).slideUp(100);
+	        });
+	
+	    });
+    
          Event.observe(window, "load", function() {
             jQuery('#row').tableDnD({
                 onDragClass: "myDragClass",
@@ -158,7 +171,25 @@ function handleCreate(){
                 <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected intervention(s) from the study. Cancel to abort.', 'trialInterventionsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected intervention(s) from the study. Cancel to abort.', 'trialInterventionsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                 <li><pa:toggleDeleteBtn/></li>
             </s:if>            
-            <li><s:a href="manageTerms.action" cssClass="btn"><span class="btn_img"><span class=edit>Manage NCIt Terms</span></span></s:a></li>
+            <li><ul id="nav">
+                    <li class='root'><span class="btn_img">&nbsp;Manage
+                            NCIt Terms &nabla;</span>
+                        <ul>
+                            <li class="action"><a
+                                href="manageTermscreateIntervention.action"> <fmt:message
+                                        key="manageTerms.button.create" />
+                            </a></li>
+                            <li  class="action" ><a
+                                href="manageTermssearchIntervention.action?searchStart=true">
+                                    <fmt:message key="manageTerms.button.import" />
+                            </a></li>
+                            <li  class="action"><a
+                                href="http://ncitermform.nci.nih.gov/ncitermform/"
+                                target="_blank"><fmt:message
+                                        key="manageTerms.button.requestForm" /> </a></li>
+                        </ul>
+                    </li>
+                </ul></li>
         </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>

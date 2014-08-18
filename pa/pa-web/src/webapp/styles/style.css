@@ -806,3 +806,77 @@ div.user_btn_column {
 .user_btn {
     width: 50px;
 }
+
+/* Mange terms button style */
+/* remove the list style */
+#nav {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* make the LI display inline */
+/* it's position relative so that position absolute */
+/* can be used in submenu */ 
+#nav li.action {
+    display: block;
+    background: #ccc;
+    cursor: pointer;
+    margin: 0 5px;
+    height: 25px;
+    text-align: center;
+    padding-top: 7px;
+    width: 250px;
+} 
+#nav li.root {
+width:auto; background:transparent url("../images/bg_btn_right.gif") no-repeat scroll top right; color:#5a5a5a; display:block; float:left; font:bold 14px arial, sans-serif; height:24px; line-height:24px; margin:0 10px; padding-right:9px; /* sliding doors padding */ text-decoration:none;
+}
+#nav li SPAN.btn_img
+{ background:transparent url("../images/bg_btn_left.gif") no-repeat; display:block; line-height:17px; padding:4px 0 3px 9px; }
+/* this is the parent menu */
+#nav li a {
+    display: block;
+    padding: 0px 0px 0 0px;
+    font-weight: 700;
+    height: 23px;
+    text-decoration: none;
+    color: #fff;
+    text-align: center;
+    color: #333;
+} 
+
+#nav li a:hover {
+    color: #fff;
+}
+
+/* you can make a different style for default selected value */
+#nav a.selected {
+    color: #f00;
+}
+
+/* submenu, it's hidden by default */
+#nav ul {
+    position: absolute;
+    display: none;
+    margin: 0 0 0 -1px;
+    padding: 0;
+    list-style: none;
+}
+
+#nav ul li {
+    border-top: 1px solid #fff;
+}
+
+/* display block will make the link fill the whole area of LI */
+#nav ul a {
+    display: block;
+    height: 15px;
+    color: #666;
+}
+
+/* fix ie6 small issue */
+/* we should always avoid using hack like this */
+/* should put it into separate file : ) */
+* html #nav ul {
+    margin: 0 0 0 -2px;
+}
