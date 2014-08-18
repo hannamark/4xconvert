@@ -45,9 +45,10 @@ public class CaDSRPVSyncJobHelper {
     private static final String PUBLIC_ID = "vm.publicID";
     /**
      * updates the planned marker sync table
-     * @throws PAException exception
+     * @throws Exception  Exception
      */
-    public void updatePlannedMarkerSyncTable() throws PAException {
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void updatePlannedMarkerSyncTable() throws Exception {
         permissibleService = PaRegistry.getPMWithCaDSRService();
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
         List<CaDSRDTO> values = getAllValuesFromCaDSR();
@@ -59,13 +60,10 @@ public class CaDSRPVSyncJobHelper {
     /**
      * 
      * @return map<Stirng, String> map
-     * @throws PAException
-     *             exception
+     * @throws Exception  Exception
      */
-    
-    @SuppressWarnings("unchecked")
-    public List<CaDSRDTO> getAllValuesFromCaDSR()
-            throws PAException {
+    @SuppressWarnings({"PMD.SignatureDeclareThrowsException", "unchecked" })
+    public List<CaDSRDTO> getAllValuesFromCaDSR() throws Exception {
         List<CaDSRDTO> values = new ArrayList<CaDSRDTO>();
 
         appService = getApplicationService();
@@ -108,7 +106,7 @@ public class CaDSRPVSyncJobHelper {
             values = getSearchResults(result);
         } catch (Exception e) {
             LOG.error("Error while querying caDSR", e);
-            throw new PAException("Error while querying caDSR");
+            throw new Exception(e);
         }
         return values;
     }
@@ -116,16 +114,17 @@ public class CaDSRPVSyncJobHelper {
     /**
      * 
      * @return ApplicationService appService
-     * @throws PAException PAException
+     * @throws Exception  Exception
      */
-    public ApplicationService getApplicationService() throws PAException {
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public ApplicationService getApplicationService() throws Exception {
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
             LOG.error(
                     "Error attempting to instantiate caDSR Application Service.",
                     e);
-            throw new PAException("Error attempting to instantiate caDSR Application Service.");
+            throw new Exception(e);
         }
         return appService;
     }

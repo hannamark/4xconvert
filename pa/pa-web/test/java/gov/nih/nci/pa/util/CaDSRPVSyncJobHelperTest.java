@@ -12,7 +12,6 @@ import gov.nih.nci.cadsr.domain.PermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.iso.dto.CaDSRDTO;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.system.applicationservice.ApplicationService;
@@ -73,14 +72,14 @@ public class CaDSRPVSyncJobHelperTest {
     }
 
 //    @Test
-    public void getAllValuesFromCaDSRTest() throws PAException {
+    public void getAllValuesFromCaDSRTest() throws Exception {
         CaDSRPVSyncJobHelper helperMock1 = createHelperMock();
         doCallRealMethod().when(helperMock1).getAllValuesFromCaDSR();
         List<CaDSRDTO> list = helperMock1.getAllValuesFromCaDSR();
         assertTrue(list.size() > 0);
     }
 
-    private CaDSRPVSyncJobHelper createHelperMock() throws PAException {
+    private CaDSRPVSyncJobHelper createHelperMock() throws Exception {
         CaDSRPVSyncJobHelper helperMock = mock(CaDSRPVSyncJobHelper.class);
         List<CaDSRDTO> values1 = new ArrayList<CaDSRDTO>();
         CaDSRDTO value = new CaDSRDTO();
@@ -98,7 +97,7 @@ public class CaDSRPVSyncJobHelperTest {
     }
 
     @Test
-    public void getSearchResultsTest() throws PAException {
+    public void getSearchResultsTest() throws Exception {
         CaDSRPVSyncJobHelper helperMock1 = createHelperMock();
         doCallRealMethod().when(helperMock1).getSearchResults(results);
         List<CaDSRDTO> list = helperMock1.getSearchResults(results);
@@ -106,7 +105,7 @@ public class CaDSRPVSyncJobHelperTest {
     }
 
     @Test
-    public void updatePlannedMarkerSyncTableTest() throws PAException {
+    public void updatePlannedMarkerSyncTableTest() throws Exception {
         CaDSRPVSyncJobHelper helperMock1 = createHelperMock();
         when(PaRegistry.getPMWithCaDSRService()).thenReturn(permissibleService);
         when(PaRegistry.getPlannedMarkerService()).thenReturn(
