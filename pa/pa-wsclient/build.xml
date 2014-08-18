@@ -152,38 +152,12 @@
 
         <copy todir="${pa-wsclient.build.outputDir}" filtering="true">
             <filterset>
-                <filter token="doc.upload.filepath.loc" value="${doc.upload.filepath.loc}" />
-                <filter token="pdq.upload.filepath.loc" value="${pdq.upload.filepath.loc}" />
-                <filter token="tooltips.filepath.loc" value="${tooltips.filepath.loc}" />
-                <filter token="batch.upload.filepath.loc" value="${batch.upload.filepath.loc}" />
-                <filter token="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}" />
-                <filter token="po.server.name" value="${po.server.name}" />
-                <filter token="po.port.number" value="${po.port.number}" />
-                <filter token="po.principal" value="${po.principal}" />
-                <filter token="po.credentials" value="${po.credentials}" /> 
-                <filter token="po.topic.clientId" value="${po.topic.clientId}" />
-                <filter token="po.topic.userName" value="${po.topic.userName}" />
-                <filter token="po.topic.password" value="${po.topic.password}" />	
-            	<filter token="csm.submitter.group" value="${csm.submitter.group}" />
-                <filter token="grid.dorian.url" value="${grid.dorian.url}" />
-                <filter token="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
-                <filter token="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
-                <filter token="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
-                <filter token="gridgrouper.url" value="${gridgrouper.url}"/>
-                <filter token="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
-                <filter token="cteprss.user" value="${cteprss.user}"/>
-                <filter token="mock.po" value="${mock.po}" />
-                <filter token="nci.ldap.prefix" value="${nci.ldap.prefix}" />
-                <filter token="wikiHelp.baseUrl.pa" value="${wikiHelp.baseUrl.pa}" />
-                <filter token="wikiHelp.baseUrl.registry" value="${wikiHelp.baseUrl.registry}" />
-                <filter token="wikiHelp.baseUrl.accrual" value="${wikiHelp.baseUrl.accrual}" />
-                <filter token="wikiHelp.baseUrl.trialStatusRules" value="${wikiHelp.baseUrl.trialStatusRules}" />            	
-                <filter token="ctgov.ftp.url" value="${ctgov.ftp.url}"/>
-                <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
-                <filter token="db.username" value="${db.username}"/>
-                <filter token="db.password" value="${db.password}"/>
-                <filter token="jdbc.driver" value="${jdbc.driver}"/>
-                <filter token="jdbc.url" value="${jdbc.url}"/>
+                <filter token="po.ws.rest.protocol" value="${po.ws.rest.protocol}" />
+            	<filter token="po.ws.rest.hostname" value="${po.ws.rest.hostname}" />
+                <filter token="po.ws.rest.port" value="${po.ws.rest.port}" />
+            	<filter token="po.ws.rest.apipath" value="${po.ws.rest.apipath}" />
+                <filter token="po.ws.rest.username" value="${po.ws.rest.username}" />
+            	<filter token="po.ws.rest.password" value="${po.ws.rest.password}" />
             </filterset>
             <fileset dir="${pa-wsclient.build.resourceDir.0}"/>
         </copy>
