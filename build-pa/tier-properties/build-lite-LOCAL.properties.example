@@ -11,6 +11,15 @@ po.credentials=pass
 po.topic.userName=subscriber
 po.topic.password=pass
 
+# PO REST-like Services Connection Info.
+po.ws.rest.protocol=http
+po.ws.rest.hostname=localhost
+po.ws.rest.port=39080
+po.ws.rest.apipath=/po-webservices/services
+po.ws.rest.username=jdoe01
+po.ws.rest.password=Aa_1111111
+
+
 db.server=localhost
 db.port=5432
 db.name=padb
