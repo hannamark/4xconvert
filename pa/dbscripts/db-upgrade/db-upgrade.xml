@@ -1624,4 +1624,8 @@
         <comment>Add Organisations as the submitter</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-5132.sql"/>
      </changeSet>
+     <changeSet id="PO-7876" author="Reshma">
+        <comment>insert cadsr error values in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7876.sql"/>
+     </changeSet>
 </databaseChangeLog>

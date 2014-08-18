@@ -80,7 +80,7 @@ public class CaDSRPVSyncJobHelperTest {
         assertTrue(list.size() > 0);
     }
 
-    private CaDSRPVSyncJobHelper createHelperMock() {
+    private CaDSRPVSyncJobHelper createHelperMock() throws PAException {
         CaDSRPVSyncJobHelper helperMock = mock(CaDSRPVSyncJobHelper.class);
         List<CaDSRDTO> values1 = new ArrayList<CaDSRDTO>();
         CaDSRDTO value = new CaDSRDTO();

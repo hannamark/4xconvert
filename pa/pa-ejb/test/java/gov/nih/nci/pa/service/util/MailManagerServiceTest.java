@@ -1392,8 +1392,45 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void sendErrorToCTROMailTest() throws Exception {
-        bean.sendErrorToCTROMail("to", "from", "Exception");
+    public void sendCadsrJobErrorEMailTest() throws Exception {
+        sut = createMailManagerServiceMock();
+        PAProperties prop = new PAProperties();
+        prop.setName("CADSR_SYNC_JOB_EMAIl_LIST");
+        prop.setValue("to@example.com, to1@example.com, test@gmail.com");
+        
+        prop = new PAProperties();
+        prop.setName("CADSR_SYNC_JOB_ERROR_BODY");
+        prop.setValue(" ${CurrentDate} end");
+        
+        doCallRealMethod().when(sut).sendCadsrJobErrorEMail();
+        when(lookUpTableService.getPropertyValue("CADSR_SYNC_JOB_ERROR_SUBJECT"))
+        .thenReturn("NCI CTRP: caDSR Biomarker SYNCHRONIZATION FAILURE");  
+        when(lookUpTableService.getPropertyValue("CADSR_SYNC_JOB_ERROR_BODY"))
+        .thenReturn("${CurrentDate} end"); 
+        when(lookUpTableService.getPropertyValue("CADSR_SYNC_JOB_EMAIl_LIST"))
+                .thenReturn("to@example.com, to1@example.com, test@gmail.com");
+        when(lookUpTableService.getPropertyValue("CADSR_SYNC_JOB_FROM_ADDRESS"))
+        .thenReturn("fromAddress@example.com");
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        
+        sut.sendCadsrJobErrorEMail();
+        List<String> copyList = new ArrayList<String>();
+        copyList.add(" to1@example.com");
+        copyList.add(" test@gmail.com");
+        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
+                .forClass(String.class);
+        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
+                .forClass(String.class);
+        verify(sut).sendMailWithHtmlBody(eq("fromAddress@example.com"), 
+            eq("to@example.com"), eq(copyList), 
+            mailSubjectCaptor.capture(), mailBodyCaptor.capture());
+
+        assertEquals("Mail subject",
+                "NCI CTRP: caDSR Biomarker SYNCHRONIZATION FAILURE",
+                mailSubjectCaptor.getValue());
+        assertEquals("Mail body",
+                dateFormat.format(new Date()) + " end"
+            , mailBodyCaptor.getValue().trim());
     }
 
     private Date getCurrentDate() {

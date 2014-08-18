@@ -108,6 +108,7 @@ public class CaDSRPVSyncJobHelper {
             values = getSearchResults(result);
         } catch (Exception e) {
             LOG.error("Error while querying caDSR", e);
+            throw new PAException("Error while querying caDSR");
         }
         return values;
     }
@@ -115,14 +116,16 @@ public class CaDSRPVSyncJobHelper {
     /**
      * 
      * @return ApplicationService appService
+     * @throws PAException PAException
      */
-    public ApplicationService getApplicationService() {
+    public ApplicationService getApplicationService() throws PAException {
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
             LOG.error(
                     "Error attempting to instantiate caDSR Application Service.",
                     e);
+            throw new PAException("Error attempting to instantiate caDSR Application Service.");
         }
         return appService;
     }

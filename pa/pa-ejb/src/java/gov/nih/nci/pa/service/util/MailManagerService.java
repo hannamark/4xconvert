@@ -336,14 +336,10 @@ public interface MailManagerService {
     void sendOnHoldEmail(Long studyProtocolId, StudyOnhold onhold, Date deadline) throws PAException;  
     
     /**
-     * send mail to CTRP when an error occurs.
-     * @param toAddress toAddress
-     * @param fromAddress fromAddress
-     * @param values values
+     * send mail  when an error occurs.
      * @throws PAException PAException
      */
-    void sendErrorToCTROMail(String toAddress, String fromAddress, 
-            String values) throws PAException;
+    void sendCadsrJobErrorEMail() throws PAException;
 
     /**
      * Mail with HTML body and Attachments.

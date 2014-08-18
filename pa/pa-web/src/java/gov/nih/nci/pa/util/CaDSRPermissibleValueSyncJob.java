@@ -1,6 +1,8 @@
 package gov.nih.nci.pa.util;
 
 
+import gov.nih.nci.pa.service.PAException;
+
 import org.quartz.Job;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
@@ -14,7 +16,6 @@ public class CaDSRPermissibleValueSyncJob implements Job {
     /** The LOG details. */
     private static final Logger LOG = Logger.getLogger(CaDSRPermissibleValueSyncJob.class);
     private CaDSRPVSyncJobHelper helper = new CaDSRPVSyncJobHelper();
-    
     /** execute.
      * @param context JobExecutionContext
      * @throws JobExecutionException exception
@@ -27,6 +28,12 @@ public class CaDSRPermissibleValueSyncJob implements Job {
             LOG.info("Success permissible value job...........");
         } catch (Exception e) {
             LOG.error("error", e);
+            try {
+               PaRegistry.getMailManagerService()
+                  .sendCadsrJobErrorEMail();
+            } catch (PAException e1) {
+               LOG.error("error while sending email", e);
+            }
         }
     }
     /**
@@ -44,5 +51,4 @@ public class CaDSRPermissibleValueSyncJob implements Job {
     public void setHelper(CaDSRPVSyncJobHelper helper) {
         this.helper = helper;
     }
-    
 }

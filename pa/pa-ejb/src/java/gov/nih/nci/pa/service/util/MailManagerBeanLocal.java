@@ -1155,22 +1155,26 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public void sendErrorToCTROMail(String toAddress, String fromAddress, 
-            String values) throws PAException {
+    public void sendCadsrJobErrorEMail() throws PAException {
         try {
-            
-            
-            String body = "Check the below error " + values;   
-            String subject = "Error regarding CaDSR sync Job";
-            MimeMessage message = prepareMessage(toAddress, fromAddress, null, subject);
-            // body
-            Multipart multipart = new MimeMultipart();
-            BodyPart msgPart = new MimeBodyPart();
-            msgPart.setText(body);
-            multipart.addBodyPart(msgPart);
-            message.setContent(multipart);
-            // Send Message
-            invokeTransportAsync(message, null);
+            String subject = lookUpTableService.getPropertyValue("CADSR_SYNC_JOB_ERROR_SUBJECT");   
+            String body = lookUpTableService.getPropertyValue("CADSR_SYNC_JOB_ERROR_BODY");
+            String toAddress = lookUpTableService.getPropertyValue("CADSR_SYNC_JOB_EMAIl_LIST");
+            body = body.replace(CURRENT_DATE, getFormatedDate(new Date()));
+            List<String> toList = new ArrayList<String>();
+            StringTokenizer st = new StringTokenizer(toAddress, ",");
+            while (st.hasMoreElements()) {
+                toList.add((String) st.nextElement());
+            }
+            toAddress = toList.get(0);
+            List<String> copyList = new ArrayList<String>();
+            for (String to : toList) {
+                if (!StringUtils.equals(to, toAddress)) {
+                     copyList.add(to);
+                }
+            }
+            String from = lookUpTableService.getPropertyValue("CADSR_SYNC_JOB_FROM_ADDRESS");
+            sendMailWithHtmlBody(from, toAddress, copyList, subject, body);
         } catch (Exception e) {
             throw new PAException("An error occured while sending email for an error message", e);
         }
