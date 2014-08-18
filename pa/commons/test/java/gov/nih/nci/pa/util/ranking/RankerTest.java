@@ -76,19 +76,19 @@ public class RankerTest extends TestCase {
        str ="PGR A (progesterone receptor, NR3C3, PR)";
        assertEquals(100000, ranker.rankCaDSR(str, serializer).getRank());
        ranker = new Ranker("PR");
-       str ="PGR (progesterone receptor, NR3C3, PR)";
+       str ="PGR (progesterone receptor; NR3C3; PR)";
        assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
        ranker = new Ranker("PR");
        str ="PGR (progesterone receptor; NR3C3; PR)";
        assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
        ranker = new Ranker("NR3C3");
-       str ="PGR (progesterone receptor, NR3C3, PR)";
+       str ="PGR (progesterone receptor; NR3C3; PR)";
        assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
        ranker = new Ranker("receptor");
-       str ="PGR (progesterone receptor, NR3C3, PR)";
+       str ="PGR (progesterone receptor; NR3C3; PR)";
        assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
        ranker = new Ranker("noMatch");
-       str ="PGR (progesterone receptor, NR3C3, PR)";
+       str ="PGR (progesterone receptor; NR3C3; PR)";
        assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
        ranker = new Ranker("PR");
        str ="PPP2R1A (protein phosphatase 2, regulatory subunit A, alpha; PR65A, PP2A-Aalpha,";
@@ -116,6 +116,15 @@ public class RankerTest extends TestCase {
        assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
        ranker = new Ranker("peci");
        str ="ECI2 (PECI; DRS1; ACBD2; DRS-1; HCA88; Enoyl-CoA Delta Isomerase 2; Enoyl-CoA Delta Isomerase 2, Mitochondrial; DBI-Related Protein 1; D3,D2-Enoyl-CoA Isomerase; Renal Carcinoma Antigen NY-REN-1; Peroxisomal 3,2-Trans-Enoyl-CoA Isomerase; Hepatocellular C";
+       assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("met");
+       str ="2-Amino-1-Methyl-6-Phenylimidazo[4,5-b]Pyridine";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("alpha");
+       str ="1,3-Butadiene (alpha, gamma-Butadiene; Biethylene; Bivinyl; Divinyl; Erythrene; Vinylethylene)";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("EMA");
+       str ="MUC-1 Antigen (Mucin 1; MUC-1; CD227; CA15-3; CA15.3; CA 15.3; CA 15-3; Cancer Antigen 15-3; PEM; PEMT; PUM; EMA; H23AG; Episialin; Epithelial Membrane Antigen; H23 Antigen; CA 15 3; MUC-1 Antigen; Mucin Antigen; CA15-3 Antigen; DF3 Antigen)";
        assertEquals(50000, ranker.rankCaDSR(str, serializer).getRank());
   }
 }

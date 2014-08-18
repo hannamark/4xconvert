@@ -466,7 +466,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             output = RankBasedSorterUtils.sortCaDSRResults(
                results, getName(), new Serializer<CaDSRWebDTO>() {
                  public String serialize(CaDSRWebDTO object) {
-                   return object.getVmMeaning();
+                   return object.getVmName();
                  }
             });
         } else {

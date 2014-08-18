@@ -131,11 +131,11 @@ public class Ranker {
              // test for exact primary value
             if (StringUtils.equalsIgnoreCase(innerString.trim(), searchStr)) {
                 rankedObject.addToRank(WHOLE_SENTENCE_MATCH);
-            } else if (synonymTrimmedString.length > 0) {
+            } else if (synonymTrimmedString.length > 1) {
              // test for exact Synonym value
                 String synonymString = synonymTrimmedString[1].replaceAll("\\(", "");
                 synonymString = synonymString.replaceAll("\\)", "");
-                String[] synonymsTrimmedString = synonymString.split("\\,|\\;");
+                String[] synonymsTrimmedString = synonymString.split("\\;");
                 for (String innersyno : synonymsTrimmedString) {
                     if (StringUtils.equalsIgnoreCase(innersyno.trim(), searchStr)) {
                          rankedObject.addToRank(BEGINING_OF_SENTENCE);
