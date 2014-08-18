@@ -167,7 +167,7 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
         }
     }
 
-    @Override
+    
     public StudySiteDTO getParticipatingSite(Ii studyProtocolID, String orgPoId)
             throws PAException {      
         return null;
