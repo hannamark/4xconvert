@@ -22,11 +22,12 @@
 				<img src="<%=request.getContextPath()%>/images/nci-logo.png"
 					class="pull-left" />
 				<h4>Welcome to NCI's Clinical Trials Reporting Program</h4>
-				<p>This site allows you to upload non-CTEP/DCP supported trial
-					accrual data for a specific NCI-supported trial. If you are part of
-					a CTEP/DCP supported trial, please go to the CDUS/CDS web interface
-					to upload your data (these data will be transferred internally to
-					CTRP).</p>
+				<p>This site allows for the upload of accrual data for trials submitted to CTRP. 
+				If trials are NCI-supported CTEP/DCP trials, accrual submission is handled via your normal accrual reporting, 
+				and it is not necessary to submit additional accrual data via this site. If you have any questions regarding 
+				accrual submission for a specific trial, please contact the Clinical Trials Reporting Office (CTRO) at
+				<a href="mailto:ncictro@mail.nih.gov">ncictro@mail.nih.gov.</a>
+			     </p>
 				<p>
 					Want to learn more about the Reporting Program? Visit the <a
 						href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main/" target="_blank">NCI Clinical Trials Reporting Program</a> website. You
