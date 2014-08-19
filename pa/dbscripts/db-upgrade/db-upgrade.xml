@@ -1628,4 +1628,8 @@
         <comment>insert cadsr error values in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7876.sql"/>
      </changeSet>
+     <changeSet id="PO-7876-1" author="Reshma">
+        <comment>update cadsr error list email values in pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7876_1.sql"/>
+     </changeSet>
 </databaseChangeLog>
