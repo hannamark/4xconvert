@@ -1632,4 +1632,8 @@
         <comment>update cadsr error list email values in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7876_1.sql"/>
      </changeSet>
+     <changeSet id="PO-7857" author="gunnikrishnan">
+        <comment>Drop constraints on intervention type code</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7857.sql"/>
+     </changeSet>
 </databaseChangeLog>

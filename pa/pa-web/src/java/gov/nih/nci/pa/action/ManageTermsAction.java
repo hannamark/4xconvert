@@ -39,7 +39,7 @@ import com.opensymphony.xwork2.Preparable;
 
 /**
  * Action class for Managing Intervention/Disease terms
- * 
+ *
  * @author Gopal Unnikrishnan
  * @since 12/1/2008 copyright NCI 2008. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
@@ -61,7 +61,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private static final String DISEASE = "disease"; // NOPMD
     private static final String SEARCH_DISEASE = "searchDisease";
     private static final String SYNC_DISEASE = "syncDisease";
-    
+
     private static final String  AJAX_RESPONSE = "ajaxResponse";
 
     private InterventionServiceLocal interventionService;
@@ -76,7 +76,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private DiseaseWebDTO currentDisease = new DiseaseWebDTO();
 
     private boolean importTerm = false;
-    
+
     private InputStream ajaxResponseStream;
 
     /**
@@ -96,7 +96,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Deafult action
-     * 
+     *
      * @return res
      * @throws PAException
      *             exception
@@ -108,7 +108,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Create intervention
-     * 
+     *
      * @return view
      */
     public String createIntervention() {
@@ -118,7 +118,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Import intervention
-     * 
+     *
      * @return view
      */
     public String importIntervention() {
@@ -128,7 +128,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Create Disease
-     * 
+     *
      * @return view
      */
     public String createDisease() {
@@ -138,7 +138,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Import Disease
-     * 
+     *
      * @return view
      */
     public String importDisease() {
@@ -148,7 +148,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Save a new intervention
-     * 
+     *
      * @return view
      */
     public String saveIntervention() {
@@ -204,7 +204,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Search for intervention by NCIt code in NCI Thesaurus
-     * 
+     *
      * @return view
      */
     public String searchIntervention() {
@@ -229,8 +229,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     currentIntervention.setIdentifier(existingIntrvDto.getPdqTermIdentifier().getValue());
                     currentIntervention.setNtTermIdentifier(existingIntrvDto.getNtTermIdentifier().getValue());
                     currentIntervention.setName(existingIntrvDto.getName().getValue());
-                    currentIntervention.setCtGovType(existingIntrvDto.getCtGovTypeCode().getDisplayName().getValue());
-                    currentIntervention.setType(existingIntrvDto.getTypeCode().getDisplayName().getValue());
+                    currentIntervention.setCtGovType(CdConverter.convertCdToString(existingIntrvDto
+                                                                                    .getCtGovTypeCode()));
+                    currentIntervention.setType(CdConverter.convertCdToString(existingIntrvDto
+                                                                                         .getTypeCode()));
+
                     List<InterventionAlternateNameDTO> altNames = interventionAltNameService
                             .getByIntervention(existingIntrvDto.getIdentifier());
                     if (altNames != null && !altNames.isEmpty()) {
@@ -267,7 +270,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE,
                     "Error looking up intervention, make sure the NCIt identifier '" + ncitCode
-                            + "' corresponds to a disease/condition. Ther error was: " + e.getLocalizedMessage());
+                            + "' corresponds to a intervention. Ther error was: " + e.getLocalizedMessage());
             return SEARCH_INTERVENTION;
         }
 
@@ -277,7 +280,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     /**
      * Synchronize an existing CTRP intervention with intervention retrieved
      * from NCIt
-     * 
+     *
      * @return view
      * @throws PAException
      *             PAException
@@ -335,7 +338,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Search for existing intervention by NCIt Id
-     * 
+     *
      * @param ncitId
      * @return matched intervention DTO, <code>null</code> if no match was found
      * @throws PAException
@@ -365,10 +368,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             valid = false;
         }
 
-        if (StringUtils.isEmpty(intervention.getType())) {
-            addFieldError("intervention.type", getText("manageTerms.fieldError.type"));
-            valid = false;
-        }
         return valid;
     }
 
@@ -421,7 +420,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Save a new disease/condition
-     * 
+     *
      * @return view
      */
     public String saveDisease() {
@@ -537,7 +536,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Search for Disease by NCIt code in NCI Thesaurus
-     * 
+     *
      * @return view
      */
     public String searchDisease() {
@@ -625,8 +624,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         PDQDiseaseDTO currDisease = getExistingDisease(disease.getNtTermIdentifier());
         if (currDisease != null) {
 
-            //Get existing parent and children terms 
-            
+            //Get existing parent and children terms
+
             List<String> missingTerms = new ArrayList<String>();
             List<PDQDiseaseParentDTO> parentDtos = new ArrayList<PDQDiseaseParentDTO>();
             List<PDQDiseaseParentDTO> childDtos = new ArrayList<PDQDiseaseParentDTO>();
@@ -635,22 +634,22 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             for (Iterator<String> iterator = currentDisease.getParentTermList().iterator(); iterator.hasNext();) {
                 existingParentCodes.add(iterator.next().split(":")[0]);
             }
-            
-           
-            
+
+
+
             // Check if all the new parent and children terms exists in CTRP
             for (Iterator<String> iterator = disease.getParentTermList().iterator(); iterator.hasNext();) {
                 String parentTerm = iterator.next();
                 String parentCode = parentTerm.split(":")[0];
-                if (!existingParentCodes.contains(parentCode)) {                   
+                if (!existingParentCodes.contains(parentCode)) {
                     PDQDiseaseDTO parent = getExistingDisease(parentCode);
-    
+
                     // If term does not exists retrieve it
                     if (parent == null) {
                         missingTerms.add(parentCode);
                         parent = retrieveAndSaveMissingTerm(parentCode);
-                    } 
-                    
+                    }
+
                     PDQDiseaseParentDTO p = new PDQDiseaseParentDTO();
                     p.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
                     p.setParentDiseaseIdentifier(parent.getIdentifier());
@@ -669,15 +668,15 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 String childTerm = iterator.next();
                 String childCode = childTerm.split(":")[0];
                 if (!existingChildCodes.contains(childCode)) {
-                    
+
                     PDQDiseaseDTO child = getExistingDisease(childCode);
-                    
+
                     // If term does not exists retrieve it
                     if (child == null) {
                         missingTerms.add(childCode);
                         child = retrieveAndSaveMissingTerm(childCode);
-                    } 
-                
+                    }
+
                     PDQDiseaseParentDTO c = new PDQDiseaseParentDTO();
                     c.setDiseaseIdentifier(child.getIdentifier());
                     c.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
@@ -759,7 +758,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Get the list of existing parents and children
-     * 
+     *
      * @param existingDiseaseDto
      * @throws PAException
      */
@@ -815,7 +814,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Create a well formatted missing terms error message for display in the UI
-     * 
+     *
      * @param missingTerms
      *            missing terms list
      * @return error message
@@ -834,7 +833,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     /**
      * Search for existing disease by NCIt Id
-     * 
+     *
      * @param ncitId
      * @return matched intervention DTO, <code>null</code> if no match was found
      * @throws PAException
@@ -852,7 +851,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     /**
      * Retrieve and save a term into CTRP. This terms relationships wont be
      * saved.
-     * 
+     *
      * @param ncitCode
      * @return created disease term reference
      * @throws PAException
@@ -912,12 +911,12 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         this.currentDisease = currentDisease;
     }
 
-    
+
     //Ajax actions
 
     /**
      * Get disease details ajax action
-     * @return view 
+     * @return view
      * @throws PAException PAException
      */
     public String ajaxGetDiseases() throws PAException {
@@ -930,7 +929,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 if (dis != null) {
                     result.append(dis.getNtTermIdentifier().getValue() + ": " + dis.getPreferredName().getValue());
                     if (i != diseaseIds.length) {
-                       result.append('\n'); 
+                       result.append('\n');
                     }
                 }
             }
@@ -954,5 +953,5 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
 
-    
+
 }

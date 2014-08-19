@@ -576,7 +576,7 @@ public class PADomainUtils {
     public static Set<String> getInterventionTypes(StudyProtocol sp) {
         Set<String> results = new TreeSet<String>();
         for (PlannedActivity pa : sp.getPlannedActivities()) {
-            if (pa.getIntervention() != null) {
+            if (pa.getIntervention() != null && pa.getIntervention().getTypeCode() != null) {
                 results.add(pa.getIntervention().getTypeCode().getCode());
             }
         }

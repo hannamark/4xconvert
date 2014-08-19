@@ -111,22 +111,22 @@
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="typeCode">PDQ
-						Type</label><span class="required">*</span></td>
-				<td><s:set name="typeCodes"
-						value="@gov.nih.nci.pa.enums.InterventionTypeCode@getDisplayNames()" />
+						Type</label></td>
+				<td><s:set name="pdqTypeCodes"
+						value="@gov.nih.nci.pa.enums.InterventionPDQTypeCode@getDisplayNames()" />
 					<s:select id="typeCode" name="intervention.type" headerKey=""
-						headerValue="-Select a Type Code-" list="#typeCodes" />
-						 <span class="formErrorMsg">
-                    <s:fielderror>
-                        <s:param>intervention.type</s:param>
-                    </s:fielderror>
-                    </span></td>
+						headerValue="-Select a Type Code-" list="#pdqTypeCodes" />
+                </td>
 			</tr>
 			<tr>
 				<td scope="row" class="label"><label for="typeCode">ClinicalTrials.gov
 						Type</label></td>
-				<td><s:select id="typeCode" name="intervention.ctGovType"
-						headerKey="" headerValue="-Select a Type Code-" list="#typeCodes" /></td>
+				<td>
+				 <s:set name="typeCodes"
+                        value="@gov.nih.nci.pa.enums.InterventionTypeCode@getDisplayNames()" />
+                 <s:select id="typeCode" name="intervention.ctGovType"
+						headerKey="" headerValue="-Select a Type Code-" list="#typeCodes" />
+		         </td>
 			</tr>
 		</table>
 		<div class="actionsrow">
