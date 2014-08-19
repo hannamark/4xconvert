@@ -254,7 +254,7 @@
 <body>
 	<!-- main content begins-->
 	<div class="container">
-		<c:set var="topic" scope="request" value="addsites" />
+		<c:set var="topic" scope="request" value="addsite" />
 
 		<s:form name="addSites" action="addSites.action" id="addSitesForm"
 			cssClass="form-horizontal" role="form">
