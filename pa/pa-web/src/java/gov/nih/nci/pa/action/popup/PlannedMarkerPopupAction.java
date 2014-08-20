@@ -208,8 +208,9 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             List<Object> permissibleValues = (List<Object>) (List<?>) appService
                    .query(constructSearchCriteria(detachedCrit));
             if (StringUtils.equals(TRUE, getSearchBothTerms())) {
-              permissibleValues.addAll((List<Object>) (List<?>) appService
-                      .query(constructNameSearchCriteria(detachedCritName)));
+              permissibleValues.addAll(avoidDuplicateEntries(permissibleValues, 
+                      (List<Object>) (List<?>) appService
+                      .query(constructNameSearchCriteria(detachedCritName))));
             }
             List<CaDSRWebDTO> values = getSearchResults(new ArrayList<Object>(permissibleValues));
             markers.addAll(values);
@@ -220,6 +221,22 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         return CADSR_RESULTS;
     }
     
+    private List<Object> avoidDuplicateEntries(List<Object> permissibleValues, List<Object> permissibleNameValues) {
+       List<Object> returnValues = new ArrayList<Object>();
+       List<Long> publicIdList = new ArrayList<Long>();
+       for (int i = 0; i < permissibleValues.size(); i++) {
+            ValueMeaning vm = (ValueMeaning) permissibleValues.get(i);
+            publicIdList.add(vm.getPublicID());
+        }
+        for (int i = 0; i < permissibleNameValues.size(); i++) {
+            ValueMeaning vm = (ValueMeaning) permissibleNameValues.get(i);
+            Long publicID = vm.getPublicID();
+            if (!publicIdList.contains(publicID)) {
+                returnValues.add(permissibleNameValues.get(i));
+            }
+        }
+        return returnValues;
+    }
     /**
      * Changes marker status to ACTIVE.
      * @return string
