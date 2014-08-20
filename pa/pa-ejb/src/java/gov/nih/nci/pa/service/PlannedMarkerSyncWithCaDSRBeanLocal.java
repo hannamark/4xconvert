@@ -20,6 +20,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -51,7 +52,9 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
     private static final String DESCRIPTION = "description";
     private static final String  STATUS = "statusCode";
     private static final String INSERT_STATEMENT = "insert into planned_marker_sync_cadsr";
-
+    /** The LOG details. */
+    private static final Logger LOG = Logger
+            .getLogger(PlannedMarkerSyncWithCaDSRBeanLocal.class);
     /**
      * @param valuesList
      *            valuesList
@@ -78,6 +81,7 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
     @SuppressWarnings({ "PMD.CyclomaticComplexity" })
     private void insertAndUpdateLogic(List<CaDSRDTO> valuesList) throws PAException {
         for (CaDSRDTO value : valuesList) {
+          try {
             Long caDSRId = value.getPublicId();
             String name = value.getVmName();
             String meaning = value.getVmMeaning();
@@ -142,7 +146,10 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
                         synonyms, ActiveInactivePendingCode.ACTIVE.getName());
                 }
             }
-        }
+          } catch (Exception e) {
+            LOG.error("Error with a record", e);
+          }
+       }
     }
     /**
      * deletes PlannedMarkerSyncWithCaDSRDTO values based on identifier.
