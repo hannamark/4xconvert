@@ -40,8 +40,8 @@ import com.opensymphony.xwork2.Preparable;
 /**
  * Action class for Managing Intervention/Disease terms
  *
- * @author Gopal Unnikrishnan
- * @since 12/1/2008 copyright NCI 2008. All rights reserved. This code may not
+ * @author Gopalakrishnan Unnikrishnan
+ * @since 08/01/2014 copyright NCI 2008. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
@@ -62,7 +62,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private static final String SEARCH_DISEASE = "searchDisease";
     private static final String SYNC_DISEASE = "syncDisease";
 
-    private static final String  AJAX_RESPONSE = "ajaxResponse";
+    private static final String AJAX_RESPONSE = "ajaxResponse";
 
     private InterventionServiceLocal interventionService;
     private InterventionAlternateNameServiceLocal interventionAltNameService;
@@ -229,16 +229,15 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     currentIntervention.setIdentifier(existingIntrvDto.getPdqTermIdentifier().getValue());
                     currentIntervention.setNtTermIdentifier(existingIntrvDto.getNtTermIdentifier().getValue());
                     currentIntervention.setName(existingIntrvDto.getName().getValue());
-                    currentIntervention.setCtGovType(CdConverter.convertCdToString(existingIntrvDto
-                                                                                    .getCtGovTypeCode()));
-                    currentIntervention.setType(CdConverter.convertCdToString(existingIntrvDto
-                                                                                         .getTypeCode()));
+                    currentIntervention
+                            .setCtGovType(CdConverter.convertCdToString(existingIntrvDto.getCtGovTypeCode()));
+                    currentIntervention.setType(CdConverter.convertCdToString(existingIntrvDto.getTypeCode()));
 
                     List<InterventionAlternateNameDTO> altNames = interventionAltNameService
                             .getByIntervention(existingIntrvDto.getIdentifier());
                     if (altNames != null && !altNames.isEmpty()) {
                         for (Iterator<InterventionAlternateNameDTO> iterator = altNames.iterator();
-                                iterator.hasNext();) {
+                                            iterator.hasNext();) {
                             InterventionAlternateNameDTO interventionAlternateNameDTO = iterator.next();
                             if (ALTNAME_TYPECODE_SYNONYM.equals(interventionAlternateNameDTO.getNameTypeCode()
                                     .getValue())) {
@@ -307,7 +306,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     if (ALTNAME_TYPECODE_SYNONYM.equals(interventionAlternateNameDTO.getNameTypeCode().getValue())) {
                         interventionAltNameService.delete(interventionAlternateNameDTO.getIdentifier());
                     }
-
                 }
             }
 
@@ -608,6 +606,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     /**
      * Synchronize an existing CTRP intervention with intervention retrieved
      * from NCIt
+     * 
      * @return view
      */
     public String syncDisease() {
@@ -621,136 +620,42 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().getSession().removeAttribute("currentDisease");
         }
         try {
-        PDQDiseaseDTO currDisease = getExistingDisease(disease.getNtTermIdentifier());
-        if (currDisease != null) {
+            PDQDiseaseDTO currDisease = getExistingDisease(disease.getNtTermIdentifier());
+            if (currDisease != null) {
 
-            //Get existing parent and children terms
+                currDisease.setPreferredName(StConverter.convertToSt(disease.getPreferredName()));
 
-            List<String> missingTerms = new ArrayList<String>();
-            List<PDQDiseaseParentDTO> parentDtos = new ArrayList<PDQDiseaseParentDTO>();
-            List<PDQDiseaseParentDTO> childDtos = new ArrayList<PDQDiseaseParentDTO>();
-
-            List<String> existingParentCodes = new ArrayList<String>();
-            for (Iterator<String> iterator = currentDisease.getParentTermList().iterator(); iterator.hasNext();) {
-                existingParentCodes.add(iterator.next().split(":")[0]);
-            }
-
-
-
-            // Check if all the new parent and children terms exists in CTRP
-            for (Iterator<String> iterator = disease.getParentTermList().iterator(); iterator.hasNext();) {
-                String parentTerm = iterator.next();
-                String parentCode = parentTerm.split(":")[0];
-                if (!existingParentCodes.contains(parentCode)) {
-                    PDQDiseaseDTO parent = getExistingDisease(parentCode);
-
-                    // If term does not exists retrieve it
-                    if (parent == null) {
-                        missingTerms.add(parentCode);
-                        parent = retrieveAndSaveMissingTerm(parentCode);
+                // DEACTIVATE existing synonyms
+                List<PDQDiseaseAlternameDTO> altNames = diseaseAltNameService.getByDisease(currDisease.getIdentifier());
+                if (altNames != null && !altNames.isEmpty()) {
+                    for (Iterator<PDQDiseaseAlternameDTO> iterator = altNames.iterator(); iterator.hasNext();) {
+                        PDQDiseaseAlternameDTO diseaseAlternateNameDTO = iterator.next();
+                        diseaseAltNameService.delete(diseaseAlternateNameDTO.getIdentifier());
                     }
-
-                    PDQDiseaseParentDTO p = new PDQDiseaseParentDTO();
-                    p.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
-                    p.setParentDiseaseIdentifier(parent.getIdentifier());
-                    p.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                    p.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
-                    parentDtos.add(p);
                 }
-            }
 
-
-            List<String> existingChildCodes = new ArrayList<String>();
-            for (Iterator<String> iterator = currentDisease.getChildTermList().iterator(); iterator.hasNext();) {
-                existingChildCodes.add(iterator.next().split(":")[0]);
-            }
-            for (Iterator<String> iterator = disease.getChildTermList().iterator(); iterator.hasNext();) {
-                String childTerm = iterator.next();
-                String childCode = childTerm.split(":")[0];
-                if (!existingChildCodes.contains(childCode)) {
-
-                    PDQDiseaseDTO child = getExistingDisease(childCode);
-
-                    // If term does not exists retrieve it
-                    if (child == null) {
-                        missingTerms.add(childCode);
-                        child = retrieveAndSaveMissingTerm(childCode);
+                // Save new synonyms
+                if (disease.getAlterNameList() != null) {
+                    for (String altName : disease.getAlterNameList()) {
+                        PDQDiseaseAlternameDTO altDto = new PDQDiseaseAlternameDTO();
+                        altDto.setAlternateName(StConverter.convertToSt(altName));
+                        altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                        altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil
+                                .today())));
+                        altDto.setDiseaseIdentifier(currDisease.getIdentifier());
+                        diseaseAltNameService.create(altDto);
                     }
-
-                    PDQDiseaseParentDTO c = new PDQDiseaseParentDTO();
-                    c.setDiseaseIdentifier(child.getIdentifier());
-                    c.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
-                    c.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                    c.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
-                    childDtos.add(c);
                 }
-            }
 
-            currDisease.setPreferredName(StConverter.convertToSt(disease.getPreferredName()));
+                diseaseService.update(currDisease);
 
-            // Remove existing synonyms
-            List<PDQDiseaseAlternameDTO> altNames = diseaseAltNameService.getByDisease(currDisease.getIdentifier());
-            if (altNames != null && !altNames.isEmpty()) {
-                for (Iterator<PDQDiseaseAlternameDTO> iterator = altNames.iterator(); iterator.hasNext();) {
-                    PDQDiseaseAlternameDTO diseaseAlternateNameDTO = iterator.next();
-                    diseaseAltNameService.delete(diseaseAlternateNameDTO.getIdentifier());
-                }
-            }
-
-            // Save new synonyms
-            if (disease.getAlterNameList() != null) {
-                for (String altName : disease.getAlterNameList()) {
-                    PDQDiseaseAlternameDTO altDto = new PDQDiseaseAlternameDTO();
-                    altDto.setAlternateName(StConverter.convertToSt(altName));
-                    altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                    altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
-                    altDto.setDiseaseIdentifier(currDisease.getIdentifier());
-                    diseaseAltNameService.create(altDto);
-                }
-            }
-
-            // Save parents
-            for (Iterator<PDQDiseaseParentDTO> iterator = parentDtos.iterator(); iterator.hasNext();) {
-                PDQDiseaseParentDTO parentDto = iterator.next();
-                parentDto.setDiseaseIdentifier(currDisease.getIdentifier());
-                diseaseParentService.create(parentDto);
-            }
-
-            // Save Children
-            for (Iterator<PDQDiseaseParentDTO> iterator = childDtos.iterator(); iterator.hasNext();) {
-                PDQDiseaseParentDTO childDto = iterator.next();
-                childDto.setParentDiseaseIdentifier(currDisease.getIdentifier());
-                diseaseParentService.create(childDto);
-            }
-
-            diseaseService.update(currDisease);
-            if (!missingTerms.isEmpty()) {
-                String errorMsg = createTermsMissingErrorMessage(missingTerms);
-                ServletActionContext
-                        .getRequest()
-                        .setAttribute(
-                                Constants.SUCCESS_MESSAGE,
-                                "Disease "
-                                        + disease.getNtTermIdentifier()
-                                        + " synchronized with NCIt successfully. Some parent/child terms were "
-                                        + "also created in CTRP as they were not present in CTRP already. "
-                                        + " Here are the list of term that were created additionally: "
-                                        + errorMsg);
             } else {
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
-                        "Disease " + currDisease.getNtTermIdentifier().getValue() + " synchronized with NCI thesaurus");
+                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
+                        "No Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() + "' found in CTRP");
             }
-        } else {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
-                    "No Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() + "' found in CTRP");
-        }
-        } catch (PAException  e) {
+        } catch (PAException e) {
             LOG.error("Error saving disease", e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
-            return DISEASE;
-        } catch (LEXEVSLookupException lexe) {
-            LOG.error("Error retrieving missing parent/child disease", lexe);
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, lexe.getLocalizedMessage());
             return DISEASE;
         }
         return SUCCESS;
@@ -911,13 +816,14 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         this.currentDisease = currentDisease;
     }
 
-
-    //Ajax actions
+    // Ajax actions
 
     /**
      * Get disease details ajax action
+     * 
      * @return view
-     * @throws PAException PAException
+     * @throws PAException
+     *             PAException
      */
     public String ajaxGetDiseases() throws PAException {
         String ids = ServletActionContext.getRequest().getParameter("diseaseIds");
@@ -929,7 +835,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 if (dis != null) {
                     result.append(dis.getNtTermIdentifier().getValue() + ": " + dis.getPreferredName().getValue());
                     if (i != diseaseIds.length) {
-                       result.append('\n');
+                        result.append('\n');
                     }
                 }
             }
@@ -946,12 +852,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @param ajaxResponseStream the ajaxResponseStream to set
+     * @param ajaxResponseStream
+     *            the ajaxResponseStream to set
      */
     public void setAjaxResponseStream(InputStream ajaxResponseStream) {
         this.ajaxResponseStream = ajaxResponseStream;
     }
-
-
 
 }

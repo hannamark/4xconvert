@@ -1,4 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page import="gov.nih.nci.pa.util.ActionUtils"%>
+<%@page import="com.opensymphony.xwork2.ActionContext"%>
+<%@page import="java.util.List"%>
 <%@page import="org.apache.commons.collections.CollectionUtils"%>
 <%@page import="gov.nih.nci.pa.action.ManageTermsAction"%>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
@@ -25,7 +28,7 @@
 			</tr>
 		</thead>
 		<tr>
-			<td scope="row" class="label">NCIt Identifier:<span
+			<td scope="row" width="20%"><label>NCIt Identifier:</label><span
 				class="required">*</span></td>
 			<td width="150px"><s:property
 					value="currentIntervention.ntTermIdentifier" /></td>
@@ -33,38 +36,37 @@
 					value="intervention.ntTermIdentifier" /></td>
 		</tr>
 		<tr>
-			<td scope="row" class="label">CDR Identifier:</td>
+			<td scope="row" ><label>CDR Identifier:</label></td>
             <td><s:property value="currentIntervention.identifier" /></td>
 			<td><s:property value="intervention.identifier" /></td>
 		</tr>
 		<tr>
-			<td scope="row" class="label">Preferred Name:<span
+			<td scope="row" ><label>Preferred Name:</label><span
 				class="required">*</span></td>
             <td><s:if test="%{currentIntervention.name != intervention.name}"><font color="red"><strong></s:if><s:property value="currentIntervention.name" /><s:if test="%{currentIntervention.name != intervention.name}"></strong></font></s:if></td>
 			<td><s:property value="intervention.name" /></td>
 		</tr>
+		 <% List<String> newAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("intervention.alterNames");
+            List<String> currentAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("currentIntervention.alterNames"); 
+         %>
 		<tr>
-			<td scope="row" class="label">Synonyms:</td>
-            <td><s:if test="%{currentIntervention.alterNames.size() != intervention.alterNames.size()}"><font color="red" ><strong></s:if>
-            <s:iterator value="currentIntervention.alterNames" status="alt">
-                <s:property /><s:if test="!#alt.last"><br></s:if>
-            </s:iterator>
-            <s:if test="%{currentIntervention.alterNames.size() != intervention.alterNames.size()}"></strong></font></s:if></td>
-			<td><s:iterator value="intervention.alterNames" status="alt">
-                <s:property /><s:if test="!#alt.last"><br></s:if>
-            </s:iterator>
+			<td scope="row" ><label>Synonyms:</label></td>
+            <td><%= ActionUtils.generateListDiffStringForManageTerms(currentAltnames, newAltnames ) %></td>
+            <td><%= ActionUtils.generateListDiffStringForManageTerms(newAltnames, currentAltnames ) %></td>
 		</tr>
 		<tr>
-			<td scope="row" class="label">Cancer.gov Type:</td>
+			<td scope="row" ><label>Cancer.gov Type:</label></td>
             <td><s:property value="currentIntervention.type" /></td>
 			<td><s:property value="intervention.type" /></td>
 		</tr>
 		<tr>
-			<td scope="row" class="label">ClinicalTrials.gov Type:</td>
+			<td scope="row" ><label>ClinicalTrials.gov Type:</label></td>
             <td><s:property value="currentIntervention.ctGovType" /></td>
 			<td><s:property value="intervention.ctGovType" /></td>
 		</tr>
+
 	</table>
+	<div align="center"><span class="info">Note: 'CDR Identifier', 'Cancer.gov Type' and 'ClinicalTrials.gov Type' attributes are NOT synchronized from NCIt, their existing CTRP values shown above will be retained.</span></div>
 	<div class="actionsrow">
 		<del class="btnwrapper">
 			<ul class="btnrow">

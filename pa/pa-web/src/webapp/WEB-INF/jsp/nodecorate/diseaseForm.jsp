@@ -1,3 +1,5 @@
+<%@page import="com.opensymphony.xwork2.ActionContext"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html>
@@ -97,12 +99,12 @@
 	}
 
 	function removeFromList(list) {
-		if (jQuery("#importTerm").val() == 'false') {
-			var values = jQuery('#' + list).val();
-			for (var i = 0; i < values.length; i++) {
-				jQuery('#' + list + ' option[value="' + values[i] + '"]')
-						.remove();
-			}
+		var values = jQuery('#' + list).val();
+		if (values != null) {
+		for (var i = 0; i < values.length; i++) {
+			jQuery('#' + list + ' option[value="' + values[i] + '"]')
+					.remove();
+		}
 		}
 	}
 </script>
@@ -113,7 +115,7 @@
 		<s:hidden id="importTerm" name="importTerm" />
 		<table class="form">
 			<tr>
-				<td scope="row" class="label"><label for="ntTermIdentifier">
+				<td scope="row" width="20%"><label for="ntTermIdentifier">
 						NCIt Identifier</label><span class="required">*</span></td>
 				<td width="150px"><s:textfield id="ntTermIdentifier"
 						name="disease.ntTermIdentifier" maxlength="10" size="10"
@@ -125,7 +127,7 @@
 
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="code">CDR
+				<td scope="row" ><label for="code">CDR
 						Identifier</label></td>
 				<td><s:textfield id="code" name="disease.code" maxlength="15"
 						size="15" cssStyle="width:150px" /> <span class="formErrorMsg">
@@ -136,7 +138,7 @@
 
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="preferredName">Preferred
+				<td scope="row" ><label for="preferredName">Preferred
 						Name</label><span class="required">*</span></td>
 				<td><s:textfield id="preferredName"
 						name="disease.preferredName" maxlength="200" size="100"
@@ -147,7 +149,7 @@
 				</span></td>
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="menuDisplayName">Display 
+				<td scope="row" ><label for="menuDisplayName">Display 
 				Name</label><span class="required">*</span></td>
 				<td><s:if test="%{importTerm && disease.menuDisplayName == null}">
 				        <s:textfield id="menuDisplayName"
@@ -170,8 +172,11 @@
                         </s:a></div>
                 </td>
 			</tr>
+			 <% List<String> newAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("disease.alterNameList");
+                List<String> currentAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("currentDisease.alterNameList"); 
+            %>
 			<tr>
-				<td scope="row" class="label"><label for="typeCode">Synonyms
+				<td scope="row" ><label for="typeCode">Synonyms
 				</label></td>
 				<td><s:textfield id="altName" name="altName" maxlength="200"
 						size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
@@ -192,13 +197,13 @@
 					</s:a></s:if></td>
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="typeCode">Parent
+				<td scope="row" ><label for="typeCode">Parent
 						Term NCIt Ids </label></td>
 				<td><s:select id="parentTerms" size="6"
 						name="disease.parentTermList" cssStyle="width:400px"
 						list="disease.parentTermList" multiple="true"
 						readonly="%{importTerm}" /></td>
-				<td><s:if test="%{!importTerm}"><div style="float: left; width: 100%;">
+				<td><div style="float: left; width: 100%;">
 						<s:a href="javascript:void(0)" cssClass="btn"
 							onClick="lookupParentDisease()">
 							<span class="btn_img"><span class="add">LookUp &
@@ -211,16 +216,16 @@
 							onclick="removeFromList('parentTerms')">
 							<span class="btn_img"><span class="delete">Remove</span></span>
 						</s:a>
-					</div></s:if></td>
+					</div></td>
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="typeCode">Child
+				<td scope="row" ><label for="typeCode">Child
 						Term NCIt Ids </label></td>
 				<td><s:select id="childTerms" size="6"
 						name="disease.childTermList" cssStyle="width:400px"
 						list="disease.childTermList" multiple="true"
 						readonly="%{importTerm}" /></td>
-				<td><s:if test="%{!importTerm}"><div style="float: left; width: 100%;">
+				<td><div style="float: left; width: 100%;">
 						<s:a href="javascript:void(0)" cssClass="btn"
 							onclick="lookupChildDisease()">
 							<span class="btn_img"><span class="add">LookUp &
@@ -233,7 +238,7 @@
 							onclick="removeFromList('childTerms')">
 							<span class="btn_img"><span class="delete">Remove</span></span>
 						</s:a>
-					</div></s:if></td>
+					</div></td>
 			</tr>
 
 		</table>

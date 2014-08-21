@@ -33,9 +33,11 @@
 	function removeSyn(value) {
 		if (jQuery("#importTerm").val() == 'false') {
 			var values = jQuery("#intervAltNames").val();
-			for (var i = 0; i < values.length; i++) {
+			if(values != null) {
+			 for (var i = 0; i < values.length; i++) {
 				jQuery("#intervAltNames option[value='" + values[i] + "']")
 						.remove();
+			 }
 			}
 		}
 
@@ -48,7 +50,7 @@
 		<s:hidden id="importTerm" name="importTerm" />
 		<table class="form">
 			<tr>
-				<td scope="row" class="label"><label for="ntTermIdentifier">
+				<td scope="row" width="20%"><label for="ntTermIdentifier">
 						NCIt Identifier</label><span class="required">*</span></td>
 				<td width="150px"><s:textfield id="ntTermIdentifier"
 						name="intervention.ntTermIdentifier" maxlength="10" size="10"
@@ -62,7 +64,7 @@
 			        
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="pdqTermIdentifier">CDR
+				<td scope="row" ><label for="pdqTermIdentifier">CDR
 						Identifier</label></td>
 				<td><s:textfield id="pdqTermIdentifier"
 						name="intervention.identifier" maxlength="15" size="15"
@@ -76,7 +78,7 @@
 			       
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="name">Preferred
+				<td scope="row" ><label for="name">Preferred
 						Name</label><span class="required">*</span></td>
 				<td><s:textfield id="name" name="intervention.name"
 						maxlength="200" size="100" cssStyle="width:400px"
@@ -89,7 +91,7 @@
                     </td>
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="typeCode">Synonyms
+				<td scope="row" ><label for="typeCode">Synonyms
 				</label></td>
 				<td><s:textfield id="altName" name="altName" maxlength="200"
 						size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
@@ -110,7 +112,7 @@
 					</s:a></s:if></td>
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="typeCode">Cancer.gov Type</label></td>
+				<td scope="row" ><label for="typeCode">Cancer.gov Type</label></td>
 				<td><s:set name="pdqTypeCodes"
 						value="@gov.nih.nci.pa.enums.InterventionPDQTypeCode@getDisplayNames()" />
 					<s:select id="typeCode" name="intervention.type" headerKey=""
@@ -118,7 +120,7 @@
                 </td>
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="typeCode">ClinicalTrials.gov
+				<td scope="row" ><label for="typeCode">ClinicalTrials.gov
 						Type</label></td>
 				<td>
 				 <s:set name="typeCodes"

@@ -16,6 +16,7 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -254,5 +255,27 @@ public final class ActionUtils {
 
     }
     
+    /**
+     * Compare list1 to list2 and generate a html stirng highlighting the terms missing in list2
+     * @param list1 list1  
+     * @param list2 list2
+     * @return html string with missing terms highlighted
+     */
+    public static String generateListDiffStringForManageTerms(List<String> list1, List<String> list2) {
+        StringBuilder result = new StringBuilder();
+        Collections.sort(list1);
+        Collections.sort(list2);
+        for (Iterator<String> iterator = list1.iterator(); iterator.hasNext();) {
+            String item = iterator.next();
+            if (!list2.contains(item)) {
+                result.append("<font color='red'><strong>").append(item).append("</strong></font>");                
+            } else {
+                result.append(item);
+            }
+            
+            result.append("<br>");
+        }
+        return result.toString();
+    }
 
 }
