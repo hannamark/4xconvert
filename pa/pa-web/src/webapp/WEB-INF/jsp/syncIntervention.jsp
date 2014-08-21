@@ -55,7 +55,7 @@
             </s:iterator>
 		</tr>
 		<tr>
-			<td scope="row" class="label">PDQ Type:</td>
+			<td scope="row" class="label">Cancer.gov Type:</td>
             <td><s:property value="currentIntervention.type" /></td>
 			<td><s:property value="intervention.type" /></td>
 		</tr>

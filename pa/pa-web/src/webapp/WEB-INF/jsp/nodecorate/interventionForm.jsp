@@ -110,8 +110,7 @@
 					</s:a></s:if></td>
 			</tr>
 			<tr>
-				<td scope="row" class="label"><label for="typeCode">PDQ
-						Type</label></td>
+				<td scope="row" class="label"><label for="typeCode">Cancer.gov Type</label></td>
 				<td><s:set name="pdqTypeCodes"
 						value="@gov.nih.nci.pa.enums.InterventionPDQTypeCode@getDisplayNames()" />
 					<s:select id="typeCode" name="intervention.type" headerKey=""
