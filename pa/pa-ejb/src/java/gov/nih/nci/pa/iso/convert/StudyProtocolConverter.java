@@ -113,7 +113,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 
@@ -129,7 +128,6 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * copyright holder, NCI.
  */
 public class StudyProtocolConverter {
-    private static final Logger LOG = Logger.getLogger(StudyProtocolConverter.class);
     /**
      *
      * @param studyProtocol study Protocol

@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ejb.TransactionAttribute;
@@ -132,5 +133,16 @@ public class MockRegistryUserServiceBean extends RegistryUserServiceBean {
 
         return registryUser;
 
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * For purposes of unit tests simulate all sites as being alone in their family.
+     */
+    protected List<Long> getAllRelatedOrgs(Long siteId) throws PAException {
+        LinkedList<Long> result = new LinkedList<Long>();
+        result.add(siteId);
+        return result;
     }
 }

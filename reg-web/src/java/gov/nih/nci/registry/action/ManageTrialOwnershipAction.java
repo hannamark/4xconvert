@@ -90,8 +90,10 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -120,7 +122,7 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
     @Override
     public List<StudyProtocol> getStudyProtocols(Long affiliatedOrgId)
             throws PAException {
-        List<StudyProtocol> result = new ArrayList<StudyProtocol>();
+        Set<StudyProtocol> result = new HashSet<StudyProtocol>();
         List<StudyProtocol> trials;
         
         List<Long> siblings = FamilyHelper.getAllRelatedOrgs(affiliatedOrgId);
@@ -134,7 +136,7 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
                 }
             }
         }
-        return result;
+        return new LinkedList<StudyProtocol>(result);
     }
 
     @Override

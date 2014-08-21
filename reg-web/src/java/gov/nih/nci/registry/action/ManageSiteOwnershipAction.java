@@ -94,8 +94,11 @@ import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -125,7 +128,7 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
     @Override
     public List<StudyProtocol> getStudyProtocols(Long participatingSiteId)
             throws PAException {
-        List<StudyProtocol> spList = new LinkedList<>();
+        Set<StudyProtocol> spSet = new HashSet<>();
         List<Long> siblings = FamilyHelper.getAllRelatedOrgs(participatingSiteId);
         Organization org = new Organization();
         org.setIdentifier(participatingSiteId.toString());
@@ -137,10 +140,10 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
         }
         
         for (long siteId : siblings) {
-            spList.addAll(PaRegistry.getRegistryUserService().getTrialsByParticipatingSite(siteId));
+            spSet.addAll(PaRegistry.getRegistryUserService().getTrialsByParticipatingSite(siteId));
         }
         
-        return spList;
+        return new LinkedList<>(spSet);
     }
 
   
@@ -168,8 +171,15 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
         Ii spID = IiConverter.convertToStudyProtocolIi(trialID);        
         StudySiteDTO studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
         if (studySiteDTO == null) {
-            throw new PAException(
+            Iterator<Long> siblings = FamilyHelper.getAllRelatedOrgs(orgId).iterator();
+            while (studySiteDTO == null && siblings.hasNext()) {
+                poOrgId = String.valueOf(siblings.next());
+                studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
+            }
+            if (studySiteDTO == null) {
+                throw new PAException(
                     "Your affiliated organization is not a participating site on the selected trial.");
+            }
         }
         if (assign) {
             PaRegistry.getRegistryUserService().assignSiteOwnership(userId,

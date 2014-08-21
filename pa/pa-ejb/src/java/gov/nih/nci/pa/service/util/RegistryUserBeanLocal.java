@@ -133,6 +133,7 @@ import org.hibernate.criterion.Restrictions;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
+    private static final String REG_USER = "regUser";
     private static final String UNCHECKED = "unchecked";
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
     private static final int INDEX_USER_ID = 0;
@@ -274,7 +275,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             throw new PAException("UserOrgType cannot be null.");
         }
         Session session = PaHibernateUtil.getCurrentSession();
-        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser")
+        Criteria criteria = session.createCriteria(RegistryUser.class, REG_USER)
             .add(Property.forName("regUser.affiliatedOrganizationId").isNotNull())
             .add(Restrictions.eq("regUser.affiliatedOrgUserType", userType));
 
@@ -311,7 +312,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     @SuppressWarnings(UNCHECKED)
     public List<RegistryUser> search(RegistryUser regUser) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
-        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
+        Criteria criteria = session.createCriteria(RegistryUser.class, REG_USER);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         if (regUser != null) {
@@ -344,26 +345,40 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     public List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation // NOPMD
             trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
+        List<Long> siblings = getAllRelatedOrgs(affiliatedOrgId);
         StringBuffer hql = new StringBuffer();
-        hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, "
-                + "sp.id, otherid.extension, sowner.affiliatedOrganizationId, sps.localStudyProtocolIdentifier "
-                + "from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
-                + "left outer join sp.studySites as sps "
-                + "left outer join sps.researchOrganization as ro left outer join ro.organization as org "
-                + " left outer join sp.studyOwners as sowner left outer join sp.otherIdentifiers otherid where '")
-                .append(affiliatedOrgId.toString())
-                .append("' in (select researchOrganization.organization.identifier from StudySite "
-                        + "where functionalCode ='")
-                .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
-                .append("' and studyProtocol.id = sp.id) and dws.statusCode  <> '")
+        hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, ")
+            .append("sp.id, otherid.extension, sowner.affiliatedOrganizationId, sps.localStudyProtocolIdentifier ")
+            .append("from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws ")
+            .append("left outer join sp.studySites as sps ")
+            .append("left outer join sps.researchOrganization as ro left outer join ro.organization as org ")
+            .append(" left outer join sp.studyOwners as sowner left outer join sp.otherIdentifiers otherid where (");
+        for (int i = 0; i < siblings.size(); i++) {
+            if (i > 0) {
+                hql.append("or ");
+            }
+            hql.append("'").append(siblings.get(i).toString())
+                .append("' in (select researchOrganization.organization.identifier from StudySite")
+                .append(" where functionalCode ='")
+                .append(StudySiteFunctionalCode.LEAD_ORGANIZATION).append("' ")
+                .append("and studyProtocol.id = sp.id) ");
+        }
+
+        hql.append(") and dws.statusCode  <> '")
                 .append(DocumentWorkflowStatusCode.REJECTED)
                 .append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
                         + "where sp.id=dws1.studyProtocol) or dws.id is null) and sps.functionalCode = '")
                 .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
                 .append("' and otherid.root = '")
                 .append(IiConverter.STUDY_PROTOCOL_ROOT)
-                .append("' and sowner.id IS NOT NULL and sowner.affiliatedOrganizationId = ")
-                .append(affiliatedOrgId);
+                .append("' and sowner.id IS NOT NULL and sowner.affiliatedOrganizationId in (");
+        for (int i = 0; i < siblings.size(); i++) {
+            hql.append(siblings.get(i).toString());
+            if (i + 1 != siblings.size()) {
+                hql.append(", ");
+            }
+        }
+        hql.append(") ");
 
         String criteriaClause = getTrialOwnershipInformationSearchCriteria(trialOwnershipInfo);
         if (StringUtils.isNotEmpty(criteriaClause)) {
@@ -395,6 +410,16 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return lst;
     }
     
+    /**
+     * A function to wrap around FamilyHelper static function getAllRelatedOrgs so
+     * it can be replaced in unit tests.
+     * @param siteId the id of the site
+     * @return the list of organizations in the family,
+     * @throws PAException When something goes wrong.
+     */
+    protected List<Long> getAllRelatedOrgs(Long siteId) throws PAException {
+        return FamilyHelper.getAllRelatedOrgs(siteId);
+    }
 
     /**
      * @param participatingSiteId the participating site id 
@@ -406,6 +431,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
              Long participatingSiteId) throws PAException {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
+        List<Long> siblings = getAllRelatedOrgs(participatingSiteId);
         StringBuffer hql = new StringBuffer();
         hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, "
                 + "sp.id, otherid.extension, sowner.affiliatedOrganizationId, sps.localStudyProtocolIdentifier "
@@ -413,20 +439,32 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 + "join sp.studySites as sps "
                 + "join sps.healthCareFacility as hcf left join hcf.organization as org "
                 + "join sps.studySiteOwners as sowner "
-                + "left outer join sp.otherIdentifiers otherid where '")
-                .append(participatingSiteId.toString())
+                + "left outer join sp.otherIdentifiers otherid where (");
+        for (int i = 0; i < siblings.size(); i++) {
+            if (i > 0) {
+                hql.append("or ");
+            }
+            hql.append("'" + siblings.get(i).toString())
                 .append("' in (select healthCareFacility.organization.identifier from StudySite"
                         + " where functionalCode ='")
                 .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
-                .append("and studyProtocol.id = sp.id) and dws.statusCode  <> '")
+                .append("and studyProtocol.id = sp.id) ");
+        }
+        hql.append(") and dws.statusCode  <> '")
                 .append(DocumentWorkflowStatusCode.REJECTED).append("' ")
                 .append("and (dws.id in (select max(id) from DocumentWorkflowStatus "
                         + "as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) "
                         + "and sps.functionalCode = '")
                 .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
                 .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT)
-                .append("' and sps.statusCode <> 'NULLIFIED' and sowner.affiliatedOrganizationId = ")
-                .append(participatingSiteId);
+                .append("' and sps.statusCode <> 'NULLIFIED' and sowner.affiliatedOrganizationId in (");
+        for (int i = 0; i < siblings.size(); i++) {
+            hql.append(siblings.get(i).toString());
+            if (i + 1 != siblings.size()) {
+                hql.append(", ");
+            }
+        }
+        hql.append(") ");
                 
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());
@@ -565,7 +603,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         try {
             regUser = (RegistryUser) criteria.uniqueResult();
         } catch (HibernateException e) {
-            throw new PAException("Multiple registry accounts for the same email address were found.");
+            throw new PAException("Multiple registry accounts for the same email address were found.", e);
         }
         if (regUser == null) {
             throw new PAException("Unable to find user with email " + email
@@ -659,7 +697,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         for (Iterator<StudySite> iter = studySites.iterator(); iter.hasNext();) {
             StudySite site = iter.next();
             if (site.getId().equals(studySiteId)) {
-                iter.remove();
+                 iter.remove();
             }
         }
         PaHibernateUtil.getCurrentSession().saveOrUpdate(usr);
@@ -786,7 +824,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             return new ArrayList<RegistryUser>();
         }
         Session session = PaHibernateUtil.getCurrentSession();
-        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
+        Criteria criteria = session.createCriteria(RegistryUser.class, REG_USER);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.add(Restrictions.in("affiliatedOrganizationId", orgIds));
         criteria.add(Restrictions.isNotNull("regUser.csmUser"));
@@ -798,7 +836,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     public List<RegistryUser> searchByCsmUsers(Collection<User> users)
             throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
-        Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
+        Criteria criteria = session.createCriteria(RegistryUser.class, REG_USER);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);     
         criteria.add(Restrictions.in("csmUser", users));
         criteria.setFetchMode("csmUser", FetchMode.JOIN);        
