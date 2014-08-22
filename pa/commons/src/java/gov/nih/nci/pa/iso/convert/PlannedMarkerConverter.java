@@ -197,15 +197,6 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
     @Override
     public void convertFromDtoToDomain(PlannedMarkerDTO dto, PlannedMarker marker) {
         new PlannedActivityConverter().convertFromDtoToDomain(dto, marker);
-       // PlannedMarkerSyncWithCaDSRDTO pmSyncDTO = new PlannedMarkerSyncWithCaDSRDTO();
-//        pmSyncDTO.setName(dto.getName());
-//        pmSyncDTO.setMeaning(dto.getLongName());
-//        pmSyncDTO.setDescription(dto.getTextDescription());
-//        pmSyncDTO.setStatusCode(dto.getStatusCode());
-//        pmSyncDTO.setIdentifier(dto.getPermissibleValue());
-      //  new PlannedMarkerSyncWithCaDSRConverter().convertFromDtoToDomain(pmSyncDTO, new PlannedMarkerSyncWithCaDSR());
-        
-        
         PlannedMarkerSyncWithCaDSR invBo = new PlannedMarkerSyncWithCaDSR();
         if (!ISOUtil.isIiNull(dto.getPermissibleValue())) {
             Long id = IiConverter.convertToLong(dto.getPermissibleValue());
@@ -216,10 +207,9 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
             invBo.setDescription(StConverter.convertToString(dto.getTextDescription()));
             invBo.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter
                     .convertCdToString(dto.getStatusCode())));
+            invBo.setPvName(StConverter.convertToString(dto.getPvValue()));
         }
         marker.setPermissibleValue(invBo);
-      //  marker.setName(StConverter.convertToString(dto.getName()));
-     //   marker.setLongName(StConverter.convertToString(dto.getLongName()));
         marker.setHugoBiomarkerCode(CdConverter.convertCdToString(dto.getHugoBiomarkerCode()));
         String finalAssayTypeCode = typeCodeValues(CdConverter.convertCdToString(dto.getAssayTypeCode()));
         marker.setAssayTypeCode(finalAssayTypeCode);

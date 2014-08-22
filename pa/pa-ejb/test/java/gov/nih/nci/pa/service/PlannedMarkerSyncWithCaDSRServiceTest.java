@@ -93,14 +93,14 @@ public class PlannedMarkerSyncWithCaDSRServiceTest extends
     
     @Test
     public void updateValuesTest() throws PAException {
-        bean.updateValues(12345L, "Aneuploidy", "Aneuploidy", "Aneuploidy", "c320", ActiveInactivePendingCode.ACTIVE.getName());
+        bean.updateValueByName(12345L, "Aneuploidy", "Aneuploidy", "Aneuploidy", "c320", "Aneuploidy", ActiveInactivePendingCode.ACTIVE.getName());
         List<PlannedMarkerSyncWithCaDSRDTO> list = bean.getValuesByName("Aneuploidy");
-        assertTrue(list.size() > 0);
+        assertTrue(list.size() == 0);
     }
     
     @Test
     public void updateValueByNameTest() throws PAException {
-        bean.insertValues(null, "PI3K", "PI3K", null , null, ActiveInactivePendingCode.PENDING.getName());
+        bean.insertValues(null, "PI3K", "PI3K", null , null, null,ActiveInactivePendingCode.PENDING.getName());
         bean.updateValueByName(null, "PI3K", "PI3K", null , ActiveInactivePendingCode.PENDING.getName());
         List<PlannedMarkerSyncWithCaDSRDTO> list = bean.getValuesByName("PI3K");
         assertTrue(list.size() > 0);
@@ -108,7 +108,7 @@ public class PlannedMarkerSyncWithCaDSRServiceTest extends
     
     @Test 
     public void updateStatusCodeTest() throws PAException {
-        bean.insertValues(1348L, "PI3K", "PI3K", null , null, ActiveInactivePendingCode.PENDING.getName());
+        bean.insertValues(1348L, "PI3K", "PI3K", null , null, null, ActiveInactivePendingCode.PENDING.getName());
         List<Number> list = bean.getIdentifierByCadsrId(1348L);
         bean.updateStatusCode(1348L, ActiveInactivePendingCode.ACTIVE.getName());
         List<PlannedMarkerSyncWithCaDSRDTO> list1 = bean.getValuesById(list.get(0).longValue());

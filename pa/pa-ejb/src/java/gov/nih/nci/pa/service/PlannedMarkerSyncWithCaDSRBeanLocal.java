@@ -7,6 +7,7 @@ import gov.nih.nci.pa.iso.convert.PlannedMarkerSyncWithCaDSRConverter;
 import gov.nih.nci.pa.iso.dto.CaDSRDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerSyncWithCaDSRDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -33,7 +34,8 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@SuppressWarnings({ "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity" })
+@SuppressWarnings({ "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity",
+    "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class PlannedMarkerSyncWithCaDSRBeanLocal
         extends
         AbstractBaseIsoService<PlannedMarkerSyncWithCaDSRDTO, 
@@ -51,6 +53,8 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
     private static final String MEANING = "meaning";
     private static final String DESCRIPTION = "description";
     private static final String  STATUS = "statusCode";
+    private static final String NT_TERM = "ntTermId";
+    private static final String PV_VALUE = "pvValue";
     private static final String INSERT_STATEMENT = "insert into planned_marker_sync_cadsr";
     /** The LOG details. */
     private static final Logger LOG = Logger
@@ -78,38 +82,37 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
         queryList = query.list();
         return queryList.get(0).longValue();
     }
-    @SuppressWarnings({ "PMD.CyclomaticComplexity" })
+    @SuppressWarnings({ "PMD.CyclomaticComplexity" , "PMD.ExcessiveMethodLength" })
     private void insertAndUpdateLogic(List<CaDSRDTO> valuesList) throws PAException {
         for (CaDSRDTO value : valuesList) {
           try {
             Long caDSRId = value.getPublicId();
             String name = value.getVmName();
             String meaning = value.getVmMeaning();
+            String pvValue = value.getPvValue();
             List<String> synonyms = value.getAltNames();
             String description = value.getVmDescription();
             String ntTermId = value.getNtTermIdentifier();
             List<Number> idList = (List<Number>) getIdentifierByCadsrId(caDSRId);
             if (!idList.isEmpty()) { 
                 Long newId = idList.get(0).longValue();
-                List<Number> nameList = getIdentifierByMeaning(meaning);
+                List<Number> nameList = getIdentifierByPvName(pvValue);
                 if (!nameList.isEmpty()) {
                   Long oldId = nameList.get(0).longValue();
                    if (nameList.size() > 1) {
-                      // to avoid unique name constraint  
-                     for (int i = 0; i < nameList.size(); i++) {
-                      List<PlannedMarkerSyncWithCaDSRDTO> dtoList = 
-                             getValuesById(nameList.get(i).longValue());
-                        if (StringUtils.equalsIgnoreCase(dtoList.get(0)
-                          .getStatusCode().getCode(), "Pending")) {
-                            oldId = IiConverter.convertToLong(dtoList.get(0).getIdentifier());
-                        }
-                      }
+                     newId = updateNameLogic(newId, nameList);
+                   } else {
+                   if (!newId.equals(oldId)) {
+                       pmSynonymService.deleteBySyncId(oldId);
+                       deleteById(oldId);
+                       plannedMarkerService.updateStatusOldIDByPMSynID(oldId, 
+                         newId, ActiveInactivePendingCode.ACTIVE.getName());
                    }
-                    if (!newId.equals(oldId)) {
-                        pmSynonymService.deleteBySyncId(oldId);
-                        deleteById(oldId);
-                        plannedMarkerService.updateStatusOldIDByPMSynID(oldId, 
-                          newId, ActiveInactivePendingCode.ACTIVE.getName());
+                  }
+                } else { 
+                    List<Number> nameUniqueList = getIdentifierByName(pvValue);
+                    if (!nameUniqueList.isEmpty()) {
+                       newId = updateNameLogic(newId, nameUniqueList);
                     }
                 }
                 List<String> listofSynValues = pmSynonymService.getAltNamesBySyncId(newId);
@@ -122,20 +125,20 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
                                 synonyms, ActiveInactivePendingCode.ACTIVE.getName(), newId);
                     }
                 }
-                updateValues(caDSRId, name, meaning, description, ntTermId, 
+                updateValues(caDSRId, name, meaning, description, ntTermId, pvValue, 
                         ActiveInactivePendingCode.ACTIVE.getName());
                 
             } else {
                 // for checking if the name is in pending status or not.
                 Long newPMID = null;
-                List<Number> nameList = getIdentifierByMeaning(meaning);
+                List<Number> nameList = getIdentifierByName(pvValue);
                 if (nameList.isEmpty()) {
                     insertValues(caDSRId, name, meaning, description, 
-                            ntTermId, ActiveInactivePendingCode.ACTIVE.getName());
+                            ntTermId, pvValue, ActiveInactivePendingCode.ACTIVE.getName());
                     List<Number> insertedPvId = getIdentifierByCadsrId(caDSRId);
                     newPMID = insertedPvId.get(0).longValue();
                 } else {
-                    updateValueByMeaning(caDSRId, name, meaning, description, ntTermId, 
+                   updateValueByName(caDSRId, name, meaning, description, ntTermId, pvValue, 
                             ActiveInactivePendingCode.ACTIVE.getName());
                     plannedMarkerService.updateStatusByPMSynID(nameList.get(0)
                          .longValue(), ActiveInactivePendingCode.ACTIVE.getName());
@@ -150,6 +153,34 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
             LOG.error("Error with a record", e);
           }
        }
+    }
+    
+    private Long updateNameLogic(Long newId, List<Number> nameUniqueList) throws PAException {
+       if (!nameUniqueList.isEmpty()) {
+            Long oldId = nameUniqueList.get(0).longValue();
+            for (int i = 0; i < nameUniqueList.size(); i++) {
+               List<PlannedMarkerSyncWithCaDSRDTO> dtoList = 
+                         getValuesById(nameUniqueList.get(i).longValue());
+               if (StringUtils.equalsIgnoreCase(dtoList.get(0)
+                       .getStatusCode().getCode(), "Pending")) {
+                    oldId = IiConverter.convertToLong(dtoList.get(0).getIdentifier());
+                    if (!newId.equals(oldId)) {
+                        pmSynonymService.deleteBySyncId(oldId);
+                        deleteById(oldId);
+                        plannedMarkerService.updateStatusOldIDByPMSynID(oldId, 
+                          newId, ActiveInactivePendingCode.ACTIVE.getName());
+                    }
+               } else if (StringUtils.equalsIgnoreCase(dtoList.get(0)
+                       .getStatusCode().getCode(), "Inactive")) {
+                  updateValues(IiConverter.convertToLong(dtoList.get(0).getCaDSRId())
+                      , StConverter.convertToString(dtoList.get(0).getName()) + "a"
+                      , StConverter.convertToString(dtoList.get(0).getMeaning())
+                      , StConverter.convertToString(dtoList.get(0).getDescription())
+                      , null, null, ActiveInactivePendingCode.INACTIVE.getName());
+               }
+            }
+        }
+       return newId;
     }
     /**
      * deletes PlannedMarkerSyncWithCaDSRDTO values based on identifier.
@@ -217,22 +248,24 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
      * @param statusCode
      *            statusCode
      * @param ntTermId ntTermId
+     * @param pvValue pvValue
      */
 
     public void updateValues(Long caDSRId, String name, String meaning,
-            String description, String ntTermId, String statusCode) {
+            String description, String ntTermId, String pvValue, String statusCode) {
         Session session = PaHibernateUtil.getCurrentSession();
         SQLQuery query = session
                 .createSQLQuery("update planned_marker_sync_cadsr set name =:name,"
                         + "meaning =:caDSRmeaning,"
                         + " description =:caDSRdescription, nt_term_identifier =:ntTermId,"
-                        + " status_code =:caDSRstatusCode"
+                        + "  pv_name =:pvValue, status_code =:caDSRstatusCode"
                         + "  where cadsrid =:cadsrId");
         query.setParameter(NAME, name);
         query.setParameter("caDSRmeaning", meaning);
         query.setParameter("caDSRdescription", description);
         query.setParameter(CADSRID, caDSRId);
-        query.setParameter("ntTermId", ntTermId);
+        query.setParameter(NT_TERM, ntTermId);
+        query.setParameter(PV_VALUE, pvValue);
         query.setParameter("caDSRstatusCode", statusCode);
         query.executeUpdate();
     }
@@ -280,21 +313,25 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
      * @param ntTermId ntTermId
      * @param statusCode
      *            statusCode
+     * @param pvValue
+     *            pvValue           
+     *         
      */
-    public void updateValueByMeaning(Long caDSRId, String name, String meaning,
-            String description, String ntTermId, String statusCode) {
+    public void updateValueByName(Long caDSRId, String name, String meaning,
+            String description, String ntTermId, String pvValue, String statusCode) {
         Session session = PaHibernateUtil.getCurrentSession();
         SQLQuery query = session
                 .createSQLQuery("update planned_marker_sync_cadsr set name =:name,"
                         + " description =:description, status_code =:statusCode,"
-                        + " nt_term_identifier =:ntTermId, cadsrid =:cadsrId"
-                        + "  where meaning =:meaning");
+                        + " nt_term_identifier =:ntTermId, meaning =:meaning, cadsrid =:cadsrId, pv_name =:pvValue"
+                        + "  where name =:pvValue");
         query.setParameter(NAME, name);
         query.setParameter(MEANING, meaning);
         query.setParameter(DESCRIPTION, description);
         query.setParameter(CADSRID, caDSRId);
-        query.setParameter("ntTermId", ntTermId);
+        query.setParameter(NT_TERM, ntTermId);
         query.setParameter(STATUS, statusCode);
+        query.setParameter(PV_VALUE, pvValue);
         query.executeUpdate();
     }
 
@@ -314,7 +351,50 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
         query.setParameter(STATUS, statusCode);
         query.executeUpdate();
     }
+//
+//    /**
+//     * 
+//     * @param caDSRId
+//     *            caDSRId
+//     * @param name
+//     *            name
+//     * @param meaning
+//     *            meaning
+//     * @param description
+//     *            description
+//     * @param statusCode
+//     *            statusCode
+//     * @param ntTermId ntTermId
+//     */
+//    public void insertValues(Long caDSRId, String name, String meaning,
+//            String description, String ntTermId, String statusCode) {
+//        Session session = PaHibernateUtil.getCurrentSession();
+//        if (caDSRId != null) {
+//            SQLQuery query = session
+//                    .createSQLQuery(INSERT_STATEMENT
+//                            + " (NAME, MEANING, DESCRIPTION, CADSRID, STATUS_CODE, NT_TERM_IDENTIFIER)"
+//                            + " values (:name, :meaning, :description, :cadsrId, :statusCode, :ntTermId)");
+//            query.setParameter(NAME, name);
+//            query.setParameter(MEANING, meaning);
+//            query.setParameter(DESCRIPTION, description);
+//            query.setParameter(CADSRID, caDSRId);
+//            query.setParameter(STATUS, statusCode);
+//            query.setParameter(NT_TERM, ntTermId);
+//            query.executeUpdate();
+//        } else {
+//            SQLQuery query = session
+//                    .createSQLQuery(INSERT_STATEMENT
+//                            + " (NAME, MEANING, DESCRIPTION, CADSRID, STATUS_CODE)"
+//                            + " values (:name, :meaning, :description, null , :statusCode)");
+//            query.setParameter(NAME, name);
+//            query.setParameter(MEANING, meaning);
+//            query.setParameter(DESCRIPTION, description);
+//            query.setParameter(STATUS, statusCode);
+//            query.executeUpdate();
+//        }
+//    }
 
+    
     /**
      * 
      * @param caDSRId
@@ -328,35 +408,37 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
      * @param statusCode
      *            statusCode
      * @param ntTermId ntTermId
+     * @param pvValue pvValue
      */
     public void insertValues(Long caDSRId, String name, String meaning,
-            String description, String ntTermId, String statusCode) {
+            String description, String ntTermId, String pvValue, String statusCode) {
         Session session = PaHibernateUtil.getCurrentSession();
         if (caDSRId != null) {
             SQLQuery query = session
                     .createSQLQuery(INSERT_STATEMENT
-                            + " (NAME, MEANING, DESCRIPTION, CADSRID, STATUS_CODE, NT_TERM_IDENTIFIER)"
-                            + " values (:name, :meaning, :description, :cadsrId, :statusCode, :ntTermId)");
+                            + " (NAME, MEANING, DESCRIPTION, CADSRID, STATUS_CODE, NT_TERM_IDENTIFIER, PV_NAME)"
+                            + " values (:name, :meaning, :description, :cadsrId, :statusCode, :ntTermId, :pvValue)");
             query.setParameter(NAME, name);
             query.setParameter(MEANING, meaning);
             query.setParameter(DESCRIPTION, description);
             query.setParameter(CADSRID, caDSRId);
             query.setParameter(STATUS, statusCode);
-            query.setParameter("ntTermId", ntTermId);
+            query.setParameter(NT_TERM, ntTermId);
+            query.setParameter(PV_VALUE, pvValue);
             query.executeUpdate();
         } else {
             SQLQuery query = session
                     .createSQLQuery(INSERT_STATEMENT
-                            + " (NAME, MEANING, DESCRIPTION, CADSRID, STATUS_CODE)"
-                            + " values (:name, :meaning, :description, null , :statusCode)");
+                            + " (NAME, MEANING, DESCRIPTION, CADSRID, STATUS_CODE, PV_NAME)"
+                            + " values (:name, :meaning, :description, null , :statusCode, :pvValue)");
             query.setParameter(NAME, name);
             query.setParameter(MEANING, meaning);
             query.setParameter(DESCRIPTION, description);
             query.setParameter(STATUS, statusCode);
+            query.setParameter(PV_VALUE, pvValue);
             query.executeUpdate();
         }
     }
-
 
     /**
      * Gets the List of all PlannedMarkerSyncWithCaDSRDTO values.
@@ -429,7 +511,7 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
             throws PAException {
         List<Number> values = getIdentifierByName(name);
         if (values.isEmpty()) {
-           insertValues(null, name, name, null, null, 
+           insertValues(null, name, name, null, null, name,
                     ActiveInactivePendingCode.PENDING.getName());
             Long maxValue = maxIdentifierValue();
             values.add(maxValue.intValue());
@@ -447,11 +529,20 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
     }
 
 
-    private List<Number> getIdentifierByMeaning(String name) throws PAException {
+//    private List<Number> getIdentifierByMeaning(String name) throws PAException {
+//        Session session = PaHibernateUtil.getCurrentSession();
+//        session.flush();
+//        SQLQuery query = session
+//                .createSQLQuery("select identifier from planned_marker_sync_cadsr where meaning=:name");
+//        query.setParameter(NAME, name);
+//        return (List<Number>) query.list();
+//    }
+    
+    private List<Number> getIdentifierByPvName(String name) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         SQLQuery query = session
-                .createSQLQuery("select identifier from planned_marker_sync_cadsr where meaning=:name");
+                .createSQLQuery("select identifier from planned_marker_sync_cadsr where pv_name=:name");
         query.setParameter(NAME, name);
         return (List<Number>) query.list();
     }

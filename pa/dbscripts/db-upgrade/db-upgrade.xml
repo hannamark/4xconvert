@@ -1636,4 +1636,8 @@
         <comment>Drop constraints on intervention type code</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7857.sql"/>
      </changeSet>
+     <changeSet id="PO-7902" author="Reshma">
+        <comment>update planned_marker sync_table</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7902.sql"/>
+     </changeSet>
 </databaseChangeLog>

@@ -120,6 +120,7 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     private Ts dateLastCreated;
     private Ts dateEmailSent;
     private List<String> synonymNames;
+    private St pvValue;
     /**
      * @return the name
      */
@@ -434,6 +435,18 @@ public class PlannedMarkerDTO extends PlannedActivityDTO {
     public void setSynonymNames(List<String> synonymNames) {
         this.synonymNames = synonymNames;
     }
-    
-    
+    /**
+     * 
+     * @return pvValue pvValue
+     */
+    public St getPvValue() {
+        return pvValue;
+    }
+    /**
+     * 
+     * @param pvValue pvValue
+     */
+    public void setPvValue(St pvValue) {
+        this.pvValue = pvValue;
+    }
 }

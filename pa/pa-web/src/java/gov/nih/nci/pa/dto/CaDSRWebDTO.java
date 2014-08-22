@@ -98,7 +98,7 @@ public class CaDSRWebDTO implements Serializable {
     private String vmMeaning;
     private String vmDescription;
     private List<String> altNames;
-
+    private String pvValue;
     /**
      * @return the preferredQuestion
      */
@@ -209,6 +209,20 @@ public class CaDSRWebDTO implements Serializable {
      */
     public void setAltNames(List<String> altNames) {
         this.altNames = altNames;
+    }
+    /**
+     * 
+     * @return pvValue pvValue
+     */
+    public String getPvValue() {
+        return pvValue;
+    }
+    /**
+     * 
+     * @param pvValue pvValue
+     */
+    public void setPvValue(String pvValue) {
+        this.pvValue = pvValue;
     }
     
     

@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.cadsr.domain.Designation;
+import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
@@ -109,6 +110,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
+import gov.nih.nci.system.query.hibernate.HQLCriteria;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -149,10 +151,6 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     private boolean pendingStatus;
     private String nciIdentifier;
     private PlannedMarkerDTO newlyCreatedMarker;
-    /** 
-     *  PERMISSIBLE Value Collection
-     */
-    private static final String PERMISSIBLE = "permissibleValueCollection";
 
     /**
      * to compare the Attribute values with Other
@@ -166,6 +164,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      * to compare the if attribute Text not present
      */
     protected static final String NOTPRESENT = "notPresent";
+    
     
 
     /**
@@ -209,6 +208,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
                 } else {
                    permissibleService.insertValues(cadsrId1, getPlannedMarker().getName(),
                            getPlannedMarker().getMeaning(), getPlannedMarker().getDescription(), null,
+                           getPlannedMarker().getPvValue(), 
                            ActiveInactivePendingCode.ACTIVE.getName());
                    List<Number> insertedPvId = permissibleService.getIdentifierByCadsrId(cadsrId1);
                    if (!insertedPvId.isEmpty()) {
@@ -343,42 +343,47 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      * 
      * @return edit
      */
+    @SuppressWarnings({ "PMD.ExcessiveMethodLength" })
     public String displaySelectedCDE() {
         try {
-            DetachedCriteria criteria = DetachedCriteria.forClass(ValueMeaning.class);
-            List<Object> results = (List<Object>) (List<?>) appService
-                   .query(constructCriteria(criteria));
+            DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class);
+            criteria.add(Property.forName("id").eq(getCdeId()));
+            criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
+            criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
+            List<Object> results = (List<Object>) (List<?>) appService.query(criteria);
             if (results.size() < 1) {
-                throw new PAException("Search of caDSR returned no results.");
-            }
-            ValueMeaning vm = (ValueMeaning) results.get(0);
+               throw new PAException("Search of caDSR returned no results.");
+             }
+            ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) results.get(0);
+            ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
             PlannedMarkerWebDTO dto = new PlannedMarkerWebDTO();
             StringBuffer synonymName = new StringBuffer();
-            List<Designation> alternativeNames = new ArrayList<Designation>();
-            if (vm.getDesignationCollection() != null 
-                    && !vm.getDesignationCollection().isEmpty()) {
-                alternativeNames.addAll(vm.getDesignationCollection());
-                for (Designation designation : alternativeNames) {
-                     if (StringUtils.equalsIgnoreCase(designation.getType(), "Biomarker Synonym")) {
-                          if (synonymName.length() == 0) {
-                              synonymName.append(designation.getName());
-                          } else {
-                              synonymName.append("; ");
-                              synonymName.append(designation.getName());
-                          }
+            String hql = "select vm.designationCollection from ValueMeaning vm where vm.id='"
+                 + vm.getId() + "'";
+            HQLCriteria hqlCriteria = new HQLCriteria(hql);
+            List<Object> desgs = appService.query(hqlCriteria);
+            for (int j = 0; j < desgs.size(); j++) {
+               Designation designation = (Designation) desgs.get(j);
+               if (StringUtils.equalsIgnoreCase(designation.getType(), "Biomarker Synonym")) {
+                   if (synonymName.length() == 0) {
+                      synonymName.append(designation.getName());
+                   } else {
+                       synonymName.append("; ");
+                       synonymName.append(designation.getName());
                      }
-                }
+               }
             }
             dto.setSynonymNames(synonymName.toString());
             if (dto.getSynonymNames() != null && !dto.getSynonymNames().isEmpty()) {
-                 dto.setName(vm.getLongName() + " (" + dto.getSynonymNames() + ")");
+                 dto.setName(vdpv.getPermissibleValue().getValue() + " (" + dto.getSynonymNames() + ")");
             } else {
-                 dto.setName(vm.getLongName());
+                 dto.setName(vdpv.getPermissibleValue().getValue());
             }
             dto.setDescription(vm.getDescription());
             dto.setMeaning(vm.getLongName());
             dto.setCadsrId(vm.getPublicID());
             dto.setStatus(ActiveInactivePendingCode.ACTIVE.getCode());
+            dto.setPvValue(vdpv.getPermissibleValue().getValue());
             if (dto.getCadsrId() != null) {
                 cadsrId = vm.getPublicID().toString();
             }
@@ -394,20 +399,20 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         return AR_EDIT;
     }
     
-    private DetachedCriteria constructCriteria(DetachedCriteria criteria) {
-        criteria.add(Property.forName("id").eq(getCdeId()));
-        criteria.setFetchMode(PERMISSIBLE, FetchMode.JOIN);
-        criteria.setFetchMode(PERMISSIBLE
-              + ".valueDomainPermissibleValueCollection", FetchMode.JOIN);
-        criteria.setFetchMode(PERMISSIBLE
-              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain", FetchMode.JOIN);
-        criteria.setFetchMode(PERMISSIBLE
-              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", 
-              FetchMode.JOIN);
-        criteria.createAlias(PERMISSIBLE
-              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", "de");
-        return criteria;
-    }
+//    private DetachedCriteria constructCriteria(DetachedCriteria criteria) {
+//        criteria.add(Property.forName("id").eq(getCdeId()));
+//        criteria.setFetchMode(PERMISSIBLE, FetchMode.JOIN);
+//        criteria.setFetchMode(PERMISSIBLE
+//              + ".valueDomainPermissibleValueCollection", FetchMode.JOIN);
+//        criteria.setFetchMode(PERMISSIBLE
+//              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain", FetchMode.JOIN);
+//        criteria.setFetchMode(PERMISSIBLE
+//              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", 
+//              FetchMode.JOIN);
+//        criteria.createAlias(PERMISSIBLE
+//              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", "de");
+//        return criteria;
+//    }
    
     private void setPreSelectedAttributeValues(PlannedMarkerWebDTO dto) throws PAException {
         Map<String, String> markerValues = markerAttributesService.getAllMarkerAttributes();
@@ -622,6 +627,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (markerDTO != null) {
             webDTO.setId(IiConverter.convertToLong(markerDTO.getIdentifier()));
             webDTO.setName(StConverter.convertToString(markerDTO.getName()));
+            webDTO.setPvValue(StConverter.convertToString(markerDTO.getPvValue()));
             if (pendingStatus) {
                 webDTO.setMeaning(null);
             } else {
@@ -781,6 +787,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (getPlannedMarker().getSynonymNames() != null && !getPlannedMarker().getSynonymNames().isEmpty()) {
            marker.setSynonymNames(getSynonymList(getPlannedMarker().getSynonymNames()));
         }
+        marker.setPvValue(StConverter.convertToSt(getPlannedMarker().getPvValue()));
         if (isEdit) {
             PlannedMarkerDTO oldValue = plannedMarkerService.getPlannedMarkerWithID(getPlannedMarker().getId());
             Map<String, String> markerValues = markerAttributesService.getAllMarkerAttributes();

@@ -771,6 +771,7 @@ public class TestSchema {
         pmSync1.setMeaning("meaning");
         pmSync1.setDescription("description");
         pmSync1.setCaDSRId(12345L);
+        pmSync1.setPvName("name");
         pmSync1.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         pmSync1.setPlannedMarkers(markers);
         addUpdObject(pmSync1);
@@ -1921,6 +1922,7 @@ public class TestSchema {
         dto.setVmName("PDE5");
         dto.setVmMeaning("PDE5");
         dto.setVmDescription("PDE5-description");
+        dto.setPvValue("Aneuploidy");
         dto.setPublicId(12345L);
         resultsList.add(dto);
         return resultsList;

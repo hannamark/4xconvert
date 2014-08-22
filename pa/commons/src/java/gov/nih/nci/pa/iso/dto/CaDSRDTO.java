@@ -18,6 +18,7 @@ public class CaDSRDTO implements Serializable {
     private String vmDescription;
     private List<String> altNames;
     private String ntTermIdentifier;
+    private String pvValue;
 
     /**
      * @return the preferredQuestion
@@ -143,6 +144,20 @@ public class CaDSRDTO implements Serializable {
      */
     public void setNtTermIdentifier(String ntTermIdentifier) {
         this.ntTermIdentifier = ntTermIdentifier;
+    }
+    /**
+     * 
+     * @return pvValue pvValue
+     */ 
+    public String getPvValue() {
+        return pvValue;
+    }
+    /**
+     * 
+     * @param pvValue pvValue
+     */
+    public void setPvValue(String pvValue) {
+        this.pvValue = pvValue;
     }
     
     

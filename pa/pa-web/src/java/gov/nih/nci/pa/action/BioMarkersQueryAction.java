@@ -82,7 +82,10 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.cadsr.domain.DataElement;
 import gov.nih.nci.cadsr.domain.Designation;
+import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
+import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
@@ -115,6 +118,7 @@ import gov.nih.nci.system.query.hibernate.HQLCriteria;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -123,11 +127,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Restrictions;
 
 import java.util.Map;
 
@@ -173,7 +174,6 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private String markerName;
     private Long id = null;
     private String caDsrId;
-    private static final String PERMISSIBLE = "permissibleValueCollection";
     
     @Override
     public void prepare() {
@@ -401,7 +401,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
                   CaDSRWebDTO caDsrdto = getSearchResults(permissibleValues.get(0));
                   permissibleService.insertValues(caDsrdto.getPublicId(), caDsrdto.getVmName()
                     , caDsrdto.getVmMeaning(), caDsrdto.getVmDescription(), null
-                    , ActiveInactivePendingCode.ACTIVE.getName());
+                    , caDsrdto.getPvValue(), ActiveInactivePendingCode.ACTIVE.getName());
                List<Number> insertedPvId = permissibleService.getIdentifierByCadsrId(Long.parseLong(newcaDsrId));
                if (caDsrdto.getAltNames() != null && !caDsrdto.getAltNames().isEmpty()) {
                   pmSynonymService.insertValues(insertedPvId.get(0).longValue(), 
@@ -424,22 +424,17 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private List<Object> caDsrLookUp(String newcaDsrId) {
         List<Object> permissibleValues = new ArrayList<Object>();
         try {
-            DetachedCriteria criteria = DetachedCriteria.forClass(ValueMeaning.class)
-            .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            criteria.setFetchMode(PERMISSIBLE, FetchMode.JOIN);
-            criteria.setFetchMode(PERMISSIBLE
-                  + ".valueDomainPermissibleValueCollection", FetchMode.JOIN);
-            criteria.setFetchMode(PERMISSIBLE
-                  + ".valueDomainPermissibleValueCollection.enumeratedValueDomain", FetchMode.JOIN);
-            criteria.setFetchMode(PERMISSIBLE
-                  + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", 
-                  FetchMode.JOIN);
-            criteria.createAlias(PERMISSIBLE
-                  + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", "de");
-            criteria.add(Restrictions.eq("de.publicID", CDE_PUBLIC_ID));
-            criteria.add(Restrictions.eq("de.latestVersionIndicator", "Yes"));
-            criteria.add(Expression.eq("publicID", Long.valueOf(newcaDsrId)));
-            permissibleValues = appService.query(criteria);
+             DataElement dataElement = new DataElement();
+             dataElement.setPublicID(CDE_PUBLIC_ID);
+             dataElement.setLatestVersionIndicator("Yes");
+             Collection<Object> results = appService.search(DataElement.class, dataElement);
+             DataElement de = (DataElement) results.iterator().next();
+             String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
+             DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class, "vdpv");
+             criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
+             criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
+             criteria.add(Expression.eq("vm.publicID", Long.valueOf(newcaDsrId)));
+             permissibleValues = appService.query(criteria);
             
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
@@ -449,16 +444,17 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     }
     
     private CaDSRWebDTO getSearchResults(Object permissibleValue) throws ApplicationException {
-        ValueMeaning vm = (ValueMeaning) permissibleValue;
+        ValueDomainPermissibleValue vdpv = (ValueDomainPermissibleValue) permissibleValue;
         CaDSRWebDTO dto = new CaDSRWebDTO();
-        setCaDSRWebDTO(vm, dto);
+        setCaDSRWebDTO(vdpv, dto);
         return dto;
     }
     
-    private CaDSRWebDTO setCaDSRWebDTO(ValueMeaning vm, CaDSRWebDTO dto) 
+    private CaDSRWebDTO setCaDSRWebDTO(ValueDomainPermissibleValue vdpv, CaDSRWebDTO dto) 
             throws ApplicationException {
          List<String> altNames = new ArrayList<String>();
          StringBuffer synonymName = new StringBuffer();
+         ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
          String hql = "select vm.designationCollection from ValueMeaning vm where vm.id='"
               + vm.getId() + "'";
          HQLCriteria criteria = new HQLCriteria(hql);
@@ -476,15 +472,16 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
             }
          }
          if (synonymName.length() != 0) {
-            dto.setVmName(vm.getLongName() + " (" +  synonymName.toString() + ")");
+            dto.setVmName(vdpv.getPermissibleValue().getValue() + " (" +  synonymName.toString() + ")");
          } else {
-             dto.setVmName(vm.getLongName());
+             dto.setVmName(vdpv.getPermissibleValue().getValue());
          }
          dto.setVmMeaning(vm.getLongName());
          dto.setAltNames(altNames);
          dto.setVmDescription(vm.getDescription());
          dto.setPublicId(vm.getPublicID());
          dto.setId(vm.getId());
+         dto.setPvValue(vdpv.getPermissibleValue().getValue());
         return dto;
     }
     /**

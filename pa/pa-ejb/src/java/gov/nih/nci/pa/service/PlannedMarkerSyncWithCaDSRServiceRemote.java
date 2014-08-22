@@ -70,6 +70,7 @@ public interface PlannedMarkerSyncWithCaDSRServiceRemote {
      * @param name name
      */
     List<PlannedMarkerSyncWithCaDSRDTO> getValuesByName(String name) throws PAException;
+    
     /**
      * 
      * @param caDSRId caDSRId
@@ -78,7 +79,9 @@ public interface PlannedMarkerSyncWithCaDSRServiceRemote {
      * @param description description
      * @param statusCode statusCode
      * @param ntTermId ntTermId
+     * @param pvValue pvValue
      */
+    @SuppressWarnings({ "PMD.ExcessiveParameterList" })
     void insertValues(Long caDSRId, String name, String meaning,
-            String description, String ntTermId, String statusCode);
+            String description, String ntTermId, String pvValue, String statusCode);
 }

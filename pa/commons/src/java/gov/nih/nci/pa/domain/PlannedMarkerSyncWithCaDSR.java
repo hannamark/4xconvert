@@ -39,6 +39,7 @@ public class PlannedMarkerSyncWithCaDSR extends AbstractEntity  implements Audit
     private Long caDSRId;
     private ActiveInactivePendingCode statusCode;
     private String ntTermIdentifier;
+    private String pvName;
     private List<PlannedMarker> plannedMarkers = new ArrayList<PlannedMarker>();
     /**
      * @return the name
@@ -156,4 +157,22 @@ public class PlannedMarkerSyncWithCaDSR extends AbstractEntity  implements Audit
   public void setNtTermIdentifier(String ntTermIdentifier) {
       this.ntTermIdentifier = ntTermIdentifier;
   }
+  /**
+   * 
+   * @return pvName pvName
+   */
+  @Column(name = "pv_name")
+  @Length(max = TEXT_DESCRIPTION_LENGTH)
+  public String getPvName() {
+      return pvName;
+  }
+  /**
+   * 
+   * @param pvName pvName
+   */
+  public void setPvName(String pvName) {
+      this.pvName = pvName;
+  }
+  
+  
 }

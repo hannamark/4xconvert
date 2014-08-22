@@ -154,7 +154,7 @@ public class CaDSRPVSyncJobHelper {
             CaDSRDTO dto = new CaDSRDTO();
             ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
           if (!publicids.contains(vm.getPublicID())) {
-            setCaDSRDTO(vm, dto);
+            setCaDSRDTO(vdpv, dto);
             dto.setId(vdpv.getId());
             publicids.add(vm.getPublicID());
             resultsList.add(dto);  
@@ -163,8 +163,9 @@ public class CaDSRPVSyncJobHelper {
         return resultsList;
     }
 
-    private CaDSRDTO setCaDSRDTO(ValueMeaning vm, CaDSRDTO dto) {
+    private CaDSRDTO setCaDSRDTO(ValueDomainPermissibleValue vdpv, CaDSRDTO dto) {
         List<String> altNames = new ArrayList<String>();
+        ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
         StringBuffer synonymName = new StringBuffer();
         List<Designation> alternativeNames = new ArrayList<Designation>();
         if (vm.getDesignationCollection() != null && !vm.getDesignationCollection().isEmpty()) {
@@ -182,12 +183,12 @@ public class CaDSRPVSyncJobHelper {
             }
         }
         if (synonymName.length() != 0) {
-            dto.setVmName(vm.getLongName() + " (" +  synonymName.toString() + ")");
+            dto.setVmName(vdpv.getPermissibleValue().getValue() + " (" +  synonymName.toString() + ")");
         } else {
-            dto.setVmName(vm.getLongName());
+            dto.setVmName(vdpv.getPermissibleValue().getValue());
         }
         dto.setAltNames(altNames);
-
+        dto.setPvValue(vdpv.getPermissibleValue().getValue());
         dto.setVmMeaning(vm.getLongName());
         dto.setVmDescription(vm.getDescription());
         dto.setPublicId(vm.getPublicID());

@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.iso21090.Ii;
+
 import java.util.Date;
 import java.io.Serializable;
 import java.util.List;
@@ -128,6 +129,7 @@ public class PlannedMarkerWebDTO implements Serializable {
     private Date creationDate;
     private Date dateEmailSent;
     private String synonymNames;
+    private String pvValue;
     /**
      * @return the id
      */
@@ -609,4 +611,18 @@ public class PlannedMarkerWebDTO implements Serializable {
         this.synonymNames = synonymNames;
     }
     
+    /**
+     * 
+     * @return pvValue pvValue
+     */
+    public String getPvValue() {
+        return pvValue;
+    }
+    /**
+     * 
+     * @param pvValue pvValue
+     */
+    public void setPvValue(String pvValue) {
+        this.pvValue = pvValue;
+    }
 }
