@@ -2,12 +2,14 @@ package gov.nih.nci.registry.test.integration;
 
 import java.sql.SQLException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
 /**
  * @author Denis G. Krylov
  */
+@Ignore
 public class DisplayTrialOwnershipTest extends AbstractRegistrySeleniumTest {
 
     private static final int WAIT_FOR_ELEMENT_TIMEOUT = 30;
