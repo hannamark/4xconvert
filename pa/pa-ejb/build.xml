@@ -402,8 +402,7 @@
                        **/service/*BeanLocal.class
                        **/service/Abstract*.class
                        **/service/BaseLookUpService.class
-                       **/service/ctgov/*
-                       **/util/pomock/*
+                       **/service/ctgov/*                       
                        **/domain/*
                        **/iso/convert/*
                        **/iso/util/En*Converter*

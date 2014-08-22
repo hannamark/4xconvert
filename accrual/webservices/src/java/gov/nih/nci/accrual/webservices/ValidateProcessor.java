@@ -36,7 +36,7 @@ public class ValidateProcessor implements
             SchemaFactory sf = SchemaFactory
                     .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = sf.newSchema(new Source[] {new StreamSource(
-                    getClass().getResource("/ws.xsd").toExternalForm()) });
+                    getClass().getResource("/accrual_ws.xsd").toExternalForm()) });
             target.setSchema(schema);
             return target;
         } catch (SAXException e) {

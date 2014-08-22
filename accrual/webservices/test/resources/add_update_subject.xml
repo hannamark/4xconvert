@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tns:studySubjects xmlns:tns="gov.nih.nci.accrual.webservices.types"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="gov.nih.nci.accrual.webservices.types ../../src/resources/ws.xsd ">
+	xsi:schemaLocation="gov.nih.nci.accrual.webservices.types ../../src/resources/accrual_ws.xsd ">
 	<tns:studySubject>
 		<tns:identifier>SU001</tns:identifier>
 		<tns:birthDate>2002-01-01</tns:birthDate>
@@ -12,8 +12,7 @@
 		<tns:zipCode>22201</tns:zipCode>
 		<tns:registrationDate>2014-01-01</tns:registrationDate>
 		<tns:methodOfPayment>MEDICAID_AND_MEDICARE</tns:methodOfPayment>
-		<tns:disease codeSystem="ICD9">861.20</tns:disease>
-		<!-- <tns:siteDisease codeSystem="ICD-O-3">C34</tns:siteDisease> -->
+		<tns:disease codeSystem="ICD9">861.20</tns:disease>		
 	</tns:studySubject>
 	<tns:studySubject>
 		<tns:identifier>SU002</tns:identifier>

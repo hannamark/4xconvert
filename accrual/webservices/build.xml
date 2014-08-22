@@ -37,8 +37,8 @@
     <property name="web.build.coberturaOutputDir" value="${web.build.dir}/generated-classes"/>
     <property name="web.test.reports" value="${web.report.dir}/test-reports"/>
     <property name="web.coverage.reports" value="${web.report.dir}/coverage-reports"/>
-    <property name="web.coverage.line" value="0"/>
-    <property name="web.coverage.branch" value="0"/>
+    <property name="web.coverage.line" value="75"/>
+    <property name="web.coverage.branch" value="64"/>
     <property name="web.pmd.maxerrors" value="0"/>
 
     <property name="selenium.delay" value="50"/>
@@ -115,7 +115,7 @@
 	        <taskdef name="xjc" classname="org.jvnet.jaxb2_commons.xjc.XJC2Task" classpathref="build.classpath"/>
 	        <mkdir dir="${web.build.srcgenDir}"/>
 	        <xjc destdir="${web.build.srcgenDir}" extension="true">
-	              <schema  dir="${web.build.resourceDir}" includes="ws.xsd"/>          
+	              <schema  dir="${web.build.resourceDir}" includes="accrual_ws.xsd"/>          
 	        </xjc>
     </target>
 	
@@ -188,7 +188,8 @@
         <delete file="${web.build.dir}/cobertura.ser"/>
         <cobertura-instrument datafile="${web.build.dir}/cobertura.ser" toDir="${web.build.coberturaOutputDir}">
             <fileset dir="${web.build.outputDir}">
-                <include name="**/*.class"/>               
+                <include name="**/*.class"/>   
+            	<exclude name="**/gov/nih/nci/accrual/webservices/types/*.class"/>
             </fileset>
         </cobertura-instrument>
 

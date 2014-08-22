@@ -11,7 +11,7 @@
 		<tns:country>USA</tns:country>
 		<tns:zipCode>22201</tns:zipCode>
 		<tns:registrationDate>2014-01-01</tns:registrationDate>
-		<tns:methodOfPayment>MEDICAID_AND_MEDICARE</tns:methodOfPayment>
+		<tns:methodOfPayment>NONEXIST</tns:methodOfPayment>
 		<tns:disease codeSystem="ICD-O-3">C34.1</tns:disease>
 		<tns:siteDisease codeSystem="ICD-O-3">C34</tns:siteDisease>
 	</tns:studySubject>

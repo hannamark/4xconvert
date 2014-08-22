@@ -60,7 +60,11 @@ import org.jboss.resteasy.annotations.cache.NoCache;
  */
 @Path("/")
 @Provider
-public final class AccrualService extends BaseRestService {
+public final class AccrualService extends BaseRestService { // NOPMD
+
+    private static final String POID2 = "poid";
+    private static final String TRIAL_ID = "trialID";
+    private static final String ID_TYPE = "idType";
 
     /**
      * @param siteID siteID
@@ -101,8 +105,8 @@ public final class AccrualService extends BaseRestService {
     @Consumes({ TXT_PLAIN })
     @Produces({ TXT_PLAIN })
     @NoCache
-    public Response updateAccrualCount(@PathParam("idType") String idType,
-            @PathParam("trialID") String trialID, @PathParam("poid") long poid,
+    public Response updateAccrualCount(@PathParam(ID_TYPE) String idType,
+            @PathParam(TRIAL_ID) String trialID, @PathParam(POID2) long poid,
             int count) {
         try {
             StudySiteDTO siteDTO = findSite(idType, trialID, poid);
@@ -125,8 +129,8 @@ public final class AccrualService extends BaseRestService {
     @Consumes({ TXT_PLAIN })
     @Produces({ TXT_PLAIN })
     @NoCache
-    public Response updateAccrualCount(@PathParam("idType") String idType,
-            @PathParam("trialID") String trialID,
+    public Response updateAccrualCount(@PathParam(ID_TYPE) String idType,
+            @PathParam(TRIAL_ID) String trialID,
             @PathParam("id") String ctepID, int count) {
         try {
             StudySiteDTO siteDTO = findSite(idType, trialID, ctepID);
@@ -156,8 +160,8 @@ public final class AccrualService extends BaseRestService {
     @Path("/trials/{idType}/{trialID}/sites/po/{id}/subjects/{subjectID}")
     @Produces({ TXT_PLAIN })
     @NoCache
-    public Response deleteStudySubject(@PathParam("idType") String idType,
-            @PathParam("trialID") String trialID, @PathParam("id") long poid,
+    public Response deleteStudySubject(@PathParam(ID_TYPE) String idType,
+            @PathParam(TRIAL_ID) String trialID, @PathParam("id") long poid,
             @PathParam("subjectID") String subjectID) {
 
         try {
@@ -173,8 +177,8 @@ public final class AccrualService extends BaseRestService {
     @Path("/trials/{idType}/{trialID}/sites/ctep/{ctepID}/subjects/{subjectID}")
     @Produces({ TXT_PLAIN })
     @NoCache
-    public Response deleteStudySubject(@PathParam("idType") String idType,
-            @PathParam("trialID") String trialID,
+    public Response deleteStudySubject(@PathParam(ID_TYPE) String idType,
+            @PathParam(TRIAL_ID) String trialID,
             @PathParam("ctepID") String ctepID,
             @PathParam("subjectID") String subjectID) {
         try {
@@ -207,8 +211,8 @@ public final class AccrualService extends BaseRestService {
     @Consumes({ APPLICATION_XML })
     @Produces({ TXT_PLAIN })
     @NoCache
-    public Response submitStudySubjects(@PathParam("idType") String idType,
-            @PathParam("trialID") String trialID, @PathParam("id") long poid,
+    public Response submitStudySubjects(@PathParam(ID_TYPE) String idType,
+            @PathParam(TRIAL_ID) String trialID, @PathParam("id") long poid,
             @Validate StudySubjects ps) {
         try {
             StudySiteDTO siteDTO = findSite(idType, trialID, poid);
@@ -233,11 +237,11 @@ public final class AccrualService extends BaseRestService {
                 .getInstance()
                 .getParticipatingSiteServiceRemote()
                 .getParticipatingSite(studyProtocolDTO.getIdentifier(),
-                        poid + "");
+                        poid + ""); // NOPMD
         if (siteDTO == null) {
             throw new EntityNotFoundException("Participating site with PO ID "
                     + poid + " on trial " + idType + "/" + trialID
-                    + " is not found.");
+                    + " is not found.");  // NOPMD
         }
         return siteDTO;
     }
@@ -247,8 +251,8 @@ public final class AccrualService extends BaseRestService {
     @Consumes({ APPLICATION_XML })
     @Produces({ TXT_PLAIN })
     @NoCache
-    public Response submitStudySubjects(@PathParam("idType") String idType,
-            @PathParam("trialID") String trialID,
+    public Response submitStudySubjects(@PathParam(ID_TYPE) String idType,
+            @PathParam(TRIAL_ID) String trialID,
             @PathParam("id") String ctepID, @Validate StudySubjects ps) {
         try {
             StudySiteDTO siteDTO = findSite(idType, trialID, ctepID);
@@ -301,7 +305,7 @@ public final class AccrualService extends BaseRestService {
                 try {
                     orgCtepID = findOrgCtepID(org);
                 } catch (NullifiedRoleException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(e); // NOPMD
                 }
                 return StringUtils.equalsIgnoreCase(orgCtepID, ctepID);
             }
@@ -371,7 +375,7 @@ public final class AccrualService extends BaseRestService {
 
     private List<SubjectAccrualDTO> convertToSubjectAccrualDTOs(
             StudySiteDTO site, StudySubjects ss) throws PAException {
-        List<SubjectAccrualDTO> list = new ArrayList<>();
+        List<SubjectAccrualDTO> list = new ArrayList<SubjectAccrualDTO>();
         for (StudySubject subj : ss.getStudySubject()) {
             list.add(convert(subj, site));
         }
@@ -447,7 +451,7 @@ public final class AccrualService extends BaseRestService {
     }
 
     private DSet<Cd> convertRace(List<Race> races) {
-        DSet<Cd> dset = new DSet<>();
+        DSet<Cd> dset = new DSet<Cd>();
         dset.setItem(new LinkedHashSet<Cd>());
         for (Race race : races) {
             dset.getItem().add(CdConverter.convertStringToCd(race.value()));
