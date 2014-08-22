@@ -418,7 +418,13 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @throws PAException When something goes wrong.
      */
     protected List<Long> getAllRelatedOrgs(Long siteId) throws PAException {
-        return FamilyHelper.getAllRelatedOrgs(siteId);
+        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(siteId);
+        if (siblings == null || siblings.size() == 0) {
+            //Can't happen, but just in case that changes later.
+            siblings = new ArrayList<Long>();
+            siblings.add(siteId);
+        }
+        return siblings;
     }
 
     /**

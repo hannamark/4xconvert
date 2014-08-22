@@ -221,8 +221,8 @@
                 <reg-web:valueRowDiv id="trialDTO.summaryFourOrgNameTR" labelFor="trialDTO.summaryFourOrgName" labelKey="update.proprietary.trial.summary4Sponsor">
                     <s:iterator value="trialDTO.summaryFourOrgIdentifiers" id="trialDTO.summaryFourOrgIdentifiers" status="stat">
                         <s:property value="%{orgName}"/><br/>
-                        <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${orgId}"/> 
-                        <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${orgName}"/>
+                        <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="<c:out value="${orgId}" />"/> 
+                        <input type="hidden" name="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="trialDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="<c:out value="${orgName}" />"/>
                     </s:iterator>
                 </reg-web:valueRowDiv>
                 <reg-web:valueRowDiv labelKey="update.proprietary.trial.consortiaTrialCategoryCode" noLabelTag="true">

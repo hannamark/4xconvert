@@ -175,10 +175,22 @@ import org.hibernate.proxy.HibernateProxy;
         "PMD.ExcessiveClassLength" })
 public class PADomainUtils {
     private static final String CDR_ID_PREFIX = "CDR";
-    private static final String PARTICIPATING_SITE = "Participating Site";
-    private static final String LEAD_ORGANIZATION = "Lead Organization";
-    private static final String HEALTHCARE_FACILITY = "Healthcare Facility";
-    private static final String RESEARCH_ORGANIZATION = "Research Organization";
+    /**
+     * The code for a participating site.
+     */
+    public static final String PARTICIPATING_SITE = "Participating Site";
+    /**
+     * The code for a Lead Organization
+     */
+    public static final String LEAD_ORGANIZATION = "Lead Organization";
+    /**
+     * The code for a Healthcare Facility
+     */
+    public static final String HEALTHCARE_FACILITY = "Healthcare Facility";
+    /**
+     * The code for a Research Organization
+     */
+    public static final String RESEARCH_ORGANIZATION = "Research Organization";
     private static final Logger LOG = Logger.getLogger(PADomainUtils.class);
     private static final int EMAIL_IDX = 7;
 

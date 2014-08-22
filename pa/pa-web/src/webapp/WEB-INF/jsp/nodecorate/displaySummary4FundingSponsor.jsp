@@ -15,17 +15,17 @@
     <tr>
         <td>
         	<label for="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" style="display:none;">SummaryFourOrgIdentifiers</label>
-            <input type="text" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="${summaryFourOrgIdentifiers.orgName}" size="30" readonly class="readonly" style="width:200px" />
-            <a href="javascript:void(0)" onclick="displayOrgDetails('${summaryFourOrgIdentifiers.orgId}');">
+            <input type="text" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgName" value="<c:out value="${summaryFourOrgIdentifiers.orgName}" />" size="30" readonly class="readonly" style="width:200px" />
+            <a href="javascript:void(0)" onclick="displayOrgDetails('<c:out value="${summaryFourOrgIdentifiers.orgId}" />');">
                 <img src="${pageContext.request.contextPath}/images/details.gif" alt="details"/>
             </a>
-            <input type="hidden" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="${summaryFourOrgIdentifiers.orgId}"/> 
-            <input type="hidden" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" value="${summaryFourOrgIdentifiers.rowId}"/> 
+            <input type="hidden" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].orgId" value="<c:out value="${summaryFourOrgIdentifiers.orgId}" />"/> 
+            <input type="hidden" name="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" id="gtdDTO.summaryFourOrgIdentifiers[${stat.index}].rowId" value="<c:out value="${summaryFourOrgIdentifiers.rowId}" />"/> 
         </td>
         <td class="value">
             <ul style="margin-top:-5px;">              
                 <li style="padding-left:0">
-                 <a href="javascript:void(0)" class="btn" onclick="deleteSummary4SponsorRow('${summaryFourOrgIdentifiers.rowId}');" title="Opens a popup form to select Summary4 Sponsor">
+                 <a href="javascript:void(0)" class="btn" onclick="deleteSummary4SponsorRow('<c:out value="${summaryFourOrgIdentifiers.rowId}" />');" title="Opens a popup form to select Summary4 Sponsor">
                     <span class="btn_img"><span class="organization">Delete Sponsor</span></span>
                  </a>
                 </li>
