@@ -92,7 +92,7 @@ public class NCItTermsLookup {
      *  LEXEVS CTS REST service URL
      */
     public static final String LEXVSCTSURL =
-            "http://lexevscts2.nci.nih.gov/lexevscts2/codesystem/NCI_Thesaurus/version/14.05d/entity/";
+            "http://lexevscts2.nci.nih.gov/lexevscts2/codesystem/NCI_Thesaurus/entity/";
     /**
      * LEXEVS API XML service URL
      */
