@@ -103,7 +103,9 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.system.applicationservice.ApplicationException;
 import gov.nih.nci.system.applicationservice.ApplicationService;
+import gov.nih.nci.system.query.hibernate.HQLCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -298,7 +300,7 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
     }
 
     @Test
-    public void testDisplaySelectedCDE() {
+    public void testDisplaySelectedCDE() throws ApplicationException {
         //CDE ID for the N-Cadherin Marker
 
         plannedMarkerAction.setCdeId("6C28341E-9EF6-6D9E-E040-BB89AD435B0F");
@@ -315,32 +317,33 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         designation.setId("1L");
         designation.setName("Bivinyl");
         designation.setType("Biomarker Synonym");
-        List<Designation> desgs = new ArrayList<Designation>();
-        desgs.add(designation);
-        vm.setDesignationCollection(desgs);
+        List<Object> obj = new ArrayList<Object>();
+        obj.add(designation);
+        when(appService.query(any(HQLCriteria.class))).thenReturn(obj);
         assertEquals(plannedMarkerAction.displaySelectedCDE(), "edit");
-        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin (Bivinyl)");
         assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
-        assertEquals(plannedMarkerAction.getPlannedMarker().getSynonymNames(), "");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getSynonymNames(), "Bivinyl");
         assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
         
         Designation designation1 = new Designation();
         designation1.setId("2L");
         designation1.setName("alpha");
         designation1.setType("Biomarker Synonym");
-        desgs.add(designation1);
         Designation designation2 = new Designation();
         designation2.setId("3L");
         designation2.setName("N-Cadherin");
         designation2.setType("Biomarker Marker");
-        desgs.add(designation2);
-        vm.setDesignationCollection(desgs);
+
+        obj.add(designation1);
+        obj.add(designation2);
+        when(appService.query(any(HQLCriteria.class))).thenReturn(obj);
         assertEquals(plannedMarkerAction.displaySelectedCDE(), "edit");
-//        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin (Bivinyl; alpha)");
-//        assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
-//        assertEquals(plannedMarkerAction.getPlannedMarker().getSynonymNames(), "Bivinyl; alpha");
-//        assertFalse(plannedMarkerAction.getPlannedMarker().getSynonymNames().equals("Bivinyl; alpha; N-Cadherin"));
-//        assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
+        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin (Bivinyl; alpha)");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getSynonymNames(), "Bivinyl; alpha");
+        assertFalse(plannedMarkerAction.getPlannedMarker().getSynonymNames().equals("Bivinyl; alpha; N-Cadherin"));
+        assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
     }
     
     @Test

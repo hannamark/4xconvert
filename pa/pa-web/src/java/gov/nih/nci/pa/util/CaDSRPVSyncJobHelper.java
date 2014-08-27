@@ -31,8 +31,6 @@ import org.hibernate.criterion.Property;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class CaDSRPVSyncJobHelper {
     private ApplicationService appService;
-    /** The CDE public Id for Assay Type Attribute. */
-    private static final Long CDE_PUBLIC_ID = 5473L;
     private static final Integer CHUNK_SIZE = 1000;
     /** The LOG details. */
     private static final Logger LOG = Logger
@@ -62,15 +60,24 @@ public class CaDSRPVSyncJobHelper {
      * @return map<Stirng, String> map
      * @throws Exception  Exception
      */
-    @SuppressWarnings({"PMD.SignatureDeclareThrowsException", "unchecked" })
+    @SuppressWarnings({"PMD.SignatureDeclareThrowsException", "unchecked", "PMD.ExcessiveMethodLength" })
     public List<CaDSRDTO> getAllValuesFromCaDSR() throws Exception {
         List<CaDSRDTO> values = new ArrayList<CaDSRDTO>();
 
         appService = getApplicationService();
         try {
+            String publicID = PaRegistry.getLookUpTableService().getPropertyValue("CDE_PUBLIC_ID");
+            String latestVersionIndicator = PaRegistry.getLookUpTableService()
+                 .getPropertyValue("Latest_Version_Indicator");
+            String cdeVersion = PaRegistry.getLookUpTableService()
+                    .getPropertyValue("CDE_Version");
             DetachedCriteria detachedCrit = DetachedCriteria.forClass(DataElement.class).add(Property
-                    .forName("publicID").eq(CDE_PUBLIC_ID)).add(Property.forName("latestVersionIndicator")
-                            .eq("Yes"));
+                    .forName("publicID").eq(Long.parseLong(publicID)));
+            if (StringUtils.equalsIgnoreCase(latestVersionIndicator, "No")) {
+                detachedCrit.add(Property.forName("version").eq(Float.parseFloat(cdeVersion)));
+            } else {
+                detachedCrit.add(Property.forName("latestVersionIndicator").eq("Yes"));
+            }
             detachedCrit.setFetchMode("valueDomain", FetchMode.JOIN);
             List<DataElement> results = (List<DataElement>) (List<?>) appService.query(detachedCrit);
             if (results.size() < 1) {

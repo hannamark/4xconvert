@@ -398,22 +398,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         }
         return AR_EDIT;
     }
-    
-//    private DetachedCriteria constructCriteria(DetachedCriteria criteria) {
-//        criteria.add(Property.forName("id").eq(getCdeId()));
-//        criteria.setFetchMode(PERMISSIBLE, FetchMode.JOIN);
-//        criteria.setFetchMode(PERMISSIBLE
-//              + ".valueDomainPermissibleValueCollection", FetchMode.JOIN);
-//        criteria.setFetchMode(PERMISSIBLE
-//              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain", FetchMode.JOIN);
-//        criteria.setFetchMode(PERMISSIBLE
-//              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", 
-//              FetchMode.JOIN);
-//        criteria.createAlias(PERMISSIBLE
-//              + ".valueDomainPermissibleValueCollection.enumeratedValueDomain.dataElementCollection", "de");
-//        return criteria;
-//    }
-   
+
     private void setPreSelectedAttributeValues(PlannedMarkerWebDTO dto) throws PAException {
         Map<String, String> markerValues = markerAttributesService.getAllMarkerAttributes();
         List<String> evalTypeList = selectedTypeValues(getPlannedMarker().getEvaluationType(), markerValues,

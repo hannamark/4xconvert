@@ -104,11 +104,13 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.CsmHelper;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.system.applicationservice.ApplicationException;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.query.hibernate.HQLCriteria;
 
@@ -128,7 +130,7 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
     private PlannedMarkerPopupAction plannedMarkerAction;
     ProtocolQueryServiceBean protocolQrySrv = new ProtocolQueryServiceBean();
     ApplicationService appService = mock(ApplicationService.class);
-    
+    LookUpTableServiceRemote lookUpTableSrv = mock(LookUpTableServiceRemote.class);
     @Before
     public void setUp() throws Exception {
         plannedMarkerAction = new PlannedMarkerPopupAction();
@@ -154,7 +156,7 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         PermissibleValue pv = new PermissibleValue();
         pv.setValue("N-Cadherin");
         
-
+        
         ValueMeaning vm = new ValueMeaning();
         vm.setLongName("N-Cadherin");
         vm.setDescription("cadherin");
@@ -164,22 +166,19 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
         ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
         vdpv.setPermissibleValue(pv);
         vdpv.setId("1");
-        
         List<Object> results = new ArrayList<Object>();
         results.add(vdpv);
-
-        when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
-
+        when(appService.query(any(DetachedCriteria.class))).thenReturn(deResults).thenReturn(results);
         plannedMarkerAction.setAppService(appService);
         assertNotNull(plannedMarkerAction.getAppService());
     }
 
     /**
      * Tests lookup of marker's via caDSR
-     * @throws ApplicationException 
+     * @throws Exception  Exception
      */
     @Test
-    public void testLookup() throws ApplicationException {
+    public void testLookup() throws Exception {
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNotNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
 
@@ -187,22 +186,31 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        plannedMarkerAction.setPublicId("foo");
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNotNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
-
+       ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+       PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+       when(PaRegistry.getLookUpTableService()).thenReturn(lookUpTableSrv);
+       plannedMarkerAction.setLookUpTableService(lookUpTableSrv);
+       when(lookUpTableSrv.getPropertyValue("CDE_PUBLIC_ID")).thenReturn("5473");
+       when(lookUpTableSrv.getPropertyValue("Latest_Version_Indicator")).thenReturn("Yes");
+       when(lookUpTableSrv.getPropertyValue("CDE_Version")).thenReturn("9.0");
+       
        getRequest().clearAttributes();
        plannedMarkerAction.setPublicId(null);
        plannedMarkerAction.setName("lyco");
        assertEquals(plannedMarkerAction.lookup(), "results");
-//       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
-//       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
 
        getRequest().clearAttributes();
+       setUp();
        plannedMarkerAction.setPublicId(null);
        plannedMarkerAction.setName("ly-co");
        assertEquals(plannedMarkerAction.lookup(), "results");
-//       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
-//       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
        
        getRequest().clearAttributes();
+       setUp();
        Designation designation = new Designation();
        designation.setId("1L");
        designation.setName("Bivinyl");
@@ -220,12 +228,13 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        plannedMarkerAction.setName(null);
        plannedMarkerAction.setMeaning("Biv");
        assertEquals(plannedMarkerAction.lookup(), "results");
-//       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
-//       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
-//       assertEquals("N-Cadherin (Bivinyl)", plannedMarkerAction.getMarkers().get(2).getVmName());
-//       assertEquals("Bivinyl" , plannedMarkerAction.getMarkers().get(2).getAltNames().get(0));
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       assertEquals("N-Cadherin (Bivinyl)", plannedMarkerAction.getMarkers().get(0).getVmName());
+       assertEquals("Bivinyl" , plannedMarkerAction.getMarkers().get(0).getAltNames().get(0));
 
        getRequest().clearAttributes();
+       setUp();
        Designation designation2 = new Designation();
        designation2.setId("3L");
        designation2.setName("alpha");
@@ -235,30 +244,31 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        plannedMarkerAction.setMeaning("aplha");
        plannedMarkerAction.setDescription("lyco");
        assertEquals(plannedMarkerAction.lookup(), "results");
-//       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
-//       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
-//       assertEquals("N-Cadherin (Bivinyl; alpha)", plannedMarkerAction.getMarkers().get(3).getVmName());
-//       assertEquals("Bivinyl" , plannedMarkerAction.getMarkers().get(3).getAltNames().get(0));
-//       assertEquals("alpha" , plannedMarkerAction.getMarkers().get(3).getAltNames().get(1));
-//       assertFalse(plannedMarkerAction.getMarkers().get(3).getAltNames().get(0).equals("N-Cadherin"));
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       assertEquals("N-Cadherin (Bivinyl; alpha)", plannedMarkerAction.getMarkers().get(0).getVmName());
+       assertEquals("Bivinyl" , plannedMarkerAction.getMarkers().get(0).getAltNames().get(0));
+       assertEquals("alpha" , plannedMarkerAction.getMarkers().get(0).getAltNames().get(1));
+       assertFalse(plannedMarkerAction.getMarkers().get(0).getAltNames().get(0).equals("N-Cadherin"));
        
        getRequest().clearAttributes();
+       setUp();
        plannedMarkerAction.setMeaning(null);
        plannedMarkerAction.setDescription("lyco");
        assertEquals(plannedMarkerAction.lookup(), "results");
-//       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
-//       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
 
        getRequest().clearAttributes();
+       setUp();
        plannedMarkerAction.setDescription(null);
        plannedMarkerAction.setPublicId("2578250");
-//       assertEquals(plannedMarkerAction.lookup(), "results");
-//       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
-//       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
-//       plannedMarkerAction.setMarkers(new ArrayList<CaDSRWebDTO>());
-//       assertTrue(plannedMarkerAction.getMarkers().isEmpty());
+       assertEquals(plannedMarkerAction.lookup(), "results");
+       assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
+       assertFalse(plannedMarkerAction.getMarkers().isEmpty());
+       plannedMarkerAction.setMarkers(new ArrayList<CaDSRWebDTO>());
+       assertTrue(plannedMarkerAction.getMarkers().isEmpty());
     }
-
     /**
      * Test initialization of the marker request email form.
      * @throws PAException on error

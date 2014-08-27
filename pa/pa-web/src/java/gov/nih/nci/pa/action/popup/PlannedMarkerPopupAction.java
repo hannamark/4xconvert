@@ -84,9 +84,9 @@ package gov.nih.nci.pa.action.popup;
 
 import gov.nih.nci.cadsr.domain.DataElement;
 import gov.nih.nci.cadsr.domain.Designation;
-import gov.nih.nci.cadsr.domain.ValueDomain;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
+import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
@@ -100,6 +100,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.CsmHelper;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -142,10 +143,6 @@ import com.opensymphony.xwork2.Preparable;
        "PMD.TooManyFields", "PMD.TooManyMethods" })
 public class PlannedMarkerPopupAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
-    /**
-     * The Public ID of the Marker CDE.
-     */
-    private static final Long CDE_PUBLIC_ID = 5473L;
     private static final String CADSR_RESULTS = "results";
     private static final String MARKER_ACCEPT = "accept";
     private static final String EMAIL = "email";
@@ -179,6 +176,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private String fromNewRequestPage;
     private String nciIdentifier;
     private static final Logger LOG = Logger.getLogger(PlannedMarkerPopupAction.class);
+    private LookUpTableServiceRemote lookUpTableService;
     /**
      * {@inheritDoc}
      */
@@ -186,6 +184,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         markers = new ArrayList<CaDSRWebDTO>();
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
         permissibleService = PaRegistry.getPMWithCaDSRService();
+        lookUpTableService = PaRegistry.getLookUpTableService();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
@@ -203,16 +202,24 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             return CADSR_RESULTS;
         }
         try {
+            String publicID = lookUpTableService.getPropertyValue("CDE_PUBLIC_ID");
+            String latestVersionIndicator = lookUpTableService
+                 .getPropertyValue("Latest_Version_Indicator");
+            String cdeVersion = lookUpTableService.getPropertyValue("CDE_Version");
             DetachedCriteria detachedCrit = DetachedCriteria.forClass(DataElement.class).add(Property
-                    .forName("publicID").eq(CDE_PUBLIC_ID)).add(Property.forName("latestVersionIndicator")
-                            .eq("Yes"));
+                    .forName("publicID").eq(Long.parseLong(publicID)));
+            if (StringUtils.equalsIgnoreCase(latestVersionIndicator, "No")) {
+                detachedCrit.add(Property.forName("version").eq(Float.parseFloat(cdeVersion)));
+            } else {
+                detachedCrit.add(Property.forName("latestVersionIndicator").eq("Yes"));
+            }
             detachedCrit.setFetchMode("valueDomain", FetchMode.JOIN);
             List<DataElement> results = (List<DataElement>) (List<?>) appService.query(detachedCrit);
             if (results.size() < 1) {
                 throw new PAException("Search of caDSR returned no results.");
             }
             DataElement de = results.get(0);
-            String vdId = ((ValueDomain) de.getValueDomain()).getId();
+            String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
             DetachedCriteria crit = constructBaseCriteria(vdId);
             crit = constructSearchCriteria(crit);
             List<Object> permissibleValues = appService.query(crit);
@@ -524,6 +531,10 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
                         && getName() != null && !getName().isEmpty()) {
                       dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames()
                           , getName()));
+                      if (getMeaning() != null && !getMeaning().isEmpty()) {
+                         dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames()
+                                  , getMeaning()));
+                      }
                    } else {
                       dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames()
                           , getMeaning()));
@@ -900,6 +911,13 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public void setSearchBothTerms(String searchBothTerms) {
         this.searchBothTerms = searchBothTerms;
+    }
+
+    /**
+     * @param lookUpTableService the lookUpTableService to set
+     */
+    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
+        this.lookUpTableService = lookUpTableService;
     }
     
 }

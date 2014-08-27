@@ -155,10 +155,6 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
      * to submit marker question.
      */
     protected static final String MARKER_QUESTION = "question";
-    /**
-     * The Public ID of the Marker CDE.
-     */
-    private static final Long CDE_PUBLIC_ID = 5473L;
     private PlannedMarkerServiceLocal plannedMarkerService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private List<PlannedMarkerDTO> plannedMarkers;
@@ -425,8 +421,17 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         List<Object> permissibleValues = new ArrayList<Object>();
         try {
              DataElement dataElement = new DataElement();
-             dataElement.setPublicID(CDE_PUBLIC_ID);
-             dataElement.setLatestVersionIndicator("Yes");
+             String publicID = PaRegistry.getLookUpTableService().getPropertyValue("CDE_PUBLIC_ID");
+             String latestVersionIndicator = PaRegistry.getLookUpTableService()
+                  .getPropertyValue("Latest_Version_Indicator");
+             String cdeVersion = PaRegistry.getLookUpTableService()
+                     .getPropertyValue("CDE_Version");
+             dataElement.setPublicID(Long.parseLong(publicID));
+             if (StringUtils.equalsIgnoreCase(latestVersionIndicator, "No")) {
+                dataElement.setVersion(Float.parseFloat(cdeVersion));
+             } else {
+                dataElement.setLatestVersionIndicator("Yes");
+             }
              Collection<Object> results = appService.search(DataElement.class, dataElement);
              DataElement de = (DataElement) results.iterator().next();
              String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
