@@ -43,7 +43,7 @@ cteprss.user=/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=ctep-rss
 log.level=INFO
 
 selenium.server.port=4444
-
+cadsr.url=http://cadsrapi.nci.nih.gov/cadsrapi40
 
 ################################
 ###  ONLY USED ON DEV BOXES  ###

@@ -181,6 +181,11 @@
                 <path refid="common.package.classpath"/>
             </classpath>
         </javac>
+        <copy file="${pa-web.build.resourceDir.0}/application-config-client.xml" todir="${pa-web.build.outputDir}" overwrite="true">
+            <filterset>
+                <filter token="cadsr.url" value="${cadsr.url}" />
+            </filterset>
+        </copy>
         <copy file="${pa.resourceDir}/quartz_jobs.xml" todir="${pa-web.build.outputDir}" overwrite="true">
             <filterset>
                 <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
