@@ -3,6 +3,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -10,8 +11,10 @@ import gov.nih.nci.registry.util.SelectedRegistryUser;
 import gov.nih.nci.registry.util.SelectedStudyProtocol;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -195,9 +198,12 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
 
     private void getOrgMembers(Long affiliatedOrgId) throws PAException {
         RegistryUser criteria = new RegistryUser();
-        criteria.setAffiliatedOrganizationId(affiliatedOrgId);
-        List<RegistryUser> regUsers = PaRegistry.getRegistryUserService()
-                .search(criteria);
+        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(affiliatedOrgId);
+        Set<RegistryUser> regUsers = new HashSet<RegistryUser>();
+        for (Long orgId : siblings) {
+            criteria.setAffiliatedOrganizationId(orgId);
+            regUsers.addAll(PaRegistry.getRegistryUserService().search(criteria));
+        }
         registryUsers.clear();
         for (RegistryUser user : regUsers) {
             if (user.getCsmUser() != null) {
