@@ -807,9 +807,13 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         boolean importPersons = Boolean.parseBoolean(lookUpTableService
                 .getPropertyValue("ctgov.sync.import_persons"));
         boolean importOrgs = Boolean.parseBoolean(lookUpTableService
-                .getPropertyValue("ctgov.sync.import_orgs")); 
-        verifyTrialCategory(study);
-
+                .getPropertyValue("ctgov.sync.import_orgs"));
+        
+        if (!isUpdate) {  // PO-7843:  When importing updates from Clinicaltrials.gov
+                           // ignore agency class if trial exists and has NCT #
+            verifyTrialCategory(study);
+        }
+        
         // convert into CTRP DTOs, piece by piece
         extractStudyProtocolDTOFields(study, studyProtocolDTO, isUpdate);
         List<ArmDTO> arms = extractArms(study);
