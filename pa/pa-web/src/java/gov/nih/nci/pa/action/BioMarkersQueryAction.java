@@ -106,6 +106,7 @@ import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSynonymsServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -118,7 +119,6 @@ import gov.nih.nci.system.query.hibernate.HQLCriteria;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -127,8 +127,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.FetchMode;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Property;
 
 import java.util.Map;
 
@@ -143,7 +145,8 @@ import com.opensymphony.xwork2.Preparable;
  * @author Gaurav Gupta
  *
  */
-@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity",  
+      "PMD.TooManyMethods", "PMD.TooManyFields" })
 public class BioMarkersQueryAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = -2137469104765932059L;
@@ -162,6 +165,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private StudyProtocolService studyProtocolService;
     private PlannedMarkerSyncWithCaDSRServiceLocal permissibleService;
+    private LookUpTableServiceRemote lookUpTableService;
     private PlannedMarkerSynonymsServiceLocal pmSynonymService;
     private ApplicationService appService;
     private String selectedRowIdentifier;
@@ -178,6 +182,7 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         studyProtocolService = PaRegistry.getStudyProtocolService();
         permissibleService = PaRegistry.getPMWithCaDSRService();
         pmSynonymService = PaRegistry.getPMSynonymService();
+        lookUpTableService = PaRegistry.getLookUpTableService();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
@@ -420,23 +425,29 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     private List<Object> caDsrLookUp(String newcaDsrId) {
         List<Object> permissibleValues = new ArrayList<Object>();
         try {
-             DataElement dataElement = new DataElement();
-             String publicID = PaRegistry.getLookUpTableService().getPropertyValue("CDE_PUBLIC_ID");
-             String latestVersionIndicator = PaRegistry.getLookUpTableService()
+             String publicID = lookUpTableService.getPropertyValue("CDE_PUBLIC_ID");
+             String latestVersionIndicator = lookUpTableService
                   .getPropertyValue("Latest_Version_Indicator");
-             String cdeVersion = PaRegistry.getLookUpTableService()
+             String cdeVersion = lookUpTableService
                      .getPropertyValue("CDE_Version");
-             dataElement.setPublicID(Long.parseLong(publicID));
+             DetachedCriteria detachedCrit = DetachedCriteria.forClass(DataElement.class).add(Property
+                     .forName("publicID").eq(Long.parseLong(publicID)));
              if (StringUtils.equalsIgnoreCase(latestVersionIndicator, "No")) {
-                dataElement.setVersion(Float.parseFloat(cdeVersion));
+                 detachedCrit.add(Property.forName("version").eq(Float.parseFloat(cdeVersion)));
              } else {
-                dataElement.setLatestVersionIndicator("Yes");
+                 detachedCrit.add(Property.forName("latestVersionIndicator").eq("Yes"));
              }
-             Collection<Object> results = appService.search(DataElement.class, dataElement);
-             DataElement de = (DataElement) results.iterator().next();
+             detachedCrit.setFetchMode("valueDomain", FetchMode.JOIN);
+             List<DataElement> results = (List<DataElement>) (List<?>) appService.query(detachedCrit);
+             if (results.size() < 1) {
+                 throw new PAException("Search of caDSR returned no results.");
+             }
+             DataElement de = results.get(0);
              String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
              DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class, "vdpv");
-             criteria.add(Expression.eq("enumeratedValueDomain.id", vdId));
+             criteria.add(Property.forName("enumeratedValueDomain.id").eq(vdId));
+             criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
+             criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
              criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
              criteria.add(Expression.eq("vm.publicID", Long.valueOf(newcaDsrId)));
              permissibleValues = appService.query(criteria);
@@ -804,5 +815,12 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
     public void setPmSynonymService(
             PlannedMarkerSynonymsServiceLocal pmSynonymService) {
         this.pmSynonymService = pmSynonymService;
+    }
+    
+    /**
+     * @param lookUpTableService the lookUpTableService to set
+     */
+    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
+        this.lookUpTableService = lookUpTableService;
     }
 }

@@ -17,9 +17,11 @@ public class Ranker {
      private static final int WHOLE_SENTENCE_MATCH = 100000;
      private static final int BEGINING_OF_SENTENCE = 50000;
      private static final int WHOLE_WORD_MATCH = 10000;
+     private static final int WHOLE_WORD_MATCH_PRIMARY = 7000;
      private static final int BEGINING_OF_WORD = 1000;
      private static final int PART_OF_SENTENCE = 500;
-
+     private static final int PART_OF_SENTENCE_PRIMARY = 700;
+     private static final int WHOLE_WORD_MATCH_SYNONYM = 4000;
     private final Pattern p;
     private final String searchStr;
     //private final String escapedSearchStr;
@@ -119,7 +121,7 @@ public class Ranker {
      * @param <T> gene
      * @return return retrun
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked", "PMD.ExcessiveMethodLength" })
     public <T extends Object> RankedObject rankCaDSR(T obj,
               Serializer<T> serializer) {
         RankedObject<T> rankedObject = new RankedObject(obj);
@@ -141,8 +143,17 @@ public class Ranker {
                          rankedObject.addToRank(BEGINING_OF_SENTENCE);
                     }
                 }
+                
+                for (String innersyno : synonymsTrimmedString) {
+                  String[] wordTrimmedString = innersyno.split(" ");
+                    for (String innerword : wordTrimmedString) {
+                        if (StringUtils.equalsIgnoreCase(innerword, searchStr)) {
+                            rankedObject.addToRank(WHOLE_WORD_MATCH_SYNONYM);
+                        } 
+                    }
+                }
             } else {
-                // Whole word match
+                // Whole word match primary when no synonym is there
                 String[] wordTrimmedString = str.split(" ");
                 for (String innerword : wordTrimmedString) {
                     if (StringUtils.equalsIgnoreCase(innerword, searchStr)) {
@@ -150,9 +161,19 @@ public class Ranker {
                     } 
                 }
             }
+            String[] wordTrimmedString = innerString.split(" ");
+            for (String innerword : wordTrimmedString) {
+                if (StringUtils.equalsIgnoreCase(innerword, searchStr)) {
+                    rankedObject.addToRank(WHOLE_WORD_MATCH_PRIMARY);
+                } 
+            }
+         if (StringUtils.containsIgnoreCase(innerString.trim(), searchStr)) {
+            rankedObject.addToRank(PART_OF_SENTENCE_PRIMARY);
+         }
         }
      // has no exact match but it is a part of word
         rankedObject.addToRank(PART_OF_SENTENCE); 
         return rankedObject;
     }
+    
 }

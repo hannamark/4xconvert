@@ -147,7 +147,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private static final String MARKER_ACCEPT = "accept";
     private static final String EMAIL = "email";
     private static final String EMAIL_PENDING_PAGE = "markeremail";
-    private static final String LONG_NAME = "vm.longName";
+    private static final String LONG_NAME = "pv.value";
     private static final String DESCRIPTION = "vm.description";
     private static final String DESIGNATION = "permissibleValue.valueMeaning.designationCollection";
     private static final String DESIGNATION_NAME = "dc.name";

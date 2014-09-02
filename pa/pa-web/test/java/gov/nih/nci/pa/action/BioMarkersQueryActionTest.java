@@ -106,8 +106,11 @@ import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerSyncWithCaDSRServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 
 import java.util.ArrayList;
@@ -133,6 +136,7 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
     StudyProtocolService studyProtocolService = mock(StudyProtocolService.class);
     PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
     PlannedMarkerSyncWithCaDSRServiceLocal permissibleService = mock(PlannedMarkerSyncWithCaDSRServiceLocal.class);
+    LookUpTableServiceRemote lookUpTableSrv = mock(LookUpTableServiceRemote.class);
     @Before
     public void setUp() throws Exception {
         bioMarkersQueryAction = new BioMarkersQueryAction();
@@ -224,6 +228,7 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
 
     @Test
     public void testAccept() throws Exception {
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
         bioMarkersQueryAction.setCaDsrId("1");
         bioMarkersQueryAction.setSelectedRowIdentifier("1");
         getSession().setAttribute(Constants.LOGGED_USER_NAME, "login1");
@@ -248,7 +253,12 @@ public class BioMarkersQueryActionTest extends AbstractPaActionTest {
         List<Object> results = new ArrayList<Object>();
         results.add(vdpv);
         when(appService.query(any(DetachedCriteria.class))).thenReturn(results);
+        bioMarkersQueryAction.setLookUpTableService(lookUpTableSrv);
+        when(lookUpTableSrv.getPropertyValue("CDE_PUBLIC_ID")).thenReturn("5473");
+        when(lookUpTableSrv.getPropertyValue("Latest_Version_Indicator")).thenReturn("Yes");
+        when(lookUpTableSrv.getPropertyValue("CDE_Version")).thenReturn("9.0");
         bioMarkersQueryAction.setAppService(appService);
+        when(appService.query(any(DetachedCriteria.class))).thenReturn(deResults).thenReturn(results);
         assertEquals(bioMarkersQueryAction.accept(), "success");
         bioMarkersQueryAction.setPermissibleService(permissibleService);
         List<Number> idList = new ArrayList<Number>();
