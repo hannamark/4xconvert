@@ -1,14 +1,8 @@
 package gov.nih.nci.pa.webservices.test.integration;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.webservices.types.AbbreviatedTrialUpdate;
 import gov.nih.nci.pa.webservices.types.CompleteTrialRegistration;
-import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -25,8 +19,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;

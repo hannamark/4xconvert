@@ -74,6 +74,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     protected String serviceURL = "";
 
     protected static final String APPLICATION_XML = "application/xml";
+    protected static final String TEXT_PLAIN = "text/plain";
 
     @SuppressWarnings("deprecation")
     public void setUp(String serviceURL) throws Exception {
@@ -104,7 +105,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         httpClient.getCredentialsProvider().setCredentials(authScope,
                 credentials);
         String url = baseURL + serviceURL;
-
+        LOG.info("Hitting " + url);
         HttpPost req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
         HttpResponse response = httpClient.execute(req);
@@ -120,7 +121,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         httpClient.getCredentialsProvider().setCredentials(authScope,
                 credentials);
         String url = baseURL + serviceURL;
-
+        LOG.info("Hitting " + url);
         HttpPost req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
         HttpResponse response = httpClient.execute(req);
@@ -245,11 +246,19 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
             StringEntity orgEntity, String serviceURL)
             throws UnsupportedEncodingException, IOException,
             ClientProtocolException {
-        String url = baseURL + serviceURL;
+        return submitEntityAndReturnResponse(orgEntity, serviceURL,
+                APPLICATION_XML, APPLICATION_XML);
+    }
 
+    protected HttpResponse submitEntityAndReturnResponse(
+            StringEntity orgEntity, String serviceURL, String acceptType,
+            String requestType) throws UnsupportedEncodingException,
+            IOException, ClientProtocolException {
+        String url = baseURL + serviceURL;
+        LOG.info("Hitting " + url);
         HttpPost req = new HttpPost(url);
-        req.addHeader("Accept", APPLICATION_XML);
-        req.addHeader("Content-Type", APPLICATION_XML);
+        req.addHeader("Accept", acceptType);
+        req.addHeader("Content-Type", requestType);
         req.setEntity(orgEntity);
 
         HttpResponse response = httpClient.execute(req);
