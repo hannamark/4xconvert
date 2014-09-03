@@ -65,11 +65,15 @@ function addDisease(diseaseid) {
     // next translate that into an array of just the values
     var values = jQuery.map(domelts, function(elt, i) { return jQuery(elt).val();});
     jQuery("#returnVal").val(values);
-    var url = '<%=request.getContextPath()%>/protected/popupDisaddDiseases.action?selectedDiseaseIds='+values;
-    jQuery.get(url, function(data) {
+    // If lookup close the window else add to the trial and close the window
+    if(<%=request.getParameter("lookUp")%>){
         window.top.hidePopWin(true);
-    });
-    
+    }else{
+	    var url = '<%=request.getContextPath()%>/protected/popupDisaddDiseases.action?selectedDiseaseIds='+values;
+	    jQuery.get(url, function(data) {
+	        window.top.hidePopWin(true);
+	    });
+    }   
 }
 </script>
 </head>

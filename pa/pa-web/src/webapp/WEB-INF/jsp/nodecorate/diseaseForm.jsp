@@ -4,7 +4,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html>
 <head>
-<c:url value="/protected/popupDisdisplayDiseaseWidget.action"
+<c:url value="/protected/popupDisdisplayDiseaseWidget.action?lookUp=true"
 	var="lookupUrl" />
 <c:url value="/protected/manageTermsajaxGetDiseases.action?diseaseIds="
 	var="diseaseAjaxURL" />
@@ -135,7 +135,6 @@
 							<s:param>disease.code</s:param>
 						</s:fielderror>
 				</span></td>
-
 			</tr>
 			<tr>
 				<td scope="row" ><label for="preferredName">Preferred
