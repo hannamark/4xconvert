@@ -55,6 +55,7 @@ import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -257,6 +258,22 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         String url = baseURL + serviceURL;
         LOG.info("Hitting " + url);
         HttpPost req = new HttpPost(url);
+        req.addHeader("Accept", acceptType);
+        req.addHeader("Content-Type", requestType);
+        req.setEntity(orgEntity);
+
+        HttpResponse response = httpClient.execute(req);
+        LOG.info("Response code: " + getReponseCode(response));
+        return response;
+    }
+
+    protected HttpResponse putEntityAndReturnResponse(StringEntity orgEntity,
+            String serviceURL, String acceptType, String requestType)
+            throws UnsupportedEncodingException, IOException,
+            ClientProtocolException {
+        String url = baseURL + serviceURL;
+        LOG.info("Hitting " + url);
+        HttpPut req = new HttpPut(url);
         req.addHeader("Accept", acceptType);
         req.addHeader("Content-Type", requestType);
         req.setEntity(orgEntity);

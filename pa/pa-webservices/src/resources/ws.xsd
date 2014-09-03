@@ -1394,7 +1394,7 @@
 		<sequence>
 			<element name="recruitmentStatus" type="tns:RecruitmentStatus" />
 			<element name="recruitmentStatusDate" type="date" />
-			<element name="localTrialIdentifier" type="string" minOccurs="0" />
+			<element name="localTrialIdentifier" type="string"/>
 			<element name="programCode" type="string" minOccurs="0" />
 			<element name="openedForAccrual" type="date" minOccurs="0">
 				<annotation>
