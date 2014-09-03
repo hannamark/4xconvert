@@ -1,10 +1,13 @@
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
+
+import org.apache.commons.lang.BooleanUtils;
 
 
 /**
@@ -30,7 +33,11 @@ public final class PoRegistry {
      * Constructor for the singleton instance.
      */
     private PoRegistry() {
-        poServiceLocator = new PoJndiServiceLocator();
+        if (BooleanUtils.isTrue(BooleanUtils.toBoolean(PaEarPropertyReader.getProperties().getProperty("mock.po")))) {
+            poServiceLocator = new PoMockLocator();
+        } else {
+            poServiceLocator = new PoJndiServiceLocator();
+        }
     }
     /**
      * @return the serviceLocator

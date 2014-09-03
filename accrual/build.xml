@@ -11,6 +11,7 @@
     <property file="${basedir}/../build-pa/version.properties"/>
 
     <property name="common.dir" value="${basedir}/../build-pa/common"/>
+	<property name="pa.dir" value="${basedir}/../pa"/>
     <property name="software.dir" value="${basedir}/.."/>
     <property name="target.dir" location="${software.dir}/target/accrual" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
@@ -62,9 +63,21 @@
             description="Build test and deploy."/>
 
     <target name="run-selenium-tests" depends="build-notest" description="Runs integration tests against an already deployed application">
-        <ant target="run-selenium-tests" dir="accrual-web" inheritAll="false" inheritrefs="false"/>
-    	<ant target="run-selenium-tests" dir="webservices" inheritAll="false" inheritrefs="false"/>
+        <!-- <ant target="run-selenium-tests" dir="accrual-web" inheritAll="false" inheritrefs="false"/> -->
+    	<ant target="run-selenium-tests" dir="webservices" inheritAll="false" inheritrefs="false">
+    		 <property name="tier" value="${tier}"/>
+    	</ant>
     </target>
+	
+	<target name="test-integration" description="Runs integration tests against the automatically deploy application." depends="deploy-notest">
+    	  <ant target="init-db-deploy-start-jboss" dir="${pa.dir}" inheritAll="false">
+                <property name="tier" value="${tier}"/>
+    	  </ant>
+		  <antcall target="run-selenium-tests"/>
+		  <ant target="stop-jboss-server" dir="${pa.dir}" inheritAll="false">
+                <property name="tier" value="${tier}"/>
+		  </ant>
+	</target>
 
     <!-- ====================================================================== -->
     <!-- Ivy targets                                                            -->
