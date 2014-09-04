@@ -597,6 +597,10 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     }
     private String replaceWithHighlightText(String inputData, String searchText) {
         String outputData = inputData;
+        String newName = searchText;
+        if (newName != null && newName.contains("-")) {
+             newName = searchText.replaceAll("-", "");
+        }
         if (searchText != null && !searchText.isEmpty()) {
             String highlight = "<span class=\"highlight\">" + searchText + "</span>";
             if (StringUtils.equals(TRUE, getCaseType())) {
@@ -604,6 +608,14 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             } else {
                outputData = inputData.replaceAll("(?i)" + searchText, "<span class=\"highlight\">$0</span>");
                
+            }
+            if (!StringUtils.equals(newName, searchText)) {
+                String highlightNew = "<span class=\"highlight\">" + newName + "</span>";
+                if (StringUtils.equals(TRUE, getCaseType())) {
+                    outputData = StringUtils.replace(outputData, newName, highlightNew);
+                 } else {
+                    outputData = outputData.replaceAll("(?i)" + newName, "<span class=\"highlight\">$0</span>");
+                 }
             }
         }
         return outputData;

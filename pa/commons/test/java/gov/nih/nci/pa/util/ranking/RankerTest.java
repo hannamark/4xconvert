@@ -54,6 +54,8 @@ public class RankerTest extends TestCase {
 
     }
     
+    
+    
 
   public void testRankCaDSR() throws Exception {
       Ranker ranker = new Ranker("delta");
@@ -129,5 +131,14 @@ public class RankerTest extends TestCase {
        ranker = new Ranker("tf");
        str ="TF var (Transferrin; Serotransferrin; Siderophilin; Beta-1 Metal-Binding Globulin; Granulocyte/Pollen-Binding Protein; TFQTL1; PRO1557; PRO2086; PRO1400)";
        assertEquals(7000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("MUC-1");
+       str ="CA15-3 (CA15-3 Antigen; Cancer Antigen 15-3; CA15.3; CA 15.3; CA 15-3; DF3 Antigen; CA 15 3; MUC-1 Antigen; MUC-1; Mucin Antigen; Sialylated MUC-1)";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("MUC1");
+       str ="MUC1 (Mucin 1; CD227; CA15-3; CA15.3; CA 15.3; CA 15-3; Cancer Antigen 15-3; PEM; PEMT; PUM; EMA; H23AG; Episialin; Epithelial Membrane Antigen; H23 Antigen; CA 15 3; MUC-1 Antigen; Mucin Antigen; CA15-3 Antigen; DF3 Antigen)";
+       assertEquals(100000, ranker.rankCaDSR(str, serializer).getRank());
+       ranker = new Ranker("MCU-1");
+       str ="CA27.29 (CA 27.29; CA 27-29; Cancer Antigen 27.29; Peripheral Blood MUC-1; Soluble MUC-1; CA27-29)";
+       assertEquals(500, ranker.rankCaDSR(str, serializer).getRank());
   }
 }

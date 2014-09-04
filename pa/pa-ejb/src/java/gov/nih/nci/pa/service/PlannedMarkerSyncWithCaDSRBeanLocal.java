@@ -172,11 +172,16 @@ public class PlannedMarkerSyncWithCaDSRBeanLocal
                     }
                } else if (StringUtils.equalsIgnoreCase(dtoList.get(0)
                        .getStatusCode().getCode(), "Inactive")) {
+               if (IiConverter.convertToLong(dtoList.get(0).getCaDSRId()) != null) {
                   updateValues(IiConverter.convertToLong(dtoList.get(0).getCaDSRId())
                       , StConverter.convertToString(dtoList.get(0).getName()) + "a"
                       , StConverter.convertToString(dtoList.get(0).getMeaning())
                       , StConverter.convertToString(dtoList.get(0).getDescription())
                       , null, null, ActiveInactivePendingCode.INACTIVE.getName());
+               } else {
+                  updateValueById(StConverter.convertToString(dtoList.get(0).getName()) + "a"
+                       , IiConverter.convertToLong(dtoList.get(0).getIdentifier()));
+                }
                }
             }
         }
