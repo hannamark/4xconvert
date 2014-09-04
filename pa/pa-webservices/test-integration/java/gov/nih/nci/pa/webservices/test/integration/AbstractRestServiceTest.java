@@ -17,6 +17,7 @@ import gov.nih.nci.pa.webservices.types.HolderType;
 import gov.nih.nci.pa.webservices.types.INDIDE;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
 import gov.nih.nci.pa.webservices.types.Organization;
+import gov.nih.nci.pa.webservices.types.ParticipatingSite;
 import gov.nih.nci.pa.webservices.types.Person;
 import gov.nih.nci.pa.webservices.types.ResponsiblePartyType;
 import gov.nih.nci.pa.webservices.types.TrialDocument;
@@ -932,6 +933,36 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                 .getResourceAsStream(file)));
         HttpResponse response = submitEntityAndReturnResponse(entity,
                 serviceURL + "/" + idType + "/" + trialID);
+        return response;
+
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected ParticipatingSite readParticipatingSiteFromFile(String string)
+            throws JAXBException, SAXException {
+        JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
+        Unmarshaller u = jc.createUnmarshaller();
+        URL url = getClass().getResource(string);
+        ParticipatingSite o = ((JAXBElement<ParticipatingSite>) u
+                .unmarshal(url)).getValue();
+        return o;
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected HttpResponse addSite(String idType, String trialID,
+            ParticipatingSite o) throws ClientProtocolException, IOException,
+            ParseException, JAXBException, SQLException {
+        JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
+        Marshaller m = jc.createMarshaller();
+        StringWriter out = new StringWriter();
+        m.marshal(new JAXBElement<ParticipatingSite>(new QName(
+                "gov.nih.nci.pa.webservices.types", "ParticipatingSite"),
+                ParticipatingSite.class, o), out);
+
+        StringEntity entity = new StringEntity(out.toString());
+        HttpResponse response = submitEntityAndReturnResponse(entity,
+                "/trials/" + idType + "/" + trialID + "/sites", TEXT_PLAIN,
+                APPLICATION_XML);
         return response;
 
     }

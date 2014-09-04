@@ -107,7 +107,7 @@
 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>services</web-resource-name>
+			<web-resource-name>accrual-services</web-resource-name>
 			<url-pattern>/*</url-pattern>
 			<http-method>POST</http-method>
 			<http-method>GET</http-method>

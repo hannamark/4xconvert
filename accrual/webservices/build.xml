@@ -176,7 +176,10 @@
         </copy>
     </target>
 	
-	<target name="compile-selenium-tests" depends="compile-tests" description="Compile the test code">	
+	<target name="compile-selenium-tests" depends="compile-tests" description="Compile the test code">
+        <ant target="jar-test" dir="${pa.dir}/pa-ejb" inheritAll="false">
+	          <property name="tier" value="${tier}"/>
+        </ant>
 		<ant target="compile-tests" dir="${pa.dir}/pa-webservices" inheritAll="false">
 			  <property name="tier" value="${tier}"/>
 		</ant>
@@ -271,6 +274,7 @@
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath>
+            	<path location="${web.build.outputDir}"/>
                 <path location="${web.build.testOutputDir}"/>
                 <path refid="selenium.classpath"/>
                 <path refid="compile.classpath"/>
@@ -285,13 +289,7 @@
             	</fileset>
             </batchtest>
         </junit>
-    	<junitreport todir="${web.test.reports}">
-            <fileset dir="${web.test.reports}">
-                <include name="TEST-*.xml" />
-            </fileset>
-            <report todir="${web.test.reports}" />
-    	</junitreport>
-    	<fail if="junit.failure" message="Integration test(s) failed.  See reports in ${web.test.reports}/index.html."/>
+    	<fail if="junit.failure" message="Integration test(s) failed.  See reports in ${web.test.reports}"/>
     </target>
 
 

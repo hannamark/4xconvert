@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-web>
-	<security-domain>pa</security-domain>
+	<security-domain>accrual</security-domain>
 	<valve>
 		<class-name>gov.nih.nci.coppa.webservices.security.UsernameTokenGridAuthenticator</class-name>
 	</valve>
