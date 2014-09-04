@@ -101,6 +101,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -276,4 +277,23 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         return node;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getAllDisplayNames() {
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select distinct pd.displayName from PDQDisease pd order by pd.displayName";
+        Query query = session.createQuery(hql);
+        List<String> result = new ArrayList<String>();
+        for (Iterator iterator = query.list().iterator(); iterator.hasNext();) {
+            String dn = (String) iterator.next();
+            if (dn != null && !dn.isEmpty()) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("\"").append(dn).append("\"");
+                result.add(builder.toString());
+            }
+        }
+        return result;
+    }
 }

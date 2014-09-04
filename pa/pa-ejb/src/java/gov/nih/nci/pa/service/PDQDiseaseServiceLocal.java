@@ -113,4 +113,11 @@ public interface PDQDiseaseServiceLocal extends BasePaService<PDQDiseaseDTO> {
      * @return The entire disease tree as a List of PDQDiseaseNode.
      */
     List<PDQDiseaseNode> getDiseaseTree();
+    
+    
+    /**
+     * Get all disease display names
+     * @return list of existing displaynames
+     */
+    List<String> getAllDisplayNames();
 }

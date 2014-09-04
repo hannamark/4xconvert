@@ -108,6 +108,9 @@ public class DiseaseWebDTO implements Serializable {
     private List<String> parentTermList = new ArrayList<String>();
     private List<String> childTermList = new ArrayList<String>();
 
+    // List of existing displanames
+    private List<String> displayNameList = new ArrayList<String>();
+    
     /**
      * @return the studyDiseaseIdentifier
      */
@@ -313,6 +316,20 @@ public class DiseaseWebDTO implements Serializable {
      */
     public void setNtTermIdentifier(String ntTermIdentifier) {
         this.ntTermIdentifier = ntTermIdentifier;
+    }
+
+    /**
+     * @return the displayNameList
+     */
+    public List<String> getDisplayNameList() {
+        return displayNameList;
+    }
+
+    /**
+     * @param displayNameList the displayNameList to set
+     */
+    public void setDisplayNameList(List<String> displayNameList) {
+        this.displayNameList = displayNameList;
     }
 
     

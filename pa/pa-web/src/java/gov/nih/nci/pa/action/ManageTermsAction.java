@@ -117,32 +117,13 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * Import intervention
-     *
-     * @return view
-     */
-    public String importIntervention() {
-        importTerm = true;
-        return INTERVENTION;
-    }
-
-    /**
      * Create Disease
      *
      * @return view
      */
     public String createDisease() {
         importTerm = false;
-        return DISEASE;
-    }
-
-    /**
-     * Import Disease
-     *
-     * @return view
-     */
-    public String importDisease() {
-        importTerm = true;
+        disease.setDisplayNameList(diseaseService.getAllDisplayNames());
         return DISEASE;
     }
 
@@ -582,10 +563,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                                     + " 'Sync Term' to update the CTRP term with values from NCIt");
                     return SYNC_DISEASE;
                 }
+                disease.setDisplayNameList(diseaseService.getAllDisplayNames());
             } else {
                 ServletActionContext.getRequest().setAttribute(
                         Constants.FAILURE_MESSAGE,
-                        "No intervention with NCIt code '" + ncitCode
+                        "No disease with NCIt code '" + ncitCode
                                 + "' found in NCI Thesaurus, try a different code");
 
                 return SEARCH_DISEASE;
@@ -625,7 +607,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
                 currDisease.setPreferredName(StConverter.convertToSt(disease.getPreferredName()));
 
-                // DEACTIVATE existing synonyms
+                // Delete existing synonyms
                 List<PDQDiseaseAlternameDTO> altNames = diseaseAltNameService.getByDisease(currDisease.getIdentifier());
                 if (altNames != null && !altNames.isEmpty()) {
                     for (Iterator<PDQDiseaseAlternameDTO> iterator = altNames.iterator(); iterator.hasNext();) {
@@ -843,7 +825,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         ajaxResponseStream = new ByteArrayInputStream(result.toString().getBytes());
         return AJAX_RESPONSE;
     }
-
+    
     /**
      * @return the ajaxResponseStream
      */

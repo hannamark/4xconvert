@@ -8,7 +8,16 @@
 	var="lookupUrl" />
 <c:url value="/protected/manageTermsajaxGetDiseases.action?diseaseIds="
 	var="diseaseAjaxURL" />
+<c:url value="/protected/manageTermsajaxDisplayNameLookup.action?searchTerm="
+    var="displayNamelookupUrl" />
+	
 <script type="text/javascript">
+
+    jQuery(function() {
+	    var displayNameList = <s:property escape="false" value="disease.displayNameList"/>;
+	    jQuery("#menuDisplayName").autocomplete({source: displayNameList});
+    });
+    
 	function saveDisease() {
 		selectAllListItems();
 		document.forms[0].action = "manageTermssaveDisease.action";
@@ -107,6 +116,7 @@
 		}
 		}
 	}
+	
 </script>
 </head>
 <div id="box">
@@ -164,16 +174,10 @@
 						<s:param>disease.menuDisplayName</s:param>
 					</s:fielderror>
 				</span></td>
-				<td><div style="float: left; width: 100%;">
-                        <s:a href="javascript:void(0)" cssClass="btn"
-                            onClick="lookupDisplayName()">
-                            <span class="btn_img"><span class="add">LookUp</span></span>
-                        </s:a></div>
-                </td>
 			</tr>
 			 <% List<String> newAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("disease.alterNameList");
                 List<String> currentAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("currentDisease.alterNameList"); 
-            %>
+             %>
 			<tr>
 				<td scope="row" ><label for="typeCode">Synonyms
 				</label></td>

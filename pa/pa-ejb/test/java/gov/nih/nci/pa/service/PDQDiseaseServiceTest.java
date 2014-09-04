@@ -84,7 +84,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -99,6 +98,7 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
@@ -258,5 +258,19 @@ public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
         assertEquals(2, result.size());
         assertTrue(ids.contains(result.get(0).getId()));
         assertTrue(ids.contains(result.get(1).getId()));        
+    }
+    
+    @Test
+    public void testgetAllDisplayName() {
+        PDQDisease bo1 = TestSchema.createPdqDisease("Disease 1");
+        bo1.setDisplayName("Disease 1");
+        TestSchema.addUpdObject(bo1);        
+        PDQDisease bo2 = TestSchema.createPdqDisease("Disease 2");
+        bo2.setDisplayName("Disease 2");
+        TestSchema.addUpdObject(bo2);
+        assertEquals(3, bean.getAllDisplayNames().size());
+        assertTrue(bean.getAllDisplayNames().contains("\"Disease 1\""));
+        assertTrue(bean.getAllDisplayNames().contains("\"Disease 2\""));
+        assertTrue(bean.getAllDisplayNames().contains("\"menuDisplayName\""));
     }
 }
