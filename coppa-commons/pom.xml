@@ -5,7 +5,7 @@
     <artifactId>coppa-commons</artifactId>
     <packaging>jar</packaging>
     <name>coppa-commons</name>
-    <version>1.3.10.2-SNAPSHOT</version>
+    <version>1.3.10.3-SNAPSHOT</version>
 
     <properties>
         <nci-commons-ctrp.version>1.4.10.1-SNAPSHOT</nci-commons-ctrp.version>

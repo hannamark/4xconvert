@@ -12,6 +12,7 @@ import org.jboss.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -63,7 +64,11 @@ public class UsernameTokenGridAuthenticator extends AuthenticatorBase {
         //do grid auth if needed
         BasicAuthInfo basicAuthInfo = null;
         for (UsernamePasswordProvider usernamePasswordProvider : usernamePasswordProviderList) {
-            basicAuthInfo = usernamePasswordProvider.getBasicAuthInfo(request);
+            try {
+                basicAuthInfo = usernamePasswordProvider.getBasicAuthInfo(request);
+            } catch (Exception e) {
+                LOG.error(e, e);
+            }
             if (basicAuthInfo != null) {
                 break;
             }
