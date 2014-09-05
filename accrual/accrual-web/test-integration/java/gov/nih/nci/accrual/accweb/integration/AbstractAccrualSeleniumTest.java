@@ -82,8 +82,7 @@
  */
 package gov.nih.nci.accrual.accweb.integration;
 
-import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
-import gov.nih.nci.pa.test.integration.util.TestProperties;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.After;
@@ -92,60 +91,58 @@ import org.junit.Ignore;
 
 /**
  * Abstract base class for selenium tests.
- *
+ * 
  * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
  */
 @Ignore
-public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCase {
-    public static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
-    
+public abstract class AbstractAccrualSeleniumTest extends
+        AbstractPaSeleniumTest {
+    public static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat
+            .getInstance("MM/dd/yyyy");
+
     @Override
     @Before
     public void setUp() throws Exception {
-        //super.setSeleniumPort(TestProperties.getSeleniumServerPort());
-        super.setServerHostname(TestProperties.getServerHostname());
-        super.setServerPort(TestProperties.getServerPort());
-        //super.setBrowser(TestProperties.getSeleniumBrowser());
         super.setUp();
-        selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-        logoutUser();
         super.tearDown();
     }
 
-    private void logoutUser() {
-        openAndWait("/accrual/login/logout.action");
+    @Override
+    protected void logoutUser() {
+        super.logoutUser();
+        openAndWait("/accrual/logout.action");
     }
 
+    @Override
     protected void login(String username, String password) {
         openAndWait("/accrual");
-        verifyHomePage();
-        clickAndWait("link=Log In");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
         selenium.select("id=authenticationServiceURL", "label=Training");
-        clickAndWait("id=loginButton");
+        clickAndWait("xpath=//i[@class='fa-arrow-circle-right']");
         verifyDisclaimerPage();
     }
 
+    @Override
     protected void verifyDisclaimerPage() {
         assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
         assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
     }
 
+    @Override
     protected void verifyHomePage() {
-        assertTrue(selenium.isTextPresent("Log In"));
-        assertTrue(selenium.isTextPresent("CONTACT US"));
-        assertTrue(selenium.isTextPresent("PRIVACY NOTICE"));
-        assertTrue(selenium.isTextPresent("DISCLAIMER"));
-        assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
-        assertTrue(selenium.isTextPresent("SUPPORT"));
+        assertTrue(selenium.isTextPresent("Sign In"));
+        assertTrue(selenium.isTextPresent("Contact Us"));
+        assertTrue(selenium.isTextPresent("Policies"));
+
     }
 
+    @Override
     protected void disclaimer(boolean accept) {
         if (accept) {
             clickAndWaitAjax("id=acceptDisclaimer");
@@ -155,16 +152,9 @@ public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCa
         }
     }
 
+    @Override
     public void loginAsAbstractor() {
         login("abstractor-ci", "Coppa#12345");
     }
 
-    protected boolean isLoggedIn() {
-        return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
-    }
-
-    protected void openAndWait(String url) {
-        selenium.open(url);
-        waitForPageToLoad();
-    }
 }

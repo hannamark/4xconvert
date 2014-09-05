@@ -153,20 +153,41 @@
         <javac destdir="${web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
             <src>
-                <pathelement location="${web.build.testSrcDir}"/>
-                <pathelement location="${web.build.integrationTestSrcDir}"/>
+                <pathelement location="${web.build.testSrcDir}"/>               
             </src>
             <classpath>
                 <pathelement location="${web.build.outputDir}"/>
                 <path refid="compile.classpath"/>
-                <path refid="test.classpath"/>
-                <path refid="selenium.classpath"/>
+                <path refid="test.classpath"/>               
             </classpath>
         </javac>
         <copy todir="${web.build.testOutputDir}">
             <fileset dir="${web.build.testResourceDir}"/>
         </copy>
     </target>
+	
+	<target name="compile-selenium-tests" depends="compile-tests" description="Compile the test code">
+	        <ant target="jar-test" dir="${pa.dir}/pa-ejb" inheritAll="false">
+	              <property name="tier" value="${tier}"/>
+	        </ant>
+	        <ant target="compile-tests" dir="${pa.dir}/pa-webservices" inheritAll="false">
+	              <property name="tier" value="${tier}"/>
+	        </ant>
+		    <javac destdir="${web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+		               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
+	            <src>                
+	            	 <pathelement location="${web.build.integrationTestSrcDir}"/>
+	            </src>
+	            <classpath>
+	                <pathelement location="${web.build.outputDir}"/>
+	                <path refid="compile.classpath"/>
+	                <path refid="test.classpath"/>
+	                <path refid="selenium.classpath"/>
+	                <pathelement location="${pa.dir}/pa-webservices/target/test-classes"/>
+	                <pathelement location="${pa.dir}/pa-webservices/target/classes"/>
+	            </classpath>
+	        </javac>       
+	</target>
 
 
     <!-- ====================================================================== -->
@@ -229,36 +250,36 @@
     <!-- ====================================================================== -->
     <!-- Configure tests target                                                 -->
     <!-- ====================================================================== -->
-    <target name="configure-tests">
-        <copy file="${resource.dir}/test.properties.accrual-web" tofile="${web.build.testResourceDir}/test.properties" overwrite="true">
-            <filterset>
-                <filter token="pa.server.name" value="${jboss.server.hostname}"/>
-                <filter token="jboss.port" value="${jboss.server.port}" />
-                <filter token="selenium.server.port" value="${selenium.server.port}"/>
-                <filter token="selenium.delay" value="${selenium.delay}" />
-            </filterset>
-        </copy>
+    <target name="configure-tests">       
     </target>
 
     <!-- ====================================================================== -->
     <!-- Run JUnit Integration Tests                                            -->
     <!-- ====================================================================== -->
-    <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
+    <target name="run-selenium-tests" depends="compile-selenium-tests" description="Run integration tests">
         <mkdir dir="${web.build.testOutputDir}"/>
         <mkdir dir="${web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." showoutput="yes" failureproperty="junit.failure">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath>
+            	<path location="${web.build.outputDir}"/>
                 <path location="${web.build.testOutputDir}"/>
                 <path refid="selenium.classpath"/>
                 <path refid="compile.classpath"/>
                 <path refid="test.classpath"/>
+                <path location="${pa.dir}/pa-webservices/target/test-classes"/>
+                <path location="${pa.dir}/pa-webservices/target/classes"/>
             </classpath>
             <batchtest todir="${web.test.reports}">
-                <fileset dir="${web.build.integrationTestSrcDir}"/>
+            	 <fileset dir="${web.build.integrationTestSrcDir}">
+            	                      <include name="**/*.java"/>
+            	                      <exclude name="**/Abstract*Test.java"/>
+            	 </fileset>
             </batchtest>
         </junit>
+    	<fail if="junit.failure" message="Integration test(s) failed.  See reports in ${web.test.reports}"/>
     </target>
 
 
