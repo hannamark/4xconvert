@@ -20,6 +20,7 @@ import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,6 +89,189 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
                 + TestProperties.getServerPort() + "/services";
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
         addSiteSubjectsAndVerify(rConf);
+    }
+
+    @Test
+    public final void testUpdateAccrualCountRequriesAccrualAccess()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+
+        String serviceURL = "/sites/" + siteID + "/count";
+        String accrualCount = "4234";
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/accrual-services";
+        StringEntity entity = new StringEntity(accrualCount);
+        String url = baseURL + serviceURL;
+        HttpPut req = new HttpPut(url);
+        req.addHeader("Accept", TEXT_PLAIN);
+        req.addHeader("Content-Type", TEXT_PLAIN);
+        req.setEntity(entity);
+
+        response = httpClient.execute(req);
+        assertEquals(500, getReponseCode(response));
+        assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
+                .contains("User does not have accrual access to site"));
+
+    }
+
+    @Test
+    public final void testUpdateAccrualCountSiteNotFound()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        String serviceURL = "/sites/2390478534/count";
+        String accrualCount = "4234";
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/accrual-services";
+        StringEntity entity = new StringEntity(accrualCount);
+        String url = baseURL + serviceURL;
+        HttpPut req = new HttpPut(url);
+        req.addHeader("Accept", TEXT_PLAIN);
+        req.addHeader("Content-Type", TEXT_PLAIN);
+        req.setEntity(entity);
+
+        HttpResponse response = httpClient.execute(req);
+        assertEquals(404, getReponseCode(response));
+        assertTrue(EntityUtils
+                .toString(response.getEntity(), "utf-8")
+                .contains(
+                        "Participating site with PA ID 2390478534 is not found."));
+
+    }
+
+    @Test
+    public final void testUpdateAccrualCount() throws ClientProtocolException,
+            ParseException, JAXBException, SAXException, SQLException,
+            IOException, DatatypeConfigurationException,
+            java.text.ParseException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        grantAccrualAccess("submitter-ci", siteID);
+
+        String serviceURL = "/sites/" + siteID + "/count";
+        String accrualCount = "4234";
+
+        submitAccrualCountAndVerify(rConf, serviceURL, accrualCount);
+
+    }
+
+    @Test
+    public final void testUpdateAccrualCountBySitePoId()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        grantAccrualAccess("submitter-ci", siteID);
+
+        String serviceURL = "/trials/nci/" + rConf.getNciTrialID()
+                + "/sites/po/3/count";
+        String accrualCount = "15234";
+
+        submitAccrualCountAndVerify(rConf, serviceURL, accrualCount);
+
+    }
+
+    @Test
+    public final void testUpdateAccrualCountBySiteCtepId()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        grantAccrualAccess("submitter-ci", siteID);
+
+        String serviceURL = "/trials/pa/" + rConf.getPaTrialID()
+                + "/sites/ctep/DCP/count";
+        String accrualCount = "152349";
+
+        submitAccrualCountAndVerify(rConf, serviceURL, accrualCount);
+
+    }
+
+    /**
+     * @param rConf
+     * @param siteID
+     * @param serviceURL
+     * @param accrualCount
+     * @throws UnsupportedEncodingException
+     * @throws IOException
+     * @throws ClientProtocolException
+     */
+    private void submitAccrualCountAndVerify(
+            TrialRegistrationConfirmation rConf, String serviceURL,
+            String accrualCount) throws UnsupportedEncodingException,
+            IOException, ClientProtocolException {
+        HttpResponse response;
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/accrual-services";
+        StringEntity entity = new StringEntity(accrualCount);
+        String url = baseURL + serviceURL;
+        LOG.info("Hitting " + url);
+        LOG.info("Payload: " + accrualCount);
+
+        HttpPut req = new HttpPut(url);
+        req.addHeader("Accept", TEXT_PLAIN);
+        req.addHeader("Content-Type", TEXT_PLAIN);
+        req.setEntity(entity);
+
+        response = httpClient.execute(req);
+        LOG.info("Response code: " + getReponseCode(response));
+        assertEquals(200, getReponseCode(response));
+        assertEquals(TEXT_PLAIN, getResponseContentType(response));
+        assertEquals("", response.getFirstHeader("Set-Cookie").getValue());
+        EntityUtils.consumeQuietly(response.getEntity());
+
+        verifyAccrualCount(rConf, accrualCount);
+    }
+
+    private void verifyAccrualCount(TrialRegistrationConfirmation rConf,
+            String accrualCount) {
+        login();
+        clickAndWait("link=Trial Search");
+        clickAndWait("link=" + rConf.getNciTrialID());
+        assertEquals(
+                accrualCount,
+                selenium.getValue("xpath=//table[@id='row']/tbody/tr[1]/td[3]/input"));
+
     }
 
     @Test
