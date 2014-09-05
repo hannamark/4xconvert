@@ -14,12 +14,13 @@
 	<h1>
 		<s:if test="%{!importTerm}">
 			<fmt:message key="manageTerms.createIntrv.page.title" />
+            <c:set var="topic" scope="request" value="enterintervention" />
 		</s:if>
 		<s:else>
 			<fmt:message key="manageTerms.importIntrv.page.title" />
+            <c:set var="topic" scope="request" value="importintervention" />
 		</s:else>
 	</h1>
-	<c:set var="topic" scope="request" value="mangeterms" />
 	<jsp:include page="/WEB-INF/jsp/nodecorate/interventionForm.jsp" />
 </body>
 </html>

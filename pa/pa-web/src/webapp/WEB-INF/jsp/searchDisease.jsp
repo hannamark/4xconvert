@@ -8,7 +8,7 @@
 <s:head />
 </head>
 <body>
-	<c:set var="topic" scope="request" value="mangeterms" />
+	<c:set var="topic" scope="request" value="importdisease" />
 	<div id="box">
 		<h1>
 			<fmt:message key="manageTerms.lookupDisease.page.title" />

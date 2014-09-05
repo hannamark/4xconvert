@@ -15,7 +15,7 @@
 	<h1>
 		<fmt:message key="manageTerms.syncDisease.page.title" />
 	</h1>
-	<c:set var="topic" scope="request" value="mangeterms" />
+	<c:set var="topic" scope="request" value="syncdisease" />
 	<pa:failureMessage />
 	<table class="form">
 		<thead>

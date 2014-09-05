@@ -8,7 +8,7 @@
 <s:head />
 </head>
 <body>
-	<c:set var="topic" scope="request" value="mangeterms" />
+	<c:set var="topic" scope="request" value="importintervention" />
 	<div id="box">
 		<h1>
 			<fmt:message key="manageTerms.lookupIntrv.page.title" />

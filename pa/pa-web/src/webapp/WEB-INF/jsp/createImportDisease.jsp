@@ -14,12 +14,14 @@
 	<h1>
 		<s:if test="%{!importTerm}">
 			<fmt:message key="manageTerms.createDisease.page.title" />
+			<c:set var="topic" scope="request" value="enterdisease" />
 		</s:if>
 		<s:else>
 			<fmt:message key="manageTerms.importDisease.page.title" />
+			<c:set var="topic" scope="request" value="importdisease" />
 		</s:else>
 	</h1>
-	<c:set var="topic" scope="request" value="mangeterms" />
+	
 	<jsp:include page="/WEB-INF/jsp/nodecorate/diseaseForm.jsp" />
 </body>
 </html>

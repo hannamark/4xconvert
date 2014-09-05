@@ -28,7 +28,7 @@
 </script>
 </head>
 <body>
-	<c:set var="topic" scope="request" value="mangeterms" />
+	<c:set var="topic" scope="request" value="manageterms" />
 	<h1>
 		<fmt:message key="manageterms.page.title" />
 	</h1>
