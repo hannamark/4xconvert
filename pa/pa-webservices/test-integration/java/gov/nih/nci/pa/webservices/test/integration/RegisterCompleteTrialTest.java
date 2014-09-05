@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
 public class RegisterCompleteTrialTest extends AbstractRestServiceTest {
 
     public void setUp() throws Exception {
-        super.setUp("/registration/complete");
+        super.setUp("/trials/complete");
         deactivateAllTrials();
     }
 

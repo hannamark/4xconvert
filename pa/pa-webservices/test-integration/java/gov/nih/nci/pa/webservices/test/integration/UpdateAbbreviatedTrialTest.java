@@ -35,7 +35,7 @@ public class UpdateAbbreviatedTrialTest extends AbstractRestServiceTest {
 
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
-        super.setUp("/update/abbreviated");
+        super.setUp("/trials/abbreviated");
         deactivateAllTrials();
     }
 

@@ -38,7 +38,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
 
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
-        super.setUp("/amend/complete");
+        super.setUp("/trials/complete");
         deactivateAllTrials();
     }
 
@@ -342,7 +342,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
                 CompleteTrialAmendment.class, o), out);
 
         StringEntity entity = new StringEntity(out.toString());
-        HttpResponse response = submitEntityAndReturnResponse(entity,
+        HttpResponse response = putEntityAndReturnResponse(entity,
                 serviceURL + "/" + idType + "/" + trialID);
         return response;
 
@@ -354,7 +354,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
             ParseException, JAXBException, SQLException {
         StringEntity entity = new StringEntity(IOUtils.toString(getClass()
                 .getResourceAsStream(file)));
-        HttpResponse response = submitEntityAndReturnResponse(entity,
+        HttpResponse response = putEntityAndReturnResponse(entity,
                 serviceURL + "/" + idType + "/" + trialID);
         return response;
 

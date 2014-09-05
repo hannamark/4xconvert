@@ -53,6 +53,7 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -85,7 +86,7 @@ public class TrialRegistrationService extends BaseRestService {
      * @return Response
      */
     @POST
-    @Path("/registration/complete")
+    @Path("/trials/complete")
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
@@ -168,7 +169,7 @@ public class TrialRegistrationService extends BaseRestService {
      * @return Response
      */
     @POST
-    @Path("/update/complete/{idType}/{trialID}")
+    @Path("/trials/complete/{idType}/{trialID}")
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
@@ -218,7 +219,7 @@ public class TrialRegistrationService extends BaseRestService {
      * @return Response
      */
     @POST
-    @Path("/update/abbreviated/{idType}/{trialID}")
+    @Path("/trials/abbreviated/{idType}/{trialID}")
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
@@ -262,8 +263,8 @@ public class TrialRegistrationService extends BaseRestService {
      *            idType
      * @return Response
      */
-    @POST
-    @Path("/amend/complete/{idType}/{trialID}")
+    @PUT
+    @Path("/trials/complete/{idType}/{trialID}")
     @Consumes({ APPLICATION_XML })
     @Produces({ APPLICATION_XML })
     @NoCache
@@ -357,7 +358,7 @@ public class TrialRegistrationService extends BaseRestService {
      * @return Response
      */
     @POST
-    @Path("/registration/abbreviated/{nct}")
+    @Path("/trials/abbreviated/{nct}")
     @Produces({ APPLICATION_XML })
     @NoCache
     @Formatted

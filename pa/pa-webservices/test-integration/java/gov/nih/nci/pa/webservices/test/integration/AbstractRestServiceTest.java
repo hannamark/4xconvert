@@ -240,7 +240,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
             StringEntity orgEntity) throws UnsupportedEncodingException,
             IOException, ClientProtocolException {
         return submitEntityAndReturnResponse(orgEntity,
-                "/registration/complete");
+                "/trials/complete");
 
     }
 
@@ -266,6 +266,14 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         HttpResponse response = httpClient.execute(req);
         LOG.info("Response code: " + getReponseCode(response));
         return response;
+    }
+    
+    protected HttpResponse putEntityAndReturnResponse(
+            StringEntity orgEntity, String serviceURL)
+            throws UnsupportedEncodingException, IOException,
+            ClientProtocolException {
+        return putEntityAndReturnResponse(orgEntity, serviceURL,
+                APPLICATION_XML, APPLICATION_XML);
     }
 
     protected HttpResponse putEntityAndReturnResponse(StringEntity orgEntity,

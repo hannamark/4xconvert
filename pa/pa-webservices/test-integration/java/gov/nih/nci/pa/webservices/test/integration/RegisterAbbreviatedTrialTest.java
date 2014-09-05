@@ -26,7 +26,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
 
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
-        super.setUp("/registration/abbreviated/");
+        super.setUp("/trials/abbreviated/");
     }
 
     @SuppressWarnings("deprecation")
@@ -36,7 +36,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
                 "nonexistentuserfortesting", "nonexistentuserfortesting");
         httpClient.getCredentialsProvider().setCredentials(authScope,
                 credentials);
-        String url = baseURL + "/registration/abbreviated/NCT01721876";
+        String url = baseURL + "/trials/abbreviated/NCT01721876";
 
         HttpPost req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
@@ -52,7 +52,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
                 "Coppa#12345");
         httpClient.getCredentialsProvider().setCredentials(authScope,
                 credentials);
-        String url = baseURL + "/registration/abbreviated/NCT01721876";
+        String url = baseURL + "/trials/abbreviated/NCT01721876";
 
         HttpPost req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
@@ -64,7 +64,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
 
     @Test
     public void testNctValidation() throws Exception {
-        String url = baseURL + "/registration/abbreviated/%20";
+        String url = baseURL + "/trials/abbreviated/%20";
         HttpPost req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
         HttpResponse response = httpClient.execute(req);
@@ -73,7 +73,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
         assertEquals("Please provide an ClinicalTrials.gov Identifier value.",
                 IOUtils.toString(response.getEntity().getContent()));
 
-        url = baseURL + "/registration/abbreviated/NCT_0124232";
+        url = baseURL + "/trials/abbreviated/NCT_0124232";
         req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
         response = httpClient.execute(req);
@@ -82,7 +82,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
         assertEquals("Provided ClinicalTrials.gov Identifer is invalid.",
                 IOUtils.toString(response.getEntity().getContent()));
 
-        url = baseURL + "/registration/abbreviated/NCT2834908239048";
+        url = baseURL + "/trials/abbreviated/NCT2834908239048";
         req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
         response = httpClient.execute(req);
@@ -95,7 +95,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
         String nctID = "NCT01920308";
         deactivateTrialByNctId(nctID);
         importByNctIdViaService(nctID);
-        url = baseURL + "/registration/abbreviated/" + nctID;
+        url = baseURL + "/trials/abbreviated/" + nctID;
         req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
         response = httpClient.execute(req);
@@ -154,7 +154,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
     private void importByNctIdViaService(String nctID)
             throws ClientProtocolException, IOException, ParseException,
             JAXBException, SQLException {
-        String url = baseURL + "/registration/abbreviated/" + nctID;
+        String url = baseURL + "/trials/abbreviated/" + nctID;
 
         HttpPost req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);

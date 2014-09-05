@@ -33,7 +33,7 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
 
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
-        super.setUp("/update/complete");
+        super.setUp("/trials/complete");
         deactivateAllTrials();
     }
 
