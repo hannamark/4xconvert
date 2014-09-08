@@ -52,10 +52,18 @@
 			<tr>
 				<td scope="row" width="20%"><label for="ntTermIdentifier">
 						NCIt Identifier</label><span class="required">*</span></td>
-				<td width="150px"><s:textfield id="ntTermIdentifier"
+				<td width="150px">
+				<s:if test="%{!importTerm}">
+				    <s:textfield id="ntTermIdentifier"
 						name="intervention.ntTermIdentifier" maxlength="10" size="10"
-						cssStyle="width:150px" readonly="%{importTerm}" />
-						<span class="formErrorMsg">
+						cssStyle="width:150px" />
+				</s:if>
+				<s:else>
+					<s:textfield id="ntTermIdentifier"
+                        name="intervention.ntTermIdentifier" maxlength="10" size="10"
+                        cssStyle="width:150px" readonly="true" cssClass="readonly"/>
+				</s:else>
+				<span class="formErrorMsg">
                     <s:fielderror>
                         <s:param>intervention.ntTermIdentifier</s:param>
                     </s:fielderror>
@@ -80,28 +88,37 @@
 			<tr>
 				<td scope="row" ><label for="name">Preferred
 						Name</label><span class="required">*</span></td>
-				<td><s:textfield id="name" name="intervention.name"
-						maxlength="200" size="100" cssStyle="width:400px"
-						readonly="%{importTerm}" />
-						 <span class="formErrorMsg">
+				<td><s:if test="%{!importTerm}">
+				        <s:textfield id="name" name="intervention.name"
+						maxlength="200" size="100" cssStyle="width:400px"/>
+					</s:if>
+					<s:else>
+					   <s:textfield id="name" name="intervention.name"
+                        maxlength="200" size="100" cssStyle="width:400px"
+                        readonly="true" cssClass="readonly"/>
+					</s:else>
+				    <span class="formErrorMsg">
                     <s:fielderror>
                         <s:param>intervention.name</s:param>
                     </s:fielderror>
                     </span>
                     </td>
 			</tr>
+			<s:if test="%{!importTerm}">
+				<tr>
+					<td scope="row" ><label for="altName">Synonyms
+					</label></td>
+					<td><s:textfield id="altName" name="altName" maxlength="200"
+							size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
+					<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
+							onclick="addSyn()">
+							<span class="btn_img"><span class="add">Add</span></span>
+						</s:a></s:if></td>
+				</tr>
+			</s:if>
 			<tr>
-				<td scope="row" ><label for="typeCode">Synonyms
-				</label></td>
-				<td><s:textfield id="altName" name="altName" maxlength="200"
-						size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
-				<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
-						onclick="addSyn()">
-						<span class="btn_img"><span class="add">Add</span></span>
-					</s:a></s:if></td>
-			</tr>
-			<tr>
-				<td />
+			    <td scope="row"><s:if test="%{importTerm}"><label for="intervAltNames">Synonyms
+                </label></td></s:if></td>
 				<td><s:select id="intervAltNames" size="4"
 						name="intervention.alterNames" cssStyle="width:400px"
 						list="intervention.alterNames" multiple="true"
@@ -120,12 +137,12 @@
                 </td>
 			</tr>
 			<tr>
-				<td scope="row" ><label for="typeCode">ClinicalTrials.gov
+				<td scope="row" ><label for="ctTypeCode">ClinicalTrials.gov
 						Type</label></td>
 				<td>
 				 <s:set name="typeCodes"
                         value="@gov.nih.nci.pa.enums.InterventionTypeCode@getDisplayNames()" />
-                 <s:select id="typeCode" name="intervention.ctGovType"
+                 <s:select id="ctTypeCode" name="intervention.ctGovType"
 						headerKey="" headerValue="-Select a Type Code-" list="#typeCodes" />
 		         </td>
 			</tr>

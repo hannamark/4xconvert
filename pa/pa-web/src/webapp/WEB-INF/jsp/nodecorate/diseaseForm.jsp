@@ -124,13 +124,21 @@
 	<s:form name="diseaseForm" method="post">
 		<s:hidden id="importTerm" name="importTerm" />
 		<table class="form">
-			<tr>
+		  <tr>
 				<td scope="row" width="20%"><label for="ntTermIdentifier">
 						NCIt Identifier</label><span class="required">*</span></td>
-				<td width="150px"><s:textfield id="ntTermIdentifier"
+				<td width="150px">
+				<s:if test="%{!importTerm}">
+				    <s:textfield id="ntTermIdentifier"
 						name="disease.ntTermIdentifier" maxlength="10" size="10"
-						cssStyle="width:150px" readonly="%{importTerm}" /> <span
-					class="formErrorMsg"> <s:fielderror>
+						cssStyle="width:150px"/>
+			    </s:if>
+			    <s:else>
+			         <s:textfield id="ntTermIdentifier"
+                        name="disease.ntTermIdentifier" maxlength="10" size="10"
+                        cssStyle="width:150px" readonly="true" cssClass="readonly"/>
+			    </s:else>
+			    <span class="formErrorMsg"> <s:fielderror>
 							<s:param>disease.ntTermIdentifier</s:param>
 						</s:fielderror>
 				</span></td>
@@ -149,9 +157,17 @@
 			<tr>
 				<td scope="row" ><label for="preferredName">Preferred
 						Name</label><span class="required">*</span></td>
-				<td><s:textfield id="preferredName"
+				<td>
+				<s:if test="%{!importTerm}">
+				    <s:textfield id="preferredName"
 						name="disease.preferredName" maxlength="200" size="100"
-						cssStyle="width:400px" readonly="%{importTerm}" /> <span
+						cssStyle="width:400px" />
+				</s:if>
+				<s:else>
+				    <s:textfield id="preferredName"
+                        name="disease.preferredName" maxlength="200" size="100"
+                        cssStyle="width:400px" readonly="true" cssClass="readonly"/>
+				</s:else> <span
 					class="formErrorMsg"> <s:fielderror>
 							<s:param>disease.preferredName</s:param>
 						</s:fielderror>
@@ -178,18 +194,23 @@
 			 <% List<String> newAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("disease.alterNameList");
                 List<String> currentAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("currentDisease.alterNameList"); 
              %>
+            <s:if test="%{!importTerm}">
+				<tr>
+					<td scope="row" ><label for="altName">Synonyms
+					</label></td>
+					<td><s:textfield id="altName" name="altName" maxlength="200"
+							size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
+					<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
+							onclick="addToList('alterNames','altName')">
+							<span class="btn_img"><span class="add">Add</span></span>
+						</s:a></s:if></td>
+				</tr>
+			</s:if>
 			<tr>
-				<td scope="row" ><label for="typeCode">Synonyms
-				</label></td>
-				<td><s:textfield id="altName" name="altName" maxlength="200"
-						size="100" cssStyle="width:400px" readonly="%{importTerm}" /></td>
-				<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
-						onclick="addToList('alterNames','altName')">
-						<span class="btn_img"><span class="add">Add</span></span>
-					</s:a></s:if></td>
-			</tr>
-			<tr>
-				<td />
+			    <td scope="row" >
+			    <s:if test="%{importTerm}">
+			         <label for="altName">Synonyms</label>
+				</s:if></td>
 				<td><s:select id="alterNames" size="4"
 						name="disease.alterNameList" cssStyle="width:400px"
 						list="disease.alterNameList" multiple="true"
@@ -197,10 +218,10 @@
 				<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
 						onclick="removeFromList('alterNames')">
 						<span class="btn_img"><span class="delete">Remove</span></span>
-					</s:a></s:if></td>
+				</s:a></s:if></td>
 			</tr>
 			<tr>
-				<td scope="row" ><label for="typeCode">Parent
+				<td scope="row" ><label for="parentTerms">Parent
 						Term NCIt Ids </label></td>
 				<td><s:select id="parentTerms" size="6"
 						name="disease.parentTermList" cssStyle="width:400px"
@@ -222,7 +243,7 @@
 					</div></td>
 			</tr>
 			<tr>
-				<td scope="row" ><label for="typeCode">Child
+				<td scope="row" ><label for="childTerms">Child
 						Term NCIt Ids </label></td>
 				<td><s:select id="childTerms" size="6"
 						name="disease.childTermList" cssStyle="width:400px"
