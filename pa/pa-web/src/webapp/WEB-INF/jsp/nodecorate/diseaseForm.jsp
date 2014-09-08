@@ -209,7 +209,7 @@
 				<td><div style="float: left; width: 100%;">
 						<s:a href="javascript:void(0)" cssClass="btn"
 							onClick="lookupParentDisease()">
-							<span class="btn_img"><span class="add">LookUp &
+							<span class="btn_img"><span class="add">Look Up &
 									Add</span></span>
 						</s:a>
 					</div>
@@ -231,7 +231,7 @@
 				<td><div style="float: left; width: 100%;">
 						<s:a href="javascript:void(0)" cssClass="btn"
 							onclick="lookupChildDisease()">
-							<span class="btn_img"><span class="add">LookUp &
+							<span class="btn_img"><span class="add">Look Up &
 									Add</span></span>
 						</s:a>
 					</div>
