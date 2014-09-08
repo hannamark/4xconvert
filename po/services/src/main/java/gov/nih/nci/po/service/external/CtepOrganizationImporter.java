@@ -102,6 +102,7 @@ import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.RoleStatus;
@@ -132,6 +133,7 @@ import org.apache.log4j.Logger;
 import javax.jms.JMSException;
 import javax.naming.Context;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -471,12 +473,16 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      */
     private void updateOrg(Organization ctepOrg, Organization poOrg) throws JMSException, EntityValidationException {
         
-        if (CtepUtils.isOnlyOrgNameAliasDifferent(ctepOrg, poOrg)) {
-            // add the updated name as an alias, if not already present
-            if (PoServiceUtil.aliasIsNotPresent(poOrg.getAlias(), ctepOrg.getName())) {
-                poOrg.getAlias().add(new Alias(ctepOrg.getName()));
+        // check if only Org name is different
+        if (CtepUtils.isOnlyOrgNameDifferent(ctepOrg, poOrg)) { 
+            // check if Org can be directly updated
+            if (isUpdateOrganizationDirectly(poOrg)) {                
+                handleOrgNameChange(ctepOrg, poOrg); // perform Org name change logic
                 this.orgService.curate(poOrg);
-            }                        
+            } else {
+                // otherwise create a CR
+                createOrgCR(ctepOrg, poOrg);
+            }
         } else if (CtepUtils.isOrganizationDifferent(ctepOrg, poOrg)) {    
             // If address/contact etc changed then check if Org can be directly update or need to create a CR
             CtepUtils.copyOrganization(ctepOrg, poOrg); 
@@ -484,19 +490,36 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             if (isUpdateOrganizationDirectly(poOrg)) {
                 this.orgService.curate(poOrg);
             } else {
-                // create a CR
-                OrganizationCR organizationCr = new OrganizationCR(poOrg);
-                OrganizationDTO oDto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(ctepOrg);
-                oDto.setIdentifier(null);
-                PoXsnapshotHelper.copyIntoAbstractModel(oDto, organizationCr, AbstractOrganization.class);
-                organizationCr.setId(null);
-                // evict 'poOrg' from Hibernate-Session, so that 'poOrg' changes are not saved(We have CR instead)
-                PoHibernateUtil.getCurrentSession().evict(poOrg); 
-                PoRegistry.getInstance().getServiceLocator().getOrganizationCRService().create(organizationCr);
+                // otherwise create a CR
+                createOrgCR(ctepOrg, poOrg);
+            }            
+        }        
+    }
+
+    
+    private void createOrgCR(Organization ctepOrg, Organization poOrg) throws EntityValidationException {
+        OrganizationCR orgCR = new OrganizationCR(poOrg);
+        OrganizationDTO oDto = (OrganizationDTO) PoXsnapshotHelper.createSnapshot(ctepOrg);
+        oDto.setIdentifier(null);
+        PoXsnapshotHelper.copyIntoAbstractModel(oDto, orgCR, AbstractOrganization.class);
+        orgCR.setId(null);        
+        handleOrgCrPhoneSync(orgCR, poOrg);
+        // evict 'poOrg' from Hibernate-Session, so that 'poOrg' changes are not saved(We have CR instead)
+        PoHibernateUtil.getCurrentSession().evict(poOrg); 
+        PoRegistry.getInstance().getServiceLocator().getOrganizationCRService().create(orgCR);
+    }
+    
+    /**
+     * This method is used to handle Phone number synch for OrgCR- we are NOT synching Phone number
+     */
+    
+    private void handleOrgCrPhoneSync(OrganizationCR orgCR, Organization poOrg) {
+        orgCR.getPhone().clear(); // clear the list as it contains phone number from oDto (from ctepOrg)
+        if (CollectionUtils.isNotEmpty(poOrg.getPhone())) {
+            for (PhoneNumber phone : poOrg.getPhone()) {
+                orgCR.getPhone().add(new PhoneNumber(phone.getValue()));                
             }
-            
-        }
-        
+        }        
     }
 
     /**
@@ -519,8 +542,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                         + ctepHcf.getId() + " pulled from ctep not found in database. ECM and PO are out of sync.");
             }
             
-            // update the HCF in PO (also adding Alias to Org, if required)
-            updateExistingHcfInPO(poHcf, ctepHcf, assignedId, poOrg);
+            // update the HCF in PO
+            updateExistingHcfInPO(poHcf, ctepHcf, assignedId);
             
         } else {
             // if po-hcfId is NOT present in CTEP-HCF then get the PO-HCF using CTEP ID            
@@ -528,7 +551,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             
             if (poHcf != null) {
                 // update the HCF in PO 
-                updateExistingHcfInPO(poHcf, ctepHcf, assignedId, poOrg);
+                updateExistingHcfInPO(poHcf, ctepHcf, assignedId);
             } else {
                 // if not found using CTEP ID also, it means its a new HCF
                 ctepHcf.setPlayer(poOrg);
@@ -564,15 +587,15 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                 throw new CtepImportException("po ro id " + ctepRo.getId() + " from ctep not valid", "The po ro id "
                         + ctepRo.getId() + " pulled from ctep not found in database. ECM and PO are out of sync.");
             }
-            // update the RO in PO (also adding Alias to Org, if required)
-            updateExistingRoInPO(poRo, ctepRo, assignedId, poOrg);
+            // update the RO in PO
+            updateExistingRoInPO(poRo, ctepRo, assignedId);
             
         } else {
                 // if po-roId is NOT present in CTEP-RO then get the PO-RO using CTEP ID   
             poRo = getRoFromDbByCtepId(assignedId, "CTEP ID");
             
             if (poRo != null) {
-                updateExistingRoInPO(poRo, ctepRo, assignedId, poOrg);
+                updateExistingRoInPO(poRo, ctepRo, assignedId);
             } else {
                     // if not found using CTEP ID also, it means its a new RO
                 ctepRo.setPlayer(poOrg);
@@ -590,36 +613,28 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
         
     }
-
+    
+    
     /**
      * This method has code to actually update the HCF or create a CR.
      */
     private void updateExistingHcfInPO(HealthCareFacility poHcf, HealthCareFacility ctepHcf,
-            Ii assignedId, Organization org) throws JMSException, EntityValidationException {  
+            Ii assignedId) throws JMSException, EntityValidationException {  
        
-         if (isOnlyHCFNameChanged(ctepHcf, poHcf)) {
-            // If only name is changed in CTEP then the new name will be added as an Alias to HCF & Org.
-            if (PoServiceUtil.aliasIsNotPresent(poHcf.getAlias(), ctepHcf.getName())) {
-                // if not already present then add it 
-                poHcf.getAlias().add(new Alias(ctepHcf.getName()));
-                this.hcfService.curate(poHcf); // save the updated HCF in PO
-            }            
-            
-            if (!org.getName().equalsIgnoreCase(ctepHcf.getName()) 
-                    && PoServiceUtil.aliasIsNotPresent(org.getAlias(), ctepHcf.getName())) {
-                // If the CTEP-HCF isn't present in Orgname or OrgAlias then add it to OrgAlias list.
-                org.getAlias().add(new Alias(ctepHcf.getName()));
-                // Org is not being saved here but later in code flow.
-            }      
-            
+         if (isOnlyHCFNameChanged(ctepHcf, poHcf)) {     
+             handleRoleNameChange(ctepHcf, poHcf);             
+             this.hcfService.curate(poHcf); // save the updated HCF in PO            
          } else if (isHCFChanged(ctepHcf, poHcf)) {
              // If address/contact etc changed then check if HCF can be directly update or need to create a CR
              
-             copyCtepRoleToExistingRole(ctepHcf, poHcf, assignedId); // copy CTEP-HCF into PO-HCF   
+             copyCtepRoleToExistingRole(ctepHcf, poHcf, assignedId); // copy CTEP-HCF into PO-HCF 
              
-             if (isUpdateRoleDirectly(poHcf)) {
+             if (isUpdateRoleDirectly(poHcf)) { 
+                 if (isNameDifferent(poHcf.getName(), ctepHcf.getName())) {
+                     handleRoleNameChange(ctepHcf, poHcf); 
+                 }                                 
                  this.hcfService.curate(poHcf); // save the updated HCF in PO
-             } else {                                
+             } else {  
                  // create a CR
                  HealthCareFacilityCR hcfCR = new HealthCareFacilityCR(poHcf);
                  HealthCareFacilityDTO curatedInstanceDto
@@ -628,6 +643,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                  PoXsnapshotHelper.copyIntoAbstractModel(
                          curatedInstanceDto, hcfCR, AbstractEnhancedOrganizationRole.class);
                  hcfCR.setId(null);
+                 hcfCR.setName(ctepHcf.getName());
                  
                  // evict 'poHcf' from Hibernate-Session, so that 'poHcf' changes are not saved(We have CR instead)
                  PoHibernateUtil.getCurrentSession().evict(poHcf); 
@@ -641,31 +657,22 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      * This method has code to actually update the RO or create a CR.
      */
     private void updateExistingRoInPO(ResearchOrganization poRo, ResearchOrganization ctepRo,
-                               Ii assignedId, Organization org) throws JMSException, EntityValidationException {
+                               Ii assignedId) throws JMSException, EntityValidationException {
             
          if (isOnlyRONameChanged(ctepRo, poRo)) {
-             // If only name is changed in CTEP then the new name will be added as an Alias to RO & Org.
-             if (PoServiceUtil.aliasIsNotPresent(poRo.getAlias(), ctepRo.getName())) {
-                 // if not already present then add it 
-                     poRo.getAlias().add(new Alias(ctepRo.getName()));
-                 this.roService.curate(poRo); // save the updated RO in PO
-             }            
-             
-             if (PoServiceUtil.aliasIsNotPresent(org.getAlias(), ctepRo.getName())) {
-                 org.getAlias().add(new Alias(ctepRo.getName()));
-                 // Org is not being saved here but later in code flow.
-             }     
-         }
-
+             handleRoleNameChange(ctepRo, poRo);             
+             this.roService.curate(poRo); // save the updated RO in PO             
+         } else if (isROChanged(ctepRo, poRo)) {
             // If anything changed then check if RO should be directly update or need to create a CR
-        if (isROChanged(ctepRo, poRo)) {
-               
             copyCtepRoleToExistingRole(ctepRo, poRo, assignedId); // copy from CTEP-RO into PO-RO             
             copyROFundingMechanism(ctepRo, poRo); // copy FundingMechanism from CTRP-RO into PO-RO 
             copyROTypeCode(ctepRo, poRo); // copy TypeCode from CTRP-RO into PO-RO 
             
             if (isUpdateRoleDirectly(poRo)) {
-                 this.roService.curate(poRo); // save the updated RO in PO
+                if (isNameDifferent(poRo.getName(), ctepRo.getName())) {
+                    handleRoleNameChange(ctepRo, poRo); 
+                }  
+                this.roService.curate(poRo); // save the updated RO in PO 
              } else {
                  // create a CR
                  ResearchOrganizationCR roCR = new ResearchOrganizationCR(poRo);
@@ -675,6 +682,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                  PoXsnapshotHelper.copyIntoAbstractModel(toSaveDto, roCR, AbstractEnhancedOrganizationRole.class);
                  PoXsnapshotHelper.copyIntoAbstractModel(toSaveDto, roCR, AbstractResearchOrganization.class);
                  roCR.setId(null);
+                 roCR.setName(ctepRo.getName());
                  // evict 'poRo' from Hibernate-Session, so that 'poRo' changes are not saved(We have CR instead)
                  PoHibernateUtil.getCurrentSession().evict(poRo); 
                  PoRegistry.getInstance().getServiceLocator().getResearchOrganizationCRService().create(roCR);
@@ -688,7 +696,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      */
     private boolean isOnlyHCFNameChanged(HealthCareFacility ctepRole, HealthCareFacility role) {
         
-        if (hasNameChanged(role.getName(), ctepRole.getName()) 
+        if (isNameDifferent(role.getName(), ctepRole.getName()) 
               && checkAddressSetsEqual(role.getPostalAddresses(), ctepRole.getPostalAddresses())
               && CtepUtils.areEmailListsEqual(role.getEmail(), ctepRole.getEmail())
               && CtepUtils.arePhoneNumberListsEqual(role.getPhone(), ctepRole.getPhone())
@@ -703,7 +711,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      *  @return true if changed, otherwise false.
      */
     private boolean isHCFChanged(HealthCareFacility ctepRole, HealthCareFacility role) {        
-        if (hasNameChanged(role.getName(), ctepRole.getName()) 
+        if (isNameDifferent(role.getName(), ctepRole.getName()) 
               || !checkAddressSetsEqual(role.getPostalAddresses(), ctepRole.getPostalAddresses())
               || !CtepUtils.areEmailListsEqual(role.getEmail(), ctepRole.getEmail())
               || !CtepUtils.arePhoneNumberListsEqual(role.getPhone(), ctepRole.getPhone())
@@ -720,7 +728,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      */
     private boolean isOnlyRONameChanged(ResearchOrganization ctepRo, ResearchOrganization poRo) {
             
-        if (hasNameChanged(poRo.getName(), ctepRo.getName()) 
+        if (isNameDifferent(poRo.getName(), ctepRo.getName()) 
               && checkAddressSetsEqual(poRo.getPostalAddresses(), ctepRo.getPostalAddresses())
               && CtepUtils.areEmailListsEqual(poRo.getEmail(), ctepRo.getEmail())
               && CtepUtils.arePhoneNumberListsEqual(poRo.getPhone(), ctepRo.getPhone())
@@ -736,7 +744,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
      *  @return true if changed, otherwise false.
      */
     private boolean isROChanged(ResearchOrganization ctepRo, ResearchOrganization poRo) {        
-        if (hasNameChanged(poRo.getName(), ctepRo.getName()) 
+        if (isNameDifferent(poRo.getName(), ctepRo.getName()) 
               || !checkAddressSetsEqual(poRo.getPostalAddresses(), ctepRo.getPostalAddresses())
               || !CtepUtils.areEmailListsEqual(poRo.getEmail(), ctepRo.getEmail())
               || !CtepUtils.arePhoneNumberListsEqual(poRo.getPhone(), ctepRo.getPhone())
@@ -795,6 +803,48 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         return false;        
     }
     
+    private void removeNameFromAlias(List<Alias> aliasList, String name) {
+        if (CollectionUtils.isNotEmpty(aliasList)) {
+            Iterator<Alias> it = aliasList.iterator();
+            while (it.hasNext()) {
+                Alias alias = it.next();
+                if (alias.getValue().equalsIgnoreCase(name)) { 
+                    it.remove();
+                }
+            }            
+        }
+    }
+    
+    /**
+     * This method is used to perform logic incase of 'name' change at OrgROLE level.
+     */
+    private void handleRoleNameChange(AbstractEnhancedOrganizationRole ctepRole,
+            AbstractEnhancedOrganizationRole poRole) {
+        // step1- The new name should be removed from alias (if present in the list of aliases)
+        removeNameFromAlias(poRole.getAlias(), ctepRole.getName()); 
+        // step2- The current name should become an alias
+        if (PoServiceUtil.aliasIsNotPresent(poRole.getAlias(), poRole.getName())) {
+            poRole.getAlias().add(new Alias(poRole.getName()));                 
+        }
+        // step3- The new name should replace the current name
+        poRole.setName(ctepRole.getName());
+    }
+    
+    
+    /**
+     * This method is used to perform logic incase of 'name' change at Org level.
+     */
+    private void handleOrgNameChange(Organization ctepOrg, Organization poOrg) {
+        // step1- The new name should be removed from alias (if present in the list of aliases)
+        removeNameFromAlias(poOrg.getAlias(), ctepOrg.getName()); 
+        // step2- The current name should become an alias
+        if (PoServiceUtil.aliasIsNotPresent(poOrg.getAlias(), poOrg.getName())) {
+            poOrg.getAlias().add(new Alias(poOrg.getName()));                 
+        }
+        // step3- The new name should replace the current name
+        poOrg.setName(ctepOrg.getName());
+    }
+    
     /**
      * This method is used to copy the CTEP-RO 'Type' into PO-RO
      */
@@ -837,14 +887,8 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                                                AbstractEnhancedOrganizationRole role, Ii assignedId) {
         boolean changed = false;
 
-        //aliases if the name changed
-        if (hasNameChanged(role.getName(), ctepRole.getName()) 
-                && PoServiceUtil.aliasIsNotPresent(role.getAlias(), ctepRole.getName())) {
-            //add it as alias on role
-            role.getAlias().add(new Alias(ctepRole.getName()));
-            changed = true;
-        }
-
+        // doesn't copy name here as name is handled separately
+        
         if (!checkAddressSetsEqual(role.getPostalAddresses(), ctepRole.getPostalAddresses())) {
             role.getPostalAddresses().clear();
             if (ctepRole.getPostalAddresses() != null) {
@@ -861,6 +905,14 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             changed = true;
         }
 
+        if (!CtepUtils.arePhoneNumberListsEqual(role.getPhone(), ctepRole.getPhone())) {
+            role.getPhone().clear();
+            if (ctepRole.getPhone() != null) {
+                role.getPhone().addAll(ctepRole.getPhone());
+            }
+            changed = true;
+        }
+        
         if (role.getPlayer().getStatusCode() == EntityStatus.ACTIVE && role.getStatus() != RoleStatus.ACTIVE) {
             role.setStatus(RoleStatus.ACTIVE);
             changed = true;
@@ -870,19 +922,11 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             role.getOtherIdentifiers().add(assignedId);
             changed = true;
         }
-
-        if (!CtepUtils.arePhoneNumberListsEqual(role.getPhone(), ctepRole.getPhone())) {
-            role.getPhone().clear();
-            if (ctepRole.getPhone() != null) {
-                role.getPhone().addAll(ctepRole.getPhone());
-            }
-            changed = true;
-        }
-
+        
         return changed;
     }
     
-    private boolean hasNameChanged(String poName, String ctepName) {
+    private boolean isNameDifferent(String poName, String ctepName) {
         return !StringUtils.equalsIgnoreCase(poName, ctepName);
     }
     

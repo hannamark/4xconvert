@@ -138,8 +138,9 @@ public class CtepUtilsTest {
         assertFalse(CtepUtils.isOrganizationDifferent(o1, o1));
     }
     
-    @Test
+//    @Test
     public void testNeedsCRPhoneDifferences() {
+        // Note -- This testcases is not relevant as we are ignoring Phone number while synching Orgs with ECM.
         Organization o1 = new Organization();
         Organization o2 = new Organization();
 

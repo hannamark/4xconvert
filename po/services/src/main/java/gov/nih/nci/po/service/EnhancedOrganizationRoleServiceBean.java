@@ -43,15 +43,15 @@ public class EnhancedOrganizationRoleServiceBean<T extends Correlation> extends
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void curate(T curatable, String ctepId) throws JMSException {
+        if (StringUtils.isNotBlank(ctepId)) {
+            // Step1: remove the existing ctepId (otherwise ctepId is getting added to existing ctepId)
 
-        // Step1: remove the existing ctepId (otherwise ctepId is getting added
-        // to existing ctepId)
+            // Initialize the collection to avoid LazyInitException
+            curatable.getOtherIdentifiers().size();
+            curatable.setOtherIdentifiers(null);
+        }        
 
-        // Initialize the collection to avoid LazyInitException
-        curatable.getOtherIdentifiers().size();
-        curatable.setOtherIdentifiers(null);
-
-        // This 'curate' removes existing CtepId & updates other attribute.
+        // This 'curate' removes(if set null) existing CtepId & updates other attribute.
         curate(curatable);
 
         // Step2: Add the new CtepId & then curate it

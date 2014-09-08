@@ -19,25 +19,25 @@
 	             id="copy_curateCrForm_role_name"
 	             onclick="copyValueToTextField('${func:escapeJavaScript(cr.name)}', 'curateRoleForm.role.name');"
 	             bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-	                <s:textfield label="%{getText('researchOrganization.name')}" name="cr.name" maxlength="160" size="50"/>
+	                <po:field labelKey="researchOrganization.name" fieldChanged="${cr.nameChanged}"><c:out value="${cr.name}"></c:out></po:field>
 	            </po:copyButton>
 	            <po:copyButton
 	                id="copy_curateCrForm_role_typeCode"
 	                onclick="selectValueInSelectField('${cr.typeCode.id}', 'curateRoleForm_role_typeCode');"
-	                bodyStyle="float:left;" buttonStyle="float:right;">
-	                <s:textfield label="%{getText('researchOrganization.typeCode')}" name="cr.typeCode.description"/>
+	                bodyStyle="float:left;" buttonStyle="float:right;">	                
+	                <po:field labelKey="researchOrganization.typeCode" fieldChanged="${cr.typeCodeChanged}">${cr.typeCode.description}</po:field>
 	            </po:copyButton>
 	            <po:copyButton
 		            id="copy_curateCrForm_role_fundingMechanism"
 		            onclick="copyValueToTextField('${cr.fundingMechanism.id}', 'curateRoleForm.role.fundingMechanism'); if (checkForValidFundingMech('${cr.fundingMechanism.id}', 'curateRoleForm.role._selectFundingMechanism', 'curateRoleForm_role_typeCode', '${cr.fundingMechanism.description}')) {selectValueInSelectField('${cr.fundingMechanism.id}', 'curateRoleForm.role._selectFundingMechanism');}"
-	                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-	                <s:textfield label="%{getText('researchOrganization.fundingMechanism')}" name="cr.fundingMechanism.description" required="true" cssClass="required" />
+	                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">	                
+	                <po:field labelKey="researchOrganization.fundingMechanism" fieldChanged="${cr.fundingMechanismChanged}">${cr.fundingMechanism.description}</po:field>
 	            </po:copyButton>
 	            <po:copyButton
 	                id="copy_curateCrForm_role_status"
 	                onclick="selectValueInSelectField('${func:escapeJavaScript(cr.status)}', 'curateRoleForm.role.status');"
 	                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-	                <s:textfield label="%{getText('researchOrganization.status')}" name="cr.status" required="true" cssClass="required"/>
+	                <po:field labelKey="researchOrganization.status" fieldChanged="${cr.statusCodeChanged}">${cr.status}</po:field>
 	            </po:copyButton>
               </c:otherwise>
             </c:choose> 

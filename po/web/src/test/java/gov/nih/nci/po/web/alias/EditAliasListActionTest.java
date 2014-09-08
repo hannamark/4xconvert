@@ -188,4 +188,25 @@ public class EditAliasListActionTest extends AbstractPoTest {
         assertTrue(ActionHelper.getMessages().get(0).contains("was not found"));
     }
 
+    @Test
+    public void testAliasOrdering() {
+        List<Alias> aliases = new ArrayList<Alias>();
+        aliases.add(new Alias("Zulu"));
+        aliases.add(new Alias("XRay"));
+        aliases.add(new Alias("Whiskey"));
+
+        EditAliasListAction action = new EditAliasListAction();
+        action.setAliases(aliases);
+
+        List<Alias> sortedAliases = action.getAliases();
+        assertEquals("Whiskey", sortedAliases.get(0).getValue());
+        assertEquals("XRay", sortedAliases.get(1).getValue());
+        assertEquals("Zulu", sortedAliases.get(2).getValue());
+
+        //make sure the original isn't changed
+        assertEquals("Whiskey", aliases.get(2).getValue());
+        assertEquals("XRay", aliases.get(1).getValue());
+        assertEquals("Zulu", aliases.get(0).getValue());
+    }
+
 }

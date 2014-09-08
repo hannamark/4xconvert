@@ -17,6 +17,7 @@ import gov.nih.nci.po.webservices.types.PersonRole;
 import gov.nih.nci.po.webservices.types.PersonRoleList;
 import gov.nih.nci.po.webservices.types.PersonSearchResult;
 import gov.nih.nci.po.webservices.types.PersonSearchResultList;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -43,6 +44,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -283,6 +285,51 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
     }
 
     /**
+     * Testcase for PersonService-createPerson-CTEP ID is present
+     */
+    @Test
+    public void testCreatePersonCtepIdPresent() throws Exception {
+        String url = psUrl + "/person";
+        person.setCtepId("123456789");
+        StringWriter writer = marshalPerson(person);
+
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_XML);
+        postRequest.addHeader("Accept", APPLICATION_XML);
+        StringEntity personEntity = new StringEntity(writer.getBuffer()
+                .toString());
+        postRequest.setEntity(personEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains("Person couldn't be created as CTEP ID 123456789 is passed in the request."));
+    }
+
+    /**
+     * Testcase for PersonService-createPerson-CTEP ID is present - JSON
+     * Format
+     */
+    @Test
+    public void testCreatePersonCtepIdPresent_JSON() throws Exception {
+        String url = psUrl + "/person";
+        person.setCtepId("123456789");
+
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_JSON);
+        postRequest.addHeader("Accept", APPLICATION_JSON);
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity personEntity = new StringEntity(
+                mapper.writeValueAsString(person));
+        postRequest.setEntity(personEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains("Person couldn't be created as CTEP ID 123456789 is passed in the request."));
+    }
+    
+    /**
      * Testcase for PersonService-createPerson-Address not present
      */
     @Test
@@ -397,7 +444,6 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         createdPerson.setFirstName("updated first name");
         createdPerson.setLastName("updated last name");
         createdPerson.setSuffix("IX");
-        createdPerson.setCtepId("54321");
         createdPerson.setStatus(EntityStatus.ACTIVE);
         // address is updated with another address object
         createdPerson.setAddress(getJaxbAddressList().get(1));
@@ -437,8 +483,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         createdPerson.setPrefix("Ms.");
         createdPerson.setFirstName("updated first name");
         createdPerson.setLastName("updated last name");
-        createdPerson.setSuffix("IX");
-        createdPerson.setCtepId("54321");
+        createdPerson.setSuffix("IX");        
         createdPerson.setStatus(EntityStatus.ACTIVE);
         // address is updated with another address object
         createdPerson.setAddress(getJaxbAddressList().get(1));
@@ -523,6 +568,69 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         HttpResponse response = httpClient.execute(putReq);
 
         assertEquals(405, getReponseCode(response));
+    }
+    
+    /**
+     * Testcase for PersonService-updatePerson-CtepId Present In Request
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testUpdatePersonForCtepIdPresentInRequest()
+            throws Exception {
+        // create a person first
+        Person createdPerson = createActivePerson();
+
+        // now change some attributes of the newly created person
+        createdPerson.setPrefix("Ms.");
+
+        // now update the created person (HttpPut)
+        String url = psUrl + "/person/" + createdPerson.getId();
+        createdPerson.setCtepId("123456789");
+        StringWriter writer = marshalPerson(createdPerson);
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_XML);
+        putReq.addHeader("Accept", APPLICATION_XML);
+        StringEntity personEntity = new StringEntity(writer.getBuffer()
+                .toString());
+        putReq.setEntity(personEntity);
+        HttpResponse response = httpClient.execute(putReq);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains("couldn't be updated as CTEP ID 123456789 is passed in the request."));
+    }
+
+    /**
+     * Testcase for PersonService-updatePerson-CtepId Present In Request - JSON
+     * Format
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testUpdatePersonForCtepIdPresentInRequest_JSON()
+            throws Exception {
+        // create a person first
+        Person createdPerson = createActivePerson();
+
+        // now change some attributes of the newly created person
+        createdPerson.setPrefix("Ms.");
+
+        // now update the created person (HttpPut)
+        String url = psUrl + "/person/" + createdPerson.getId();
+        createdPerson.setCtepId("123456789");
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_JSON);
+        putReq.addHeader("Accept", APPLICATION_JSON);
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity personEntity = new StringEntity(
+                mapper.writeValueAsString(createdPerson));
+        putReq.setEntity(personEntity);
+        HttpResponse response = httpClient.execute(putReq);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains("couldn't be updated as CTEP ID 123456789 is passed in the request."));
     }
 
     /**
@@ -981,15 +1089,19 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
      */
     @Test
     public void testGetPersonsByCtepId() throws Exception {
-        String randomCtepId = RandomStringUtils.random(58, true, true);
-        person.setCtepId(randomCtepId);
+        String randomCtepId = RandomStringUtils.random(10, false, true);
 
         // create few person
-        createActivePerson();
+        Person person1 = createActivePerson();
 
-        createActivePerson();
+        Person person2 = createActivePerson();
 
-        createActivePerson();
+        Person person3 = createActivePerson();
+        
+        // create their CTEP ID
+        createIdentifiedPerson(person1.getId(), randomCtepId);
+        createIdentifiedPerson(person2.getId(), randomCtepId);
+        createIdentifiedPerson(person3.getId(), randomCtepId);
 
         // get person by ctepId
         String url = psUrl + "/person/ctep/" + randomCtepId;
@@ -1012,15 +1124,19 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
      */
     @Test
     public void testGetPersonsByCtepId_JSON() throws Exception {
-        String randomCtepId = RandomStringUtils.random(58, true, true);
-        person.setCtepId(randomCtepId);
+        String randomCtepId = RandomStringUtils.random(10, false, true);
 
         // create few person
-        createActivePerson();
+        Person person1 = createActivePerson();
 
-        createActivePerson();
+        Person person2 = createActivePerson();
 
-        createActivePerson();
+        Person person3 = createActivePerson();
+        
+        // create their CTEP ID
+        createIdentifiedPerson(person1.getId(), randomCtepId);
+        createIdentifiedPerson(person2.getId(), randomCtepId);
+        createIdentifiedPerson(person3.getId(), randomCtepId);
 
         // get person by ctepId
         String url = psUrl + "/person/ctep/" + randomCtepId;
@@ -1383,13 +1499,15 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
      */
     @Test
     public void testSearchPersonsByCtepId() throws Exception {
-        String randomCtepId = RandomStringUtils.random(45, true, true);
+        String randomCtepId = RandomStringUtils.random(10, false, true);
         // create few persons
-        person.setCtepId(randomCtepId);
+        Person person1 = createActivePerson();
 
-        createActivePerson();
-
-        createActivePerson();
+        Person person2 = createActivePerson();
+        
+        // create their CTEP ID
+        createIdentifiedPerson(person1.getId(), randomCtepId);
+        createIdentifiedPerson(person2.getId(), randomCtepId);        
 
         String url = psUrl + "/persons?ctepID=" + randomCtepId;
         HttpGet getReq = new HttpGet(url);
@@ -1399,8 +1517,7 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
         assertEquals(200, getReponseCode(response));
         assertEquals(APPLICATION_XML, getResponseContentType(response));
 
-        PersonSearchResultList psrList = unmarshalPersonSearchResultList(response
-                .getEntity());
+        PersonSearchResultList psrList = unmarshalPersonSearchResultList(response.getEntity());
         assertTrue(psrList.getPersonSearchResult().size() == 2);
         for (PersonSearchResult psr : psrList.getPersonSearchResult()) {
             assertTrue(psr.getCtepID().contains(randomCtepId));
@@ -1412,13 +1529,15 @@ public class PersonRESTServiceTest extends AbstractBaseTest {
      */
     @Test
     public void testSearchPersonsByCtepId_JSON() throws Exception {
-        String randomCtepId = RandomStringUtils.random(45, true, true);
+        String randomCtepId = RandomStringUtils.random(11, false, true);
         // create few persons
-        person.setCtepId(randomCtepId);
+        Person person1 = createActivePerson();
 
-        createActivePerson();
-
-        createActivePerson();
+        Person person2 = createActivePerson();
+        
+        // create their CTEP ID
+        createIdentifiedPerson(person1.getId(), randomCtepId);
+        createIdentifiedPerson(person2.getId(), randomCtepId);
 
         String url = psUrl + "/persons?ctepID=" + randomCtepId;
         HttpGet getReq = new HttpGet(url);

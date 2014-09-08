@@ -77,8 +77,6 @@ public class PersonServiceTest extends AbstractBaseTest {
 
         super.setUp();
 
-
-
         // get PersonService
         QName serviceName = new QName(
                 "http://soap.simple.service.webservices.po.nci.nih.gov/person/",
@@ -173,6 +171,31 @@ public class PersonServiceTest extends AbstractBaseTest {
     }
 
     /**
+     * Testcase for PersonService-createPerson-CTEP ID is present
+     */
+    @Test
+    public void testCreatePersonCtepIdPresent() {
+        String excepMessage = null;
+        person.setCtepId("123456789");
+        CreatePersonRequest cpRequest = new CreatePersonRequest();
+        cpRequest.setPerson(person);
+        try {
+            personService.createPerson(cpRequest);
+        } catch (Exception e) {
+            excepMessage = e.getMessage();
+        }
+
+        Assert.assertTrue(excepMessage
+                .contains("Person couldn't be created as CTEP ID 123456789 is passed in the request."));
+
+        // try to get the person by ID - it shouldn't be found
+        GetPersonRequest gpRequest = new GetPersonRequest();
+        gpRequest.setPersonID(123456789);
+        GetPersonResponse gpResponse = personService.getPerson(gpRequest);
+        Assert.assertNull(gpResponse.getPerson());
+    }
+    
+    /**
      * Testcase for PersonService-createPerson-Address not present
      */
     @Test
@@ -188,7 +211,7 @@ public class PersonServiceTest extends AbstractBaseTest {
         }
 
         Assert.assertTrue(excepMessage
-                .contains("One of \'{\"gov.nih.nci.po.webservices.types\":address}' is expected"));
+                .contains("gov.nih.nci.po.webservices.types\":address}' is expected"));
     }
 
     /**
@@ -229,7 +252,6 @@ public class PersonServiceTest extends AbstractBaseTest {
         createdPerson.setFirstName("updated first name");
         createdPerson.setLastName("updated last name");
         createdPerson.setSuffix("IX");
-        createdPerson.setCtepId("54321");
         createdPerson.setStatus(EntityStatus.ACTIVE);
         // address is updated with another address object
         createdPerson.setAddress(getJaxbAddressList().get(1));
@@ -267,6 +289,25 @@ public class PersonServiceTest extends AbstractBaseTest {
         Assert.assertTrue(excepMessage.contains("personId is null"));
     }
 
+    /**
+     * Testcase for PersonService-updatePerson-CtepId Present In Request
+     */
+    @Test
+    public void testUpdatePersonForCtepIdPresentInRequest() {
+        String excepMessage = null;
+        UpdatePersonRequest upRequest = new UpdatePersonRequest();
+        person.setId(9999999999999L);
+        person.setCtepId("123456789");
+        upRequest.setPerson(person);
+        try {
+            personService.updatePerson(upRequest);
+        } catch (Exception e) {
+            excepMessage = e.getMessage();
+        }
+
+        Assert.assertTrue(excepMessage.contains("couldn't be updated as CTEP ID 123456789 is passed in the request."));
+    }
+    
     /**
      * Testcase for PersonService-updatePerson-Person is NULL
      */
@@ -502,24 +543,27 @@ public class PersonServiceTest extends AbstractBaseTest {
      */
     @Test
     public void testGetPersonsByCtepId() {
-        String randomCtepId = RandomStringUtils.random(48, true, true);
-        person.setCtepId(randomCtepId);
+        String randomCtepId = RandomStringUtils.random(11, true, true);        
 
         // create few person
         CreatePersonRequest cpRequest = new CreatePersonRequest();
         cpRequest.setPerson(person);
-        personService.createPerson(cpRequest);
+        CreatePersonResponse resp = personService.createPerson(cpRequest);
+        createIdentifiedPerson(resp.getPerson().getId(), randomCtepId);
 
+        cpRequest = new CreatePersonRequest();
         cpRequest.setPerson(person);
-        personService.createPerson(cpRequest);
+        resp = personService.createPerson(cpRequest);
+        createIdentifiedPerson(resp.getPerson().getId(), randomCtepId);
 
+        cpRequest = new CreatePersonRequest();
         cpRequest.setPerson(person);
-        personService.createPerson(cpRequest);
+        resp = personService.createPerson(cpRequest);
+        createIdentifiedPerson(resp.getPerson().getId(), randomCtepId);
 
         GetPersonsByCtepIdRequest request = new GetPersonsByCtepIdRequest();
         request.setCtepID(randomCtepId);
-        GetPersonsByCtepIdResponse response = personService
-                .getPersonsByCtepId(request);
+        GetPersonsByCtepIdResponse response = personService.getPersonsByCtepId(request);
         List<Person> personList = response.getPersonList();
         Assert.assertTrue(personList.size() >= 3);
 
@@ -730,18 +774,19 @@ public class PersonServiceTest extends AbstractBaseTest {
      * Testcase for PersonService-searchPersons- by CtepId
      */
     @Test
-    public void testSearchPersonsByCtepId() {
-        String randomCtepId = RandomStringUtils.random(45, true, true);
-        // create few persons
-        person.setCtepId(randomCtepId);
+    public void testSearchPersonsByCtepId() {        
+        String randomCtepId = RandomStringUtils.random(11, true, true);        
+
+        // create few person
         CreatePersonRequest cpRequest = new CreatePersonRequest();
         cpRequest.setPerson(person);
-        personService.createPerson(cpRequest);
+        CreatePersonResponse resp = personService.createPerson(cpRequest);
+        createIdentifiedPerson(resp.getPerson().getId(), randomCtepId);
 
-        // create another person
-        person.setCtepId(randomCtepId);
+        cpRequest = new CreatePersonRequest();
         cpRequest.setPerson(person);
-        personService.createPerson(cpRequest);
+        resp = personService.createPerson(cpRequest);
+        createIdentifiedPerson(resp.getPerson().getId(), randomCtepId);
 
         // search by CtepId
         SearchPersonsRequest spRequest = new SearchPersonsRequest();

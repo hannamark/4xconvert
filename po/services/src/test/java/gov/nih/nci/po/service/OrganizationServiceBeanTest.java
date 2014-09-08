@@ -88,12 +88,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.OrganizationService;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
@@ -108,6 +112,7 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
 import gov.nih.nci.po.data.bo.OversightCommittee;
@@ -119,6 +124,7 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.CsmUserUtil;
+import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
@@ -134,12 +140,15 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jms.JMSException;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.InvalidStateException;
@@ -167,6 +176,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
     private OrganizationServiceBean orgServiceBean;
+    private Long ctepOrgId = null;
 
     public OrganizationServiceBean getOrgServiceBean() {
         return orgServiceBean;
@@ -176,9 +186,29 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     public void setUpData() {
 
         orgServiceBean = EjbTestHelper.getOrganizationServiceBean();
+        initCtepOrg();
     }
 
+    private void initCtepOrg() {
+        Organization ctep = getBasicOrganization();
+        ctep.setName(PoConstants.CTEP_ORG_NAME);
 
+        PoHibernateUtil.getCurrentSession().save(ctep);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        ctepOrgId = ctep.getId();
+
+    }
+
+    protected void removeCtepOrg() {
+        Organization ctep = (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, ctepOrgId);
+
+        if (ctep != null) {
+            PoHibernateUtil.getCurrentSession().delete(ctep);
+        }
+
+    }
 
 
     @After
@@ -219,10 +249,20 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         return org;
     }
 
+    protected long createOrganization(Organization org) throws JMSException, EntityValidationException {
+        return createOrganization(org, null);
+    }
 
-    protected long createOrganization(Organization org) throws EntityValidationException, JMSException {
+    protected long createOrganization(Organization org, String ctepId) throws EntityValidationException, JMSException {
         assertNull(org.getStatusDate());
-        long id = getOrgServiceBean().create(org);
+        Long id = null;
+
+        if (ctepId == null) {
+            id = getOrgServiceBean().create(org);
+        } else {
+            id = getOrgServiceBean().create(org, ctepId);
+        }
+
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         Organization saved = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, id);
@@ -354,8 +394,8 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals("test org alias", retrievedOrg.getAlias().get(0).getValue());        
 
         List<Organization> orgs = getAllOrganizations();
-        assertEquals(1, orgs.size());
-        assertEquals(new Long(orgId), orgs.get(0).getId());
+        assertEquals(2, orgs.size());
+        assertEquals(new Long(orgId), orgs.get(1).getId());
 
         MessageProducerTest.assertMessageCreated(retrievedOrg, getOrgServiceBean(), true);
     }
@@ -582,8 +622,10 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o2.getAlias().add(new Alias("org2alias"));
 
         long id = createOrganization(o);
-        long id2 = createOrganization(o2);
+
+        long id2 = createOrganization(o2, "CTEP2");
         o = getOrgServiceBean().getById(id);
+
         // remove elements from the different CollectionType properties to ensure proper persistence
         o.getEmail().remove(0);
         o.getFax().remove(0);
@@ -596,19 +638,28 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.setDuplicateOf(o2);
         getOrgServiceBean().curate(o);
 
-        Organization result = getOrgServiceBean().getById(id);
-        assertEquals(EntityStatus.NULLIFIED, result.getStatusCode());
-        assertEquals(1, result.getEmail().size());
-        assertEquals(1, result.getFax().size());
-        assertEquals(1, result.getPhone().size());
-        assertEquals(1, result.getTty().size());
-        assertEquals(1, result.getUrl().size());
+        Organization retrievedOrg1 = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.NULLIFIED, retrievedOrg1.getStatusCode());
+        assertEquals(o2.getId(), retrievedOrg1.getDuplicateOf().getId());
+        assertEquals(1, retrievedOrg1.getEmail().size());
+        assertEquals(1, retrievedOrg1.getFax().size());
+        assertEquals(1, retrievedOrg1.getPhone().size());
+        assertEquals(1, retrievedOrg1.getTty().size());
+        assertEquals(1, retrievedOrg1.getUrl().size());
+
+        Set<IdentifiedOrganization> org1Identities = retrievedOrg1.getIdentifiedOrganizations();
+        assertTrue(org1Identities.isEmpty());
 
         Organization retrievedOrg2 = getOrgServiceBean().getById(id2);
         assertEquals(3, retrievedOrg2.getAlias().size());
         assertEquals("org2alias", retrievedOrg2.getAlias().get(0).getValue());
         assertEquals("org1alias", retrievedOrg2.getAlias().get(1).getValue());
         assertEquals("org1name", retrievedOrg2.getAlias().get(2).getValue());
+
+        Set<IdentifiedOrganization> org2Identities = retrievedOrg2.getIdentifiedOrganizations();
+
+        assertEquals(1, org2Identities.size());
+        assertEquals("CTEP2", org2Identities.iterator().next().getAssignedIdentifier().getExtension());
 
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
@@ -789,8 +840,20 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         Organization o = getBasicOrganization();
         Organization o2 = getBasicOrganization();        
         long id = createOrganization(o);
-        long id2 = createOrganization(o2);
+
+        ResearchOrganization org1Ro = new ResearchOrganization();
+        org1Ro.setPlayer(o);
+        org1Ro.setOtherIdentifiers(new HashSet<Ii>());
+        org1Ro.getOtherIdentifiers().add(getCtepId("CTEP ID ORG 1 RO"));
+
+        long org1RoId = EjbTestHelper.getResearchOrganizationServiceBean().create(org1Ro);
+
+        org1Ro = EjbTestHelper.getResearchOrganizationServiceBean().getById(org1RoId);
+
+        assertEquals(1, org1Ro.getOtherIdentifiers().size());
+
         o = getOrgServiceBean().getById(id);
+
         o.getEmail().size();
         o.getUrl().size();
         o.getPhone().size();
@@ -798,10 +861,16 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         o.getFax().size();
         o.getPostalAddress().getCountry().getStates().size();
 
+        long id2 = createOrganization(o2);
+
+
         HealthCareFacility hcf = new HealthCareFacility();
         hcf.setPlayer(o);
         hcf.setStatus(RoleStatus.PENDING);
         hcf.setName("HCF Name");
+        hcf.setOtherIdentifiers(new HashSet<Ii>());
+        hcf.getOtherIdentifiers().add(getCtepId("CTEP ID ORG 1 HCF"));
+
         HealthCareFacilityServiceLocal healthCareFacilityServiceBean = EjbTestHelper.getHealthCareFacilityServiceBean();
         long hcfId = healthCareFacilityServiceBean.create(hcf);
         hcf = healthCareFacilityServiceBean.getById(hcfId);
@@ -854,9 +923,48 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         hcp = hcpSB.getById(hcpId);
         assertEquals(o2.getId(), hcp.getScoper().getId());
 
+
+        //o2 should have the ro, but it should not have any identifiers
+        hcf = EjbTestHelper.getHealthCareFacilityServiceBean().getById(hcfId);
+        assertNoCtepIds("hcf", hcf.getId());
+        assertTrue(hcf.getPlayer().getId() == o2.getId());
+        assertTrue(hcf.getOtherIdentifiers().isEmpty());
+
+        org1Ro = EjbTestHelper.getResearchOrganizationServiceBean().getById(org1RoId);
+
+        assertNoCtepIds("ro", org1Ro.getId());
+
+        assertTrue(org1Ro.getPlayer().getId() == o2.getId());
+        assertTrue(org1Ro.getOtherIdentifiers().isEmpty());
+
         MessageProducerTest.assertMessageCreated(o, getOrgServiceBean(), false);
     }
-    
+
+    private void assertNoCtepIds(String prefix, Long id) {
+        String sql = String.format(
+                        "select root from %s_otheridentifier where %s_id=:id and root=:root",
+                        prefix,
+                        prefix
+                    );
+
+        Query query = PoHibernateUtil.getCurrentSession().createSQLQuery(sql);
+        query.setParameter("id", id);
+        query.setParameter("root", PoConstants.ORG_CTEP_ID_ROOT);
+
+        List hits = query.list();
+        assertTrue("CTEP Identifiers were not removed from the research organization", hits.isEmpty());
+    }
+
+    private Ii getCtepId( String ctepIdString) {
+        Ii ctepId = new Ii();
+
+        ctepId.setRoot(PoConstants.ORG_CTEP_ID_ROOT);
+        ctepId.setIdentifierName(PoConstants.ORG_CTEP_ID_IDENTIFIER_NAME);
+        ctepId.setExtension(ctepIdString);
+
+        return ctepId;
+    }
+
     @Test
     public void curateToNullifiedWithInactiveDuplicateOf()
             throws EntityValidationException, JMSException {
@@ -1009,7 +1117,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         hcf.setName("HCF Name");
         Ii ctepIi = new Ii();
         ctepIi.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
-        ctepIi.setIdentifierName("name");
+        ctepIi.setIdentifierName("CTEP HCF 1");
         ctepIi.setExtension("CTEP");
         hcf.getOtherIdentifiers().add(ctepIi);
         HealthCareFacilityServiceLocal healthCareFacilityServiceBean = EjbTestHelper.getHealthCareFacilityServiceBean();
@@ -1038,6 +1146,10 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(o2.getId(), hcf.getPlayer().getId());
         assertEquals(o2.getStatusCode(), EntityStatus.ACTIVE);
         assertEquals(hcf.getStatus(), RoleStatus.ACTIVE);
+
+        Set<Ii> i = hcf.getOtherIdentifiers();
+        assertNotNull(i);
+
     }
 
     @Test
@@ -1259,7 +1371,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         OrganizationSearchCriteria criteria = new OrganizationSearchCriteria();
        
-        assertEquals(1L, getOrgServiceBean().count(criteria));
+        assertEquals(2L, getOrgServiceBean().count(criteria));
     }
 
 

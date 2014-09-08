@@ -155,9 +155,6 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
      */
     @SuppressWarnings(UNCHECKED)
     protected void cascadeStatusChangeNullified(T e, Session s) throws JMSException {
-
-
-
         for (Correlation x : getAssociatedRoles(e, s)) {
             x.setStatus(RoleStatus.NULLIFIED);
             GenericStructrualRoleServiceLocal service = getServiceForRole(x.getClass());

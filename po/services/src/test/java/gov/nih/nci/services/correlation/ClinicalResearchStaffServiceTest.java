@@ -163,14 +163,12 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
      */
     @Test
     public void testCreateActiveSuccess() throws Exception {
-        final Session session = PoHibernateUtil.getCurrentSession();        
+        Session session = PoHibernateUtil.getCurrentSession();
         ClinicalResearchStaff hcf = getSampleStructuralRole();
-        
+
         hcf.getScoper().setStatusCode(EntityStatus.ACTIVE);
-        session.save(hcf.getScoper());
         hcf.getPlayer().setStatusCode(EntityStatus.ACTIVE);
-        session.save(hcf.getPlayer());
-        session.flush();
+
         
         ClinicalResearchStaffServiceLocal s = (ClinicalResearchStaffServiceLocal) getService();        
         s.createActiveWithFallback(hcf);

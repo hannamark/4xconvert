@@ -341,8 +341,8 @@ public abstract class AbstractPersonRoleDTOTest extends AbstractHibernateTestCas
         AbstractPersonRoleDTO dto = getExampleTestClassDTO(personId, orgId);
         AbstractPersonRole bo = (AbstractPersonRole) PoXsnapshotHelper.createModel(dto);
         assertEquals(1L, bo.getId().longValue());
-        assertEquals(orgId, bo.getPlayer().getId().longValue());
-        assertEquals(personId, bo.getScoper().getId());
+        assertEquals(orgId, bo.getScoper().getId().longValue());
+        assertEquals(personId, bo.getPlayer().getId());
         assertEquals(RoleStatus.ACTIVE, bo.getStatus());
 
         assertEquals(1, bo.getEmail().size());

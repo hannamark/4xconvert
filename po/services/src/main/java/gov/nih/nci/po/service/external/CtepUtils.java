@@ -39,7 +39,7 @@ import java.util.Set;
  * @author Rohit Gupta
  *
  */
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public final class CtepUtils {
     private static final String NULL_STRING = "null";
 
@@ -119,37 +119,11 @@ public final class CtepUtils {
      * @param localOrg current local organization (not nullable)
      * @return true if the ctep org has different data than localOrg
      */
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
     static boolean isOrganizationDifferent(Organization ctepOrg, Organization localOrg) {
-        if (isDifferentHelper(ctepOrg, localOrg)) {
-            return true;
-        }
-
-        Address ctepAddr = ctepOrg.getPostalAddress() == null ? new Address() : ctepOrg.getPostalAddress();
-        Address localAddr = localOrg.getPostalAddress() == null ? new Address() : localOrg.getPostalAddress();
-
-        return !localAddr.contentEquals(ctepAddr);
-    }
-    
-    /**
-     * Determines whether or not a ctep organization represents an update to Only 'name'/Alias of an existing org.
-     *
-     * @param ctepOrg ctep organization (not nullable)
-     * @param localOrg current local organization (not nullable)
-     * @return true if the ctep org has different data than localOrg
-     */
-    static boolean isOnlyOrgNameAliasDifferent(Organization ctepOrg, Organization localOrg) {
-        Address ctepAddr = ctepOrg.getPostalAddress() == null ? new Address() : ctepOrg.getPostalAddress();
-        Address localAddr = localOrg.getPostalAddress() == null ? new Address() : localOrg.getPostalAddress();
         
-        return hasOrgNameOrAliasChanged(localOrg, ctepOrg)
-                && areEmailListsEqual(localOrg.getEmail(), ctepOrg.getEmail())
-                && arePhoneNumberListsEqual(localOrg.getPhone(), ctepOrg.getPhone())
-                && ObjectUtils.equals(localOrg.getStatusCode(), ctepOrg.getStatusCode()) 
-                && localAddr.contentEquals(ctepAddr);
-    }
-    
-    private static boolean isDifferentHelper(Organization ctepOrg, Organization localOrg) {
-        if (!StringUtils.equals(localOrg.getName(), ctepOrg.getName())) {
+        if (!StringUtils.equals(localOrg.getName(), ctepOrg.getName())
+                && PoServiceUtil.aliasIsNotPresent(localOrg.getAlias(), ctepOrg.getName())) {
             return true;
         }
 
@@ -157,32 +131,38 @@ public final class CtepUtils {
             return true;
         }
         
-        if (!arePhoneNumberListsEqual(localOrg.getPhone(), ctepOrg.getPhone())) {
-            return true;
-        }
-
+        // Phone Number is not considered for comparison as PhoneNumber is not being synched.        
+        
         if (ObjectUtils.notEqual(localOrg.getStatusCode(), ctepOrg.getStatusCode())) {
             return true;
         }
+        
+        Address ctepAddr = ctepOrg.getPostalAddress() == null ? new Address() : ctepOrg.getPostalAddress();
+        Address localAddr = localOrg.getPostalAddress() == null ? new Address() : localOrg.getPostalAddress();
+        if (!localAddr.contentEquals(ctepAddr)) {
+            return true;
+        }
+        
         return false;
     }
     
-    private static boolean hasOrgNameOrAliasChanged(Organization poOrg, Organization ctepOrg) {
-        return !StringUtils.equalsIgnoreCase(poOrg.getName(), ctepOrg.getName()) 
-                || hasAliasChanged(poOrg.getAlias(), ctepOrg.getAlias());
+    /**
+     * Determines whether or not a ctep organization represents an update to Only 'name' of an existing org.
+     *
+     * @param ctepOrg ctep organization (not nullable)
+     * @param localOrg current local organization (not nullable)
+     * @return true if the ctep org has different data than localOrg
+     */
+    static boolean isOnlyOrgNameDifferent(Organization ctepOrg, Organization localOrg) {
+        Address ctepAddr = ctepOrg.getPostalAddress() == null ? new Address() : ctepOrg.getPostalAddress();
+        Address localAddr = localOrg.getPostalAddress() == null ? new Address() : localOrg.getPostalAddress();
+        //ignoring phone number
+        return !StringUtils.equalsIgnoreCase(localOrg.getName(), ctepOrg.getName())
+                && areEmailListsEqual(localOrg.getEmail(), ctepOrg.getEmail())
+                && ObjectUtils.equals(localOrg.getStatusCode(), ctepOrg.getStatusCode()) 
+                && localAddr.contentEquals(ctepAddr);
     }
-    
-    private static boolean hasAliasChanged(List<Alias> poAliasList, List<Alias> ctepAliasList) {
-        boolean result = false;
-        for (Alias ctepAlias : ctepAliasList) {
-            if (PoServiceUtil.aliasIsNotPresent(poAliasList, ctepAlias.getValue())) {
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-
+         
     /**
      * @param ctepOrg data from CTEP
      * @param poOrg local data, either org or change request

@@ -258,10 +258,10 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         if (sr1 instanceof AbstractPersonRole || sr1 instanceof AbstractIdentifiedPerson){
             ids = new Long[1];
             ids[0] = basicPerson.getId();
-        } else if (sr2 instanceof AbstractOrganizationRole) {
+        } else if (sr1 instanceof AbstractOrganizationRole) {
             ids = new Long[2];
-            ids[0] = basicOrganization.getId() - 2;
-            ids[1] = basicOrganization.getId() - 3;
+            ids[0] = ((AbstractOrganizationRole) sr1).getPlayer().getId();
+            ids[1] = ((AbstractOrganizationRole) sr2).getPlayer().getId();
         } else if (sr2 instanceof AbstractIdentifiedOrganization) {
             ids = new Long[1];
             ids[0] = basicOrganization.getId();

@@ -123,8 +123,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
      */
     @Test
     public void testCreateOrganization() {
-        CreateOrganizationRequest request = new CreateOrganizationRequest();
-        org.setCtepId("123435");
+        CreateOrganizationRequest request = new CreateOrganizationRequest();        
         request.setOrganization(org);
         CreateOrganizationResponse response = orgService
                 .createOrganization(request);
@@ -142,7 +141,6 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     @Test
     public void testCreateActiveOrganization() {
         CreateOrganizationRequest request = new CreateOrganizationRequest();
-        org.setCtepId("123435");
         org.setStatus(EntityStatus.ACTIVE);
         request.setOrganization(org);
         CreateOrganizationResponse response = orgService
@@ -190,6 +188,25 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertTrue(excepMessage
                 .contains("IllegalArgumentException: id must be null on calls to create"));
 
+    }
+    
+    
+    /**
+     * Testcase for OrganizationService-createOrganization- CTEP ID is
+     * present
+     */
+    @Test
+    public void testCreateOrganizationCtepIdPresent() {
+        String excepMessage ="";
+        org.setCtepId("VA212");
+        CreateOrganizationRequest request = new CreateOrganizationRequest();        
+        request.setOrganization(org);
+        try {
+            orgService.createOrganization(request);
+        } catch (Exception e) {
+            excepMessage = e.getMessage();
+        }
+        Assert.assertTrue(excepMessage.contains("Organization couldn't be created as CTEP ID VA212 is passed in the request"));
     }
 
     /**
@@ -257,7 +274,6 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
         createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
-        createdOrg.setCtepId("111111111");
 
         // now update the created organization
         UpdateOrganizationRequest updateRequest = new UpdateOrganizationRequest();
@@ -372,7 +388,6 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
         createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
-        createdOrg.setCtepId("111111111");
 
         // now update the created organization, it should create a Change Request
         UpdateOrganizationRequest updateRequest = new UpdateOrganizationRequest();
@@ -421,6 +436,29 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 .contains("The Organization couldn't be updated as either organization or organizationId is null"));
     }
 
+    /**
+     * Testcase for OrganizationService-updateOrganization-CTEP ID Present
+     */
+    @Test
+    public void testUpdateOrganizationCtepIdPresent() {
+        String excepMessage = "";
+        // create an Organization first
+        Organization createdOrg = createActiveOrganization();
+
+        // now change some attributes of the newly created organization
+        createdOrg.setName("My Mayo"); // name updated
+        createdOrg.setCtepId("MD212"); 
+
+        // now update the created organization
+        UpdateOrganizationRequest updateRequest = new UpdateOrganizationRequest();
+        updateRequest.setOrganization(createdOrg);
+        try {
+            orgService.updateOrganization(updateRequest);
+        } catch (Exception e) {
+            excepMessage = e.getMessage();
+        }
+        Assert.assertTrue(excepMessage.contains("Organization couldn't be updated as CTEP ID MD212 is passed in the request"));
+    }
     /**
      * Testcase for OrganizationService-updateOrganization-Org object is Null
      */
@@ -582,8 +620,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     public void testGetOrganization() {
 
         // create an organization first
-        CreateOrganizationRequest request = new CreateOrganizationRequest();
-        org.setCtepId("22222222222222");
+        CreateOrganizationRequest request = new CreateOrganizationRequest();        
         request.setOrganization(org);
         CreateOrganizationResponse response = orgService
                 .createOrganization(request);
@@ -820,24 +857,22 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     @Test
     public void testSearchOrganizationsByCtepId() {        
         // create an organization first
-        CreateOrganizationRequest request = new CreateOrganizationRequest();   
-        org.setStatus(EntityStatus.ACTIVE);
-        request.setOrganization(org);
-        CreateOrganizationResponse response = orgService
-                .createOrganization(request);
-        Organization createdOrg = response.getOrganization(); 
+        Organization createdOrg = createActiveOrganization();
         
-        // create HCF with CETP ID and search the Org by that CTEP ID
-        String hcfCtepId = RandomStringUtils.random(47, true, true);
+        // create HCF
+        String hcfCtepId = RandomStringUtils.random(10, true, true);
         HealthCareFacility hcf = getHealthCareFacilityObj();
         hcf.setOrganizationId(createdOrg.getId());
-        hcf.setCtepId(hcfCtepId);
         CreateOrganizationRoleRequest corReq = new CreateOrganizationRoleRequest();
         corReq.setOrganizationRole(hcf);
-        orgService.createOrganizationRole(corReq);        
+        CreateOrganizationRoleResponse corRes = orgService.createOrganizationRole(corReq);      
+        
+        // now set the CTEP ID for this HCF
+        createHcfCtepId(corRes.getOrganizationRole().getId(), hcfCtepId);
+        
         // search the Org using HCF CTEP ID
         SearchOrganizationsRequest soRequest = new SearchOrganizationsRequest();
-        OrganizationSearchCriteria criteria = new OrganizationSearchCriteria();
+        OrganizationSearchCriteria criteria = new OrganizationSearchCriteria(); 
         criteria.setCtepID(hcfCtepId);
         soRequest.setOrganizationSearchCriteria(criteria);
         SearchOrganizationsResponse soResponse = orgService.searchOrganizations(soRequest);
@@ -860,17 +895,20 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         }
         
         
-        // create RO with CETP ID and search the Org by that CTEP ID
-        String roCtepId = RandomStringUtils.random(48, true, true);
+        // create RO
+        String roCtepId = RandomStringUtils.random(10, true, true);
         ResearchOrganization ro = getResearchOrganizationObj();
-        ro.setOrganizationId(createdOrg.getId());
-        ro.setCtepId(roCtepId);
+        ro.setOrganizationId(createdOrg.getId());        
         corReq = new CreateOrganizationRoleRequest();
-        corReq.setOrganizationRole(ro);
-        orgService.createOrganizationRole(corReq);        
+        corReq.setOrganizationRole(ro);        
+        corRes = orgService.createOrganizationRole(corReq);    
+        
+        // now set the CTEP ID for this RO
+        createROCtepId(corRes.getOrganizationRole().getId(), roCtepId);
+        
         // search the Org using RO CTEP ID
         soRequest = new SearchOrganizationsRequest();
-        criteria = new OrganizationSearchCriteria();
+        criteria = new OrganizationSearchCriteria();   
         criteria.setCtepID(roCtepId);
         soRequest.setOrganizationSearchCriteria(criteria);
         soResponse = orgService.searchOrganizations(soRequest);
@@ -893,7 +931,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         }
         
         // create IdentifiedOrganization with CETP ID and search the Org by that CTEP ID
-        String ioCtepId = RandomStringUtils.random(51, true, true);
+        String ioCtepId = RandomStringUtils.random(10, true, true);
         createIdentifiedOrganization(createdOrg.getId(), ioCtepId);
         // search the Org using IO CTEP ID
         soRequest = new SearchOrganizationsRequest();
@@ -1322,14 +1360,37 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertNotNull(orgRole);
         Assert.assertTrue(orgRole instanceof HealthCareFacility);
         Assert.assertNotNull(orgRole.getId());
-        Assert.assertEquals("1234567",
-                ((HealthCareFacility) orgRole).getCtepId());
         assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the address details from DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
                 "571-456-1245", "571-456-1278", "571-123-1123",
                 "http://www.mayoclinic.org");
+    }
+    
+    /**
+     * Testcase for OrganizationService-createOrganizationRole-HCF-having CTEP ID
+     */
+    @Test
+    public void testCreateOrganizationRoleHCFHavingCtepId() {
+        String excepMessage ="";
+        // create a new organization
+        Organization organization = createActiveOrganization();
+
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setOrganizationId(organization.getId());
+        hcf.setCtepId("VA212");
+
+        CreateOrganizationRoleRequest request = new CreateOrganizationRoleRequest();
+        request.setOrganizationRole(hcf);
+        try {
+            orgService.createOrganizationRole(request);
+        } catch (Exception e) {
+            excepMessage = e.getMessage();
+        }
+        
+        Assert.assertTrue(excepMessage
+                .contains("The OrganizationRole couldn't be created as CTEP ID VA212 is passed in the request."));
     }
 
     /**
@@ -1377,7 +1438,6 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ResearchOrganization orgRole = (ResearchOrganization) response.getOrganizationRole();
         Assert.assertNotNull(orgRole);
         Assert.assertNotNull(orgRole.getId());
-        Assert.assertNotNull(((ResearchOrganization)orgRole).getCtepId());
         assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         assertEquals("NWK", orgRole.getType().name());
         assertEquals(ro.getFundingMechanism().value(), orgRole.getFundingMechanism().value());
@@ -1390,31 +1450,28 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     
     /**
      * Testcase for OrganizationService-createOrganizationRole-RO-
-     * CTEP ID is not passed.
+     * CTEP ID is passed.
      */
     @Test
-    public void testCreateOrganizationRoleROWithoutCTEPId() {
+    public void testCreateOrganizationRoleROWithCTEPId() {
+        String excepMessage ="";
         // create a new organization
         Organization organization = createActiveOrganization();
 
         ResearchOrganization ro = getResearchOrganizationObj();
-        ro.setCtepId(null);
+        ro.setCtepId("MD255");
         ro.setOrganizationId(organization.getId());
 
         CreateOrganizationRoleRequest request = new CreateOrganizationRoleRequest();
         request.setOrganizationRole(ro);
-        CreateOrganizationRoleResponse response = orgService
-                .createOrganizationRole(request);
-        OrganizationRole orgRole = response.getOrganizationRole();
-        Assert.assertNotNull(orgRole);
-        Assert.assertTrue(orgRole instanceof ResearchOrganization);
-        Assert.assertNotNull(orgRole.getId());
-        Assert.assertNull(((ResearchOrganization)orgRole).getCtepId());
+        try {
+            orgService.createOrganizationRole(request);
+        } catch (Exception e) {
+            excepMessage = e.getMessage();
+        }
 
-        checkOrgRoleAddressDetails(ro, orgRole);
-        checkOrgRoleContactDetails(ro, orgRole, "my.email@mayoclinic.org",
-                "571-456-1245", "571-456-1278", "571-123-1123",
-                "http://www.mayoclinic.org");
+        Assert.assertTrue(excepMessage
+                .contains("The OrganizationRole couldn't be created as CTEP ID MD255 is passed in the request."));
     }
 
     /**
@@ -1497,6 +1554,42 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 "http://www.updatedmayoclinic.org");
         Assert.assertEquals(hcf.getName(), upHCF.getName()); // no name changed
         checkOrgRoleAliases("Mayo HCF 111", upHCF);
+    }
+    
+    
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-HCF- CTEP ID
+     */
+    @Test
+    public void testUpdateOrganizationRoleHCFHavingCtepId() {
+        String excepMessage= "";
+        // create a new organization
+        Organization organization = createActiveOrganization();
+
+        // create a HCF first
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setOrganizationId(organization.getId());
+        CreateOrganizationRoleRequest request = new CreateOrganizationRoleRequest();
+        request.setOrganizationRole(hcf);
+        CreateOrganizationRoleResponse response = orgService
+                .createOrganizationRole(request);
+        HealthCareFacility createdHCF = (HealthCareFacility) response
+                .getOrganizationRole();
+        Assert.assertTrue(createdHCF instanceof HealthCareFacility);
+
+        // now update the HCF details
+        UpdateOrganizationRoleRequest upRequest = new UpdateOrganizationRoleRequest();
+        createdHCF.setName("Mayo HCF 111"); // added to alias, name not change
+        createdHCF.setCtepId("MD211");
+        upRequest.setOrganizationRole(createdHCF);
+        try {
+            orgService.updateOrganizationRole(upRequest);
+        } catch (Exception e) {
+            excepMessage = e.getMessage();
+        }
+        
+        Assert.assertTrue(excepMessage
+                .contains("The OrganizationRole couldn't be updated as CTEP ID MD211 is passed in the request."));
     }
     
     /**
@@ -1632,6 +1725,42 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 "http://www.updatedmayoclinic.org");
         Assert.assertEquals(ro.getName(), upRO.getName()); // no name changed
         checkOrgRoleAliases("Mayo RO 111", upRO);
+    }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-RO-CTEP ID
+     */
+    @Test
+    public void testUpdateOrganizationRoleROHavingCtepId() {
+        String excepMessage ="";
+        // create a new organization
+        Organization organization = createActiveOrganization();
+
+        // create a RO first
+        ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setOrganizationId(organization.getId());
+
+        CreateOrganizationRoleRequest request = new CreateOrganizationRoleRequest();
+        request.setOrganizationRole(ro);
+        CreateOrganizationRoleResponse response = orgService
+                .createOrganizationRole(request);
+        ResearchOrganization createdRO = (ResearchOrganization) response.getOrganizationRole();
+        Assert.assertNotNull(createdRO);
+        Assert.assertTrue(createdRO instanceof ResearchOrganization);
+
+        // now update the RO details
+        UpdateOrganizationRoleRequest upRequest = new UpdateOrganizationRoleRequest();
+        createdRO.setName("Mayo RO 111"); // added to alias, name not change
+        createdRO.setCtepId("VA222");
+        upRequest.setOrganizationRole(createdRO);
+        try {
+            orgService.updateOrganizationRole(upRequest);
+        } catch (Exception e) {
+            excepMessage = e.getMessage();
+        }
+        
+        Assert.assertTrue(excepMessage
+                .contains("The OrganizationRole couldn't be updated as CTEP ID VA222 is passed in the request."));
     }
     
     /**
@@ -1996,36 +2125,38 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
 
     /**
      * Testcase for OrganizationService-getOrganizationRolesByCtepId
-     */
+     */    
     @Test
     public void testGetOrganizationRolesByCtepId() {
-        // create a organization
-        Organization organization = createActiveOrganization();
+        String randomCtepId = RandomStringUtils.random(10, true, true);
 
-        String randomCtepId = RandomStringUtils.random(38, true, true);
-
-        // create a role-HCF for this CtepId
+        // create an organization first
+        Organization createdOrg = createActiveOrganization();
+        
+        // create HCF
         HealthCareFacility hcf = getHealthCareFacilityObj();
-        hcf.setOrganizationId(organization.getId());
-        hcf.setCtepId(randomCtepId);
+        hcf.setOrganizationId(createdOrg.getId());
+        CreateOrganizationRoleRequest corReq = new CreateOrganizationRoleRequest();
+        corReq.setOrganizationRole(hcf);
+        CreateOrganizationRoleResponse corRes = orgService.createOrganizationRole(corReq);      
+        
+        // now set the CTEP ID for this HCF
+        createHcfCtepId(corRes.getOrganizationRole().getId(), randomCtepId);
 
-        CreateOrganizationRoleRequest corRequest = new CreateOrganizationRoleRequest();
-        corRequest.setOrganizationRole(hcf);
-        orgService.createOrganizationRole(corRequest);
-
-        // create a role-RO for this CtepId
+        // create RO
         ResearchOrganization ro = getResearchOrganizationObj();
-        ro.setOrganizationId(organization.getId());
-        ro.setCtepId(randomCtepId);
-        CreateOrganizationRoleRequest roRequest = new CreateOrganizationRoleRequest();
-        roRequest.setOrganizationRole(ro);
-        orgService.createOrganizationRole(roRequest);
+        ro.setOrganizationId(createdOrg.getId());        
+        corReq = new CreateOrganizationRoleRequest();
+        corReq.setOrganizationRole(ro);        
+        corRes = orgService.createOrganizationRole(corReq);    
+        
+        // now set the CTEP ID for this RO
+        createROCtepId(corRes.getOrganizationRole().getId(), randomCtepId);
 
         // get the Roles by the CtepId.
         GetOrganizationRolesByCtepIdRequest req = new GetOrganizationRolesByCtepIdRequest();
         req.setCtepID(randomCtepId);
-        GetOrganizationRolesByCtepIdResponse res = orgService
-                .getOrganizationRolesByCtepId(req);
+        GetOrganizationRolesByCtepIdResponse res = orgService.getOrganizationRolesByCtepId(req);
         List<OrganizationRole> orgRoleList = res.getOrganizationRoleList();
         Assert.assertTrue(orgRoleList.size() == 2);
     }
@@ -2253,8 +2384,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     }
 
     private HealthCareFacility getHealthCareFacilityObj() {
-        HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setCtepId("1234567");
+        HealthCareFacility hcf = new HealthCareFacility();        
         hcf.setName("Mayo HCF");
         hcf.setOrganizationId(1l);
         hcf.setStatus(EntityStatus.ACTIVE);
@@ -2274,8 +2404,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
     }
 
     private ResearchOrganization getResearchOrganizationObj() {
-        ResearchOrganization ro = new ResearchOrganization();
-        ro.setCtepId("1221234");
+        ResearchOrganization ro = new ResearchOrganization();        
         ro.setName("Mayo RO");
         ro.setOrganizationId(1l);
         ro.setType(ResearchOrganizationType.NWK);

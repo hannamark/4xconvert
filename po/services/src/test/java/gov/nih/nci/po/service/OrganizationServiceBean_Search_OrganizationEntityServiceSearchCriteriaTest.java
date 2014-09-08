@@ -46,6 +46,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByName() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         createOrganization("testName", "defaultCity");
         createOrganization("abc", "defaultCity");
 
@@ -64,6 +65,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByEmail() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         /* create a person with two email addresses */
         createOrganization();
 
@@ -92,6 +94,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByPhone() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         /* create a person with two phone numbers */
         createOrganization();
 
@@ -119,6 +122,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByFax() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         /* create a person with two phone numbers */
         createOrganization();
 
@@ -146,6 +150,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByTty() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         /* create a person with two phone numbers */
         createOrganization();
 
@@ -173,6 +178,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByUrl() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         /* create a person with two phone numbers */
         createOrganization();
 
@@ -219,6 +225,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByAddressStreetAddressLine() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         createOrgsWithAddresses();
         sc.getCriteria().setPostalAddress(new Address());
 
@@ -241,6 +248,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByAddressDeliveryAddressLine() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         createOrgsWithAddresses();
         sc.getCriteria().setPostalAddress(new Address());
 
@@ -267,6 +275,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByAddressCity() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         createOrgsWithAddresses();
         sc.getCriteria().setPostalAddress(new Address());
 
@@ -294,6 +303,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByAddressPostalCode() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         createOrgsWithAddresses();
         sc.getCriteria().setPostalAddress(new Address());
 
@@ -321,6 +331,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     @Test
     @SuppressWarnings("deprecation")
     public void findByAddressCountry() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         createOrgsWithAddresses();
 
         sc.getCriteria().setPostalAddress(new Address());
@@ -341,6 +352,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByStatusCode() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         createOrgsWithAddresses();
 
         sc.getCriteria().setStatusCode(EntityStatus.ACTIVE);
@@ -355,6 +367,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     @Test
     @SuppressWarnings("unchecked")
     public void findByStatusCodeEnsureRejectedAreNotReturned() throws EntityValidationException, JMSException {
+        removeCtepOrg();
         createOrgsWithAddresses();
         Query query = PoHibernateUtil.getCurrentSession().createQuery("from Organization o");
         List<Organization> list = query.list();
@@ -376,6 +389,7 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
     
     @Test
     public void familySearch() throws Exception {
+        removeCtepOrg();
         Calendar cal = Calendar.getInstance();
         cal.set(2008, 01, 02);
         Date oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);

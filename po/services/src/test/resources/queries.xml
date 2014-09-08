@@ -6,7 +6,7 @@
 	<sql-query name="gov.nih.nci.po.service.OrganizationServiceBean.search"
 		read-only="true">
  <![CDATA[
-        select * from organization o
+        select o.id, o.name from organization o
          ]]>
 	</sql-query>	
     <sql-query name="gov.nih.nci.po.service.OrganizationServiceBean.getInboxOrgs"
@@ -14,5 +14,12 @@
  <![CDATA[
        select * from organization where 1=2    
     ]]>
-    </sql-query>	
+    </sql-query>
+    <sql-query
+            name="gov.nih.nci.po.service.OrganizationServiceBean.search.alias"
+            read-only="true">
+        <![CDATA[
+        SELECT o.id, a.value FROM alias a, organization o, organization_alias oa WHERE o.id = oa.organization_id AND oa.alias_id = a.id AND
+        o.id IN (:ids) ]]>
+    </sql-query>
 </hibernate-mapping>

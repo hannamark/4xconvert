@@ -96,6 +96,7 @@ import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
+import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoServiceUtil;
 
@@ -103,6 +104,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.InvalidStateException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -209,30 +211,45 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         try {
             PoHibernateUtil.getCurrentSession().flush();
             PoHibernateUtil.getCurrentSession().update(ro1);
+            PoHibernateUtil.getCurrentSession().flush();
             Assert.fail();
         } catch (InvalidStateException e) {
+            PoHibernateUtil.getCurrentSession().clear();
+            ro1 = (ResearchOrganization) PoHibernateUtil.getCurrentSession().get(ResearchOrganization.class, ro1.getId());
+            ro2 = (ResearchOrganization) PoHibernateUtil.getCurrentSession().get(ResearchOrganization.class, ro2.getId());
         }
 
         FundingMechanism otherfm = new FundingMechanism("ZZZ", "bla", "bla", FundingMechanismStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().save(otherfm);
+        PoHibernateUtil.getCurrentSession().flush();
+
         ResearchOrganizationType otherType = new ResearchOrganizationType("otherType", "Some other stuff");
         otherType.getFundingMechanisms().add(fm);
         otherType.getFundingMechanisms().add(otherfm);
         PoHibernateUtil.getCurrentSession().save(otherType);
+        PoHibernateUtil.getCurrentSession().flush();
+
         ro1.setTypeCode(otherType);
         PoHibernateUtil.getCurrentSession().update(ro1);
+        PoHibernateUtil.getCurrentSession().flush();
 
         ro2.getTypeCode().getFundingMechanisms().add(otherfm);
         PoHibernateUtil.getCurrentSession().update(ro2.getTypeCode());
+        PoHibernateUtil.getCurrentSession().flush();
+
         ro1.setTypeCode(ro2.getTypeCode());
         ro1.setFundingMechanism(otherfm);
         PoHibernateUtil.getCurrentSession().update(ro1);
+        PoHibernateUtil.getCurrentSession().flush();
 
         ro2.setStatus(RoleStatus.NULLIFIED);
         PoHibernateUtil.getCurrentSession().update(ro2);
+        PoHibernateUtil.getCurrentSession().flush();
+
         ro1.setTypeCode(ro2.getTypeCode());
         ro1.setFundingMechanism(ro2.getFundingMechanism());
         PoHibernateUtil.getCurrentSession().update(ro1);
+        PoHibernateUtil.getCurrentSession().flush();
     }
 
     @Test
@@ -311,11 +328,19 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
     @Test
     public void testNullifyRoleWithDuplicateSet() throws Exception {
 
+        Ii oldCtepId = new Ii();
+        oldCtepId.setRoot(PoConstants.ORG_CTEP_ID_ROOT);
+        oldCtepId.setIdentifierName(PoConstants.ORG_CTEP_ID_IDENTIFIER_NAME);
+        oldCtepId.setExtension("OLD CTEP ID");
+
         //role 1 exists with alias1
         ResearchOrganization role1 = getSampleStructuralRole();
         role1.setName("role1");
         role1.getAlias().clear();
         role1.getAlias().add(new Alias("alias1"));
+        role1.setOtherIdentifiers(new HashSet<Ii>());
+        role1.getOtherIdentifiers().add(oldCtepId);
+        getService().create(role1);
 
         //role 2 exists with alias2
         ResearchOrganization role2 = getSampleStructuralRole();
@@ -323,7 +348,6 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         role2.getAlias().clear();
         role2.getAlias().add(new Alias("alias2"));
 
-        getService().create(role1);
         long id2 = getService().create(role2);
 
         //role 1 is nullified with duplicateOf set to role 2
@@ -339,6 +363,8 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         assertEquals("alias2", aliases.get(0).getValue());
         assertEquals("alias1", aliases.get(1).getValue());
         assertEquals("role1", aliases.get(2).getValue());
+
+        assertTrue(role2.getOtherIdentifiers().isEmpty());
     }
 }
 

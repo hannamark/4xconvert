@@ -1,15 +1,11 @@
 package gov.nih.nci.po.webservices.service.simple;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.PersonSearchDTO;
 import gov.nih.nci.po.util.PoConstants;
-import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.webservices.convert.simple.ClinicalResearchStaffConverter;
 import gov.nih.nci.po.webservices.convert.simple.Converters;
 import gov.nih.nci.po.webservices.convert.simple.HealthCareProviderConverter;
@@ -32,15 +28,20 @@ import gov.nih.nci.po.webservices.types.PersonRole;
 import gov.nih.nci.po.webservices.types.PersonSearchCriteria;
 import gov.nih.nci.po.webservices.types.PersonSearchResult;
 import gov.nih.nci.po.webservices.util.PoWSUtil;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import com.fiveamsolutions.nci.commons.search.OneCriterionRequiredException;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
  * This is the PersonService implementation class.
@@ -56,10 +57,9 @@ public class PersonServiceImpl implements PersonService {
     private static final Logger LOG = Logger.getLogger(PersonServiceImpl.class);
     private static final String CLASS_NULL_MSG = " as incoming Class is null.";
     private static final String NOT_FOUND_IN_DB_MSG = " as it is not found in the DB.";
+    private static final String PASS_IN_REQ = " is passed in the request.";
     private static final String RAW_TYPES = "rawtypes";
     private static final String UNCHECKED = "unchecked";
-
-
 
     @Autowired
     private PersonBoService personBoService;
@@ -87,22 +87,20 @@ public class PersonServiceImpl implements PersonService {
         gov.nih.nci.po.data.bo.Person personBo = null;
         long retPersonId = -1;
         String ctepId = person.getCtepId();
-        gov.nih.nci.po.data.bo.Organization ctepOrgBo = null;
-        try {
-            if (StringUtils.isNotBlank(ctepId)) {
-                // get the Organization representing "CTEP"
-                ctepOrgBo = PoServiceUtil.getCtepOrganization();
-                if (ctepOrgBo == null) {
-                    LOG.error("Person couldn't be created as CTEP Organization is not found.");
-                    throw new ServiceException("Person couldn't be created as CTEP Organization is not found.");
-                }
-            }
+        if (StringUtils.isNotBlank(ctepId)) {
+            // PO-7923 throw an exception if CTEP ID is passed.
+            LOG.error("Person couldn't be created as CTEP ID " + ctepId + PASS_IN_REQ);
+            throw new ServiceException(
+                    "Person couldn't be created as CTEP ID " + ctepId + PASS_IN_REQ);              
+        }
+        
+        try {            
             // get the corresponding BO object
             PersonConverter pConverter = Converters.get(PersonConverter.class);
             personBo = pConverter.convertFromJaxbToBO(person);
 
-            // call the EJB service method to create the Person
-            retPersonId = personBoService.create(personBo, ctepId);
+            // call the BO service method to create the Person
+            retPersonId = personBoService.create(personBo);
         } catch (EntityValidationException e) {
             LOG.error("Person couldn't be created as data is invalid.", e);
             throw new ServiceException("Person couldn't be created as data is invalid.", e);
@@ -122,25 +120,23 @@ public class PersonServiceImpl implements PersonService {
             LOG.error("The Person couldn't be updated as either person or personId is null.");
             throw new ServiceException("The Person couldn't be updated as either person or personId is null.");
         }
+        
         String ctepId = person.getCtepId();
-        gov.nih.nci.po.data.bo.Organization ctepOrgBo = null;
+        if (StringUtils.isNotBlank(ctepId)) {
+            // PO-7923 throw an exception if CTEP ID is passed.
+            LOG.error("Person " + person.getId() + " couldn't be updated " + "as CTEP ID " + ctepId + PASS_IN_REQ);
+            throw new ServiceException(
+                    "Person " + person.getId() + " couldn't be updated " + "as CTEP ID " + ctepId + PASS_IN_REQ);
+        }
+        
         gov.nih.nci.po.data.bo.Person personBo = null;
-        try {
-            if (StringUtils.isNotBlank(ctepId)) {
-                // get the Organization representing "CTEP"
-                ctepOrgBo = PoServiceUtil.getCtepOrganization();
-                if (ctepOrgBo == null) {
-                    LOG.error("Person " + person.getId() + " couldn't be updated as CTEP Organization is not found.");
-                    throw new ServiceException(
-                            "Person " + person.getId() + " couldn't be updated as CTEP Organization is not found.");
-                }
-            }
+        try {            
             // get the corresponding BO object
             PersonConverter pConverter = Converters.get(PersonConverter.class);
             personBo = pConverter.convertFromJaxbToBO(person);
 
-            // call the EJB service method to update the Person
-            personBoService.curate(personBo, ctepId);
+            // call the BO service method to update the Person
+            personBoService.curate(personBo);
         } catch (Exception e) {
             LOG.error("Exception occured while updating the person having Id " + person.getId() + ".", e);
             throw new ServiceException(
@@ -164,8 +160,7 @@ public class PersonServiceImpl implements PersonService {
 
         try {
             // set the Status
-            personBo.setStatusCode(gov.nih.nci.po.data.bo.EntityStatus
-                    .valueOf(status.value()));
+            personBo.setStatusCode(gov.nih.nci.po.data.bo.EntityStatus.valueOf(status.value()));
 
             // call the EJB service method to update Person status
             personBoService.curate(personBo);
@@ -518,15 +513,15 @@ public class PersonServiceImpl implements PersonService {
     private <T extends PersonRole> gov.nih.nci.po.data.bo.PersonRole convertFromJaxbRoleToBO(PersonRole jaxbPerRole) {
 
         if (jaxbPerRole instanceof HealthCareProvider) {
-            HealthCareProvider hcp = (HealthCareProvider) jaxbPerRole;
+            HealthCareProvider hcp = (HealthCareProvider) jaxbPerRole;            
             HealthCareProviderConverter hcpConverter = Converters.get(HealthCareProviderConverter.class);
             return hcpConverter.convertFromJaxbToBO(hcp);
         } else if (jaxbPerRole instanceof ClinicalResearchStaff) {
-            ClinicalResearchStaff crs = (ClinicalResearchStaff) jaxbPerRole;
+            ClinicalResearchStaff crs = (ClinicalResearchStaff) jaxbPerRole;            
             ClinicalResearchStaffConverter crsConverter = Converters.get(ClinicalResearchStaffConverter.class);
             return crsConverter.convertFromJaxbToBO(crs);
         } else if (jaxbPerRole instanceof OrganizationalContact) {
-            OrganizationalContact oc = (OrganizationalContact) jaxbPerRole;
+            OrganizationalContact oc = (OrganizationalContact) jaxbPerRole;            
             OrganizationalContactConverter ocConverter = Converters.get(OrganizationalContactConverter.class);
             return ocConverter.convertFromJaxbToBO(oc);
         } else {
@@ -543,7 +538,6 @@ public class PersonServiceImpl implements PersonService {
         dscList.add("PERSON_ID");
         return dscList;
     }
-
 
     /*
      * GETTERS AND SETTERS

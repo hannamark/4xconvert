@@ -95,6 +95,38 @@ public abstract class AbstractOrganizationServiceTest extends AbstractBaseTest {
         }
     }
     
+    protected void createHcfCtepId(long hcfId, String ctepId) {
+        try {
+            setUpOrganizationServiceData();
+            QueryRunner queryRunner = new QueryRunner(); 
+            
+            // insert data into "hcf_otheridentifier" table
+            queryRunner.update(conn,
+                    "insert into hcf_otheridentifier(hcf_id, displayable , extension, identifier_name, reliability, root, scope) values(?, 'TRUE', ?, 'CTEP ID','VRF','2.16.840.1.113883.3.26.6.2','OBJ')", 
+                    hcfId, ctepId);
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside createHcfCtepId. The exception is: " + e);
+        }finally{
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
+    protected void createROCtepId(long roId, String ctepId) {
+        try {
+            setUpOrganizationServiceData();
+            QueryRunner queryRunner = new QueryRunner(); 
+            
+            // insert data into "ro_otheridentifier" table
+            queryRunner.update(conn,
+                    "insert into ro_otheridentifier(ro_id, displayable , extension, identifier_name, reliability, root, scope) values(?, 'TRUE', ?, 'CTEP ID','VRF','2.16.840.1.113883.3.26.6.2','OBJ')", 
+                    roId, ctepId);
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside createROCtepId. The exception is: " + e);
+        }finally{
+            DbUtils.closeQuietly(conn);
+        }
+    }
+    
     /**
      * This method is used to Override the Entity.
      * @param clazz Class

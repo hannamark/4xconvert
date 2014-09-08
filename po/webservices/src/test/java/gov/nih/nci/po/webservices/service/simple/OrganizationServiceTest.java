@@ -62,7 +62,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -99,7 +98,6 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         ctep = ModelUtils.getBasicOrganization();
         ctep.setId(1L);
         mockStatic(PoServiceUtil.class);
-        PowerMockito.when(PoServiceUtil.getCtepOrganization()).thenReturn(ctep);
 
         // setting up gov.nih.nci.po.webservices.types.Organization
         org = new Organization();
@@ -108,13 +106,10 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         org.setAddress(getJaxbAddressList().get(0));
         org.getContact().addAll(getJaxbContactList());
 
-
-
         osCriteria = new OrganizationSearchCriteria();
         osCriteria.setOrganizationName("Mayo");
         osCriteria.setOffset(0);
         osCriteria.setLimit(4);
-
 
         orgService = new OrganizationServiceImpl();
         orgService.setHealthCareFacilityBoService(healthCareFacilityBoService);
@@ -135,7 +130,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
      * Testcase for OrganizationService-createOrganization
      */
     @Test
-    public void testcreateOrganization() throws JMSException, EntityValidationException {
+    public void testCreateOrganization() throws JMSException, EntityValidationException {
 
         when(organizationBoService.create(any(gov.nih.nci.po.data.bo.Organization.class), anyString()))
                 .thenReturn(1L);
@@ -199,10 +194,19 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
     }
 
     /**
+     * Testcase for OrganizationService-createOrganization-Exception scenario- CTEP ID
+     */
+    @Test(expected = ServiceException.class)
+    public void testCreateOrganizationHavingCTEPID()
+            throws EntityValidationException, JMSException { 
+        org.setCtepId("VA212");
+        orgService.createOrganization(org);
+    }
+    /**
      * Testcase for OrganizationService-updateOrganization
      */
     @Test
-    public void testupdateOrganization() {
+    public void testUpdateOrganization() {
         
         org.setId(1L);
 
@@ -228,7 +232,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
      * null
      */
     @Test(expected = ServiceException.class)
-    public void testupdateNullOrganization() {
+    public void testUpdateNullOrganization() {
         
         orgService.updateOrganization(null);
     }
@@ -238,7 +242,7 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
      * is null
      */
     @Test(expected = ServiceException.class)
-    public void testupdateOrganizationForNullDBId() {
+    public void testUpdateOrganizationForNullDBId() {
         
         org.setId(null);
         orgService.updateOrganization(org);
@@ -266,6 +270,20 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         orgService.updateOrganization(org);
     }
 
+    /**
+     * Testcase for OrganizationService-updateOrganization-Exception Scenario-CTEP ID
+     * 
+     * @throws JMSException
+     * @throws EntityValidationException 
+     */
+    @Test(expected = ServiceException.class)
+    public void testUpdateOrganizationHavingCTEPID()
+            throws JMSException, EntityValidationException {
+        org.setId(1l);
+        org.setCtepId("VA212");        
+
+        orgService.updateOrganization(org);
+    }
     /**
      * Testcase for OrganizationService-changeOrganizationStatus
      */
@@ -447,6 +465,18 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
                 .createOrganizationRole(healthCareFacility);
        verify(healthCareFacilityBoService).create(any(gov.nih.nci.po.data.bo.HealthCareFacility.class));
     }
+    
+    /**
+     * Testcase for
+     * OrganizationService-createOrganizationRole-HealthCareFacility- HCF having CTEP ID
+     */
+    @Test(expected = ServiceException.class)
+    public void testCreateOrgRoleHealthCareFacilityHavingCTEPID() throws JMSException, EntityValidationException {
+        HealthCareFacility healthCareFacility = getHealthCareFacility();
+        healthCareFacility.setCtepId("VA212");
+
+        orgService.createOrganizationRole(healthCareFacility);
+    }
 
     /**
      * Testcase for
@@ -485,11 +515,13 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
 
         verify(oversightCommitteeBoService).create(any(gov.nih.nci.po.data.bo.OversightCommittee.class));
     }
+    
 
     /**
      * Testcase for
      * OrganizationService-createOrganizationRole-ResearchOrganization
      */
+    @Test
     public void testCreateOrgRoleResearchOrganization() throws JMSException, EntityValidationException {
         
         ResearchOrganization researchOrganization = getResearchOrganization();
@@ -513,6 +545,20 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
 
         OrganizationRole orgRole = orgService.createOrganizationRole(researchOrganization);
        verify(researchOrganizationBoService).create(any(gov.nih.nci.po.data.bo.ResearchOrganization.class));
+   }
+    
+    /**
+     * Testcase for
+     * OrganizationService-createOrganizationRole-ResearchOrganization-RO having CTEP ID
+     */
+    @Test(expected=ServiceException.class)
+    public void testCreateOrgRoleResearchOrganizationHavingCTEPID() throws JMSException, EntityValidationException {
+        
+        ResearchOrganization researchOrganization = getResearchOrganization();
+
+        researchOrganization.setCtepId("VA212");
+
+        orgService.createOrganizationRole(researchOrganization);
    }
 
     /**
@@ -590,6 +636,21 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
         OrganizationRole orgRole = orgService.updateOrganizationRole(healthCareFacility);
         assertNotNull(orgRole);
         Assert.assertTrue(orgRole instanceof HealthCareFacility);
+    }
+    
+    /**
+     * Testcase for
+     * OrganizationService-updateOrganizationRole-HealthCareFacility
+     */
+    @Test(expected = ServiceException.class)
+    public void testUpdateOrgRoleHealthCareFacilityHavingCTEPID() {
+        
+        final HealthCareFacility healthCareFacility = getHealthCareFacility();
+        healthCareFacility.setId(1l);
+        healthCareFacility.setOrganizationId(2L);
+        healthCareFacility.setCtepId("VA212");
+        
+        orgService.updateOrganizationRole(healthCareFacility);
     }
 
     /**
@@ -679,6 +740,22 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
          Assert.assertTrue(orgRole instanceof ResearchOrganization);
     }
 
+     /**
+      * Testcase for
+      * OrganizationService-updateOrganizationRole-ResearchOrganization
+      */
+      @Test(expected = ServiceException.class)
+     public void testUpdateOrgRoleResearchOrganizationHavingCTEPID() {
+                   
+          ResearchOrganization ro = getResearchOrganization();
+          ro.setId(1l);
+          ro.setOrganizationId(2L);
+          ro.setName("test ro");
+          ro.setCtepId("VA212");
+          
+          orgService.updateOrganizationRole(ro);
+     }
+      
     /**
      * Testcase for OrganizationService-createOrganizationRole-Exception
      * Scenario
@@ -1025,7 +1102,6 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
 
     private HealthCareFacility getHealthCareFacility() {
         HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setCtepId("1234567");
         hcf.setName("Mayo HCF");
         hcf.setOrganizationId(1l);
         hcf.setStatus(EntityStatus.ACTIVE);
@@ -1046,7 +1122,6 @@ public class OrganizationServiceTest extends AbstractEndpointTest {
 
     private ResearchOrganization getResearchOrganization() {
         ResearchOrganization ro = new ResearchOrganization();
-        ro.setCtepId("1221234");
         ro.setName("Mayo RO");
         ro.setOrganizationId(1l);
         ro.setType(ResearchOrganizationType.NCP);

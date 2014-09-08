@@ -17,13 +17,13 @@
 	             id="copy_curateCrForm_role_name"
 	             onclick="copyValueToTextField('${func:escapeJavaScript(cr.name)}', 'curateRoleForm.role.name');" 
 	                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-	                <s:textfield label="%{getText('healthCareFacility.name')}" name="cr.name" maxlength="160" size="50"/>
+	                <po:field labelKey="healthCareFacility.name" fieldChanged="${cr.nameChanged}"><c:out value="${cr.name}"></c:out></po:field>
 	            </po:copyButton>             
 	            <po:copyButton
 	             id="copy_curateCrForm_role_status"
 	             onclick="selectValueInSelectField('${func:escapeJavaScript(cr.status)}', 'curateRoleForm.role.status');" 
-	                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
-	                <s:textfield label="%{getText('healthCareFacility.status')}" name="cr.status" required="true" cssClass="required"/>
+	                bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">	                
+	                <po:field labelKey="healthCareFacility.status" fieldChanged="${cr.statusCodeChanged}">${cr.status}</po:field>
 	            </po:copyButton>
               </c:otherwise>
             </c:choose>           

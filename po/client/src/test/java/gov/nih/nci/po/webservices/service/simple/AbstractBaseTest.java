@@ -1,6 +1,8 @@
 package gov.nih.nci.po.webservices.service.simple;
 
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.test.DataGeneratorUtil;
+import gov.nih.nci.coppa.test.FixtureDataUtil;
 import gov.nih.nci.po.webservices.types.Address;
 import gov.nih.nci.po.webservices.types.Alias;
 import gov.nih.nci.po.webservices.types.ClinicalResearchStaff;
@@ -19,18 +21,6 @@ import gov.nih.nci.po.webservices.types.Person;
 import gov.nih.nci.po.webservices.types.PersonRole;
 import gov.nih.nci.po.webservices.types.ResearchOrganization;
 
-import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.util.EntityUtils;
-import org.junit.After;
-import org.junit.Assert;
-
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -38,6 +28,16 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.dbutils.DbUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.util.EntityUtils;
+import org.junit.Assert;
+import org.junit.After;
 
 /**
  * This is a base class with common code to be used across different testcases.
@@ -62,7 +62,6 @@ public abstract class AbstractBaseTest {
         person.setStatus(EntityStatus.PENDING);
 
         person.setAddress(getJaxbAddressList().get(0));
-        person.setCtepId("25879");
         person.getContact().addAll(getJaxbContactList());
 
         // setting up gov.nih.nci.po.webservices.types.Organization
@@ -1272,8 +1271,6 @@ public abstract class AbstractBaseTest {
         try {
         QueryRunner queryRunner = new QueryRunner();
         
-        System.out.println("reqRole.getId()--->"+reqRole.getId());
-        
         // get the RO-CR Id from the database for the given hcfId
         Object[] result = queryRunner.query(conn,"select id from researchorganizationcr where target =?", h, reqRole.getId());
         long crId = ((Long) result[0]).longValue();
@@ -1334,7 +1331,22 @@ public abstract class AbstractBaseTest {
         }
     }    
     
-    
+    protected void createIdentifiedPerson(long personId, String ctepId) {
+        try {
+            QueryRunner queryRunner = new QueryRunner();
+                       
+            Object[] result = queryRunner.query(conn,
+                    "select id from organization where name = 'Cancer Therapy Evaluation Program'", h);
+            long ctepOrgId = ((Long) result[0]).longValue();
+            
+            // insert data into "identifiedperson" table
+            long idenOrgId = FixtureDataUtil.getNextSequenceId(conn, h);
+            queryRunner.update(conn,
+                    "insert into identifiedperson(id,assigned_identifier_extension,assigned_identifier_identifier_name,assigned_identifier_root,status,scoper_id,player_id) values(?, ?, 'Identified person identifier','2.16.840.1.113883.3.26.6.1','ACTIVE',?,?)",idenOrgId, ctepId, ctepOrgId, personId);
+        } catch (SQLException e) {
+            Assert.fail("Exception occured inside createIdentifiedPerson. The exception is: " + e);
+        }
+    }
 
     protected int getReponseCode(HttpResponse response) {
         return response.getStatusLine().getStatusCode();

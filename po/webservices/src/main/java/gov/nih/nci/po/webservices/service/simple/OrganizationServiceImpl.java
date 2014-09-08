@@ -5,7 +5,6 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.util.PoConstants;
-import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.webservices.convert.simple.Converters;
 import gov.nih.nci.po.webservices.convert.simple.HealthCareFacilityConverter;
 import gov.nih.nci.po.webservices.convert.simple.OrganizationConverter;
@@ -54,11 +53,11 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 @Service("simpleOrganizationService")
 public class OrganizationServiceImpl implements OrganizationService {
 
-    private static final Logger LOG = Logger
-            .getLogger(OrganizationServiceImpl.class);
+    private static final Logger LOG = Logger.getLogger(OrganizationServiceImpl.class);
     private static final String ORG_NOT_FOUND_IN_DB_MSG = " as Organization is not found in the DB.";
     private static final String ORG_ROLE_NOT_FOUND_IN_DB_MSG = " as OrganizationRole is not found in the DB.";
     private static final String CLASS_NULL_MSG = " as incoming Class is null.";
+    private static final String PASS_IN_REQ = " is passed in the request.";
     private static final String RAW_TYPES = "rawtypes";
     private static final String UNCHECKED = "unchecked";
 
@@ -86,32 +85,27 @@ public class OrganizationServiceImpl implements OrganizationService {
         gov.nih.nci.po.data.bo.Organization orgBo = null;
         long retOrgId = -1;
         String ctepId = organization.getCtepId();
-        gov.nih.nci.po.data.bo.Organization ctepOrgBo = null;
-        try {
-            if (StringUtils.isNotBlank(ctepId)) {
-                // get the Organization representing "CTEP"
-                ctepOrgBo = PoServiceUtil.getCtepOrganization();
-                if (ctepOrgBo == null) {
-                    LOG.error("Organization couldn't be created as CTEP Organization is not found.");
-                    throw new ServiceException("Organization couldn't be created as CTEP Organization is not found.");
-                }
-            }
+        if (StringUtils.isNotBlank(ctepId)) {
+            // PO-7923 throw an exception if CTEP ID is passed.
+            LOG.error("Organization couldn't be created as CTEP ID " + ctepId + PASS_IN_REQ);
+            throw new ServiceException(
+                    "Organization couldn't be created as CTEP ID " + ctepId + PASS_IN_REQ);
+         }
+        
+        try {            
             // get the corresponding BO object
             OrganizationConverter oConverter = Converters.get(OrganizationConverter.class);
             orgBo = oConverter.convertFromJaxbToBO(organization);
             
             // call the BO service method
-            retOrgId = organizationBoService.create(orgBo, ctepId);
+            retOrgId = organizationBoService.create(orgBo, null);
         } catch (EntityValidationException e) {
             LOG.error("Organization couldn't be created as data is invalid.", e);
-            throw new ServiceException(
-                    "Organization couldn't be created as data is invalid.", e);
+            throw new ServiceException("Organization couldn't be created as data is invalid.", e);
         } catch (Exception e) {
-            LOG.error("Exception occured while creating organization "
-                    + organization.getName() + ".", e);
+            LOG.error("Exception occured while creating organization " + organization.getName() + ".", e);
             throw new ServiceException(
-                    "Exception occured while creating organization "
-                            + organization.getName() + ".", e);
+                    "Exception occured while creating organization " + organization.getName() + ".", e);
         }
 
         // get the Organization from the database & return it
@@ -120,40 +114,26 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public Organization updateOrganization(Organization organization) {
-        // validate the request data and get the existing org
+        // validate the request data
         validateUpdateOrgRequest(organization);
 
-        gov.nih.nci.po.data.bo.Organization inOrgBo = null;
-        String ctepId = organization.getCtepId();
-        gov.nih.nci.po.data.bo.Organization ctepOrgBo = null;
-        try {
-            if (StringUtils.isNotBlank(ctepId)) {
-                // get the Organization representing "CTEP"
-                ctepOrgBo = PoServiceUtil.getCtepOrganization();
-                if (ctepOrgBo == null) {
-                    LOG.error("Organization couldn't be updated as CTEP Organization is not found.");
-                    throw new ServiceException("Organization couldn't be updated as CTEP Organization is not found.");
-                }
-            }
+        gov.nih.nci.po.data.bo.Organization inOrgBo = null;       
+        try {            
             // get the corresponding BO object
-            OrganizationConverter oConverter = Converters
-                    .get(OrganizationConverter.class);
+            OrganizationConverter oConverter = Converters.get(OrganizationConverter.class);
             inOrgBo = oConverter.convertFromJaxbToBO(organization);
 
             // call the BO service method
-            organizationBoService.curate(inOrgBo, ctepId);
+            organizationBoService.curate(inOrgBo, null);
         } catch (ServiceException e) {
             LOG.error(
-                    "Exception occured while updating the organization having Id "
-                            + organization.getId() + ".", e);
+                    "Exception occured while updating the organization having Id " + organization.getId() + ".", e);
             throw e;
         } catch (Exception e) {
             LOG.error(
-                    "Exception occured while updating the organization having Id "
-                            + organization.getId() + ".", e);
+                    "Exception occured while updating the organization having Id " + organization.getId() + ".", e);
             throw new ServiceException(
-                    "Exception occured while updating the organization having Id "
-                            + organization.getId() + ".", e);
+                    "Exception occured while updating the organization having Id " + organization.getId() + ".", e);
         }
 
         // get the Organization from the database & return it
@@ -175,18 +155,15 @@ public class OrganizationServiceImpl implements OrganizationService {
         }
         try {
             // set the Status
-            orgBo.setStatusCode(gov.nih.nci.po.data.bo.EntityStatus
-                    .valueOf(status.value()));
+            orgBo.setStatusCode(gov.nih.nci.po.data.bo.EntityStatus.valueOf(status.value()));
 
             // call the EJB service method to update Organization status
             organizationBoService.curate(orgBo);
         } catch (Exception e) {
             LOG.error(
-                    "Exception occured while updating the Status for organizationID "
-                            + organizationID + ".", e);
+                    "Exception occured while updating the Status for organizationID " + organizationID + ".", e);
             throw new ServiceException(
-                    "Exception occured while updating the Status for organizationID "
-                            + organizationID + ".", e);
+                    "Exception occured while updating the Status for organizationID " + organizationID + ".", e);
         }
 
         // get the Organization from the database & return it
@@ -199,8 +176,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         gov.nih.nci.po.data.bo.Organization orgBo = organizationBoService.getById(organizationID);
 
         // Convert to get the corresponding JaxB object & then return it
-        OrganizationConverter oConverter = Converters
-                .get(OrganizationConverter.class);
+        OrganizationConverter oConverter = Converters.get(OrganizationConverter.class);
         return oConverter.convertFromBOToJaxB(orgBo);
     }
 
@@ -212,8 +188,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (osCriteria == null) {
             // null check to avoid null pointer during isValid() check
             LOG.error("Organization search couldn't be performed as seach criteria is null.");
-            throw new ServiceException(
-                    "Organization search couldn't be performed as seach criteria is null.");
+            throw new ServiceException("Organization search couldn't be performed as seach criteria is null.");
         }
 
         // get the corresponding BO object
@@ -221,23 +196,18 @@ public class OrganizationServiceImpl implements OrganizationService {
         gov.nih.nci.po.service.OrganizationSearchCriteria osCriteriaBo = osConverter
                 .convertOSCFromJaxbToBO(osCriteria);
 
-
-
         try {
             // check that the search criteria is valid
             osCriteriaBo.isValid();
         } catch (OneCriterionRequiredException e) {
-            LOG.error("Organization search couldn't be performed as search crietria is empty."
-                    + e);
+            LOG.error("Organization search couldn't be performed as search criteria is empty." + e);
             throw new ServiceException(
-                    "Organization search couldn't be performed as search crietria is empty."
-                            + e);
+                    "Organization search couldn't be performed as search criteria is empty." + e);
         }
 
         // instantiate PageSortParams (in ascending order of ORGANIZATION_ID)
         PageSortParams<OrganizationSearchDTO> pageSortParams = new PageSortParams<OrganizationSearchDTO>(
-                osCriteria.getLimit(), osCriteria.getOffset(), null, false,
-                getDynamicSortCriteria());
+                osCriteria.getLimit(), osCriteria.getOffset(), null, false, getDynamicSortCriteria());
 
         // call the EJB service method to search the Organizations
         List<OrganizationSearchDTO> osDtoList = organizationBoService.search(osCriteriaBo, pageSortParams);
@@ -245,8 +215,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (CollectionUtils.isNotEmpty(osDtoList)) {
             // Convert it to JaxB object & add in the list
             for (OrganizationSearchDTO osDto : osDtoList) {
-                OrganizationSearchResult osResult = osConverter
-                        .convertOSRFromBOToJaxB(osDto);
+                OrganizationSearchResult osResult = osConverter.convertOSRFromBOToJaxB(osDto);
                 osrList.add(osResult);
             }
         }
@@ -265,14 +234,20 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (orgRole.getId() != null) {
             // If "Id" is present then curate will 'update' the DB
             LOG.error(msg + "organizationRoleId is present in the request.");
-            throw new ServiceException(msg
-                    + "organizationRoleId is present in the request.");
+            throw new ServiceException(msg + "organizationRoleId is present in the request.");
         }
 
+        String ctepId = getCtepId(orgRole);
+        if (StringUtils.isNotBlank(ctepId)) {
+            // PO-7923 throw an exception if CTEP ID is passed.
+            LOG.error(msg + "CTEP ID " + ctepId + PASS_IN_REQ);
+            throw new ServiceException(msg + "CTEP ID " + ctepId + PASS_IN_REQ);                
+         }
+        
         Class<? extends OrganizationRole> clazz = orgRole.getClass();
         try {
             // get the corresponding BO (to be passed in 'curate' method)
-            gov.nih.nci.po.data.bo.Correlation orgRoleBo = convertJaxbRoleToBO(orgRole);
+            gov.nih.nci.po.data.bo.Correlation orgRoleBo = convertJaxbRoleToBO(orgRole);            
 
             // create OrganizationRole by calling EJB service method
             GenericStructrualRoleServiceLocal roleSerLocal = getGenericStructrualRoleServiceLocal(clazz);
@@ -302,14 +277,11 @@ public class OrganizationServiceImpl implements OrganizationService {
          
         gov.nih.nci.po.data.bo.Correlation inOrgRoleBo = null;
         try {
-            // get the CtepId from the OrgRole
-            String ctepId = getCtepId(orgRole);
-
             // get the corresponding BO (to be passed in 'curate' method)
             inOrgRoleBo = convertJaxbRoleToBO(orgRole);
 
             // call the method to update the OrganizationRole
-            updateOrgRole(inOrgRoleBo, ctepId);
+            updateOrgRole(inOrgRoleBo);
 
             // convert from BO to JaxB & return it
             return convertFromBoRoleToJaxB(inOrgRoleBo);
@@ -444,6 +416,14 @@ public class OrganizationServiceImpl implements OrganizationService {
                     "The Organization couldn't be updated as either organization or organizationId is null.");
         }
 
+        String ctepId = organization.getCtepId();
+        if (StringUtils.isNotBlank(ctepId)) {
+            // PO-7923 throw an exception if CTEP ID is passed.
+            LOG.error("Organization couldn't be updated as CTEP ID " + ctepId + PASS_IN_REQ);
+            throw new ServiceException(
+                    "Organization couldn't be updated as CTEP ID " + ctepId + PASS_IN_REQ);            
+        }
+        
         // get the OrganizationBO for given organizationID
         gov.nih.nci.po.data.bo.Organization existOrgBo = organizationBoService.getById(organization.getId());
         if (existOrgBo == null) {
@@ -458,28 +438,28 @@ public class OrganizationServiceImpl implements OrganizationService {
     /**
      * This method is used to validate 'updateOrganizationRole' request data.
      */
-    private void validateUpdateOrgRoleRequest(
-            OrganizationRole orgRole) {
+    private void validateUpdateOrgRoleRequest(OrganizationRole orgRole) {
         String msg = "The OrganizationRole couldn't be updated ";
 
         // null check for OrganizationRole or OrganizationRoleId
         if ((orgRole == null) || (orgRole.getId() == null)) {
-            LOG.error(msg
-                    + " as either organizationRole or organizationRoleId is null.");
-            throw new ServiceException(
-                    msg
-                            + "as either organizationRole or organizationRoleId is null.");
+            LOG.error(msg + " as either organizationRole or organizationRoleId is null.");
+            throw new ServiceException(msg + "as either organizationRole or organizationRoleId is null.");
         }
+        
+        String ctepId = getCtepId(orgRole);
+        if (StringUtils.isNotBlank(ctepId)) {
+            // PO-7923 throw an exception if CTEP ID is passed.
+            LOG.error(msg + "as CTEP ID " + ctepId + PASS_IN_REQ);
+            throw new ServiceException(msg + "as CTEP ID " + ctepId + PASS_IN_REQ);                
+         }
 
         Class<? extends OrganizationRole> clazz = orgRole.getClass();
         // get the OrganizationRole from the database
-        gov.nih.nci.po.data.bo.Correlation existOrgRolBo = getOrganizationRoleBOByDBId(
-                clazz, orgRole.getId());
+        gov.nih.nci.po.data.bo.Correlation existOrgRolBo = getOrganizationRoleBOByDBId(clazz, orgRole.getId());
         if (existOrgRolBo == null) {
-            LOG.error(msg + "for ID " + orgRole.getId()
-                    + ORG_ROLE_NOT_FOUND_IN_DB_MSG);
-            throw new EntityNotFoundException(msg + "for ID " + orgRole.getId()
-                    + ORG_ROLE_NOT_FOUND_IN_DB_MSG);
+            LOG.error(msg + "for ID " + orgRole.getId() + ORG_ROLE_NOT_FOUND_IN_DB_MSG);
+            throw new EntityNotFoundException(msg + "for ID " + orgRole.getId() + ORG_ROLE_NOT_FOUND_IN_DB_MSG);
         }
     }
 
@@ -489,8 +469,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @SuppressWarnings(RAW_TYPES)
     private <T extends OrganizationRole> gov.nih.nci.po.data.bo.Correlation getOrganizationRoleBOByDBId(
             Class<T> clazz, long orgRoleID) {
-        String msg = "Couldn't get OrganizationRoleBOByDBId for orgRoleID "
-                + orgRoleID;
+        String msg = "Couldn't get OrganizationRoleBOByDBId for orgRoleID " + orgRoleID;
         if (clazz == null) {
             LOG.error(msg + orgRoleID + CLASS_NULL_MSG);
             throw new ServiceException(msg + orgRoleID + CLASS_NULL_MSG);
@@ -517,8 +496,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         List<gov.nih.nci.po.data.bo.HealthCareFacility> hcfList = healthCareFacilityBoService
                 .search(hcfSearchCriteria);
         if (CollectionUtils.isNotEmpty(hcfList)) {
-            HealthCareFacilityConverter hcfConverter = Converters
-                    .get(HealthCareFacilityConverter.class);
+            HealthCareFacilityConverter hcfConverter = Converters.get(HealthCareFacilityConverter.class);
             for (gov.nih.nci.po.data.bo.HealthCareFacility hcfBo : hcfList) {
                 gov.nih.nci.po.webservices.types.HealthCareFacility jaxbHCF = hcfConverter
                         .convertFromBOToJaxB(hcfBo);
@@ -543,8 +521,7 @@ public class OrganizationServiceImpl implements OrganizationService {
         List<gov.nih.nci.po.data.bo.ResearchOrganization> roList = researchOrganizationBoService
                 .search(roSearchCriteria);
         if (CollectionUtils.isNotEmpty(roList)) {
-            ResearchOrganizationConverter roConverter = Converters
-                    .get(ResearchOrganizationConverter.class);
+            ResearchOrganizationConverter roConverter = Converters.get(ResearchOrganizationConverter.class);
             for (gov.nih.nci.po.data.bo.ResearchOrganization roBo : roList) {
                 gov.nih.nci.po.webservices.types.ResearchOrganization jaxbRO = roConverter
                         .convertFromBOToJaxB(roBo);
@@ -558,22 +535,19 @@ public class OrganizationServiceImpl implements OrganizationService {
      * 
      * @param inOrgRoleBo
      *            - incoming OrgRoleBO object
-     * @param ctepId
-     *            - ctepId to be set
      * @throws JMSException
      * @throws Exception
      *             - incase any exception occurs
      */
-    private void updateOrgRole(gov.nih.nci.po.data.bo.Correlation inOrgRoleBo, String ctepId)
-            throws JMSException {
+    private void updateOrgRole(gov.nih.nci.po.data.bo.Correlation inOrgRoleBo) throws JMSException {
         if (inOrgRoleBo instanceof gov.nih.nci.po.data.bo.ResearchOrganization) {
             gov.nih.nci.po.data.bo.ResearchOrganization inROBo = 
                     (gov.nih.nci.po.data.bo.ResearchOrganization) inOrgRoleBo;
-            researchOrganizationBoService.curate(inROBo, ctepId); // curate
+            researchOrganizationBoService.curate(inROBo, null); // curate
         } else if (inOrgRoleBo instanceof gov.nih.nci.po.data.bo.HealthCareFacility) {
             gov.nih.nci.po.data.bo.HealthCareFacility inHCFBo = 
                     (gov.nih.nci.po.data.bo.HealthCareFacility) inOrgRoleBo;
-            healthCareFacilityBoService.curate(inHCFBo, ctepId); // curate
+            healthCareFacilityBoService.curate(inHCFBo, null); // curate
         } else if (inOrgRoleBo instanceof gov.nih.nci.po.data.bo.OversightCommittee) {
             gov.nih.nci.po.data.bo.OversightCommittee ocBo = (gov.nih.nci.po.data.bo.OversightCommittee) inOrgRoleBo;
             oversightCommitteeBoService.curate(ocBo); // curate
@@ -596,52 +570,42 @@ public class OrganizationServiceImpl implements OrganizationService {
     /**
      * This method is used to convert JaxB into BO.
      */
-    private gov.nih.nci.po.data.bo.Correlation convertJaxbRoleToBO(
-            OrganizationRole jaxbOrgRole) {
+    private gov.nih.nci.po.data.bo.Correlation convertJaxbRoleToBO(OrganizationRole jaxbOrgRole) {
         if (jaxbOrgRole instanceof ResearchOrganization) {
             ResearchOrganization ro = (ResearchOrganization) jaxbOrgRole;
-            ResearchOrganizationConverter roConverter = Converters
-                    .get(ResearchOrganizationConverter.class);
+            ResearchOrganizationConverter roConverter = Converters.get(ResearchOrganizationConverter.class);
             return roConverter.convertFromJaxbToBO(ro);
         } else if (jaxbOrgRole instanceof OversightCommittee) {
             OversightCommittee oc = (OversightCommittee) jaxbOrgRole;
-            OversightCommitteeConverter ocConverter = Converters
-                    .get(OversightCommitteeConverter.class);
+            OversightCommitteeConverter ocConverter = Converters.get(OversightCommitteeConverter.class);
             return ocConverter.convertFromJaxbToBO(oc);
         } else if (jaxbOrgRole instanceof HealthCareFacility) {
             HealthCareFacility hcf = (HealthCareFacility) jaxbOrgRole;
-            HealthCareFacilityConverter hcfConverter = Converters
-                    .get(HealthCareFacilityConverter.class);
+            HealthCareFacilityConverter hcfConverter = Converters.get(HealthCareFacilityConverter.class);
             return hcfConverter.convertFromJaxbToBO(hcf);
         } else {
-            throw new ServiceException(
-                    "Can't convert JaxB-OrganizationRole to BO as type is wrong.");
+            throw new ServiceException("Can't convert JaxB-OrganizationRole to BO as type is wrong.");
         }
     }
 
     /**
      * This method is used to convert BO Role into JaxB.
      */
-    private OrganizationRole convertFromBoRoleToJaxB(
-            gov.nih.nci.po.data.bo.Correlation orgRoleBo) {
+    private OrganizationRole convertFromBoRoleToJaxB(gov.nih.nci.po.data.bo.Correlation orgRoleBo) {
         if (orgRoleBo instanceof gov.nih.nci.po.data.bo.ResearchOrganization) {
             gov.nih.nci.po.data.bo.ResearchOrganization roBo = (gov.nih.nci.po.data.bo.ResearchOrganization) orgRoleBo;
-            ResearchOrganizationConverter roConverter = Converters
-                    .get(ResearchOrganizationConverter.class);
+            ResearchOrganizationConverter roConverter = Converters.get(ResearchOrganizationConverter.class);
             return roConverter.convertFromBOToJaxB(roBo);
         } else if (orgRoleBo instanceof gov.nih.nci.po.data.bo.OversightCommittee) {
             gov.nih.nci.po.data.bo.OversightCommittee ocBo = (gov.nih.nci.po.data.bo.OversightCommittee) orgRoleBo;
-            OversightCommitteeConverter ocConverter = Converters
-                    .get(OversightCommitteeConverter.class);
+            OversightCommitteeConverter ocConverter = Converters.get(OversightCommitteeConverter.class);
             return ocConverter.convertFromBOToJaxB(ocBo);
         } else if (orgRoleBo instanceof gov.nih.nci.po.data.bo.HealthCareFacility) {
             gov.nih.nci.po.data.bo.HealthCareFacility hcfBo = (gov.nih.nci.po.data.bo.HealthCareFacility) orgRoleBo;
-            HealthCareFacilityConverter hcfConverter = Converters
-                    .get(HealthCareFacilityConverter.class);
+            HealthCareFacilityConverter hcfConverter = Converters.get(HealthCareFacilityConverter.class);
             return hcfConverter.convertFromBOToJaxB(hcfBo);
         } else {
-            throw new ServiceException(
-                    "Can't convert OrganizationRoleBO to JaxB as type is wrong.");
+            throw new ServiceException("Can't convert OrganizationRoleBO to JaxB as type is wrong.");
         }
     }
 
@@ -666,13 +630,10 @@ public class OrganizationServiceImpl implements OrganizationService {
     private void populateROOrgRole(gov.nih.nci.po.data.bo.Organization orgBo,
             Collection<OrganizationRole> orgRoleList) {
         if (CollectionUtils.isNotEmpty(orgBo.getResearchOrganizations())) {
-            ResearchOrganizationConverter roConverter = Converters
-                    .get(ResearchOrganizationConverter.class);
+            ResearchOrganizationConverter roConverter = Converters.get(ResearchOrganizationConverter.class);
 
-            for (gov.nih.nci.po.data.bo.ResearchOrganization roBo : orgBo
-                    .getResearchOrganizations()) {
-                ResearchOrganization hcp = roConverter
-                        .convertFromBOToJaxB(roBo);
+            for (gov.nih.nci.po.data.bo.ResearchOrganization roBo : orgBo.getResearchOrganizations()) {
+                ResearchOrganization hcp = roConverter.convertFromBOToJaxB(roBo);
                 orgRoleList.add(hcp);
             }
         }
@@ -684,11 +645,9 @@ public class OrganizationServiceImpl implements OrganizationService {
     private void populateOCOrgRole(gov.nih.nci.po.data.bo.Organization orgBo,
             Collection<OrganizationRole> orgRoleList) {
         if (CollectionUtils.isNotEmpty(orgBo.getOversightCommittees())) {
-            OversightCommitteeConverter roConverter = Converters
-                    .get(OversightCommitteeConverter.class);
+            OversightCommitteeConverter roConverter = Converters.get(OversightCommitteeConverter.class);
 
-            for (gov.nih.nci.po.data.bo.OversightCommittee roBo : orgBo
-                    .getOversightCommittees()) {
+            for (gov.nih.nci.po.data.bo.OversightCommittee roBo : orgBo.getOversightCommittees()) {
                 OversightCommittee hcp = roConverter.convertFromBOToJaxB(roBo);
                 orgRoleList.add(hcp);
             }
@@ -702,13 +661,10 @@ public class OrganizationServiceImpl implements OrganizationService {
     private void populateHCFOrgRole(gov.nih.nci.po.data.bo.Organization orgBo,
             Collection<OrganizationRole> orgRoleList) {
         if (CollectionUtils.isNotEmpty(orgBo.getHealthCareFacilities())) {
-            HealthCareFacilityConverter hcfConverter = Converters
-                    .get(HealthCareFacilityConverter.class);
+            HealthCareFacilityConverter hcfConverter = Converters.get(HealthCareFacilityConverter.class);
 
-            for (gov.nih.nci.po.data.bo.HealthCareFacility hcfBo : orgBo
-                    .getHealthCareFacilities()) {
-                HealthCareFacility hcp = hcfConverter
-                        .convertFromBOToJaxB(hcfBo);
+            for (gov.nih.nci.po.data.bo.HealthCareFacility hcfBo : orgBo.getHealthCareFacilities()) {
+                HealthCareFacility hcp = hcfConverter.convertFromBOToJaxB(hcfBo);
                 orgRoleList.add(hcp);
             }
         }

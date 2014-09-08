@@ -138,8 +138,12 @@ public class OversightCommitteeServiceTest extends AbstractStructrualRoleService
         try {
             PoHibernateUtil.getCurrentSession().flush();
             PoHibernateUtil.getCurrentSession().update(oc1);
+            PoHibernateUtil.getCurrentSession().flush();
             Assert.fail();
         } catch(InvalidStateException e) {
+            PoHibernateUtil.getCurrentSession().clear();
+            oc1 = (OversightCommittee) PoHibernateUtil.getCurrentSession().get(OversightCommittee.class, oc1.getId());
+            oc2 = (OversightCommittee) PoHibernateUtil.getCurrentSession().get(OversightCommittee.class, oc2.getId());
         }
 
         OversightCommitteeType otherType = new OversightCommitteeType("otherType");

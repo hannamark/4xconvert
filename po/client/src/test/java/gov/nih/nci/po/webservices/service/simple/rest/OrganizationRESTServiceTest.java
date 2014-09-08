@@ -2,7 +2,6 @@ package gov.nih.nci.po.webservices.service.simple.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.coppa.test.TestUtils;
 import gov.nih.nci.coppa.test.TstProperties;
@@ -138,8 +137,7 @@ public class OrganizationRESTServiceTest extends
      * Testcase for OrganizationService-createOrganization
      */
     @Test
-    public void testCreateOrganization() throws Exception {
-        org.setCtepId("111111111");
+    public void testCreateOrganization() throws Exception {        
         StringWriter writer = marshalOrganization(org);
         String url = osUrl + "/organization";
 
@@ -179,8 +177,7 @@ public class OrganizationRESTServiceTest extends
      * Testcase for OrganizationService-createOrganization-JSON Format
      */
     @Test
-    public void testCreateOrganization_JSON() throws Exception {
-        org.setCtepId("111111111");
+    public void testCreateOrganization_JSON() throws Exception {        
         String url = osUrl + "/organization";
         HttpPost postRequest = new HttpPost(url);
         postRequest.addHeader("content-type", APPLICATION_JSON);
@@ -212,8 +209,7 @@ public class OrganizationRESTServiceTest extends
      * Testcase for OrganizationService-createOrganization - ACTIVE Status
      */
     @Test
-    public void testCreateActiveOrganization() throws Exception {
-        org.setCtepId("111111111");
+    public void testCreateActiveOrganization() throws Exception {        
         org.setStatus(EntityStatus.ACTIVE);
         StringWriter writer = marshalOrganization(org);
         String url = osUrl + "/organization";
@@ -339,6 +335,50 @@ public class OrganizationRESTServiceTest extends
     }
 
     /**
+     * Testcase for OrganizationService-createOrganization-CTEP ID is
+     * present
+     */
+    @Test
+    public void testCreateOrganizationCtepIdPresent() throws Exception {
+        String url = osUrl + "/organization";
+        org.setCtepId("VA212");
+        StringWriter writer = marshalOrganization(org);
+
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_XML);
+        postRequest.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgEntity = new StringEntity(writer.getBuffer().toString());
+        postRequest.setEntity(orgEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains("Organization couldn't be created as CTEP ID VA212 is passed in the request"));
+    }
+
+    /**
+     * Testcase for OrganizationService-createOrganization-CTEP ID is
+     * present - JSON Format
+     */
+    @Test
+    public void testCreateOrganizationCtepIdPresent_JSON() throws Exception {
+        org.setCtepId("VA212");
+        String url = osUrl + "/organization";
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_JSON);
+        postRequest.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgEntity = new StringEntity(
+                mapper.writeValueAsString(org));
+        postRequest.setEntity(orgEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains("Organization couldn't be created as CTEP ID VA212 is passed in the request"));
+    }
+    /**
      * Testcase for OrganizationService-createOrganization-Address not present
      */
     @Test
@@ -455,8 +495,7 @@ public class OrganizationRESTServiceTest extends
         createdOrg.setAddress(getJaxbAddressList().get(1));
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
-        createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
-        createdOrg.setCtepId("22222222222");        
+        createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated      
 
         // now update the created organization (HttpPut)
         String url = osUrl + "/organization/" + createdOrg.getId();
@@ -495,7 +534,6 @@ public class OrganizationRESTServiceTest extends
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
         createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
-        createdOrg.setCtepId("22222222222"); 
 
         // now update the created organization (HttpPut)
         String url = osUrl + "/organization/" + createdOrg.getId();
@@ -715,8 +753,7 @@ public class OrganizationRESTServiceTest extends
         createdOrg.setAddress(getJaxbAddressList().get(1));
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
-        createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
-        createdOrg.setCtepId("22222222222");        
+        createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated       
 
         // now update the created organization, it should create a Change Request
         String url = osUrl + "/organization/" + createdOrg.getId();
@@ -753,7 +790,6 @@ public class OrganizationRESTServiceTest extends
         // clear the existing contacts & set new one
         createdOrg.getContact().clear();
         createdOrg.getContact().addAll(getJaxbUpdatedContactList()); // updated
-        createdOrg.setCtepId("22222222222"); 
 
         // now update the created organization (HttpPut)
         String url = osUrl + "/organization/" + createdOrg.getId();
@@ -832,6 +868,70 @@ public class OrganizationRESTServiceTest extends
 
         assertEquals(405, getReponseCode(response));
     }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganization-CTEP Id Present In Request
+     * 
+     * @throws Exception
+     */
+    
+    @Test
+    public void testUpdateOrganizationCtepIdPresent()
+            throws Exception {
+        // create a Organization first
+        Organization createdOrg = createActiveOrganization();
+        createdOrg.setName("updated name");
+        createdOrg.setCtepId("MD212");
+
+        // now update the created organization (HttpPut)
+        String url = osUrl + "/organization/" + createdOrg.getId();
+        StringWriter writer = marshalOrganization(createdOrg);
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_XML);
+        putReq.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgEntity = new StringEntity(writer.getBuffer().toString());
+        putReq.setEntity(orgEntity);
+        HttpResponse response = httpClient.execute(putReq);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains("Organization couldn't be updated as CTEP ID MD212 is passed in the request"));
+    }
+
+    /**
+     * Testcase for OrganizationService-updateOrganization-CTEP Id Present In Request
+     * - JSON Format
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testUpdateOrganizationCtepIdPresent_JSON()
+            throws Exception {
+        // create a organization first
+        Organization createdOrg = createActiveOrganization();
+
+        // now change some attributes of the newly created organization
+        createdOrg.setName("My Mayo");
+        createdOrg.setCtepId("MD212");
+
+        // now update the created organization (HttpPut)
+        String url = osUrl + "/organization/" + createdOrg.getId();
+
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_JSON);
+        putReq.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgEntity = new StringEntity(
+                mapper.writeValueAsString(createdOrg));
+        putReq.setEntity(orgEntity);
+        HttpResponse response = httpClient.execute(putReq);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains("Organization couldn't be updated as CTEP ID MD212 is passed in the request"));
+    }
+    
 
     /**
      * Testcase for OrganizationService-updateOrganization-organization is NULL
@@ -1691,21 +1791,22 @@ public class OrganizationRESTServiceTest extends
         // create an ACTIVE organization first
         Organization createdOrg = createActiveOrganization();
                 
-        // create HCF with CETP ID and search the Org by that CTEP ID
-        String hcfCtepId = RandomStringUtils.random(57, true, true);
+        // create HCF and search the Org by that CTEP ID
+        String hcfCtepId = RandomStringUtils.random(10, true, true);
         HealthCareFacility hcf = getHealthCareFacilityObj();
-        hcf.setCtepId(hcfCtepId);
         hcf.setOrganizationId(createdOrg.getId());
         String url = osUrl + "/role";
         StringWriter writer = marshalOrganizationRole(hcf);
         HttpPost postRequest = new HttpPost(url);
         postRequest.addHeader("content-type", APPLICATION_XML);
         postRequest.addHeader("Accept", APPLICATION_XML);
-        StringEntity orgRolEntity = new StringEntity(writer.getBuffer()
-                .toString());
+        StringEntity orgRolEntity = new StringEntity(writer.getBuffer().toString());
         postRequest.setEntity(orgRolEntity);        
         HttpResponse postRes = httpClient.execute(postRequest);
-        EntityUtils.consume(postRes.getEntity());
+        OrganizationRole orgRole = unmarshalOrganizationRole(postRes.getEntity());
+        
+        // now set the CTEP ID for this HCF
+        createHcfCtepId(orgRole.getId(), hcfCtepId);
 
         // search the Org using HCF CTEP ID
         url = osUrl + "/organizations?ctepID=" + hcfCtepId;
@@ -1729,9 +1830,8 @@ public class OrganizationRESTServiceTest extends
         
         
         // create RO with CETP ID and search the Org by that CTEP ID
-        String roCtepId = RandomStringUtils.random(58, true, true);
+        String roCtepId = RandomStringUtils.random(10, true, true);
         ResearchOrganization ro = getResearchOrganizationObj();
-        ro.setCtepId(roCtepId);
         ro.setOrganizationId(createdOrg.getId());
         url = osUrl + "/role";
         writer = marshalOrganizationRole(ro);
@@ -1741,7 +1841,10 @@ public class OrganizationRESTServiceTest extends
         orgRolEntity = new StringEntity(writer.getBuffer().toString());
         postRequest.setEntity(orgRolEntity);        
         postRes = httpClient.execute(postRequest);
-        EntityUtils.consume(postRes.getEntity());
+        orgRole = unmarshalOrganizationRole(postRes.getEntity());
+        
+        // now set the CTEP ID for this RO
+        createROCtepId(orgRole.getId(), roCtepId);
 
         // search the Org using RO CTEP ID
         url = osUrl + "/organizations?ctepID=" + roCtepId;
@@ -1759,7 +1862,7 @@ public class OrganizationRESTServiceTest extends
         
         
         // create IdentifiedOrganization with CETP ID and search the Org by that CTEP ID
-        String ioCtepId = RandomStringUtils.random(56, true, true);
+        String ioCtepId = RandomStringUtils.random(10, true, true);
         createIdentifiedOrganization(createdOrg.getId(), ioCtepId);
         
         // search the Org using IO CTEP ID
@@ -1786,11 +1889,10 @@ public class OrganizationRESTServiceTest extends
         // create an ACTIVE organization first
         Organization createdOrg = createActiveOrganization();
         
-        // create HCF with CETP ID and search the Org by that CTEP ID
-        String hcfCtepId = RandomStringUtils.random(58, true, true);
+        // create HCF and search the Org by that CTEP ID
+        String hcfCtepId = RandomStringUtils.random(10, true, true);
         HealthCareFacility hcf = getHealthCareFacilityObj();
         hcf.setOrganizationId(createdOrg.getId());
-        hcf.setCtepId(hcfCtepId);
         String url = osUrl + "/role";
         HttpPost postRequest = new HttpPost(url);
         postRequest.addHeader("content-type", APPLICATION_JSON);
@@ -1800,8 +1902,12 @@ public class OrganizationRESTServiceTest extends
         StringEntity orgRolEntity = new StringEntity(
                 mapper.writeValueAsString(hcf));
         postRequest.setEntity(orgRolEntity);
-        HttpResponse response = httpClient.execute(postRequest);       
-        EntityUtils.consume(response.getEntity());
+        HttpResponse response = httpClient.execute(postRequest); 
+        String rolJSONStr = EntityUtils.toString(response.getEntity(), "utf-8");
+        OrganizationRole orgRole = mapper.readValue(rolJSONStr,OrganizationRole.class);
+
+        // now set the CTEP ID for this HCF
+        createHcfCtepId(orgRole.getId(), hcfCtepId);
 
         // search the Org using HCF CTEP ID
         url = osUrl + "/organizations?ctepID=" + hcfCtepId;
@@ -1823,10 +1929,9 @@ public class OrganizationRESTServiceTest extends
             assertEquals(osr.getHcfCtepID(), hcfCtepId);
         }
         
-        // create RO with CETP ID and search the Org by that CTEP ID
-        String roCtepId = RandomStringUtils.random(58, true, true);
+        // create RO and search the Org by that CTEP ID
+        String roCtepId = RandomStringUtils.random(10, true, true);
         ResearchOrganization ro = getResearchOrganizationObj();
-        ro.setCtepId(roCtepId);
         ro.setOrganizationId(createdOrg.getId());
         url = osUrl + "/role";
         postRequest = new HttpPost(url);
@@ -1836,8 +1941,12 @@ public class OrganizationRESTServiceTest extends
         mapper = new ObjectMapper();
         orgRolEntity = new StringEntity(mapper.writeValueAsString(ro));
         postRequest.setEntity(orgRolEntity);
-        response = httpClient.execute(postRequest);       
-        EntityUtils.consume(response.getEntity());
+        response = httpClient.execute(postRequest); 
+        rolJSONStr = EntityUtils.toString(response.getEntity(), "utf-8");
+        orgRole = mapper.readValue(rolJSONStr,OrganizationRole.class);
+
+        // now set the CTEP ID for this RO
+        createROCtepId(orgRole.getId(), roCtepId);
 
         // search the Org using RO CTEP ID
         url = osUrl + "/organizations?ctepID=" + roCtepId;
@@ -2387,7 +2496,6 @@ public class OrganizationRESTServiceTest extends
                 .getEntity());
         assertTrue(orgRole instanceof HealthCareFacility);
         assertNotNull(orgRole.getId());
-        assertNotNull(((HealthCareFacility)orgRole).getCtepId());
         assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the details in DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
@@ -2421,7 +2529,6 @@ public class OrganizationRESTServiceTest extends
                 OrganizationRole.class);
         assertTrue(orgRole instanceof HealthCareFacility);
         assertNotNull(orgRole.getId());
-        assertNotNull(((HealthCareFacility)orgRole).getCtepId());
         assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
         // check the details in DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
@@ -2430,73 +2537,7 @@ public class OrganizationRESTServiceTest extends
                 "http://www.mayoclinic.org");
     }
     
-    /**
-     * Testcase for OrganizationService-createOrganizationRole-HCF -
-     * CTEP ID is not passed.
-     */
-    @Test
-    public void testCreateOrganizationRoleHCFWithoutCTPEId() throws Exception {
-        HealthCareFacility hcf = getHealthCareFacilityObj();
-        hcf.setCtepId(null);
-        String url = osUrl + "/role";
-        StringWriter writer = marshalOrganizationRole(hcf);
-        HttpPost postRequest = new HttpPost(url);
-        postRequest.addHeader("content-type", APPLICATION_XML);
-        postRequest.addHeader("Accept", APPLICATION_XML);
-        StringEntity orgRolEntity = new StringEntity(writer.getBuffer()
-                .toString());
-        postRequest.setEntity(orgRolEntity);
-        HttpResponse response = httpClient.execute(postRequest);
-
-        assertEquals(201, getReponseCode(response));
-        assertEquals(APPLICATION_XML, getResponseContentType(response));
-
-        OrganizationRole orgRole = unmarshalOrganizationRole(response
-                .getEntity());
-        assertTrue(orgRole instanceof HealthCareFacility);
-        assertNotNull(orgRole.getId());
-        assertNull(((HealthCareFacility)orgRole).getCtepId());
-        // check the details in DB for HCF
-        checkOrgRoleAddressDetails(hcf, orgRole);
-        checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
-                "571-456-1245", "571-456-1278", "571-123-1123",
-                "http://www.mayoclinic.org");
-    }
-
-    /**
-     * Testcase for OrganizationService-createOrganizationRole-HCF - 
-     * CTEP ID is not passed.- JSON Format
-     */
-    @Test
-    public void testCreateOrganizationRoleHCFWithoutCTPEId_JSON() throws Exception {
-        HealthCareFacility hcf = getHealthCareFacilityObj();
-        hcf.setCtepId(null);
-        String url = osUrl + "/role";
-        HttpPost postRequest = new HttpPost(url);
-        postRequest.addHeader("content-type", APPLICATION_JSON);
-        postRequest.addHeader("Accept", APPLICATION_JSON);
-
-        ObjectMapper mapper = new ObjectMapper();
-        StringEntity orgRolEntity = new StringEntity(
-                mapper.writeValueAsString(hcf));
-        postRequest.setEntity(orgRolEntity);
-        HttpResponse response = httpClient.execute(postRequest);
-
-        assertEquals(201, getReponseCode(response));
-        assertEquals(APPLICATION_JSON, getResponseContentType(response));
-        String perJSONStr = EntityUtils.toString(response.getEntity(), "utf-8");
-
-        OrganizationRole orgRole = mapper.readValue(perJSONStr,
-                OrganizationRole.class);
-        assertTrue(orgRole instanceof HealthCareFacility);
-        assertNotNull(orgRole.getId());
-        assertNull(((HealthCareFacility)orgRole).getCtepId());
-        // check the details in DB for HCF
-        checkOrgRoleAddressDetails(hcf, orgRole);
-        checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
-                "571-456-1245", "571-456-1278", "571-123-1123",
-                "http://www.mayoclinic.org");
-    }
+    
 
     /**
      * Testcase for OrganizationService-createOrganizationRole-OverComm
@@ -2719,6 +2760,103 @@ public class OrganizationRESTServiceTest extends
                 "organizationRoleId is present in the request"));
     }
 
+    
+    /**
+     * Testcase for OrganizationService-createOrganizationRole-HCF-CTEP ID
+     * present in the request
+     */
+    @Test
+    public void testCreateOrganizationRoleHCFForCtepIdPresent() throws Exception {
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setCtepId("VA212");
+
+        StringWriter writer = marshalOrganizationRole(hcf);
+        String url = osUrl + "/role";
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_XML);
+        postRequest.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgEntity = new StringEntity(writer.getBuffer().toString());
+        postRequest.setEntity(orgEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "The OrganizationRole couldn't be created as CTEP ID VA212 is passed in the request."));
+    }
+
+    /**
+     * Testcase for OrganizationService-createOrganizationRole-HCF-CTEP ID
+     * present in the request - JSON Format
+     */
+    @Test
+    public void testCreateOrganizationRoleHCFForCtepIdPresent_JSON()
+            throws Exception {
+        HealthCareFacility hcf = getHealthCareFacilityObj();
+        hcf.setCtepId("VA212");
+        String url = osUrl + "/role";
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_JSON);
+        postRequest.addHeader("Accept", APPLICATION_JSON);
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgRolEntity = new StringEntity(
+                mapper.writeValueAsString(hcf));
+        postRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "The OrganizationRole couldn't be created as CTEP ID VA212 is passed in the request."));
+    }
+    
+    /**
+     * Testcase for OrganizationService-createOrganizationRole-RO-CTEP ID
+     * present in the request
+     */
+    @Test
+    public void testCreateOrganizationRoleROForCtepIdPresent() throws Exception {
+        ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setCtepId("VA212");
+
+        StringWriter writer = marshalOrganizationRole(ro);
+        String url = osUrl + "/role";
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_XML);
+        postRequest.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgEntity = new StringEntity(writer.getBuffer().toString());
+        postRequest.setEntity(orgEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "The OrganizationRole couldn't be created as CTEP ID VA212 is passed in the request."));
+    }
+
+    /**
+     * Testcase for OrganizationService-createOrganizationRole-RO-CTEP ID
+     * present in the request - JSON Format
+     */
+    @Test
+    public void testCreateOrganizationRoleROForCtepIdPresent_JSON()
+            throws Exception {
+        ResearchOrganization ro = getResearchOrganizationObj();
+        ro.setCtepId("VA212");
+        String url = osUrl + "/role";
+        HttpPost postRequest = new HttpPost(url);
+        postRequest.addHeader("content-type", APPLICATION_JSON);
+        postRequest.addHeader("Accept", APPLICATION_JSON);
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgRolEntity = new StringEntity(
+                mapper.writeValueAsString(ro));
+        postRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(postRequest);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "The OrganizationRole couldn't be created as CTEP ID VA212 is passed in the request."));
+    }
+    
     /**
      * Testcase for OrganizationService-updateOrganizationRole-HCF
      */
@@ -3047,6 +3185,114 @@ public class OrganizationRESTServiceTest extends
         HttpResponse response = httpClient.execute(putRequest);
 
         assertEquals(404, getReponseCode(response));
+    }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-HCF-CTEP ID present in the request
+     */
+    @Test
+    public void testUpdateOrganizationRoleHCFForCTEPIdPresent()
+            throws Exception {
+        // create HCF first
+        HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
+        hcf.setCtepId("VA222");
+
+        String url = osUrl + "/role/HealthCareFacility/" + hcf.getId();
+        StringWriter writer = marshalOrganizationRole(hcf);
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_XML);
+        putReq.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgRolEntity = new StringEntity(writer.getBuffer()
+                .toString());
+        putReq.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(putReq);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "The OrganizationRole couldn't be updated as CTEP ID VA222 is passed in the request."));
+    }
+
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-HCF-CTEP ID present in the request-JSON Format
+     */
+    @Test
+    public void testUpdateOrganizationRoleHCFForCTEPIdPresent_JSON()
+            throws Exception {
+        // create HCF first
+        HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
+        hcf.setCtepId("VA222");
+
+        String url = osUrl + "/role/HealthCareFacility/" + hcf.getId();
+
+        HttpPut putRequest = new HttpPut(url);
+        putRequest.addHeader("content-type", APPLICATION_JSON);
+        putRequest.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgRolEntity = new StringEntity(mapper.writeValueAsString(hcf));
+        putRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(putRequest);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "The OrganizationRole couldn't be updated as CTEP ID VA222 is passed in the request."));
+    }
+    
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-RO-CTEP ID present in the request
+     */
+    @Test
+    public void testUpdateOrganizationRoleROForCTEPIdPresent()
+            throws Exception {
+        // create RO first
+        ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
+        ro.setCtepId("VA222");
+
+        String url = osUrl + "/role/ResearchOrganization/" + ro.getId();
+
+        StringWriter writer = marshalOrganizationRole(ro);
+        HttpPut putReq = new HttpPut(url);
+        putReq.addHeader("content-type", APPLICATION_XML);
+        putReq.addHeader("Accept", APPLICATION_XML);
+        StringEntity orgRolEntity = new StringEntity(writer.getBuffer()
+                .toString());
+        putReq.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(putReq);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "The OrganizationRole couldn't be updated as CTEP ID VA222 is passed in the request."));
+    }
+
+    /**
+     * Testcase for OrganizationService-updateOrganizationRole-CTEP ID present in the request-JSON Format
+     */
+    @Test
+    public void testUpdateOrganizationRoleROForCTEPIdPresent_JSON()
+            throws Exception {
+        // create RO first
+        ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
+        ro.setCtepId("VA222");
+
+        String url = osUrl + "/role/ResearchOrganization/" + ro.getId();
+
+        HttpPut putRequest = new HttpPut(url);
+        putRequest.addHeader("content-type", APPLICATION_JSON);
+        putRequest.addHeader("Accept", APPLICATION_JSON);
+
+        ObjectMapper mapper = new ObjectMapper();
+        StringEntity orgRolEntity = new StringEntity(
+                mapper.writeValueAsString(ro));
+        putRequest.setEntity(orgRolEntity);
+        HttpResponse response = httpClient.execute(putRequest);
+
+        assertEquals(500, getReponseCode(response));
+        assertEquals(TXT_PLAIN, getResponseContentType(response));
+        assertTrue(getResponseMessage(response).contains(
+                "The OrganizationRole couldn't be updated as CTEP ID VA222 is passed in the request."));
     }
 
     /**
@@ -3700,7 +3946,6 @@ public class OrganizationRESTServiceTest extends
         assertEquals(200, getReponseCode(getResponse));
         assertEquals(APPLICATION_XML, getResponseContentType(getResponse));
         assertEquals(hcf.getName(), retOrgRole.getName());
-        assertEquals(hcf.getCtepId(), retOrgRole.getCtepId());
     }
 
     /**
@@ -3732,7 +3977,6 @@ public class OrganizationRESTServiceTest extends
         assertEquals(200, getReponseCode(getResponse));
         assertEquals(APPLICATION_JSON, getResponseContentType(getResponse));
         assertEquals(hcf.getName(), retOrgRole.getName());
-        assertEquals(hcf.getCtepId(), retOrgRole.getCtepId());
     }
 
     /**
@@ -3815,7 +4059,6 @@ public class OrganizationRESTServiceTest extends
         assertEquals(200, getReponseCode(getResponse));
         assertEquals(APPLICATION_XML, getResponseContentType(getResponse));
         assertEquals(ro.getName(), retOrgRole.getName());
-        assertEquals(ro.getCtepId(), retOrgRole.getCtepId());
         assertEquals(ro.getType().value(), retOrgRole.getType().value());
         assertEquals(ro.getFundingMechanism().value(), retOrgRole.getFundingMechanism().value());
     }
@@ -3848,7 +4091,6 @@ public class OrganizationRESTServiceTest extends
         assertEquals(200, getReponseCode(getResponse));
         assertEquals(APPLICATION_JSON, getResponseContentType(getResponse));
         assertEquals(ro.getName(), retOrgRole.getName());
-        assertEquals(ro.getCtepId(), retOrgRole.getCtepId());
         assertEquals(ro.getType().value(), retOrgRole.getType().value());
         assertEquals(ro.getFundingMechanism().value(), retOrgRole.getFundingMechanism().value());
     }
@@ -3896,19 +4138,21 @@ public class OrganizationRESTServiceTest extends
     public void testGetOrganizationRolesByCtepId() throws Exception {
 
         Organization organization = createActiveOrganization();
-        String randomCtepId = RandomStringUtils.random(46, true, true);
+        String randomCtepId = RandomStringUtils.random(10, true, true);
 
-        // create a role-HCF for this CtepId
+        // create a role-HCF 
         HealthCareFacility hcf = getHealthCareFacilityObj();
         hcf.setOrganizationId(organization.getId());
-        hcf.setCtepId(randomCtepId);// set the CtepId
         hcf = (HealthCareFacility) createOrgRole(hcf);
+        // now set the CTEP ID for this HCF
+        createHcfCtepId(hcf.getId(), randomCtepId);
 
-        // create a role-RO for this CtepId
+        // create a role-RO 
         ResearchOrganization ro = getResearchOrganizationObj();
         ro.setOrganizationId(organization.getId());
-        ro.setCtepId(randomCtepId); // set the CtepId
         ro = (ResearchOrganization) createOrgRole(ro);
+        // now set the CTEP ID for this RO
+        createROCtepId(ro.getId(), randomCtepId);
 
         // get the Roles by the CtepId.
         String getUrl = osUrl + "/organization/ctep/" + randomCtepId;
@@ -4183,8 +4427,7 @@ public class OrganizationRESTServiceTest extends
     }
 
     private HealthCareFacility getHealthCareFacilityObj() throws Exception {
-        HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setCtepId("1234567");
+        HealthCareFacility hcf = new HealthCareFacility();        
         hcf.setName("Mayo HCF");
         hcf.setOrganizationId(createActiveOrganization().getId());
         hcf.setStatus(EntityStatus.ACTIVE);
@@ -4204,8 +4447,7 @@ public class OrganizationRESTServiceTest extends
     }
 
     private ResearchOrganization getResearchOrganizationObj() throws Exception {
-        ResearchOrganization ro = new ResearchOrganization();
-        ro.setCtepId("1221234");
+        ResearchOrganization ro = new ResearchOrganization();        
         ro.setName("Mayo RO");
         ro.setOrganizationId(createActiveOrganization().getId());
         ro.setType(ResearchOrganizationType.NWK);

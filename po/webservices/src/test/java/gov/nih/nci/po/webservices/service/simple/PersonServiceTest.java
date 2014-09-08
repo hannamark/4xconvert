@@ -103,16 +103,13 @@ public class PersonServiceTest extends AbstractEndpointTest {
         person.setSuffix("Sr");
         person.setStatus(EntityStatus.PENDING);
 
-        person.setAddress(getJaxbAddressList().get(0));
-        person.setCtepId("25879");
+        person.setAddress(getJaxbAddressList().get(0));        
         person.getContact().addAll(getJaxbContactList());
 
         psCriteria = new PersonSearchCriteria();
         psCriteria.setFirstName("Rohit");
         psCriteria.setOffset(0);
         psCriteria.setLimit(5);
-
-
 
         perService = new PersonServiceImpl();
         perService.setPersonBoService(personBoService);
@@ -136,8 +133,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
      */
     @Test
     public void testCreatePerson() throws JMSException, EntityValidationException {
-        when(personBoService.create(any(gov.nih.nci.po.data.bo.Person.class), anyString()))
-                .thenReturn(1L);
+        when(personBoService.create(any(gov.nih.nci.po.data.bo.Person.class))).thenReturn(1L);
 
         when(personBoService.getById(1L)).thenAnswer(new Answer<gov.nih.nci.po.data.bo.Person>() {
             @Override
@@ -172,7 +168,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
     @Test(expected = ServiceException.class)
     public void testCreatePersonEntityValidationExceptionScenario()
             throws EntityValidationException, JMSException {
-        when(personBoService.create(isA(gov.nih.nci.po.data.bo.Person.class), isA(String.class)))
+        when(personBoService.create(isA(gov.nih.nci.po.data.bo.Person.class)))
                 .thenThrow(
                         new EntityValidationException(
                                 "EntityValidationException Occured while creating the person.",
@@ -194,24 +190,19 @@ public class PersonServiceTest extends AbstractEndpointTest {
     public void testCreatePersonForExceptionScenario()
             throws EntityValidationException, JMSException {
         when(personBoService
-                        .create(isA(gov.nih.nci.po.data.bo.Person.class),isA(String.class)))
+                        .create(isA(gov.nih.nci.po.data.bo.Person.class)))
                 .thenThrow(
-                        new ServiceException(
-                                "Exception Occured while creating the person.",
-                                null));
+                        new ServiceException("Exception Occured while creating the person.", null));
         perService.createPerson(person);
     }
-
+    
     /**
-     * Testcase for PersonService-createPerson-CtepOrganizationNotFound scenario
+     * Testcase for PersonService-createPerson-Exception scenario
      */
     @Test(expected = ServiceException.class)
-    public void testCreatePersonForCtepOrganizationNotFound()
+    public void testCreatePersonHavingCTEPID()
             throws EntityValidationException, JMSException {
-
-        // Mock setup for getting Organization
-        PowerMockito.when(PoServiceUtil.getCtepOrganization()).thenReturn(null);
-
+        person.setCtepId("VA202");
         perService.createPerson(person);
     }
 
@@ -233,7 +224,7 @@ public class PersonServiceTest extends AbstractEndpointTest {
         Person retPerson = perService.updatePerson(person);
         Assert.assertNotNull(retPerson);
         Assert.assertEquals(1l, retPerson.getId().longValue());
-        verify(personBoService).curate(any(gov.nih.nci.po.data.bo.Person.class), anyString());
+        verify(personBoService).curate(any(gov.nih.nci.po.data.bo.Person.class));
     }
 
     /**
@@ -267,33 +258,30 @@ public class PersonServiceTest extends AbstractEndpointTest {
          doThrow(
                 new ServiceException(
                         "Exception Occured while updating the Person.")).when(
-                personBoService).curate(isA(gov.nih.nci.po.data.bo.Person.class), anyString());
+                personBoService).curate(isA(gov.nih.nci.po.data.bo.Person.class));
 
         Person per = new Person();
         per.setId(5l);
         per.setStatus(EntityStatus.ACTIVE);
-        per.setCtepId("12345");
-
         
         perService.updatePerson(per);
     }
 
     /**
-     * Testcase for PersonService-updatePerson-CtepOrganizationNotFound scenario
+     * Testcase for PersonService-updatePerson-Exception Scenario
+     * 
+     * @throws JMSException
+     * @throws EntityValidationException 
      */
     @Test(expected = ServiceException.class)
-    public void testUpdatePersonForCtepOrganizationNotFound()
-            throws EntityValidationException, JMSException {
+    public void testUpdatePersonHavingCTEPID() throws JMSException, EntityValidationException {
 
-        // Mock setup for getting Organization
-        OrganizationServiceLocal orgSerLocal = mock(OrganizationServiceLocal.class);
-        when(serviceLocator.getOrganizationService()).thenReturn(orgSerLocal);
-        when(
-                orgSerLocal.search(isA(OrganizationSearchCriteria.class),
-                        isA(PageSortParams.class))).thenReturn(null);
-
+        Person per = new Person();
+        per.setId(5l);
+        per.setStatus(EntityStatus.ACTIVE);
+        per.setCtepId("VA212");
         
-        perService.updatePerson(person);
+        perService.updatePerson(per);
     }
 
     /**

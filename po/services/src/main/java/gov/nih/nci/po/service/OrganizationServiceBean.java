@@ -83,6 +83,7 @@
 package gov.nih.nci.po.service; // NOPMD
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.EntityStatus;
@@ -104,6 +105,7 @@ import gov.nih.nci.po.service.OrganizationSearchDTO.AliasDTO;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
 import gov.nih.nci.po.util.MergeOrganizationHelper;
 import gov.nih.nci.po.util.MergeOrganizationHelperImpl;
+import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.RoleStatusChangeHelper;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
@@ -113,6 +115,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
@@ -316,10 +319,23 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         Set<Correlation> associatedRoles = getAssociatedRoles(org, s);
         List<Correlation> changes = new ArrayList<Correlation>();
         for (Correlation correlation : associatedRoles) {
+
             changes.addAll(mergePlayedRoleCorrelation(org, dup, correlation));
             changes.addAll(mergeScopedRoleCorrelation(org, dup, correlation));
+
         }
         curateMergedCorrelations(changes);
+    }
+
+    private boolean isCtepId(Correlation correlation) {
+        boolean isCtepId = false;
+
+        if (correlation instanceof IdentifiedOrganization) {
+            String root = ((IdentifiedOrganization) correlation).getAssignedIdentifier().getRoot();
+            isCtepId = StringUtils.equals(PoConstants.ORG_CTEP_ID_ROOT, root);
+        }
+
+        return isCtepId;
     }
 
     private List<Correlation> mergeScopedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
@@ -344,15 +360,71 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                 && ((PlayedRole) correlation).getPlayer().getId().equals(org.getId())) {
             PlayedRole<Organization> pr = (PlayedRole<Organization>) correlation;
             pr.setPlayer(dup);
-            activateRoleStatusByDupStatus(dup, correlation);
+
+            if (isCtepId(correlation) && org.getStatusCode() == EntityStatus.NULLIFIED) {
+                correlation.setStatus(RoleStatus.NULLIFIED);
+            } else {
+                activateRoleStatusByDupStatus(dup, correlation);
+            }
+
             if (isChangeConflicting(correlation)) {
                 changes.addAll(mergeOrganizationHelper.handleConflictingPlayedRoleCorrelation(org,
                         correlation));
             } else {
                 changes.add(correlation);
             }
+
+            removeCtepIds(correlation);
         }
         return changes;
+    }
+
+    private void removeCtepIds(Correlation correlation) {
+        Set<Ii> ctepIdentifiers = getCtepIdentifiers(correlation.getOtherIdentifiers());
+
+        for (Ii ctepIi : ctepIdentifiers) {
+            correlation.getOtherIdentifiers().remove(ctepIi);
+        }
+
+        String prefix = getOtherIdentifierDatabasePrefix(correlation);
+
+        if (prefix != null) {
+            String sql = String.format(
+                    "delete from %s_otheridentifier where %s_id=:corrId and root=:root",
+                    prefix,
+                    prefix
+            );
+            Query query = PoHibernateUtil.getCurrentSession().createSQLQuery(sql);
+            query.setParameter("corrId", correlation.getId());
+            query.setParameter("root", PoConstants.ORG_CTEP_ID_ROOT);
+            query.executeUpdate();
+        }
+    }
+
+    private String getOtherIdentifierDatabasePrefix(Correlation correlation) {
+        String result = null;
+
+        if (correlation instanceof ResearchOrganization) {
+            result = "ro";
+        } else if (correlation instanceof HealthCareFacility) {
+            result = "hcf";
+        }
+
+        return result;
+    }
+
+
+    private Set<Ii> getCtepIdentifiers(Set<Ii> otherIdentifiers) {
+        Set<Ii> result = new HashSet<Ii>();
+
+        for (Ii ii : otherIdentifiers) {
+
+            if (ii.getRoot() == PoConstants.ORG_CTEP_ID_ROOT) {
+                result.add(ii);
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -523,31 +595,36 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         OrganizationSearchDTO dto = new OrganizationSearchDTO();
         dto.setId(((Number) row[0]).longValue());
         dto.setName((String) row[1]);
-        dto.setFamilyName((String) row[2]);
-        dto.setRoCtepId((String) row[3]);
-        dto.setHcfCtepId((String) row[4]);
-        dto.setChangeRequests(((BigInteger) row[5]).intValue());
-        dto.setPendingROs(((BigInteger) row[6]).intValue());
-        dto.setPendingHCFs(((BigInteger) row[7]).intValue());
-        dto.setStatusCode((String) row[8]);
-        dto.setStatusDate((Date) row[9]);
-        dto.setTotalROs(((BigInteger) row[10]).intValue());
-        dto.setTotalHCFs(((BigInteger) row[11]).intValue());
-        dto.setTotalIdOrgs(((BigInteger) row[12]).intValue());
-        dto.setTotalOversightCommitees(((BigInteger) row[13]).intValue());
-        dto.setTotalOrgContacts(((BigInteger) row[14]).intValue());
-        dto.setAddress1((String) row[15]);
-        dto.setAddress2((String) row[16]);
-        dto.setCity((String) row[17]);
-        dto.setState((String) row[18]);
-        dto.setCountry((String) row[19]);
-        dto.setZipCode((String) row[20]);
-        dto.setComments((String) row[21]);
-        dto.setEmailAddresses((String) row[22]);
-        dto.setPhones((String) row[23]);
-        dto.setDuplicateOf(((BigInteger) row[24]));
-        dto.setCountryCode((String) row[25]);
-        dto.setIoCtepId((String) row[26]);
+
+        if (row.length > 2) {
+            //this is dirty, but the only way to make identified orgs testable
+            dto.setFamilyName((String) row[2]);
+            dto.setRoCtepId((String) row[3]);
+            dto.setHcfCtepId((String) row[4]);
+            dto.setChangeRequests(((BigInteger) row[5]).intValue());
+            dto.setPendingROs(((BigInteger) row[6]).intValue());
+            dto.setPendingHCFs(((BigInteger) row[7]).intValue());
+            dto.setStatusCode((String) row[8]);
+            dto.setStatusDate((Date) row[9]);
+            dto.setTotalROs(((BigInteger) row[10]).intValue());
+            dto.setTotalHCFs(((BigInteger) row[11]).intValue());
+            dto.setTotalIdOrgs(((BigInteger) row[12]).intValue());
+            dto.setTotalOversightCommitees(((BigInteger) row[13]).intValue());
+            dto.setTotalOrgContacts(((BigInteger) row[14]).intValue());
+            dto.setAddress1((String) row[15]);
+            dto.setAddress2((String) row[16]);
+            dto.setCity((String) row[17]);
+            dto.setState((String) row[18]);
+            dto.setCountry((String) row[19]);
+            dto.setZipCode((String) row[20]);
+            dto.setComments((String) row[21]);
+            dto.setEmailAddresses((String) row[22]);
+            dto.setPhones((String) row[23]);
+            dto.setDuplicateOf(((BigInteger) row[24]));
+            dto.setCountryCode((String) row[25]);
+            dto.setIoCtepId((String) row[26]);
+        }
+
         return dto;
     }
     // CHECKSTYLE:ON
@@ -899,6 +976,14 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
     public void setFamilyOrganizationRelationshipService(
             FamilyOrganizationRelationshipServiceLocal familyOrganizationRelationshipService) {
         this.familyOrganizationRelationshipService = familyOrganizationRelationshipService;
+    }
+
+    /**
+     *
+     * @param idenOrgServ The IdentifiedOrganization service to use.
+     */
+    public void setIdenOrgServ(IdentifiedOrganizationServiceLocal idenOrgServ) {
+        this.idenOrgServ = idenOrgServ;
     }
 
 }

@@ -261,12 +261,10 @@ public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlati
         verifyRoleServiceCurateCalled();
 
         assertEquals("currentOrgName", localOrg.getName());
-        assertEquals(1, localOrg.getAlias().size());
-        assertEquals("newRoleName", localOrg.getAlias().get(0).getValue());
 
-        assertEquals("currentRoleName", localRole.getName());
+        assertEquals("newRoleName", localRole.getName());
         assertEquals(1, localRole.getAlias().size());
-        assertEquals("newRoleName", localRole.getAlias().get(0).getValue());
+        assertEquals("currentRoleName", localRole.getAlias().get(0).getValue());
     }
 
     protected abstract AbstractEnhancedOrganizationRoleDTO getCtepDto();
@@ -315,8 +313,8 @@ public abstract class CtepOrganizationRoleImportTest<ROLE_TYPE extends Correlati
         //org updated accordingly
         assertEquals("currentOrgName", localOrg.getName());
 
-        //role is unchanged
-        assertEquals("currentRoleName", localRole.getName());
+        //role name is changed
+        assertEquals("newRoleName", localRole.getName());
 
     }
 

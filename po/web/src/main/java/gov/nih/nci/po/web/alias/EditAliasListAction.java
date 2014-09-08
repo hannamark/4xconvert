@@ -136,8 +136,10 @@ public class EditAliasListAction extends ActionSupport implements Preparable {
      * @return aliases - List<Alias>.
      */
     public List<Alias> getAliases() {
-        Collections.sort(aliases, new AliasComparator());        
-        return aliases;        
+        List<Alias> result = new ArrayList<Alias>();
+        result.addAll(aliases);
+        Collections.sort(result, new AliasComparator());
+        return result;
     }
 
     /**
@@ -238,7 +240,7 @@ public class EditAliasListAction extends ActionSupport implements Preparable {
      * @return the list of aliases
      */
     private List<Alias> getList() {
-        return getAliases();
+        return aliases;
     }
 
     /**
