@@ -488,10 +488,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     String errorMsg = createTermsMissingErrorMessage(missingTerms);
                     ServletActionContext.getRequest().setAttribute(
                             Constants.SUCCESS_MESSAGE,
-                            "New Disease " + disease.getNtTermIdentifier()
-                                    + " added successfully. Some parent/child terms were also created in CTRP"
-                                    + " as they were not present in CTRP already. "
-                                    + " Here are the list of term that were created additionally: " + errorMsg);
+                            "The CTRP system imported the disease " + disease.getNtTermIdentifier() + " successfully."
+                             + " It also imported the following parent/child terms:"
+                             + errorMsg);
                 } else {
                     ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                             "New Disease " + disease.getNtTermIdentifier() + " added successfully");
