@@ -113,11 +113,9 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
 import gov.nih.nci.system.query.hibernate.HQLCriteria;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -130,7 +128,6 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -153,6 +150,8 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private static final String DESIGNATION_NAME = "dc.name";
     private static final String DESIGNATION_TYPE = "dc.type";
     private static final String SYNONYM = "Biomarker Synonym";
+    private static final String REGEXPRESSION = "([^a-zA-z0-9])";
+    private static final String REPLACER = "\\\\$1";
     
     private static final String TRUE = "true";
     private String name;
@@ -604,17 +603,20 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         if (searchText != null && !searchText.isEmpty()) {
             String highlight = "<span class=\"highlight\">" + searchText + "</span>";
             if (StringUtils.equals(TRUE, getCaseType())) {
-               outputData = StringUtils.replace(inputData, searchText, highlight);
+               outputData = inputData.replaceAll(searchText.replaceAll(REGEXPRESSION
+                       , REPLACER), highlight);
             } else {
-               outputData = inputData.replaceAll("(?i)" + searchText, "<span class=\"highlight\">$0</span>");
-               
+               outputData = inputData.replaceAll("(?i)" + searchText.replaceAll(REGEXPRESSION
+                      , REPLACER), "<span class=\"highlight\">$0</span>");
             }
             if (!StringUtils.equals(newName, searchText)) {
                 String highlightNew = "<span class=\"highlight\">" + newName + "</span>";
                 if (StringUtils.equals(TRUE, getCaseType())) {
-                    outputData = StringUtils.replace(outputData, newName, highlightNew);
+                    outputData = outputData.replaceAll(newName.replaceAll(REGEXPRESSION,
+                      REPLACER), highlightNew);
                  } else {
-                    outputData = outputData.replaceAll("(?i)" + newName, "<span class=\"highlight\">$0</span>");
+                    outputData = outputData.replaceAll("(?i)" + newName
+                      .replaceAll(REGEXPRESSION, REPLACER), "<span class=\"highlight\">$0</span>");
                  }
             }
         }
