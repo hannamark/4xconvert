@@ -12,9 +12,6 @@ public class OrgFamilyDTO implements Serializable {
 
     private Long id;
     private String name;
-    
-    private String p30SerialNumber;
-    
     /**
      * @return the id
      */
@@ -39,22 +36,4 @@ public class OrgFamilyDTO implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
-    /**
-     * 
-     * @return p30SerialNumber
-     */
-    public String getP30SerialNumber() {
-        return p30SerialNumber;
-    }
-    
-    /**
-     * 
-     * @param p30SerialNumber the serial number to set
-     */
-    public void setP30SerialNumber(String p30SerialNumber) {
-        this.p30SerialNumber = p30SerialNumber;
-    }
-    
-    
 }

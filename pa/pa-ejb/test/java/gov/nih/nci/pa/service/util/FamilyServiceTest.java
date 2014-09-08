@@ -34,17 +34,11 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.po.ws.common.types.EntityStatus;
-import gov.nih.nci.po.ws.common.types.Family;
-import gov.nih.nci.po.ws.common.types.FamilyMember;
-import gov.nih.nci.po.ws.common.types.FamilyMemberType;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.webservices.rest.client.FamilyRestServiceClient;
-import gov.nih.nci.webservices.rest.client.util.PoRestServiceLocator;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -67,7 +61,6 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
     private FamilyServiceBeanLocal ejb;
     private OrganizationEntityServiceRemote oes;
     private FamilyServiceRemote fs;
-    private FamilyRestServiceClient fsc;
     RegistryUserServiceLocal registryUserEjb;
     StudySiteAccrualAccessServiceBean siteAccessEjb;
     ParticipatingOrgServiceBean partOrgEjb;
@@ -78,16 +71,11 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
     @Before
     public void setUp() throws Exception {
         PoServiceLocator psl = mock(PoServiceLocator.class);
-        PoRestServiceLocator prsl = mock(PoRestServiceLocator.class);
         oes = mock(OrganizationEntityServiceRemote.class);
         when(psl.getOrganizationEntityService()).thenReturn(oes);
         fs = mock(FamilyServiceRemote.class);
         when(psl.getFamilyService()).thenReturn(fs);
-        fsc = mock(FamilyRestServiceClient.class);
-        when(prsl.getFamilyService()).thenReturn(fsc);
-        when(prsl.getFamilyServiceRemote()).thenReturn(fs);
         PoRegistry.getInstance().setPoServiceLocator(psl);
-        PoRegistry.getInstance().setPoResPoServiceLocator(prsl);
         TestSchema.primeData();
         sess = PaHibernateUtil.getCurrentSession();
         ru = (RegistryUser) sess.get(RegistryUser.class, TestSchema.registryUserIds.get(0));
@@ -148,11 +136,19 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         Long orgId = getCompleteTrialLeadOrgId();
         ru.setAffiliatedOrganizationId(orgId);
         TestSchema.addUpdObject(ru);
-        
-        Family family = getFamily(1L);
-        List<Family> familyList = new ArrayList<Family>();
-        familyList.add(family);
-        when(fsc.search(any(Family.class))).thenReturn(familyList);
+        OrganizationDTO org  = new OrganizationDTO();
+        org.setIdentifier(IiConverter.convertToPoOrganizationIi(orgId.toString()));
+        DSet<Ii> dset = new DSet<Ii>();
+        Set<Ii> familySet = new HashSet<Ii>();
+        dset.setItem(familySet);
+        familySet.add(IiConverter.convertToPoFamilyIi("1"));
+        org.setFamilyOrganizationRelationships(dset);
+        List<OrganizationDTO> result = new ArrayList<OrganizationDTO>();
+        result.add(org);
+        when(oes.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(result);
+        Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
+        familyMap.put(IiConverter.convertToPoFamilyIi("1"), getPoFamilyDTO(1L));
+        when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
         when(fs.getActiveRelationships(1L)).thenReturn(getRelationships(new Long[] {1L}));
 
         List<Long> poOrgIds =  FamilyHelper.getAllRelatedOrgs(ru.getAffiliatedOrganizationId());
@@ -191,19 +187,6 @@ public class FamilyServiceTest extends AbstractHibernateTestCase {
         assertEquals(1, ejb.getSiteAccrualTrials(ru.getAffiliatedOrganizationId()).size());
         convertToAbbreviateTrial();
         assertEquals(1, ejb.getSiteAccrualTrials(ru.getAffiliatedOrganizationId()).size());
-    }
-    
-    private Family getFamily(long index) {
-        Family family = new Family();
-        family.setName("some family name"+index);
-        family.setStatus(EntityStatus.ACTIVE);
-        family.setId(index);
-        FamilyMember fm = new FamilyMember();
-        fm.setFamilyId(index);
-        fm.setOrganizationId(index);
-        fm.setType(FamilyMemberType.ORGANIZATIONAL);
-        family.getMember().add(fm);
-        return family;
     }
 
     @Test

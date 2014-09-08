@@ -14,8 +14,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,13 +39,10 @@ import org.hibernate.Session;
  * @since Nov 30, 2012
  */
 @Stateless
-@Interceptors({ RemoteAuthorizationInterceptor.class,
-        PaHibernateSessionInterceptor.class })
-public class FamilySynchronizationServiceBean implements
-        FamilySynchronizationServiceLocal {
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+public class FamilySynchronizationServiceBean implements FamilySynchronizationServiceLocal {
 
-    private static final Logger LOG = Logger
-            .getLogger(FamilySynchronizationServiceBean.class);
+    private static final Logger LOG = Logger.getLogger(FamilySynchronizationServiceBean.class);
 
     private static final String COMMENT = "Change in PO organization family structure.";
     private static final String SOURCE = "source";
@@ -62,21 +59,14 @@ public class FamilySynchronizationServiceBean implements
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void synchronizeFamilyOrganizationRelationship(Long familyOrgRelId)
-            throws PAException {
+    public void synchronizeFamilyOrganizationRelationship(Long familyOrgRelId) throws PAException {
         if (familyOrgRelId == null) {
             LOG.warn("Called FamilySynchronizationServiceBean.synchronizeFamilyOrganizationRelationship()"
                     + " with a null.");
             return;
         }
-
-        FamilyOrganizationRelationshipDTO dto = PoRegistry
-                .getFamilyServiceRemote()
-                .getFamilyOrganizationRelationship(
-                        IiConverter
-                                .convertToPoFamilyOrgRelationshipIi(familyOrgRelId
-                                        .toString()));
-
+        FamilyOrganizationRelationshipDTO dto = PoRegistry.getFamilyService().getFamilyOrganizationRelationship(
+                IiConverter.convertToPoFamilyOrgRelationshipIi(familyOrgRelId.toString()));
         if (dto == null) {
             LOG.error("Referenced object not found in PO in FamilySynchronizationServiceBean."
                     + "synchronizeFamilyOrganizationRelationship().");
@@ -85,11 +75,9 @@ public class FamilySynchronizationServiceBean implements
         if (isDelete(dto)) {
             Long orgId = IiConverter.convertToLong(dto.getOrgIdentifier());
             removeFamilyAccessToOrgsSubmitters(orgId);
-            removeFamilyAccessToOrgsTrials(orgId,
-                    FamilyServiceBeanLocal.HQL_COMPLETE,
+            removeFamilyAccessToOrgsTrials(orgId, FamilyServiceBeanLocal.HQL_COMPLETE, 
                     StudySiteFunctionalCode.LEAD_ORGANIZATION);
-            removeFamilyAccessToOrgsTrials(orgId,
-                    FamilyServiceBeanLocal.HQL_ABBR,
+            removeFamilyAccessToOrgsTrials(orgId, FamilyServiceBeanLocal.HQL_ABBR, 
                     StudySiteFunctionalCode.TREATING_SITE);
         } else {
             addOrgToFamily(IiConverter.convertToLong(dto.getFamilyIdentifier()));
@@ -97,9 +85,8 @@ public class FamilySynchronizationServiceBean implements
     }
 
     private boolean isDelete(FamilyOrganizationRelationshipDTO dto) {
-        List<FamilyOrganizationRelationshipDTO> activeList = PoRegistry
-                .getFamilyServiceRemote().getActiveRelationships(
-                        IiConverter.convertToLong(dto.getFamilyIdentifier()));
+        List<FamilyOrganizationRelationshipDTO> activeList = PoRegistry.getFamilyService().getActiveRelationships(
+                IiConverter.convertToLong(dto.getFamilyIdentifier()));
         Set<Ii> activeMap = new HashSet<Ii>();
         for (FamilyOrganizationRelationshipDTO active : activeList) {
             activeMap.add(active.getIdentifier());
@@ -109,8 +96,7 @@ public class FamilySynchronizationServiceBean implements
 
     private void addOrgToFamily(Long familyId) throws PAException {
         Collection<Long> orgs = getAllOrgs(familyId);
-        List<RegistryUser> users = registryUserService
-                .findByAffiliatedOrgs(orgs);
+        List<RegistryUser> users = registryUserService.findByAffiliatedOrgs(orgs);
         for (RegistryUser user : users) {
             if (user.getFamilyAccrualSubmitter()) {
                 familyService.assignFamilyAccrualAccess(user, null, COMMENT);
@@ -121,8 +107,8 @@ public class FamilySynchronizationServiceBean implements
 
     private Collection<Long> getAllOrgs(Long familyId) {
         Set<Long> result = new HashSet<Long>();
-        List<FamilyOrganizationRelationshipDTO> activeList = PoRegistry
-                .getFamilyServiceRemote().getActiveRelationships(familyId);
+        List<FamilyOrganizationRelationshipDTO> activeList = 
+                PoRegistry.getFamilyService().getActiveRelationships(familyId);
         for (FamilyOrganizationRelationshipDTO active : activeList) {
             result.add(IiConverter.convertToLong(active.getOrgIdentifier()));
         }
@@ -130,20 +116,14 @@ public class FamilySynchronizationServiceBean implements
     }
 
     /**
-     * Remove all family accrual access from family accrual submitters
-     * affiliated with given organization.
-     * 
-     * @param orgId
-     *            the affiliated organization
-     * @throws PAException
-     *             exception
+     * Remove all family accrual access from family accrual submitters affiliated with given organization.
+     * @param orgId the affiliated organization
+     * @throws PAException exception
      */
     @SuppressWarnings("unchecked")
-    private void removeFamilyAccessToOrgsSubmitters(Long orgId)
-            throws PAException {
+    private void removeFamilyAccessToOrgsSubmitters(Long orgId) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
-        List<RegistryUser> users = registryUserService
-                .findByAffiliatedOrg(orgId);
+        List<RegistryUser> users = registryUserService.findByAffiliatedOrg(orgId);
         for (RegistryUser user : users) {
             if (user.getFamilyAccrualSubmitter()) {
                 String hql = "from StudyAccrualAccess saa where saa.registryUser.id = :userId "
@@ -152,56 +132,46 @@ public class FamilySynchronizationServiceBean implements
                 query.setParameter("userId", user.getId());
                 query.setParameter("statusCode", ActiveInactiveCode.ACTIVE);
                 query.setParameter("actionCode", AssignmentActionCode.ASSIGNED);
-                query.setParameter(SOURCE,
-                        AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
+                query.setParameter(SOURCE, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
                 List<StudyAccrualAccess> accessList = query.list();
                 for (StudyAccrualAccess studyAccrualAccess : accessList) {
-                    studyAccrualAccess
-                            .setStatusCode(ActiveInactiveCode.INACTIVE);
+                    studyAccrualAccess.setStatusCode(ActiveInactiveCode.INACTIVE);
                     session.update(studyAccrualAccess);
-                    studySiteAccess.createTrialAccessHistory(user,
-                            AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE,
-                            studyAccrualAccess.getStudyProtocol().getId(),
-                            COMMENT, null);
+                    studySiteAccess.createTrialAccessHistory(user, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, 
+                            studyAccrualAccess.getStudyProtocol().getId(), COMMENT, null);
                 }
 
                 hql = "UPDATE StudySiteAccrualAccess ssaa "
-                        + "SET ssaa.userLastUpdated = NULL, ssaa.dateLastUpdated = current_timestamp(), "
-                        + "    ssaa.statusCode = :inactiveCode "
-                        + "WHERE ssaa.id in "
-                        + " ( SELECT ssaa2.id FROM StudySiteAccrualAccess ssaa2 JOIN ssaa2.registryUser ru "
-                        + "      WHERE ssaa2.statusCode = :activeCode AND ru.id = :userId "
-                        + "      AND ssaa2.source = :source )";
+                    + "SET ssaa.userLastUpdated = NULL, ssaa.dateLastUpdated = current_timestamp(), "
+                    + "    ssaa.statusCode = :inactiveCode "
+                    + "WHERE ssaa.id in ( SELECT ssaa2.id FROM StudySiteAccrualAccess ssaa2 JOIN ssaa2.registryUser ru "
+                    + "                   WHERE ssaa2.statusCode = :activeCode AND ru.id = :userId "
+                    + "                     AND ssaa2.source = :source )";
                 query = session.createQuery(hql);
                 query.setParameter("userId", user.getId());
                 query.setParameter("inactiveCode", ActiveInactiveCode.INACTIVE);
                 query.setParameter("activeCode", ActiveInactiveCode.ACTIVE);
-                query.setParameter(SOURCE,
-                        AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
+                query.setParameter(SOURCE, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
                 query.executeUpdate();
                 user.setFamilyAccrualSubmitter(false);
                 registryUserService.updateUser(user);
             }
         }
         session.flush();
-    }
+   }
 
     /**
      * Remove all family accrual access to trials for which this is lead org.
-     * 
-     * @param orgId
-     *            the affiliated organization
-     * @throws PAException
-     *             exception
+     * @param orgId the affiliated organization
+     * @throws PAException exception
      */
     @SuppressWarnings("unchecked")
-    private void removeFamilyAccessToOrgsTrials(Long orgId, String hql,
-            StudySiteFunctionalCode siteType) throws PAException {
+    private void removeFamilyAccessToOrgsTrials(Long orgId, String hql, StudySiteFunctionalCode siteType) 
+            throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
-        Query query = session.createQuery(hql);
+        Query  query = session.createQuery(hql);
         query.setParameter("statusCode", ActStatusCode.ACTIVE);
-        query.setParameter("excludeType",
-                SummaryFourFundingCategoryCode.NATIONAL);
+        query.setParameter("excludeType", SummaryFourFundingCategoryCode.NATIONAL);
         query.setParameter("siteCode", siteType);
         query.setParameterList("orgIds", Arrays.asList(orgId.toString()));
         List<Long> queryList = query.list();
@@ -214,58 +184,49 @@ public class FamilySynchronizationServiceBean implements
             query.setParameterList("trialIds", trialIds);
             query.setParameter("statusCode", ActiveInactiveCode.ACTIVE);
             query.setParameter("actionCode", AssignmentActionCode.ASSIGNED);
-            query.setParameter(SOURCE,
-                    AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
+            query.setParameter(SOURCE, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
             List<StudyAccrualAccess> accessList = query.list();
             for (StudyAccrualAccess studyAccrualAccess : accessList) {
                 studyAccrualAccess.setStatusCode(ActiveInactiveCode.INACTIVE);
                 session.saveOrUpdate(studyAccrualAccess);
-                studySiteAccess.createTrialAccessHistory(
-                        studyAccrualAccess.getRegistryUser(),
-                        AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE,
-                        studyAccrualAccess.getStudyProtocol().getId(), COMMENT,
-                        null);
+                studySiteAccess.createTrialAccessHistory(studyAccrualAccess.getRegistryUser(), 
+                        AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, studyAccrualAccess.getStudyProtocol().getId(),
+                        COMMENT, null);
             }
 
             hql2 = "UPDATE StudySiteAccrualAccess ssaa "
                     + "SET ssaa.userLastUpdated = NULL, ssaa.dateLastUpdated = current_timestamp(), "
                     + "    ssaa.statusCode = :inactiveCode "
                     + "WHERE ssaa.id IN ( SELECT ssaa2.id FROM StudySiteAccrualAccess ssaa2 "
-                    + "                   JOIN ssaa2.studySite ss JOIN ss.studyProtocol sp "
+                    + "                   JOIN ssaa2.studySite ss JOIN ss.studyProtocol sp " 
                     + "                   WHERE sp.id IN (:trialIds) AND ssaa.statusCode = :activeCode "
                     + "                     AND ssaa.source = :source )";
             query = session.createQuery(hql2);
             query.setParameter("inactiveCode", ActiveInactiveCode.INACTIVE);
             query.setParameterList("trialIds", trialIds);
             query.setParameter("activeCode", ActiveInactiveCode.ACTIVE);
-            query.setParameter(SOURCE,
-                    AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
+            query.setParameter(SOURCE, AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE);
             query.executeUpdate();
             session.flush();
         }
     }
 
     /**
-     * @param studySiteAccess
-     *            the studySiteAccess to set
+     * @param studySiteAccess the studySiteAccess to set
      */
-    public void setStudySiteAccess(
-            StudySiteAccrualAccessServiceLocal studySiteAccess) {
+    public void setStudySiteAccess(StudySiteAccrualAccessServiceLocal studySiteAccess) {
         this.studySiteAccess = studySiteAccess;
     }
 
     /**
-     * @param registryUserService
-     *            the registryUserService to set
+     * @param registryUserService the registryUserService to set
      */
-    public void setRegistryUserService(
-            RegistryUserServiceLocal registryUserService) {
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
         this.registryUserService = registryUserService;
     }
 
     /**
-     * @param familyService
-     *            the familyService to set
+     * @param familyService the familyService to set
      */
     public void setFamilyService(FamilyServiceLocal familyService) {
         this.familyService = familyService;

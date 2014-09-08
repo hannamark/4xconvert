@@ -27,13 +27,8 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.po.ws.common.types.EntityStatus;
-import gov.nih.nci.po.ws.common.types.Family;
-import gov.nih.nci.po.ws.common.types.FamilyMember;
-import gov.nih.nci.po.ws.common.types.FamilyMemberType;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
-import gov.nih.nci.webservices.rest.client.FamilyRestServiceClient;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -141,35 +136,14 @@ public class UpdateFamilyAccrualAccessServiceBeanTest  extends AbstractHibernate
 	     CSMUserService.setInstance(new MockCSMUserService());
 	     when(PoRegistry.getOrganizationEntityService()).thenReturn(new MockPoOrganizationEntityService());
 	     FamilyServiceRemote fs = mock(FamilyServiceRemote.class);
-	     when(PoRegistry.getFamilyServiceRemote()).thenReturn(fs);
-	     FamilyRestServiceClient fsc = mock(FamilyRestServiceClient.class);
-         when(PoRegistry.getFamilyService()).thenReturn(fsc);
+	     when(PoRegistry.getFamilyService()).thenReturn(fs);
 	     Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
          FamilyDTO family = new FamilyDTO();
          family.setName(EnOnConverter.convertToEnOn("family name"));
          familyMap.put(IiConverter.convertToPoFamilyIi("1"), family);
          when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
          when(fs.getActiveRelationships(any(Long.class))).thenReturn(FamilyHelperTest.getRelationships(new Long[] {1L, 2L}));
-         
-         Family tmpf = getFamily(1L);
-         tmpf.setP30SerialNumber("12345");
-         List<Family> familyList = new ArrayList<Family>();
-         familyList.add(tmpf);  
-         when(fsc.search(any(Family.class))).thenReturn(familyList);
 	 }
-	 
-	 private Family getFamily(long index) {
-	        Family family = new Family();
-	        family.setName("family name");
-	        family.setStatus(EntityStatus.ACTIVE);
-	        family.setId(index);
-	        FamilyMember fm = new FamilyMember();
-	        fm.setFamilyId(index);
-	        fm.setOrganizationId(index);
-	        fm.setType(FamilyMemberType.ORGANIZATIONAL);
-	        family.getMember().add(fm);
-	        return family;
-	    }
 	 
 	 @Test
 	    public void testUpdateFamilyAccrualAccess() throws Exception {

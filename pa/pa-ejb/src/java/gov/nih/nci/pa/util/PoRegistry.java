@@ -11,9 +11,6 @@ import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRe
 import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
-import gov.nih.nci.webservices.rest.client.FamilyRestServiceClient;
-import gov.nih.nci.webservices.rest.client.util.MockPoRestServiceLocator;
-import gov.nih.nci.webservices.rest.client.util.PoRestServiceLocator;
 
 import org.apache.commons.lang.BooleanUtils;
 
@@ -28,10 +25,7 @@ public final class PoRegistry {
 
     private static final PoRegistry PO_REGISTRY = new PoRegistry();
     private PoServiceLocator poServiceLocator;
-    
-    /** This should replace the PoServiceLocator**/
-    private gov.nih.nci.webservices.rest.client.util.PoServiceLocator poResPoServiceLocator;
-    
+
     /**
      * @return the PO_REGISTRY
      */
@@ -46,48 +40,10 @@ public final class PoRegistry {
     private PoRegistry() {
         if (BooleanUtils.isTrue(BooleanUtils.toBoolean(PaEarPropertyReader.getProperties().getProperty("mock.po")))) {
             this.poServiceLocator = new MockPoJndiServiceLocator();
-            this.poResPoServiceLocator = new MockPoRestServiceLocator();
         } else {
             this.poServiceLocator = new PoJndiServiceLocator();
-            this.poResPoServiceLocator = new PoRestServiceLocator();
         }
     }
-    
-    /**
-     * Returns PoServiceLocator
-     * @return the serviceLocator
-     */
-    public PoServiceLocator getPoServiceLocator() {
-        return this.poServiceLocator;
-    }
-
-    /**
-     * sets PoServiceLocator
-     * @param poServiceLocator poServiceLocator
-     */
-    public void setPoServiceLocator(PoServiceLocator poServiceLocator) {
-        this.poServiceLocator  = poServiceLocator;
-    }
-    
-    
-    /**
-     * Returns gov.nih.nci.webservices.rest.client.util.PoServiceLocator
-     * @return the serviceLocator
-     */
-    public gov.nih.nci.webservices.rest.client.util.PoServiceLocator getPoResPoServiceLocator() {
-        return poResPoServiceLocator;
-    }
-
-    
-   /**
-    * Sets the PoResPoServiceLocator
-    * @param poResPoServiceLocator gov.nih.nci.webservices.rest.client.util.PoServiceLocator
-    */
-    public void setPoResPoServiceLocator(
-            gov.nih.nci.webservices.rest.client.util.PoServiceLocator poResPoServiceLocator) {
-        this.poResPoServiceLocator = poResPoServiceLocator;
-    }
-
 
     /**
      *
@@ -117,7 +73,21 @@ public final class PoRegistry {
     public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() {
         return getInstance().getPoServiceLocator().getOversightCommitteeCorrelationService();
     }
-    
+
+    /**
+     * @return the serviceLocator
+     */
+    public PoServiceLocator getPoServiceLocator() {
+        return this.poServiceLocator;
+    }
+
+    /**
+     *
+     * @param poServiceLocator poServiceLocator
+     */
+    public void setPoServiceLocator(PoServiceLocator poServiceLocator) {
+        this.poServiceLocator  = poServiceLocator;
+    }
     /**
      *
      * @return PersonEntityServiceRemote
@@ -157,20 +127,12 @@ public final class PoRegistry {
      */
     public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         return getInstance().getPoServiceLocator().getIdentifiedPersonEntityService();
-    }   
-    
-    
-    /**
-     * @return FamilyRestServiceClient
-     */
-    public static FamilyRestServiceClient getFamilyService() {
-        return getInstance().poResPoServiceLocator.getFamilyService();
     }
-    
+
     /**
      * @return FamilyServiceRemote
      */
-    public static FamilyServiceRemote getFamilyServiceRemote() {
+    public static FamilyServiceRemote getFamilyService() {
         return getInstance().getPoServiceLocator().getFamilyService();
     }
 }

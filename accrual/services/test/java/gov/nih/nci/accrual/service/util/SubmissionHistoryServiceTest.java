@@ -49,8 +49,6 @@ import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.webservices.rest.client.FamilyRestServiceClient;
-import gov.nih.nci.webservices.rest.client.util.PoRestServiceLocator;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -77,22 +75,17 @@ public class SubmissionHistoryServiceTest extends AbstractServiceTest<Submission
     private StudyProtocolDTO sp;
     private OrganizationEntityServiceRemote oes;
     private FamilyServiceRemote fs;
-    private FamilyRestServiceClient fsc;
     private OrganizationCorrelationServiceRemote ocSvc;
     private StudySiteServiceLocal ssSvc;
 
     @Before
     public void setupFamilyHelper() throws Exception {
         PoServiceLocator psl = mock(PoServiceLocator.class);
-        PoRestServiceLocator prsl = mock(PoRestServiceLocator.class);
         oes = mock(OrganizationEntityServiceRemote.class);
         when(psl.getOrganizationEntityService()).thenReturn(oes);
         fs = mock(FamilyServiceRemote.class);
         when(psl.getFamilyService()).thenReturn(fs);
-        fsc = mock(FamilyRestServiceClient.class);
-        when(prsl.getFamilyService()).thenReturn(fsc);
         PoRegistry.getInstance().setPoServiceLocator(psl);
-        PoRegistry.getInstance().setPoResPoServiceLocator(prsl);
     }
 
     @Override

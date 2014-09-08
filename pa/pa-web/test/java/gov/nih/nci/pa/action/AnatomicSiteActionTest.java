@@ -86,19 +86,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.pa.domain.AnatomicSite;
-import gov.nih.nci.pa.dto.AnatomicSiteWebDTO;
-import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AnatomicSite;
+import gov.nih.nci.pa.dto.AnatomicSiteWebDTO;
+import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 
 import org.junit.Before;
 import org.junit.Test;

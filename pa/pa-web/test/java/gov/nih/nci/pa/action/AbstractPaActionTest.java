@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertNotNull;
+
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
@@ -86,7 +87,6 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.webservices.rest.client.util.MockPoRestServiceLocator;
 
 import javax.servlet.http.HttpSession;
 
@@ -142,7 +142,6 @@ public abstract class AbstractPaActionTest extends AbstractMockitoTest {
     public void setUpServices() {
         PaRegistry.getInstance().setServiceLocator(new MockServiceLocator());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        PoRegistry.getInstance().setPoResPoServiceLocator(new MockPoRestServiceLocator());
     }
 
     /**
