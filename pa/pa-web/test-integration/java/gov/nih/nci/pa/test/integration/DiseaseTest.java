@@ -89,7 +89,7 @@ import org.junit.Test;
 /**
  * Selenium test for adding/removing diseases
  * 
- * @author Michael Visee
+ * @author Gopalakrishnan Unnikrishnan
  */
 public class DiseaseTest extends AbstractPaSeleniumTest {
     
@@ -131,7 +131,7 @@ public class DiseaseTest extends AbstractPaSeleniumTest {
     /**
      * Search for non existing disease
      */
-    @Test
+    @Test       
     public void testSearchNonExistingDisese(){
         // Search for invalid d
         searchDisease("invalid disease");
@@ -145,7 +145,7 @@ public class DiseaseTest extends AbstractPaSeleniumTest {
      */
     @Test
     public void testSearchDiseseByPreferredTerm(){
-        //Search for perferred term
+        //Search for preferred term
         searchDisease("lung cancer");
         
         assertTrue(selenium.isTextPresent("63 results for \"lung cancer\""));
@@ -156,20 +156,133 @@ public class DiseaseTest extends AbstractPaSeleniumTest {
      * Search by synonym
      */
     @Test
-    public void testSearchDiseseBySynonym(){
+    public void testSearchDiseaseBySynonym(){
         //Search synonyms
         selenium.click("id=searchSynonym");
-        searchDisease("lung cancer");
+        searchDisease("lung carcinoma");
         
-        assertTrue(selenium.isTextPresent("63 results for \"lung cancer\""));
+        assertTrue(selenium.isTextPresent("36 results for \"lung carcinoma\""));
         assertTrue(selenium.isTextPresent("Preferred Term"));
         assertTrue(selenium.isTextPresent("Synonyms"));
+        
     }    
+    
+    /**
+     * Select search results 
+     */
+    @Test
+    public void testSelectDisease(){
+        //Search synonyms
+        //Search for preferred term
+        searchDisease("lung cancer");
+        selenium.click("class=breadcrumbFeaturedElement");
+        assertTrue(selenium.isTextPresent("1 selection added"));
+    }    
+    
+    /**
+     * Add disease to study 
+     */
+    //@Test
+    /*public void testAddDiseaseToStudy(){
+        //Search synonyms
+        //Search for preferred term
+        searchDisease("lung cancer");
+        selenium.click("class=breadcrumbFeaturedElement");
+        assertTrue(selenium.isTextPresent("1 selection added"));
+        clickAndWait("link=Add");
+        waitForElementById("popupContainer", 30);
+        assertFalse(selenium.isElementPresent("id=popupContainer"));
+        assertTrue(selenium.isTextPresent("One item found"));       
+        assertTrue(selenium.isTextPresent("Stage 0 Lung Cancer"));
+    }*/
+    
+    /**
+     * Delete disease from study 
+     */
+    //@Test
+    /*public void testDeleteDiseaseFromStudy(){
+        //Search synonyms
+        //Search for preferred term
+        searchDisease("lung cancer");
+        selenium.click("class=breadcrumbFeaturedElement");
+        clickAndWait("link=Add");
+        assertTrue(selenium.isTextPresent("One item found"));        
+
+        selenium.click("name=objectsToDelete");
+        clickAndWait("link=Delete");
+        driver.switchTo().alert().accept();
+        assertTrue(selenium.isTextPresent("Nothing found to display"));
+    }*/
+    
+    /**
+     * Select search results parent 
+     */
+    @Test
+    public void testSelectParentDisease(){
+        //Search synonyms
+        //Search for preferred term
+        searchDisease("lung cancer");
+        selenium.click("class=breadcrumbElementText");
+        assertTrue(selenium.isTextPresent("7 selections added"));
+    }    
+    
+    
+    /**
+     * Test open hierarchy tree 
+     */
+    @Test
+    public void testOpenHierarchyTree(){
+        //Search synonyms
+        //Search for preferred term
+        searchDisease("lung cancer");
+        selenium.click("class=breadcrumbFeaturedElementImageLink");
+        assertTrue(selenium.isElementPresent("id=ui-dialog-title-pdq_tree_dialog"));
+    }  
+    
+    /**
+     * Test Add all
+     */
+    @Test
+    public void testAddAll(){
+        //Search synonyms
+        //Search for preferred term
+        searchDisease("lung cancer");
+        selenium.click("link=Add All");
+        assertTrue(selenium.isTextPresent("63 selections added"));
+    }  
+    
+    /**
+     * Test show tree
+     */
+    @Test
+    public void testShowTree(){
+        selenium.click("link=Show Tree");
+        assertTrue(selenium.isElementPresent("id=ui-dialog-title-pdq_tree_dialog"));
+    }  
+    
+    /**
+     * Test reset
+     */
+    @Test
+    public void testReset(){
+        //Search synonyms
+        //Search for preferred term
+        searchDisease("lung cancer");
+        selenium.click("link=Add All");
+        assertTrue(selenium.isTextPresent("63 selections added"));
+        
+        selenium.click("link=Reset");
+        
+        assertFalse(selenium.isTextPresent("63 selections added"));
+        assertFalse(selenium.isTextPresent("Preferred Term"));
+        assertFalse(selenium.isElementPresent("class=breadcrumbFeaturedElement"));
+        assertFalse(selenium.isTextPresent("lung cancer"));
+    }  
     
     private void searchDisease(String searchName) {
         selenium.type("id=disease", searchName);
         clickAndWaitAjax("alt=Search");
-        pause(10000);
+        pause(2000);
     }
 
 }

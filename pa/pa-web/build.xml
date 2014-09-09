@@ -401,6 +401,15 @@
                     <path refid="build.classpath"/>
                 </classpath>
             </sql>
+        	<sql driver="${jdbc.driver}" url="${jdbc.url}" userid="${db.username}" password="${db.password}"
+                expandproperties="true" onerror="continue" autocommit="true">
+                <fileset dir="..">
+                    <include name="dbscripts/db-integration/postgresql/disease-alternames.sql"/>
+                </fileset>
+                <classpath>
+                    <path refid="build.classpath"/>
+                </classpath>
+            </sql>
         </sequential>
     </target>
 
