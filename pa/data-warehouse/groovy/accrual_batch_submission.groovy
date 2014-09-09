@@ -1,7 +1,7 @@
 import groovy.sql.Sql
 
 def sql = """select batch_file_identifier, change_code, nci_number, date_last_created, date_last_updated, passed_validation,
-                    results, user_last_created_id, user_last_updated_id
+                    results, user_last_created_id, user_last_updated_id, total_imports
              from accrual_collections
           """
 
@@ -24,6 +24,7 @@ sourceConnectionPa.eachRow(sql) { row ->
         date_last_created: row.date_last_created,
         date_last_updated: row.date_last_updated,
         passed_validation: row.passed_validation,
+		successful_imports: row.total_imports,
         result_comments: row.results,
         study_id_submitted: row.nci_number,
         user_last_created_id: row.user_last_created_id,
