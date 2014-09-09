@@ -252,7 +252,9 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             Map<String, String> values = markerAttributesService
                     .getAllMarkerAttributes();
             plannedMarker = populateWebDTO(marker, values);
-            plannedMarker.setDateEmailSent(new Date());
+            if (getPlannedMarker().getDateEmailSent() != null) {
+               plannedMarker.setDateEmailSent(new Date());
+            }
             return super.create();
         }
         return currentActionType();
@@ -697,7 +699,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             }
             webDTO.setEvaluationTypeOtherText(StConverter
                     .convertToString(markerDTO.getEvaluationTypeOtherText()));
-
+            webDTO.setDateEmailSent(TsConverter.convertToTimestamp(markerDTO.getDateEmailSent()));
         }
         return webDTO;
     }
@@ -756,6 +758,10 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         PlannedMarkerDTO marker = new PlannedMarkerDTO();
         marker.setIdentifier(IiConverter.convertToIi(getPlannedMarker().getId()));
         marker.setName(StConverter.convertToSt(getPlannedMarker().getName()));
+        if (getPlannedMarker().getDateEmailSent() != null) {
+          marker.setDateEmailSent(TsConverter.convertToTs(
+               getPlannedMarker().getDateEmailSent()));
+        }
         if (StringUtils.isEmpty(getPlannedMarker().getMeaning()) || isEdit) {
             marker.setLongName(marker.getName());
             if (StringUtils.isEmpty(getPlannedMarker().getMeaning())) {
