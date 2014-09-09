@@ -197,6 +197,7 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        getRequest().clearAttributes();
        plannedMarkerAction.setPublicId(null);
        plannedMarkerAction.setName("lyco");
+       plannedMarkerAction.setSearchBothTerms("both");
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
@@ -225,8 +226,8 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        desgs.add(designation);
        desgs.add(designation1);
        when(appService.query(any(HQLCriteria.class))).thenReturn(desgs);
-       plannedMarkerAction.setName(null);
-       plannedMarkerAction.setMeaning("Biv");
+       plannedMarkerAction.setName("N-Cadherin");
+       plannedMarkerAction.setSearchBothTerms("both");
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
@@ -239,10 +240,10 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        designation2.setId("3L");
        designation2.setName("alpha");
        designation2.setType("Biomarker Synonym");
+       plannedMarkerAction.setName("alpha");
        desgs.add(designation2);
+       plannedMarkerAction.setSearchBothTerms("Synonym");
        when(appService.query(any(HQLCriteria.class))).thenReturn(desgs);
-       plannedMarkerAction.setMeaning("aplha");
-       plannedMarkerAction.setDescription("lyco");
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
@@ -253,15 +254,14 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        
        getRequest().clearAttributes();
        setUp();
-       plannedMarkerAction.setMeaning(null);
-       plannedMarkerAction.setDescription("lyco");
+       plannedMarkerAction.setName("alpha1");
+       plannedMarkerAction.setSearchBothTerms("Synonym");
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
 
        getRequest().clearAttributes();
        setUp();
-       plannedMarkerAction.setDescription(null);
        plannedMarkerAction.setPublicId("2578250");
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));

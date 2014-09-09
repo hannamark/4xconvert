@@ -9,19 +9,18 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <script type="text/javascript" language="javascript">
 
-	        jQuery(function(){
-	        	jQuery(window).keypress(function(e) {
-		            if(e.keyCode == 13) {	              
-		              loadResults();
-		            }
-		          });        	
-	        });
-	        
+            jQuery(function(){
+                jQuery(window).keypress(function(e) {
+                    if(e.keyCode == 13) {                 
+                      loadResults();
+                    }
+                  });           
+            });
+            
              function reset() {
                  $('searchName').value = '';
-                 $('searchMeaning').value = '';
-                 $('searchDescription').value = '';
                  $('searchPublicId').value = '';
+                 $('searchBothTerms').value='Both'
                  var ele = document.getElementsByName("caseType");
                  for(var i=0;i<ele.length;i++){
                     ele[i].checked = false;
@@ -43,13 +42,11 @@
                 top.window.loadDiv(value,eval,assayType,bioUse,bioPurpose,specimenType,evalOther,assayOther,specimenOther);
              }
              function loadResults() {     
-            	 var caseValue = document.forms[0].caseTypetrue.checked;
+                 var caseValue = document.forms[0].caseTypetrue.checked;
                  var highlightValue = document.forms[0].highlightRequiredtrue.checked;
-                 var searchBothTermsValue = document.forms[0].searchBothTermstrue.checked;
+                 var searchBothTermsValue = document.forms[0].searchBothTerms.value;
                  var url= '/pa/protected/popupPlannedMarkerlookup.action';
                  var params = {
-                         description: $('searchDescription').value,
-                         meaning: $('searchMeaning').value,
                          name: $('searchName').value,
                          publicId: $('searchPublicId').value, 
                          caseType :caseValue,
@@ -100,23 +97,27 @@ background-color:yellow;
                             <label for="caseType"><fmt:message key="plannedMarker.lookup.CaseSearch"/>:</label>
                         </td>
                         <td nowrap="nowrap"> 
-                          <s:radio name="caseType" id="caseType" value='caseType' list="#{'true':'Yes', 'false':'No'}"></s:radio>
+                          <s:radio name="caseType" id="caseType" value='false' list="#{'true':'Yes', 'false':'No'}"></s:radio>
                         </td>
                         <td scope="row" class="label">
                             <label for="highlightRequired"><fmt:message key="plannedMarker.lookup.highlight"/>:</label>
                         </td>
                         <td nowrap="nowrap"> 
-                          <s:radio name="highlightRequired" id="highlightRequired" value='highlightRequired' list="#{'true':'Yes', 'false':'No'}"></s:radio>
+                          <s:radio name="highlightRequired" id="highlightRequired" value='true' list="#{'true':'Yes', 'false':'No'}"></s:radio>
                         </td>
 
                     </tr>
                     <tr>
-                        <td scope="row" class="label">
+                       <td scope="row" class="label">
                             <label for="searchBothTerms"><fmt:message key="plannedMarker.lookup.searchBothTerms"/>:</label>
-                        </td>
-                        <td nowrap="nowrap"> 
-                          <s:radio name="searchBothTerms" id="searchBothTerms" value='true' list="#{'true':'Yes', 'false':'No'}"></s:radio>
-                        </td>
+                       </td>
+                       <td nowrap="nowrap">  
+                          <s:select id="searchBothTerms"
+                                    name="searchBothTerms"
+                                    value="defaultSearchScope"
+                                    list="#{'Primary':'Primary Term','Synonym':'Synonym','both':'Both'}"
+                                    cssStyle="width:206px" />
+                       </td>
                     </tr>
                     <tr>
                         <td scope="row" class="label">
@@ -124,20 +125,6 @@ background-color:yellow;
                         </td>
                         <td>
                             <s:textfield id="searchName" name="searchName" maxlength="60" size="60" cssStyle="width:200px"/>
-                        </td>
-                        <td scope="row" class="label">
-                            <label for="searchMeaning"><fmt:message key="plannedMarker.lookup.synonyms"/>:</label>
-                        </td>
-                        <td>
-                            <s:textfield id="searchMeaning" name="searchMeaning" maxlength="60" size="60" cssStyle="width:200px"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="searchDescription"><fmt:message key="plannedMarker.lookup.description"/>:</label>
-                        </td>
-                        <td>
-                            <s:textfield id="searchDescription" name="searchDescription" maxlength="60" size="60" cssStyle="width:200px"/>
                         </td>
                         <td scope="row" class="label">
                             <label for="searchPublicId"><fmt:message key="plannedMarker.lookup.publicIdExact"/>:</label>

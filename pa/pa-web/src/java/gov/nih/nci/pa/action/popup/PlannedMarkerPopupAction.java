@@ -145,18 +145,18 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private static final String EMAIL = "email";
     private static final String EMAIL_PENDING_PAGE = "markeremail";
     private static final String LONG_NAME = "pv.value";
-    private static final String DESCRIPTION = "vm.description";
     private static final String DESIGNATION = "permissibleValue.valueMeaning.designationCollection";
     private static final String DESIGNATION_NAME = "dc.name";
     private static final String DESIGNATION_TYPE = "dc.type";
     private static final String SYNONYM = "Biomarker Synonym";
     private static final String REGEXPRESSION = "([^a-zA-z0-9])";
     private static final String REPLACER = "\\\\$1";
+    private static final String BOTH = "both";
+    private static final String PRIMARY = "Primary";
+    private static final String SYNONYMS = "Synonym";
     
     private static final String TRUE = "true";
     private String name;
-    private String meaning;
-    private String description;
     private String publicId;
     private String subject;
     private String toEmail;
@@ -171,6 +171,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
     private String caseType;
     private String highlightRequired;
     private String searchBothTerms;
+    private String defaultSearchScope;
     private String showActionColumn; 
     private String fromNewRequestPage;
     private String nciIdentifier;
@@ -222,7 +223,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             DetachedCriteria crit = constructBaseCriteria(vdId);
             crit = constructSearchCriteria(crit);
             List<Object> permissibleValues = appService.query(crit);
-          if (StringUtils.equals(TRUE, getSearchBothTerms())) {
+          if (StringUtils.equals(BOTH, getSearchBothTerms())) {
               crit = constructBaseCriteria(vdId);
               crit = constructNameSearchCriteria(crit);
               permissibleValues.addAll(avoidDuplicateEntries(permissibleValues, 
@@ -417,7 +418,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      * @param vdId the id of the value domain to search
      * @return the constructed criteria
      */
-    @SuppressWarnings({ "PMD.CyclomaticComplexity" })
+    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveMethodLength" })
     private DetachedCriteria constructSearchCriteria(DetachedCriteria criteria) {
         //If public id is specified we only want to search using that.
         if (StringUtils.isNotEmpty(getPublicId())) {
@@ -425,27 +426,29 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             return criteria;
         }
         if (StringUtils.equals(TRUE, getCaseType())) {
-            if (StringUtils.isNotEmpty(getName())) {
-                String newName = getName();
-                 if (newName.contains("-")) {
-                      newName = getName().replaceAll("-", "");
-                 }
-                 criteria.add(Expression.or(Expression.or(
+            if ((StringUtils.equals(PRIMARY, getSearchBothTerms())
+                 || StringUtils.equals(BOTH, getSearchBothTerms()))
+                 && StringUtils.isNotEmpty(getName())) {
+                    String newName = getName();
+                    if (newName.contains("-")) {
+                        newName = getName().replaceAll("-", "");
+                    }
+                    criteria.add(Expression.or(Expression.or(
                        Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
                        Expression.like(LONG_NAME, getName(), MatchMode.ANYWHERE)), 
                        Expression.like(LONG_NAME, newName, MatchMode.ANYWHERE)));
-             }
-             if (StringUtils.isNotEmpty(getMeaning())) {
-                criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
-                criteria.createAlias(DESIGNATION, "dc");
-                criteria.add(Restrictions.like(DESIGNATION_NAME, getMeaning(), MatchMode.ANYWHERE));
-                criteria.add(Expression.eq(DESIGNATION_TYPE, SYNONYM));
-             }
-             if (StringUtils.isNotEmpty(getDescription())) {
-                criteria.add(Expression.like(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
-             }
+            }
+            if (StringUtils.equals(SYNONYMS, getSearchBothTerms())
+                  && StringUtils.isNotEmpty(getName())) {
+                   criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
+                   criteria.createAlias(DESIGNATION, "dc");
+                   criteria.add(Restrictions.like(DESIGNATION_NAME, getName(), MatchMode.ANYWHERE));
+                   criteria.add(Expression.eq(DESIGNATION_TYPE, SYNONYM));
+            }
         } else {
-             if (StringUtils.isNotEmpty(getName())) {
+           if ((StringUtils.equals(PRIMARY, getSearchBothTerms()) 
+                || StringUtils.equals(BOTH, getSearchBothTerms()))
+                && StringUtils.isNotEmpty(getName())) {
                  String newName = getName();
                  if (newName.contains("-")) {
                       newName = getName().replaceAll("-", "");
@@ -454,16 +457,14 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
                        Expression.sqlRestriction("replace(value, '-', '') like '%" + getName() + "%'"), 
                        Expression.ilike(LONG_NAME, getName(), MatchMode.ANYWHERE)), 
                        Expression.ilike(LONG_NAME, newName, MatchMode.ANYWHERE)));
-             }
-             if (StringUtils.isNotEmpty(getMeaning())) {
+           }
+           if (StringUtils.equals(SYNONYMS, getSearchBothTerms())
+                && StringUtils.isNotEmpty(getName())) {
                  criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
                  criteria.createAlias(DESIGNATION, "dc");
-                 criteria.add(Restrictions.ilike(DESIGNATION_NAME, getMeaning(), MatchMode.ANYWHERE));
+                 criteria.add(Restrictions.ilike(DESIGNATION_NAME, getName(), MatchMode.ANYWHERE));
                  criteria.add(Expression.eq(DESIGNATION_TYPE, SYNONYM));
-             }
-             if (StringUtils.isNotEmpty(getDescription())) {
-                criteria.add(Expression.ilike(DESCRIPTION, getDescription(), MatchMode.ANYWHERE));
-             }
+           }
         }
         return criteria;
     }
@@ -520,23 +521,18 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         if (StringUtils.equals(TRUE, getHighlightRequired())) {
               for (CaDSRWebDTO dto : output) {
                    dto.setId(dto.getId());
-                   dto.setVmName(replaceWithHighlightText(
-                       replaceHTMLCharacters(dto.getVmName()), getName()));
+                   if (StringUtils.equals(PRIMARY, getSearchBothTerms())
+                         || StringUtils.equals(BOTH, getSearchBothTerms())) {
+                      dto.setVmName(replaceWithHighlightText(
+                               replaceHTMLCharacters(dto.getVmName()), getName()));
+                   }
                    dto.setVmMeaning(dto.getVmMeaning());
-                   dto.setVmDescription(replaceWithHighlightText(
-                    replaceHTMLCharacters(dto.getVmDescription()), getDescription()));
+                   dto.setVmDescription(dto.getVmDescription());
                    dto.setPublicId(dto.getPublicId());
-                   if (StringUtils.equals(TRUE, getSearchBothTerms()) 
-                        && getName() != null && !getName().isEmpty()) {
+                   if (StringUtils.equals(BOTH, getSearchBothTerms())
+                       || StringUtils.equals(SYNONYMS, getSearchBothTerms())) {
                       dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames()
                           , getName()));
-                      if (getMeaning() != null && !getMeaning().isEmpty()) {
-                         dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames()
-                                  , getMeaning()));
-                      }
-                   } else {
-                      dto.setAltNames(replaceWithHighlightTexts(dto.getAltNames()
-                          , getMeaning()));
                    }
                    resultsMain.add(dto);
                }
@@ -627,7 +623,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      * @return true iff a validation error has occurred
      */
     private boolean validateInput() {
-        String allParams = StringUtils.join(new String[] {getMeaning(), getName(), getDescription(), getPublicId()});
+        String allParams = StringUtils.join(new String[] {getName(), getPublicId()});
         if (!StringUtils.isEmpty(getSelectedRowIdentifier()) && StringUtils.isEmpty(getPublicId())) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                     getText("plannedMarker.lookup.publicId.criteria.error"));
@@ -658,34 +654,6 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * @return the meaning
-     */
-    public String getMeaning() {
-        return meaning;
-    }
-
-    /**
-     * @param meaning the meaning to set
-     */
-    public void setMeaning(String meaning) {
-        this.meaning = meaning;
-    }
-
-    /**
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     /**
@@ -932,6 +900,21 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      */
     public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
         this.lookUpTableService = lookUpTableService;
+    }
+    /**
+     * 
+     * @return defaultSearchScope defaultSearchScope
+     */
+    public String getDefaultSearchScope() {
+        defaultSearchScope = BOTH;
+        return defaultSearchScope;
+    }
+    /**
+     * 
+     * @param defaultSearchScope defaultSearchScope
+     */
+    public void setDefaultSearchScope(String defaultSearchScope) {
+        this.defaultSearchScope = defaultSearchScope;
     }
     
 }
