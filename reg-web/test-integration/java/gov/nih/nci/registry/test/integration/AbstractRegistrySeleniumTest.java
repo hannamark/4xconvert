@@ -91,10 +91,13 @@ import java.util.Date;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -109,8 +112,13 @@ public abstract class AbstractRegistrySeleniumTest extends
 
     protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat
             .getInstance("MM/dd/yyyy");
+    
     private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
     private static final String IRB_DOCUMENT = "IrbDoc.doc";
+    private static final String SITES_DOCUMENT = "Sites.doc";
+    private static final String CONSENT_DOCUMENT = "Consent.doc";
+    private static final String OTHER_DOCUMENT = "Other.doc";
+    
     private static boolean firstRun = true;
 
     protected String today = MONTH_DAY_YEAR_FMT.format(new Date());
@@ -206,79 +214,70 @@ public abstract class AbstractRegistrySeleniumTest extends
         tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
         oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(
                 new Date(), 1));
-
+        final String rand = RandomStringUtils.randomNumeric(10);
+        
         // Select register trial and choose trial type
-        clickAndWaitAjax("registerTrialMenuOption");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("summaryFourFundingCategoryCode", 60);
-        selenium.select("summaryFourFundingCategoryCode", "label=Institutional");
-        clickAndWaitAjax("link=Submit");
-        waitForPageToLoad();
-
-        driver.switchTo().defaultContent();
+        hoverLink("Register Trial");       
+        clickAndWait("link=National");
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
+        
+        selenium.click("id=xmlRequiredtrue");
+        hover(By.xpath("//i[preceding-sibling::input[@id='xmlRequiredfalse']]"));
+        assertTrue(selenium.isTextPresent("Indicate whether you need an XML file "
+                + "to submit/update your trial to ClinicalTrials.gov"));
+        
         selenium.type("trialDTO.leadOrgTrialIdentifier", leadOrgTrialId);
+        
+        
+        selenium.type("trialDTO.nctIdentifier", "NCT"+rand);
+        final String nctID = "OTHER"+rand;
+        selenium.type("otherIdentifierOrg", nctID);
+        clickAndWaitAjax("id=otherIdbtnid");
+        waitForElementById("otherIdentifierdiv", 30);
+        assertTrue(selenium.isTextPresent(nctID));
+        
         selenium.type("trialDTO.officialTitle", trialName);
         selenium.select("trialDTO.phaseCode", "label=0");
+        selenium.click("id=trialDTO.trialType.Interventional");
         selenium.select("trialDTO.primaryPurposeCode", "label=Treatment");
+        selenium.select("trialDTO.secondaryPurposes", "label=Ancillary");
+        selenium.select("trialDTO.accrualDiseaseCodeSystem", "label=ICD10");
 
         // Select Lead Organization
-        clickAndWaitAjax("link=Look Up Org");
-        waitForElementById("popupFrame", 60);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("search_organization_btn", 30);
-        if (firstRun) {
-            // compiling the popup jsp the first time screws up selenium, so
-            // give it some time
-            System.out.println("Waiting on first run - org");
-            pause(2000);
-        }
-        selenium.type("orgNameSearch", "Division");
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 30);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
-        waitForPageToLoad();
+        hover(By.id("trialDTO.leadOrganizationNameField"));
+        clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
 
         // Select Principal Investigator
         driver.switchTo().defaultContent();
-        clickAndWaitAjax("link=Look Up Person");
+        clickAndWaitAjax("xpath=//div[@id='loadPersField']//button");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
-        waitForElementById("search_person_btn", 30);
-        if (firstRun) {
-            // compiling the popup jsp the first time screws up selenium, so
-            // give it some time
-            System.out.println("Waiting on first run - pers");
-            pause(2000);
-        }
-        clickAndWaitAjax("link=Search");
+        waitForElementById("search_person_btn", 30);       
+        clickAndWaitAjax("id=search_person_btn");
         waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/button");
         waitForPageToLoad();
 
         // Select Sponsor
         driver.switchTo().defaultContent();
-        clickAndWaitAjax("//div[@id='loadSponsorField']/table/tbody/tr/td[2]/ul/li/a");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("search_organization_btn", 15);
-        selenium.type("orgNameSearch", "Division");
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
-        waitForPageToLoad();
-
-        driver.switchTo().defaultContent();
+        hover(By.id("trialDTO.sponsorNameField"));
+        clickAndWaitAjax("link=Cancer Therapy Evaluation Program");
+        
         selenium.select("trialDTO.responsiblePartyType", "label=Sponsor");
 
         // Select Funding Sponsor
-        clickAndWaitAjax("//div[@id='loadSummary4FundingSponsorField']/table/tbody/tr/td[2]/ul/li/a");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("search_organization_btn", 15);
-        selenium.type("orgNameSearch", "Division");
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
-        waitForPageToLoad();
+        hover(By.id("trialDTO.summaryFourOrgName"));
+        clickAndWaitAjax("xpath=//table[@id='dropdown-sum4Organization']//a[text()='National Cancer Institute']");
+        selenium.type("trialDTO.programCodeText", "PG"+rand);
+        
+        // Grants
+        selenium.click("nciGrantfalse");
+        selenium.select("fundingMechanismCode", "label=B09");
+        selenium.select("nihInstitutionCode", "label=AA");
+        selenium.type("serialNumber", rand);
+        selenium.select("nciDivisionProgramCode", "label=CCR");
+        selenium.click("grantbtnid");
+        waitForElementById("grantdiv", 5);
 
         // Trial Status Information
         driver.switchTo().defaultContent();
@@ -290,19 +289,29 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.type("trialDTO_primaryCompletionDate", oneYearFromToday);
         selenium.click("trialDTO_completionDateTypeAnticipated");
         selenium.type("trialDTO_completionDate", oneYearFromToday);
+        
+        // IND/IDE
+        selenium.select("group3", "label=IND");
+        selenium.type("id=indidenumber", rand);        
+        selenium.click("id=SubCat");
+        selenium.select("id=SubCat", "label=CDER");                
+        selenium.select("holderType", "label=NIH");
+        selenium.select("programcodenihselectedvalue", "label=NEI-National Eye Institute");
+        selenium.click("group4");
+        selenium.select("expanded_status", "label=Available");
+        selenium.click("exemptIndicator");
+        selenium.click("addbtn");
+        waitForElementById("indidediv", 5);
 
         // Regulator Information
         selenium.select("countries", "label=United States");
-        selenium.click("//option[@value='1026']");
-        selenium.select("trialDTO.fdaRegulatoryInformationIndicator",
-                "label=Yes");
-        selenium.select("trialDTO.section801Indicator", "label=Yes");
-        selenium.select("trialDTO.delayedPostingIndicator", "label=Yes");
-        selenium.select("trialDTO.dataMonitoringCommitteeAppointedIndicator",
-                "label=Yes");
-
-        // Grants
-        selenium.click("nciGrantfalse");
+        pause(1000);
+        selenium.select("trialDTO.selectedRegAuth", "label=Food and Drug Administration");
+        selenium.click("trialDTO.fdaRegulatoryInformationIndicatorYes");
+        selenium.click("trialDTO.section801IndicatorYes");
+        selenium.click("trialDTO.delayedPostingIndicatorYes");
+        selenium.click("trialDTO.dataMonitoringCommitteeAppointedIndicatorYes");
+      
 
         // Add Protocol and IRB Document
         String protocolDocPath = (new File(ClassLoader.getSystemResource(
@@ -311,14 +320,18 @@ public abstract class AbstractRegistrySeleniumTest extends
                 IRB_DOCUMENT).toURI()).toString());
         selenium.type("protocolDoc", protocolDocPath);
         selenium.type("irbApproval", irbDocPath);
-
-        pause(1000);
-        clickAndWaitAjax("link=Review Trial");
+        selenium.type("participatingSites", (new File(ClassLoader.getSystemResource(
+                SITES_DOCUMENT).toURI()).toString()));
+        selenium.type("informedConsentDocument", (new File(ClassLoader.getSystemResource(
+                CONSENT_DOCUMENT).toURI()).toString()));
+        selenium.type("submitTrial_otherDocument_0", (new File(ClassLoader.getSystemResource(
+                OTHER_DOCUMENT).toURI()).toString()));
+      
+        clickAndWait("xpath=//button[text()='Review Trial']");
         waitForElementById("reviewTrialForm", 60);
-        clickAndWaitAjax("link=Submit");
+        clickAndWait("xpath=//button[text()='Submit']");
         waitForPageToLoad();
-        pause(2000);
-        firstRun = false;
+       
     }
 
     protected void registerDraftTrial(String trialName, String leadOrgTrialId)

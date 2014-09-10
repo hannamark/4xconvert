@@ -1012,6 +1012,16 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "','NCI study protocol entity identifier',null,'2.16.840.1.113883.3.26.4.3',null)";
         runner.update(connection, sql);
     }
+    
+    protected String getLastNciId() throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (String) runner
+                .query(connection,
+                        "select extension from study_otheridentifiers where root='2.16.840.1.113883.3.26.4.3'"
+                                + " and identifier_name='NCI study protocol entity identifier'"
+                                + " order by study_protocol_id desc LIMIT 1",
+                        new ArrayHandler())[0];
+    }
 
     protected void deactivateTrialByNctId(String nctID) throws SQLException {
         QueryRunner runner = new QueryRunner();
