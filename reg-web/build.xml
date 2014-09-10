@@ -184,22 +184,7 @@
     <!-- Configure test compilation target                                      -->
     <!-- ====================================================================== -->
 
-    <target name="configure-tests">
-        <copy file="${pa.resourceDir}/test.properties.reg-web" tofile="${reg-web.build.testResourceDir.0}/test.properties"
-            overwrite="true">
-            <filterset>                
-                <filter token="webdriver.class" value="${webdriver.class}" />
-                <filter token="phantomjs.binary.path" value="${phantomjs.binary.path}" />
-                <filter token="jdbc.driver" value="${jdbc.driver}"/>
-                <filter token="jdbc.url" value="${jdbc.url}"/>
-                <filter token="db.username" value="${db.username}"/>
-                <filter token="db.password" value="${db.password}"/>              	
-                <filter token="pa.server.name" value="${pa.server.name}"/>
-                <filter token="jboss.port" value="${jboss.port}" />
-                <filter token="selenium.server.port" value="${selenium.server.port}"/>
-                <filter token="selenium.delay" value="${selenium.delay}"/>
-            </filterset>
-        </copy>
+    <target name="configure-tests">       
     </target>
 
     <!-- ====================================================================== -->
@@ -210,15 +195,13 @@
         <javac destdir="${reg-web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
             <src>
-                <pathelement location="${reg-web.build.testDir.0}"/>
-                <pathelement location="${reg-web.build.integrationTestDir.0}"/>
+                <pathelement location="${reg-web.build.testDir.0}"/>                
             </src>
             <classpath>
                 <pathelement location="${reg-web.build.outputDir}"/>
                 <path refid="common.package.classpath"/>
                 <path refid="test.classpath"/>
-                <path refid="test-junit.classpath"/>
-                <path refid="selenium.classpath"/>
+                <path refid="test-junit.classpath"/>                
                 <path refid="ejb.package.classpath"/>
             </classpath>
         </javac>
@@ -226,17 +209,44 @@
             <fileset dir="${reg-web.build.testResourceDir.0}"/>
         </copy>
     </target>
+	
+	 <target name="compile-selenium-tests" depends="compile-tests" description="Compile the test code">
+           <ant target="jar-test" dir="${pa.dir}/pa-ejb" inheritAll="false">
+                 <property name="tier" value="${tier}"/>
+           </ant>
+           <ant target="compile-tests" dir="${pa.dir}/pa-web" inheritAll="false">
+                 <property name="tier" value="${tier}"/>
+           </ant>
+	        <javac destdir="${reg-web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+	               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
+	            <src>	 
+	                <pathelement location="${reg-web.build.integrationTestDir.0}"/>
+	            </src>
+	            <classpath>
+	                <pathelement location="${reg-web.build.outputDir}"/>
+	                <path refid="common.package.classpath"/>
+	                <path refid="test.classpath"/>
+	                <path refid="test-junit.classpath"/>
+	                <path refid="selenium.classpath"/>
+	                <path refid="ejb.package.classpath"/>
+	            	<pathelement location="${pa.dir}/pa-web/target/test-classes"/>
+	            	<pathelement location="${pa.dir}/pa-web/target/classes"/>
+	            </classpath>
+	        </javac>
+	    </target>
 
     <!-- ====================================================================== -->
     <!-- Run Selenium Tests                                                       -->
     <!-- ====================================================================== -->
-    <target name="run-selenium-tests" depends="compile-tests" description="Run integration tests">
+    <target name="run-selenium-tests" depends="compile-selenium-tests" description="Run integration tests">
         <mkdir dir="${reg-web.test.reports}"/>
         <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="yes" failureproperty="junit.failure">
-            <jvmarg value="-XX:-UseSplitVerifier"/>
+        	<jvmarg value="-XX:-UseSplitVerifier"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath>
+            	<pathelement location="${pa.dir}/pa-web/target/test-classes"/>
+            	<pathelement location="${pa.dir}/pa-web/target/classes"/>
             	<path refid="test-junit.classpath"/>
                 <path location="${reg-web.build.testOutputDir}"/>
                 <path refid="selenium.classpath"/>

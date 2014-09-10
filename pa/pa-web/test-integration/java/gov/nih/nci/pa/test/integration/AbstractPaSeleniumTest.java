@@ -589,8 +589,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
         }
     }
-
+    
     protected TrialInfo createSubmittedTrial() throws SQLException {
+        return createSubmittedTrial(false);
+    }
+
+    protected TrialInfo createSubmittedTrial(boolean isAbbr) throws SQLException {
         TrialInfo info = new TrialInfo();
         info.uuid = UUID.randomUUID().toString();
         info.title = "Title " + info.uuid;
@@ -629,7 +633,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "false,null,'Scientific Description','InterventionalStudyProtocol','RANDOMIZED_CONTROLLED_TRIAL',"
                 + "null,null,null,null,'OPEN','PARALLEL',1,'EFFICACY',null,null,null,1,null,null,null,null,null,"
                 + "{ts '2014-04-16 12:18:50.572'},null,'ACTIVE',{ts '2013-04-16 12:18:50.572'},null,"
-                + "null,null,1,null,'" + info.uuid + "',60,false,false,"
+                + "null,null,1,null,'" + info.uuid + "',60,"+isAbbr+",false,"
                 + info.csmUserID + ",null,null,null,"
                 + "{ts '2018-04-16 12:18:50.572'},'ANTICIPATED',null,null,2,"
                 + info.csmUserID + ",false,null,false,null,null,'OTHER');";
@@ -751,9 +755,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         "select identifier from ctgovimport_log order by identifier desc limit 1",
                         new ArrayHandler())[0];
     }
-
+    
     protected TrialInfo createAcceptedTrial() throws SQLException {
-        TrialInfo info = createSubmittedTrial();
+        return createAcceptedTrial(false);
+    }
+
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated) throws SQLException {
+        TrialInfo info = createSubmittedTrial(isAbbreviated);
         addDWS(info, "ACCEPTED");
         addMilestone(info, "SUBMISSION_ACCEPTED");
         return info;
@@ -1042,6 +1050,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 "update study_site set local_sp_indentifier='"
                         + UUID.randomUUID().toString()
                         + "' where local_sp_indentifier is not null");
+    }
+    
+    protected void assignTrialOwner(String loginName, Long trialID)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        Number regUserID = (Number) runner
+                .query(connection,
+                        "select identifier from registry_user ru inner join csm_user cu on ru.csm_user_id=cu.user_id where cu.login_name like '%"
+                                + loginName + "%'", new ArrayHandler())[0];
+
+        String sql = "INSERT INTO study_owner (study_id,user_id,enable_emails) VALUES ("
+                + trialID + "," + regUserID + ",false)";
+        runner.update(connection, sql);
     }
 
     public static final class TrialInfo {
