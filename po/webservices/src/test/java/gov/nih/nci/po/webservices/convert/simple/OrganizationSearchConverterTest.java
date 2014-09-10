@@ -84,7 +84,7 @@ public class OrganizationSearchConverterTest extends
         OrganizationSearchConverter osConverter = new OrganizationSearchConverter();
         OrganizationSearchResult retPsResult = (OrganizationSearchResult) osConverter
                 .convertOSRFromBOToJaxB(osDto);
-        IiConverter
+
         // check for 'BaseSearchResult' attribute
         assertBSRForConvertFromBOToJaxB(osDto, retPsResult);
 
