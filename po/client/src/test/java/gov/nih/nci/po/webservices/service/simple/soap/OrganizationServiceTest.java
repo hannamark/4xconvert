@@ -3,6 +3,8 @@ package gov.nih.nci.po.webservices.service.simple.soap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.TestUtils;
 import gov.nih.nci.coppa.test.TstProperties;
 import gov.nih.nci.po.webservices.service.simple.AbstractOrganizationServiceTest;
@@ -48,6 +50,8 @@ import gov.nih.nci.po.webservices.types.ResearchOrganization;
 import gov.nih.nci.po.webservices.types.ResearchOrganizationType;
 
 import java.net.URL;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -56,6 +60,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
@@ -1360,7 +1365,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         Assert.assertNotNull(orgRole);
         Assert.assertTrue(orgRole instanceof HealthCareFacility);
         Assert.assertNotNull(orgRole.getId());
-        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals(EntityStatus.PENDING, orgRole.getStatus());
         // check the address details from DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
@@ -1438,7 +1443,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ResearchOrganization orgRole = (ResearchOrganization) response.getOrganizationRole();
         Assert.assertNotNull(orgRole);
         Assert.assertNotNull(orgRole.getId());
-        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals(EntityStatus.PENDING, orgRole.getStatus());
         assertEquals("NWK", orgRole.getType().name());
         assertEquals(ro.getFundingMechanism().value(), orgRole.getFundingMechanism().value());
 
@@ -2336,7 +2341,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
      * OrganizationService-changeOrganizationStatus-InvalidStatusTransition
      */
     @Test
-    public void testChangeOrganizationRoleStatusForInvalidTransition() {
+    public void testChangeOrganizationRoleStatusForInvalidTransition() throws SQLException {
 
         String excepMessage = null;
         Organization organization = createActiveOrganization();
@@ -2351,6 +2356,8 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
                 .createOrganizationRole(request);
         OrganizationRole orgRole = response.getOrganizationRole();
         Assert.assertTrue(orgRole instanceof HealthCareFacility);
+
+        activateRole(orgRole);
 
         // now change the status to PENDING
         ChangeOrganizationRoleStatusRequest req = new ChangeOrganizationRoleStatusRequest();
@@ -2387,7 +2394,7 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         HealthCareFacility hcf = new HealthCareFacility();        
         hcf.setName("Mayo HCF");
         hcf.setOrganizationId(1l);
-        hcf.setStatus(EntityStatus.ACTIVE);
+        hcf.setStatus(EntityStatus.PENDING);
         hcf.getAddress().add(getJaxbAddressList().get(0));
         hcf.getContact().addAll(getJaxbContactList());
         return hcf;
@@ -2409,10 +2416,32 @@ public class OrganizationServiceTest extends AbstractOrganizationServiceTest {
         ro.setOrganizationId(1l);
         ro.setType(ResearchOrganizationType.NWK);
         ro.setFundingMechanism(FundingMechanism.G_11);
-        ro.setStatus(EntityStatus.ACTIVE);
+        ro.setStatus(EntityStatus.PENDING);
         ro.getAddress().add(getJaxbAddressList().get(0));
         ro.getContact().addAll(getJaxbContactList());
         return ro;
     }
 
+    private void activateRole(OrganizationRole role) throws SQLException {
+        role.setStatus(EntityStatus.ACTIVE);
+
+        String sql = String.format(
+                "update %s set status='ACTIVE' where id=?",
+                role.getClass().getSimpleName().toLowerCase()
+        );
+
+        if (conn == null) {
+            conn = DataGeneratorUtil.getJDBCConnection();
+        }
+
+        PreparedStatement statement = null;
+
+        try {
+            statement = DataGeneratorUtil.getJDBCConnection().prepareStatement(sql);
+            statement.setLong(1, role.getId());
+            statement.executeUpdate();
+        } finally {
+            DbUtils.closeQuietly(statement);
+        }
+    }
 }

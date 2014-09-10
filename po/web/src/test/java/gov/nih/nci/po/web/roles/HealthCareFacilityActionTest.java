@@ -82,15 +82,8 @@
  */
 package gov.nih.nci.po.web.roles;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import com.opensymphony.xwork2.Action;
 import gov.nih.nci.po.data.bo.AbstractRole;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
@@ -105,23 +98,28 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PrivateAccessor;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.jms.JMSException;
-
 import org.displaytag.properties.SortOrderEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-import com.opensymphony.xwork2.Action;
+import javax.jms.JMSException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Scott Miller
@@ -292,7 +290,6 @@ public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
     public void testGetAvailableStatusForAddForm() {
         List<RoleStatus> expected = new ArrayList<RoleStatus>();
         expected.add(RoleStatus.PENDING);
-        expected.add(RoleStatus.ACTIVE);
 
         action.getRole().setId(null);
         Collection<RoleStatus> availableStatus = action.getAvailableStatus();
@@ -305,9 +302,15 @@ public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
     protected void verifyAvailStatusForEditForm(AbstractRole role, RoleStatus roleStatus) {
         role.setId(1L);
         PrivateAccessor.invokePrivateMethod(role, AbstractRole.class, "setPriorAsString",
-                new Object[] { roleStatus.name() });
-        Collection<RoleStatus> allowedTransitions = new ArrayList<RoleStatus>(roleStatus.getAllowedTransitions());
-//        allowedTransitions.remove(RoleStatus.ACTIVE);
+                new Object[]{roleStatus.name()});
+        Collection<RoleStatus> allowedTransitions = new ArrayList<RoleStatus>();
+
+        if (roleStatus == RoleStatus.PENDING) {
+            allowedTransitions.add(RoleStatus.PENDING);
+        } else {
+            allowedTransitions.addAll(roleStatus.getAllowedTransitions());
+        }
+
         assertTrue(allowedTransitions.containsAll(getAction().getAvailableStatus()));
         assertTrue(getAction().getAvailableStatus().containsAll(allowedTransitions));
     }
@@ -433,5 +436,18 @@ public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
     @Override
     AbstractRoleAction<HealthCareFacility, HealthCareFacilityCR, HealthCareFacilityServiceLocal> getAction() {
         return action;
+    }
+
+    @Test
+    public void testUpdatePendingToActive() throws JMSException {
+
+        PrivateAccessor.invokePrivateMethod(action.getRole(), AbstractRole.class, "setPriorAsString",
+                new Object[] { RoleStatus.PENDING.name() });
+
+        action.getRole().setStatus(RoleStatus.ACTIVE);
+
+        String response = action.edit();
+
+        assertEquals(Action.ERROR, response);
     }
 }

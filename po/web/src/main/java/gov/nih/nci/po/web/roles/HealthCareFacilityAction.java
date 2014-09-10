@@ -82,9 +82,16 @@
  */
 package gov.nih.nci.po.web.roles;
 
+import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
+import com.opensymphony.xwork2.Preparable;
+import com.opensymphony.xwork2.validator.annotations.CustomValidator;
+import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareFacilityCR;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.HealthCareFacilityServiceLocal;
 import gov.nih.nci.po.service.HealthCareFacilitySortCriterion;
@@ -93,19 +100,12 @@ import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 import gov.nih.nci.po.web.util.validator.Addressable;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
-
-import java.util.ArrayList;
-
-import javax.jms.JMSException;
-
 import org.displaytag.properties.SortOrderEnum;
 
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
-import com.fiveamsolutions.nci.commons.web.displaytag.PaginatedList;
-import com.opensymphony.xwork2.Preparable;
-import com.opensymphony.xwork2.validator.annotations.CustomValidator;
-import com.opensymphony.xwork2.validator.annotations.ValidationParameter;
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.jms.JMSException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Scott Miller
@@ -187,6 +187,18 @@ public class HealthCareFacilityAction
             })
     @Override
     public String edit() throws JMSException {
+
+        if (role.getPriorStatus() == RoleStatus.PENDING && role.getStatus() != RoleStatus.PENDING) {
+            LOG.warn(
+                    String.format(
+                            "Illegal attempt to update status from %s to %s",
+                            role.getPriorStatus().name(),
+                            role.getStatus().name()
+                    )
+            );
+            return ERROR;
+        }
+
         // PO-1098 - for some reason, the duplicate of wasn't getting set properly by struts when we tried to
         // set person.duplicateOf.id directly, so we're setting it manually
         if (duplicateOf != null && duplicateOf.getId() != null) {
@@ -374,4 +386,15 @@ public class HealthCareFacilityAction
         return role.isUsOrCanadaAddress();
     }
 
+    @Override
+    public Collection<RoleStatus> getAvailableStatus() {
+        List<RoleStatus> result  = new ArrayList<RoleStatus>();
+        if (getRole().getId()  == null || getRole().getPriorStatus() == RoleStatus.PENDING) {
+            result.add(RoleStatus.PENDING);
+        } else {
+            result.addAll(getBaseRole().getPriorStatus().getAllowedTransitions());
+        }
+
+        return result;
+    }
 }

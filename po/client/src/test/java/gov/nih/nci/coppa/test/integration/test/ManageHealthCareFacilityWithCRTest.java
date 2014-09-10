@@ -82,20 +82,30 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.TelUrl;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.IdConverter;
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import org.apache.commons.dbutils.DbUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashSet;
 
 import javax.naming.NamingException;
@@ -123,13 +133,33 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
 
         // Test create/update HCF functionality.
         createHCF();
+
+        activateRole(Long.parseLong(getOrganizationalRoleId()));
+
         updateHCF();
 
         // Test the CR
         checkCR();
-        
+
+
+
         // Test to check if OrgRole can be Nullified
         nullifyOrgRole();
+    }
+
+    private void activateRole(long id) {
+        Connection connection = DataGeneratorUtil.getJDBCConnection();
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("update healthcarefacility set status='ACTIVE' where id=?");
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DbUtils.closeQuietly(statement);
+            DbUtils.closeQuietly(connection);
+        }
     }
 
     private void createHCF() throws Exception {
@@ -183,7 +213,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
 
         // Update the HCF
         selenium.type("curateRoleForm.role.name", "Facility 1 Updated");
-        selenium.select("curateRoleForm.role.status", "label=PENDING");
+        selenium.select("curateRoleForm.role.status", "label=ACTIVE");
         addUSPostalAddress();
         waitForTelecomFormsToLoad();
         
@@ -205,7 +235,7 @@ public class ManageHealthCareFacilityWithCRTest extends AbstractManageOrgRolesWi
         assertTrue(selenium.isTextPresent("jdoe01")); // JohnDoe has overridden the OrgRole
         assertFalse(selenium.isTextPresent("Override"));
         selenium.type("curateRoleForm.role.name", "Facility 1 Updated Again by JDoe01");
-        selenium.select("curateRoleForm.role.status", "label=ACTIVE");  // change status(including to ACTIVE)      
+        selenium.select("curateRoleForm.role.status", "label=ACTIVE");  // change status(including to ACTIVE)
         clickAndWait("save_button"); 
         logoutUser(); //'John Doe' logs out      
         loginAsCurator();

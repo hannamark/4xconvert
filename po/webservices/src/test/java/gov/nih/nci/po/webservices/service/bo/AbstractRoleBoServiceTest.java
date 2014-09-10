@@ -68,7 +68,7 @@ public abstract class AbstractRoleBoServiceTest<TYPE extends Correlation, CR_TYP
     @Test
     public void testCreate() throws JMSException, EntityValidationException {
         TYPE instance = getBasicModel();
-
+        instance.setStatus(RoleStatus.PENDING);
         when(getEjbService().create(instance)).thenReturn(1L);
 
         long id = service.create(instance);
@@ -85,7 +85,7 @@ public abstract class AbstractRoleBoServiceTest<TYPE extends Correlation, CR_TYP
     @Test(expected = EntityValidationException.class)
     public void testCreateWithEntityValidationException() throws JMSException, EntityValidationException {
         TYPE instance = getBasicModel();
-
+        instance.setStatus(RoleStatus.PENDING);
         when(getEjbService().create(instance)).thenThrow(new EntityValidationException(Collections.EMPTY_MAP));
 
         long id = service.create(instance);
@@ -96,7 +96,7 @@ public abstract class AbstractRoleBoServiceTest<TYPE extends Correlation, CR_TYP
     @Test(expected = JMSException.class)
     public void testCreateWithJMSException() throws JMSException, EntityValidationException {
         TYPE type = getBasicModel();
-
+        type.setStatus(RoleStatus.PENDING);
         when(getEjbService().create(type)).thenThrow(new JMSException(""));
 
         service.create(type);

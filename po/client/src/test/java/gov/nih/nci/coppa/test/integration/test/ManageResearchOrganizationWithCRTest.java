@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.test.integration.test;
 
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.test.remoteapi.RemoteServiceHelper;
@@ -90,8 +91,12 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import org.apache.commons.dbutils.DbUtils;
 
 import java.net.URISyntaxException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.naming.NamingException;
 
@@ -115,7 +120,9 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
 
         // Goto Manage RO Page
         accessManageResearchOrganizationScreen();
-        clickAndWait("add_button_ro");        
+        clickAndWait("add_button_ro");
+
+
         assertTrue(selenium.isTextPresent("Research Organization Role Information"));
         assertFalse(selenium.isElementPresent("//div[@id='wwlbl_createdBy']")); // 'createdBy' shouldn't be present
         // ensure the player is ACTIVE
@@ -153,7 +160,10 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         assertTrue(selenium.isTextPresent("exact:Basic Identifying Information"));
         // save everything
         clickAndWaitSaveButton();
-        
+
+
+        activateRole(Long.parseLong(roId));
+
         // Step2:: OrgRole not overridden, other curator (who didn't create the OrgRole) logs in.
         logoutUser();// 'curator' logout 
         loginAsJohnDoe(); // some other curator   
@@ -228,6 +238,21 @@ public class ManageResearchOrganizationWithCRTest extends AbstractManageOrgRoles
         waitForElementById("curateRoleForm.role.name", 5);
         assertEquals("new RO name", selenium.getValue("curateRoleForm.role.name").trim());
         
+    }
+
+    private void activateRole(long id) {
+        Connection connection = DataGeneratorUtil.getJDBCConnection();
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("update researchorganization set status='ACTIVE' where id=?");
+            statement.setLong(1, id);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            DbUtils.closeQuietly(statement);
+            DbUtils.closeQuietly(connection);
+        }
     }
 
     private void checkContactInformation() throws Exception {

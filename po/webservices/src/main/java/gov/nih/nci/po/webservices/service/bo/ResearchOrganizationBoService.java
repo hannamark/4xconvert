@@ -6,17 +6,20 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Overridable;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
+import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.GenericStructrualRoleCRServiceLocal;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 import gov.nih.nci.po.service.ResearchOrganizationServiceLocal;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
+import gov.nih.nci.po.webservices.service.bo.filter.StatusValidatingRoleFilter;
+import gov.nih.nci.po.webservices.service.exception.ServiceException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
-
-import org.springframework.stereotype.Service;
 
 /**
  * @author Jason Aliyetti <jason.aliyetti@semanticbits.com>
@@ -25,6 +28,15 @@ import org.springframework.stereotype.Service;
 public class ResearchOrganizationBoService
         extends AbstractEnhancedOrganizationRoleBoService<ResearchOrganization, ResearchOrganizationCR>
         implements ResearchOrganizationServiceLocal {
+
+    /**
+     * Default constructor.
+     */
+    public ResearchOrganizationBoService() {
+        super();
+        getUpdateFilters().add(new StatusValidatingRoleFilter<ResearchOrganization>());
+    }
+
     @Override
     protected GenericStructrualRoleServiceLocal<ResearchOrganization> getCorrelationService() {
         return PoRegistry.getInstance().getServiceLocator().getResearchOrganizationService();
@@ -68,5 +80,19 @@ public class ResearchOrganizationBoService
     @Override
     public void override(Overridable overridable, User overriddenBy) {
         ((ResearchOrganizationServiceLocal) getCorrelationService()).override(overridable, overriddenBy);
+    }
+
+    @Override
+    public long create(ResearchOrganization structuralRole) throws EntityValidationException, JMSException {
+        if (structuralRole.getStatus() != null && structuralRole.getStatus() != RoleStatus.PENDING) {
+            throw new ServiceException(
+                    String.format(
+                            "Illegal attempt to create a HealthCareFacility with status %s",
+                            structuralRole.getStatus().name()
+                    )
+            );
+        }
+
+        return super.create(structuralRole);
     }
 }

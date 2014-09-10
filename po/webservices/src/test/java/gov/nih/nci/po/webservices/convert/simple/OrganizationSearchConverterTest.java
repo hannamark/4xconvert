@@ -1,5 +1,6 @@
 package gov.nih.nci.po.webservices.convert.simple;
 
+import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.service.OrganizationSearchDTO;
 import gov.nih.nci.po.service.OrganizationSearchDTO.AliasDTO;
 import gov.nih.nci.po.webservices.types.EntityStatus;
@@ -83,7 +84,7 @@ public class OrganizationSearchConverterTest extends
         OrganizationSearchConverter osConverter = new OrganizationSearchConverter();
         OrganizationSearchResult retPsResult = (OrganizationSearchResult) osConverter
                 .convertOSRFromBOToJaxB(osDto);
-
+        IiConverter
         // check for 'BaseSearchResult' attribute
         assertBSRForConvertFromBOToJaxB(osDto, retPsResult);
 

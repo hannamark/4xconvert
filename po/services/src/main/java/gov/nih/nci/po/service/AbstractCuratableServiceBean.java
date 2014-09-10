@@ -362,7 +362,6 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
 
         //if duplicate set, then cascade aliases
         if (e instanceof Aliasable && e.getDuplicateOf() instanceof Aliasable) {
-
             mergeAliases((Aliasable) e, (Aliasable) e.getDuplicateOf());
         }
     }

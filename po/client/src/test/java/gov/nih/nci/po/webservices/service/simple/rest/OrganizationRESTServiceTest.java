@@ -3,8 +3,11 @@ package gov.nih.nci.po.webservices.service.simple.rest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import gov.nih.nci.coppa.test.DataGeneratorUtil;
 import gov.nih.nci.coppa.test.TestUtils;
 import gov.nih.nci.coppa.test.TstProperties;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.webservices.service.simple.AbstractOrganizationServiceTest;
 import gov.nih.nci.po.webservices.types.Contact;
 import gov.nih.nci.po.webservices.types.ContactType;
@@ -26,6 +29,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URLEncoder;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -36,6 +42,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -51,6 +58,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.SQLQuery;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -2496,7 +2504,7 @@ public class OrganizationRESTServiceTest extends
                 .getEntity());
         assertTrue(orgRole instanceof HealthCareFacility);
         assertNotNull(orgRole.getId());
-        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals(EntityStatus.PENDING, orgRole.getStatus());
         // check the details in DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
@@ -2529,7 +2537,7 @@ public class OrganizationRESTServiceTest extends
                 OrganizationRole.class);
         assertTrue(orgRole instanceof HealthCareFacility);
         assertNotNull(orgRole.getId());
-        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals(EntityStatus.PENDING, orgRole.getStatus());
         // check the details in DB for HCF
         checkOrgRoleAddressDetails(hcf, orgRole);
         checkOrgRoleContactDetails(hcf, orgRole, "my.email@mayoclinic.org",
@@ -2625,7 +2633,7 @@ public class OrganizationRESTServiceTest extends
 
         ResearchOrganization orgRole = (ResearchOrganization) unmarshalOrganizationRole(response.getEntity());
         assertNotNull(orgRole.getId());
-        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals(EntityStatus.PENDING, orgRole.getStatus());
         assertEquals("NWK", orgRole.getType().name());
         assertEquals(ro.getFundingMechanism().value(), orgRole.getFundingMechanism().value());
         // check the details in DB for OC
@@ -2658,7 +2666,7 @@ public class OrganizationRESTServiceTest extends
 
         ResearchOrganization orgRole = (ResearchOrganization) mapper.readValue(perJSONStr,OrganizationRole.class);
         assertNotNull(orgRole.getId());
-        assertEquals(EntityStatus.ACTIVE, orgRole.getStatus());
+        assertEquals(EntityStatus.PENDING, orgRole.getStatus());
         assertEquals("NWK", orgRole.getType().name());
         assertEquals(ro.getFundingMechanism().value(), orgRole.getFundingMechanism().value());
         // check the details in DB for OC
@@ -2864,6 +2872,7 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleHCF() throws Exception {
         // create HCF first
         HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
+        activateRole(hcf);
 
         // now update the HCF details
         hcf.setName("Mayo HCF 111"); // added to alias, name not change
@@ -2902,6 +2911,29 @@ public class OrganizationRESTServiceTest extends
         checkOrgRoleAliases("Mayo HCF 111", hcf); // check for alias
     }
 
+    private void activateRole(OrganizationRole role) throws SQLException {
+        role.setStatus(EntityStatus.ACTIVE);
+
+        String sql = String.format(
+                "update %s set status='ACTIVE' where id=?",
+                role.getClass().getSimpleName().toLowerCase()
+        );
+
+        if (conn == null) {
+            conn = DataGeneratorUtil.getJDBCConnection();
+        }
+
+        PreparedStatement statement = null;
+
+        try {
+            statement = DataGeneratorUtil.getJDBCConnection().prepareStatement(sql);
+            statement.setLong(1, role.getId());
+            statement.executeUpdate();
+        } finally {
+            DbUtils.closeQuietly(statement);
+        }
+    }
+
     /**
      * Testcase for OrganizationService-updateOrganizationRole-HCF - JSON Format
      */
@@ -2909,6 +2941,7 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleHCF_JSON() throws Exception {
         // create HCF first
         HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
+        activateRole(hcf);
 
         // now update the HCF details
         hcf.setName("Mayo HCF 111"); // added to alias, name not change
@@ -3042,6 +3075,7 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleRO() throws Exception {
         // create OC first
         ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
+        activateRole(ro);
 
         // now update the RO details
         ro.setName("Mayo RO 111"); // added to alias, name not change
@@ -3090,7 +3124,7 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleRO_JSON() throws Exception {
         // create OC first
         ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
-
+        activateRole(ro);
         // now update the OC details
         ro.setName("Mayo RO 111"); // added to alias, name not change
         // update the status
@@ -3525,6 +3559,7 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleHCF_create_ChangeRequest() throws Exception {
         // create HCF first
         HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
+        activateRole(hcf);
 
         // set Overridden by CTRPQATester1
         updateOverriddenBy(HealthCareFacility.class, hcf.getId());
@@ -3561,7 +3596,8 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleHCF_create_ChangeRequest_JSON() throws Exception {
         // create HCF first
         HealthCareFacility hcf = (HealthCareFacility) createOrgRole(getHealthCareFacilityObj());
-        
+        activateRole(hcf);
+
         // set Overridden by CTRPQATester1
         updateOverriddenBy(HealthCareFacility.class, hcf.getId());
 
@@ -3724,7 +3760,7 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleRO_create_ChangeRequest() throws Exception {
         // create OC first
         ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
-        
+        activateRole(ro);
         // set Overridden by CTRPQATester1
         updateOverriddenBy(ResearchOrganization.class, ro.getId());
 
@@ -3768,7 +3804,8 @@ public class OrganizationRESTServiceTest extends
     public void testUpdateOrganizationRoleRO_create_ChangeRequest_JSON() throws Exception {
         // create OC first
         ResearchOrganization ro = (ResearchOrganization) createOrgRole(getResearchOrganizationObj());
-        
+        activateRole(ro);
+
         // set Overridden by CTRPQATester1
         updateOverriddenBy(ResearchOrganization.class, ro.getId());
 
@@ -4430,7 +4467,7 @@ public class OrganizationRESTServiceTest extends
         HealthCareFacility hcf = new HealthCareFacility();        
         hcf.setName("Mayo HCF");
         hcf.setOrganizationId(createActiveOrganization().getId());
-        hcf.setStatus(EntityStatus.ACTIVE);
+        hcf.setStatus(EntityStatus.PENDING);
         hcf.getAddress().add(getJaxbAddressList().get(0));
         hcf.getContact().addAll(getJaxbContactList());
         return hcf;
@@ -4452,7 +4489,7 @@ public class OrganizationRESTServiceTest extends
         ro.setOrganizationId(createActiveOrganization().getId());
         ro.setType(ResearchOrganizationType.NWK);
         ro.setFundingMechanism(FundingMechanism.G_11);
-        ro.setStatus(EntityStatus.ACTIVE);
+        ro.setStatus(EntityStatus.PENDING);
         ro.getAddress().add(getJaxbAddressList().get(0));
         ro.getContact().addAll(getJaxbContactList());
         return ro;
