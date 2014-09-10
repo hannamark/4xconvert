@@ -24,6 +24,7 @@ public final class CacheUtils {
     private static final String CADSR_CLASSIFICATION_SCHEMES_KEY = "CADSR_CLASSIFICATION_SCHEMES";
     private static final String VIEW_PARTICIPATING_SITES_CACHE_KEY = "VIEW_PARTICIPATING_SITES_CACHE";
     private static final String CTEP_ORGANIZATIONS_CACHE_KEY = "CTEP_ORGANIZATIONS_CACHE";
+    private static final String ORGANIZATIONS_FAMILY_CACHE_KEY = "ORGANIZATION_FAMILY_CACHE";
 
     /**
      * Cache used for storing criteria's referenced collections, usually Lead
@@ -83,6 +84,15 @@ public final class CacheUtils {
      */
     public static Cache getCaDSRClassificationSchemesCache() {
         return CACHE_MANAGER.getCache(CADSR_CLASSIFICATION_SCHEMES_KEY);
+    }
+    
+    /**
+     * Cache used for storing the related orgs to one..
+     * 
+     * @return Cache
+     */
+    public static Cache getOrganizationFamilyCache() {
+        return CACHE_MANAGER.getCache(ORGANIZATIONS_FAMILY_CACHE_KEY);
     }
 
     /**

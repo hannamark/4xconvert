@@ -12,6 +12,7 @@ import gov.nih.nci.registry.util.SelectedRegistryUser;
 import gov.nih.nci.registry.util.SelectedStudyProtocol;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
@@ -46,7 +47,7 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
 
     @Test
     public void testSearch() throws PAException {
-        action = new ManageSiteOwnershipAction();
+        action = new MockSiteOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -63,7 +64,7 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
 
     @Test
 	public void testSetRegUser() throws PAException {
-        action = new ManageSiteOwnershipAction();
+        action = new MockSiteOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("regUserId", "3");
 		request.setupAddParameter("isOwner", "true");
@@ -78,7 +79,7 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
 
     @Test
     public void testAssignOwnershipException() throws PAException {
-        action = new ManageSiteOwnershipAction();
+        action = new MockSiteOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -93,7 +94,7 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
 
     @Test
     public void testUnAssignOwnershipException() throws PAException {
-        action = new ManageSiteOwnershipAction();
+        action = new MockSiteOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -105,6 +106,15 @@ public class ManageSiteOwnershipActionTest extends AbstractRegWebTest {
             action.unassignOwnership();
         } catch(PAException e) {
             //expected
+        }
+    }
+    
+    private class MockSiteOwnershipAction extends ManageSiteOwnershipAction {
+        @Override
+        protected List<Long> getAllRelatedOrgs(final Long siteId) throws PAException {
+            ArrayList<Long> lst = new ArrayList<Long>();
+            lst.add(siteId);
+            return lst;
         }
     }
 

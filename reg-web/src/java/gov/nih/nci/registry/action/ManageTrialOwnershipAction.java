@@ -85,7 +85,6 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -125,7 +124,7 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
         Set<StudyProtocol> result = new HashSet<StudyProtocol>();
         List<StudyProtocol> trials;
         
-        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(affiliatedOrgId);
+        List<Long> siblings = getAllRelatedOrgs(affiliatedOrgId);
 
         for (long siteId : siblings) {
             trials = PaRegistry.getProtocolQueryService().getStudyProtocolByOrgIdentifier(siteId);
@@ -142,7 +141,8 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
     @Override
     public void getAssignedTrials(Long affiliatedOrgId) throws PAException {
         setTrialOwnershipInfo(PaRegistry.getRegistryUserService().
-               searchTrialOwnership(new DisplayTrialOwnershipInformation(), affiliatedOrgId));
+               searchTrialOwnership(new DisplayTrialOwnershipInformation(),
+                       this.getAllRelatedOrgs(affiliatedOrgId)));
         ServletActionContext
         .getRequest()
         .getSession()
@@ -150,19 +150,13 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
     }
   
     @Override
-    public void updateOwnership(Long userId, Long tId, boolean assign, boolean enableEmails)
+    public void updateOwnership(List<Long> userId, Set<Long> tId, boolean assign, boolean enableEmails)
             throws PAException {
-        // check if currently owner or not.
-        boolean isOwner = PaRegistry.getRegistryUserService().isTrialOwner(
-                userId, tId);
+        
         if (assign) {
-            if (!isOwner) {
-                PaRegistry.getRegistryUserService().assignOwnership(userId, tId);
-                PaRegistry.getRegistryUserService().setEmailNotificationsPreference(userId, tId, enableEmails);
-            }
-        }
-
-        if (!assign && isOwner) {
+            PaRegistry.getRegistryUserService().assignOwnership(userId, tId);
+           
+        } else {
             PaRegistry.getRegistryUserService().removeOwnership(userId, tId);
         }
     }

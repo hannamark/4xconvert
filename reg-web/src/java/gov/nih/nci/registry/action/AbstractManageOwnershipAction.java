@@ -4,6 +4,8 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.util.CacheUtils;
+import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -17,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
+
+import net.sf.ehcache.Cache;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -45,6 +49,11 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
     protected static final String TRIAL_OWNERSHIP_LIST = "trialOwnershipInfo";
     private static final String VIEW_RESULTS = "viewResults";
     private static final String SITE_NAME = "siteName";
+    
+    /**
+     * Cache to keep the family collection in while people are working with it.
+     */
+    protected static final Cache FAMILY_CACHE = CacheUtils.getOrganizationFamilyCache();
     
     private List<SelectedStudyProtocol> studyProtocols = new ArrayList<SelectedStudyProtocol>();
     private List<SelectedRegistryUser> registryUsers = new ArrayList<SelectedRegistryUser>();
@@ -164,6 +173,31 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
         performSearch();
         return VIEW_RESULTS;
     }
+    
+    /**
+     * A function to wrap around FamilyHelper static function getAllRelatedOrgs so
+     * it can use the cache.
+     * @param siteId the id of the site
+     * @return the list of organizations in the family,
+     * @throws PAException When something goes wrong.
+     */
+    @SuppressWarnings("unchecked")
+    protected List<Long> getAllRelatedOrgs(final Long siteId) throws PAException {
+        List<Long> siblings = (List<Long>) CacheUtils.getFromCacheOrBackend(FAMILY_CACHE, siteId.toString(),
+                new Closure() {
+                    @Override
+                    public Object execute() throws PAException {
+                        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(siteId);
+                        if (siblings == null || siblings.size() == 0) {
+                            //Can't happen, but just in case that changes later.
+                            siblings = new ArrayList<Long>();
+                            siblings.add(siteId);
+                        }
+                        return siblings;
+                    }
+                });
+        return siblings;
+    }
 
     private void performSearch() throws PAException {        
         final HttpSession session = ServletActionContext.getRequest()
@@ -178,6 +212,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
             Long affiliatedOrgId = loggedInUser.getAffiliatedOrganizationId();
             ServletActionContext.getRequest().getSession()
                                        .setAttribute(SITE_NAME, loggedInUser.getAffiliateOrg());
+            
             getOrgMembers(affiliatedOrgId);
             getOrgTrials(affiliatedOrgId);
             getAssignedTrials(affiliatedOrgId);
@@ -198,7 +233,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
 
     private void getOrgMembers(Long affiliatedOrgId) throws PAException {
         RegistryUser criteria = new RegistryUser();
-        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(affiliatedOrgId);
+        List<Long> siblings = getAllRelatedOrgs(affiliatedOrgId);
         Set<RegistryUser> regUsers = new HashSet<RegistryUser>();
         for (Long orgId : siblings) {
             criteria.setAffiliatedOrganizationId(orgId);
@@ -359,7 +394,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
         try {
             if (regUserIds != null && trialIds != null) {
                 List<Long> selectedUserIds = new ArrayList<Long>();
-                List<Long> selectedTrialIds = new ArrayList<Long>();
+                Set<Long> selectedTrialIds = new HashSet<Long>();
                 
                 for (int i = 0; i < trialIds.length; i++) {
                     selectedTrialIds.add(Long.parseLong(trialIds[i]));
@@ -371,11 +406,9 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                 toBeRemoved.add(Long.valueOf(0));
                 selectedTrialIds.removeAll(toBeRemoved);
                 selectedUserIds.removeAll(toBeRemoved);
-                for (Long userId : selectedUserIds) {
-                    for (Long tId : selectedTrialIds) {
-                        updateOwnership(userId, tId, true, true);
-                    }
-                }
+                
+                updateOwnership(selectedUserIds, selectedTrialIds, true, true);
+
                 ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
                         assignSuccessMsg());
             } else {
@@ -437,7 +470,11 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
                     tId = Long.parseLong(ids[0]);
                     userId = Long.parseLong(ids[1]);
                     if (tId != 0 && userId != 0) {
-                        updateOwnership(userId, tId, false, false);
+                        List<Long> user = new ArrayList<Long>();
+                        user.add(userId);
+                        Set<Long> trial = new HashSet<Long>();
+                        trial.add(tId);
+                        updateOwnership(user, trial, false, false);
                     }
                 }
                 ServletActionContext.getRequest().setAttribute(SUCCESS_MSG,
@@ -471,7 +508,7 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
      * @throws PAException
      *             PAException
      */
-    public abstract void updateOwnership(Long registryUserID, Long trialID,
+    public abstract void updateOwnership(List<Long> registryUserID, Set<Long> trialID,
             boolean assign, boolean enableEmailNotifications)
             throws PAException;
 

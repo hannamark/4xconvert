@@ -26,7 +26,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
 
     @Test
     public void testSearch() throws PAException {
-        action = new ManageTrialOwnershipAction();
+        action = new MockTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -43,13 +43,13 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
 
     @Test
     public void testView() throws PAException {
-        action = new ManageTrialOwnershipAction();
+        action = new MockTrialOwnershipAction();
         assertEquals("viewResults", action.view());
     }
 
     @Test
 	public void testSetRegUser() throws PAException {
-        action = new ManageTrialOwnershipAction();
+        action = new MockTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setupAddParameter("regUserId", "3");
 		request.setupAddParameter("isOwner", "true");
@@ -66,7 +66,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
 
     @Test
     public void testAssignOwnershipException() throws PAException {
-        action = new ManageTrialOwnershipAction();
+        action = new MockTrialOwnershipAction();
         
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
@@ -84,7 +84,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
 
     @Test
     public void testUnAssignOwnershipException() throws PAException {
-        action = new ManageTrialOwnershipAction();
+        action = new MockTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -101,7 +101,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
     
     @Test
     public void testUpdateEmailPref() throws PAException {
-        action = new ManageTrialOwnershipAction();
+        action = new MockTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -118,7 +118,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
     
     @Test
     public void testUpdateEmailPrefAll() throws PAException {
-        action = new ManageTrialOwnershipAction();
+        action = new MockTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser("RegUser");
@@ -130,6 +130,15 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
             action.updateEmailPref();
         } catch(PAException e) {
             //expected
+        }
+    }
+    
+    private class MockTrialOwnershipAction extends ManageTrialOwnershipAction {
+        @Override
+        protected List<Long> getAllRelatedOrgs(final Long siteId) throws PAException {
+            ArrayList<Long> lst = new ArrayList<Long>();
+            lst.add(siteId);
+            return lst;
         }
     }
 }

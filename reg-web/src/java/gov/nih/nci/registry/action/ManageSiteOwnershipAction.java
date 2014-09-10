@@ -129,7 +129,7 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
     public List<StudyProtocol> getStudyProtocols(Long participatingSiteId)
             throws PAException {
         Set<StudyProtocol> spSet = new HashSet<>();
-        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(participatingSiteId);
+        List<Long> siblings = getAllRelatedOrgs(participatingSiteId);
         Organization org = new Organization();
         org.setIdentifier(participatingSiteId.toString());
         org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(org);
@@ -149,7 +149,8 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
   
     @Override
     public void getAssignedTrials(Long affiliatedOrgId) throws PAException {
-        setTrialOwnershipInfo(PaRegistry.getRegistryUserService().searchSiteRecordOwnership(affiliatedOrgId));
+        setTrialOwnershipInfo(PaRegistry.getRegistryUserService().searchSiteRecordOwnership(
+                this.getAllRelatedOrgs(affiliatedOrgId)));
         ServletActionContext
         .getRequest()
         .getSession()
@@ -157,7 +158,7 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
     }
     
     @Override
-    public void updateOwnership(Long userId, Long trialID, boolean assign, boolean enableEmails)
+    public void updateOwnership(List<Long> userId, Set<Long> trialID, boolean assign, boolean enableEmails)
             throws PAException {        
         RegistryUser loggedInUser = getRegistryUser();        
         final Long orgId = loggedInUser.getAffiliatedOrganizationId();
@@ -166,27 +167,32 @@ public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction imp
             throw new PAException(
                     "We are unable to determine your affiliation with an organization.");
         }
-
-        String poOrgId = orgId.toString();       
-        Ii spID = IiConverter.convertToStudyProtocolIi(trialID);        
-        StudySiteDTO studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
-        if (studySiteDTO == null) {
-            Iterator<Long> siblings = FamilyHelper.getAllRelatedOrgs(orgId).iterator();
-            while (studySiteDTO == null && siblings.hasNext()) {
-                poOrgId = String.valueOf(siblings.next());
-                studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
-            }
+        final List<Long> family = FamilyHelper.getAllRelatedOrgs(orgId);
+        
+        String poOrgId = orgId.toString();
+        Set<Long> ssId = new HashSet<Long>(trialID.size());
+        for (Long trial : trialID) {
+            //TODO: More speedup improvements here.
+            Ii spID = IiConverter.convertToStudyProtocolIi(trial);        
+            StudySiteDTO studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
             if (studySiteDTO == null) {
-                throw new PAException(
-                    "Your affiliated organization is not a participating site on the selected trial.");
+                Iterator<Long> siblings = family.iterator();
+                while (studySiteDTO == null && siblings.hasNext()) {
+                    poOrgId = String.valueOf(siblings.next());
+                    studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
+                }
+                if (studySiteDTO == null) {
+                    throw new PAException(
+                        "Your affiliated organization is not a participating site on the selected trial.");
+                }
             }
+            
+            ssId.add(IiConverter.convertToLong(studySiteDTO.getIdentifier()));
         }
         if (assign) {
-            PaRegistry.getRegistryUserService().assignSiteOwnership(userId,
-                    IiConverter.convertToLong(studySiteDTO.getIdentifier()));
+            PaRegistry.getRegistryUserService().assignSiteOwnership(userId, ssId);
         } else {
-            PaRegistry.getRegistryUserService().removeSiteOwnership(userId,
-                    IiConverter.convertToLong(studySiteDTO.getIdentifier()));
+            PaRegistry.getRegistryUserService().removeSiteOwnership(userId, ssId);
         }
     }
 

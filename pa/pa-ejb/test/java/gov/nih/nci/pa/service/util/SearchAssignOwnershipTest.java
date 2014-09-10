@@ -89,6 +89,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -119,7 +120,9 @@ public class SearchAssignOwnershipTest extends AbstractHibernateTestCase {
         remoteEjb.assignOwnership(userId, spId);
         PaHibernateUtil.getCurrentSession().clear();
         assertTrue(remoteEjb.isTrialOwner(userId, spId));
-        List<DisplayTrialOwnershipInformation> usrLst = remoteEjb.searchTrialOwnership(criteria, Long.parseLong("1"));
+        List<Long> orgs = new ArrayList<Long>();
+        orgs.add(Long.parseLong("1"));
+        List<DisplayTrialOwnershipInformation> usrLst = remoteEjb.searchTrialOwnership(criteria, orgs);
         assertNotNull(usrLst);
         assertEquals(1, usrLst.size());
         assertEquals("Local SP ID 01", usrLst.get(0).getLeadOrgId());

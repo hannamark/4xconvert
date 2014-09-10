@@ -85,6 +85,7 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -208,7 +209,7 @@ public class DisplayTrialOwnershipAction extends ActionSupport {
             RegistryUser loggedInUser = PaRegistry.getRegistryUserService().getUser(loginName);
             trialOwnershipInfo =
                     PaRegistry.getRegistryUserService().searchTrialOwnership(criteria,
-                            loggedInUser.getAffiliatedOrganizationId());
+                            FamilyHelper.getAllRelatedOrgs(loggedInUser.getAffiliatedOrganizationId()));
             ServletActionContext.getRequest().getSession().setAttribute(DisplayTrialOwnershipAction.TRIAL_INFO,
                     trialOwnershipInfo);
         } catch (Exception e) {

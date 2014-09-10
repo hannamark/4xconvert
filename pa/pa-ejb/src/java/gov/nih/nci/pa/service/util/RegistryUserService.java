@@ -166,7 +166,7 @@ public interface RegistryUserService {
      * @throws PAException on error.
      */
     List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation
-            trialOwnershipInfo, Long affiliatedOrgId) throws PAException;
+            trialOwnershipInfo, List<Long> affiliatedOrgId) throws PAException;
 
     /**
      * Given a login name and study protocol id, find out if the user is
@@ -265,7 +265,7 @@ public interface RegistryUserService {
      * @throws PAException on error.
      */
     List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
-            Long participatingSiteId) throws PAException;
+            List<Long> participatingSiteId) throws PAException;
     
     /**
      * Retrieves user's ID by login name.
@@ -359,5 +359,37 @@ public interface RegistryUserService {
      * @throws PAException PAException
      */
     List<StudyProtocol> getTrialsByParticipatingSite(Long participatingSiteId) throws PAException;
+
+    /**
+     * A batch version of the regular assignSiteOwnership
+     * @param userId the userids
+     * @param studySiteId the siteids
+     * @throws PAException database exceptions
+     */
+    void assignSiteOwnership(List<Long> userId, Set<Long> studySiteId) throws PAException;
+    
+    /**
+     * A batch version of the regular removeSiteOwnership
+     * @param userId the user ids
+     * @param studySiteId the site ids 
+     * @throws PAException the database exceptions
+     */
+    void removeSiteOwnership(List<Long> userId, Set<Long> studySiteId) throws PAException;
+    
+    /**
+     * A batch version of the regular assignOwnership
+     * @param userId the user ids
+     * @param studyProtocolId the trial ids
+     * @throws PAException database exceptions
+     */
+    void assignOwnership(List<Long> userId, Set<Long> studyProtocolId) throws PAException;
+    
+    /**
+     * A batch version of the regular removeOwnership
+     * @param userId the user ids
+     * @param studyProtocolId the trial ids
+     * @throws PAException database exceptions
+     */
+    void removeOwnership(List<Long> userId, Set<Long> studyProtocolId) throws PAException;
 
 }

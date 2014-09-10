@@ -102,6 +102,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -144,6 +145,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final int INDEX_NCI_IDENTIFIER = 5;
     private static final int INDEX_ORG_ID = 6;
     private static final int INDEX_LEAD_ID = 7;
+    private static final int STRING_SIZE = 2500;
     private static final String SEARCH_USER_BY_EMAIL_QUERY = "select ru from RegistryUser as ru "
             + "join fetch ru.csmUser as csmu where ru.emailAddress = :emailAddress";
     
@@ -336,49 +338,32 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
 
     /**
      * @param trialOwnershipInfo the criteria object.
-     * @param affiliatedOrgId the affiliated org id.
+     * @param siblings the affiliated org id and siblings.
      * @return list of trial ownership information objects.
      * @throws PAException on error.
      */
     @Override
     @SuppressWarnings(UNCHECKED)
     public List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation // NOPMD
-            trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
+            trialOwnershipInfo, List<Long> siblings) throws PAException {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
-        List<Long> siblings = getAllRelatedOrgs(affiliatedOrgId);
-        StringBuffer hql = new StringBuffer();
+        StringBuffer hql = new StringBuffer(STRING_SIZE);
         hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, ")
             .append("sp.id, otherid.extension, sowner.affiliatedOrganizationId, sps.localStudyProtocolIdentifier ")
             .append("from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws ")
             .append("left outer join sp.studySites as sps ")
             .append("left outer join sps.researchOrganization as ro left outer join ro.organization as org ")
-            .append(" left outer join sp.studyOwners as sowner left outer join sp.otherIdentifiers otherid where (");
-        for (int i = 0; i < siblings.size(); i++) {
-            if (i > 0) {
-                hql.append("or ");
-            }
-            hql.append("'").append(siblings.get(i).toString())
-                .append("' in (select researchOrganization.organization.identifier from StudySite")
-                .append(" where functionalCode ='")
-                .append(StudySiteFunctionalCode.LEAD_ORGANIZATION).append("' ")
-                .append("and studyProtocol.id = sp.id) ");
-        }
-
-        hql.append(") and dws.statusCode  <> '")
-                .append(DocumentWorkflowStatusCode.REJECTED)
-                .append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
-                        + "where sp.id=dws1.studyProtocol) or dws.id is null) and sps.functionalCode = '")
-                .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
-                .append("' and otherid.root = '")
-                .append(IiConverter.STUDY_PROTOCOL_ROOT)
-                .append("' and sowner.id IS NOT NULL and sowner.affiliatedOrganizationId in (");
-        for (int i = 0; i < siblings.size(); i++) {
-            hql.append(siblings.get(i).toString());
-            if (i + 1 != siblings.size()) {
-                hql.append(", ");
-            }
-        }
-        hql.append(") ");
+            .append("left outer join sp.studyOwners as sowner left outer join sp.otherIdentifiers otherid where ")
+            .append("(( sps.functionalCode = '").append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
+            .append("' and cast(org.identifier as long) in (:siblings)) or org.identifier is NULL) ")
+            .append("and dws.statusCode  <> '")
+            .append(DocumentWorkflowStatusCode.REJECTED)
+            .append("' and (dws.id in (select max(id) from DocumentWorkflowStatus as dws1 ")
+            .append("where sp.id=dws1.studyProtocol) or dws.id is null) and sps.functionalCode = '")
+            .append(StudySiteFunctionalCode.LEAD_ORGANIZATION)
+            .append("' and otherid.root = '")
+            .append(IiConverter.STUDY_PROTOCOL_ROOT)
+            .append("' and sowner.id IS NOT NULL and cast(sowner.affiliatedOrganizationId as long) in (:siblings) ");
 
         String criteriaClause = getTrialOwnershipInformationSearchCriteria(trialOwnershipInfo);
         if (StringUtils.isNotEmpty(criteriaClause)) {
@@ -389,6 +374,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());
+        query.setParameterList("siblings", siblings);
         for (Iterator<Object[]> iter = query.iterate(); iter.hasNext();) {
             Object[] row = iter.next();
             DisplayTrialOwnershipInformation trialInfo = new DisplayTrialOwnershipInformation();
@@ -409,71 +395,41 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
 
         return lst;
     }
-    
-    /**
-     * A function to wrap around FamilyHelper static function getAllRelatedOrgs so
-     * it can be replaced in unit tests.
-     * @param siteId the id of the site
-     * @return the list of organizations in the family,
-     * @throws PAException When something goes wrong.
-     */
-    protected List<Long> getAllRelatedOrgs(Long siteId) throws PAException {
-        List<Long> siblings = FamilyHelper.getAllRelatedOrgs(siteId);
-        if (siblings == null || siblings.size() == 0) {
-            //Can't happen, but just in case that changes later.
-            siblings = new ArrayList<Long>();
-            siblings.add(siteId);
-        }
-        return siblings;
-    }
 
     /**
-     * @param participatingSiteId the participating site id 
+     * @param siblings the participating site id and siblings
      * @return list of trial ownership information objects.
      * @throws PAException on error.
      */
     @Override
     @SuppressWarnings(UNCHECKED)
     public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(
-             Long participatingSiteId) throws PAException {
+             List<Long> siblings) throws PAException {
         List<DisplayTrialOwnershipInformation> lst = new ArrayList<DisplayTrialOwnershipInformation>();
-        List<Long> siblings = getAllRelatedOrgs(participatingSiteId);
-        StringBuffer hql = new StringBuffer();
-        hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, "
-                + "sp.id, otherid.extension, sowner.affiliatedOrganizationId, sps.localStudyProtocolIdentifier "
-                + "from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws "
-                + "join sp.studySites as sps "
-                + "join sps.healthCareFacility as hcf left join hcf.organization as org "
-                + "join sps.studySiteOwners as sowner "
-                + "left outer join sp.otherIdentifiers otherid where (");
-        for (int i = 0; i < siblings.size(); i++) {
-            if (i > 0) {
-                hql.append("or ");
-            }
-            hql.append("'" + siblings.get(i).toString())
-                .append("' in (select healthCareFacility.organization.identifier from StudySite"
-                        + " where functionalCode ='")
-                .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
-                .append("and studyProtocol.id = sp.id) ");
-        }
-        hql.append(") and dws.statusCode  <> '")
+        StringBuffer hql = new StringBuffer(STRING_SIZE);
+        hql.append("select sowner.id, sowner.firstName, sowner.lastName, sowner.emailAddress, ")
+                .append("sp.id, otherid.extension, sowner.affiliatedOrganizationId, sps.localStudyProtocolIdentifier ")
+                .append("from StudyProtocol as sp left outer join sp.documentWorkflowStatuses as dws ")
+                .append("join sp.studySites as sps ")
+                .append("join sps.healthCareFacility as hcf left join hcf.organization as org ")
+                .append("join sps.studySiteOwners as sowner ")
+                .append("left outer join sp.otherIdentifiers otherid where ")
+                .append("sps.functionalCode = '").append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
+                .append("and cast(org.identifier as long) in (:siblings) ")
+                .append("and dws.statusCode  <> '")
                 .append(DocumentWorkflowStatusCode.REJECTED).append("' ")
-                .append("and (dws.id in (select max(id) from DocumentWorkflowStatus "
-                        + "as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) "
-                        + "and sps.functionalCode = '")
+                .append("and (dws.id in (select max(id) from DocumentWorkflowStatus ")
+                .append("as dws1 where sp.id=dws1.studyProtocol) or dws.id is null) ")
+                .append("and sps.functionalCode = '")
                 .append(StudySiteFunctionalCode.TREATING_SITE).append("' ")
                 .append("and otherid.root = '").append(IiConverter.STUDY_PROTOCOL_ROOT)
-                .append("' and sps.statusCode <> 'NULLIFIED' and sowner.affiliatedOrganizationId in (");
-        for (int i = 0; i < siblings.size(); i++) {
-            hql.append(siblings.get(i).toString());
-            if (i + 1 != siblings.size()) {
-                hql.append(", ");
-            }
-        }
-        hql.append(") ");
+                .append("' and sps.statusCode <> 'NULLIFIED' ")
+                .append("and cast(sowner.affiliatedOrganizationId as long) in (:siblings)");
+
                 
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());
+        query.setParameterList("siblings", siblings);
         
         for (Iterator<Object[]> iter = query.iterate(); iter.hasNext();) {
             Object[] row = iter.next();
@@ -569,6 +525,38 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         }
         PaHibernateUtil.getCurrentSession().flush();
     }
+    
+    @Override
+    public void assignOwnership(List<Long> userId, final Set<Long> studyProtocolId)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        SQLQuery query = session
+                .createSQLQuery("select study_id from study_owner where study_id in (:study) "
+                        + "and user_id = :user"); // NOPMD
+        SQLQuery update = session.createSQLQuery("insert into study_owner(study_id,user_id,enable_emails) "
+                + "values(:study, :user, true)");
+        query.setParameterList("study", studyProtocolId);
+        try {
+            for (Long user : userId) {
+                Set<Long> study = new HashSet<Long>(studyProtocolId);
+                update.setParameter("user", user);
+                query.setParameter("user", user);
+                
+                //remove all the studies the user already has before running the update
+                for (Object obj : query.list()) {
+                    study.remove(((BigInteger) obj).longValue());
+                }
+             
+                
+                for (Long studyId : study) {
+                    update.setParameter("study", studyId).executeUpdate();
+                }
+            }
+        } catch (Exception cse) {
+            throw new PAException(cse);
+        }
+        PaHibernateUtil.getCurrentSession().flush();
+    }
 
     /**
      * remove ownership .
@@ -586,6 +574,24 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                             "delete from study_owner where study_id="
                                     + studyProtocolId + " and user_id="
                                     + userId).executeUpdate();
+        } catch (Exception cse) {
+            throw new PAException(cse);
+        }
+        PaHibernateUtil.getCurrentSession().flush();
+    }
+    
+    @Override
+    public void removeOwnership(List<Long> userId, Set<Long> studyProtocolId)
+            throws PAException {
+        try {
+            PaHibernateUtil
+                    .getCurrentSession()
+                    .createSQLQuery(
+                            "delete from study_owner where study_id in (:study)"
+                                    + " and user_id in (:user)")
+                                    .setParameterList("study", studyProtocolId)
+                                    .setParameterList("user", userId)
+                                    .executeUpdate();
         } catch (Exception cse) {
             throw new PAException(cse);
         }
@@ -690,6 +696,55 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         usr.getStudySites().add(site);
         PaHibernateUtil.getCurrentSession().update(usr);
         PaHibernateUtil.getCurrentSession().flush();
+    }
+    
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#assignSiteOwnership(java.lang.Long, java.lang.Long)
+     */
+    @Override
+    public void assignSiteOwnership(List<Long> userId, Set<Long> newSiteId)
+            throws PAException {
+        for (Long id : userId) {
+            RegistryUser usr = getUserById(id);
+            
+            Set<Long> addSites = new HashSet<Long>(newSiteId);
+            Set<StudySite> studySites = usr.getStudySites();
+            for (StudySite site : studySites) {
+                addSites.remove(site.getId());
+            }
+            
+            for (Long studySiteId : addSites) {
+                StudySite site = new StudySite();
+                site.setId(studySiteId);
+                studySites.add(site);
+            }
+            PaHibernateUtil.getCurrentSession().update(usr);
+        }
+        PaHibernateUtil.getCurrentSession().flush();
+    }
+    
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#removeSiteOwnership(java.lang.Long, java.lang.Long)
+     */
+    @Override
+    public void removeSiteOwnership(List<Long> userId, Set<Long> studySiteId)
+            throws PAException {
+        
+        for (Long id : userId) {
+            RegistryUser usr = getUserById(id);
+            Set<StudySite> studySites = usr.getStudySites();
+            Iterator<StudySite> sites = studySites.iterator();
+            while (sites.hasNext()) {
+                final StudySite site = sites.next();
+                if (studySiteId.contains(site.getId())) {
+                    sites.remove();
+                }
+            }
+
+            PaHibernateUtil.getCurrentSession().saveOrUpdate(usr);
+        }
+        PaHibernateUtil.getCurrentSession().flush();
+        
     }
 
     /* (non-Javadoc)
@@ -870,7 +925,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
 
     @Override
     public List<StudyProtocol> getTrialsByParticipatingSite(Long participatingSiteId) throws PAException {
-        StringBuffer hql = new StringBuffer();
+        StringBuffer hql = new StringBuffer(STRING_SIZE);
         hql.append("select sp from StudyProtocol as sp "
                 + "join sp.studySites as sps "
                 + "left outer join sp.documentWorkflowStatuses as dws "

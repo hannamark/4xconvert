@@ -49,6 +49,15 @@
          overflowToDisk="false"
     />
     
+    <cache
+         name="ORGANIZATION_FAMILY_CACHE"
+         maxElementsInMemory="5"
+         eternal="false"         
+         timeToIdleSeconds="900"
+         timeToLiveSeconds="3600"
+         overflowToDisk="false"
+    />
+    
     <!--  Cache used to temporarily store all caDSR classification schemes  -->
     <cache
          name="CADSR_CLASSIFICATION_SCHEMES"

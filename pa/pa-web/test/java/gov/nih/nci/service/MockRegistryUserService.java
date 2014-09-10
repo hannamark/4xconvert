@@ -165,7 +165,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      */
     @Override
     public List<DisplayTrialOwnershipInformation> searchTrialOwnership(
-            DisplayTrialOwnershipInformation trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
+            DisplayTrialOwnershipInformation trialOwnershipInfo, List<Long> affiliatedOrgId) throws PAException {
         return new ArrayList<DisplayTrialOwnershipInformation>();
     }
 
@@ -292,5 +292,36 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     public List<StudyProtocol> getTrialsByParticipatingSite(
             Long participatingSiteId) throws PAException {
         return new ArrayList<StudyProtocol>();
+    }
+
+    @Override
+    public List<DisplayTrialOwnershipInformation> searchSiteRecordOwnership(List<Long> participatingSiteId)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void assignSiteOwnership(List<Long> userId, Set<Long> studySiteId) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void removeSiteOwnership(List<Long> userId, Set<Long> studySiteId) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void assignOwnership(List<Long> userId, Set<Long> studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void removeOwnership(List<Long> userId, Set<Long> studyProtocolId) throws PAException {
+        // TODO Auto-generated method stub
+        
     }
 }
