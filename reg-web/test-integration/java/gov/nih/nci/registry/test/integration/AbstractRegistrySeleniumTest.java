@@ -199,8 +199,18 @@ public abstract class AbstractRegistrySeleniumTest extends
 
     protected void registerTrial(String trialName, String leadOrgTrialId)
             throws URISyntaxException, SQLException {
+        registerTrial(trialName, leadOrgTrialId,
+                RandomStringUtils.randomNumeric(10));
+    }
+    
+    protected void registerTrial(final String rand) throws URISyntaxException, SQLException {
+        registerTrial("An Open-Label Study of Ruxolitinib "+rand, "LEAD"+rand, rand);
+    }
+
+    protected void registerTrial(String trialName, String leadOrgTrialId,
+            final String rand) throws URISyntaxException, SQLException {
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        registerTrialWithoutDeletingExistingOne(trialName, leadOrgTrialId);
+        registerTrialWithoutDeletingExistingOne(trialName, leadOrgTrialId, rand);
     }
 
     /**
@@ -209,12 +219,11 @@ public abstract class AbstractRegistrySeleniumTest extends
      * @throws URISyntaxException
      */
     protected void registerTrialWithoutDeletingExistingOne(String trialName,
-            String leadOrgTrialId) throws URISyntaxException {
+            String leadOrgTrialId, final String rand) throws URISyntaxException {
         today = MONTH_DAY_YEAR_FMT.format(new Date());
         tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
         oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(
                 new Date(), 1));
-        final String rand = RandomStringUtils.randomNumeric(10);
         
         // Select register trial and choose trial type
         hoverLink("Register Trial");       

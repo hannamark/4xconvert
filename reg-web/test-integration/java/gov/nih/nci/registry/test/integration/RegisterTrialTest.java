@@ -82,11 +82,11 @@
  */
 package gov.nih.nci.registry.test.integration;
 
-import java.util.UUID;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.thoughtworks.selenium.SeleniumException;
 
 /**
  * Tests the trial registration process.
@@ -95,27 +95,22 @@ import org.junit.Test;
  */
 public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
-    private final String UUID_1 = UUID.randomUUID().toString();
-    private final String UUID_2 = UUID.randomUUID().toString();
-    private final String LEAD_ORG_TRIAL_ID = StringUtils.substring("LEAD-ORG" + UUID_1, 0, 30);
-    private final String LEAD_ORG_TRIAL_ID2 = StringUtils.substring("LEAD-ORG" + UUID_2, 0, 30);
-    private final String TRIAL_NAME = StringUtils.substring("Test Trial created by Selenium." + UUID_1, 0, 90);
-    private final String TRIAL_NAME2 = StringUtils.substring("Test Summ 4 Anatomic Site Trial created by Selenium." + UUID_1, 0, 90);
-    private final String PA_LEAD_ORG_TRIAL_ID = StringUtils.substring("LEAD-ORG" + UUID_1, 0, 30);
-    private final String PA_TRIAL_NAME = "PA Test Trial created by Selenium.";
+  
     /**
      * Tests registering a trial.
      * @throws Exception on error
      */
     @Test
-    public void testRegisterTrial() throws Exception {
-        
+    public void testRegisterTrial() throws Exception {        
         loginAndAcceptDisclaimer();
         // register a trial
-        registerTrial(TRIAL_NAME + UUID_1, LEAD_ORG_TRIAL_ID);
-        waitForPageToLoad();        
+        String rand = RandomStringUtils.randomNumeric(10);
+        registerTrial(rand);       
+        final String nciID = getLastNciId();
         assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "+getLastNciId()));
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "+nciID));
+        verifyRegisterTrialConfirmaionPage(rand, nciID);
+        
         /**
         int nciId1 = getSeqNumFromNciId(getNciIdViaSearch(TRIAL_NAME));
         // try to register a trial with the same lead org trial ID and fail
@@ -143,6 +138,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
     /**
      * Tests saving a draft trial.
+     * @param nciID 
      * @throws Exception on error
      */
     
@@ -155,6 +151,45 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                    selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
     }*/
     
+    private void verifyRegisterTrialConfirmaionPage(String rand, String nciID) {       
+        assertEquals(nciID, getTrialConfValue("NCI Trial Identifier:"));
+        assertEquals("LEAD"+rand, getTrialConfValue("Lead Organization Trial Identifier:"));
+        assertEquals("NCT"+rand, getTrialConfValue("ClinicalTrials.gov Identifier:"));
+        assertTrue(selenium.isElementPresent("//li[normalize-space(text())='OTHER"+rand+"']"));
+        assertEquals("An Open-Label Study of Ruxolitinib "+rand, getTrialConfValue("Title:"));
+        assertEquals("0", getTrialConfValue("Phase:"));
+        assertEquals("Interventional", getTrialConfValue("Trial Type:"));
+        assertEquals("Treatment", getTrialConfValue("Primary Purpose:"));
+        assertEquals("Ancillary", getTrialConfValue("Secondary Purpose:"));
+        assertEquals("ICD10", getTrialConfValue("Accrual Disease Terminology:"));
+        assertEquals("National Cancer Institute Division of Cancer Prevention", getTrialConfValue("Lead Organization:"));
+        assertEquals("Doe, John", getTrialConfValue("Principal Investigator:"));
+        assertEquals("Cancer Therapy Evaluation Program", getTrialConfValue("Sponsor:"));
+        assertEquals("Sponsor", getTrialConfValue("Responsible Party:"));
+        assertEquals("National", getTrialConfValue("Summary 4 Funding Sponsor Type:"));
+        assertEquals("National Cancer Institute", getTrialConfValue("Summary 4 Funding Sponsor/Source:"));
+        assertEquals("PG"+rand, getTrialConfValue("Program code:"));
+        assertEquals("In Review", getTrialConfValue("Current Trial Status:"));
+        assertEquals("", getTrialConfValue("Why the Study Stopped:"));
+        assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
+        assertEquals(tommorrow+" Anticipated", getTrialConfValue("Trial Start Date:"));
+        assertEquals(oneYearFromToday+" Anticipated", getTrialConfValue("Primary Completion Date:"));
+        assertEquals(oneYearFromToday+" Anticipated", getTrialConfValue("Completion Date:"));
+    }
+
+    private String getTrialConfValue(String labeltxt) {
+        try {
+            return selenium
+                    .getText("//div[preceding-sibling::label[normalize-space(text())='"
+                            + labeltxt + "']]");
+
+        } catch (SeleniumException e) {
+            return selenium
+                    .getText("//div[preceding-sibling::label/strong[normalize-space(text())='"
+                            + labeltxt + "']/..]");
+        }
+    }
+
     /**
      * Tests Lookup of an organization with apostrophe.
      * @throws Exception on error
