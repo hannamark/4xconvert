@@ -195,6 +195,11 @@ public class ResearchOrganizationActionTest extends AbstractRoleActionTest {
             allowedTransitions.add(RoleStatus.PENDING);
         } else {
             allowedTransitions.addAll(roleStatus.getAllowedTransitions());
+
+        }
+
+        if (roleStatus != RoleStatus.ACTIVE) {
+            allowedTransitions.remove(RoleStatus.ACTIVE);
         }
 
         assertTrue(allowedTransitions.containsAll(getAction().getAvailableStatus()));

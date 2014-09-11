@@ -59,7 +59,7 @@ public class HealthCareFacilityBoServiceTest extends AbstractEnhancedOrganizatio
         updatedHealthCareFacility.setStatus(RoleStatus.ACTIVE);
         try {
             this.service.curate(updatedHealthCareFacility);
-            fail();
+            fail("Exception expected");
         } catch(ServiceException se) {
             assertEquals("Illegal attempt to update status of HealthCareFacility 1 from PENDING to ACTIVE", se.getMessage());
         }

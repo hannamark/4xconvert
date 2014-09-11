@@ -311,6 +311,10 @@ public class HealthCareFacilityActionTest extends AbstractRoleActionTest {
             allowedTransitions.addAll(roleStatus.getAllowedTransitions());
         }
 
+        if (roleStatus != RoleStatus.ACTIVE) {
+            allowedTransitions.remove(RoleStatus.ACTIVE);
+        }
+
         assertTrue(allowedTransitions.containsAll(getAction().getAvailableStatus()));
         assertTrue(getAction().getAvailableStatus().containsAll(allowedTransitions));
     }

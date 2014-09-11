@@ -19,8 +19,7 @@ public class StatusValidatingRoleFilter<TYPE extends Correlation> implements Rol
      */
     @Override
     public void handle(TYPE currentInstance, TYPE updatedInstance) {
-        if (currentInstance.getStatus() == RoleStatus.PENDING
-                && updatedInstance.getStatus() != RoleStatus.PENDING) {
+         if (currentInstance.getStatus() != RoleStatus.ACTIVE && updatedInstance.getStatus() == RoleStatus.ACTIVE) {
             throw new ServiceException(
                     String.format(
                             "Illegal attempt to update status of %s %d from %s to %s",

@@ -188,7 +188,7 @@ public class HealthCareFacilityAction
     @Override
     public String edit() throws JMSException {
 
-        if (role.getPriorStatus() == RoleStatus.PENDING && role.getStatus() != RoleStatus.PENDING) {
+        if (role.getPriorStatus() != RoleStatus.ACTIVE && role.getStatus() == RoleStatus.ACTIVE) {
             LOG.warn(
                     String.format(
                             "Illegal attempt to update status from %s to %s",
@@ -393,6 +393,10 @@ public class HealthCareFacilityAction
             result.add(RoleStatus.PENDING);
         } else {
             result.addAll(getBaseRole().getPriorStatus().getAllowedTransitions());
+        }
+
+        if (getRole().getPriorStatus() != RoleStatus.ACTIVE) {
+            result.remove(RoleStatus.ACTIVE);
         }
 
         return result;

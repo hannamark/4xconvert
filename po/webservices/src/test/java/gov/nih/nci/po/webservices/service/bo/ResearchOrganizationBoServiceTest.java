@@ -1,6 +1,5 @@
 package gov.nih.nci.po.webservices.service.bo;
 
-import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.ResearchOrganizationCR;
 import gov.nih.nci.po.data.bo.ResearchOrganizationType;
@@ -59,10 +58,9 @@ public class ResearchOrganizationBoServiceTest extends AbstractEnhancedOrganizat
 
         when(getEjbService().getById(anyLong())).thenReturn(currentResearchOrganization);
 
-        updatedResearchOrganization.setStatus(RoleStatus.ACTIVE);
         try {
             this.service.curate(updatedResearchOrganization);
-            fail();
+            fail("Exception expected");
         } catch(ServiceException se) {
             assertEquals("Illegal attempt to update status of ResearchOrganization 1 from PENDING to ACTIVE", se.getMessage());
         }
