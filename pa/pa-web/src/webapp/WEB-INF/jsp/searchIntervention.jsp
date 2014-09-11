@@ -30,7 +30,7 @@
 							cssStyle="width:150px" /></td>
 					<td><s:a href="javascript:void(0)" cssClass="btn"
 							onclick="document.forms[0].submit()">
-							<span class="btn_img"><span class="search">Lookup</span></span>
+							<span class="btn_img"><span class="search">Look Up</span></span>
 						</s:a></td>
 				</tr>
 			</table>
