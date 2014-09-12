@@ -591,7 +591,7 @@
       <key>role_id</key>
     </keys_1>
     <keys_2>
-      <key>hcf_id</key>
+      <key>ro_id</key>
     </keys_2>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
@@ -948,7 +948,7 @@
     <append>N</append>
     <add_to_result_filenames>Y</add_to_result_filenames>
     <file>
-      <name>&#x24;&#x7b;user.home&#x7d;&#x24;&#x7b;file.separator&#x7d;ROs With Difference Phone Numbers</name>
+      <name>&#x24;&#x7b;user.home&#x7d;&#x24;&#x7b;file.separator&#x7d;ROs With Different Phone Numbers</name>
       <extention>xls</extention>
       <do_not_open_newfile_init>N</do_not_open_newfile_init>
       <create_parent_folder>N</create_parent_folder>
