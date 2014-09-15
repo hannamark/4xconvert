@@ -674,7 +674,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             for (Iterator<PDQDiseaseParentDTO> iterator = parents.iterator(); iterator.hasNext();) {
                 PDQDiseaseDTO parent = diseaseService.get(iterator.next().getParentDiseaseIdentifier());
                 disc.getParentTermList().add(
-                   ((parent.getNtTermIdentifier().getValue() != null)?parent.getNtTermIdentifier().getValue() : "-")
+                   ((parent.getNtTermIdentifier().getValue() != null)?parent.getNtTermIdentifier().getValue() : "")
                    + ": " + parent.getPreferredName().getValue());
             }
 
@@ -687,7 +687,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             for (Iterator<PDQDiseaseParentDTO> iterator = children.iterator(); iterator.hasNext();) {
                 PDQDiseaseDTO child = diseaseService.get(iterator.next().getDiseaseIdentifier());
                 disc.getChildTermList().add(
-                        ((child.getNtTermIdentifier().getValue() != null)?child.getNtTermIdentifier().getValue() : "-") 
+                        ((child.getNtTermIdentifier().getValue() != null)?child.getNtTermIdentifier().getValue() : "") 
                         + ": " + child.getPreferredName().getValue());
             }
 
@@ -834,7 +834,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 if (dis != null) {
                     result.append(dis.getIdentifier().getExtension() + ":" 
                         + ((dis.getNtTermIdentifier().getValue() != null) ? dis.getNtTermIdentifier().getValue() 
-                                : "-") + ":" + dis.getPreferredName().getValue());
+                                : "") + ":" + dis.getPreferredName().getValue());
                     if (i != diseaseIds.length) {
                         result.append('\n');
                     }
@@ -865,8 +865,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      * @param list
      */
     private void removeTermsWithNullNCItCode(List<String> list) {
-        for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-            String term = (String) iterator.next();
+        for (int i = 0; i < list.size(); i++) {
+            String term = list.get(i);
             if (StringUtils.isNumeric(term)) {
                 list.remove(term);
             }

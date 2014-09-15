@@ -21,7 +21,7 @@
 	function saveDisease() {
 		selectAllListItems();
 		if (checkForNullCodes('parentTerms') || checkForNullCodes('childTerms') ) {
-			var r = confirm("One or more of the selected parent or child terms do not have a NCIt code, continue to Save?");
+			var r = confirm("WARNING: One or more of the selected parent or child terms do not have a NCIt code, continue to Save?");
 			if (r == false) {
 				return;
 			}
@@ -33,7 +33,7 @@
 	function checkForNullCodes(diseaseList){
 		var opts = document.getElementById(diseaseList).options;
 		for (var i=0; i<opts.length; i++) {
-			if (opts[i].text.indexOf('-') == 0 ) {
+			if (opts[i].text.indexOf(':') == 0 ) {
 				return true;
 			}
 		}
@@ -91,7 +91,7 @@
 			if (values[i] != ''){
 				var termAttrs = values[i].split(":")
 				var val, opt
-				if(termAttrs[1] == '-'){
+				if(termAttrs[1] == ''){
 					val = termAttrs[0];
 				}else{
 					val = termAttrs[1]+': '+termAttrs[2];
