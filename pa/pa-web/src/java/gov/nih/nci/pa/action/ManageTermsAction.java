@@ -513,14 +513,23 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             } else {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                         "Disease with NCIt code " + disease.getNtTermIdentifier() + " already exists!");
+                // remove terms with empty C codes 
+                removeTermsWithNullNCItCode(disease.getParentTermList());
+                removeTermsWithNullNCItCode(disease.getChildTermList());
                 return DISEASE;
             }
         } catch (PAException e) {
             LOG.error("Error saving disease", e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            // remove terms with empty C codes 
+            removeTermsWithNullNCItCode(disease.getParentTermList());
+            removeTermsWithNullNCItCode(disease.getChildTermList());
             return DISEASE;
         } catch (LEXEVSLookupException lexe) {
             LOG.error("Error retrieving missing parent/child disease", lexe);
+            // remove terms with empty C codes 
+            removeTermsWithNullNCItCode(disease.getParentTermList());
+            removeTermsWithNullNCItCode(disease.getChildTermList());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, lexe.getLocalizedMessage());
             return DISEASE;
         }
