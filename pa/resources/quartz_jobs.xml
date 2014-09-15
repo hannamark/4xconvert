@@ -255,8 +255,22 @@
                   <cron-expression>0 0 23 ? * MON-FRI</cron-expression>
             </cron>
         </trigger>
+        <trigger>
+            <simple>
+                <name>caDSRSyncPermissibleValueDeployJobTrigger</name>
+                <group>DeployTriggerGroup</group>
+                <description>Run once at startup</description>
+                <misfire-instruction>MISFIRE_INSTRUCTION_FIRE_ONCE_NOW</misfire-instruction>
+                <job-name>MyJob</job-name>
+                <job-group>caDSRSyncPermissibleValueDeployJob</job-group>
+                <start-time>2014-09-12T10:00:00</start-time>
+                <repeat-count>0</repeat-count>
+                <repeat-interval>0</repeat-interval> 
+            </simple>
+        </trigger>
     </job>  
-    
+
+     
       <job>
         <job-detail>
             <name>verifyTrialDataJob</name>
