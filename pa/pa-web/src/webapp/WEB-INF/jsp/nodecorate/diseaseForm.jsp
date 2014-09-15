@@ -12,7 +12,7 @@
     var="displayNamelookupUrl" />
 	
 <script type="text/javascript">
-
+    
     jQuery(function() {
 	    var displayNameList = <s:property escape="false" value="disease.displayNameList"/>;
 	    jQuery("#menuDisplayName").autocomplete({source: displayNameList});
@@ -20,14 +20,24 @@
     
 	function saveDisease() {
 		selectAllListItems();
+		if (checkForNullCodes('parentTerms') || checkForNullCodes('childTerms') ) {
+			var r = confirm("One or more of the selected parent or child terms do not have a NCIt code, continue to Save?");
+			if (r == false) {
+				return;
+			}
+		}
 		document.forms[0].action = "manageTermssaveDisease.action";
-		document.forms[0].submit();
+        document.forms[0].submit();
 	}
-
-	function importDisease() {
-		selectAllListItems();
-		document.forms[0].action = "manageTermssaveDisease.action";
-		document.forms[0].submit();
+	
+	function checkForNullCodes(diseaseList){
+		var opts = document.getElementById(diseaseList).options;
+		for (var i=0; i<opts.length; i++) {
+			if (opts[i].text.indexOf('-') == 0 ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	function lookupParentDisease() {
@@ -61,7 +71,7 @@
 		var retValue = ret.value;
 		if(retValue != '') {
 			jQuery.get('${diseaseAjaxURL}' + retValue, function(value) {
-				addDiseaseToList(value, 'parentTerms')
+				addDiseaseToList(value,'parentTerms')
 			});
 		}
 	}
@@ -78,11 +88,18 @@
 	function addDiseaseToList(values, listName) {
 		values = values.split('\n');
 		for (var i = 0; i < values.length; i++) {
-			var value = values[i];
-			if (value != ''
-					&& jQuery('#' + listName + ' option[value="' + value + '"]').length == 0) {
-				var option = new Option(value, value, 'selected');
-				jQuery('#' + listName).append(option);
+			if (values[i] != ''){
+				var termAttrs = values[i].split(":")
+				var val, opt
+				if(termAttrs[1] == '-'){
+					val = termAttrs[0];
+				}else{
+					val = termAttrs[1]+': '+termAttrs[2];
+				}
+				if(jQuery('#' + listName + ' option[value="' + val + '"]').length == 0) {
+				    var option = new Option(termAttrs[1]+': '+termAttrs[2], val, 'selected');
+				    jQuery('#' + listName).append(option);
+			    }
 			}
 		}
 	}
@@ -112,8 +129,7 @@
 		if (values != null) {
 		for (var i = 0; i < values.length; i++) {
 			jQuery('#' + list + ' option[value="' + values[i] + '"]')
-					.remove();
-		}
+					.remove();		}
 		}
 	}
 	
@@ -276,7 +292,7 @@
 							</s:a>
 						</s:if> <s:else>
 							<s:a href="javascript:void(0)" cssClass="btn"
-								onclick="importDisease()">
+								onclick="saveDisease()">
 								<span class="btn_img"><span class="copy">Import</span></span>
 							</s:a>
 						</s:else> <s:a href="manageTerms.action" cssClass="btn">

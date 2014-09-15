@@ -405,6 +405,10 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     public String saveDisease() {
         try {
             if (!validateDisease()) {
+                
+                // remove terms with empty C codes 
+                removeTermsWithNullNCItCode(disease.getParentTermList());
+                removeTermsWithNullNCItCode(disease.getChildTermList());
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                         "Please correct the errors listed below and resubmit");
                 return DISEASE;
@@ -418,11 +422,16 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 // Check if all parent and children terms exists in CTRP
                 for (Iterator<String> iterator = disease.getParentTermList().iterator(); iterator.hasNext();) {
                     String parentTerm = iterator.next();
-                    String parentCode = parentTerm.split(":")[0];
-                    PDQDiseaseDTO parent = getExistingDisease(parentCode);
-                    if (parent == null) {
-                        missingTerms.add(parentCode);
-                        parent = retrieveAndSaveMissingTerm(parentCode);
+                    PDQDiseaseDTO parent = null;
+                    if (StringUtils.isNumeric(parentTerm)) {
+                        parent = diseaseService.get(IiConverter.convertToIi(parentTerm));
+                    } else {
+                        String parentCode = parentTerm.split(":")[0];
+                        parent = getExistingDisease(parentCode);
+                        if (parent == null) {
+                            missingTerms.add(parentCode);
+                            parent = retrieveAndSaveMissingTerm(parentCode);
+                        }
                     }
                     PDQDiseaseParentDTO p = new PDQDiseaseParentDTO();
                     p.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
@@ -434,12 +443,18 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
                 for (Iterator<String> iterator = disease.getChildTermList().iterator(); iterator.hasNext();) {
                     String childTerm = iterator.next();
-                    String childCode = childTerm.split(":")[0];
-                    PDQDiseaseDTO child = getExistingDisease(childCode);
-                    if (child == null) {
-                        missingTerms.add(childCode);
-                        child = retrieveAndSaveMissingTerm(childCode);
+                    PDQDiseaseDTO child = null;
+                    if (StringUtils.isNumeric(childTerm)) {
+                        child = diseaseService.get(IiConverter.convertToIi(childTerm));
+                    } else {
+                        String childCode = childTerm.split(":")[0];
+                        child = getExistingDisease(childCode);
+                        if (child == null) {
+                            missingTerms.add(childCode);
+                            child = retrieveAndSaveMissingTerm(childCode);
+                        }    
                     }
+                    
                     PDQDiseaseParentDTO c = new PDQDiseaseParentDTO();
                     c.setDiseaseIdentifier(child.getIdentifier());
                     c.setParentDiseaseCode(StConverter.convertToSt(PARENT_DISEASE_CODE_ISA));
@@ -629,7 +644,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 }
 
                 diseaseService.update(currDisease);
-
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                        "Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() 
+                        + "' synchronized from NCIt");
             } else {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                         "No Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() + "' found in CTRP");
@@ -657,7 +674,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             for (Iterator<PDQDiseaseParentDTO> iterator = parents.iterator(); iterator.hasNext();) {
                 PDQDiseaseDTO parent = diseaseService.get(iterator.next().getParentDiseaseIdentifier());
                 disc.getParentTermList().add(
-                        parent.getNtTermIdentifier().getValue() + ": " + parent.getPreferredName().getValue());
+                   ((parent.getNtTermIdentifier().getValue() != null)?parent.getNtTermIdentifier().getValue() : "-")
+                   + ": " + parent.getPreferredName().getValue());
             }
 
         }
@@ -669,7 +687,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             for (Iterator<PDQDiseaseParentDTO> iterator = children.iterator(); iterator.hasNext();) {
                 PDQDiseaseDTO child = diseaseService.get(iterator.next().getDiseaseIdentifier());
                 disc.getChildTermList().add(
-                        child.getNtTermIdentifier().getValue() + ": " + child.getPreferredName().getValue());
+                        ((child.getNtTermIdentifier().getValue() != null)?child.getNtTermIdentifier().getValue() : "-") 
+                        + ": " + child.getPreferredName().getValue());
             }
 
         }
@@ -746,10 +765,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private PDQDiseaseDTO retrieveAndSaveMissingTerm(String ncitCode) throws LEXEVSLookupException, PAException {
         DiseaseWebDTO disc = new NCItTermsLookup().lookupDisease(ncitCode);
         PDQDiseaseDTO diseaseDto = new PDQDiseaseDTO();
-        diseaseDto.setDiseaseCode(StConverter.convertToSt(""));
         diseaseDto.setNtTermIdentifier(StConverter.convertToSt(disc.getNtTermIdentifier()));
         diseaseDto.setPreferredName(StConverter.convertToSt(disc.getPreferredName()));
-        diseaseDto.setDisplayName(StConverter.convertToSt(""));
+        diseaseDto.setDisplayName(StConverter.convertToSt(disc.getPreferredName()));
         diseaseDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
         diseaseDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
         diseaseDto = diseaseService.create(diseaseDto);
@@ -814,7 +832,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             for (int i = 0; i < diseaseIds.length; i++) {
                 PDQDiseaseDTO dis = diseaseService.get(IiConverter.convertToIi(Long.parseLong(diseaseIds[i])));
                 if (dis != null) {
-                    result.append(dis.getNtTermIdentifier().getValue() + ": " + dis.getPreferredName().getValue());
+                    result.append(dis.getIdentifier().getExtension() + ":" 
+                        + ((dis.getNtTermIdentifier().getValue() != null) ? dis.getNtTermIdentifier().getValue() 
+                                : "-") + ":" + dis.getPreferredName().getValue());
                     if (i != diseaseIds.length) {
                         result.append('\n');
                     }
@@ -840,4 +860,17 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         this.ajaxResponseStream = ajaxResponseStream;
     }
 
+    /**
+     * Removes terms with null NCIt code
+     * @param list
+     */
+    private void removeTermsWithNullNCItCode(List<String> list) {
+        for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+            String term = (String) iterator.next();
+            if (StringUtils.isNumeric(term)) {
+                list.remove(term);
+            }
+            
+        }
+    }
 }

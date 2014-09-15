@@ -1644,4 +1644,8 @@
         <comment>insert values in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7928.sql"/>
      </changeSet>
+     <changeSet id="PO-7971" author="gunnikrishnan">
+        <comment>Remove constraints on cdr identifier</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7971.sql"/>
+     </changeSet>
 </databaseChangeLog>
