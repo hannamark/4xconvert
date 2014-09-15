@@ -21,7 +21,7 @@
 	function saveDisease() {
 		selectAllListItems();
 		if (checkForNullCodes('parentTerms') || checkForNullCodes('childTerms') ) {
-			var r = confirm("WARNING: One or more of the selected parent or child terms do not have a NCIt code, continue to Save?");
+			var r = confirm("WARNING: One or more of the selected parent or child terms do not have a NCIt identifier, continue to Save?");
 			if (r == false) {
 				return;
 			}
