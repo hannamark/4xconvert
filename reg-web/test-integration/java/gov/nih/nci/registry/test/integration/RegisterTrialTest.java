@@ -175,6 +175,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals(tommorrow+" Anticipated", getTrialConfValue("Trial Start Date:"));
         assertEquals(oneYearFromToday+" Anticipated", getTrialConfValue("Primary Completion Date:"));
         assertEquals(oneYearFromToday+" Anticipated", getTrialConfValue("Completion Date:"));
+        
+        assertEquals("IND", selenium
+                .getText("//div[@id='indideDiv']/table/tbody/tr/td[1]"));
+        
     }
 
     private String getTrialConfValue(String labeltxt) {
@@ -288,8 +292,6 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         return nciId;
     }
 
-    private int getSeqNumFromNciId(String nciId) {
-        return Integer.valueOf(nciId.substring(nciId.lastIndexOf("-") + 1, nciId.length()));
-    }
+ 
 
 }

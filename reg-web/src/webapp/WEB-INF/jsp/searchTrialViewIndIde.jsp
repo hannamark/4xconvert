@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<div class="row form-horizontal details">
+<div class="row form-horizontal details" id="indideDiv">
 <display:table class="data table table-striped table-bordered sortable" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
     				name="${requestScope.studyIndIde}" requestURI="searchTrialview.action" export="false">
 	<display:column titleKey="search.trial.view.indldeTypeCode" property="indIde"   sortable="true" headerClass="sortable"/>
