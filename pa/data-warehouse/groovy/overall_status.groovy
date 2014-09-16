@@ -19,10 +19,12 @@ def sql = """SELECT
                 FROM STUDY_OVERALL_STATUS sos
                 inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sos.study_protocol_identifier
                     and nci_id.root = '2.16.840.1.113883.3.26.4.3'
+				inner join study_protocol as sp on sos.study_protocol_identifier=sp.identifier 
                 left outer join csm_user as creator on sos.user_last_created_id = creator.user_id
                 left outer join registry_user as ru_creator on ru_creator.csm_user_id = creator.user_id
                 left outer join csm_user as updater on sos.user_last_created_id = updater.user_id
                 left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id
+				where sp.status_code = 'ACTIVE'
                 """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
