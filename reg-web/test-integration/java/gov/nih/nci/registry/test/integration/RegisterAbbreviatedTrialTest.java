@@ -86,6 +86,9 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.WebElement;
 
 /**
  * Tests the trial registration process.
@@ -154,6 +157,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
         selenium.select("id=trialDTO.phaseCode", "0");
 
         // Site Principal Investigator
+        moveElementIntoView(By.id("lookup4loadSitePersonBtn"));
         clickAndWaitAjax("id=lookup4loadSitePersonBtn");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
@@ -172,6 +176,8 @@ public class RegisterAbbreviatedTrialTest extends AbstractRegistrySeleniumTest {
 
     private void checkInterventionalNonInterventionalFields_PO7457() {
 
+        moveElementIntoView(By.id("trialDTO.trialType.Noninterventional"));
+        
         selenium.click("id=trialDTO.trialType.Noninterventional");
         assertTrue(selenium.isElementPresent("id=trialDTO.studySubtypeCode"));
         assertTrue(selenium.isElementPresent("id=trialDTO.studyModelCode"));

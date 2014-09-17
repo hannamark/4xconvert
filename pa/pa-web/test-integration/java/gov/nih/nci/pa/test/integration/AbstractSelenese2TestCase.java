@@ -120,7 +120,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
                 + ":" + port;
 
         driver = (WebDriver) Class.forName(driverClass).newInstance();
-        driver.manage().window().setSize(new Dimension(1366, 768));
+        driver.manage().window().setSize(new Dimension(1500, 900));
         selenium = new WebDriverBackedSelenium(driver, url);
         selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
        
@@ -161,6 +161,11 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
     protected void waitForTextToAppear(By by, String text, int timeoutSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
         wait.until(ExpectedConditions.textToBePresentInElement(by, text));
+    }
+    
+    protected void waitForElementToBecomeVisible(By by, int timeoutSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(by)));
     }
 
     /**

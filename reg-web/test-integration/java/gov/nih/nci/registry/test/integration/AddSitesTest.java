@@ -46,9 +46,8 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
      */
     private void goToAddSitesScreen() {
         loginAndAcceptDisclaimer();
-        hoverLink("Register Trial");
-        waitForTextToAppear(By.linkText("Add Sites"), "Add Sites",
-                WAIT_FOR_ELEMENT_TIMEOUT);
+        hoverLink("Register Trial");        
+        waitForElementToBecomeVisible(By.xpath("//a[text()='Add Sites']"), WAIT_FOR_ELEMENT_TIMEOUT);
         clickAndWait("link=Add Sites");
     }
 

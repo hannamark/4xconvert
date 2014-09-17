@@ -116,8 +116,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.After;
 import org.junit.Ignore;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebElement;
 
 /**
  * Abstract base class for selenium tests.
@@ -1073,6 +1077,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         String sql = "INSERT INTO study_owner (study_id,user_id,enable_emails) VALUES ("
                 + trialID + "," + regUserID + ",false)";
         runner.update(connection, sql);
+    }
+    
+    protected void moveElementIntoView(By by) {
+        WebElement element = driver.findElement(by);
+        Point p = element.getLocation();
+        ((JavascriptExecutor) driver).executeScript("window.scroll(" + p.getX()
+                + "," + (p.getY() - 150) + ");");
+        pause(200);
     }
 
     public static final class TrialInfo {

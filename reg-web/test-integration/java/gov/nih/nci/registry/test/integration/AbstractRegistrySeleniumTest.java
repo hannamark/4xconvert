@@ -230,6 +230,8 @@ public abstract class AbstractRegistrySeleniumTest extends
         clickAndWait("link=National");
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
         
+        hideTopMenu();
+        
         selenium.click("id=xmlRequiredtrue");
         hover(By.xpath("//i[preceding-sibling::input[@id='xmlRequiredfalse']]"));
         assertTrue(selenium.isTextPresent("Indicate whether you need an XML file "
@@ -253,6 +255,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.select("trialDTO.accrualDiseaseCodeSystem", "label=ICD10");
 
         // Select Lead Organization
+        moveElementIntoView(By.id("trialDTO.leadOrganizationNameField"));
         hover(By.id("trialDTO.leadOrganizationNameField"));
         clickAndWaitAjax("link=National Cancer Institute Division of Cancer Prevention (Your Affiliation)");
 
@@ -280,6 +283,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.type("trialDTO.programCodeText", "PG"+rand);
         
         // Grants
+        moveElementIntoView(By.id("nciGrantfalse")); 
         selenium.click("nciGrantfalse");
         selenium.select("fundingMechanismCode", "label=B09");
         selenium.select("nihInstitutionCode", "label=AA");
@@ -300,22 +304,30 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.type("trialDTO_completionDate", oneYearFromToday);
         
         // IND/IDE
+        moveElementIntoView(By.id("group3"));
         selenium.select("group3", "label=IND");
         selenium.type("id=indidenumber", rand);        
         selenium.click("id=SubCat");
         selenium.select("id=SubCat", "label=CDER");                
         selenium.select("holderType", "label=NIH");
         selenium.select("programcodenihselectedvalue", "label=NEI-National Eye Institute");
-        selenium.click("group4");
+        moveElementIntoView(By.id("group4"));  
+        driver.findElement(By.id("group4")).sendKeys(" ");
+        //selenium.click("id=group4");
         selenium.select("expanded_status", "label=Available");
         selenium.click("exemptIndicator");
+        moveElementIntoView(By.id("addbtn"));
         selenium.click("addbtn");
         waitForElementById("indidediv", 5);
 
         // Regulator Information
+        moveElementIntoView(By.id("countries")); 
         selenium.select("countries", "label=United States");
         pause(1000);
+        moveElementIntoView(By.id("trialDTO.selectedRegAuth"));  
         selenium.select("trialDTO.selectedRegAuth", "label=Food and Drug Administration");
+        
+        moveElementIntoView(By.id("trialDTO.fdaRegulatoryInformationIndicatorYes")); 
         selenium.click("trialDTO.fdaRegulatoryInformationIndicatorYes");
         selenium.click("trialDTO.section801IndicatorYes");
         selenium.click("trialDTO.delayedPostingIndicatorYes");
@@ -341,6 +353,11 @@ public abstract class AbstractRegistrySeleniumTest extends
         clickAndWait("xpath=//button[text()='Submit']");
         waitForPageToLoad();
        
+    }
+
+    private void hideTopMenu() {
+        ((JavascriptExecutor) driver).executeScript("$('nav').hide();");
+        
     }
 
     protected void registerDraftTrial(String trialName, String leadOrgTrialId)
