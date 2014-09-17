@@ -46,6 +46,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.xml.sax.SAXException;
 
 /**
@@ -786,7 +787,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         for (StudySubject ss : subjects.getStudySubject()) {
             clickAndWait("link=Trial Search");
             clickAndWait("link=" + rConf.getNciTrialID());
-            selenium.select("xpath=//select[@name='row_length']", "100");
+            selenium.select("xpath=//select[@name='row_length']", "100");            
             verifySubject(ss, siteID);
         }
     }
@@ -801,6 +802,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
     private void verifySubject(StudySubject ss, long siteID)
             throws SQLException {
+        moveElementIntoView(By.xpath("//a[text()='"+ss.getIdentifier()+"']"));
         clickAndWait("link=" + ss.getIdentifier());
         clickAndWait("xpath=//i[@class='fa-pencil']");
         assertEquals(ss.getIdentifier(), selenium.getValue("id=identifier"));
