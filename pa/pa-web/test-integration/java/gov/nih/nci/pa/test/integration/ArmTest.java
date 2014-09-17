@@ -85,6 +85,7 @@ package gov.nih.nci.pa.test.integration;
 import java.sql.SQLException;
 
 import org.junit.Test;
+import org.openqa.selenium.JavascriptExecutor;
 
 /**
  * Tests listing, adding, editing and deleting arms.
@@ -162,8 +163,10 @@ public class ArmTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[5]/a"));
         
         selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[6]//input[@type='checkbox']");
-        selenium.chooseOkOnNextConfirmation();
-        clickAndWait("link=Delete");
+        //selenium.chooseOkOnNextConfirmation();
+        //clickAndWait("link=Delete");
+        ((JavascriptExecutor) driver).executeScript("handleMultiDelete('', 'trialArmsdelete.action');");
+        waitForPageToLoad();
         assertTrue(selenium.isTextPresent("Record(s) Deleted"));
         assertTrue(selenium.isTextPresent("Nothing found to display."));
     }

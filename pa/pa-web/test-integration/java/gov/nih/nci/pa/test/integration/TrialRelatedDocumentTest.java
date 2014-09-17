@@ -89,6 +89,7 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 
 import org.junit.Test;
+import org.openqa.selenium.JavascriptExecutor;
 
 /**
  * Tests adding, editing and deleting trial documents.
@@ -157,11 +158,10 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Trial Related Documents");
         
         if (!isPhantomJS()) {
-            addProtocolHighlighDocument();
-    
+            addProtocolHighlighDocument();    
             selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[6]//input");
-            selenium.chooseOkOnNextConfirmation();
-            clickAndWait("link=Delete");
+            ((JavascriptExecutor) driver).executeScript("handleMultiDelete('', 'trialDocumentdelete.action');");
+            waitForPageToLoad();
             selenium.type("inactiveComment", "inactive");
             clickAndWait("link=Done");       
             assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial"));

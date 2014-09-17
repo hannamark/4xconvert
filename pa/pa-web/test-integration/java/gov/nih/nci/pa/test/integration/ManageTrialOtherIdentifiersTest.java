@@ -90,7 +90,9 @@ import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
 
 public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
@@ -324,8 +326,9 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
      */
     private void deleteIdentifier(String type, String value) {
         int rowNum = findIdentifierRowIndex(type, value);
-        selenium.chooseOkOnNextConfirmation();
-        selenium.click("id=otherIdDeleteBtn_" + rowNum);
+        //selenium.chooseOkOnNextConfirmation();
+        //selenium.click("id=otherIdDeleteBtn_" + rowNum);
+        ((JavascriptExecutor) driver).executeScript("deleteOtherIdentifierRow('"+rowNum+"');");
         waitForTextToAppear(By.className("confirm_msg"),
                 "Identifier deleted from the trial", WAIT_FOR_ELEMENT_TIMEOUT);
     }

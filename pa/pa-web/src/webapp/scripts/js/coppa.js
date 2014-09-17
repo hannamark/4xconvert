@@ -27,7 +27,7 @@ function handleMultiDelete(confirmationMessage, submitAction) {
     });
     
     if (atLeastOne) {
-        input_box = confirm(confirmationMessage);
+        input_box = confirmationMessage!=''?confirm(confirmationMessage):true;
     }
     
     if (input_box || !atLeastOne) {

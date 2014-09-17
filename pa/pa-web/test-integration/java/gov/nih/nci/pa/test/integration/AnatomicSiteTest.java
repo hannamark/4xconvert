@@ -85,6 +85,7 @@ package gov.nih.nci.pa.test.integration;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import org.junit.Test;
+import org.openqa.selenium.JavascriptExecutor;
 
 /**
  * @author mshestopalov
@@ -137,8 +138,10 @@ public class AnatomicSiteTest extends AbstractPaSeleniumTest {
 
         // test delete.
         selenium.click("xpath=//table[@id='row']//tr[1]//td[2]//input[@type='checkbox']");
-        selenium.chooseOkOnNextConfirmation();
-        clickAndWait("link=Delete");
+        //selenium.chooseOkOnNextConfirmation();
+        //clickAndWait("link=Delete");
+        ((JavascriptExecutor) driver).executeScript("handleMultiDelete('', 'anatomicSitedelete.action');");
+        waitForPageToLoad();
         assertTrue(selenium.isTextPresent("Record(s) Deleted"));
         assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
         assertTrue(selenium.isTextPresent("Nothing found to display."));
