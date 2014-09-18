@@ -235,7 +235,9 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         
         selenium.type("id=altName", "synonym1");
         clickAndWait("link=Add");
-        assertEquals("synonym1", selenium.getValue("id=alterNames"));
+        
+        Select sel = new Select(driver.findElement(By.id("alterNames")));
+        assertEquals("synonym1", sel.getOptions().get(0).getText());
 
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Message. New Disease CTEST123 added successfully."));
