@@ -13,7 +13,7 @@ CREATE TABLE stg_dw_grants_i2e
   fy integer,
   budget_start_date timestamp without time zone,
   budget_end_date timestamp without time zone,
-  project_title character varying(128),
+  project_title character varying(256),
   project_period_start_date timestamp without time zone,
   project_period_end_date timestamp without time zone,
   institution_name character varying(40),
