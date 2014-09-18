@@ -106,8 +106,8 @@ import org.junit.runners.Suite.SuiteClasses;
         CtGovImportLogTest.class,
         DiseaseTest.class,
         TrialCheckInOutTest.class,
-        ManageTermsTest.class
-//        PlannedMarkerTest.class
+        ManageTermsTest.class,
+        PlannedMarkerTest.class
 //        DuplicateTrialEditTest.class,
 //        LookupWithApostropheTest.class,
 //        DiseaseTest.class,

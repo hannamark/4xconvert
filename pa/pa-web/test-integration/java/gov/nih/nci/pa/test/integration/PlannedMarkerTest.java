@@ -86,7 +86,7 @@ import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-
+import org.openqa.selenium.JavascriptExecutor;
 /**
  * Selenium test case for planned markers. This test assumes that the register trial
  * test in registry has already been run.
@@ -268,7 +268,11 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
     private void verifyDeletion() {
         selenium.check("xpath=//table[@id='plannedMarkerTable']//tr[1]//td[9]//input");
         assertTrue(selenium.isElementPresent("xpath=//table[@id='plannedMarkerTable']//tr[1]"));
-        clickAndWait("link=Delete");
+        
+        ((JavascriptExecutor) driver).executeScript("handleMultiDelete('', 'plannedMarkerdelete.action');");
+        waitForPageToLoad();
+//        clickAndWait("link=Delete");
+//        pause(1000);
         assertTrue(selenium.isTextPresent("Message. Record(s) Deleted."));
         assertFalse(selenium.isElementPresent("xpath=//table[@id='plannedMarkerTable']//tr[1]"));
     }
@@ -278,8 +282,9 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         clickAndWait("link=caDSR");
         waitForElementById("popupFrame", 15);
         selenium.selectFrame("popupFrame");
-        assertTrue(selenium.isChecked("id=searchBothTermstrue"));
+        assertTrue(selenium.isElementPresent("id=searchBothTerms"));
         assertTrue(selenium.isElementPresent("id=caseTypetrue"));
+        assertFalse(selenium.isChecked("id=caseTypetrue"));
         assertTrue(selenium.isElementPresent("id=highlightRequiredtrue"));
         assertTrue(selenium.isTextPresent("Marker Search in caDSR"));
         assertTrue(selenium.isElementPresent("link=Search"));
@@ -287,8 +292,6 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isElementPresent("link=Create Biomarker Request"));
         assertTrue(selenium.isElementPresent("link=Cancel"));
         assertTrue(selenium.isElementPresent("id=searchName"));
-        assertTrue(selenium.isElementPresent("id=searchMeaning"));
-        assertTrue(selenium.isElementPresent("id=searchDescription"));
         assertTrue(selenium.isElementPresent("id=searchPublicId"));
         assertTrue(selenium.isTextPresent("Nothing found to display."));
         driver.switchTo().defaultContent();
@@ -301,54 +304,39 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         selenium.selectFrame("popupFrame");
         selenium.type("id=searchName", "alpha");
         clickAndWait("link=Search");
-        waitForElementById("row", 15);
+        waitForElementById("row", 30);
         assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[1]")
-                .trim(), "alpha"));
-        assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
-                "xpath=//form//table[@class='data']//tr[1]//td[2]")
                 .trim(), "alpha"));
         driver.switchTo().defaultContent();
         selenium.click("id=popCloseBox");
         
+        assertTrue(selenium.isElementPresent("link=caDSR"));
         clickAndWait("link=caDSR");
         waitForElementById("popupFrame", 15);
         selenium.selectFrame("popupFrame");
-        selenium.type("id=searchMeaning", "alpha");
+        selenium.type("id=searchName", "alpha");
+        selenium.select("id=searchBothTerms","label=Synonym");
         clickAndWait("link=Search");
-        waitForElementById("row", 15);
-        assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
-                "xpath=//form//table[@class='data']//tr[1]//td[1]")
-                .trim(), "alpha"));
+        waitForElementById("row", 30);
         assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[3]")
                 .trim(), "alpha"));
         driver.switchTo().defaultContent();
         selenium.click("id=popCloseBox");
         
+        
         clickAndWait("link=caDSR");
         waitForElementById("popupFrame", 15);
         selenium.selectFrame("popupFrame");
-        selenium.type("id=searchMeaning", "alpha");
+        selenium.type("id=searchName", "alpha");
         selenium.check("id=caseTypetrue");
         selenium.check("id=highlightRequiredtrue");
         clickAndWait("link=Search");
-        waitForElementById("row", 15);
+        waitForElementById("row", 30);
         assertTrue(StringUtils.contains(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[1]")
                 .trim(), "alpha"));
-        assertTrue(StringUtils.contains(selenium.getText(
-                "xpath=//form//table[@class='data']//tr[1]//td[3]")
-                .trim(), "alpha"));
-        driver.switchTo().defaultContent();
-        selenium.click("id=popCloseBox");
-        
-        clickAndWait("link=caDSR");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        selenium.type("id=searchMeaning", "alpha");
-        clickAndWait("link=Reset");
-        assertEquals(selenium.getText("searchMeaning"), "");
         driver.switchTo().defaultContent();
         selenium.click("id=popCloseBox");
         
@@ -356,13 +344,20 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         waitForElementById("popupFrame", 15);
         selenium.selectFrame("popupFrame");
         selenium.type("id=searchName", "alpha");
+        clickAndWait("link=Reset");
+        assertEquals(selenium.getText("searchName"), "");
+        driver.switchTo().defaultContent();
+        selenium.click("id=popCloseBox");
+        
+        clickAndWait("link=caDSR");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        selenium.type("id=searchName", "alpha");
+        selenium.select("id=searchBothTerms","label=Primary Term");
         clickAndWait("link=Search");
-        waitForElementById("row", 15);
+        waitForElementById("row", 30);
         assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[1]")
-                .trim(), "alpha"));
-        assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
-                "xpath=//form//table[@class='data']//tr[1]//td[2]")
                 .trim(), "alpha"));
         clickAndWait("link=Select");
         pause(1000);
