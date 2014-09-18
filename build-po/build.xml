@@ -535,17 +535,6 @@
     <!-- Downloads jboss from tools repository and compares checksum, based on properties set in project.properties -->
     <target name="dist:tools:retrieve:jboss" unless="jboss.tools.exists">
         <get src="${jboss.src.url}" dest="${jboss.dest.file}" />
-        <get src="${jboss.src.url}.MD5" dest="${jboss.dest.file}.MD5" />
-        <checksum file="${jboss.dest.file}" verifyProperty="jboss.cksum.ok" />
-        <if>
-            <equals arg1="${jboss.cksum.ok}" arg2="true" />
-            <then>
-                <echo message="Downloaded jboss sucessfully" />
-            </then>
-            <else>
-                <fail message="Failed to download jboss file sucessfully." />
-            </else>
-        </if>
     </target>
 
     <!-- Copies install time resources into distribution tree -->
