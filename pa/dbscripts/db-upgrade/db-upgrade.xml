@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog logicalFilePath="/tmp/pa/db-upgrade.xml"
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
-        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd">
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
     <preConditions>
         <or>
             <dbms type="oracle" />
@@ -1645,7 +1645,17 @@
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7928.sql"/>
      </changeSet>
      <changeSet id="PO-7971" author="gunnikrishnan">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="PostgreSQL 9">select substring(version() from 1 for 12)</sqlCheck>
+        </preConditions>   
         <comment>Remove constraints on cdr identifier</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7971.sql"/>
      </changeSet>
+     <changeSet id="PO-7971-8.4" author="gunnikrishnan" failOnError="false">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="PostgreSQL 8">select substring(version() from 1 for 12)</sqlCheck>
+        </preConditions>   
+        <comment>Remove constraints on cdr identifier</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7971-8.4.sql"/>
+     </changeSet>     
 </databaseChangeLog>
