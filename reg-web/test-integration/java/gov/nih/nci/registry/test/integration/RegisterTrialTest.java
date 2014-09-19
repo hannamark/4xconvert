@@ -83,109 +83,290 @@
 package gov.nih.nci.registry.test.integration;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 import com.thoughtworks.selenium.SeleniumException;
 
 /**
  * Tests the trial registration process.
- *
+ * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
-  
     /**
      * Tests registering a trial.
-     * @throws Exception on error
+     * 
+     * @throws Exception
+     *             on error
      */
     @Test
-    public void testRegisterTrial() throws Exception {        
+    public void testRegisterTrial() throws Exception {
         loginAndAcceptDisclaimer();
-        // register a trial
         String rand = RandomStringUtils.randomNumeric(10);
-        registerTrial(rand);       
+        registerTrial(rand);
         final String nciID = getLastNciId();
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "+nciID));
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
         verifyRegisterTrialConfirmaionPage(rand, nciID);
-        
-        /**
-        int nciId1 = getSeqNumFromNciId(getNciIdViaSearch(TRIAL_NAME));
-        // try to register a trial with the same lead org trial ID and fail
-        registerTrialWithoutDeletingExistingOne(TRIAL_NAME, LEAD_ORG_TRIAL_ID);
-        waitForPageToLoad();
-        assertFalse("A success message was found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertFalse("A success message was found",
-                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        assertTrue("No error message found", selenium.isElementPresent("css=div.error_msg"));
-        assertTrue("No error message found",
-                   selenium
-                       .isTextPresent("Error Message: A trial exists in the system with the same Lead Organization Trial Identifier for the selected Lead Organization"));
 
-        // try to register a trial with the a new lead org trial ID (and title) and succeed
-        registerTrial(TRIAL_NAME2, LEAD_ORG_TRIAL_ID2);
-        waitForPageToLoad();
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        int nciId2 = getSeqNumFromNciId(getNciIdViaSearch(TRIAL_NAME2));
-        assertEquals(nciId2, nciId1 + 1);
-        
-        **/
+    }
+
+    @Test
+    public void testRegisterNonCtGovTrial() throws Exception {
+        loginAndAcceptDisclaimer();
+
+        String rand = RandomStringUtils.randomNumeric(10);
+        String title = "An Open-Label Study of Ruxolitinib " + rand;
+        String leadOrgTrialId = "LEAD" + rand;
+        deactivateTrialByLeadOrgId(leadOrgTrialId);
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        selenium.click("id=xmlRequiredfalse");
+        assertFalse(selenium.isVisible("id=sponsorDiv"));
+        assertFalse(selenium.isVisible("id=regDiv"));
+        reviewAndSubmit();
+
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
+        verifyBaseTrialInfo(rand, nciID);
+        verifyTrialConfValueMissing("Sponsor:");
+        verifyTrialConfValueMissing("Responsible Party:");
+        verifyTrialConfValueMissing("Trial Oversight Authority Country :");
+        verifyTrialConfValueMissing("Trial Oversight Authority Organization Name :");
+        verifyTrialConfValueMissing("FDA Regulated Intervention Indicator :");
+        verifyTrialConfValueMissing("Section 801 Indicator :");
+        verifyTrialConfValueMissing("Delayed Posting Indicator :");
+        verifyTrialConfValueMissing("Data Monitoring Committee Appointed Indicator :");
+
+    }
+
+    @Test
+    public void testRegisterNonInterventionalTrial() throws Exception {
+        loginAndAcceptDisclaimer();
+
+        String rand = RandomStringUtils.randomNumeric(10);
+        String title = "An Open-Label Study of Ruxolitinib " + rand;
+        String leadOrgTrialId = "LEAD" + rand;
+        deactivateTrialByLeadOrgId(leadOrgTrialId);
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        moveElementIntoView(By.id("trialDTO.trialType.Noninterventional"));
+        selenium.click("id=trialDTO.trialType.Noninterventional");
+        assertFalse(selenium.isVisible("id=trialDTO.secondaryPurposes"));
+
+        moveElementIntoView(By.id("trialDTO.primaryPurposeCode"));
+        selenium.select("trialDTO.primaryPurposeCode2", "label=Treatment");
+        selenium.select("trialDTO.studySubtypeCode", "label=Observational");
+        selenium.select("trialDTO.studyModelCode", "label=Other");
+        selenium.type("trialDTO.studyModelOtherText", "Study Model Other");
+        selenium.select("trialDTO.timePerspectiveCode", "label=Other");
+        selenium.type("trialDTO.timePerspectiveOtherText", "Time Other");
+        selenium.chooseOkOnNextConfirmation();
+        selenium.click("id=trialDTO.section801IndicatorNo");
+
+        reviewAndSubmit();
+
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
+        verifyBaseTrialInfo(rand, nciID);
+        verifyRegulatoryInfo();
+        verifySponsor();
+        verifyTrialConfValueMissing("Secondary Purpose:");
+        verifyNonInterventionalInfo();
+
+    }
+
+    private void verifyTrialConfValueMissing(String label) {
+        try {
+            getTrialConfValue(label);
+            Assert.fail();
+        } catch (SeleniumException e) {
+        }
     }
 
     /**
      * Tests saving a draft trial.
-     * @param nciID 
-     * @throws Exception on error
+     * 
+     * @param nciID
+     * @throws Exception
+     *             on error
      */
-    
-    /*public void testSaveDraftTrial() throws Exception {
-        loginAndAcceptDisclaimer();
-        // register a trial
-        registerDraftTrial("Test Trial Draft created by Selenium.", LEAD_ORG_TRIAL_ID);
-        waitForPageToLoad();
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
-    }*/
-    
-    private void verifyRegisterTrialConfirmaionPage(String rand, String nciID) {       
+
+    /*
+     * public void testSaveDraftTrial() throws Exception {
+     * loginAndAcceptDisclaimer(); // register a trial
+     * registerDraftTrial("Test Trial Draft created by Selenium.",
+     * LEAD_ORG_TRIAL_ID); waitForPageToLoad();
+     * assertTrue("No success message found", selenium.isTextPresent(
+     * "The trial draft has been successfully saved and assigned the Identifier"
+     * )); }
+     */
+
+    private void verifyRegisterTrialConfirmaionPage(String rand, String nciID) {
+        verifyBaseTrialInfo(rand, nciID);
+        verifyRegulatoryInfo();
+        verifySponsor();
+        verifyInterventionalInfo();
+
+    }
+
+    /**
+     * @param rand
+     * @param nciID
+     */
+    protected void verifyBaseTrialInfo(String rand, String nciID) {
         assertEquals(nciID, getTrialConfValue("NCI Trial Identifier:"));
-        assertEquals("LEAD"+rand, getTrialConfValue("Lead Organization Trial Identifier:"));
-        assertEquals("NCT"+rand, getTrialConfValue("ClinicalTrials.gov Identifier:"));
-        assertTrue(selenium.isElementPresent("//li[normalize-space(text())='OTHER"+rand+"']"));
-        assertEquals("An Open-Label Study of Ruxolitinib "+rand, getTrialConfValue("Title:"));
+        assertEquals("LEAD" + rand,
+                getTrialConfValue("Lead Organization Trial Identifier:"));
+        assertEquals("NCT" + rand,
+                getTrialConfValue("ClinicalTrials.gov Identifier:"));
+        assertTrue(selenium
+                .isElementPresent("//li[normalize-space(text())='OTHER" + rand
+                        + "']"));
+        assertEquals("An Open-Label Study of Ruxolitinib " + rand,
+                getTrialConfValue("Title:"));
         assertEquals("0", getTrialConfValue("Phase:"));
-        assertEquals("Interventional", getTrialConfValue("Trial Type:"));
         assertEquals("Treatment", getTrialConfValue("Primary Purpose:"));
-        assertEquals("Ancillary", getTrialConfValue("Secondary Purpose:"));
+
         assertEquals("ICD10", getTrialConfValue("Accrual Disease Terminology:"));
-        assertEquals("National Cancer Institute Division of Cancer Prevention", getTrialConfValue("Lead Organization:"));
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                getTrialConfValue("Lead Organization:"));
         assertEquals("Doe, John", getTrialConfValue("Principal Investigator:"));
-        assertEquals("Cancer Therapy Evaluation Program", getTrialConfValue("Sponsor:"));
-        assertEquals("Sponsor", getTrialConfValue("Responsible Party:"));
-        assertEquals("National", getTrialConfValue("Summary 4 Funding Sponsor Type:"));
-        assertEquals("National Cancer Institute", getTrialConfValue("Summary 4 Funding Sponsor/Source:"));
-        assertEquals("PG"+rand, getTrialConfValue("Program code:"));
+
+        assertEquals("National",
+                getTrialConfValue("Summary 4 Funding Sponsor Type:"));
+        assertEquals("National Cancer Institute",
+                getTrialConfValue("Summary 4 Funding Sponsor/Source:"));
+        assertEquals("PG" + rand, getTrialConfValue("Program code:"));
         assertEquals("In Review", getTrialConfValue("Current Trial Status:"));
         assertEquals("", getTrialConfValue("Why the Study Stopped:"));
         assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
-        assertEquals(tommorrow+" Anticipated", getTrialConfValue("Trial Start Date:"));
-        assertEquals(oneYearFromToday+" Anticipated", getTrialConfValue("Primary Completion Date:"));
-        assertEquals(oneYearFromToday+" Anticipated", getTrialConfValue("Completion Date:"));
-        
-        assertEquals("IND", selenium
-                .getText("//div[@id='indideDiv']/table/tbody/tr/td[1]"));
-        
+        assertEquals(tommorrow + " Anticipated",
+                getTrialConfValue("Trial Start Date:"));
+        assertEquals(oneYearFromToday + " Anticipated",
+                getTrialConfValue("Primary Completion Date:"));
+        assertEquals(oneYearFromToday + " Anticipated",
+                getTrialConfValue("Completion Date:"));
+
+        // INDs
+        assertEquals("IND",
+                selenium.getText("//div[@id='indideDiv']/table/tbody/tr/td[1]"));
+        assertEquals(rand,
+                selenium.getText("//div[@id='indideDiv']/table/tbody/tr/td[2]"));
+        assertEquals("CDER",
+                selenium.getText("//div[@id='indideDiv']/table/tbody/tr/td[3]"));
+        assertEquals("NIH",
+                selenium.getText("//div[@id='indideDiv']/table/tbody/tr/td[4]"));
+        assertEquals("NEI-National Eye Institute",
+                selenium.getText("//div[@id='indideDiv']/table/tbody/tr/td[5]"));
+        assertEquals("Yes",
+                selenium.getText("//div[@id='indideDiv']/table/tbody/tr/td[6]"));
+        assertEquals("Available",
+                selenium.getText("//div[@id='indideDiv']/table/tbody/tr/td[7]"));
+        assertEquals("Yes",
+                selenium.getText("//div[@id='indideDiv']/table/tbody/tr/td[8]"));
+
+        // Grants
+        assertEquals("B09",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr/td[1]"));
+        assertEquals("AA",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr/td[2]"));
+        assertEquals(rand,
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr/td[3]"));
+        assertEquals("CCR",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr/td[4]"));
+
+        // Documents
+        assertEquals(
+                "ProtocolDoc.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Protocol Document']]"));
+        assertEquals(
+                "Sites.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Participating sites']]"));
+        assertEquals(
+                "IrbDoc.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='IRB Approval Document']]"));
+        assertEquals(
+                "Consent.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Informed Consent Document']]"));
+        assertEquals(
+                "Other.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Other']]"));
+    }
+
+    /**
+     * 
+     */
+    protected void verifyInterventionalInfo() {
+        assertEquals("Interventional", getTrialConfValue("Trial Type:"));
+        assertEquals("Ancillary", getTrialConfValue("Secondary Purpose:"));
+    }
+
+    /**
+     * 
+     */
+    protected void verifyNonInterventionalInfo() {
+        assertEquals("Non-Interventional", getTrialConfValue("Trial Type:"));
+        assertEquals("Observational",
+                getTrialConfValue("Non-interventional Trial Type:"));
+        assertEquals("Other", getTrialConfValue("Study Model Code:"));
+        assertEquals("Study Model Other",
+                getTrialConfValue("If Study Model is 'Other', describe:"));
+        assertEquals("Other", getTrialConfValue("Time Perspective Code:"));
+        assertEquals("Time Other",
+                getTrialConfValue("If Time Perspective is 'Other', describe:"));
+    }
+
+    /**
+     * 
+     */
+    protected void verifyRegulatoryInfo() {
+        // Regulatory
+        assertEquals("United States",
+                getTrialConfValue("Trial Oversight Authority Country :"));
+        assertEquals(
+                "Food and Drug Administration",
+                getTrialConfValue("Trial Oversight Authority Organization Name :"));
+        assertEquals("Yes",
+                getTrialConfValue("FDA Regulated Intervention Indicator :"));
+
+        if ("Interventional".equalsIgnoreCase(getTrialConfValue("Trial Type:"))) {
+            assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
+            assertEquals("Yes",
+                    getTrialConfValue("Delayed Posting Indicator :"));
+        } else {
+            assertEquals("No", getTrialConfValue("Section 801 Indicator :"));
+        }
+
+        assertEquals(
+                "Yes",
+                getTrialConfValue("Data Monitoring Committee Appointed Indicator :"));
+    }
+
+    /**
+     * 
+     */
+    protected void verifySponsor() {
+        assertEquals("Cancer Therapy Evaluation Program",
+                getTrialConfValue("Sponsor:"));
+        assertEquals("Sponsor", getTrialConfValue("Responsible Party:"));
     }
 
     private String getTrialConfValue(String labeltxt) {
         try {
             return selenium
-                    .getText("//div[preceding-sibling::label[normalize-space(text())='"
-                            + labeltxt + "']]");
+                    .getText("//div[preceding-sibling::label[normalize-space(text())=\""
+                            + labeltxt + "\"]]");
 
         } catch (SeleniumException e) {
             return selenium
@@ -196,87 +377,75 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
     /**
      * Tests Lookup of an organization with apostrophe.
-     * @throws Exception on error
+     * 
+     * @throws Exception
+     *             on error
      */
     @Ignore("Assumes po is up and running. Needs to be fixed.")
-    /*public void lookupOrganization() throws Exception {
-        loginAndAcceptDisclaimer();
-        clickAndWaitAjax("registerTrialMenuOption");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("summaryFourFundingCategoryCode", 60);
-        selenium.select("summaryFourFundingCategoryCode", "label=National");
-        clickAndWaitAjax("link=Submit");
-        waitForPageToLoad();
-        clickAndWaitAjax("link=Look Up Org");
-        waitForElementById("popupFrame", 60);
-        selenium.selectFrame("popupFrame");
-        clickAndWaitAjax("link=Add Org");
-        String orgName = "PO-2098'test organization";
-        selenium.type("orgName", orgName);
-        selenium.type("orgAddress", "2115 E Jefferson St");
-        selenium.type("orgCity", "Rockville");
-        selenium.select("orgStateSelect", "label=MD");
-        selenium.type("orgZip", "20852");
-        selenium.type("orgEmail", "po2098@example.com");
-        clickAndWaitAjax("link=Save");
-        clickAndWaitAjax("link=Cancel");
-        clickAndWaitAjax("link=Close");
-        selenium.waitForPageToLoad("30000");
-
-        driver.switchTo().defaultContent();
-        clickAndWaitAjax("link=Look Up Org");
-        selenium.selectFrame("popupFrame");
-        selenium.type("orgNameSearch", "'");
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
-        assertTrue("Wrong search results returned", selenium.isTextPresent(orgName));
-        clickAndWait("//table[@id='row']/tbody/tr[1]/td[7]/a/span/span");
-        selenium.selectWindow(null);
-        assertEquals("Wrong Principal investigator", orgName, selenium.getValue("name=trialDTO.leadOrganizationName"));
-    }*/
-
+    /*
+     * public void lookupOrganization() throws Exception {
+     * loginAndAcceptDisclaimer(); clickAndWaitAjax("registerTrialMenuOption");
+     * selenium.selectFrame("popupFrame");
+     * waitForElementById("summaryFourFundingCategoryCode", 60);
+     * selenium.select("summaryFourFundingCategoryCode", "label=National");
+     * clickAndWaitAjax("link=Submit"); waitForPageToLoad();
+     * clickAndWaitAjax("link=Look Up Org"); waitForElementById("popupFrame",
+     * 60); selenium.selectFrame("popupFrame");
+     * clickAndWaitAjax("link=Add Org"); String orgName =
+     * "PO-2098'test organization"; selenium.type("orgName", orgName);
+     * selenium.type("orgAddress", "2115 E Jefferson St");
+     * selenium.type("orgCity", "Rockville"); selenium.select("orgStateSelect",
+     * "label=MD"); selenium.type("orgZip", "20852"); selenium.type("orgEmail",
+     * "po2098@example.com"); clickAndWaitAjax("link=Save");
+     * clickAndWaitAjax("link=Cancel"); clickAndWaitAjax("link=Close");
+     * selenium.waitForPageToLoad("30000");
+     * 
+     * driver.switchTo().defaultContent(); clickAndWaitAjax("link=Look Up Org");
+     * selenium.selectFrame("popupFrame"); selenium.type("orgNameSearch", "'");
+     * clickAndWaitAjax("link=Search"); waitForElementById("row", 15);
+     * assertTrue("Wrong search results returned",
+     * selenium.isTextPresent("One item found"));
+     * assertTrue("Wrong search results returned",
+     * selenium.isTextPresent(orgName));
+     * clickAndWait("//table[@id='row']/tbody/tr[1]/td[7]/a/span/span");
+     * selenium.selectWindow(null); assertEquals("Wrong Principal investigator",
+     * orgName, selenium.getValue("name=trialDTO.leadOrganizationName")); }
+     */
     /**
      * Tests Lookup of a person with apostrophe.
      * @throws Exception on error
      */
     /*
-    public void lookupPerson() throws Exception {
-        loginAndAcceptDisclaimer();
-        clickAndWaitAjax("registerTrialMenuOption");
-        selenium.selectFrame("popupFrame");
-        waitForElementById("summaryFourFundingCategoryCode", 60);
-        selenium.select("summaryFourFundingCategoryCode", "label=National");
-        clickAndWaitAjax("link=Submit");
-        waitForPageToLoad();
-        clickAndWaitAjax("link=Look Up Person");
-        waitForElementById("popupFrame", 60);
-        selenium.selectFrame("popupFrame");
-        clickAndWaitAjax("link=Add Person");
-        selenium.type("poOrganizations_firstName", "Michael");
-        selenium.type("poOrganizations_lastName", "O'Grady");
-        selenium.type("poOrganizations_streetAddress", "2115 E Jefferson St");
-        selenium.type("poOrganizations_city", "Rockville");
-        selenium.select("poOrganizations_orgStateSelect", "label=MD");
-        selenium.type("poOrganizations_zip", "20852");
-        selenium.type("poOrganizations_email", "mogrady@example.com");
-        clickAndWaitAjax("link=Save");
-        clickAndWaitAjax("link=Cancel");
-        clickAndWaitAjax("link=Close");
-        selenium.waitForPageToLoad("30000");
-        driver.switchTo().defaultContent();
-        clickAndWaitAjax("link=Look Up Person");
-        selenium.selectFrame("popupFrame");
-        selenium.type("lastName", "'");
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
-        assertTrue("Wrong search results returned", selenium.isTextPresent("O'Grady"));
-        clickAndWait("//table[@id='row']/tbody/tr[1]/td[6]/a/span/span");
-        selenium.selectWindow(null);
-        assertEquals("Wrong Principal investigator", "O'Grady,Michael", selenium.getValue("name=trialDTO.piName"));
-    }*/
-
+     * public void lookupPerson() throws Exception { loginAndAcceptDisclaimer();
+     * clickAndWaitAjax("registerTrialMenuOption");
+     * selenium.selectFrame("popupFrame");
+     * waitForElementById("summaryFourFundingCategoryCode", 60);
+     * selenium.select("summaryFourFundingCategoryCode", "label=National");
+     * clickAndWaitAjax("link=Submit"); waitForPageToLoad();
+     * clickAndWaitAjax("link=Look Up Person"); waitForElementById("popupFrame",
+     * 60); selenium.selectFrame("popupFrame");
+     * clickAndWaitAjax("link=Add Person");
+     * selenium.type("poOrganizations_firstName", "Michael");
+     * selenium.type("poOrganizations_lastName", "O'Grady");
+     * selenium.type("poOrganizations_streetAddress", "2115 E Jefferson St");
+     * selenium.type("poOrganizations_city", "Rockville");
+     * selenium.select("poOrganizations_orgStateSelect", "label=MD");
+     * selenium.type("poOrganizations_zip", "20852");
+     * selenium.type("poOrganizations_email", "mogrady@example.com");
+     * clickAndWaitAjax("link=Save"); clickAndWaitAjax("link=Cancel");
+     * clickAndWaitAjax("link=Close"); selenium.waitForPageToLoad("30000");
+     * driver.switchTo().defaultContent();
+     * clickAndWaitAjax("link=Look Up Person");
+     * selenium.selectFrame("popupFrame"); selenium.type("lastName", "'");
+     * clickAndWaitAjax("link=Search"); waitForElementById("row", 15);
+     * assertTrue("Wrong search results returned",
+     * selenium.isTextPresent("One item found"));
+     * assertTrue("Wrong search results returned",
+     * selenium.isTextPresent("O'Grady"));
+     * clickAndWait("//table[@id='row']/tbody/tr[1]/td[6]/a/span/span");
+     * selenium.selectWindow(null); assertEquals("Wrong Principal investigator",
+     * "O'Grady,Michael", selenium.getValue("name=trialDTO.piName")); }
+     */
     private String getNciIdViaSearch(String trialName) {
 
         clickAndWait("searchTrialsMenuOption");
@@ -285,13 +454,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         selenium.type("id=officialTitle", trialName);
         clickAndWait("id=searchAllTrialsBtn");
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]"));
-        String nciId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]");
+        assertTrue(selenium
+                .isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]"));
+        String nciId = selenium
+                .getText("xpath=//table[@id='row']//tr[1]//td[1]");
         assertTrue(nciId.contains("NCI"));
         assertEquals(14, nciId.length());
         return nciId;
     }
-
- 
 
 }

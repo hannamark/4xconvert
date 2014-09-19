@@ -220,6 +220,29 @@ public abstract class AbstractRegistrySeleniumTest extends
      */
     protected void registerTrialWithoutDeletingExistingOne(String trialName,
             String leadOrgTrialId, final String rand) throws URISyntaxException {
+        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand);      
+        reviewAndSubmit();
+       
+    }
+
+    /**
+     * 
+     */
+    protected void reviewAndSubmit() {
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 60);
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+    }
+
+    /**
+     * @param trialName
+     * @param leadOrgTrialId
+     * @param rand
+     * @throws URISyntaxException
+     */
+    protected void populateRegisterNationalTrialScreen(String trialName,
+            String leadOrgTrialId, final String rand) throws URISyntaxException {
         today = MONTH_DAY_YEAR_FMT.format(new Date());
         tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
         oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(
@@ -347,12 +370,6 @@ public abstract class AbstractRegistrySeleniumTest extends
                 CONSENT_DOCUMENT).toURI()).toString()));
         selenium.type("submitTrial_otherDocument_0", (new File(ClassLoader.getSystemResource(
                 OTHER_DOCUMENT).toURI()).toString()));
-      
-        clickAndWait("xpath=//button[text()='Review Trial']");
-        waitForElementById("reviewTrialForm", 60);
-        clickAndWait("xpath=//button[text()='Submit']");
-        waitForPageToLoad();
-       
     }
 
     private void hideTopMenu() {

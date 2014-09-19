@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<div class="row form-horizontal details">
+<div class="row form-horizontal details" id="grantsDiv">
 <display:table class=" table table-striped table-bordered data sortable" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"
     	name="${requestScope.trialFundingList}" requestURI="searchTrialview.action" export="false">
 	<display:column titleKey="search.trial.view.fundingMechanism" property="fundingMechanismCode"   sortable="true" headerClass="sortable"/>
