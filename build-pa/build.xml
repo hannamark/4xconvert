@@ -803,19 +803,13 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
     <target name="dist:tools:retrieve:cagrid-target">
             <mkdir dir="${cagrid.target.co.dir}"/>
-            <if>
-                <not>
-                    <available file="${cagrid-target.src.url}"/>
-                </not>
-                <then>
-                    <mkdir dir="${cagrid.target.co.dir}"/>
-                    <svn-co
-                        svn.checkout.url="${cagrid-target.src.url}"
-                        svn.checkout.dir="${cagrid.target.co.dir}"
-                        delete="false"
-                        />
-                </then>
-            </if>
+    	
+    	    <copy todir="${cagrid.target.co.dir}" verbose="true" includeEmptyDirs="true">
+    	            <fileset dir="${cagrid-target.src.url}">
+    	              <include name="**/*.*"/>
+    	            </fileset>
+    	        </copy>
+
             <copy todir="${dist.exploded.dir}/cagrid-target">
                 <fileset dir="${cagrid.target.co.dir}"/>
             </copy>
@@ -861,26 +855,15 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         depends="remote:upgrade:pa-ear,remote:upgrade:pa-grid-3.3,remote:upgrade:pa-grid-3.2,remote:upgrade:pa-grid-3.4">
     </target>
 
-    <target name="dist:tools:retrieve:jboss-bindings"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">
-        <get src="${jboss-bindings.src.url}" dest="${dist.exploded.dir}/${jboss-bindings.file}" />
+    <target name="dist:tools:retrieve:jboss-bindings"  description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">        
+    	<copy file="${jboss-bindings.src.url}" tofile="${dist.exploded.dir}/${jboss-bindings.file}" verbose="true"/>
     </target>
 
     <!-- Downloads jboss from tools repository and compares checksum, based on properties set in project.properties -->
     <target name="dist:tools:retrieve:jboss" unless="jboss.tools.exists">
         <get src="${jboss.src.url}"
             dest="${jboss.dest.file}"/>
-        <get src="${jboss.src.url}.MD5"
-            dest="${jboss.dest.file}.MD5"/>
-        <checksum file="${jboss.dest.file}" verifyProperty="jboss.cksum.ok"/>
-        <if>
-            <equals arg1="${jboss.cksum.ok}" arg2="true"/>
-            <then>
-                <echo message="Downloaded jboss sucessfully"/>
-            </then>
-            <else>
-                <fail message="Failed to download jboss file sucessfully."/>
-            </else>
-        </if>
+      
     </target>
     <target name="dist:tools:retrieve:jbosscp" unless="jbosscp.tools.exists" description="Downloads JBOSS Cumulative Patch from binary repository and verifies checksum">
         <echoproperties prefix="jbosscp"/>
