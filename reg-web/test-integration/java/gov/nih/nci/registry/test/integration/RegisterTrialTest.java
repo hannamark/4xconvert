@@ -87,6 +87,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import com.thoughtworks.selenium.SeleniumException;
 
@@ -185,6 +186,125 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         verifyNonInterventionalInfo();
 
     }
+    
+    @Test
+    public void testResponsiblePartyOptionsHandling() throws Exception {
+        loginAndAcceptDisclaimer();
+
+        String rand = RandomStringUtils.randomNumeric(10);
+        String title = "An Open-Label Study of Ruxolitinib " + rand;
+        String leadOrgTrialId = "LEAD" + rand;
+        deactivateTrialByLeadOrgId(leadOrgTrialId);
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        
+        moveElementIntoView(By.id("trialDTO.responsiblePartyType"));
+        selenium.select("trialDTO.responsiblePartyType", "label=Principal Investigator");
+        assertTrue(selenium.isVisible("trialDTO.responsiblePersonName"));
+        assertTrue(selenium.isVisible("trialDTO.responsiblePersonTitle"));
+        assertTrue(selenium.isVisible("trialDTO.responsiblePersonAffiliationOrgName"));
+        assertTrue(selenium.isVisible("affiliationLookupcell"));
+        assertFalse(selenium.isVisible("investigatorlookupcell"));
+        assertEquals("Doe,John", selenium.getValue("trialDTO.responsiblePersonName"));
+        assertEquals("Principal Investigator", selenium.getValue("trialDTO.responsiblePersonTitle"));
+        assertEquals("Cancer Therapy Evaluation Program", selenium.getValue("trialDTO.responsiblePersonAffiliationOrgName"));
+        WebElement we = driver.findElement(By.id("trialDTO.responsiblePersonName"));
+        assertEquals("true", we.getAttribute("readonly"));
+        we = driver.findElement(By.id("trialDTO.responsiblePersonAffiliationOrgName"));
+        assertEquals("true", we.getAttribute("readonly"));
+        
+        selenium.select("trialDTO.responsiblePartyType", "label=Sponsor-Investigator");
+        assertTrue(selenium.isVisible("trialDTO.responsiblePersonName"));
+        assertTrue(selenium.isVisible("trialDTO.responsiblePersonTitle"));
+        assertTrue(selenium.isVisible("trialDTO.responsiblePersonAffiliationOrgName"));
+        assertFalse(selenium.isVisible("affiliationLookupcell"));
+        assertTrue(selenium.isVisible("investigatorlookupcell"));
+        assertEquals("Doe,John", selenium.getValue("trialDTO.responsiblePersonName"));
+        assertEquals("Principal Investigator", selenium.getValue("trialDTO.responsiblePersonTitle"));
+        assertEquals("Cancer Therapy Evaluation Program", selenium.getValue("trialDTO.responsiblePersonAffiliationOrgName"));
+        we = driver.findElement(By.id("trialDTO.responsiblePersonName"));
+        assertEquals("true", we.getAttribute("readonly"));
+        we = driver.findElement(By.id("trialDTO.responsiblePersonAffiliationOrgName"));
+        assertEquals("true", we.getAttribute("readonly"));
+        
+        selenium.select("trialDTO.responsiblePartyType", "label=Sponsor");
+        assertFalse(selenium.isVisible("trialDTO.responsiblePersonName"));
+        assertFalse(selenium.isVisible("trialDTO.responsiblePersonTitle"));
+        assertFalse(selenium.isVisible("trialDTO.responsiblePersonAffiliationOrgName"));
+        assertFalse(selenium.isVisible("affiliationLookupcell"));
+        assertFalse(selenium.isVisible("investigatorlookupcell"));
+
+        reviewAndSubmit();
+
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
+        verifyRegisterTrialConfirmaionPage(rand, nciID);
+       
+
+    }
+    
+    @Test
+    public void testSponsorInvestigator() throws Exception {
+        if (isPhantomJS()) {
+            // having an odd issue in phantom js with frame switching.
+            return;
+        }
+        loginAndAcceptDisclaimer();
+
+        String rand = RandomStringUtils.randomNumeric(10);
+        String title = "An Open-Label Study of Ruxolitinib " + rand;
+        String leadOrgTrialId = "LEAD" + rand;
+        deactivateTrialByLeadOrgId(leadOrgTrialId);
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        
+        moveElementIntoView(By.id("trialDTO.responsiblePartyType"));        
+        selenium.select("trialDTO.responsiblePartyType", "label=Sponsor-Investigator");
+        selenium.type("trialDTO.responsiblePersonTitle", "Principal Investigator!!");  
+        
+        driver.switchTo().defaultContent();
+        clickAndWaitAjax("xpath=//div[@id='investigatorlookupcell']//button");
+        waitForElementById("popupFrame", 60);  
+        selenium.selectFrame("popupFrame");           
+        waitForElementById("search_person_btn", 30);   
+        selenium.click("add_person_btn");
+        selenium.type("poOrganizations_firstName", rand);
+        selenium.type("poOrganizations_lastName", rand);
+        selenium.type("poOrganizations_streetAddress", "123 Maint St");
+        selenium.select("poOrganizations_orgStateSelect", "label=AL");
+        selenium.type("poOrganizations_email", rand+"@example.com");
+        selenium.type("poOrganizations_city", "Vienna");
+        selenium.type("poOrganizations_zip", "22222");
+        selenium.type("poOrganizations_phone", "555-555-5555");
+        clickAndWaitAjax("xpath=//i[@class='fa-floppy-o']");
+        waitForElementById("row", 15);
+        moveElementIntoView(By.xpath("//table[@id='row']/tbody/tr[1]/td[8]/button"));
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/button");
+        waitForPageToLoad();      
+        driver.switchTo().defaultContent();
+
+        reviewAndSubmit();
+
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
+        verifyBaseTrialInfo(rand, nciID);
+        verifyRegulatoryInfo();       
+        verifyInterventionalInfo();
+        
+        assertEquals("Cancer Therapy Evaluation Program",
+                getTrialConfValue("Sponsor:"));
+        assertEquals("Sponsor-Investigator", getTrialConfValue("Responsible Party:"));
+        assertEquals(rand+", "+rand, getTrialConfValue("Investigator"));
+        assertEquals("Principal Investigator!!", getTrialConfValue("Investigator Title"));
+        assertEquals("Cancer Therapy Evaluation Program",
+                getTrialConfValue("Investigator Affiliation"));
+
+    }
+
 
     private void verifyTrialConfValueMissing(String label) {
         try {

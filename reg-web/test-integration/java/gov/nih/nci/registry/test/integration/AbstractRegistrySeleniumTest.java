@@ -287,7 +287,9 @@ public abstract class AbstractRegistrySeleniumTest extends
         clickAndWaitAjax("xpath=//div[@id='loadPersField']//button");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
-        waitForElementById("search_person_btn", 30);       
+        waitForElementById("search_person_btn", 30);   
+        selenium.type("firstName", "John");
+        selenium.type("lastName", "Doe");
         clickAndWaitAjax("id=search_person_btn");
         waitForElementById("row", 15);
         selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/button");
