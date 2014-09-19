@@ -507,15 +507,11 @@
 
     <target name="dist:tools:retrieve:cagrid-target">
         <mkdir dir="${cagrid.target.co.dir}" />
-        <if>
-            <not>
-                <available file="${cagrid-target.src.url}" />
-            </not>
-            <then>
-                <mkdir dir="${cagrid.target.co.dir}" />
-                <svn-co svn.checkout.url="${cagrid-target.src.url}" svn.checkout.dir="${cagrid.target.co.dir}" delete="false" />
-            </then>
-        </if>
+    	<copy todir="${cagrid.target.co.dir}" verbose="true" includeEmptyDirs="true">
+    	    <fileset dir="${cagrid-target.src.url}">
+    	      <include name="**/*.*"/>
+    	    </fileset>
+    	</copy>
         <copy todir="${dist.exploded.dir}/cagrid-target">
             <fileset dir="${cagrid.target.co.dir}" />
         </copy>
