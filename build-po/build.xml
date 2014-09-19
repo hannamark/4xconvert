@@ -529,7 +529,7 @@
     </target>
 
     <target name="dist:tools:retrieve:jboss-bindings" description="Downloads JBOSS bindings filefrom binary repository and verifies checksum">
-        <get src="${jboss-bindings.src.url}" dest="${dist.exploded.dir}/${jboss-bindings.file}" />
+        <copy file="${jboss-bindings.src.url}" tofile="${dist.exploded.dir}/${jboss-bindings.file}" verbose="true"/>
     </target>
 
     <!-- Downloads jboss from tools repository and compares checksum, based on properties set in project.properties -->
