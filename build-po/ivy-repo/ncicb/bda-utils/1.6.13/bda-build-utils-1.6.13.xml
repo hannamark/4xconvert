@@ -2336,18 +2336,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/automation/branches/automation-1.6.1
 						<then>
 							<get src="@{wscore.download.url}"
 								dest="${wscore.dest.file}"/>
-							<get src="@{wscore.download.url}.MD5"
-								dest="${wscore.dest.file}.MD5"/>
-							<checksum file="${wscore.dest.file}" verifyProperty="wscore.cksum.ok"/>
-							<if>
-								<equals arg1="${wscore.cksum.ok}" arg2="true"/>
-								<then>
-									<echo message="Downloaded wscore sucessfully"/>
-								</then>
-								<else>
-									<fail message="Failed to download wscore file sucessfully."/>
-								</else>
-							</if>
 						</then>
 					</if>
 					<var name="env.GLOBUS_LOCATION" value="@{application.base.path}/@{wscore.relative.dir}"/>
