@@ -408,12 +408,13 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         selenium.type("id=name", "TestPendingMarker");
         selenium.type("id=message", "TestPendingMarker message");
         clickAndWait("link=Send Email");
+        pause(1000);
         driver.switchTo().defaultContent();
-        selenium.check("id=plannedMarker.evaluationType-1");
-        selenium.check("id=plannedMarker.assayType-1");
+        selenium.click("id=plannedMarker.evaluationType-1");
+        selenium.click("id=plannedMarker.assayType-1");
         selenium.select("id=assayUse","label=Integral");
-        selenium.check("id=plannedMarker.assayPurpose-1");
-        selenium.check("id=plannedMarker.tissueSpecimenType-1");
+        selenium.click("id=plannedMarker.assayPurpose-1");
+        selenium.click("id=plannedMarker.tissueSpecimenType-1");
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Message. Record Created."));
         assertEquals(selenium.getText("xpath=//table[@id='plannedMarkerTable']//tr[2]//td[1]"),"TestPendingMarker");
