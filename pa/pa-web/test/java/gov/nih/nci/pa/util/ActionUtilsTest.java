@@ -46,4 +46,29 @@ public class ActionUtilsTest {
         
     }
 
+    
+    @Test 
+    public final void testGenerateListDiffStringForManageTerms(){
+        List<String> list1 = new ArrayList<String>();
+        list1.add("item1");
+        list1.add("item2");
+        list1.add("item3");
+        List<String> list2 = new ArrayList<String>();
+        list2.add("item1");
+        list2.add("item20");
+        list2.add("item30");
+        
+        String result = ActionUtils.generateListDiffStringForManageTerms(list1, list2);
+        assertEquals("item1<br><font color='red'><strong>item2</strong></font><br><font color='red'><strong>item3</strong></font><br>", result);
+        
+        result = ActionUtils.generateListDiffStringForManageTerms(list2, list1);
+        assertEquals("item1<br><font color='red'><strong>item20</strong></font><br><font color='red'><strong>item30</strong></font><br>", result);
+        
+        list2.clear();
+        list2.add("item3");
+        list2.add("item1");
+        list2.add("item2");
+        result = ActionUtils.generateListDiffStringForManageTerms(list2, list1);
+        assertEquals("item1<br>item2<br>item3<br>", result);
+    }
 }
