@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
+import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.After;
@@ -157,7 +160,38 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     }
 
     /**
-     * test create intervention
+     * test create existing intervention 
+     */
+    @Test
+    public void testEnterExistingInterventionTerm(){
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        clickAndWait("xpath=//a[@href='manageTermscreateIntervention.action']");
+        assertTrue(selenium.isTextPresent("Enter New Intervention Details"));
+        
+        // Test save successful with mandatory fields
+        selenium.type("id=ntTermIdentifier", "CTEST234");
+        selenium.type("id=pdqTermIdentifier", "CDRTEST234");
+        selenium.type("id=name", "Preferred Name");
+        clickAndWait("link=Save");
+
+        action.moveToElement(driver.findElement(By.xpath("//span[@class='btn_img']"))).perform();
+        clickAndWait("xpath=//a[@href='manageTermscreateIntervention.action']");
+        assertTrue(selenium.isTextPresent("Enter New Intervention Details"));
+       
+        // Test save existing term
+        selenium.type("id=ntTermIdentifier", "CTEST234");
+        selenium.type("id=pdqTermIdentifier", "CTEST234");
+        selenium.type("id=name", "Preferred Name");
+        
+        clickAndWait("link=Save");
+        
+        assertTrue(selenium.isTextPresent("Message. Intervention with NCIt code CTEST234 already exists!."));
+    }
+
+    
+    /**
+     * test import intervention
      */
     @Test
     public void testImportInterventionTerm(){
@@ -242,9 +276,39 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Message. New Disease CTEST123 added successfully."));
     }
+    
+    /**
+     * test create existing disease
+     */
+    @Test
+    public void testEnterExistingDiseaseTerm(){
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
+        
+        // Test save successful with mandatory fields
+        selenium.type("id=ntTermIdentifier", "CTEST234");
+        selenium.type("id=code", "CDRTEST234");
+        selenium.type("id=preferredName", "Preferred Name");
+        selenium.type("id=menuDisplayName", "Menu display name");
+        clickAndWait("link=Save");
+        
+        action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
+        assertTrue(selenium.isTextPresent("Enter New Disease/Condition Details"));
+      
+        // Test save existing disease
+        selenium.type("id=ntTermIdentifier", "CTEST234");
+        selenium.type("id=code", "CDRTEST234");
+        selenium.type("id=preferredName", "Preferred Name");
+        selenium.type("id=menuDisplayName", "Menu display name");
+        
+        clickAndWait("link=Save");
+        assertTrue(selenium.isTextPresent("Message. Disease with NCIt code CTEST234 already exists!."));
+    }
 
     /**
-     * test create intervention
+     * test import disease
      */
     @Test
     public void testImportDiseaseTerm(){
@@ -296,4 +360,212 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Disease/Condition with NCIt code 'C4877' synchronized from NCIt."));        
     }
         
+    /**
+     * test create disease with parent and children
+     */
+    /* This test does not work because the alert does not get displayed
+    @Test
+    public void testEnterDiseaseWithParentAndChildTerm() {
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
+        assertTrue(selenium.isTextPresent("Enter New Disease/Condition Details"));
+
+        // Test save successful with mandatory fields
+        selenium.type("id=ntTermIdentifier", "CTEST1234");
+        selenium.type("id=preferredName", "Preferred Name");
+        selenium.type("id=menuDisplayName", "Menu display name");
+
+        action.click(driver.findElements(By.xpath("//span[@class='add']")).get(1)).perform();
+        selenium.selectFrame("popupFrame");
+        waitForElementById("disease", 30);
+
+        // Add parent terms
+        searchAndAddDisease("disease/diagnosis");
+        searchAndAddDisease("malignant neoplasm");
+        clickAndWait("link=Add");
+        driver.switchTo().defaultContent();
+        // Get the options of the drop down list.
+        List<WebElement> parentTerms = driver.findElement(By.xpath("//select[@id='parentTerms']")).findElements(
+                By.tagName("option"));
+        assertEquals(2, parentTerms.size());
+        assertEquals(": Disease/diagnosis", parentTerms.get(0).getText());
+        assertEquals("C9305: malignant neoplasm", parentTerms.get(1).getText());
+
+        // Add child terms
+        action.click(driver.findElements(By.xpath("//span[@class='add']")).get(2)).perform();
+        selenium.selectFrame("popupFrame");
+        waitForElementById("disease", 30);
+        searchAndAddDisease("lung cancer");
+        searchAndAddDisease("prostate cancer");
+        clickAndWait("link=Add");
+        // Get the options of the drop down list.
+        driver.switchTo().defaultContent();
+        List<WebElement> childTerms = driver.findElement(By.xpath("//select[@id='childTerms']")).findElements(
+                By.tagName("option"));
+        assertEquals(2, childTerms.size());
+        assertEquals("C9133: adenosquamous cell lung cancer", childTerms.get(0).getText());
+        assertEquals(": cellular diagnosis, prostate cancer", childTerms.get(1).getText());
+        
+        // Click save and Cancel
+        selenium.click("link=Save");
+        verifyAlertTextAndAccept("WARNING: One or more of the selected parent or child terms do not have a NCIt identifier, continue to Save?");
+        assertTrue(selenium.isTextPresent("Message. New Disease CTEST1234 added successfully."));
+    } */
+    
+    @Test
+    public void testEnterDiseaseWithParentAndChildTerm() {
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
+        assertTrue(selenium.isTextPresent("Enter New Disease/Condition Details"));
+
+        // Test save successful with mandatory fields
+        selenium.type("id=ntTermIdentifier", "CTEST1235");
+        selenium.type("id=preferredName", "Preferred Name");
+        selenium.type("id=menuDisplayName", "Menu display name");
+
+        //  Add parent terms
+        action.click(driver.findElements(By.xpath("//span[@class='add']")).get(1)).perform();
+        selenium.selectFrame("popupFrame");
+        waitForElementById("disease", 30);
+        searchAndAddDisease("malignant neoplasm");
+        clickAndWait("link=Add");
+        driver.switchTo().defaultContent();
+        // Get the options of the drop down list.
+        List<WebElement> parentTerms = driver.findElement(By.xpath("//select[@id='parentTerms']")).findElements(
+                By.tagName("option"));
+        assertEquals(1, parentTerms.size());
+        assertEquals("C9305: malignant neoplasm", parentTerms.get(0).getText());
+        
+        // Remove parent
+        action.click(driver.findElements(By.xpath("//span[@class='delete']")).get(1)).perform();
+        parentTerms = driver.findElement(By.xpath("//select[@id='parentTerms']")).findElements(
+                By.tagName("option"));
+        assertEquals(0, parentTerms.size());
+        
+        // Add back parent term
+        action.click(driver.findElements(By.xpath("//span[@class='add']")).get(1)).perform();
+        selenium.selectFrame("popupFrame");
+        waitForElementById("disease", 30);
+        searchAndAddDisease("malignant neoplasm");
+        clickAndWait("link=Add");
+        driver.switchTo().defaultContent();
+        // Get the options of the drop down list.
+        parentTerms = driver.findElement(By.xpath("//select[@id='parentTerms']")).findElements(
+                By.tagName("option"));
+        assertEquals(1, parentTerms.size());
+        assertEquals("C9305: malignant neoplasm", parentTerms.get(0).getText());
+        
+        // Add child terms
+        action.click(driver.findElements(By.xpath("//span[@class='add']")).get(2)).perform();
+        selenium.selectFrame("popupFrame");
+        waitForElementById("disease", 30);
+        searchAndAddDisease("lung cancer");
+        clickAndWait("link=Add");
+        // Get the options of the drop down list.
+        driver.switchTo().defaultContent();
+        List<WebElement> childTerms = driver.findElement(By.xpath("//select[@id='childTerms']")).findElements(
+                By.tagName("option"));
+        assertEquals(1, childTerms.size());
+        assertEquals("C9133: adenosquamous cell lung cancer", childTerms.get(0).getText());
+
+        // Remove child term
+        action.click(driver.findElements(By.xpath("//span[@class='delete']")).get(2)).perform();
+        childTerms = driver.findElement(By.xpath("//select[@id='childTerms']")).findElements(
+                By.tagName("option"));
+        assertEquals(0, childTerms.size());
+        
+        //Add child terms back
+        action.click(driver.findElements(By.xpath("//span[@class='add']")).get(2)).perform();
+        selenium.selectFrame("popupFrame");
+        waitForElementById("disease", 30);
+        searchAndAddDisease("lung cancer");
+        clickAndWait("link=Add");
+        // Get the options of the drop down list.
+        driver.switchTo().defaultContent();
+        childTerms = driver.findElement(By.xpath("//select[@id='childTerms']")).findElements(
+                By.tagName("option"));
+        assertEquals(1, childTerms.size());
+        
+        // Click save and Cancel
+        selenium.click("link=Save");
+        assertTrue(selenium.isTextPresent("Message. New Disease CTEST1235 added successfully."));
+    }
+
+    /**
+     * Test cancel on disease details page 
+     */
+    @Test
+    public void testEnterDiseaseCancel() {
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+        clickAndWait("xpath=//a[@href='manageTermscreateDisease.action']");
+        assertTrue(selenium.isTextPresent("Enter New Disease/Condition Details"));
+
+        // Click cancel
+        selenium.click("link=Cancel");
+        assertTrue(selenium.isTextPresent("Manage NCIt Disease/Condition or Intervention Terms")); 
+    }
+
+    /**
+     * Test cancel on intervention details page 
+     */
+    @Test
+    public void testEnterInterventionCancel() {
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(0)).perform();
+        clickAndWait("xpath=//a[@href='manageTermscreateIntervention.action']");
+        assertTrue(selenium.isTextPresent("Enter New Intervention Details"));
+
+        // Click cancel
+        selenium.click("link=Cancel");
+        assertTrue(selenium.isTextPresent("Manage NCIt Disease/Condition or Intervention Terms")); 
+    }
+    
+    /**
+     * Test manage terms links in diease and intervention pages in study
+     */
+    @Test
+    public void testManageTermsLinkInStudyDiseseInterventionPages() throws SQLException{
+        Actions action = new Actions(driver);
+        TrialInfo trial = createSubmittedTrial();
+        logoutUser();
+        loginAsAdminAbstractor();
+        searchSelectAndAcceptTrial(trial.title, true, false);
+        
+        logoutUser();
+        
+        loginAsScientificAbstractor();
+        searchAndSelectTrial(trial.title);
+        
+        checkOutTrialAsScientificAbstractor();
+       
+        logoutUser();
+        
+        loginAsScientificAbstractor();
+        searchAndSelectTrial(trial.title);
+        
+        clickAndWait("link=Disease/Condition"); 
+
+        assertTrue(selenium.isTextPresent("Manage NCIt Terms"));
+        assertTrue(selenium.isElementPresent("link=Enter Term Information"));
+        assertTrue(selenium.isElementPresent("link=Import/Sync Term with NCIt"));
+        assertTrue(selenium.isElementPresent("link=EVS New Term Request Form"));   
+
+        clickAndWait("link=Interventions"); 
+
+        assertTrue(selenium.isTextPresent("Manage NCIt Terms"));
+        assertTrue(selenium.isElementPresent("link=Enter Term Information"));
+        assertTrue(selenium.isElementPresent("link=Import/Sync Term with NCIt"));
+        assertTrue(selenium.isElementPresent("link=EVS New Term Request Form"));   
+
+    }
+    
+    private void searchAndAddDisease(String searchName) {
+        selenium.type("id=disease", searchName);
+        clickAndWaitAjax("alt=Search");
+        pause(2000);
+        selenium.click("class=breadcrumbFeaturedElement");
+    }
 }
