@@ -374,7 +374,7 @@ public abstract class AbstractRegistrySeleniumTest extends
                 OTHER_DOCUMENT).toURI()).toString()));
     }
 
-    private void hideTopMenu() {
+    protected void hideTopMenu() {
         ((JavascriptExecutor) driver).executeScript("$('nav').hide();");
         
     }

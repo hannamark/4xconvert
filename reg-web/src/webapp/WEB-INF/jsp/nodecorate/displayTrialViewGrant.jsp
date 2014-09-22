@@ -21,7 +21,7 @@
 </display:table>
 </c:when>
 <c:when test="${trialDTO.fundingDtos != null && fn:length(trialDTO.fundingDtos) >0}">
-<div class="box">
+<div class="box" id="grantsDiv">
 <h3 class="heading mt20"><span>NIH Grant Information (for NIH funded Trials)</span></h3>
 Is this trial funded by an NCI grant? <s:radio name="trialDTO.nciGrant" id="nciGrant"  list="#{true:'Yes', false:'No'}" disabled="true"/>
 <display:table class="data table table-striped table-bordered sortable" decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" size="false" id="row"

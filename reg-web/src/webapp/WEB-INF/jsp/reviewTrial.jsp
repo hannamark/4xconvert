@@ -289,7 +289,7 @@
                             </c:if>
 
                         <c:if test="${fn:length(trialDTO.indIdeDtos) > 0}">
-                            <div class="box">
+                            <div class="box" id="indideDiv">
                                 <h3 class="heading mt20"><span>FDA IND/IDE Information for applicable trials</span></h3>
                                 <%@ include file="/WEB-INF/jsp/nodecorate/addIdeIndIndicator.jsp" %>
                             </div>
