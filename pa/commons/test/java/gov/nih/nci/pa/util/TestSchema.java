@@ -535,6 +535,7 @@ public class TestSchema {
         inv.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
         inv.setTypeCode(InterventionTypeCode.DIETARY_SUPPLEMENT);
         inv.setUserLastUpdated(curator);
+        inv.setNtTermIdentifier("CTEST");
         addUpdObject(inv);
         interventionIds.add(inv.getId());
 
@@ -673,6 +674,7 @@ public class TestSchema {
         pec.setMaxUnit(UnitsCode.MONTHS.getCode());
         addUpdObject(pec);
         PDQDisease dis01 = TestSchema.createPdqDisease("Toe Cancer");
+        dis01.setNtTermIdentifier("CTEST");
         addUpdObject(dis01);
         pdqDiseaseIds.add(dis01.getId());
         PDQDisease dis02 = TestSchema.createPdqDisease("Heel Cancer");

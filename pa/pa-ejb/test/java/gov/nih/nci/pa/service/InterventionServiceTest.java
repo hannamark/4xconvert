@@ -191,6 +191,7 @@ public class InterventionServiceTest extends AbstractHibernateTestCase {
         assertEquals(1, r.size());
 
         searchCriteria.setName(null);
+        searchCriteria.setNtTermIdentifier(null);
         searchCriteria.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.GENETIC));
         searchCriteria.setExactMatch(StConverter.convertToSt("false"));
         searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
@@ -200,6 +201,15 @@ public class InterventionServiceTest extends AbstractHibernateTestCase {
         } catch(PAException e) {
             // expected behavior
         }
+        
+        //Search by NCIt id
+        searchCriteria.setNtTermIdentifier(StConverter.convertToSt("CTEST"));
+        r = remoteEjb.search(searchCriteria);
+        assertEquals(1, r.size());
+        
+        searchCriteria.setNtTermIdentifier(StConverter.convertToSt("INVALID"));
+        r = remoteEjb.search(searchCriteria);
+        assertEquals(0, r.size());
     }
     @Test
     public void noInactiveInterventionAlternateNameRecordsReturnedBySearchTest() throws Exception {

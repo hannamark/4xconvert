@@ -217,13 +217,24 @@ public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
         r = bean.search(searchCriteria);
         assertFalse(r.isEmpty());
 
+        searchCriteria.setNtTermIdentifier(null);
         searchCriteria.setPreferredName(null);
         try {
             r = bean.search(searchCriteria);
-            fail("Service should throw PAException when searching w/o name.  ");
+            fail("Service should throw PAException when searching w/o name and NCIt identifier.  ");
         } catch(PAException e) {
             // expected behavior
         }
+        
+        //Search by NCIt id        
+        searchCriteria.setNtTermIdentifier(StConverter.convertToSt("CTEST"));
+        r = bean.search(searchCriteria);
+        assertEquals(1, r.size());
+        
+        searchCriteria.setNtTermIdentifier(StConverter.convertToSt("NONEXISTING"));
+        r = bean.search(searchCriteria);
+        assertEquals(0, r.size());
+        
     }
     @Test
     public void searchDoesNotReturnInactiveTest() throws Exception {
