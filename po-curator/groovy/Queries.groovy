@@ -177,6 +177,10 @@ public class Queries {
             oco.status <> 'NULLIFIED' and
             oco.id = ?
     """
+	
+	public static def activeUnprocessedHcfCrs = """select * from healthcarefacilitycr where status='ACTIVE' and processed=false"""
+	
+	public static def activeUnprocessedRoCrs = """select * from researchorganizationcr where status='ACTIVE' and processed=false"""
 }
 
 

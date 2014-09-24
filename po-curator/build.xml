@@ -48,7 +48,10 @@
 	
 	
     <target name="process:duplicate:phantom:orgcr" description="Mark duplicate and phantom Org CRs as processed">
-        <echo message = "Processing Duplicate and Phantom Organization CRs..."/>
+    	<echo message = "Activating Organization Roles (PO-8009)..."/>
+    	<groovy src="groovy/OrganizationRoleActivator.groovy"/>
+    	
+    	<echo message = "Processing Duplicate and Phantom Organization CRs..."/>
         <groovy src="groovy/DuplicateAndPhantomOrgCRProcessor.groovy"/>
     	<delete quiet="true" file="${basedir}/resolved.build.properties"/>
     	<delete dir="${temp.dir}"/>
