@@ -135,6 +135,114 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
+    public void testRegisterAbbreviatedByNct() throws Exception {
+
+        loginAndAcceptDisclaimer();
+        // Select register trial and choose trial type
+        hoverLink("Register Trial");
+        pause(1000);
+        if (isPhantomJS())
+            openAndWait("/registry/protected/submitProprietaryTrialinputNct.action");
+        else
+            clickAndWait("xpath=//a[text()='Industrial/Other']");
+        waitForElementById("nctID", 30);
+        deactivateTrialByNctId("NCT00038610");
+        selenium.type("nctID", "NCT00038610");
+        clickAndWait("xpath=//button[text()='Search Studies']");
+
+        assertEquals("NCT00038610",
+                selenium.getText("//table[@id='row']/tbody/tr/td[1]"));
+        assertEquals("Completed",
+                selenium.getText("//table[@id='row']/tbody/tr/td[2]"));
+        assertTrue(selenium
+                .getText("//table[@id='row']/tbody/tr/td[3]")
+                .contains(
+                        "Phase II Study of Hyper-CVAD Plus Imatinib Mesylate (Gleevec, STI571) for Philadelphia-Positive Acute Lymphocytic Leukemia"));
+
+        clickAndWait("xpath=//button/i[@class='fa-cloud-download']");
+
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("Trial NCT00038610 has been imported and registered in CTRP system successfully."
+                        + " A unique NCI identifier "
+                        + nciID
+                        + " has been assigned to this trial with a processing status of Submitted. "
+                        + "You can add your site to the trial now using the Add My Site button on this page"));
+        assertTrue(selenium
+                .isElementPresent("xpath=//button[text()='Add My Site']"));
+        assertEquals(nciID, getTrialConfValue("NCI Trial Identifier:"));
+        assertEquals("ID01-006",
+                getTrialConfValue("Lead Organization Trial Identifier:"));
+        assertEquals(
+                "Phase II Study of Hyper-CVAD Plus Imatinib Mesylate"
+                        + " (Gleevec, STI571) for Philadelphia-Positive Acute Lymphocytic Leukemia",
+                getTrialConfValue("Title:"));
+        assertEquals("II", getTrialConfValue("Phase:"));
+        assertEquals("Interventional", getTrialConfValue("Trial Type:"));
+        assertEquals("Treatment", getTrialConfValue("Primary Purpose:"));
+        assertEquals("SDC", getTrialConfValue("Accrual Disease Terminology:"));
+        assertEquals("M.D. Anderson Cancer Center",
+                getTrialConfValue("Lead Organization:"));
+        assertEquals("Industrial",
+                getTrialConfValue("Trial Submission Category:"));
+        assertEquals("M.D. Anderson Cancer Center",
+                getTrialConfValue("Summary 4 Funding Sponsor/Source:"));
+        assertEquals("Yes", getTrialConfValue("Industrial?"));
+
+        // Add My Site
+        clickAndWait("xpath=//button[text()='Add My Site']");
+        waitForElementById("popupFrame", 20);
+        selenium.selectFrame("popupFrame");
+        selenium.type("localIdentifier", "XYZ0000001");
+
+        clickAndWaitAjax("xpath=//button[text()='Look Up']");
+        waitForElementById("popupFrame", 10);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("search_person_btn", 30);
+        selenium.type("firstName", "John");
+        selenium.type("lastName", "Doe");
+        clickAndWaitAjax("id=search_person_btn");
+        waitForElementById("row", 15);
+        moveElementIntoView(By
+                .xpath("//table[@id='row']/tbody/tr[1]/td[8]/button"));
+        selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[8]/button");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+        selenium.selectFrame("popupFrame");
+
+        selenium.type("programCode", "PGCODE");
+        selenium.select("statusCode", "label=Completed");
+        selenium.type("statusDate", "09/25/2014");
+        selenium.type("accrualOpenedDate", "09/23/2014");
+        selenium.type("accrualClosedDate", "09/24/2014");
+        selenium.click("xpath=//button/i[@class='fa-floppy-o']");
+        pause(5000);
+
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("Your site has been added to the trial."));
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getText("//table[@id='row']/tbody/tr/td[1]"));
+        assertEquals("Doe,John",
+                selenium.getText("//table[@id='row']/tbody/tr/td[2]"));
+        assertEquals("XYZ0000001",
+                selenium.getText("//table[@id='row']/tbody/tr/td[3]"));
+        assertEquals("PGCODE",
+                selenium.getText("//table[@id='row']/tbody/tr/td[4]"));
+        assertEquals("Completed",
+                selenium.getText("//table[@id='row']/tbody/tr/td[5]"));
+        assertEquals("09/25/2014",
+                selenium.getText("//table[@id='row']/tbody/tr/td[6]"));
+        assertEquals("09/23/2014",
+                selenium.getText("//table[@id='row']/tbody/tr/td[7]"));
+        assertEquals("09/24/2014",
+                selenium.getText("//table[@id='row']/tbody/tr/td[8]"));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
     public void testReviewEditSubmit() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
             // PhantomJS keeps crashing on Linux CI box. No idea why at the
@@ -563,7 +671,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      * @throws Exception
      *             on error
      */
-    private void verifyTrialConfirmaionPage(String rand, String nciID, String category) {
+    private void verifyTrialConfirmaionPage(String rand, String nciID,
+            String category) {
         verifyBaseTrialInfo(rand, nciID, category);
         verifyRegulatoryInfo();
         verifySponsor();
@@ -575,7 +684,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      * @param rand
      * @param nciID
      */
-    protected void verifyBaseTrialInfo(String rand, String nciID, String category) {
+    protected void verifyBaseTrialInfo(String rand, String nciID,
+            String category) {
         if (StringUtils.isNotBlank(nciID))
             assertEquals(nciID, getTrialConfValue("NCI Trial Identifier:"));
 
