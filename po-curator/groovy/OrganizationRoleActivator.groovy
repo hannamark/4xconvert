@@ -1,5 +1,8 @@
 import static org.apache.commons.lang.StringUtils.*
 
+import javax.mail.*
+import javax.mail.internet.*
+
 import java.sql.Timestamp
 
 
@@ -17,17 +20,46 @@ println "Using " + props['po.jdbc.url'] + " to connect to PO database"
 
 def poSourceConnection = ReportGenUtils.getPoSourceConnection()
 
+def grouperURL = poSourceConnection.firstRow("select grid_grouper_url as url from csm_remote_group limit 1").url;
+def tier = grouperURL.contains("training.cagrid.org")?"DEV":(grouperURL.contains("prod.nci.nih.gov")?"PROD":"QA1/2/STAGE")
+println "We are in ${tier} tier"
+
+StringBuilder log = new StringBuilder()
+
 poSourceConnection.eachRow(Queries.activeUnprocessedHcfCrs) { roleCR ->
 	println "\rOK, found an active & unprocessed HCF CR; id=${roleCR.id}"
-	handleCR(roleCR, poSourceConnection, 'healthcarefacility', 'hcf')
+	handleCR(roleCR, poSourceConnection, 'healthcarefacility', 'hcf', log)
 }
 
 poSourceConnection.eachRow(Queries.activeUnprocessedRoCrs) { roleCR ->
 	println "\rOK, found an active & unprocessed RO CR; id=${roleCR.id}"
-	handleCR(roleCR, poSourceConnection, 'researchorganization', 'ro')
+	handleCR(roleCR, poSourceConnection, 'researchorganization', 'ro', log)
 }
 
-def handleCR(roleCR, poSourceConnection, String roleName, String roleAbbr) {
+
+// send email
+if (log.length()>0) {
+	try {
+		println "Sending mail..."
+		props.put("mail.smtp.host", "mailfwd.nih.gov");
+		Session session = Session.getDefaultInstance(props, null);
+		MimeMessage message = new MimeMessage(session);
+		message.setFrom(new InternetAddress("ctrp-team@semanticbits.com"));
+		InternetAddress toAddress = new InternetAddress("ctrp-team@semanticbits.com");
+		message.addRecipient(Message.RecipientType.TO, toAddress);
+		message.setSubject("PO-8009 Nightly Job Report in ${tier}");
+		message.setText("This is a report of running PO-8009 Nightly Job in ${tier} on ${new Date()}\r\n\r\n"+log);
+		
+		Transport transport = session.getTransport("smtp");
+		transport.connect();
+		transport.sendMessage(message, message.getAllRecipients());
+		transport.close();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+}
+
+def handleCR(roleCR, poSourceConnection, String roleName, String roleAbbr, log) {
 	def role = poSourceConnection.firstRow("select * from "+roleName+" where id=${roleCR.target}")
 	println "This CR is for a "+roleName+" role named ${role.name}; id=${role.id}"
 
@@ -98,6 +130,7 @@ def handleCR(roleCR, poSourceConnection, String roleName, String roleAbbr) {
 		}
 
 		def commentText = """\
+Organization: ${org.name}; ID=${org.id}
 We found an active and unprocessed ${roleName} change request (id=${roleCR.id}) for this organization.
 Therefore, according to the requirements specified in PO-8009, we automatically performed the following:		     
  - Apply all changes from the CR to both the role and the organization, including blanking out fields that are blank in the CR
@@ -125,6 +158,7 @@ Please see https://tracker.nci.nih.gov/browse/PO-8009 for more information.
 				])
 		
 		poSourceConnection.executeInsert("insert into organization_comment (organization_id, comment_id, idx) values (${org.id}, ${commentID.nextid}, (select COALESCE(max (idx), -1)+1 from organization_comment where organization_id=${org.id}))")
+		log.append(commentText)
 		
 		println "Marking the CR as processed."
 		poSourceConnection.executeUpdate("update "+roleName+"cr set processed = true where id=${roleCR.id}")
