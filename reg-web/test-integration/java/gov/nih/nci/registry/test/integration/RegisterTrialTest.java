@@ -113,26 +113,32 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testRegisterTrial() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
-            // PhantomJS keeps crashing on Linux CI box. No idea why at the moment.
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
             return;
         }
-        loginAndAcceptDisclaimer();
-        String rand = RandomStringUtils.randomNumeric(10);
-        registerTrial(rand);
-        final String nciID = getLastNciId();
-        assertTrue(
-                "No success message found",
-                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
-                        + nciID));
-        verifyTrialConfirmaionPage(rand, nciID);
+        for (String cat : new String[] { "National",
+                "Externally Peer-Reviewed", "Institutional" }) {
+            loginAndAcceptDisclaimer();
+            String rand = RandomStringUtils.randomNumeric(10);
+            registerTrial(rand, cat);
+            final String nciID = getLastNciId();
+            assertTrue(
+                    "No success message found",
+                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                            + nciID));
+            verifyTrialConfirmaionPage(rand, nciID, cat);
+            logoutUser();
+        }
 
     }
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testSaveDraft() throws Exception {
+    public void testReviewEditSubmit() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
-            // PhantomJS keeps crashing on Linux CI box. No idea why at the moment.
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
             return;
         }
         loginAndAcceptDisclaimer();
@@ -141,14 +147,46 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         String title = "An Open-Label Study of Ruxolitinib " + rand;
         String leadOrgTrialId = "LEAD" + rand;
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        final String category = "National";
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand,
+                category);
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        clickAndWait("xpath=//button/i[@class='fa-edit']");
+        reviewAndSubmit();
+
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
+        verifyTrialConfirmaionPage(rand, nciID, category);
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testSaveDraft() throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        loginAndAcceptDisclaimer();
+
+        String rand = RandomStringUtils.randomNumeric(10);
+        String title = "An Open-Label Study of Ruxolitinib " + rand;
+        String leadOrgTrialId = "LEAD" + rand;
+        deactivateTrialByLeadOrgId(leadOrgTrialId);
+        final String category = "National";
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand,
+                category);
         clickAndWait("xpath=//button[text()='Save as Draft']");
         final Number draftID = getLastDraftId();
         assertTrue(
                 "No success message found",
                 selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier "
                         + draftID));
-        verifyTrialConfirmaionPage(rand, "");
+        verifyTrialConfirmaionPage(rand, "", category);
 
         hoverLink("Search");
         clickAndWait("link=Clinical Trials");
@@ -158,7 +196,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium.isTextPresent(title));
         assertTrue(selenium.isTextPresent(leadOrgTrialId));
         clickAndWait("xpath=//a[text()='" + draftID + "']");
-        verifyTrialConfirmaionPage(rand, "");
+        verifyTrialConfirmaionPage(rand, "", category);
 
         hoverLink("Search");
         clickAndWait("link=Clinical Trials");
@@ -168,13 +206,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWait("xpath=//a[@href='/registry/protected/submitTrialcompletePartialSubmission.action?studyProtocolId="
                 + draftID + "']/button");
         reviewAndSubmit();
-        
+
         final String nciID = getLastNciId();
         assertTrue(
                 "No success message found",
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
-        verifyTrialConfirmaionPage(rand, nciID);
+        verifyTrialConfirmaionPage(rand, nciID, category);
 
     }
 
@@ -189,7 +227,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testRegisterNonCtGovTrial() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
-            // PhantomJS keeps crashing on Linux CI box. No idea why at the moment.
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
             return;
         }
         loginAndAcceptDisclaimer();
@@ -198,7 +237,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         String title = "An Open-Label Study of Ruxolitinib " + rand;
         String leadOrgTrialId = "LEAD" + rand;
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        final String category = "National";
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand,
+                category);
         selenium.click("id=xmlRequiredfalse");
         assertFalse(selenium.isVisible("id=sponsorDiv"));
         assertFalse(selenium.isVisible("id=regDiv"));
@@ -209,7 +250,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 "No success message found",
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
-        verifyBaseTrialInfo(rand, nciID);
+        verifyBaseTrialInfo(rand, nciID, category);
         verifyTrialConfValueMissing("Sponsor:");
         verifyTrialConfValueMissing("Responsible Party:");
         verifyTrialConfValueMissing("Trial Oversight Authority Country :");
@@ -224,7 +265,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testRegisterNonInterventionalTrial() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
-            // PhantomJS keeps crashing on Linux CI box. No idea why at the moment.
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
             return;
         }
         loginAndAcceptDisclaimer();
@@ -233,7 +275,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         String title = "An Open-Label Study of Ruxolitinib " + rand;
         String leadOrgTrialId = "LEAD" + rand;
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        final String category = "National";
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand,
+                category);
         moveElementIntoView(By.id("trialDTO.trialType.Noninterventional"));
         selenium.click("id=trialDTO.trialType.Noninterventional");
         assertFalse(selenium.isVisible("id=trialDTO.secondaryPurposes"));
@@ -255,7 +299,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 "No success message found",
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
-        verifyBaseTrialInfo(rand, nciID);
+        verifyBaseTrialInfo(rand, nciID, category);
         verifyRegulatoryInfo();
         verifySponsor();
         verifyTrialConfValueMissing("Secondary Purpose:");
@@ -271,7 +315,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         String title = "An Open-Label Study of Ruxolitinib " + rand;
         String leadOrgTrialId = "LEAD" + rand;
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        final String category = "National";
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand,
+                category);
 
         moveElementIntoView(By.id("trialDTO.responsiblePartyType"));
         selenium.select("trialDTO.responsiblePartyType",
@@ -332,7 +378,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 "No success message found",
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
-        verifyTrialConfirmaionPage(rand, nciID);
+        verifyTrialConfirmaionPage(rand, nciID, category);
 
     }
 
@@ -348,7 +394,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         String title = "An Open-Label Study of Ruxolitinib " + rand;
         String leadOrgTrialId = "LEAD" + rand;
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        final String category = "National";
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand,
+                category);
 
         moveElementIntoView(By.id("trialDTO.responsiblePartyType"));
         selenium.select("trialDTO.responsiblePartyType",
@@ -385,7 +433,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 "No success message found",
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
-        verifyBaseTrialInfo(rand, nciID);
+        verifyBaseTrialInfo(rand, nciID, category);
         verifyRegulatoryInfo();
         verifyInterventionalInfo();
 
@@ -450,7 +498,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         String title = "An Open-Label Study of Ruxolitinib " + rand;
         String leadOrgTrialId = "LEAD" + rand;
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand);
+        final String category = "National";
+        populateRegisterNationalTrialScreen(title, leadOrgTrialId, rand,
+                category);
 
         moveElementIntoView(By.id("trialDTO.responsiblePartyType"));
         selenium.select("trialDTO.responsiblePartyType",
@@ -482,7 +532,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 "No success message found",
                 selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
                         + nciID));
-        verifyBaseTrialInfo(rand, nciID);
+        verifyBaseTrialInfo(rand, nciID, category);
         verifyRegulatoryInfo();
         verifyInterventionalInfo();
 
@@ -513,8 +563,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      * @throws Exception
      *             on error
      */
-    private void verifyTrialConfirmaionPage(String rand, String nciID) {
-        verifyBaseTrialInfo(rand, nciID);
+    private void verifyTrialConfirmaionPage(String rand, String nciID, String category) {
+        verifyBaseTrialInfo(rand, nciID, category);
         verifyRegulatoryInfo();
         verifySponsor();
         verifyInterventionalInfo();
@@ -525,7 +575,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      * @param rand
      * @param nciID
      */
-    protected void verifyBaseTrialInfo(String rand, String nciID) {
+    protected void verifyBaseTrialInfo(String rand, String nciID, String category) {
         if (StringUtils.isNotBlank(nciID))
             assertEquals(nciID, getTrialConfValue("NCI Trial Identifier:"));
 
@@ -558,7 +608,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("Doe,John", getTrialConfValue("Principal Investigator:")
                 .replaceAll("\\s", ""));
 
-        assertEquals("National",
+        assertEquals(category,
                 getTrialConfValue("Summary 4 Funding Sponsor Type:"));
         assertEquals("National Cancer Institute",
                 getTrialConfValue("Summary 4 Funding Sponsor/Source:"));

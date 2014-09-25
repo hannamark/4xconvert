@@ -97,7 +97,6 @@ import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
@@ -197,20 +196,20 @@ public abstract class AbstractRegistrySeleniumTest extends
         return !selenium.isElementPresent("link=Sign In");
     }
 
-    protected void registerTrial(String trialName, String leadOrgTrialId)
+    protected void registerTrial(String trialName, String leadOrgTrialId, String category)
             throws URISyntaxException, SQLException {
         registerTrial(trialName, leadOrgTrialId,
-                RandomStringUtils.randomNumeric(10));
+                RandomStringUtils.randomNumeric(10), category);
     }
     
-    protected void registerTrial(final String rand) throws URISyntaxException, SQLException {
-        registerTrial("An Open-Label Study of Ruxolitinib "+rand, "LEAD"+rand, rand);
+    protected void registerTrial(final String rand, String category) throws URISyntaxException, SQLException {
+        registerTrial("An Open-Label Study of Ruxolitinib "+rand, "LEAD"+rand, rand, category);
     }
 
     protected void registerTrial(String trialName, String leadOrgTrialId,
-            final String rand) throws URISyntaxException, SQLException {
+            final String rand, String category) throws URISyntaxException, SQLException {
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        registerTrialWithoutDeletingExistingOne(trialName, leadOrgTrialId, rand);
+        registerTrialWithoutDeletingExistingOne(trialName, leadOrgTrialId, rand, category);
     }
 
     /**
@@ -219,8 +218,8 @@ public abstract class AbstractRegistrySeleniumTest extends
      * @throws URISyntaxException
      */
     protected void registerTrialWithoutDeletingExistingOne(String trialName,
-            String leadOrgTrialId, final String rand) throws URISyntaxException {
-        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand);      
+            String leadOrgTrialId, final String rand, String category) throws URISyntaxException {
+        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand, category);      
         reviewAndSubmit();
        
     }
@@ -242,7 +241,7 @@ public abstract class AbstractRegistrySeleniumTest extends
      * @throws URISyntaxException
      */
     protected void populateRegisterNationalTrialScreen(String trialName,
-            String leadOrgTrialId, final String rand) throws URISyntaxException {
+            String leadOrgTrialId, final String rand, final String category) throws URISyntaxException {
         today = MONTH_DAY_YEAR_FMT.format(new Date());
         tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
         oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(
@@ -250,9 +249,20 @@ public abstract class AbstractRegistrySeleniumTest extends
         
         // Select register trial and choose trial type
         hoverLink("Register Trial");       
-        clickAndWait("link=National");
+        clickAndWait("link="+category);
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
         
+        populateFieldsWithTrialData(trialName, leadOrgTrialId, rand);
+    }
+
+    /**
+     * @param trialName
+     * @param leadOrgTrialId
+     * @param rand
+     * @throws URISyntaxException
+     */
+    protected void populateFieldsWithTrialData(String trialName,
+            String leadOrgTrialId, final String rand) throws URISyntaxException {
         hideTopMenu();
         
         selenium.click("id=xmlRequiredtrue");
