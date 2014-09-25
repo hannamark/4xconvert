@@ -49,7 +49,7 @@ if (log.length()>0) {
 		message.addRecipient(Message.RecipientType.TO, toAddress);
 		message.setSubject("PO-8009 Nightly Job Report in ${tier}");
 		message.setText("This is a report of running PO-8009 Nightly Job in ${tier} on ${new Date()}\r\n\r\n"+log);
-		
+
 		Transport transport = session.getTransport("smtp");
 		transport.connect();
 		transport.sendMessage(message, message.getAllRecipients());
@@ -156,10 +156,10 @@ Please see https://tracker.nci.nih.gov/browse/PO-8009 for more information.
 					new Timestamp(System.currentTimeMillis()),
 					ctepecm!=null?ctepecm.user_id:null
 				])
-		
+
 		poSourceConnection.executeInsert("insert into organization_comment (organization_id, comment_id, idx) values (${org.id}, ${commentID.nextid}, (select COALESCE(max (idx), -1)+1 from organization_comment where organization_id=${org.id}))")
 		log.append(commentText)
-		
+
 		println "Marking the CR as processed."
 		poSourceConnection.executeUpdate("update "+roleName+"cr set processed = true where id=${roleCR.id}")
 	}
