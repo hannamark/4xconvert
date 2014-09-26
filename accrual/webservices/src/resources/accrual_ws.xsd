@@ -157,19 +157,17 @@
 				minOccurs="0" />
 			<element name="disease" type="tns:DiseaseCode" minOccurs="0">
 				<annotation>
-					<documentation>If you are using ICD-O-3 terminology then Disease is
-						optional. If you are not using ICD-O-3,
-						then Disease is mandatory.
-					</documentation>
+					<documentation><![CDATA[This element should contain a valid disease code using the coding system specified in the <codeSystem> element. 
+                            When the disease <codeSystem> = "ICD-O-3", then either the <disease> or the <siteDisease> is mandatory.
+					]]></documentation>
 				</annotation>
 			</element>
 			<element name="siteDisease" type="tns:DiseaseCode" minOccurs="0">
 				<annotation>
-					<documentation>Site Disease applies ONLY if ICD-O-3 disease
-						terminology is
-						being used. Either Site or Disease is required for
-						ICD-O-3.
-					</documentation>
+					<documentation><![CDATA[This element is only applicable when the disease <codeSystem> = "ICD-O-3".  
+					It should contains a valid ICD-O-3 body site code. Example: use the code "C34.1" if the disease's body site is "Upper lobe, lung".
+When the disease <codeSystem> = "ICD-O-3", then either the <disease> or the <siteDisease> is mandatory.					
+					]]></documentation>
 				</annotation>
 			</element>
 		</sequence>
