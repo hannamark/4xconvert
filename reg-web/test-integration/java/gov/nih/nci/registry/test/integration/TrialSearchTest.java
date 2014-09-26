@@ -304,7 +304,7 @@ public class TrialSearchTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[19]"));
         assertEquals("Selenium, Abstractor",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[21]"));
-        assertEquals(today,
+        assertEquals(oneYearFromToday,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[22]"));
     }
 
