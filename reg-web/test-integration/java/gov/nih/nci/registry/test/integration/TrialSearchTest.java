@@ -82,55 +82,258 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import java.net.URISyntaxException;
+import java.sql.SQLException;
+
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 /**
  * Tests trial search in Registry, as well as search-related functionality.
- * @author Steve Lustbader
+ * 
+ * @author dkrylov
  */
-public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
+public class TrialSearchTest extends AbstractRegistrySeleniumTest {
+
+    @Test
+    public void testSearch() throws URISyntaxException, SQLException {
+        deactivateAllTrials();
+        loginAndAcceptDisclaimer();
+        String rand = RandomStringUtils.randomNumeric(10);
+        TrialInfo info = registerAndAcceptTrial(rand);
+        verifySingleFieldCriteria("officialTitle", rand, info);
+        verifySingleFieldCriteriaNoMatch("officialTitle", rand + "_", info);
+
+        verifySingleFieldCriteria("phaseCode", "0", info);
+        verifySingleFieldCriteriaNoMatch("phaseCode", "II", info);
+
+        verifySingleFieldCriteria("typeCodeValues", "Treatment", info);
+        verifySingleFieldCriteriaNoMatch("typeCodeValues", "Prevention", info);
+
+        verifySingleFieldCriteria("identifier", info.nciID, info);
+        verifySingleFieldCriteriaNoMatch("identifier", info.nciID + "0", info);
+
+        verifySingleFieldCriteria("identifier", info.leadOrgID, info);
+        verifySingleFieldCriteriaNoMatch("identifier", info.leadOrgID + "0",
+                info);
+
+        verifySingleFieldCriteria("identifier", "NCT" + rand, info);
+        verifySingleFieldCriteriaNoMatch("identifier", "NCT" + rand + "1", info);
+
+        verifySingleFieldCriteria("identifier", "OTHER" + rand, info);
+        verifySingleFieldCriteriaNoMatch("identifier", "OTHER" + rand + "1",
+                info);
+
+        verifySingleFieldCriteria("trialCategory", "Complete", info);
+        verifySingleFieldCriteriaNoMatch("trialCategory", "Abbreviated", info);
+
+        // By Lead Org
+        accessTrialSearchScreen();
+        selenium.select("organizationType", "label=Lead Organization");
+        driver.findElement(By.id("organizationName")).sendKeys("National");
+        pause(3000);
+        selenium.click("xpath=//li[@class='ui-menu-item']/a[text()='National Cancer Institute Division of Cancer Prevention']");
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getValue("organizationName"));
+        runSearchAndVerifySingleTrialResult(info);
+
+        // By PI
+        accessTrialSearchScreen();
+        driver.findElement(By.id("principalInvestigatorName")).sendKeys("John");
+        pause(3000);
+        selenium.click("xpath=//li[@class='ui-menu-item']/a[text()='Doe,John']");
+        assertEquals("Doe,John", selenium.getValue("principalInvestigatorName"));
+        runSearchAndVerifySingleTrialResult(info);
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testSearchMyTrials() throws URISyntaxException, SQLException {
+        deactivateAllTrials();
+        loginAndAcceptDisclaimer();
+        String rand = RandomStringUtils.randomNumeric(10);
+        TrialInfo info = registerAndAcceptTrial(rand);
+        accessTrialSearchScreen();
+        selenium.click("runSearchBtn");
+        clickAndWait("link=My Trials");
+        waitForElementById("row", 10);
+        verifySingleTrialExtendedSearchResult(info);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testReset() throws URISyntaxException, SQLException {
+        loginAndAcceptDisclaimer();
+        accessTrialSearchScreen();
+        selenium.type("officialTitle", "officialTitle");
+        selenium.type("phaseCode", "0");
+        selenium.type("typeCodeValues", "Treatment");
+        selenium.type("identifier", "identifier");
+        selenium.type("trialCategory", "Complete");
+        selenium.select("phaseAdditionalQualifierCode", "label=Yes");
+        selenium.type("identifierType", "NCI");
+
+        selenium.select("organizationType", "label=Lead Organization");
+        driver.findElement(By.id("organizationName")).sendKeys("National");
+        pause(3000);
+        selenium.click("xpath=//li[@class='ui-menu-item']/a[text()='National Cancer Institute Division of Cancer Prevention']");
+
+        driver.findElement(By.id("principalInvestigatorName")).sendKeys("John");
+        pause(3000);
+        selenium.click("xpath=//li[@class='ui-menu-item']/a[text()='Doe,John']");
+
+        clickAndWait("id=resetSearchBtn");
+
+        assertEquals("", selenium.getValue("officialTitle"));
+        assertEquals("", selenium.getValue("phaseCode"));
+        assertEquals("", selenium.getValue("typeCodeValues"));
+        assertEquals("", selenium.getValue("phaseAdditionalQualifierCode"));
+        assertEquals("", selenium.getValue("trialCategory"));
+        assertEquals("All", selenium.getValue("identifierType"));
+        assertEquals("", selenium.getValue("identifier"));
+        assertEquals("", selenium.getValue("organizationType"));
+        assertEquals("", selenium.getValue("organizationName"));
+        assertEquals("", selenium.getValue("principalInvestigatorName"));
+
+    }
+
+    private void verifySingleFieldCriteria(String fieldID, String value,
+            TrialInfo info) {
+        accessTrialSearchScreen();
+        selenium.type(fieldID, value);
+        runSearchAndVerifySingleTrialResult(info);
+
+    }
+
+    private void verifySingleFieldCriteriaNoMatch(String fieldID, String value,
+            TrialInfo info) {
+        accessTrialSearchScreen();
+        selenium.type(fieldID, value);
+        selenium.click("runSearchBtn");
+        clickAndWait("link=All Trials");
+        waitForElementById("search-results", 10);
+        assertTrue(selenium
+                .isElementPresent("xpath=//div[normalize-space(text())='Nothing found to display.']"));
+
+    }
 
     /**
-     * Tests exporting search results to CSV/Excel.
+     * @param info
      */
-    @Test
-    public void testExportSearchResults() {
-        loginAndAcceptDisclaimer();
+    protected void runSearchAndVerifySingleTrialResult(TrialInfo info) {
+        selenium.click("runSearchBtn");
+        clickAndWait("link=All Trials");
+        waitForElementById("row", 10);
+        verifySingleTrialSearchResult(info);
+    }
 
-        clickAndWait("searchTrialsMenuOption");
-        waitForElementById("searchMyTrialsBtn", 5);
-        waitForElementById("searchAllTrialsBtn", 5);
+    /**
+     * @param info
+     */
+    protected void verifySingleTrialSearchResult(TrialInfo info) {
+        assertEquals(
+                info.nciID,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]/a"));
+        assertEquals("An Open-Label Study of Ruxolitinib " + info.rand,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
+        assertEquals("In Review",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[3]"));
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
+        assertEquals(info.leadOrgID,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[5]"));
+        assertEquals("Doe, John",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[6]"));
+        assertEquals("NCT" + info.rand,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[7]"));
+        assertEquals("OTHER" + info.rand,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[8]"));
+        assertEquals(
+                "View",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[9]/a"));
+        assertTrue(selenium
+                .isElementPresent("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']"));
+    }
 
-        // search my trials, verify export links
-        clickAndWait("searchMyTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("regexp:(One|[0-9]+) trial(s)? found"));
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
+    /**
+     * @param info
+     */
+    protected void verifySingleTrialExtendedSearchResult(TrialInfo info) {
+        assertEquals(
+                info.nciID,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]/a"));
+        assertEquals("An Open-Label Study of Ruxolitinib " + info.rand,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[3]"));
+        assertEquals(info.leadOrgID,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
+        assertEquals("Doe, John",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[5]"));
+        assertEquals("NCT" + info.rand,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[6]"));
+        assertEquals("OTHER" + info.rand,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[7]"));
+        assertEquals("In Review",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[8]"));
+        assertEquals("Accepted",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[9]"));
+        assertTrue(selenium
+                .isElementPresent("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']"));
+        assertEquals(
+                "ICD10",
+                selenium.getValue("xpath=//table[@id='row']/tbody/tr[1]/td[11]/select"));
+        assertEquals(
+                "View",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[12]/a"));
+        assertEquals("O",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[13]"));
+        assertEquals("TREATMENT",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[14]"));
+        assertEquals("Complete",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[15]"));
+        assertEquals(tommorrow,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[16]"));
+        assertEquals("Cancer Therapy Evaluation Program",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[17]"));
+        assertEquals("Cancer Therapy Evaluation Program",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[18]"));
+        assertEquals("NATIONAL",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[19]"));
+        assertEquals("Selenium, Abstractor",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[21]"));
+        assertEquals(today,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[22]"));
+    }
 
-        // verify no export links when no results found
-        selenium.type("officialTitle", "no trials with this title");
-        clickAndWait("searchMyTrialsBtn");
-        assertFalse("CSV link shouldn't be shown with no results", selenium.isElementPresent("link=CSV"));
-        assertFalse("Excel link shouldn't be shown with no results", selenium.isElementPresent("link=Excel"));
+    /**
+     * 
+     */
+    protected void accessTrialSearchScreen() {
+        hoverLink("Search");
+        pause(1500);
+        clickAndWait("xpath=//a[text()='Clinical Trials']");
+        waitForElementById("resetSearchBtn", 5);
+    }
 
-        // search all trials, verify export links
-        selenium.type("officialTitle", "selenium");
-        clickAndWait("searchAllTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("regexp:(One|[0-9]+) trial(s)? found"));
+    /**
+     * @throws URISyntaxException
+     * @throws SQLException
+     */
+    protected TrialInfo registerAndAcceptTrial(String rand)
+            throws URISyntaxException, SQLException {
 
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
-
-        // search all trials, verify export links
-        selenium.type("officialTitle", "");
-        clickAndWait("searchSavedDraftsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("regexp:(One|[0-9]+) trial(s)? found"));
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
-
-        // TODO: actually download and verify the files.  Unfortunately, Selenium doesn't support this right now,
-        // but since this functionality comes from displaytag, we can assume it works.  It would be good to verify
-        // the file contents, though (eg, no html was exported, etc).
+        registerTrial(rand, "National");
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
+        TrialInfo info = acceptTrialByNciId(nciID, "LEAD" + rand);
+        info.rand = rand;
+        return info;
     }
 
 }

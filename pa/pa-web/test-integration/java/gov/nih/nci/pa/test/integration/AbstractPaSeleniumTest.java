@@ -988,6 +988,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + " where study_protocol.status_code='ACTIVE' and local_sp_indentifier='"
                                 + loID + "'", new ArrayHandler())[0];
     }
+    
+    protected TrialInfo acceptTrialByNciId(String nciID, String leadOrgID)
+            throws SQLException {
+        TrialInfo info = new TrialInfo();
+        info.nciID = nciID;
+        info.id = (Long) getTrialIdByLeadOrgID(leadOrgID);
+        info.leadOrgID = leadOrgID;
+        pickUsers(info);
+        addDWS(info, "ACCEPTED");
+        addMilestone(info, "SUBMISSION_ACCEPTED");
+        return info;
+
+    }
 
     protected void addDWS(TrialInfo info, String status) throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -1059,11 +1072,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         QueryRunner runner = new QueryRunner();
         String sql = "update study_protocol set status_code='INACTIVE'";
         runner.update(connection, sql);
-
         runner.update(connection,
                 "update study_site set local_sp_indentifier='"
                         + UUID.randomUUID().toString()
                         + "' where local_sp_indentifier is not null");
+        runner.update(connection, "delete from study_otheridentifiers");
     }
     
     protected void assignTrialOwner(String loginName, Long trialID)
@@ -1096,6 +1109,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         public String nciID;
         public Long registryUserID;
         public Long csmUserID;
+        public String rand;
 
         @Override
         public String toString() {

@@ -94,22 +94,16 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses(value = { LoginTest.class, AddSitesTest.class,
-        RegisterAbbreviatedTrialTest.class, RegisterTrialTest.class /*
-                                                                     * DisplayTrialOwnershipTest
-                                                                     * .class ,
-                                                                     * SearchUserTest
-                                                                     * . class ,
-                                                                     * MyAccountTest
-                                                                     * . class ,
-                                                                     * 
-                                                                     * . class ,
-                                                                     * TrialSearchTest
-                                                                     * . class ,
-                                                                     * SetupPaTrialData
-                                                                     * . class ,
-                                                                     * ViewTrialTest
-                                                                     * . class
-                                                                     */})
+        RegisterAbbreviatedTrialTest.class, RegisterTrialTest.class,
+        TrialSearchTest.class /*
+                               * DisplayTrialOwnershipTest .class ,
+                               * SearchUserTest . class , MyAccountTest . class
+                               * ,
+                               * 
+                               * . class , TrialSearchTest . class ,
+                               * SetupPaTrialData . class , ViewTrialTest .
+                               * class
+                               */})
 public class AllSeleniumTests {
 
 }
