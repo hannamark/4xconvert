@@ -111,13 +111,13 @@ public abstract class AbstractRegistrySeleniumTest extends
 
     protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat
             .getInstance("MM/dd/yyyy");
-    
+
     private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
     private static final String IRB_DOCUMENT = "IrbDoc.doc";
     private static final String SITES_DOCUMENT = "Sites.doc";
     private static final String CONSENT_DOCUMENT = "Consent.doc";
     private static final String OTHER_DOCUMENT = "Other.doc";
-    
+
     private static boolean firstRun = true;
 
     protected String today = MONTH_DAY_YEAR_FMT.format(new Date());
@@ -196,20 +196,24 @@ public abstract class AbstractRegistrySeleniumTest extends
         return !selenium.isElementPresent("link=Sign In");
     }
 
-    protected void registerTrial(String trialName, String leadOrgTrialId, String category)
-            throws URISyntaxException, SQLException {
+    protected void registerTrial(String trialName, String leadOrgTrialId,
+            String category) throws URISyntaxException, SQLException {
         registerTrial(trialName, leadOrgTrialId,
                 RandomStringUtils.randomNumeric(10), category);
     }
-    
-    protected void registerTrial(final String rand, String category) throws URISyntaxException, SQLException {
-        registerTrial("An Open-Label Study of Ruxolitinib "+rand, "LEAD"+rand, rand, category);
+
+    protected void registerTrial(final String rand, String category)
+            throws URISyntaxException, SQLException {
+        registerTrial("An Open-Label Study of Ruxolitinib " + rand, "LEAD"
+                + rand, rand, category);
     }
 
     protected void registerTrial(String trialName, String leadOrgTrialId,
-            final String rand, String category) throws URISyntaxException, SQLException {
+            final String rand, String category) throws URISyntaxException,
+            SQLException {
         deactivateTrialByLeadOrgId(leadOrgTrialId);
-        registerTrialWithoutDeletingExistingOne(trialName, leadOrgTrialId, rand, category);
+        registerTrialWithoutDeletingExistingOne(trialName, leadOrgTrialId,
+                rand, category);
     }
 
     /**
@@ -218,20 +222,29 @@ public abstract class AbstractRegistrySeleniumTest extends
      * @throws URISyntaxException
      */
     protected void registerTrialWithoutDeletingExistingOne(String trialName,
-            String leadOrgTrialId, final String rand, String category) throws URISyntaxException {
-        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand, category);      
+            String leadOrgTrialId, final String rand, String category)
+            throws URISyntaxException {
+        populateRegisterNationalTrialScreen(trialName, leadOrgTrialId, rand,
+                category);
         reviewAndSubmit();
-       
+
     }
 
     /**
      * 
      */
     protected void reviewAndSubmit() {
-        clickAndWait("xpath=//button[text()='Review Trial']");
-        waitForElementById("reviewTrialForm", 60);
-        clickAndWait("xpath=//button[text()='Submit']");
-        waitForPageToLoad();
+        if (isPhantomJS()) {
+            ((JavascriptExecutor) driver).executeScript("reviewProtocol();");
+            waitForElementById("reviewTrialForm", 20);
+            ((JavascriptExecutor) driver).executeScript("submitTrial();");
+            waitForElementById("searchTrial", 20);
+        } else {
+            clickAndWait("xpath=//button[text()='Review Trial']");
+            waitForElementById("reviewTrialForm", 20);
+            clickAndWait("xpath=//button[text()='Submit']");
+            waitForPageToLoad();
+        }
     }
 
     /**
@@ -241,17 +254,18 @@ public abstract class AbstractRegistrySeleniumTest extends
      * @throws URISyntaxException
      */
     protected void populateRegisterNationalTrialScreen(String trialName,
-            String leadOrgTrialId, final String rand, final String category) throws URISyntaxException {
+            String leadOrgTrialId, final String rand, final String category)
+            throws URISyntaxException {
         today = MONTH_DAY_YEAR_FMT.format(new Date());
         tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(new Date(), 1));
         oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils.addYears(
                 new Date(), 1));
-        
+
         // Select register trial and choose trial type
-        hoverLink("Register Trial");       
-        clickAndWait("link="+category);
+        hoverLink("Register Trial");
+        clickAndWait("link=" + category);
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
-        
+
         populateFieldsWithTrialData(trialName, leadOrgTrialId, rand);
     }
 
@@ -264,22 +278,22 @@ public abstract class AbstractRegistrySeleniumTest extends
     protected void populateFieldsWithTrialData(String trialName,
             String leadOrgTrialId, final String rand) throws URISyntaxException {
         hideTopMenu();
-        
+
         selenium.click("id=xmlRequiredtrue");
         hover(By.xpath("//i[preceding-sibling::input[@id='xmlRequiredfalse']]"));
-        assertTrue(selenium.isTextPresent("Indicate whether you need an XML file "
-                + "to submit/update your trial to ClinicalTrials.gov"));
-        
+        assertTrue(selenium
+                .isTextPresent("Indicate whether you need an XML file "
+                        + "to submit/update your trial to ClinicalTrials.gov"));
+
         selenium.type("trialDTO.leadOrgTrialIdentifier", leadOrgTrialId);
-        
-        
-        selenium.type("trialDTO.nctIdentifier", "NCT"+rand);
-        final String nctID = "OTHER"+rand;
+
+        selenium.type("trialDTO.nctIdentifier", "NCT" + rand);
+        final String nctID = "OTHER" + rand;
         selenium.type("otherIdentifierOrg", nctID);
         clickAndWaitAjax("id=otherIdbtnid");
         waitForElementById("otherIdentifierdiv", 30);
         assertTrue(selenium.isTextPresent(nctID));
-        
+
         selenium.type("trialDTO.officialTitle", trialName);
         selenium.select("trialDTO.phaseCode", "label=0");
         selenium.click("id=trialDTO.trialType.Interventional");
@@ -297,7 +311,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         clickAndWaitAjax("xpath=//div[@id='loadPersField']//button");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
-        waitForElementById("search_person_btn", 30);   
+        waitForElementById("search_person_btn", 30);
         selenium.type("firstName", "John");
         selenium.type("lastName", "Doe");
         clickAndWaitAjax("id=search_person_btn");
@@ -309,16 +323,16 @@ public abstract class AbstractRegistrySeleniumTest extends
         driver.switchTo().defaultContent();
         hover(By.id("trialDTO.sponsorNameField"));
         clickAndWaitAjax("link=Cancer Therapy Evaluation Program");
-        
+
         selenium.select("trialDTO.responsiblePartyType", "label=Sponsor");
 
         // Select Funding Sponsor
         hover(By.id("trialDTO.summaryFourOrgName"));
         clickAndWaitAjax("xpath=//table[@id='dropdown-sum4Organization']//a[text()='National Cancer Institute']");
-        selenium.type("trialDTO.programCodeText", "PG"+rand);
-        
+        selenium.type("trialDTO.programCodeText", "PG" + rand);
+
         // Grants
-        moveElementIntoView(By.id("nciGrantfalse")); 
+        moveElementIntoView(By.id("nciGrantfalse"));
         selenium.click("nciGrantfalse");
         selenium.select("fundingMechanismCode", "label=B09");
         selenium.select("nihInstitutionCode", "label=AA");
@@ -337,18 +351,19 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.type("trialDTO_primaryCompletionDate", oneYearFromToday);
         selenium.click("trialDTO_completionDateTypeAnticipated");
         selenium.type("trialDTO_completionDate", oneYearFromToday);
-        
+
         // IND/IDE
         moveElementIntoView(By.id("group3"));
         selenium.select("group3", "label=IND");
-        selenium.type("id=indidenumber", rand);        
+        selenium.type("id=indidenumber", rand);
         selenium.click("id=SubCat");
-        selenium.select("id=SubCat", "label=CDER");                
+        selenium.select("id=SubCat", "label=CDER");
         selenium.select("holderType", "label=NIH");
-        selenium.select("programcodenihselectedvalue", "label=NEI-National Eye Institute");
-        moveElementIntoView(By.id("group4"));  
+        selenium.select("programcodenihselectedvalue",
+                "label=NEI-National Eye Institute");
+        moveElementIntoView(By.id("group4"));
         driver.findElement(By.id("group4")).sendKeys(" ");
-        //selenium.click("id=group4");
+        // selenium.click("id=group4");
         selenium.select("expanded_status", "label=Available");
         selenium.click("exemptIndicator");
         moveElementIntoView(By.id("addbtn"));
@@ -356,18 +371,19 @@ public abstract class AbstractRegistrySeleniumTest extends
         waitForElementById("indidediv", 5);
 
         // Regulator Information
-        moveElementIntoView(By.id("countries")); 
+        moveElementIntoView(By.id("countries"));
         selenium.select("countries", "label=United States");
         pause(1000);
-        moveElementIntoView(By.id("trialDTO.selectedRegAuth"));  
-        selenium.select("trialDTO.selectedRegAuth", "label=Food and Drug Administration");
-        
-        moveElementIntoView(By.id("trialDTO.fdaRegulatoryInformationIndicatorYes")); 
+        moveElementIntoView(By.id("trialDTO.selectedRegAuth"));
+        selenium.select("trialDTO.selectedRegAuth",
+                "label=Food and Drug Administration");
+
+        moveElementIntoView(By
+                .id("trialDTO.fdaRegulatoryInformationIndicatorYes"));
         selenium.click("trialDTO.fdaRegulatoryInformationIndicatorYes");
         selenium.click("trialDTO.section801IndicatorYes");
         selenium.click("trialDTO.delayedPostingIndicatorYes");
         selenium.click("trialDTO.dataMonitoringCommitteeAppointedIndicatorYes");
-      
 
         // Add Protocol and IRB Document
         String protocolDocPath = (new File(ClassLoader.getSystemResource(
@@ -376,17 +392,17 @@ public abstract class AbstractRegistrySeleniumTest extends
                 IRB_DOCUMENT).toURI()).toString());
         selenium.type("protocolDoc", protocolDocPath);
         selenium.type("irbApproval", irbDocPath);
-        selenium.type("participatingSites", (new File(ClassLoader.getSystemResource(
-                SITES_DOCUMENT).toURI()).toString()));
-        selenium.type("informedConsentDocument", (new File(ClassLoader.getSystemResource(
-                CONSENT_DOCUMENT).toURI()).toString()));
-        selenium.type("submitTrial_otherDocument_0", (new File(ClassLoader.getSystemResource(
-                OTHER_DOCUMENT).toURI()).toString()));
+        selenium.type("participatingSites", (new File(ClassLoader
+                .getSystemResource(SITES_DOCUMENT).toURI()).toString()));
+        selenium.type("informedConsentDocument", (new File(ClassLoader
+                .getSystemResource(CONSENT_DOCUMENT).toURI()).toString()));
+        selenium.type("submitTrial_otherDocument_0", (new File(ClassLoader
+                .getSystemResource(OTHER_DOCUMENT).toURI()).toString()));
     }
 
     protected void hideTopMenu() {
         ((JavascriptExecutor) driver).executeScript("$('nav').hide();");
-        
+
     }
 
     protected void registerDraftTrial(String trialName, String leadOrgTrialId)
