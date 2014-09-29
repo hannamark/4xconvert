@@ -873,18 +873,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("Sponsor", getTrialConfValue("Responsible Party:"));
     }
 
-    private String getTrialConfValue(String labeltxt) {
-        try {
-            return selenium
-                    .getText("//div[preceding-sibling::label[normalize-space(text())=\""
-                            + labeltxt + "\"]]");
-
-        } catch (SeleniumException e) {
-            return selenium
-                    .getText("//div[preceding-sibling::label/strong[normalize-space(text())='"
-                            + labeltxt + "']/..]");
-        }
-    }
+   
 
     /**
      * Tests Lookup of an organization with apostrophe.

@@ -100,6 +100,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import com.thoughtworks.selenium.SeleniumException;
+
 /**
  * Abstract base class for selenium tests.
  * 
@@ -234,17 +236,11 @@ public abstract class AbstractRegistrySeleniumTest extends
      * 
      */
     protected void reviewAndSubmit() {
-        if (isPhantomJS()) {
-            ((JavascriptExecutor) driver).executeScript("reviewProtocol();");
-            waitForElementById("reviewTrialForm", 20);
-            ((JavascriptExecutor) driver).executeScript("submitTrial();");
-            waitForElementById("searchTrial", 20);
-        } else {
-            clickAndWait("xpath=//button[text()='Review Trial']");
-            waitForElementById("reviewTrialForm", 20);
-            clickAndWait("xpath=//button[text()='Submit']");
-            waitForPageToLoad();
-        }
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 20);
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+
     }
 
     /**
@@ -535,6 +531,19 @@ public abstract class AbstractRegistrySeleniumTest extends
         WebElement elem = driver.findElement(by);
         action.moveToElement(elem);
         action.perform();
+    }
+    
+    protected String getTrialConfValue(String labeltxt) {
+        try {
+            return selenium
+                    .getText("//div[preceding-sibling::label[normalize-space(text())=\""
+                            + labeltxt + "\"]]");
+
+        } catch (SeleniumException e) {
+            return selenium
+                    .getText("//div[preceding-sibling::label/strong[normalize-space(text())='"
+                            + labeltxt + "']/..]");
+        }
     }
 
     protected void changeRegUserAffiliation(String loginName, int orgPoId,

@@ -1100,7 +1100,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         pause(200);
     }
 
-    public static final class TrialInfo {
+    public static final class TrialInfo implements Comparable<TrialInfo> {
 
         public String uuid;
         public String title;
@@ -1114,6 +1114,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         @Override
         public String toString() {
             return ToStringBuilder.reflectionToString(this);
+        }
+
+        @Override
+        public int compareTo(TrialInfo o) {           
+            return this.uuid.compareTo(o.uuid);
         }
 
     }
