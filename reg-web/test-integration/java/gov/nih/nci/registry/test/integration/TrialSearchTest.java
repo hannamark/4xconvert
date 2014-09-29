@@ -152,6 +152,28 @@ public class TrialSearchTest extends AbstractRegistrySeleniumTest {
 
     }
 
+    @Test
+    public void testTabs() throws URISyntaxException, SQLException {
+        TrialInfo trialInfo = createAcceptedTrial();
+        loginAndAcceptDisclaimer();
+        accessTrialSearchScreen();
+        selenium.type("officialTitle", trialInfo.uuid);
+        selenium.click("runSearchBtn");
+        clickAndWait("link=All Trials");
+        waitForElementById("row", 10);
+        assertEquals(trialInfo.title,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
+
+        clickAndWaitAjax("xpath=//div[@class='container']//a[normalize-space(text())='Search Clinical Trials']");
+        assertTrue(selenium.isVisible("officialTitle"));
+        assertEquals(trialInfo.uuid, selenium.getValue("officialTitle"));
+
+        clickAndWaitAjax("xpath=//div[@class='container']//a[normalize-space(text())='Search Results']");
+        assertTrue(selenium.isVisible("row"));
+        assertEquals(trialInfo.title,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
+    }
+
     @SuppressWarnings("deprecation")
     @Test
     public void testMultiCriteriaSearch() throws URISyntaxException,
