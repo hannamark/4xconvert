@@ -539,32 +539,8 @@ public class TrialSearchTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[22]"));
     }
 
-    /**
-     * 
-     */
-    protected void accessTrialSearchScreen() {
-        hoverLink("Search");
-        pause(1500);
-        clickAndWait("xpath=//a[text()='Clinical Trials']");
-        waitForElementById("resetSearchBtn", 5);
-    }
+    
 
-    /**
-     * @throws URISyntaxException
-     * @throws SQLException
-     */
-    protected TrialInfo registerAndAcceptTrial(String rand)
-            throws URISyntaxException, SQLException {
-
-        registerTrial(rand, "National");
-        final String nciID = getLastNciId();
-        assertTrue(
-                "No success message found",
-                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
-                        + nciID));
-        TrialInfo info = acceptTrialByNciId(nciID, "LEAD" + rand);
-        info.rand = rand;
-        return info;
-    }
+   
 
 }

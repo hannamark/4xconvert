@@ -82,6 +82,10 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
+import java.io.File;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -102,6 +106,7 @@ import com.thoughtworks.selenium.SeleniumException;
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@SuppressWarnings("deprecation")
 public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
     /**
@@ -131,6 +136,346 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
             logoutUser();
         }
 
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testUpdateAbbreviatedTrial() throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        loginAndAcceptDisclaimer();
+        TrialInfo info = createAcceptedTrial(true);
+        assignTrialOwner("abstractor-ci", info.id);
+        final String nciID = info.nciID;
+        searchForTrialByNciID(nciID);
+        selectUpdateAction();
+
+        String rand = RandomStringUtils.randomNumeric(10);
+
+        assertEquals(info.nciID, getTrialConfValue("NCI Trial Identifier:"));
+        assertEquals(info.leadOrgID,
+                getTrialConfValue("Lead Organization Trial Identifier:"));
+        assertEquals(info.title, getTrialConfValue("Title:"));
+        assertEquals("ClinicalTrials.gov",
+                getTrialConfValue("Lead Organization:"));
+        assertEquals("Interventional", getTrialConfValue("Trial Type:"));
+        assertEquals("Treatment", getTrialConfValue("Primary Purpose:"));
+        assertEquals("II", getTrialConfValue("Phase:"));
+
+        selenium.type("nctId", "NCT" + rand);
+        clickAndWaitAjax("id=nctIdbtnid");
+
+        // Add Protocol and IRB Document
+        String irbDocPath = (new File(ClassLoader.getSystemResource(
+                IRB_DOCUMENT).toURI()).toString());
+        selenium.type("irbApproval", irbDocPath);
+        selenium.type("informedConsentDocument", (new File(ClassLoader
+                .getSystemResource(CONSENT_DOCUMENT).toURI()).toString()));
+        selenium.type("submitProprietaryTrial_otherDocument_0", (new File(
+                ClassLoader.getSystemResource(OTHER_DOCUMENT).toURI())
+                .toString()));
+
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("updateProprietaryTrialreview", 10);
+
+        assertEquals(info.leadOrgID,
+                getTrialConfValue("Lead Organization Trial Identifier:"));
+        assertEquals(info.title, getTrialConfValue("Title:"));
+        assertEquals("ClinicalTrials.gov",
+                getTrialConfValue("Lead Organization:"));
+        assertEquals("Interventional", getTrialConfValue("Trial Type:"));
+        assertEquals("Treatment", getTrialConfValue("Primary Purpose:"));
+        assertEquals("II", getTrialConfValue("Phase:"));
+
+        // Documents
+        assertEquals(
+                "IrbDoc.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='IRB Approval Document']]"));
+        assertEquals(
+                "Consent.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Informed Consent Document']]"));
+        assertEquals(
+                "Other.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Other']]"));
+
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+
+        assertTrue(selenium
+                .isTextPresent("The trial update with the NCI Identifier "
+                        + nciID + " was successfully submitted"));
+        assertEquals(info.nciID, getTrialConfValue("NCI Trial Identifier:"));
+        assertEquals(info.leadOrgID,
+                getTrialConfValue("Lead Organization Trial Identifier:"));
+        assertEquals(info.title, getTrialConfValue("Title:"));
+        assertEquals("ClinicalTrials.gov",
+                getTrialConfValue("Lead Organization:"));
+        assertEquals("Interventional", getTrialConfValue("Trial Type:"));
+        assertEquals("Treatment", getTrialConfValue("Primary Purpose:"));
+        assertEquals("II", getTrialConfValue("Phase:"));
+        // Documents
+        assertEquals(
+                "IrbDoc.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='IRB Approval Document']]"));
+        assertEquals(
+                "Consent.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Informed Consent Document']]"));
+        assertEquals(
+                "Other.doc",
+                selenium.getText("//td[preceding-sibling::td[normalize-space(text())='Other']]"));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testUpdateCompleteTrial() throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        loginAndAcceptDisclaimer();
+        String rand = RandomStringUtils.randomNumeric(10);
+        TrialInfo info = registerAndAcceptTrial(rand);
+        final String nciID = info.nciID;
+        searchForTrialByNciID(nciID);
+
+        selectUpdateAction();
+
+        verifyUpdateCompleteTrialPage(info);
+        populateUpdateCompleteTrialPage(rand);
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("updateTrialreviewUpdate", 10);
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+
+        assertTrue(selenium
+                .isTextPresent("The trial update with the NCI Identifier "
+                        + nciID + " was successfully submitted"));
+
+        assertTrue(selenium
+                .isElementPresent("//li[normalize-space(text())='OTHER" + rand
+                        + "-2']"));
+        assertEquals("ICD9", getTrialConfValue("Accrual Disease Terminology:"));
+
+        // Grants
+        int newGrantIndex = selenium.getText(
+                "//div[@id='grantsDiv']/table/tbody/tr[1]/td[1]").equals("C06") ? 1
+                : 2;
+        int oldGrantIndex = newGrantIndex == 1 ? 2 : 1;
+        assertEquals(
+                "C06",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
+                        + newGrantIndex + "]/td[1]"));
+        assertEquals(
+                "AG",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
+                        + newGrantIndex + "]/td[2]"));
+        assertEquals(
+                rand + "2",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
+                        + newGrantIndex + "]/td[3]"));
+        assertEquals(
+                "CIP",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
+                        + newGrantIndex + "]/td[4]"));
+
+        assertEquals(
+                "B09",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
+                        + oldGrantIndex + "]/td[1]"));
+        assertEquals(
+                "AA",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
+                        + oldGrantIndex + "]/td[2]"));
+        assertEquals(
+                rand,
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
+                        + oldGrantIndex + "]/td[3]"));
+        assertEquals(
+                "CCR",
+                selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
+                        + oldGrantIndex + "]/td[4]"));
+
+        // Status & Dates
+        assertEquals("Approved", getTrialConfValue("Current Trial Status:"));
+        assertEquals("", getTrialConfValue("Why the Study Stopped:"));
+        assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
+        assertEquals(today + " Actual", getTrialConfValue("Trial Start Date:"));
+        assertEquals(tommorrow + " Anticipated",
+                getTrialConfValue("Primary Completion Date:"));
+        assertEquals(tommorrow + " Anticipated",
+                getTrialConfValue("Completion Date:"));
+
+        verifyDocuments();
+
+    }
+
+    /**
+     * 
+     */
+    protected void selectUpdateAction() {
+        selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']");
+        clickAndWait("xpath=//ul[@id='actmenu']/li/a[normalize-space(text())='Update']");
+        hideTopMenu();
+    }
+
+    /**
+     * @param rand
+     * @throws URISyntaxException
+     */
+    protected void populateUpdateCompleteTrialPage(String rand)
+            throws URISyntaxException {
+        selenium.type("otherIdentifierOrg", "OTHER" + rand + "-2");
+        selenium.click("otherIdbtnid");
+        selenium.select("trialDTO.accrualDiseaseCodeSystem", "ICD9");
+
+        // Grants
+        moveElementIntoView(By.id("fundingMechanismCode"));
+        selenium.select("fundingMechanismCode", "label=C06");
+        selenium.select("nihInstitutionCode", "label=AG");
+        selenium.type("serialNumber", rand + "2");
+        selenium.select("nciDivisionProgramCode", "label=CIP");
+        selenium.click("grantbtnid");
+        waitForElementById("grantadddiv", 5);
+
+        // Trial Status Information
+        driver.switchTo().defaultContent();
+        selenium.select("trialDTO_statusCode", "label=Approved");
+        selenium.type("trialDTO_statusDate", today);
+        selenium.type("trialDTO_startDate", today);
+        selenium.click("trialDTO_startDateTypeActual");
+        selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
+        selenium.type("trialDTO_primaryCompletionDate", tommorrow);
+        selenium.click("trialDTO_completionDateTypeAnticipated");
+        selenium.type("trialDTO_completionDate", tommorrow);
+
+        // Add Protocol and IRB Document
+        String protocolDocPath = (new File(ClassLoader.getSystemResource(
+                PROTOCOL_DOCUMENT).toURI()).toString());
+        String irbDocPath = (new File(ClassLoader.getSystemResource(
+                IRB_DOCUMENT).toURI()).toString());
+        selenium.type("protocolDoc", protocolDocPath);
+        selenium.type("irbApproval", irbDocPath);
+        selenium.type("participatingSites", (new File(ClassLoader
+                .getSystemResource(SITES_DOCUMENT).toURI()).toString()));
+        selenium.type("informedConsentDocument", (new File(ClassLoader
+                .getSystemResource(CONSENT_DOCUMENT).toURI()).toString()));
+        selenium.type("updateTrial_otherDocument_0", (new File(ClassLoader
+                .getSystemResource(OTHER_DOCUMENT).toURI()).toString()));
+    }
+
+    private void verifyUpdateCompleteTrialPage(TrialInfo info) {
+        String rand = info.rand;
+        assertEquals(info.nciID, getTrialConfValue("NCI Trial Identifier:"));
+        assertEquals("LEAD" + rand,
+                getTrialConfValue("Lead Organization Trial Identifier:"));
+        assertEquals("NCT" + rand,
+                getTrialConfValue("ClinicalTrials.gov Identifier:"));
+        assertEquals("OTHER" + rand,
+                selenium.getValue("updateTrial_otherIdentifiers"));
+        assertEquals("true",
+                driver.findElement(By.id("updateTrial_otherIdentifiers"))
+                        .getAttribute("readonly"));
+        assertEquals("An Open-Label Study of Ruxolitinib " + rand,
+                selenium.getValue("submitTrial_protocolWebDTO_trialTitle"));
+        assertEquals(
+                "true",
+                driver.findElement(
+                        By.id("submitTrial_protocolWebDTO_trialTitle"))
+                        .getAttribute("readonly"));
+        assertEquals("0", getTrialConfValue("Phase:"));
+        assertEquals("Treatment", getTrialConfValue("Primary Purpose:"));
+        assertEquals("ICD10",
+                selenium.getValue("trialDTO.accrualDiseaseCodeSystem"));
+        assertTrue("National Cancer Institute Division of Cancer Prevention"
+                .equals(getTrialConfValue("Lead Organization:")));
+        assertEquals("Doe,John", getTrialConfValue("Principal Investigator:")
+                .replaceAll("\\s", ""));
+        assertEquals("National",
+                getTrialConfValue("Summary 4 Funding Sponsor Type:"));
+        assertEquals("National Cancer Institute",
+                getTrialConfValue("Summary 4 Funding Sponsor:"));
+        assertEquals("PG" + rand, getTrialConfValue("Program code:"));
+        assertEquals("In Review", selenium.getValue("trialDTO_statusCode"));
+        assertEquals("", selenium.getValue("trialDTO_reason"));
+        assertEquals(today, selenium.getValue("trialDTO_statusDate"));
+        assertEquals(tommorrow, selenium.getValue("trialDTO_startDate"));
+        assertTrue(selenium.isChecked("trialDTO_startDateTypeAnticipated"));
+        assertEquals(oneYearFromToday,
+                selenium.getValue("trialDTO_primaryCompletionDate"));
+        assertTrue(selenium
+                .isChecked("trialDTO_primaryCompletionDateTypeAnticipated"));
+        assertEquals(oneYearFromToday,
+                selenium.getValue("trialDTO_completionDate"));
+        assertTrue(selenium.isChecked("trialDTO_completionDateTypeAnticipated"));
+
+        // INDs
+        assertEquals("IND",
+                selenium.getText("//table[@id='indideTable']/tbody/tr/td[1]"));
+        assertEquals(rand,
+                selenium.getText("//table[@id='indideTable']/tbody/tr/td[2]"));
+        assertEquals("CDER",
+                selenium.getText("//table[@id='indideTable']/tbody/tr/td[3]"));
+        assertEquals("NIH",
+                selenium.getText("//table[@id='indideTable']/tbody/tr/td[4]"));
+        assertEquals("NEI-National Eye Institute",
+                selenium.getText("//table[@id='indideTable']/tbody/tr/td[5]"));
+        assertEquals("Yes",
+                selenium.getText("//table[@id='indideTable']/tbody/tr/td[6]"));
+        assertEquals("Available",
+                selenium.getText("//table[@id='indideTable']/tbody/tr/td[7]"));
+        assertEquals("Yes",
+                selenium.getText("//table[@id='indideTable']/tbody/tr/td[8]"));
+
+        // Grants
+        assertEquals("B09",
+                selenium.getText("//div[@id='grantdiv']/table/tbody/tr/td[1]"));
+        assertEquals("AA",
+                selenium.getText("//div[@id='grantdiv']/table/tbody/tr/td[2]"));
+        assertEquals(rand,
+                selenium.getText("//div[@id='grantdiv']/table/tbody/tr/td[3]"));
+        assertEquals("CCR",
+                selenium.getText("//div[@id='grantdiv']/table/tbody/tr/td[4]"));
+
+        verifyDocuments();
+
+        // Regulatory
+        assertEquals("United States",
+                getTrialConfValue("Trial Oversight Authority Country :"));
+        assertEquals(
+                "Food and Drug Administration",
+                getTrialConfValue("Trial Oversight Authority Organization Name :"));
+        assertEquals("Yes",
+                getTrialConfValue("FDA Regulated Intervention Indicator :"));
+        assertEquals("Yes", getTrialConfValue("Section 801 Indicator :"));
+        assertEquals("Yes", getTrialConfValue("Delayed Posting Indicator :"));
+        assertEquals(
+                "Yes",
+                getTrialConfValue("Data Monitoring Committee Appointed Indicator :"));
+
+        assertEquals("Cancer Therapy Evaluation Program",
+                getTrialConfValue("Sponsor:"));
+        assertEquals("Sponsor", getTrialConfValue("Responsible Party:"));
+
+        assertEquals("Interventional", getTrialConfValue("Trial Type:"));
+        assertEquals("Ancillary", getTrialConfValue("Secondary Purpose:"));
+
+    }
+
+    /**
+     * @param nciID
+     */
+    protected void searchForTrialByNciID(final String nciID) {
+        accessTrialSearchScreen();
+        selenium.type("identifier", nciID);
+        selenium.click("runSearchBtn");
+        clickAndWait("link=All Trials");
+        waitForElementById("row", 10);
     }
 
     @SuppressWarnings("deprecation")
@@ -753,6 +1098,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("National Cancer Institute",
                 getTrialConfValue("Summary 4 Funding Sponsor/Source:"));
         assertEquals("PG" + rand, getTrialConfValue("Program code:"));
+
         assertEquals("In Review", getTrialConfValue("Current Trial Status:"));
         assertEquals("", getTrialConfValue("Why the Study Stopped:"));
         assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
@@ -791,6 +1137,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("CCR",
                 selenium.getText("//div[@id='grantsDiv']/table/tbody/tr/td[4]"));
 
+        verifyDocuments();
+    }
+
+    /**
+     * 
+     */
+    protected void verifyDocuments() {
         // Documents
         assertEquals(
                 "ProtocolDoc.doc",
@@ -872,8 +1225,6 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 getTrialConfValue("Sponsor:"));
         assertEquals("Sponsor", getTrialConfValue("Responsible Party:"));
     }
-
-   
 
     /**
      * Tests Lookup of an organization with apostrophe.

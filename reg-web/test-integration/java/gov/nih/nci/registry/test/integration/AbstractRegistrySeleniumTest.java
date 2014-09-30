@@ -83,6 +83,7 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -114,11 +115,11 @@ public abstract class AbstractRegistrySeleniumTest extends
     protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat
             .getInstance("MM/dd/yyyy");
 
-    private static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
-    private static final String IRB_DOCUMENT = "IrbDoc.doc";
-    private static final String SITES_DOCUMENT = "Sites.doc";
-    private static final String CONSENT_DOCUMENT = "Consent.doc";
-    private static final String OTHER_DOCUMENT = "Other.doc";
+    protected static final String PROTOCOL_DOCUMENT = "ProtocolDoc.doc";
+    protected static final String IRB_DOCUMENT = "IrbDoc.doc";
+    protected static final String SITES_DOCUMENT = "Sites.doc";
+    protected static final String CONSENT_DOCUMENT = "Consent.doc";
+    protected static final String OTHER_DOCUMENT = "Other.doc";
 
     private static boolean firstRun = true;
 
@@ -259,6 +260,7 @@ public abstract class AbstractRegistrySeleniumTest extends
 
         // Select register trial and choose trial type
         hoverLink("Register Trial");
+        pause(500);
         clickAndWait("link=" + category);
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
 
@@ -545,7 +547,35 @@ public abstract class AbstractRegistrySeleniumTest extends
                             + labeltxt + "']/..]");
         }
     }
+    
+    /**
+     * @throws URISyntaxException
+     * @throws SQLException
+     */
+    protected TrialInfo registerAndAcceptTrial(String rand)
+            throws URISyntaxException, SQLException {
 
+        registerTrial(rand, "National");
+        final String nciID = getLastNciId();
+        assertTrue(
+                "No success message found",
+                selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier "
+                        + nciID));
+        TrialInfo info = acceptTrialByNciId(nciID, "LEAD" + rand);
+        info.rand = rand;
+        return info;
+    }
+    
+    /**
+     * 
+     */
+    protected void accessTrialSearchScreen() {
+        hoverLink("Search");
+        pause(1500);
+        clickAndWait("xpath=//a[text()='Clinical Trials']");
+        waitForElementById("resetSearchBtn", 5);
+    }
+    
     protected void changeRegUserAffiliation(String loginName, int orgPoId,
             String orgName) throws SQLException {
         QueryRunner runner = new QueryRunner();

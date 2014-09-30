@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
     
 <s:if test="indIdeUpdateDtos != null && indIdeUpdateDtos.size > 0">
-    <table class="table table-bordered table-stripped">    
+    <table class="table table-bordered table-stripped" id="indideTable">    
         <thead>
             <tr>
                 <th>IND/IDE Types</th>
@@ -57,8 +57,7 @@
                     </td> 
                     <td>
                         <s:hidden name="indIdeUpdateDtos[%{#indidestats.index}].exemptIndicator" value="%{indIdeUpdateDtos[#indidestats.index].exemptIndicator}"/>
-                        <s:if test="%{indIdeUpdateDtos[#indidestats.index].exemptIndicator}">Yes</s:if>
-                        <s:else>No</s:else>
+                        <s:property value="%{indIdeUpdateDtos[#indidestats.index].exemptIndicator}"/> 
                         <s:hidden  name="indIdeUpdateDtos[%{#indidestats.index}].indIdeId" value="%{indIdeId}"/>
                     </td>
                 </tr>                 
