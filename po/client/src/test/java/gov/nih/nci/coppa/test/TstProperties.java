@@ -96,8 +96,8 @@ public final class TstProperties {
     public static final String SERVER_JNDI_PORT_KEY = "server.jndi.port";
 
     public static final String SERVER_HOSTNAME_DEFAULT = "localhost";
-    public static final String SERVER_PORT_DEFAULT = "8080";
-    public static final String SERVER_JNDI_PORT_DEFAULT = "1099";
+    public static final String SERVER_PORT_DEFAULT = "39080";
+    public static final String SERVER_JNDI_PORT_DEFAULT = "31099";
 
     public static final String WEBDRIVER_CLASS_KEY = "webdriver.class";
     public static final String WEBDRIVER_CLASS_DEFAULT = "org.openqa.selenium.firefox.FirefoxDriver";
@@ -118,7 +118,8 @@ public final class TstProperties {
             InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("test.properties");
             properties.load(stream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.err.println("Unable to load test.properties; using defaults.");
         }
     }
 
@@ -152,46 +153,46 @@ public final class TstProperties {
     }
     
     public static String getPersonServiceURL() {
-        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
-                + properties.getProperty(SERVER_PORT_KEY)
+        return "http://" + getServerHostname() + ":"
+                + getServerPort()
                 + "/po-webservices/services/PersonService?wsdl";
     }
 
     public static String getPersonRESTServiceURL() {
-        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
-                + properties.getProperty(SERVER_PORT_KEY)
+        return "http://" + getServerHostname() + ":"
+                + getServerPort()
                 + "/po-webservices/services/person-rest-service";
     }
 
     public static String getOrgServiceURL() {
-        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
-                + properties.getProperty(SERVER_PORT_KEY)
+        return "http://" + getServerHostname() + ":"
+                + getServerPort()
                 + "/po-webservices/services/OrganizationService?wsdl";
     }
     
     public static String getOrgRESTServiceURL() {
-        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
-                + properties.getProperty(SERVER_PORT_KEY)
+        return "http://" + getServerHostname() + ":"
+                + getServerPort()
                 + "/po-webservices/services/organization-rest-service";
     }
 
     public static String getFamilyServiceURL() {
-        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
-                + properties.getProperty(SERVER_PORT_KEY)
+        return "http://" + getServerHostname() + ":"
+                + getServerPort()
                 + "/po-webservices/services/FamilyService?wsdl";
     }
     
     public static String getFamilyRESTServiceURL() {
-        return "http://" + properties.getProperty(SERVER_HOSTNAME_KEY) + ":"
-                + properties.getProperty(SERVER_PORT_KEY)
+        return "http://" + getServerHostname() + ":"
+                + getServerPort()
                 + "/po-webservices/services/family-rest-service";
     }
 
     public static String getWebserviceUsername() {
-        return properties.getProperty(WS_CLIENT_USERNAME);
+        return properties.getProperty(WS_CLIENT_USERNAME,"jdoe01");
     }
 
     public static String getWebservicePassword() {
-        return properties.getProperty(WS_CLIENT_PASSWORD);
+        return properties.getProperty(WS_CLIENT_PASSWORD, "Aa_1111111");
     }
 }

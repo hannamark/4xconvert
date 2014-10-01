@@ -120,10 +120,10 @@ public class DataGeneratorUtil {
     public static Connection getJDBCConnection() {
         try {
             Properties config = TstProperties.properties;
-            Class.forName(config.getProperty("jdbc.driver-class"));
-            String url = config.getProperty("jdbc.connection-url");
-            String user = config.getProperty("jdbc.user-name");
-            String password = config.getProperty("jdbc.password");
+            Class.forName(config.getProperty("jdbc.driver-class", "org.postgresql.Driver"));
+            String url = config.getProperty("jdbc.connection-url", "jdbc:postgresql://localhost:5432/podb");
+            String user = config.getProperty("jdbc.user-name", "pouser");
+            String password = config.getProperty("jdbc.password", "pouser");
             Connection c = DriverManager.getConnection(url, user, password);
             return c;
         } catch(Exception ex) {
