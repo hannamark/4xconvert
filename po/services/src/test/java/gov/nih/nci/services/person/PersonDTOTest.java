@@ -1,4 +1,4 @@
-package gov.nih.nci.po.services.person;
+package gov.nih.nci.services.person;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

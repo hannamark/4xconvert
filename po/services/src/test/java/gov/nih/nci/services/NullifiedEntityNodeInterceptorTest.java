@@ -1,11 +1,11 @@
 package gov.nih.nci.services;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
 import gov.nih.nci.po.data.bo.Organization;
@@ -13,14 +13,14 @@ import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.AbstractServiceBeanTest;
-import gov.nih.nci.po.services.entity.NullifiedEntityInterceptorTest.OSvcBean;
-import gov.nih.nci.po.services.entity.NullifiedEntityInterceptorTest.PSvcBean;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.CorrelationNodeDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.NullifiedRoleInterceptorTest.TestInvocationContext;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.entity.NullifiedEntityInterceptorTest.OSvcBean;
+import gov.nih.nci.services.entity.NullifiedEntityInterceptorTest.PSvcBean;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -28,8 +28,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import com.fiveamsolutions.nci.commons.util.HibernateUtil;
 
 
 public class NullifiedEntityNodeInterceptorTest extends AbstractServiceBeanTest {
