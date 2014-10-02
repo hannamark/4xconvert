@@ -141,6 +141,7 @@ public abstract class AbstractHibernateTestCase {
     @Before
     @SuppressWarnings("unchecked")
     final public void initDbIfNeeded() throws HibernateException, SQLException {
+        setUpTest();
         // First drop the audit sequence (& associated table, see
         // http://opensource.atlassian.com/projects/hibernate/browse/HHH-2472)
         Transaction tx = PoHibernateUtil.getHibernateHelper().beginTransaction();
@@ -239,8 +240,8 @@ public abstract class AbstractHibernateTestCase {
 
     ServiceLocator oldLocator = null;
 
-    @Before
-    public void setUpTest() {
+   
+    protected void setUpTest() {
         oldLocator = PoRegistry.getInstance().getServiceLocator();
         PoRegistry.getInstance().setServiceLocator(new TestServiceLocator());
     }
