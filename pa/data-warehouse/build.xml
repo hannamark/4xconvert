@@ -1,6 +1,8 @@
 <project name="data-warehouse" default="populate" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property file="${basedir}/build.properties"/>
     <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
+	
+	<property name="datawarehouse.timeout" value="43200000" />
 
     <path id="bda-utils.classpath">
         <fileset dir="./lib">
@@ -14,51 +16,58 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="bda-utils.classpath"/>
     <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath" name="groovy"/>
 
-    <target name="populate" depends="gen" description="Rename from staging to final tables, add indexes">
-        <stopwatch name="timer1"/>
-        <echo message = "Running miscellaneous tasks (add tree to study_disease...)"/>
-        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
-            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
-            expandproperties="true" autocommit="true">
-            <transaction src="${basedir}/sql/misc.sql"/>
-            <classpath>
-                <path refid="bda-utils.classpath"/>
-            </classpath>
-        </sql>
-        <stopwatch name="timer1" action="total"/>
-        <stopwatch name="timer1"/>
-        <echo message = "Renaming stage tables"/>
-        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
-            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
-            expandproperties="true" autocommit="true">
-            <transaction src="${basedir}/sql/rename_all.sql"/>
-            <classpath>
-                <path refid="bda-utils.classpath"/>
-            </classpath>
-        </sql>
-        <stopwatch name="timer1" action="total"/>
-        <stopwatch name="timer1"/>
-        <echo message = "Adding indexes"/>
-        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
-            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
-            expandproperties="true" autocommit="true">
-            <transaction src="${basedir}/sql/add_indexes.sql"/>
-            <classpath>
-                <path refid="bda-utils.classpath"/>
-            </classpath>
-        </sql>
-        <stopwatch name="timer1" action="total"/>
-        <stopwatch name="timer1"/>
-        <echo message = "Creating trial type tables.."/>
-        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
-            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
-            expandproperties="true" autocommit="true">
-            <transaction src="${basedir}/sql/trial_type.sql"/>
-            <classpath>
-                <path refid="bda-utils.classpath"/>
-            </classpath>
-        </sql>
-        <stopwatch name="timer1" action="total"/>
+    <target name="populate" description="Rename from staging to final tables, add indexes">    	
+    	<parallel threadCount="1" timeout="${datawarehouse.timeout}" failonany="true">    	 
+    	  <sequential>    	
+                <antcall target="gen"/>    	    
+                <stopwatch name="timer1"/>
+                <echo message = "Running miscellaneous tasks (add tree to study_disease...)"/>
+                <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+                    userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+                    expandproperties="true" autocommit="true">
+                    <transaction src="${basedir}/sql/misc.sql"/>
+                    <classpath>
+                        <path refid="bda-utils.classpath"/>
+                    </classpath>
+                </sql>
+                <stopwatch name="timer1" action="total"/>
+                <stopwatch name="timer1"/>
+                <echo message = "Renaming stage tables"/>
+                <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+                    userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+                    expandproperties="true" autocommit="true">
+                    <transaction src="${basedir}/sql/rename_all.sql"/>
+                    <classpath>
+                        <path refid="bda-utils.classpath"/>
+                    </classpath>
+                </sql>
+                <stopwatch name="timer1" action="total"/>
+                <stopwatch name="timer1"/>
+                <echo message = "Adding indexes"/>
+                <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+                    userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+                    expandproperties="true" autocommit="true">
+                    <transaction src="${basedir}/sql/add_indexes.sql"/>
+                    <classpath>
+                        <path refid="bda-utils.classpath"/>
+                    </classpath>
+                </sql>
+                <stopwatch name="timer1" action="total"/>
+                <stopwatch name="timer1"/>
+                <echo message = "Creating trial type tables.."/>
+                <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+                    userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+                    expandproperties="true" autocommit="true">
+                    <transaction src="${basedir}/sql/trial_type.sql"/>
+                    <classpath>
+                        <path refid="bda-utils.classpath"/>
+                    </classpath>
+                </sql>
+                <stopwatch name="timer1" action="total"/>    	  	
+    	  	
+    	  </sequential>
+    	</parallel>
+    		
     </target>
 
     <target name="init-db" description="Initializes the data warehousing tables">

@@ -29,3 +29,6 @@ datawarehouse.po.db.name=podb
 datawarehouse.po.jdbc.driver=org.postgresql.Driver
 datawarehouse.po.jdbc.base=jdbc:${datawarehouse.po.db.type}://${datawarehouse.po.db.server}:${datawarehouse.po.db.port}
 datawarehouse.po.jdbc.url=${datawarehouse.po.jdbc.base}/${datawarehouse.po.db.name}
+
+# Timeout for the overall DW generation task, in milliseconds.
+datawarehouse.timeout=43200000
