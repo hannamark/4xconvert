@@ -118,7 +118,8 @@
                                 Event.observe(window,'load',function() {
                                 	var tabs = new Control.Tabs($('maintabs'));
                                 	<c:if test="${not empty param.activeTab}">
-                                		tabs.setActiveTab('${param.activeTab}');
+                                		tabs.setActiveTab('<%=org.apache.commons.lang.StringUtils.defaultString(
+                                		        request.getParameter("activeTab")).replaceAll("\\W","")%>');
                                 	</c:if>                                                                        	
                                 });
                                 //]]>
