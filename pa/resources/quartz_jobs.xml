@@ -208,7 +208,7 @@
                 <misfire-instruction>MISFIRE_INSTRUCTION_FIRE_ONCE_NOW</misfire-instruction>
                 <job-name>ctgovSyncNightlyJob</job-name>
                 <job-group>DEFAULT</job-group>                
-                <cron-expression>0 0 1 ? * MON-FRI</cron-expression>
+                <cron-expression>0 0 2 ? * MON-FRI</cron-expression>
             </cron>
         </trigger>
     </job>
