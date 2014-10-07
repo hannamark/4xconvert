@@ -44,7 +44,7 @@ log.level=INFO
 
 selenium.server.port=4444
 cadsr.url=http://cadsrapi.nci.nih.gov/cadsrapi40
-
+register.mail.body.url=http://localhost:39480/registry/registerUseractivate.action
 ################################
 ###  ONLY USED ON DEV BOXES  ###
 ################################
