@@ -97,6 +97,7 @@ public class StudyOwnershipTest extends AbstractPaSeleniumTest {
      *
      * @throws Exception on error
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testAddRemoveOwnership() throws Exception {
         TrialInfo trial = createAcceptedTrial();
@@ -108,10 +109,11 @@ public class StudyOwnershipTest extends AbstractPaSeleniumTest {
         selenium.type("id=firstName", "ClinicalTrials.gov Import");
         selenium.type("id=lastName", "");
         clickAndWait("link=Search");
-        assertEquals(selenium.getText("xpath=//table[@id='results']//tr[1]//td[4]"), "Assign Ownership");
+        assertTrue(selenium.isElementPresent("xpath=//img[@src='../images/ico_check.gif' and @alt='Same Organization Family']"));
+        assertEquals("Assign Ownership", selenium.getText("xpath=//table[@id='results']//tr[1]//td[5]"));
         clickAndWait("link=Assign Ownership");
         assertTrue(selenium.isTextPresent("Ownership has been assigned"));
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[6]"), "Remove Ownership");
+        assertEquals("Remove Ownership", selenium.getText("xpath=//table[@id='row']//tr[1]//td[6]"));
         clickAndWait("link=Remove Ownership");
         assertTrue(selenium.isTextPresent("Ownership has been removed"));
     }

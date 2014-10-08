@@ -621,7 +621,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "min_target_accrual_num,proprietary_trial_indicator,ctgov_xml_required_indicator,user_last_created_id,user_last_updated_id,"
                 + "phase_additional_qualifier_code,primary_purpose_additional_qualifier_code,completion_date,completion_date_type_code,"
                 + "study_subtype_code,comments,processing_priority,assigned_user_id,ctro_override,secondary_purpose_other_text,nci_grant,"
-                + "consortia_trial_category,final_accrual_num,study_source) VALUES "
+                + "consortia_trial_category,final_accrual_num,study_source, submitting_organization_id) VALUES "
                 + "((SELECT NEXTVAL('HIBERNATE_SEQUENCE'))"
                 + ",'ABBREVIATED','Accr',false,false,false,false,"
                 + "false,false,'stage I prostate cancer, stage IIB prostate cancer, stage IIA prostate cancer, stage III prostate cancer'"
@@ -640,7 +640,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "null,null,1,null,'" + info.uuid + "',60,"+isAbbr+",false,"
                 + info.csmUserID + ",null,null,null,"
                 + "{ts '2018-04-16 12:18:50.572'},'ANTICIPATED',null,null,2,"
-                + info.csmUserID + ",false,null,false,null,null,'OTHER');";
+                + info.csmUserID + ",false,null,false,null,null,'OTHER', 1);";
         runner.update(connection, protocolInsertSQL);
         info.id = (Long) runner
                 .query(connection,

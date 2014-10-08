@@ -19,6 +19,7 @@ import gov.nih.nci.pa.service.MockPoOversightCommitteeCorrelationService;
 import gov.nih.nci.pa.service.MockPoPersonEntityService;
 import gov.nih.nci.pa.service.MockPoResearchOrganizationCorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
@@ -154,7 +155,14 @@ public class MockPoServiceLocator implements PoServiceLocator {
         dto.setIdentifier(IiConverter.convertToIi(1L));
         dto.setName(EnOnConverter.convertToEnOn("value"));
         results.put(IiConverter.convertToPoFamilyIi("1"), dto);
-        when(svc.getFamilies(any(Set.class))).thenReturn(results);  
+        when(svc.getFamilies(any(Set.class))).thenReturn(results);
+        
+        List<FamilyOrganizationRelationshipDTO> results2 = new ArrayList<>();
+        FamilyOrganizationRelationshipDTO dto2 = new FamilyOrganizationRelationshipDTO();
+        dto2.setIdentifier(IiConverter.convertToIi(1L));
+        dto2.setOrgIdentifier(IiConverter.convertToIi(1L));
+        results2.add(dto2);
+        when(svc.getActiveRelationships(any(Long.class))).thenReturn(results2 );  
         return svc;
     }
 }

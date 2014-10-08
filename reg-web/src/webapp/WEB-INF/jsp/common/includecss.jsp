@@ -1,6 +1,7 @@
 <link href="${stylePath}/jquery-ui/ui-lightness/jquery-ui-1.8.23.custom.css" rel="stylesheet" media="all" type="text/css" />
 <link href="${pageContext.request.contextPath}/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all" />
 <link href="${pageContext.request.contextPath}/styles/subModal.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${pageContext.request.contextPath}/styles/print.css" rel="stylesheet" type="text/css" media="print" />
 <!-- <link href="${pageContext.request.contextPath}/styles/style.css" rel="stylesheet" type="text/css" media="all" /> -->
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/bootstrap.min.css" />

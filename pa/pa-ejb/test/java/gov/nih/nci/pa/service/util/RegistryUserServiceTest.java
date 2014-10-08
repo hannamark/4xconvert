@@ -83,11 +83,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.*;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.*;
+import gov.nih.nci.logging.api.applicationservice.Query;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
@@ -98,6 +95,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -197,6 +195,24 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Cannot activate account with empty email.");
         bean.activateAccount("", "");
+    }
+    
+    @Test
+    public void testRemoveAll() throws PAException {
+        User csmUser = createCsmUser(TestRegistryUserSchema.randomUserId);
+        RegistryUser regUsr = createRegisterUser(csmUser);
+        Long ssId = TestRegistryUserSchema.participatingSiteId;
+        Long userId = TestRegistryUserSchema.randomUserId;
+        Long studyProtocolId = TestRegistryUserSchema.studyProtocolId;
+        remoteEjb.assignOwnership(userId, studyProtocolId);
+        remoteEjb.assignSiteOwnership(userId, ssId);
+        
+        List<Long> l = new ArrayList<Long>();
+        l.add(TestRegistryUserSchema.orgId);
+        
+        bean.removeAllOwnership(regUsr, l);
+        assertTrue(regUsr.getStudySites().isEmpty());
+        assertTrue(regUsr.getStudyProtocols().isEmpty());
     }
 
     /**

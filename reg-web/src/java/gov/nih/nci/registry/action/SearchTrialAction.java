@@ -649,6 +649,29 @@ public class SearchTrialAction extends BaseSearchTrialAction implements Preparab
         criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));
         criteriaSpDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(criteria
             .getPhaseAdditionalQualifierCode()));
+        
+        if (StringUtils.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
+            criteriaSpDTO.setPiIdentifier(IiConverter.convertToIi(criteria.getPrincipalInvestigatorId()));
+        }
+        
+        if (StringUtils.isNotEmpty(criteria.getIdentifierType()) && StringUtils.isNotEmpty(criteria.getIdentifier())) {
+            if (Constants.IDENTIFIER_TYPE_LEAD_ORG.equals(criteria.getIdentifierType())) {
+                criteriaSpDTO.setLocalProtocolIdentifier(StConverter.convertToSt(criteria.getIdentifier()));
+            } else if (Constants.IDENTIFIER_TYPE_NCT.equals(criteria.getIdentifierType())) {
+                criteriaSpDTO.setNctIdentifier(StConverter.convertToSt(criteria.getIdentifier()));
+            } else if (Constants.IDENTIFIER_TYPE_OTHER_IDENTIFIER.equals(criteria.getIdentifierType())) {
+                List<Ii> sid = criteriaSpDTO.getSecondaryIdentifierList();
+                if (sid == null) {
+                    sid = new ArrayList<Ii>();
+                    criteriaSpDTO.setSecondaryIdentifierList(sid);
+                }
+ 
+                sid.add(IiConverter.convertToIi(criteria.getIdentifier()));
+            }
+            //NCI are not applicable to staged studies and All cannot be implemented easily,
+            //and so those filters are ignored..
+        }
+
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         try {
             List<StudyProtocolStageDTO> spStageDTOs = studyProtocolStageService.search(criteriaSpDTO, limit);

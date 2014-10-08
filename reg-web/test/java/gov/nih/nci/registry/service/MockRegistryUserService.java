@@ -397,4 +397,10 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         // TODO Auto-generated method stub
         
     }
+
+    @Override
+    public void removeAllOwnership(RegistryUser registryUser, List<Long> list) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
 }

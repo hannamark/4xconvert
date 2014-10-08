@@ -219,6 +219,7 @@ import org.apache.log4j.Logger;
  * @author Krishna Kanchinadam
  * @since 01/21/2009
  */
+@SuppressWarnings("PMD")
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceLocal, TSRReportGeneratorServiceRemote {

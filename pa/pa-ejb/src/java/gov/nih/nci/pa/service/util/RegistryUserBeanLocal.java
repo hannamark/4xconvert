@@ -952,6 +952,32 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
         this.mailManagerService = mailManagerService;
     }
+
+    /**
+     * Remove all Site and trial ownership from a user that belong to a family.
+     * @param registryUser The user whose ownership to remove.
+     * @param list The family of Orgs to remove ownership from.
+     * @throws PAException the exception if any.
+     */
+    public void removeAllOwnership(RegistryUser registryUser, List<Long> list) throws PAException {
+        Iterator<StudyProtocol> spItter = registryUser.getStudyProtocols().iterator();
+        Set<Long> family = new HashSet<Long>(list);
+        
+        while (spItter.hasNext()) {
+            final StudyProtocol sp = spItter.next();
+            if (family.contains(sp.getSubmitingOrganization())) {
+                spItter.remove();
+            }
+        }
+        
+        Iterator<StudySite> ssItter = registryUser.getStudySites().iterator();
+        while (ssItter.hasNext()) {
+            final StudySite ss = ssItter.next();
+            if (family.contains(ss.getHealthCareFacility().getOrganization().getId())) {
+               ssItter.remove(); 
+            }
+        }
+    }
     
 
 }

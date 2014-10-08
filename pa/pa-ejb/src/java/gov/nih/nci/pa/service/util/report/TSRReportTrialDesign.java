@@ -89,7 +89,7 @@ package gov.nih.nci.pa.service.util.report;
  *
  * @author kkanchinadam
  */
-
+@SuppressWarnings("PMD.TooManyFields")
 public class TSRReportTrialDesign {
     private String type;
     private String primaryPurpose;

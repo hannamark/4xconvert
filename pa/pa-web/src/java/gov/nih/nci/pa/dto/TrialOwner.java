@@ -16,6 +16,7 @@ public class TrialOwner implements Serializable {
     private RegistryUser regUser;
     private boolean owner;
     private boolean enableEmails;
+    private boolean inFamily;
     /**
      * @param regUser the regUser to set
      */
@@ -51,5 +52,18 @@ public class TrialOwner implements Serializable {
      */
     public void setEnableEmails(boolean enableEmails) {
         this.enableEmails = enableEmails;
+    }
+    
+    /**
+     * @return if the user is in the family.
+     */
+    public boolean isInFamily() {
+        return inFamily;
+    }
+    /**
+     * @param family sets if the user is in the family or not.
+     */
+    public void setInFamily(boolean family) {
+        this.inFamily = family;
     }
 }

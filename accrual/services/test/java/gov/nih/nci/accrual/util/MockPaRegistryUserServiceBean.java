@@ -321,4 +321,10 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
         
     }
 
+    @Override
+    public void removeAllOwnership(RegistryUser registryUser, List<Long> list) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

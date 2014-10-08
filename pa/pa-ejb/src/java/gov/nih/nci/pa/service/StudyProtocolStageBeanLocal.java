@@ -55,7 +55,9 @@ import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -113,6 +115,19 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
                 CdConverter.convertCdToString(dto.getPrimaryPurposeCode())));
         if (!ISOUtil.isStNull(dto.getOfficialTitle())) {
             criteria.setOfficialTitle(StConverter.convertToString(dto.getOfficialTitle()));
+        }
+        if (!ISOUtil.isStNull(dto.getNctIdentifier())) {
+            criteria.setNctIdentifier(StConverter.convertToString(dto.getNctIdentifier()));
+        }
+        if (!ISOUtil.isStNull(dto.getLocalProtocolIdentifier())) {
+            criteria.setLocalProtocolIdentifier(StConverter.convertToString(dto.getLocalProtocolIdentifier()));
+        }
+        if (dto.getSecondaryIdentifierList() != null && !dto.getSecondaryIdentifierList().isEmpty()) {
+            Set<Ii> otherIdentifiers = new HashSet<Ii>(dto.getSecondaryIdentifierList());
+            criteria.setOtherIdentifiers(otherIdentifiers);
+        }
+        if (!ISOUtil.isIiNull(dto.getPiIdentifier())) {
+            criteria.setPiIdentifier(IiConverter.convertToString(dto.getPiIdentifier()));
         }
 
         if (!ISOUtil.isStNull(dto.getUserLastCreated())) {

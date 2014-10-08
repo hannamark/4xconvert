@@ -90,6 +90,7 @@ import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceBean;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
@@ -417,6 +418,8 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         if (affiliatedOrgUpdated) {
             try {
                 familyService.unassignAllAccrualAccess(registryUser, registryUser);
+                registryUserService.removeAllOwnership(registryUser, 
+                        FamilyHelper.getAllRelatedOrgs(registryUser.getAffiliatedOrganizationId()));
                 ServletActionContext.getRequest().getSession().removeAttribute("isSiteAdmin");
             } catch (PAException e) {
                 LOG.error("ERROR REMOVING ACCRUAL ACCESS.", e);

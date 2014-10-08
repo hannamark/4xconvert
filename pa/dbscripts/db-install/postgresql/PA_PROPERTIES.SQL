@@ -201,3 +201,6 @@ If you have any questions about the processing of this trial, please contact CTR
  
 --Thank you for registering your update with NCI Clinical Trials Reporting Program (CTRP).
 --');
+
+insert into pa_properties(IDENTIFIER,name,value) VALUES(64, 'rss.leadOrgs', 'American College of Surgeons Oncology Trials Group,Cancer and Leukemia Group B,Eastern Cooperative Oncology Group,Gynecologic Oncology Group,National Cancer Institute of Canada Clinical Trials Group,North Central Cancer Treatment Group,National Surgical Adjuvant Breast and Bowel Project,Radiation Therapy Oncology Group,Southwest Oncology Group,Children''s Oncology Group,American College of Radiology Imaging Network,European Organization for Research and Treatment of Cancer,Alliance for Clinical Trials in Oncology,ECOG-ACRIN Cancer Research Group,Imaging and Radiation Oncology Core Group,NCIC Clinical Trials Group,NRG Oncology,SWOG');
+

@@ -34,9 +34,14 @@
                 document.forms[0].elements["criteria.affiliatedOrgName"].value="";
             }
 
-            function assignOwner(userId) {
+            function assignOwner(userId, inFamily) {
              var trialCategory = $('trialCategory').value;
-             if(trialCategory == 'Abbreviated Trial') {
+             if (inFamily == 'false') {
+	             if (!confirm("<fmt:message key='assignOwnership.notFamily.Confirm' />")) {
+	            	 return;
+	             }
+             }
+             if (trialCategory == 'Abbreviated Trial') {
                 if (confirm("<fmt:message key='assignOwnership.industrial.Confirm' />")) {
                     document.forms[0].action="assignOwnershipsave.action?userId=" + userId;
                     document.forms[0].submit();
@@ -247,13 +252,23 @@
 	                        <display:column  titleKey="pending.emailAddress" sortable="true" headerClass="sortable">
 	                           <c:out value="${results.regUser.emailAddress}"/> 
 	                        </display:column>
+	                        <display:column  titleKey="pending.inFamily" sortable="true" headerClass="sortable">
+	                           <c:choose>
+	                                <c:when test="${results.inFamily == true}">
+	                                    <img src="../images/ico_check.gif" alt="Same Organization Family"/>
+	                                </c:when>
+	                                <c:otherwise>
+	                                    <img src="../images/ico_cancel.gif" alt="Different Organization"/>
+	                                </c:otherwise>
+	                            </c:choose>
+	                        </display:column>
 	                        <display:column class="title" titleKey="studyProtocol.action">
 	                            <c:choose>
 	                                <c:when test="${results.owner == true}">
 	                                    <a href="javascript:void(0)" onclick="removeOwner('${results.regUser.id}');">Remove Ownership</a>
 	                                </c:when>
 	                                <c:otherwise>
-	                                    <a href="javascript:void(0)" onclick="assignOwner('${results.regUser.id}');">Assign Ownership</a>
+	                                    <a href="javascript:void(0)" onclick="assignOwner('${results.regUser.id}', '${results.inFamily}');">Assign Ownership</a>
 	                                </c:otherwise>
 	                            </c:choose>
 	                        </display:column>

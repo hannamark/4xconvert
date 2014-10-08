@@ -92,6 +92,7 @@ import java.util.List;
  *
  * @author kkanchinadam
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class TSRReportGeneralTrialDetails {
     private String officialTitle;
     private String type;

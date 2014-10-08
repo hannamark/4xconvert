@@ -392,4 +392,12 @@ public interface RegistryUserService {
      */
     void removeOwnership(List<Long> userId, Set<Long> studyProtocolId) throws PAException;
 
+    /**
+     * Remove all Site and trial ownership from a user.
+     * @param registryUser The user whose ownership to remove.
+     * @param list The list of Orgs to remove ownership from.
+     * @throws PAException the exception if any.
+     */
+    void removeAllOwnership(RegistryUser registryUser, List<Long> list) throws PAException;
+
 }

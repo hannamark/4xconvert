@@ -86,10 +86,13 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.TrialOwner;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.AssignOwnershipSearchCriteria;
 import gov.nih.nci.pa.util.Constants;
@@ -101,7 +104,9 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -225,13 +230,44 @@ public class AssignOwnershipAction extends ActionSupport {
        PaRegistry.getMailManagerService().sendTrialOwnershipRemoveEmail(userId, trialId);
        return getText("assignOwnership.remove.success");
     }
+    
+    private StudyProtocolQueryDTO getTrial() {
+        Long studyId = IiConverter.convertToLong((Ii) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.STUDY_PROTOCOL_II));
+        StudyProtocolQueryCriteria spqCriteria = new StudyProtocolQueryCriteria();
+        spqCriteria.setStudyProtocolId(studyId);
+        spqCriteria.setExcludeRejectProtocol(false);
+        List<StudyProtocolQueryDTO> list;
+        try {
+            list = PaRegistry.getCachingProtocolQueryService().getStudyProtocolByCriteria(spqCriteria);
+            return list.get(0);
+        } catch (PAException e) {
+            // ignore bad study id, just return null.
+            return null;
+        }
+    }
 
     /**
      *
      * @return map of users
      */
+    @SuppressWarnings("PMD")
     private void loadRegistryUsers() {
         final RegistryUserService registryUserService = getRegistryUserService();
+        
+        Set<Long> family = new HashSet<Long>();
+        try {
+            List<Long> allRelatedOrgs = FamilyHelper.getAllRelatedOrgs(getTrial().getSubmitterOrgId());
+            for (Long orgId : allRelatedOrgs) {
+                family.add(orgId);
+            }
+        } catch (PAException e1) {
+            // ignore missing or bad results.
+            LOG.error("PA Exception while querying family members. Expected in some cases.", e1);
+        } catch (NullPointerException npe) {
+            // ignore missing or bad results. Expected when No trial or no submiter org
+            LOG.error("Nullpointer while querying family members. Expected in some cases.", npe);
+        }
         try {
             Ii spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
             if (!ISOUtil.isIiNull(spIi)) {                
@@ -248,6 +284,7 @@ public class AssignOwnershipAction extends ActionSupport {
                     TrialOwner owner = new TrialOwner();
                     owner.setRegUser(rUsr);
                     owner.setOwner(contains(owners, rUsr));
+                    owner.setInFamily(family.contains(rUsr.getAffiliatedOrganizationId()));
                     users.add(owner);
                 }
             }
