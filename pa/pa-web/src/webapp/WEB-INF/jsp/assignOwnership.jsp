@@ -11,6 +11,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <script language="javascript" type="text/javascript">
             var orgid;
+            var disableConfirmations = false;
 
             function setorgid(orgIdentifier) {
                 orgid = orgIdentifier;
@@ -37,7 +38,7 @@
             function assignOwner(userId, inFamily) {
              var trialCategory = $('trialCategory').value;
              if (inFamily == 'false') {
-	             if (!confirm("<fmt:message key='assignOwnership.notFamily.Confirm' />")) {
+	             if (!disableConfirmations && !confirm("<fmt:message key='assignOwnership.notFamily.Confirm' />")) {
 	            	 return;
 	             }
              }

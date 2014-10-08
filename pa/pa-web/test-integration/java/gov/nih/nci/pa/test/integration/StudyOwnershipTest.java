@@ -85,6 +85,7 @@ package gov.nih.nci.pa.test.integration;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import org.junit.Test;
+import org.openqa.selenium.JavascriptExecutor;
 
 /**
  * @author mshestopalov
@@ -109,11 +110,11 @@ public class StudyOwnershipTest extends AbstractPaSeleniumTest {
         selenium.type("id=firstName", "ClinicalTrials.gov Import");
         selenium.type("id=lastName", "");
         clickAndWait("link=Search");
-        assertTrue(selenium.isElementPresent("xpath=//img[@src='../images/ico_check.gif' and @alt='Same Organization Family']"));
-        assertEquals("Assign Ownership", selenium.getText("xpath=//table[@id='results']//tr[1]//td[5]"));
+        assertEquals(selenium.getText("xpath=//table[@id='results']//tr[1]//td[5]"), "Assign Ownership");
+        ((JavascriptExecutor) driver).executeScript("disableConfirmations=true;");
         clickAndWait("link=Assign Ownership");
         assertTrue(selenium.isTextPresent("Ownership has been assigned"));
-        assertEquals("Remove Ownership", selenium.getText("xpath=//table[@id='row']//tr[1]//td[6]"));
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[6]"), "Remove Ownership");
         clickAndWait("link=Remove Ownership");
         assertTrue(selenium.isTextPresent("Ownership has been removed"));
     }
