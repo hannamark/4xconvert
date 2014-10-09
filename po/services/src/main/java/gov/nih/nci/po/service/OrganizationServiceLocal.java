@@ -223,4 +223,12 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
      */
     void removeChangeRequest(OrganizationCR cr);
 
+    /**
+     * Finds a nullified organization that used to have the given CTEP ID. If found, returns the organization's
+     * Duplicate Of attribute.
+     * @param ctepID given CTEP ID
+     * @return Long Duplicate Of attribute
+     */
+    Long getDuplicateOfNullifiedOrg(String ctepID);
+
 }

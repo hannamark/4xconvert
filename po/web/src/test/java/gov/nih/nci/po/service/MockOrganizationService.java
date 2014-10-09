@@ -222,5 +222,10 @@ public class MockOrganizationService implements OrganizationServiceLocal {
         
     }
 
+    @Override
+    public Long getDuplicateOfNullifiedOrg(String ctepID) {       
+        return null;
+    }
+
     
 }

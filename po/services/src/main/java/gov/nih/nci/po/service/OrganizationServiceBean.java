@@ -82,7 +82,16 @@
  */
 package gov.nih.nci.po.service; // NOPMD
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.CR;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.FAMILY;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.HCF_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.IO_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.NAME;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_HCF;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_RO;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.RO_CTEP_ID;
+import static gov.nih.nci.po.service.OrganizationSearchSortEnum.STATUS;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Correlation;
@@ -107,23 +116,10 @@ import gov.nih.nci.po.util.MergeOrganizationHelper;
 import gov.nih.nci.po.util.MergeOrganizationHelperImpl;
 import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoServiceUtil;
 import gov.nih.nci.po.util.RoleStatusChangeHelper;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.jms.JMSException;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -137,16 +133,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.CR;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.FAMILY;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.HCF_CTEP_ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.IO_CTEP_ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.NAME;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_HCF;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.PENDING_RO;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.RO_CTEP_ID;
-import static gov.nih.nci.po.service.OrganizationSearchSortEnum.STATUS;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.jms.JMSException;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  *
@@ -984,6 +987,28 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
      */
     public void setIdenOrgServ(IdentifiedOrganizationServiceLocal idenOrgServ) {
         this.idenOrgServ = idenOrgServ;
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Long getDuplicateOfNullifiedOrg(String ctepID) {
+        IdentifiedOrganization io = new IdentifiedOrganization();
+        Ii assignedIdentifier = new Ii();
+        assignedIdentifier.setExtension(ctepID);
+        assignedIdentifier.setRoot(PoConstants.ORG_CTEP_ID_ROOT);
+        io.setAssignedIdentifier(assignedIdentifier);
+        io.setScoper(PoServiceUtil.getCtepOrganization());
+        io.setStatus(RoleStatus.NULLIFIED);
+
+        for (IdentifiedOrganization ctepIO : idenOrgServ
+                .search(new AnnotatedBeanSearchCriteria<IdentifiedOrganization>(
+                        io, false))) {
+            Organization org = ctepIO.getPlayer();
+            if (org != null && org.getStatusCode() != EntityStatus.NULLIFIED) {
+                return org.getId();
+            }
+        }
+        return null;
     }
 
 }

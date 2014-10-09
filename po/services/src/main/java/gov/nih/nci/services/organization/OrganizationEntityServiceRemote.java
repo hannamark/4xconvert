@@ -194,4 +194,12 @@ public interface OrganizationEntityServiceRemote {
      * @throws EntityValidationException if the CR proposes an invalid state for the target.
      */
     void updateOrganizationStatus(Ii targetOrg, Cd statusCode) throws EntityValidationException;
+    
+    /**
+     * Finds a nullified organization that used to have the given CTEP ID. If found, returns the organization's
+     * Duplicate Of attribute.
+     * @param ctepID given CTEP ID
+     * @return Ii Duplicate Of attribute
+     */
+    Ii getDuplicateOfNullifiedOrg(String ctepID);
 }

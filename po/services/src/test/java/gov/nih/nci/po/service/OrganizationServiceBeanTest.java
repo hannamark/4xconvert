@@ -88,16 +88,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.OrganizationService;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
 import gov.nih.nci.po.data.bo.AbstractOrganizationRole;
@@ -123,15 +113,11 @@ import gov.nih.nci.po.data.bo.ResearchOrganizationType;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.service.external.CtepOrganizationImporter;
-import gov.nih.nci.po.util.CsmUserUtil;
 import gov.nih.nci.po.util.PoConstants;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
-import gov.nih.nci.security.SecurityServiceProvider;
-import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
@@ -148,9 +134,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.junit.After;
@@ -160,13 +144,6 @@ import org.junit.Test;
 import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
-import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Tests the organization service.
@@ -1611,6 +1588,39 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         family.setStartDate(date);
         family.setStatusCode(FamilyStatus.ACTIVE);
         return family;
+    }
+    
+    
+    @Test
+    public void getDuplicateOfNullifiedOrg() throws EntityValidationException, JMSException {
+        Organization o = getBasicOrganization();
+        o.setName("org1");       
+
+        Organization o2 = getBasicOrganization();
+        o2.setName("org2");
+
+        long id = createOrganization(o, "CTEP01");
+        long id2 = createOrganization(o2, "CTEP02");
+        
+        o = getOrgServiceBean().getById(id);    
+        o.setStatusCode(EntityStatus.NULLIFIED);
+        o2 = getOrgServiceBean().getById(id2);
+        o.setDuplicateOf(o2);
+        getOrgServiceBean().curate(o);
+        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+
+        Organization retrievedOrg1 = getOrgServiceBean().getById(id);
+        assertEquals(EntityStatus.NULLIFIED, retrievedOrg1.getStatusCode());
+        assertEquals(o2.getId(), retrievedOrg1.getDuplicateOf().getId());
+        
+        Set<IdentifiedOrganization> org1Identities = retrievedOrg1.getIdentifiedOrganizations();
+        assertEquals(0, org1Identities.size());      
+        
+        assertEquals(o2.getId(), orgServiceBean.getDuplicateOfNullifiedOrg("CTEP01"));
+        assertNull(orgServiceBean.getDuplicateOfNullifiedOrg("CTEP02"));
+
     }
 
 }

@@ -85,6 +85,7 @@ package gov.nih.nci.services.organization;
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
@@ -113,6 +114,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.Utils;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.entity.NullifiedEntityInterceptor;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.ejb3.annotation.SecurityDomain;
@@ -124,6 +126,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
+
 import java.util.List;
 import java.util.Map;
 
@@ -331,6 +334,17 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
         List<Organization> results = getOrganizationServiceBean().search(
                 criteria, pageSortParams);
         return PoXsnapshotHelper.createSnapshotList(results);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed({ DEFAULT_ROLE_ALLOWED_CLIENT,
+            DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
+    public Ii getDuplicateOfNullifiedOrg(String ctepID) {
+        return new OrgIdConverter().convertToIi(orgService
+                .getDuplicateOfNullifiedOrg(ctepID));
     }
 
 }

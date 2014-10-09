@@ -470,5 +470,10 @@ public class NullifiedEntityInterceptorTest  extends AbstractServiceBeanTest {
            
             
         }
+
+        @Override
+        public Long getDuplicateOfNullifiedOrg(String ctepID) {          
+            return null;
+        }
     }
 }

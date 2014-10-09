@@ -329,4 +329,10 @@ public class OrganizationBoService implements OrganizationServiceLocal {
     }
 
 
+    @Override
+    public Long getDuplicateOfNullifiedOrg(String ctepID) {
+        return PoRegistry.getOrganizationService().getDuplicateOfNullifiedOrg(ctepID);
+    }
+
+
 }
