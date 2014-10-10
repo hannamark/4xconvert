@@ -167,4 +167,9 @@ public class MockOrganizationEntityService implements
         return orgDto;
     }
 
+   
+    public Ii getDuplicateOfNullifiedOrg(String arg0) {   
+        return null;
+    }
+
 }

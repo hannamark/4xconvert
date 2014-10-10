@@ -224,4 +224,9 @@ public class MockOrganizationEntityService implements
         return new HashMap<String, String[]>();
     }
 
+    @Override
+    public Ii getDuplicateOfNullifiedOrg(String arg0) {       
+        return null;
+    }
+
 }

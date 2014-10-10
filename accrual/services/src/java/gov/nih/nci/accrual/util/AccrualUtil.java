@@ -89,11 +89,15 @@ import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -413,5 +417,32 @@ public class AccrualUtil {
             diseaseCode = diseaseCode.substring(0, diseaseCode.indexOf('/'));
         }
         return diseaseCode;
+    }
+    
+    
+    /**
+     * @param org OrganizationDTO
+     * @return String
+     * @throws NullifiedRoleException NullifiedRoleException
+     */
+    public static String findOrgCtepID(OrganizationDTO org)
+            throws NullifiedRoleException {
+        List<Ii> ids = new ArrayList<Ii>();
+        ids.add(org.getIdentifier());
+        List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
+                .getIdentifiedOrganizationEntityService()
+                .getCorrelationsByPlayerIds(ids.toArray(new Ii[0])); // NOPMD
+        for (IdentifiedOrganizationDTO idOrgDTO : identifiedOrgs) {
+            if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(idOrgDTO
+                    .getAssignedId().getRoot())) {
+                String ctepID = idOrgDTO.getAssignedId().getExtension();
+                if (org.getIdentifier().getExtension()
+                        .equals(idOrgDTO.getPlayerIdentifier().getExtension())) {
+                    return ctepID;
+                }
+
+            }
+        }
+        return null;
     }
 }

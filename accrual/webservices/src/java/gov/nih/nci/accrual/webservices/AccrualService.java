@@ -6,6 +6,7 @@ package gov.nih.nci.accrual.webservices;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.webservices.types.DiseaseCode;
@@ -30,7 +31,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
@@ -303,7 +303,7 @@ public final class AccrualService extends BaseRestService { // NOPMD
                 OrganizationDTO org = (OrganizationDTO) o;
                 String orgCtepID;
                 try {
-                    orgCtepID = findOrgCtepID(org);
+                    orgCtepID = AccrualUtil.findOrgCtepID(org);
                 } catch (NullifiedRoleException e) {
                     throw new RuntimeException(e); // NOPMD
                 }
@@ -324,27 +324,6 @@ public final class AccrualService extends BaseRestService { // NOPMD
         } else {
             return orgList.get(0);
         }
-    }
-
-    protected String findOrgCtepID(OrganizationDTO org)
-            throws NullifiedRoleException {
-        List<Ii> ids = new ArrayList<Ii>();
-        ids.add(org.getIdentifier());
-        List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
-                .getIdentifiedOrganizationEntityService()
-                .getCorrelationsByPlayerIds(ids.toArray(new Ii[0])); // NOPMD
-        for (IdentifiedOrganizationDTO idOrgDTO : identifiedOrgs) {
-            if (IiConverter.CTEP_ORG_IDENTIFIER_ROOT.equals(idOrgDTO
-                    .getAssignedId().getRoot())) {
-                String ctepID = idOrgDTO.getAssignedId().getExtension();
-                if (org.getIdentifier().getExtension()
-                        .equals(idOrgDTO.getPlayerIdentifier().getExtension())) {
-                    return ctepID;
-                }
-
-            }
-        }
-        return null;
     }
 
     private Response submitStudySubjects(Ii siteID, StudySubjects ss) {

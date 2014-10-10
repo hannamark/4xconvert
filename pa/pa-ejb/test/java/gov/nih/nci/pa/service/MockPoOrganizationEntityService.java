@@ -218,4 +218,10 @@ public class MockPoOrganizationEntityService implements
         return orgDtoList;
     }
 
+   
+    public Ii getDuplicateOfNullifiedOrg(String arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

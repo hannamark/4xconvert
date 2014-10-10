@@ -382,4 +382,10 @@ public class MockOrganizationEntityService implements
         return telAd;
     }
 
+    @Override
+    public Ii getDuplicateOfNullifiedOrg(String arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

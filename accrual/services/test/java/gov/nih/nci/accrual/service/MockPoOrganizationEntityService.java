@@ -139,4 +139,10 @@ public class MockPoOrganizationEntityService implements
         return null;
     }
 
+    @Override
+    public Ii getDuplicateOfNullifiedOrg(String arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

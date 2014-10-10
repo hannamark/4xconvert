@@ -90,6 +90,7 @@ import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -100,16 +101,19 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.noniso.dto.AccrualOutOfScopeTrialDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.AccrualUtilityServiceRemote;
 import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
@@ -587,10 +591,11 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     /*
      * Test that Registering Institution Code is NCI PO ID or CTEP ID
      */
-    private boolean isCorrectOrganizationId(String registeringInstitutionID, Date registrationDate,
+    boolean isCorrectOrganizationId(String registeringInstitutionID, Date registrationDate,
             boolean isDetailed) {
         String msg = "The Registering Institution Code must be a valid PO or CTEP ID. Code: " 
-                + registeringInstitutionID + "\n";
+                + registeringInstitutionID;
+        String additionalErrorInfo = "";
         if (isDetailed && registrationDate != null && registrationDate.before(blankOrgDate)
                 && listOfBlankIds.containsKey(registeringInstitutionID)) {
             if (listOfOrgIds.get(registeringInstitutionID) == null) {
@@ -620,11 +625,14 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }
             }
         } catch (NullifiedEntityException e) {
-            bfErrors.appendSiteError(new StringBuffer().append(msg));
+            additionalErrorInfo = getErrorMessageForNullifiedOrg(e);
+            bfErrors.appendSiteError(new StringBuffer().append(msg
+                    + additionalErrorInfo + "\n"));
             return false;
         } catch (Exception e) {
-            LOG.debug(e.getMessage());
+            LOG.info(e.getMessage());
         }
+        
         try {
             if (StringUtils.isNotBlank(registeringInstitutionID)) {
                 Ii identifier = getPoHcfByCtepId(IiConverter.convertToIdentifiedOrgEntityIi(registeringInstitutionID));
@@ -633,10 +641,61 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }
             }
         } catch (PAException e) {
-            LOG.debug(e.getMessage());
+            LOG.info(e.getMessage());
         }
-        bfErrors.appendSiteError(new StringBuffer().append(msg));
+        additionalErrorInfo = getErrorMessageForNullifiedOrg(registeringInstitutionID);
+        bfErrors.appendSiteError(new StringBuffer().append(msg
+                + additionalErrorInfo + "\n"));
         return false;
+    }
+
+    private String getErrorMessageForNullifiedOrg(NullifiedEntityException e) {
+        try {
+            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+            for (Map.Entry<Ii, Ii> entry : nullifiedEntities.entrySet()) {
+                Ii dupeof = entry.getValue();
+                return getErrorMessageForNullifiedOrg(dupeof);
+            }
+        } catch (Exception e1) {
+            LOG.warn(e1.getMessage());
+        }
+        return "";
+    }
+
+    private String getErrorMessageForNullifiedOrg(String ctepID) {
+        String msg = "";
+        if (StringUtils.isNotBlank(ctepID)) {
+            try {
+                Ii mergedInto = PoRegistry.getOrganizationEntityService()
+                        .getDuplicateOfNullifiedOrg(ctepID);
+                if (!ISOUtil.isIiNull(mergedInto)) {
+                    msg = getErrorMessageForNullifiedOrg(mergedInto);
+                }
+            } catch (Exception e) {
+                LOG.warn(e.getMessage());
+            }
+        }
+        return msg;
+    }
+
+    private String getErrorMessageForNullifiedOrg(Ii orgID)
+            throws NullifiedEntityException, NullifiedRoleException,
+            PAException, TooManyResultsException {
+        StringBuilder sb = new StringBuilder();
+        OrganizationDTO org = PoRegistry.getOrganizationEntityService()
+                .getOrganization(orgID);
+        String ctepID = AccrualUtil.findOrgCtepID(org);
+
+        sb.append("*<br/>");
+        sb.append("&nbsp;&nbsp;&nbsp; *This organization's record has been nullified and merged with another organization. <br/>");
+        sb.append("&nbsp;&nbsp;&nbsp; The new organization is: <br/>");
+        sb.append("&nbsp;&nbsp;&nbsp; Name: "
+                + EnOnConverter.convertEnOnToString(org.getName()) + "<br/>");
+        sb.append("&nbsp;&nbsp;&nbsp; PO ID: "
+                + IiConverter.convertToLong(orgID) + "<br/>");
+        sb.append("&nbsp;&nbsp;&nbsp; CTEP ID: "
+                + StringUtils.defaultString(ctepID, "N/A") + "<br/>");
+        return sb.toString();
     }
 
     /**
@@ -839,5 +898,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
 
     void setRu(RegistryUser ru) {
         this.ru = ru;
+    }
+    
+    /**
+     * @return BatchFileErrors BatchFileErrors
+     */
+    public BatchFileErrors getBfErrors() {
+        return bfErrors;
     }
 }

@@ -43,7 +43,7 @@
 	<classpathentry kind="var" path="PA_LIB/ear/nci-commons-ctrp-core-1.4.10.1-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ognl-3.0.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ojdbc6.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/po-services-client-3.10.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/po-services-1.0.1-SNAPSHOT-client.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/spring-beans-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/spring-core-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/picketbox-spi-bare-4.0.19.SP2.jar"/>
