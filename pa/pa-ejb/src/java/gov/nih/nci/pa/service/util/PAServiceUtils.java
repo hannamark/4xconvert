@@ -876,8 +876,8 @@ public class PAServiceUtils {
     public boolean isIndIdeDuplicate(StudyIndldeDTO ind, StudyIndldeDTO toCompare) {
         boolean sameType = StringUtils.equals(toCompare.getIndldeTypeCode().getCode(),
                 ind.getIndldeTypeCode().getCode());
-        boolean sameNumber = StringUtils.equals(toCompare.getIndldeNumber().getValue(),
-                ind.getIndldeNumber().getValue());
+        boolean sameNumber = StringUtils.equals(StringUtils.trim(toCompare.getIndldeNumber().getValue()),
+                StringUtils.trim(ind.getIndldeNumber().getValue()));
         boolean sameGrantor = StringUtils.equals(toCompare.getGrantorCode().getCode(), ind.getGrantorCode().getCode());
         return sameType && sameNumber && sameGrantor;
     }
