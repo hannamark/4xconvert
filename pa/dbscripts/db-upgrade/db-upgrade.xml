@@ -1658,4 +1658,8 @@
         <comment>Remove constraints on cdr identifier</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1/PO-7971-8.4.sql"/>
      </changeSet>     
+     <changeSet id="PO-8059" author="krylovd">
+        <comment>Add a new property to pa_properties that configures CT.Gov FTP Upload job start time.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1.1/PO-8059.sql"/>
+     </changeSet>
 </databaseChangeLog>

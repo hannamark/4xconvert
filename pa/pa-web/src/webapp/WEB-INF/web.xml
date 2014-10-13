@@ -287,7 +287,7 @@
 
     <servlet>
         <servlet-name>QuartzServlet</servlet-name>
-        <servlet-class>org.quartz.ee.servlet.QuartzInitializerServlet</servlet-class>
+        <servlet-class>gov.nih.nci.pa.util.QuartzInitializerServlet</servlet-class>
         <init-param>
             <param-name>config-file</param-name>
             <param-value>/quartz.properties</param-value>

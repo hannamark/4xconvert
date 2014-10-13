@@ -163,7 +163,10 @@
                     <value>uploadToCTGov</value>
                 </entry>
             </job-data-map>
-        </job-detail> 
+        </job-detail>
+        <!--  
+        Trigger for this job is no longer configured here as per PO-8059. The schedule is now configured as 
+        'ctgov.ftp.schedule pa_property in the database.
         <trigger>
             <cron>
                 <name>ctgovUploadJobTrigger</name>
@@ -175,6 +178,7 @@
                 <cron-expression>0 0 0 ? * MON-FRI</cron-expression>
             </cron>
         </trigger>
+         -->
     </job>    
              
     <job>
