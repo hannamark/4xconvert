@@ -352,6 +352,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setName("smtp");
         prop.setValue(smtpHost);
         TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("smtp.port");
+        prop.setValue("21");
+        TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
         prop.setName("fromaddress");
