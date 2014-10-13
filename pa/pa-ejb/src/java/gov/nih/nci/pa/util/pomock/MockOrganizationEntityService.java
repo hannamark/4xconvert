@@ -115,6 +115,13 @@ public class MockOrganizationEntityService implements
             createOrg(org);
             if (createROs)
                 createRO(org);
+            
+            org = new OrganizationDTO();
+            org.setName(EnOnConverter.convertToEnOn("CT.Gov Dupe"));
+            createOrg(org);
+            PO_ID_TO_CTEP_ID.put(
+                    IiConverter.convertToString(org.getIdentifier()), "CTGOVDUPE");
+            org.setStatusCode(CdConverter.convertToCd(EntityStatusCode.NULLIFIED));            
 
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD
@@ -186,7 +193,7 @@ public class MockOrganizationEntityService implements
         }
         if (CdConverter.convertCdToEnum(EntityStatusCode.class,
                 dto.getStatusCode()) == EntityStatusCode.NULLIFIED) {
-            throw new NullifiedEntityException(ii);
+            throw new NullifiedEntityException(ii, IiConverter.convertToPoOrganizationIi(CT_GOV_ID+"")); // NOPMD
         }
         return dto;
     }

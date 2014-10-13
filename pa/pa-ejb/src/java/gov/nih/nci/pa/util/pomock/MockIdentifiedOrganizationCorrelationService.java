@@ -3,16 +3,6 @@
  */
 package gov.nih.nci.pa.util.pomock;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.lang.StringUtils;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
@@ -23,6 +13,16 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.Closure;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Denis G. Krylov
@@ -174,18 +174,21 @@ public class MockIdentifiedOrganizationCorrelationService implements
      * IdentifiedOrganizationCorrelationServiceRemote
      * #getCorrelationsByPlayerIdsWithoutLimit(java.lang.Long[])
      */
+    @SuppressWarnings("rawtypes")
     @Override
     public List<IdentifiedOrganizationDTO> getCorrelationsByPlayerIdsWithoutLimit(
             Long[] arg0) {
+        
         final List asList = Arrays.asList(arg0);
-        CollectionUtils.transform(asList, new Transformer() {
+        final List<Ii> iiList = new ArrayList<>();        
+        CollectionUtils.forAllDo(asList, new Closure() {            
             @Override
-            public Object transform(Object arg0) {
-                return IiConverter.convertToIi((Long) arg0);
+            public void execute(Object arg0) {
+                iiList.add(IiConverter.convertToIi((Long) arg0));
             }
-        });
+        });        
         try {
-            return getCorrelationsByPlayerIds((Ii[]) asList.toArray(new Ii[0]));
+            return getCorrelationsByPlayerIds((Ii[]) iiList.toArray(new Ii[0]));
         } catch (NullifiedRoleException e) {
             throw new RuntimeException(e); //NOPMD
         }

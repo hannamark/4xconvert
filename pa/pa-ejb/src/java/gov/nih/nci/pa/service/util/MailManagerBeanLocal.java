@@ -1622,6 +1622,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         Properties props = System.getProperties();
         // Set up mail server
         props.put("mail.smtp.host", lookUpTableService.getPropertyValue("smtp"));
+        props.put("mail.smtp.port", lookUpTableService.getPropertyValue("smtp.port"));
         props.put("mail.smtp.timeout", SMTP_TIMEOUT);
         props.put("mail.smtp.connectiontimeout", SMTP_TIMEOUT);
         // Get session

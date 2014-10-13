@@ -1662,4 +1662,8 @@
         <comment>Add a new property to pa_properties that configures CT.Gov FTP Upload job start time.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1.1/PO-8059.sql"/>
      </changeSet>
+     <changeSet id="add_smtp_port" author="krylovd">
+        <comment>Add a new property to pa_properties that configures SMTP Port</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1.1/add_smtp_port.sql"/>
+     </changeSet>     
 </databaseChangeLog>
