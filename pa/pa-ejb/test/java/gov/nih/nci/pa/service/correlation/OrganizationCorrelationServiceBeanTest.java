@@ -5,6 +5,7 @@ package gov.nih.nci.pa.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
@@ -20,6 +21,10 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -27,12 +32,16 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -48,17 +57,22 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
+
 
 /**
  * @author vrushali
  *
  */
-public class OrganizationCorrelationServiceBeanTest {
+public class OrganizationCorrelationServiceBeanTest extends AbstractHibernateTestCase {
     private final OrganizationCorrelationServiceBean bean = new OrganizationCorrelationServiceBean();;
     private CorrelationUtils corrUtils;
     private final HealthCareFacility hcfBO = new HealthCareFacility();
@@ -482,5 +496,60 @@ public class OrganizationCorrelationServiceBeanTest {
         roDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToIi("1")));
         when(poRoSvc.getCorrelation(any(Ii.class))).thenReturn(roDTO);
     }
+    
+    @Test
+    public void testGetOrganizationByStudySite() throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        List<ResearchOrganization> rsorgList = new ArrayList<ResearchOrganization>();
+        Organization org = TestSchema.createOrganizationObj();
+        session.saveOrUpdate(org);
+        
+        ResearchOrganization rsorg = new ResearchOrganization();
+        rsorg.setOrganization(org);
+        rsorg.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        rsorg.setIdentifier("abc");
+        session.saveOrUpdate(rsorg);
+        
+        HealthCareFacility hfc = TestSchema.createHealthCareFacilityObj(org);
+        session.saveOrUpdate(hfc);
 
+        StudyProtocol studyProtocol = TestSchema.createStudyProtocolObj();
+        session.saveOrUpdate(studyProtocol);
+        
+        
+        StudySite sPart = new StudySite();
+        sPart.setFunctionalCode(StudySiteFunctionalCode.FUNDING_SOURCE);
+        sPart.setHealthCareFacility(hfc);
+        sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
+        sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        sPart.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));
+        sPart.setAccrualDateRangeLow(ISOUtil
+                .dateStringToTimestamp("03/11/2012"));
+        sPart.setStudyProtocol(studyProtocol);
+        sPart.setResearchOrganization(rsorg);
+        session.saveOrUpdate(sPart);
+        List<StudySite> ssList = new ArrayList<StudySite>();
+        rsorg.setStudySites(ssList);
+        rsorgList.add(rsorg);
+        org.setResearchOrganizations(rsorgList);
+        ssList.add(sPart);
+        List<Organization> orgs = bean.getOrganizationByStudySite(1L, StudySiteFunctionalCode.COLLABORATORS);
+        assertTrue(orgs.size() >= 1); 
+        List<String> orgValues = new ArrayList<String>();
+        for (Organization orgValue : orgs) {
+           orgValues.add(orgValue.getName());
+        }
+        Set<String> duplicatesOrgs = new LinkedHashSet<String>();
+        Set<String> uniquesorgs = new HashSet<String>();
+        for(String t : orgValues) {
+            if(!uniquesorgs.add(t)) {
+                duplicatesOrgs.add(t);
+            }
+        }
+        assertTrue(duplicatesOrgs.size() == 0);
+        List<ResearchOrganization> rorgList = orgs.get(0).getResearchOrganizations();
+        assertTrue(rorgList.size() == 1);
+        List<StudySite> ssLists = orgs.get(0).getResearchOrganizations().get(0).getStudySites();
+        assertTrue(ssLists.size() == 1);
+    }
 }

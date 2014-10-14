@@ -499,7 +499,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         StringBuffer sb = new StringBuffer();
         sb.append("select org from Organization as org ");
         sb.append(setOrgRoleSql(functionalCode));
-        sb.append(" join org.researchOrganizations as orgRole join orgRole.studySites as sps "
+        sb.append(" join orgRole.studySites as sps "
                 + "join sps.studyProtocol as sp where 1 = 1 and sp.id = ");
         sb.append(studyProtocolId);
         if (StudySiteFunctionalCode.TREATING_SITE.equals(functionalCode)) {
