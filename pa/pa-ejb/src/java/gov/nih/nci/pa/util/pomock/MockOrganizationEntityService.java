@@ -390,9 +390,11 @@ public class MockOrganizationEntityService implements
     }
 
     @Override
-    public Ii getDuplicateOfNullifiedOrg(String arg0) {
-        // TODO Auto-generated method stub
-        return null;
+    public Ii getDuplicateOfNullifiedOrg(String ctepID) {
+        if ("CTGOVDUPE".equalsIgnoreCase(ctepID)) {
+            return IiConverter.convertToPoOrganizationIi(CT_GOV_ID + ""); // NOPMD
+        }
+        return IiConverter.convertToPoOrganizationIi(null);
     }
 
 }

@@ -1092,6 +1092,20 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
     }
     
+    protected void grantAccrualAccess(String username, long siteID)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_site_accrual_access (identifier,study_site_identifier,status_code,status_date_range_low,"
+                + "registry_user_id,source) "
+                + "VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), "
+                + siteID
+                + ", 'ACTIVE', '2013-03-21 13:35:09.109', "
+                + "(select identifier from registry_user inner join csm_user on registry_user.csm_user_id=csm_user.user_id where login_name like '%"
+                + username + "' )" + ", 'ACC_GENERATED' )";
+        runner.update(connection, sql);
+
+    }
+    
     protected void moveElementIntoView(By by) {
         WebElement element = driver.findElement(by);
         Point p = element.getLocation();

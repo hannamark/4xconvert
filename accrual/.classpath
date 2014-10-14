@@ -3,6 +3,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/pa"/>
 	<classpathentry kind="src" path="services/src/java"/>
+	<classpathentry kind="src" path="accrual-web/test/resources"/>
 	<classpathentry kind="src" path="webservices/target/generated-src"/>
 	<classpathentry kind="src" path="webservices/src/java"/>
 	<classpathentry kind="src" path="webservices/test-integration/java"/>
@@ -49,6 +50,7 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/test/mockrunner-0.4.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/test/slf4j-api-1.6.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/test/slf4j-log4j12-1.6.0.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/test/dumbster-1.6.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/commons-lang3-3.1.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/displaytag-1.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/web/freemarker-2.3.19.jar"/>
