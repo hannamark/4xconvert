@@ -147,7 +147,7 @@
             <group>DEFAULT</group>
             <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
             <volatility>false</volatility>
-            <durability>false</durability>
+            <durability>true</durability>
             <recover>false</recover>
             <job-data-map allows-transient-data="true">
                 <entry>
