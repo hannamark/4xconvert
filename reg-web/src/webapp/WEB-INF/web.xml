@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<web-app id="PA" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="PA" xmlns="http://java.sun.com/xml/ns/javaee"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee web-app_3_0.xsd"
+      version="3.0">  
 
     <display-name>PA</display-name>
+    
+     <!-- Registry session-timeout -->
+    <session-config>
+        <session-timeout>120</session-timeout>
+         <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>    
+    </session-config>
 
     <!-- Define the basename for a resource bundle for I18N -->
     <context-param>
@@ -140,10 +149,7 @@
         <description>Sets the various paths variables in the servlet context for use in jsps</description>
         <listener-class>gov.nih.nci.registry.util.ServletContextConfigurator</listener-class>
     </listener>
-    <!-- Registry session-timeout -->
-    <session-config>
-        <session-timeout>120</session-timeout>
-    </session-config>
+   
 
     <!-- Servlets -->
     <servlet>

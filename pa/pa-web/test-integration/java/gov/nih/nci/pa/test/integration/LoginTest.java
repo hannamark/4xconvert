@@ -82,14 +82,20 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Test;
-
 
 public class LoginTest extends AbstractPaSeleniumTest {
 
     /**
      * Tests logging in as abstractor.
-     * @throws Exception on error
+     * 
+     * @throws Exception
+     *             on error
      */
     @Test
     public void testLogin() throws Exception {
@@ -100,4 +106,16 @@ public class LoginTest extends AbstractPaSeleniumTest {
         loginAsScientificAbstractor();
         logoutUser();
     }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testHttpOnly() throws Exception {
+        HttpClient client = new DefaultHttpClient();
+        HttpGet get = new HttpGet(url + "/pa/protected/home.action");
+        HttpResponse response = client.execute(get);
+        final Header cookie = response.getHeaders("Set-Cookie")[0];
+        System.out.println(cookie.getValue());
+        assertTrue(cookie.getValue().matches("JSESSIONID=\\p{Graph}+?; Path=/pa; HttpOnly"));
+    }
+
 }
