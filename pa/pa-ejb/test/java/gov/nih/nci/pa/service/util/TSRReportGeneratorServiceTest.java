@@ -115,6 +115,7 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.TestSchema;
@@ -130,6 +131,7 @@ import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.lowagie.text.DocumentException;
 
 /**
@@ -192,6 +194,9 @@ public class TSRReportGeneratorServiceTest extends AbstractHibernateTestCase {
         LookUpTableServiceRemote lookupSvc = mock(LookUpTableServiceRemote.class);
         when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);
         when(PaRegistry.getLookUpTableService()).thenReturn(lookupSvc);
+        
+        CSMUserService.setInstance(new MockCSMUserService());
+        UsernameHolder.setUserCaseSensitive("user1@mail.nih.gov");
     }
 
     @Test

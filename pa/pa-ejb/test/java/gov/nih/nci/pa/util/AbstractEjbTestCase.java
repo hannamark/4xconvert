@@ -5,6 +5,8 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
+import gov.nih.nci.pa.util.pomock.MockPersonEntityService;
 import gov.nih.nci.security.authorization.domainobjects.Application;
 import gov.nih.nci.security.authorization.domainobjects.Group;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -34,6 +36,8 @@ import org.junit.Before;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import org.springframework.util.ReflectionUtils;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  * @author dkrylov
  * 
@@ -45,6 +49,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
     private ServiceLocator backupPaServiceLocator;
     private PoServiceLocator backupPoServiceLocator;
     private CSMUserUtil backupCsmService;
+    private String backupUsername;
 
     @Before
     public final void setupEjbEnvironment() throws ClassNotFoundException,
@@ -57,6 +62,16 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         configureCSM();
         createCsmUsers();
         TestSchema.primeData();
+        setCurrentUser();
+    }
+
+    /**
+     * 
+     */
+    private void setCurrentUser() {
+        this.backupUsername = UsernameHolder.getUser();
+        UsernameHolder
+                .setUserCaseSensitive("/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=SuAbstractor");
     }
 
     @After
@@ -64,6 +79,8 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         CSMUserService.setInstance(backupCsmService);
         PaRegistry.getInstance().setServiceLocator(backupPaServiceLocator);
         PoRegistry.getInstance().setPoServiceLocator(backupPoServiceLocator);
+        UsernameHolder.setUserCaseSensitive(UsernameHolder.ANONYMOUS_USERNAME
+                .equals(backupUsername) ? null : backupUsername);
     }
 
     private void createCsmUsers() throws CSConfigurationException {
@@ -141,6 +158,10 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
         PoRegistry.getInstance().setPoServiceLocator(
                 new MockPoJndiServiceLocator());
+
+        MockOrganizationEntityService.reset(1, true);
+        MockPersonEntityService.reset();
+
     }
 
     private void configureJndi() throws IllegalStateException, NamingException {

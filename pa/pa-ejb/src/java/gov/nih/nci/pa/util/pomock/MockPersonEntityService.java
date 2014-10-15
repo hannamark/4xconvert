@@ -51,6 +51,16 @@ public class MockPersonEntityService implements PersonEntityServiceRemote {
     public static final Map<String, String> PO_ID_TO_CTEP_ID = new HashMap<String, String>();
     
     static {
+        reset();
+    }
+    
+    /**
+     * Reset
+     */
+    public static final void reset() {
+        PO_ID_SEQ = 1;
+        STORE.clear();
+        PO_ID_TO_CTEP_ID.clear();
         createInitialPersons();
     }
 

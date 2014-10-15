@@ -99,7 +99,6 @@ import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentByTrialDTO;
 import gov.nih.nci.pa.dto.AccrualAccessAssignmentHistoryDTO;
 import gov.nih.nci.pa.dto.AccrualSubmissionAccessDTO;
-import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.AssignmentActionCode;
@@ -113,30 +112,31 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusBeanLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
-import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.AbstractEjbTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import net.sf.ehcache.Cache;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ReflectionUtils;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author Hugh Reinhart
  * @since Sep 3, 2009
  */
-public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase {
+public class StudySiteAccrualAccessServiceTest extends AbstractEjbTestCase {
     private static final String REQUEST_DETAILS = "request details";
     private Long ssId;
     private Long spId;
@@ -149,38 +149,18 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
     
 
     @Before
-    public void setUp() throws Exception {
-        TestSchema.primeData();
+    public void setUp() throws Exception {        
         ssId = TestSchema.studySiteIds.get(0);
         spId = TestSchema.studyProtocolIds.get(0);
         REGISTRY_USER_IDENTIFIER = IiConverter.convertToIi(TestSchema.registryUserIds.get(0));
-
-        StudySiteAccrualAccessServiceBean bean = new StudySiteAccrualAccessServiceBean();
-        statusBean = new StudySiteAccrualStatusServiceBean();
-        bean.setStudySiteAccrualStatusService(statusBean);
-        statusBean.setStudySiteAccrualAccessServiceLocal(bean);
+        statusBean = (StudySiteAccrualStatusBeanLocal) getEjbBean(StudySiteAccrualStatusServiceBean.class);        
+        participatingOrgServiceLocal = (ParticipatingOrgServiceBean) getEjbBean(ParticipatingOrgServiceBean.class);
+        this.bean = (StudySiteAccrualAccessServiceBean) getEjbBean(StudySiteAccrualAccessServiceBean.class);
         
-        participatingOrgServiceLocal = new ParticipatingOrgServiceBean();        
-        participatingOrgServiceLocal.setStudySiteAccrualStatusService(statusBean);
-        PAHealthCareProviderLocal paHcp = mock(PAHealthCareProviderLocal.class);
-        when(paHcp.getPersonsByStudySiteId(any(Long[].class), any(String.class))).thenReturn(
-                new HashMap<Long, List<PaPersonDTO>>());        
-        participatingOrgServiceLocal.setPaHealthCareProviderService(paHcp);        
-        bean.setParticipatingOrgServiceLocal(participatingOrgServiceLocal);
-        
-        StudySiteAccrualAccessServiceBean.setLastUpdate(new Timestamp(new Date().getTime()));
-        User user = new User();
-        user.setUserId(TestSchema.getUser().getUserId());
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setLoginName("/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=john.doe");
-        Set<User> users = new HashSet<User>();
-        users.add(user);
-        StudySiteAccrualAccessServiceBean.setSubmitterList(users);
-        
-        CSMUserService.setInstance(new MockCSMUserService());
-        
-        this.bean = bean;
+        Method m = ReflectionUtils.findMethod(StudySiteAccrualAccessServiceBean.class, "getIndTrialCache");
+        ReflectionUtils.makeAccessible(m);
+        Cache cache = (Cache) ReflectionUtils.invokeMethod(m, null);
+        cache.removeAll();
      }
 
     @Test
@@ -360,8 +340,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         StudySiteAccrualAccess ssaa = siteAccessList.get(0);
         assertEquals(AccrualAccessSourceCode.REG_FAMILY_ADMIN_ROLE, ssaa.getSource());
         assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
-        assertEquals(ssaa.getUserLastCreated().getUserId(), user.getCsmUser()
-                .getUserId());
+        assertEquals(ssaa.getUserLastCreated().getUserId(), CSMUserService
+                .getInstance().getCSMUser(UsernameHolder.getUser()).getUserId());
 
     
     }
@@ -510,7 +490,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         StudySiteAccrualAccess ssaa = siteAccessList.get(0);
         assertEquals(AccrualAccessSourceCode.REG_SITE_ADMIN_ROLE, ssaa.getSource());
         assertEquals(ssaa.getStatusCode(), ActiveInactiveCode.ACTIVE);
-        assertEquals(ssaa.getUserLastCreated().getUserId(), user.getCsmUser()
+        assertEquals(ssaa.getUserLastCreated().getUserId(), CSMUserService
+                .getInstance().getCSMUser(UsernameHolder.getUser())
                 .getUserId());
     }    
 
