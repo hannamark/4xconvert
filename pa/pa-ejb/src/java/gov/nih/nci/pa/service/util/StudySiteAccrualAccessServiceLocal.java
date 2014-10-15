@@ -95,10 +95,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.Local;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 2, 2009
  */
+@Local
 public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudySiteAccrualAccessDTO> {
 
     /**

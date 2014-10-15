@@ -85,12 +85,15 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.pa.enums.BioMarkerAttributesCode;
 
 import java.util.Map;
+
+import javax.ejb.Remote;
 /**
  * 
  * @author Reshma Koganti
  * 
  */
 @SuppressWarnings("PMD.ExcessiveParameterList")
+@Remote
 public interface MarkerAttributesServiceRemote {
     /**
      * Gets the map <Key,Value> pair of all Biomarkers Attributes. 
