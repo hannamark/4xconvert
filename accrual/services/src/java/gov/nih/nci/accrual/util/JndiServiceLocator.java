@@ -104,7 +104,7 @@ import org.apache.log4j.Logger;
 public class JndiServiceLocator implements ServiceLocatorAccInterface {
 
     private static final Logger LOG = Logger.getLogger(JndiServiceLocator.class);
-    private static Context ctx;
+    private static Context ctx; // NOPMD
 
     /**
      * Constructor.

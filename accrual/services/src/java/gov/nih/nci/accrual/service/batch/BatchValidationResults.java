@@ -107,6 +107,7 @@ public class BatchValidationResults {
     private boolean hasNonSiteErrors;
     private String diseaseCodeSystem;
     private boolean outOfScope;
+    private PreprocessingResult preprocessingResult;
 
     /**
      * @return the errors
@@ -114,6 +115,24 @@ public class BatchValidationResults {
     public StringBuilder getErrors() {
         return errors;
     }
+    
+    /**
+     * @return the errors
+     */
+    public StringBuilder getPreprocessingErrors() {
+        StringBuilder sb = new StringBuilder();
+        if (preprocessingResult != null) {
+            for (ValidationError error : preprocessingResult
+                    .getValidationErrors()) {
+                sb.append("\r\n");
+                sb.append(error.getErrorMessage());
+                sb.append("\r\n");
+                sb.append(error.getErrorDetails());
+            }
+        }
+        return sb;
+    }
+    
     
     /**
      * @param errors the errors to set
@@ -258,5 +277,19 @@ public class BatchValidationResults {
      */
     public void setOutOfScope(boolean outOfScope) {
         this.outOfScope = outOfScope;
+    }
+
+    /**
+     * @return the preprocessingResult
+     */
+    public PreprocessingResult getPreprocessingResult() {
+        return preprocessingResult;
+    }
+
+    /**
+     * @param preprocessingResult the preprocessingResult to set
+     */
+    public void setPreprocessingResult(PreprocessingResult preprocessingResult) {
+        this.preprocessingResult = preprocessingResult;
     }
 }

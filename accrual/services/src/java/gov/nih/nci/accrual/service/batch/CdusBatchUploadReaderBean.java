@@ -125,6 +125,8 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -190,6 +192,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private SubjectAccrualServiceLocal subjectAccrualService;
     @EJB
     private BatchFileService batchFileSvc;
+    @EJB
+    private CdusBatchFilePreProcessorLocal cdusBatchFilePreProcessorLocal;
     
     private static final int RESULTS_LEN = 1000;
     private static final String DATE_PATTERN = "MM/dd/yyyy";
@@ -234,7 +238,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                         prefix = prefix.append("_tmp");
                     }
                     File f = File.createTempFile(prefix.toString(), ".txt");
-                    IOUtils.copy(zip.getInputStream(entry), FileUtils.openOutputStream(f));
+                    final FileOutputStream outStream = FileUtils.openOutputStream(f);
+                    IOUtils.copy(zip.getInputStream(entry), outStream);
+                    outStream.close();
                     try {
                         batchFileProcessing(results, batchFile, entry.getName(), f);
                     } catch (Exception e) {
@@ -283,11 +289,17 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
     }
     
-    private void batchFileProcessing(List<BatchValidationResults> results, BatchFile batchFile, 
-            String fileName, File file) throws PAException {
-        BatchValidationResults result = cdusBatchUploadDataValidator.validateSingleBatchData(
-                file, batchFile.getSubmitter());
+    private void batchFileProcessing(List<BatchValidationResults> results,
+            BatchFile batchFile, String fileName, File file)
+            throws PAException, IOException {
+        PreprocessingResult preprocessingResult = cdusBatchFilePreProcessorLocal
+                .preprocess(file);
+        File processedFile = preprocessingResult.getPreprocessedFile();
+        BatchValidationResults result = cdusBatchUploadDataValidator
+                .validateSingleBatchData(processedFile,
+                        batchFile.getSubmitter());
         result.setFileName(fileName);
+        result.setPreprocessingResult(preprocessingResult);
         results.add(result);
         if (!result.isOutOfScope()) {
             validateAndProcessData(batchFile, result);
@@ -303,7 +315,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         boolean suAbstractor = isSuAbstractor(batchFile.getSubmitter());
         if (!validationResult.isPassedValidation() && (validationResult.isHasNonSiteErrors() || !suAbstractor)) {
             if (validationResult.getErrors() != null) {
-                collection.setResults(StringUtils.left(validationResult.getErrors().toString(), RESULTS_LEN));
+                collection.setResults(StringUtils.left(
+                        validationResult.getErrors().toString()
+                                + validationResult.getPreprocessingErrors(),
+                        RESULTS_LEN));
             }
             sendValidationErrorEmail(validationResult, batchFile);
         } else  {
@@ -313,18 +328,26 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             BatchImportResults importResults = importBatchData(batchFile, validationResult);
             StringBuffer sb = new StringBuffer();
             // to insert in database results column
-            sb.append(validationResult.getErrors() != null ? StringUtils.left(
-                    validationResult.getErrors().toString(), RESULTS_LEN) : "")
-            .append(importResults.getErrors() != null ? StringUtils.left(
-                    importResults.getErrors().toString(), RESULTS_LEN) : "");
-            collection.setResults(sb.toString());
+            sb.append(
+                    validationResult.getErrors() != null ? StringUtils.left(
+                            validationResult.getErrors().toString(),
+                            RESULTS_LEN) : "")
+                    .append(validationResult.getPreprocessingErrors())
+                    .append(importResults.getErrors() != null ? StringUtils
+                            .left(importResults.getErrors().toString(),
+                                    RESULTS_LEN) : "");
+            collection.setResults(StringUtils.left(sb.toString(), RESULTS_LEN));
             collection.setTotalImports(importResults.getTotalImports());
+            
             sb = new StringBuffer();
             // this is to display the errors in the confirmation email
-            sb.append(validationResult.getErrors() != null ? validationResult.getErrors().toString() : "")
-            .append(importResults.getErrors() != null ? importResults.getErrors().toString() : "");
-            importResults.setErrors(new StringBuilder(sb.toString())); 
-            sendConfirmationEmail(importResults, batchFile);
+            sb.append(
+                    validationResult.getErrors() != null ? validationResult
+                            .getErrors().toString() : "").append(
+                    importResults.getErrors() != null ? importResults
+                            .getErrors().toString() : "");
+            importResults.setErrors(new StringBuilder(sb.toString()));
+            sendConfirmationEmail(importResults, validationResult.getPreprocessingResult(), batchFile);
         }
         collection.setChangeCode(validationResult.getChangeCode());
         if (StringUtils.isNotBlank(collection.getResults())) {
@@ -623,11 +646,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         body = body.replace("${submissionDate}", getFormatedCurrentDate());
         body = body.replace("${SubmitterName}", regUserName);
         body = body.replace("${CurrentDate}", getFormatedCurrentDate());
-        StringBuffer errorReport = new StringBuffer();
-        if (!result.isPassedValidation()) {
-            errorReport.append(String.format("Errors in batch file: %s\n\n%s\n", result.getFileName(), 
-                    result.getErrors()));
-            StringBuffer numberedErrors = setErrorsInEmail(result.getErrors().toString());
+        
+        if (!result.isPassedValidation()) {           
+            StringBuffer numberedErrors = setErrorsInEmail(result);
             body = body.replace(FILE_NAME, result.getFileName());
             body = body.replace("${errors}", numberedErrors.toString().replace("\n", "<br/>"));
             if (result.getNciIdentifier() == null) {
@@ -639,7 +660,20 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         sendEmail(batchFile.getSubmitter().getEmailAddress(), subj, body);
     }
 
-    private StringBuffer setErrorsInEmail(String errors) {
+    private StringBuffer setErrorsInEmail(BatchValidationResults result) {
+        String errors = result.getErrors().toString();
+        final PreprocessingResult preprocessingResult = result.getPreprocessingResult();
+        
+        return setErrorsInEmail(errors, preprocessingResult);
+    }
+
+    /**
+     * @param errors
+     * @param preprocessingResult
+     * @return
+     */
+    private StringBuffer setErrorsInEmail(String errors,
+            final PreprocessingResult preprocessingResult) {
         int count = 1;
         StringBuffer numberedErrors = new StringBuffer();
         StringTokenizer st1 = new StringTokenizer(errors, "\n");
@@ -650,14 +684,50 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             }
             count++;
         }
+       
+        if (preprocessingResult != null) {
+            for (ValidationError error : preprocessingResult
+                    .getValidationErrors()) {
+                StringBuilder errorMsg = new StringBuilder();
+                errorMsg.append(count)
+                        .append(".  ")
+                        .append(error.getErrorMessage())
+                        .append("\n")
+                        .append("&nbsp;&nbsp;&nbsp;")
+                        .append(StringUtils.join(error.getErrorDetails(), "\n&nbsp;&nbsp;&nbsp;"))
+                        .append("\n");
+                numberedErrors.append(errorMsg);
+                count++;
+
+            }
+        }
+        
         return numberedErrors;
     }
     
+    private CharSequence preparePreprocessingErrorsAsHtml(
+            List<ValidationError> validationErrors) {
+        StringBuilder errorMsg = new StringBuilder();
+        for (ValidationError error : validationErrors) {
+            errorMsg.append(String.format("<p>%s</p>", error.getErrorMessage()));
+            errorMsg.append("<ul>");
+            for (String s : error.getErrorDetails()) {
+                errorMsg.append(String.format("<li>%s</li>", s));
+            }
+            errorMsg.append("</ul>");
+        }
+        return errorMsg;
+    }
+
+    
     /**
      * {@inheritDoc}
+     * @param preprocessingResult 
      */
     @Override
-    public void sendConfirmationEmail(BatchImportResults result, BatchFile batchFile) throws PAException {
+    public void sendConfirmationEmail(BatchImportResults result,
+            PreprocessingResult preprocessingResult, BatchFile batchFile)
+            throws PAException {
         String subject = PaServiceLocator.getInstance().getLookUpTableService()
                 .getPropertyValue("accrual.confirmation.subject");
         String body = "";
@@ -688,17 +758,29 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             body = body.replace("${errorsDesc}", 
                     "However, some patient records could not be processed because the accruing"
                     + " site is not listed on the trial in CTRP. Please see details below.");
-            StringBuffer numberedErrors = setErrorsInEmail(result.getErrors().toString());
+            StringBuffer numberedErrors = setErrorsInEmail(result.getErrors()
+                    .toString(), null);
             body = body.replace("${errors}", numberedErrors.toString().replace("\n", "<br/>"));
         } else {
             body = body.replace("<p>${errorsDesc}</p>", "");
             body = body.replace("<ul>${errors}</ul>", "");
         }
+        
+        if (preprocessingResult != null
+                && !preprocessingResult.getValidationErrors().isEmpty()) {
+            body = body.replace("${preprocessingErrors}",
+                    preparePreprocessingErrorsAsHtml(preprocessingResult
+                            .getValidationErrors()));
+        } else {
+            body = body.replace("${preprocessingErrors}", "");
+        }
+        
         body = body.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         subject = subject.replace(NCI_TRIAL_IDENTIFIER, result.getNciIdentifier());
         sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, body);
     }
 
+   
     private void sendEmail(String to, String subject, String msg) {
         if (StringUtils.isNotBlank(msg)) {
             PaServiceLocator.getInstance().getMailManagerService().sendMailWithHtmlBody(to, subject, msg);
@@ -732,5 +814,13 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      */
     public void setBatchFileSvc(BatchFileService batchFileSvc) {
         this.batchFileSvc = batchFileSvc;
+    }
+
+    /**
+     * @param cdusBatchFilePreProcessorLocal the cdusBatchFilePreProcessorLocal to set
+     */
+    public void setCdusBatchFilePreProcessorLocal(
+            CdusBatchFilePreProcessorLocal cdusBatchFilePreProcessorLocal) {
+        this.cdusBatchFilePreProcessorLocal = cdusBatchFilePreProcessorLocal;
     }
 }

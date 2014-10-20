@@ -341,6 +341,21 @@ public class AccrualUtil {
         }
         return StringUtils.trim(list.get(index));
     }
+    
+    /**
+     * 
+     * @param list
+     *            the list
+     * @param index
+     *            index to return
+     * @return trimmed String
+     */
+    public static String safeGet(String[] list, int index) {
+        if (list == null || list.length <= index) {
+            return StringUtils.EMPTY;
+        }
+        return StringUtils.trim(list[index]);
+    }
 
     /**
      * Parse a line of csv. Trim all the elements.

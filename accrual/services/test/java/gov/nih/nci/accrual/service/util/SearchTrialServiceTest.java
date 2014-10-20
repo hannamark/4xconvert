@@ -137,6 +137,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -458,7 +459,11 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
     	//when(bean.setTrialCountAndMaxDate(any(AccrualCountsDto.class), any(org.hibernate.Query.class)))
     	
     	OrganizationCorrelationServiceRemote ocsr = mock(OrganizationCorrelationServiceRemote.class);
-    	when(PaRegistry.getOrganizationCorrelationService()).thenReturn(ocsr);
+        PaRegistry.getInstance().setServiceLocator(mock(ServiceLocator.class));
+        when(
+                PaRegistry.getInstance().getServiceLocator()
+                        .getOrganizationCorrelationService()).thenReturn(ocsr);
+        
     	when(ocsr.getPOOrgIdentifierByIdentifierType(anyString())).thenReturn("1");
     	when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenReturn(new Ii());
     	ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);

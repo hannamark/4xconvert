@@ -125,7 +125,10 @@ public interface CdusBatchUploadReaderServiceLocal {
      * Sends the import validation email.
      * @param importResults the import results
      * @param batchFile the batch file that's been imported
+     * @param preprocessingResult preprocessingResult
      * @throws PAException if unable to lookup user 
      */
-    void sendConfirmationEmail(BatchImportResults importResults, BatchFile batchFile) throws PAException;
+    void sendConfirmationEmail(BatchImportResults importResults,
+            PreprocessingResult preprocessingResult, BatchFile batchFile)
+            throws PAException;
 }

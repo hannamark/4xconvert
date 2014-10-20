@@ -290,7 +290,7 @@ public class BaseBatchUploadReader {
      *
      */
     protected class BatchFileErrors {
-        private final StringBuffer errMsg = new StringBuffer();
+        private final StringBuffer errMsg = new StringBuffer(); // NOPMD
         private boolean hasNonSiteErrors = false;
         /**
          * @return the hasNonSiteErrors

@@ -196,6 +196,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     protected ServiceLocatorPaInterface paSvcLocator;
     protected CountryService countryService = new CountryBean();
     protected CdusBatchUploadReaderBean readerService;
+    protected CdusBatchFilePreProcessorLocal cdusBatchFilePreProcessorLocal;
     protected StudySubjectServiceLocal studySubjectService = new StudySubjectBean();
     protected CdusBatchUploadDataValidator cdusBatchUploadDataValidator = new CdusBatchUploadDataValidator();
     protected MailManagerServiceRemote mailService;
@@ -500,6 +501,9 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         when(accSvcLocator.getSubjectAccrualCountService()).thenReturn(accrualCountSvc);
         when(accSvcLocator.getAccrualDiseaseService()).thenReturn(diseaseSvc);
+        
+        cdusBatchFilePreProcessorLocal = new CdusBatchFilePreProcessorBean();
+        readerService.setCdusBatchFilePreProcessorLocal(cdusBatchFilePreProcessorLocal);
         
         CSMUserService.setInstance(new gov.nih.nci.pa.util.MockCSMUserService());
     }

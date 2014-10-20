@@ -208,7 +208,7 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
 
     @Test 
     public void safeGetTest() {
-        assertNull(AccrualUtil.safeGet(null, 1));
+        assertNull(AccrualUtil.safeGet((List)null, 1));
         assertNull(AccrualUtil.safeGet(new ArrayList<String>(), 2));
         List<String> list = new ArrayList<String>();
         list.add("value1");
@@ -218,6 +218,18 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
         assertEquals("value2", AccrualUtil.safeGet(list, 1));
         assertNull(AccrualUtil.safeGet(list, 2));
     }
+    
+    @Test
+    public void safeGetArrayTest() {
+        String[] arr = null;
+        assertEquals("", AccrualUtil.safeGet(arr, 0));
+        assertEquals("", AccrualUtil.safeGet(arr, 1));
+        
+        arr = new String[] {" test "};
+        assertEquals("test", AccrualUtil.safeGet(arr, 0));
+        assertEquals("", AccrualUtil.safeGet(arr, 1));
+    }
+
 
     @Test
     public void csvParseAndTrimTest() {

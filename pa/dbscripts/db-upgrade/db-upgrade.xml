@@ -1665,5 +1665,9 @@
      <changeSet id="add_smtp_port" author="krylovd">
         <comment>Add a new property to pa_properties that configures SMTP Port</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1.1/add_smtp_port.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-8106" author="krylovd">
+        <comment>Updated 'accrual.confirmation.body' PA Property.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.1.1/PO-8106.sql"/>
+     </changeSet>          
 </databaseChangeLog>

@@ -865,6 +865,42 @@ private List<PatientStage> getPatientStage(String nciId) {
 	}
 	
     @Test
+    public void batchUploadWithValidationErrorsAndDuplicateSubjects() throws URISyntaxException,
+            PAException {
+        File file = new File(this.getClass()
+                .getResource("/CDUS_Complete-modified-dupes.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
+        List<BatchValidationResults> results = readerService
+                .validateBatchData(batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils
+                .isNotEmpty(results.get(0).getErrors().toString()));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
+        assertTrue(results.get(0).getPreprocessingResult().getValidationErrors().size() == 1);
+        
+        verifyEmailsSent(1, 0, 0);
+    }
+    
+    @Test
+    public void batchUploadWithDuplicateSubjects() throws Exception {
+        assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
+
+        File file = new File(this.getClass().getResource("/CDUS_Complete_dupes.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        assertEquals(1, validationResults.size());
+        assertEquals(0, validationResults.get(0).getErrors().length());
+        assertTrue(validationResults.get(0).getPreprocessingResult().getValidationErrors().size() == 1);
+        BatchImportResults importResults = readerService.importBatchData(batchFile, validationResults.get(0));
+        assertEquals(23, importResults.getTotalImports());        
+        assertEquals(23, studySubjectService.getByStudyProtocol(completeIi).size());
+        verifyEmailsSent(0, 1, 0);
+    }
+	
+    @Test
     public void completeBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
