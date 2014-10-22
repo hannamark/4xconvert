@@ -594,6 +594,9 @@ FiveAmUtil = {
                 var pdqItemId = searchResultsPDQ[i];
                 populateBreadcrumbItem( bcItem, pdqData, pdqItemId, true, bcItems );
             }
+            if (bcItems.length > 500) {
+            	bcItems = bcItems.slice(0, 500);
+            }
             return {
                 'bcItems' : bcItems,
                 'searchTerm' : searchTerm

@@ -56,7 +56,7 @@
 
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/ml_breadcrumbs.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/cookies_support.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/diseasesFilter.js?534785924'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/diseasesFilter.js?5347859245'/>"></script>
 
 <script type="text/javascript">
 function addDisease(diseaseid) {
