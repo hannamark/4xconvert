@@ -162,6 +162,7 @@
     <dependency conf="pa-web->master" org="org.springframework" name="spring-web" rev="3.2.2.RELEASE"/>
     <dependency conf="pa-web->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
     <dependency conf="pa-web->master" org="taglibs" name="standard" rev="1.1.2"/>
+    <dependency conf="pa-web->master" org="org.json" name="json" rev="20140107"/>
     
     <dependency conf="pa-webservices->master" org="commons-io" name="commons-io" rev="2.4"/>
     

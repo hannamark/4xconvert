@@ -4,8 +4,8 @@
  */
 
 var bJstreeOperationReady = true;
-var jstreeNodeIdsToClose = [];
 var jstreeNodeIdsToOpen = [];
+var numberOfAjaxInProgress = 0;
 
 function isJstreeOperationReady() {
     return bJstreeOperationReady;
@@ -209,6 +209,9 @@ function setJstreeOperationReady(bReady) {
                 $(value).unwrap();
             });
             if( typeof(id) != 'undefined' ) {
+            	
+            	$('#pdq_tree').jstree("close_all", $('#pdq_tree'), false); 
+            	
                 var thisNodeParentIds = $(parentIds).toArray().reverse();
                 thisNodeParentIds = $.map( $(thisNodeParentIds), function(val,i) {
                     return '_' + $(thisNodeParentIds).toArray().slice(0,i+1).join('_');
@@ -222,14 +225,7 @@ function setJstreeOperationReady(bReady) {
                 var nodeIdsCurrentlyOpen = $.map( $('#pdq_tree').find('.jstree-open').toArray(), function(val,i) { 
                     return $(val).attr('id').match(/ptid([\d_]+)/)[1]; 
                 });
-                jstreeNodeIdsToClose = nodeIdsCurrentlyOpen.slice(0);
-                for( var i in thisNodeParentIds ) { // We are going to close all open nodes except the ones that are parents of our to-be-highlighted node
-                    if(!thisNodeParentIds.hasOwnProperty(i))
-                        continue;
-                    var parentId = thisNodeParentIds[i];
-                    if( $.inArray(parentId, jstreeNodeIdsToClose) != -1 )
-                        jstreeNodeIdsToClose.splice( jstreeNodeIdsToClose.indexOf(parentId), 1 );
-                }
+        
                 jstreeNodeIdsToOpen = thisNodeParentIds.slice(0);
                 for( var i in nodeIdsCurrentlyOpen ) { // We are going to open all parents of our to-be-highlighted node except those already open
                     if(!nodeIdsCurrentlyOpen.hasOwnProperty(i))
@@ -238,11 +234,13 @@ function setJstreeOperationReady(bReady) {
                     if( $.inArray(nodeId, jstreeNodeIdsToOpen) != -1 )
                         jstreeNodeIdsToOpen.splice( jstreeNodeIdsToOpen.indexOf(nodeId), 1 );
                 }
-                
+               
                 setJstreeOperationReady(true);
-                var interval = setInterval( function(){
-                    if(jstreeNodeIdsToClose.length==0) {
-                        if(jstreeNodeIdsToOpen.length==0) {
+                var interval = setInterval( function() {  
+                	    if (numberOfAjaxInProgress > 0 ) {
+                	    	return;
+                	    }
+                        if(jstreeNodeIdsToOpen.length == 0) {
                             $('#pdq_tree').jstree("deselect_all");
                             $('#pdq_tree').jstree("select_node", $('#ptid'+thisNodeId));
                             var name = $.trim($('#ptid'+thisNodeId).children('a').text());
@@ -255,28 +253,27 @@ function setJstreeOperationReady(bReady) {
                                 $('#pdq_tree').jstree("open_node", $('#ptid'+jstreeNodeIdsToOpen[0]), false, true); 
                             }
                         }
-                    } else {
-                        if( isJstreeOperationReady() ) {
-                            setJstreeOperationReady(false);
-                            $('#pdq_tree').jstree("close_node", $('#ptid'+jstreeNodeIdsToClose[0]), true); 
-                        }
-                    }
-                }, 50 );
+                }, 200 );
             }
             self.adjustPDQTreeDimensions();
         },
         
         generatePDQTreeHtml : function () {
             var self = this;
-            var pdqTree = new NBTree();
-            pdqTree.buildFromFlatData( FiveAmUtil.PDQPkg.pdqData );
-            var jsTreeJsonData = pdqTree.generateJstreeJsonData();
             var pdqTree = $('<div id="pdq_tree"></div>');
             $(function () {
                 $('#pdq_tree').jstree({ 
-                    'plugins' : [ 'json_data', 'themes', 'ui', 'hotkeys' ],
+                    'plugins' : [ 'json_data', 'themes', 'ui', 'hotkeys', 'sort' ],
                     'core' : { 'initially_open' : $.map( FiveAmUtil.PDQPkg.tree_initially_open, function(val,i) { return 'ptid'+val }) },
-                    'json_data' : jsTreeJsonData,
+                    'json_data' : {
+                        'ajax': {
+            		                "url"  : treeAjaxURL,            		              
+                	                "data" : function (n) {
+                        	                    return {nodeID : n.attr ? n.attr("id") : 0};
+                        	             	}
+            		            },
+                        'progressive_render' : true 
+                    },
                     'themes' : { 'theme' : 'default-p' },
                     'ui' : {'select_limit' : 1, 'selected_parent_close' : 'select_parent' }
                 }).bind("select_node.jstree", function (e, data) { 
@@ -310,8 +307,7 @@ function setJstreeOperationReady(bReady) {
                 }).bind("after_close.jstree", function (e, data) { 
                     if( data.rslt.obj.context.nodeName.toLowerCase().indexOf('document')==-1 ) { // Close was generated by mouse click
                         self.adjustPDQTreeDimensions();
-                    } else {
-                        jstreeNodeIdsToClose.splice(0,1);
+                    } else {                      
                         setJstreeOperationReady(true);
                     }
                 });
@@ -546,6 +542,13 @@ function setJstreeOperationReady(bReady) {
             df.showTree();
             e.preventDefault();
         });
+        
+        $(document).bind("ajaxSend", function(){
+        	numberOfAjaxInProgress++;
+        }).bind("ajaxComplete", function(){
+        	numberOfAjaxInProgress--;
+        });
+        
     });
 })(jQuery);
 
@@ -618,7 +621,7 @@ FiveAmUtil = {
                     	}
                 }else{
                     this.pdqData[pdqItem.id].parentId.push(pdqItem.parentId);
-                    }
+                }
             }
         },
         

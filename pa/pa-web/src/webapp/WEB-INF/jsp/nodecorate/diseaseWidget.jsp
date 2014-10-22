@@ -25,6 +25,7 @@
 
 
 <script type="text/javascript">
+    var treeAjaxURL = '<c:url value='/protected/ajaxDiseaseTreegetChildren.action'/>';
     var diseaseTree = <s:property escape="false" value="diseaseTree"/>;
 </script>
 
@@ -54,7 +55,6 @@
 <script type="text/javascript" src="${scriptPath}/js/subModal.js"></script>
 
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/ml_breadcrumbs.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/generic_tree.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/cookies_support.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/diseasesFilter.js'/>"></script>
 

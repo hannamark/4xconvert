@@ -96,6 +96,8 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,12 +107,21 @@ import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.Status;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.StreamResult;
 import org.apache.struts2.json.JSONException;
 import org.apache.struts2.json.JSONUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -119,7 +130,7 @@ import com.opensymphony.xwork2.Preparable;
 * @author Hugh Reinhart
 * @since 11/31/2008
 */
-public class PopUpDisAction extends ActionSupport implements Preparable {
+public class PopUpDisAction extends ActionSupport implements Preparable { // NOPMD
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpDisAction.class);
@@ -136,6 +147,24 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
     private boolean includeXml = true;
     private List<Long> pdqDiseases = new ArrayList<Long>();
     private String diseaseIds; 
+    private String nodeID;
+    
+    // Cache for disease tree.
+    private static CacheManager cacheManager;
+    private static final String CACHE_KEY = "DISEASE_TREE_CACHE_KEY";
+    private static final int CACHE_MAX_ELEMENTS = 1;
+    private static final long CACHE_TIME = 3600;
+
+    private Cache getDiseaseTreeCache() {
+        if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
+            cacheManager = CacheManager.create();
+            Cache cache = new Cache(CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+                    CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
+            cacheManager.removeCache(CACHE_KEY);
+            cacheManager.addCache(cache);
+        }
+        return cacheManager.getCache(CACHE_KEY);
+    }
 
     /**
      * {@inheritDoc}
@@ -154,8 +183,73 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
      * @throws JSONException JSON Translation exception
      */
     public String getDiseaseTree() throws JSONException {
-        List<PDQDiseaseNode> diseaseTree = PaRegistry.getDiseaseService().getDiseaseTree();
+        List<PDQDiseaseNode> diseaseTree = getDiseaseTreeFromCache();
         return JSONUtil.serialize(diseaseTree);
+    }
+    
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException 
+     * @throws org.json.JSONException 
+     */
+    // CHECKSTYLE:OFF
+    public StreamResult getChildren() throws UnsupportedEncodingException, org.json.JSONException {
+        String[] split = getNodeID().split("_");
+        final Long clickedDiseaseId = Long.valueOf(split[split.length - 1]);
+        List<PDQDiseaseNode> diseaseTree = getDiseaseTreeFromCache();
+        CollectionUtils.filter(diseaseTree, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                PDQDiseaseNode node = (PDQDiseaseNode) arg0;
+                return clickedDiseaseId.equals(0L) ? node.getParentId() == null // NOPMD
+                        : clickedDiseaseId.equals(node.getParentId());
+            }
+        });
+        
+        String nodeIdPrefix = clickedDiseaseId.equals(0L) ? "" // NOPMD
+                : getNodeID().replace("ptid", "");
+        JSONArray children = new JSONArray();
+        for (PDQDiseaseNode pdqDiseaseNode : diseaseTree) {
+            JSONObject child = new JSONObject();
+            child.put("state", "closed");
+
+            JSONObject attr = new JSONObject();
+            attr.put("id", "ptid" + nodeIdPrefix + "_" + pdqDiseaseNode.getId());
+            attr.put("title",
+                    "Click to add this item to your selections for the search");
+            child.put("attr", attr);
+
+            JSONObject data = new JSONObject();
+            data.put("title", StringUtils.lowerCase(pdqDiseaseNode.getName()));
+            data.put("icon", "folder");
+            child.put("data", data);
+
+            JSONObject metadata = new JSONObject();
+            metadata.put("id", nodeIdPrefix + "_" + pdqDiseaseNode.getId());
+            child.put("metadata", metadata);
+
+            children.put(child);
+
+        }
+        return new StreamResult(new ByteArrayInputStream(children.toString()
+                .getBytes("UTF-8")));
+    }
+
+    /**
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private List<PDQDiseaseNode> getDiseaseTreeFromCache() {
+        Element el = getDiseaseTreeCache().get(CACHE_KEY);
+        if (el != null) {
+            return new ArrayList<PDQDiseaseNode>(
+                    (List<PDQDiseaseNode>) el.getObjectValue());
+        }
+        List<PDQDiseaseNode> diseaseTree = PaRegistry.getDiseaseService()
+                .getDiseaseTree();
+        Element element = new Element(CACHE_KEY, diseaseTree);
+        getDiseaseTreeCache().put(element);
+        return new ArrayList<PDQDiseaseNode>(diseaseTree);
     }
 
     /**
@@ -535,4 +629,23 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
     public void setDiseaseIds(String diseaseIds) {
         this.diseaseIds = diseaseIds;
     }
+
+
+    /**
+     * @return the nodeID
+     */
+    public String getNodeID() {
+        return nodeID;
+    }
+
+
+    /**
+     * @param nodeID the nodeID to set
+     */
+    public void setNodeID(String nodeID) {
+        this.nodeID = nodeID;
+    }
+
+
+   
 }
