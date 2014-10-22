@@ -601,7 +601,7 @@ public class InterventionalStudyDesignAction extends AbstractMultiObjectDeleteAc
           addFieldError("webDTO.outcomeMeasure.timeFrame", getText("error.maximumChar.254"));
         }
         if (webDTO.getOutcomeMeasure().getSafetyIndicator() == null) {
-            addFieldError("webDTO.safetyIndicator", getText("error.outcome.safety"));
+            addFieldError("webDTO.outcomeMeasure.safetyIndicator", getText("error.outcome.safety"));
         }
     }
 

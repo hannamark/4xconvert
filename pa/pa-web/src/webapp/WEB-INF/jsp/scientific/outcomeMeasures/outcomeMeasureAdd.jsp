@@ -25,11 +25,19 @@ function callOnloadFunctions(){
 
 function handleAction(){
     var page=document.forms[0].page.value;
+    
+  //If empty value is submitted then disabled paramter as if paratmeter is not submmited
+	//this is because otherwise struts defaults blank value to boolean field
+	var safetyIndicatorValue = document.forms[0].elements['webDTO.outcomeMeasure.safetyIndicator'].value;
+	if(safetyIndicatorValue == " ") {
+		document.getElementById("safety").setAttribute("disabled","disabled");
+	}
+	
 	if (page == "Edit"){
  		document.forms[0].action="interventionalStudyDesignoutcomeupdate.action";
  		document.forms[0].submit();  	
 	} else {
- 		document.forms[0].action="interventionalStudyDesignoutcomecreate.action";
+		document.forms[0].action="interventionalStudyDesignoutcomecreate.action";
  		document.forms[0].submit();   
  	} 
 } 
