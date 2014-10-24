@@ -45,7 +45,8 @@ import com.opensymphony.xwork2.Preparable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity", "PMD.ExcessiveMethodLength" })
+@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity",
+        "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" })
 public class ManageTermsAction extends ActionSupport implements Preparable {
 
     private static final String ALTNAME_TYPECODE_SYNONYM = "Synonym";
