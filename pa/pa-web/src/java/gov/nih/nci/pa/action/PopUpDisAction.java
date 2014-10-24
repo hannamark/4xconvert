@@ -155,7 +155,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable { // NOP
     private static final int CACHE_MAX_ELEMENTS = 1;
     private static final long CACHE_TIME = 3600;
 
-    private Cache getDiseaseTreeCache() {
+    public static Cache getDiseaseTreeCache() {
         if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
             cacheManager = CacheManager.create();
             Cache cache = new Cache(CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,

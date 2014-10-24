@@ -533,6 +533,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, lexe.getLocalizedMessage());
             return DISEASE;
         }
+        PopUpDisAction.getDiseaseTreeCache().removeAll();
         return SUCCESS;
     }
 
@@ -665,6 +666,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             return DISEASE;
         }
+        PopUpDisAction.getDiseaseTreeCache().removeAll();
         return SUCCESS;
     }
 
