@@ -1453,14 +1453,14 @@ private List<PatientStage> getPatientStage(String nciId) {
         FileUtils.writeByteArrayToFile(
                 file1,
                 IOUtils.toByteArray(this.getClass().getResourceAsStream(
-                        "/CDUS_Complete-BirthDates.txt")));
+                        "/CDUS_Abbreviated-modified.txt")));
         file1.deleteOnExit();
         
         File file2 = File.createTempFile(UUID.randomUUID().toString(), "txt");
         FileUtils.writeByteArrayToFile(
                 file2,
                 IOUtils.toByteArray(this.getClass().getResourceAsStream(
-                        "/CDUS_Complete-modified.txt")));
+                        "/ICD-O-3_coverage2.txt")));
         file2.deleteOnExit();
                 
         final BatchFile batchFile1 = getBatchFile(file1);
