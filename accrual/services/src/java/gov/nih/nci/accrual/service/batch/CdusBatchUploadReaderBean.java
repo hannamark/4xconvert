@@ -137,6 +137,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -217,19 +219,54 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         return cacheManager.getCache(DISEASE_CACHE_KEY);
     }
+    
+    
+    private static final Map<Long, ReentrantLock> MAIN_BATCH_FILE_CRC32_LOCKS = new HashMap<Long, ReentrantLock>();
+    private static final long LOCK_WAIT_SECONDS = 43200L; // 12 hours
+
+    private static synchronized ReentrantLock getMainBatchFileLock(
+            final Long crc32) {
+        ReentrantLock lock = MAIN_BATCH_FILE_CRC32_LOCKS.get(crc32);
+        if (lock == null) {
+            lock = new ReentrantLock();
+            MAIN_BATCH_FILE_CRC32_LOCKS.put(crc32, lock);
+        }
+        return lock;
+    }
+
+    private static synchronized void removeMainBatchFileLock(final Long crc32) {
+        ReentrantLock lock = getMainBatchFileLock(crc32);
+        if (!lock.isLocked() && !lock.hasQueuedThreads()) {
+            MAIN_BATCH_FILE_CRC32_LOCKS.remove(crc32);
+        }
+    }
 
     /**
      * {@inheritDoc}
+     * @throws IOException IOException 
      */
     @Override
-    public List<BatchValidationResults> validateBatchData(BatchFile batchFile)  {
+    public List<BatchValidationResults> validateBatchData(BatchFile batchFile) throws IOException  {
         List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
-        ZipFile zip = null;
-        File file = new File(batchFile.getFileLocation());        
+        ZipFile zip = null;        
+        File file = new File(batchFile.getFileLocation());
+        
+        final Long crc32 = FileUtils.checksumCRC32(file);
+        final ReentrantLock lock = getMainBatchFileLock(crc32);
         try {
-            boolean archive = StringUtils.equals(FilenameUtils.getExtension(file.getName()), "zip");
+            if (!lock.tryLock(LOCK_WAIT_SECONDS, TimeUnit.SECONDS)) {
+                throw new RuntimeException(// NOPMD
+                        "Unable to acquire lock to process the given batch file: "
+                                + file.getAbsolutePath()); 
+            }
+        } catch (InterruptedException e) {
+            LOG.error(e, e);
+            throw new RuntimeException(e); // NOPMD
+        }
+        try {
+            boolean archive = StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(file.getName()), "zip");
             if (archive) {
-                 zip = new ZipFile(file, ZipFile.OPEN_READ);
+                zip = new ZipFile(file, ZipFile.OPEN_READ);
                 Enumeration<? extends ZipEntry> files = zip.entries();
                 while (files.hasMoreElements()) {
                     ZipEntry entry = files.nextElement();
@@ -258,7 +295,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         } catch (Exception e) {
             LOG.error("Error validating batch files.", e);
             sendFormatIssueEmail(batchFile, AccrualUtil.getFileNameWithoutRandomNumbers(file.getName()), e);
-        } 
+        } finally {
+            if (lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+            removeMainBatchFileLock(crc32);
+        }
         return results;
     }
 
@@ -289,7 +331,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
     }
     
-    private void batchFileProcessing(List<BatchValidationResults> results,
+    void batchFileProcessing(List<BatchValidationResults> results,
             BatchFile batchFile, String fileName, File file)
             throws PAException, IOException {
         PreprocessingResult preprocessingResult = cdusBatchFilePreProcessorLocal

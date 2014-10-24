@@ -80,7 +80,7 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.service.batch;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -91,15 +91,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
-import gov.nih.nci.accrual.service.batch.BatchImportResults;
-import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
@@ -147,13 +145,17 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -651,7 +653,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 }
 
 	@Test
-	public void patientRCCoverage() throws URISyntaxException, PAException {
+	public void patientRCCoverage() throws URISyntaxException, PAException, IOException {
 		File file = new File(this.getClass().getResource("/patientRaceCodeValidation2.txt").toURI());
 		BatchFile batchFile = getBatchFile(file);
 		List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -665,7 +667,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 	}
 	
 	@Test
-	public void testTrialwithCtepIdNotSuAbstractor() throws URISyntaxException, PAException {    
+	public void testTrialwithCtepIdNotSuAbstractor() throws URISyntaxException, PAException, IOException {    
         CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
         when(csmUtil.isUserInGroup(any(String.class), any(String.class))).thenReturn(false);
         CSMUserService.setInstance(csmUtil);
@@ -690,7 +692,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 	}
 
 	@Test
-	public void patientICDO3Coverage() throws URISyntaxException, PAException {
+	public void patientICDO3Coverage() throws URISyntaxException, PAException, IOException {
          setTrialDiseaseCodeSystem("ICD-O-3");
 		 AccrualDisease disease1 = new AccrualDisease();
 	     disease1.setCodeSystem("ICD-O-3");
@@ -737,7 +739,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 	}
         
 	@Test
-	public void junitCoverage() throws URISyntaxException, PAException {
+	public void junitCoverage() throws URISyntaxException, PAException, IOException {
 		File file = new File(this.getClass().getResource("/patientRaceCodeValidation.txt").toURI());
 		BatchFile batchFile = getBatchFile(file);
 		List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -804,7 +806,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 	}
 
 	@Test
-	public void testDiseaseCodes() throws Exception {
+	public void testDiseaseCodes() throws Exception, IOException {
         AccrualDisease disease1 = new AccrualDisease();
         disease1.setCodeSystem("SDC");
         disease1.setDiseaseCode("code1");
@@ -866,7 +868,7 @@ private List<PatientStage> getPatientStage(String nciId) {
 	
     @Test
     public void batchUploadWithValidationErrorsAndDuplicateSubjects() throws URISyntaxException,
-            PAException {
+            PAException, IOException {
         File file = new File(this.getClass()
                 .getResource("/CDUS_Complete-modified-dupes.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
@@ -901,7 +903,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
 	
     @Test
-    public void completeBatchValidation() throws URISyntaxException, PAException {
+    public void completeBatchValidation() throws URISyntaxException, PAException, IOException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
 
@@ -950,7 +952,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
 
     @Test
-    public void abbreviatedBatchValidation() throws URISyntaxException, PAException {
+    public void abbreviatedBatchValidation() throws URISyntaxException, PAException, IOException {
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -975,7 +977,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
 
    @Test
-    public void changeCode2BatchValidation() throws URISyntaxException, PAException {
+    public void changeCode2BatchValidation() throws URISyntaxException, PAException, IOException {
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated_cc2.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -1000,7 +1002,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
 
     @Test
-    public void accrualCountBatchValidation() throws URISyntaxException, PAException {
+    public void accrualCountBatchValidation() throws URISyntaxException, PAException, IOException {
     	CSMUserUtil csmUtil = mock(CSMUserService.getInstance().getClass());
         when(csmUtil.isUserInGroup(any(String.class), any(String.class))).thenReturn(true);
         CSMUserService.setInstance(csmUtil);
@@ -1036,7 +1038,7 @@ private List<PatientStage> getPatientStage(String nciId) {
         assertNull(collection.getTotalImports());
 }
     @Test
-    public void accrualCountBatch() throws URISyntaxException, PAException {
+    public void accrualCountBatch() throws URISyntaxException, PAException, IOException {
 
         setStudyProtocolSvc();
         
@@ -1065,7 +1067,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
 
     @Test
-    public void abbreviatedPreventionBatchValidation() throws URISyntaxException, PAException {
+    public void abbreviatedPreventionBatchValidation() throws URISyntaxException, PAException, IOException {
         File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -1077,7 +1079,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
     
     @Test
-    public void crfValuesBatchValidation() throws URISyntaxException, PAException {
+    public void crfValuesBatchValidation() throws URISyntaxException, PAException, IOException {
         File file = new File(this.getClass().getResource("/cdus-abbreviated-with-crf-values.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -1089,7 +1091,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
     
     @Test
-    public void archiveBatchValidation() throws URISyntaxException, PAException {
+    public void archiveBatchValidation() throws URISyntaxException, PAException, IOException {
         File file = new File(this.getClass().getResource("/CDUS.zip").toURI());
         BatchFile batchFile = getBatchFile(file);
         
@@ -1128,7 +1130,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
 
     @Test
-    public void testIsValidProtocolId() throws PAException, TooManyResultsException, URISyntaxException {
+    public void testIsValidProtocolId() throws PAException, TooManyResultsException, URISyntaxException, IOException {
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
@@ -1346,7 +1348,7 @@ private List<PatientStage> getPatientStage(String nciId) {
     }
 
     @Test
-     public void processChangeCode2BatchValidation() throws URISyntaxException, PAException {
+     public void processChangeCode2BatchValidation() throws URISyntaxException, PAException, IOException {
          File file = new File(this.getClass().getResource("/cc.txt").toURI());
          BatchFile batchFile = getBatchFile(file);
          List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
@@ -1370,6 +1372,150 @@ private List<PatientStage> getPatientStage(String nciId) {
          assertEquals((Integer) 2, collection.getTotalImports());
          
      }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBatchUploadConcurrencySameFile() throws Exception {
+        File file1 = File.createTempFile(UUID.randomUUID().toString(), "txt");
+        FileUtils.writeByteArrayToFile(
+                file1,
+                IOUtils.toByteArray(this.getClass().getResourceAsStream(
+                        "/CDUS_Complete_dupes.txt")));
+        file1.deleteOnExit();
+        
+        File file2 = File.createTempFile(UUID.randomUUID().toString(), "txt");
+        FileUtils.writeByteArrayToFile(
+                file2,
+                IOUtils.toByteArray(this.getClass().getResourceAsStream(
+                        "/CDUS_Complete_dupes.txt")));
+        file2.deleteOnExit();
+                
+        final BatchFile batchFile1 = getBatchFile(file1);
+        final BatchFile batchFile2 = getBatchFile(file2);
+        
+        final List<Thread> threadsThatEnteredProcessing = new ArrayList<Thread>();
+       
+        final CdusBatchUploadReaderBean bean = mock(CdusBatchUploadReaderBean.class);
+        when(bean.validateBatchData(any(BatchFile.class))).thenCallRealMethod();
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                threadsThatEnteredProcessing.add(Thread.currentThread());
+                Thread.sleep(20000);
+                threadsThatEnteredProcessing.remove(Thread.currentThread());
+                return null;
+            }
+        }).when(bean).batchFileProcessing(any(List.class),
+                any(BatchFile.class), any(String.class), any(File.class));
+        
+        final Thread t1 = new Thread(new Runnable() {            
+            @Override
+            public void run() {
+                try {
+                    bean.validateBatchData(batchFile1);
+                } catch (IOException e) {                  
+                }
+            }
+        });
+        
+        final Thread t2 = new Thread(new Runnable() {            
+            @Override
+            public void run() {
+                try {
+                    bean.validateBatchData(batchFile2);
+                } catch (IOException e) {                  
+                }
+            }
+        });
+        t1.setDaemon(true);
+        t2.setDaemon(true);
+
+        t1.start();
+        Thread.sleep(5000L);
+        t2.start();
+        Thread.sleep(5000L);
+        
+        assertEquals(1, threadsThatEnteredProcessing.size());
+        assertEquals(t1, threadsThatEnteredProcessing.get(0));        
+        
+        Thread.sleep(15000L);
+        assertEquals(1, threadsThatEnteredProcessing.size());
+        assertEquals(t2, threadsThatEnteredProcessing.get(0));
+        
+        
+       
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testBatchUploadConcurrencyDifferentFiles() throws Exception {
+        File file1 = File.createTempFile(UUID.randomUUID().toString(), "txt");
+        FileUtils.writeByteArrayToFile(
+                file1,
+                IOUtils.toByteArray(this.getClass().getResourceAsStream(
+                        "/CDUS_Complete-BirthDates.txt")));
+        file1.deleteOnExit();
+        
+        File file2 = File.createTempFile(UUID.randomUUID().toString(), "txt");
+        FileUtils.writeByteArrayToFile(
+                file2,
+                IOUtils.toByteArray(this.getClass().getResourceAsStream(
+                        "/CDUS_Complete-modified.txt")));
+        file2.deleteOnExit();
+                
+        final BatchFile batchFile1 = getBatchFile(file1);
+        final BatchFile batchFile2 = getBatchFile(file2);
+        
+        final List<Thread> threadsThatEnteredProcessing = new ArrayList<Thread>();
+       
+        final CdusBatchUploadReaderBean bean = mock(CdusBatchUploadReaderBean.class);
+        when(bean.validateBatchData(any(BatchFile.class))).thenCallRealMethod();
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                threadsThatEnteredProcessing.add(Thread.currentThread());
+                Thread.sleep(20000);
+                threadsThatEnteredProcessing.remove(Thread.currentThread());
+                return null;
+            }
+        }).when(bean).batchFileProcessing(any(List.class),
+                any(BatchFile.class), any(String.class), any(File.class));
+        
+        final Thread t1 = new Thread(new Runnable() {            
+            @Override
+            public void run() {
+                try {
+                    bean.validateBatchData(batchFile1);
+                } catch (IOException e) {                  
+                }
+            }
+        });
+        
+        final Thread t2 = new Thread(new Runnable() {            
+            @Override
+            public void run() {
+                try {
+                    bean.validateBatchData(batchFile2);
+                } catch (IOException e) {                  
+                }
+            }
+        });
+        t1.setDaemon(true);
+        t2.setDaemon(true);
+        
+        t1.start();
+        Thread.sleep(5000L);
+        t2.start();
+        Thread.sleep(5000L);
+        
+        assertEquals(2, threadsThatEnteredProcessing.size());
+        assertEquals(t1, threadsThatEnteredProcessing.get(0));        
+        assertEquals(t2, threadsThatEnteredProcessing.get(1));
+        
+       
+    }
+
+
 
     private void setStudyProtocolSvc() throws PAException {        
         StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);

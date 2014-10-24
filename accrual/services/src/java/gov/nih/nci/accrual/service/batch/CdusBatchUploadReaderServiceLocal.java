@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.service.batch;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -99,8 +100,9 @@ public interface CdusBatchUploadReaderServiceLocal {
      * Reads and validate the csv file.
      * @param batchFile batch file to read
      * @return the validation results
+     * @throws IOException IOException
      */
-    List<BatchValidationResults> validateBatchData(BatchFile batchFile);
+    List<BatchValidationResults> validateBatchData(BatchFile batchFile) throws IOException;
     
     /**
      * Imports the batch data. This assumes that data has already been validated.
