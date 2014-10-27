@@ -156,6 +156,7 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -167,6 +168,8 @@ import org.mockito.stubbing.Answer;
  * @author vrushali
  */
 public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest {
+    
+   
 	
 	@Test
 	public void testNoninterventionalTrialPatientLevelBatchupload() throws Exception {
@@ -1395,24 +1398,37 @@ private List<PatientStage> getPatientStage(String nciId) {
         
         final List<Thread> threadsThatEnteredProcessing = new ArrayList<Thread>();
        
-        final CdusBatchUploadReaderBean bean = mock(CdusBatchUploadReaderBean.class);
-        when(bean.validateBatchData(any(BatchFile.class))).thenCallRealMethod();
+        final CdusBatchUploadReaderBean bean1 = mock(CdusBatchUploadReaderBean.class);
+        when(bean1.validateBatchData(any(BatchFile.class))).thenCallRealMethod();
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 threadsThatEnteredProcessing.add(Thread.currentThread());
-                Thread.sleep(20000);
+                Thread.sleep(5000);
                 threadsThatEnteredProcessing.remove(Thread.currentThread());
                 return null;
             }
-        }).when(bean).batchFileProcessing(any(List.class),
+        }).when(bean1).batchFileProcessing(any(List.class),
+                any(BatchFile.class), any(String.class), any(File.class));
+        
+        final CdusBatchUploadReaderBean bean2 = mock(CdusBatchUploadReaderBean.class);
+        when(bean2.validateBatchData(any(BatchFile.class))).thenCallRealMethod();
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                threadsThatEnteredProcessing.add(Thread.currentThread());
+                Thread.sleep(5000);
+                threadsThatEnteredProcessing.remove(Thread.currentThread());
+                return null;
+            }
+        }).when(bean2).batchFileProcessing(any(List.class),
                 any(BatchFile.class), any(String.class), any(File.class));
         
         final Thread t1 = new Thread(new Runnable() {            
             @Override
             public void run() {
                 try {
-                    bean.validateBatchData(batchFile1);
+                    bean1.validateBatchData(batchFile1);
                 } catch (IOException e) {                  
                 }
             }
@@ -1422,7 +1438,7 @@ private List<PatientStage> getPatientStage(String nciId) {
             @Override
             public void run() {
                 try {
-                    bean.validateBatchData(batchFile2);
+                    bean2.validateBatchData(batchFile2);
                 } catch (IOException e) {                  
                 }
             }
@@ -1431,36 +1447,33 @@ private List<PatientStage> getPatientStage(String nciId) {
         t2.setDaemon(true);
 
         t1.start();
-        Thread.sleep(5000L);
+        Thread.sleep(1000L);
         t2.start();
-        Thread.sleep(5000L);
+        Thread.sleep(1000L);
         
         assertEquals(1, threadsThatEnteredProcessing.size());
         assertEquals(t1, threadsThatEnteredProcessing.get(0));        
         
-        Thread.sleep(15000L);
+        Thread.sleep(5000L);
         assertEquals(1, threadsThatEnteredProcessing.size());
         assertEquals(t2, threadsThatEnteredProcessing.get(0));
         
         
        
-    }
+    } 
     
     @SuppressWarnings("unchecked")
     @Test
-    public void testBatchUploadConcurrencyDifferentFiles() throws Exception {
+    public void testBatchUploadConcurrencyDifferentFiles() throws Exception {   
+        System.out.println("testBatchUploadConcurrencyDifferentFiles start");
         File file1 = File.createTempFile(UUID.randomUUID().toString(), "txt");
-        FileUtils.writeByteArrayToFile(
-                file1,
-                IOUtils.toByteArray(this.getClass().getResourceAsStream(
-                        "/CDUS_Abbreviated-modified.txt")));
+        FileUtils.writeStringToFile(file1,
+                RandomStringUtils.randomAlphanumeric(1000));
         file1.deleteOnExit();
-        
+
         File file2 = File.createTempFile(UUID.randomUUID().toString(), "txt");
-        FileUtils.writeByteArrayToFile(
-                file2,
-                IOUtils.toByteArray(this.getClass().getResourceAsStream(
-                        "/ICD-O-3_coverage2.txt")));
+        FileUtils.writeStringToFile(file2,
+                RandomStringUtils.randomAlphanumeric(1000));
         file2.deleteOnExit();
                 
         final BatchFile batchFile1 = getBatchFile(file1);
@@ -1468,24 +1481,37 @@ private List<PatientStage> getPatientStage(String nciId) {
         
         final List<Thread> threadsThatEnteredProcessing = new ArrayList<Thread>();
        
-        final CdusBatchUploadReaderBean bean = mock(CdusBatchUploadReaderBean.class);
-        when(bean.validateBatchData(any(BatchFile.class))).thenCallRealMethod();
+        final CdusBatchUploadReaderBean bean1 = mock(CdusBatchUploadReaderBean.class);
+        when(bean1.validateBatchData(any(BatchFile.class))).thenCallRealMethod();
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 threadsThatEnteredProcessing.add(Thread.currentThread());
-                Thread.sleep(20000);
+                Thread.sleep(5000);
                 threadsThatEnteredProcessing.remove(Thread.currentThread());
                 return null;
             }
-        }).when(bean).batchFileProcessing(any(List.class),
+        }).when(bean1).batchFileProcessing(any(List.class),
+                any(BatchFile.class), any(String.class), any(File.class));
+        
+        final CdusBatchUploadReaderBean bean2 = mock(CdusBatchUploadReaderBean.class);
+        when(bean2.validateBatchData(any(BatchFile.class))).thenCallRealMethod();
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                threadsThatEnteredProcessing.add(Thread.currentThread());
+                Thread.sleep(5000);
+                threadsThatEnteredProcessing.remove(Thread.currentThread());
+                return null;
+            }
+        }).when(bean2).batchFileProcessing(any(List.class),
                 any(BatchFile.class), any(String.class), any(File.class));
         
         final Thread t1 = new Thread(new Runnable() {            
             @Override
             public void run() {
                 try {
-                    bean.validateBatchData(batchFile1);
+                    bean1.validateBatchData(batchFile1);
                 } catch (IOException e) {                  
                 }
             }
@@ -1495,7 +1521,7 @@ private List<PatientStage> getPatientStage(String nciId) {
             @Override
             public void run() {
                 try {
-                    bean.validateBatchData(batchFile2);
+                    bean2.validateBatchData(batchFile2);
                 } catch (IOException e) {                  
                 }
             }
@@ -1504,9 +1530,9 @@ private List<PatientStage> getPatientStage(String nciId) {
         t2.setDaemon(true);
         
         t1.start();
-        Thread.sleep(5000L);
+        Thread.sleep(1000L);
         t2.start();
-        Thread.sleep(5000L);
+        Thread.sleep(2000L);
         
         assertEquals(2, threadsThatEnteredProcessing.size());
         assertEquals(t1, threadsThatEnteredProcessing.get(0));        
