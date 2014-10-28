@@ -89,8 +89,12 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Test;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.TimeoutException;
@@ -192,6 +196,82 @@ public class ManageTrialOtherIdentifiersTest extends AbstractPaSeleniumTest {
                 "Obsolete ClinicalTrials.gov Identifier cannot match the current ClinicalTrials.gov Identifier of this trial");
 
        
+    }
+    
+    @SuppressWarnings({ "resource", "deprecation" })
+    @Test
+    public void testRemovalOfNctIdByDirectGETIsPrevented() throws Exception {
+        TrialInfo trial = createAcceptedTrial();
+        goToGTDScreen(trial);
+
+        final String nctID = UUID.randomUUID().toString();
+        verifyStudySiteAssignedIdentifier(trial,
+                "ClinicalTrials.gov Identifier", nctID);
+
+        final String directURL = url
+                + "/pa/protected/studyProtocolremoveNctId.action?studyProtocolId="
+                + trial.id + "&hash=" + UUID.randomUUID();
+        selenium.open(directURL);
+        assertEquals("PA: Error", selenium.getTitle());
+        
+    }
+
+    @Test
+    public void testRemoveNctIdFromRejectedTrial() throws Exception {
+        TrialInfo trial = createAcceptedTrial();
+        goToGTDScreen(trial);
+
+        final String nctID = UUID.randomUUID().toString();
+        final String ctepID = UUID.randomUUID().toString();
+        final String dcpID = UUID.randomUUID().toString();
+        
+        verifyStudySiteAssignedIdentifier(trial, "CTEP Identifier", ctepID);
+        verifyStudySiteAssignedIdentifier(trial, "DCP Identifier", dcpID);
+        verifyStudySiteAssignedIdentifier(trial,
+                "ClinicalTrials.gov Identifier", nctID);
+        
+        clickAndWait("link=Trial Identification");
+        assertFalse(selenium.isElementPresent("id=removeNctIdIcon"));
+        
+        addDWS(trial, "REJECTED");
+        addMilestone(trial, "LATE_REJECTION_DATE");
+        clickAndWait("link=Trial Identification");
+        assertTrue(selenium.isElementPresent("id=removeNctIdIcon"));
+        
+        // First, make sure Cancel button closes the dialog and the identifier
+        // is NOT deleted.
+        selenium.click("id=removeNctIdIcon");
+        assertTrue(selenium.isVisible("id=confirmNctIdDialog"));
+        assertTrue(selenium
+                .isVisible("xpath=//p[text()='Please confirm you want to remove ClinicalTrials.gov Identifier from this trial']"));
+        assertTrue(selenium
+                .isVisible("xpath=//span[text()='Confirm ClinicalTrials.gov ID Removal']"));        
+        selenium.click("xpath=//button/span[text()='Cancel']");
+        assertFalse(selenium.isVisible("id=confirmNctIdDialog"));
+        assertTrue(selenium.isElementPresent("id=removeNctIdIcon"));
+        verifyStudySiteIdentifierAssignerInDb(trial, nctID);
+        
+        // Now actually delete.        
+        selenium.click("id=removeNctIdIcon");
+        assertTrue(selenium.isVisible("id=confirmNctIdDialog"));
+        selenium.click("xpath=//button/span[text()='Confirm']");       
+        assertFalse(selenium.isVisible("id=confirmNctIdDialog"));
+        assertFalse(selenium.isVisible("id=removeNctIdIcon"));
+        pause(5000);
+        assertFalse(selenium.isVisible("id=td_CTGOV_value"));
+        assertFalse(selenium.isTextPresent(nctID));
+        Object[] results = getIdentifierAssignerStudySiteId(trial, nctID);
+        assertNull(results);
+        
+        // reload page and make sure there is no NCT ID, but CTEP and DCP are in place.
+        clickAndWait("link=Trial Identification");
+        assertFalse(selenium.isTextPresent(nctID));
+        assertFalse(selenium.isTextPresent("ClinicalTrials.gov Identifier"));
+        verifyStudySiteIdentifierAssignerInDb(trial, dcpID);
+        verifyStudySiteIdentifierAssignerInDb(trial, ctepID);
+        assertTrue(selenium.isTextPresent(dcpID));
+        assertTrue(selenium.isTextPresent(ctepID));
+
     }
 
     private void verifyEditIdentifierFailure(TrialInfo trial, String type,

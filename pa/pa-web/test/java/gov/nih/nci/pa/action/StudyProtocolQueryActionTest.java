@@ -6,25 +6,32 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.dto.StudyIdentifierDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyIdentifierType;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusService;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolService;
+import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.service.MockCorrelationUtils;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -43,9 +50,11 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     private StudyProtocolQueryAction spqAction;
     private StudyProtocolQueryCriteria criteria;
+    private DocumentWorkflowStatusService dwsService;
+    
     @Override
     @Before
-    public void setUp() {
+    public void setUp() throws PAException {
         spqAction = new StudyProtocolQueryAction();
         spqAction.setCorrelationUtils(new MockCorrelationUtils());
         spqAction.setServletRequest(getRequest());
@@ -58,6 +67,88 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
         UsernameHolder.setUser("suAbstractor");
         getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);
+        
+        dwsService = mock(DocumentWorkflowStatusService.class);
+        DocumentWorkflowStatusDTO dws = new DocumentWorkflowStatusDTO();
+        dws.setStatusCode(CdConverter
+                .convertToCd(DocumentWorkflowStatusCode.REJECTED));
+        when(
+                dwsService.getCurrentByStudyProtocol(eq(IiConverter
+                        .convertToStudyProtocolIi(1L)))).thenReturn(dws);
+    }
+    
+    @Test(expected=PAException.class)
+    public void testRemoveNctIdRejectedOnly() throws PAException {
+        getRequest().setupAddParameter("studyProtocolId", "1");
+        getSession().resetAll();
+        getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);     
+        
+        DocumentWorkflowStatusDTO dws = new DocumentWorkflowStatusDTO();
+        dws.setStatusCode(CdConverter
+                .convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
+        when(
+                dwsService.getCurrentByStudyProtocol(eq(IiConverter
+                        .convertToStudyProtocolIi(1L)))).thenReturn(dws);
+        
+        verifySuccessfulNctIdRemoval();
+       
+    }
+    
+    @Test
+    public void testRemoveNctId() throws PAException {
+        getRequest().setupAddParameter("studyProtocolId", "1");
+        
+        getSession().resetAll();
+        getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);        
+        verifySuccessfulNctIdRemoval();
+
+        getSession().resetAll();
+        getSession().setAttribute(Constants.IS_ABSTRACTOR, Boolean.TRUE);        
+        verifySuccessfulNctIdRemoval();
+
+        getSession().resetAll();
+        getSession().setAttribute(Constants.IS_ADMIN_ABSTRACTOR, Boolean.TRUE);        
+        verifySuccessfulNctIdRemoval();
+
+        getSession().resetAll();
+        getSession().setAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR, Boolean.TRUE);        
+        verifySuccessfulNctIdRemoval();        
+       
+    }
+    
+    @Test(expected=PAException.class)
+    public void testRemoveNctIdAbstractorsOnly() throws PAException {
+        getRequest().setupAddParameter("studyProtocolId", "1");
+        getSession().resetAll();
+        getSession().setAttribute(Constants.IS_REPORT_VIEWER, Boolean.TRUE);        
+        verifySuccessfulNctIdRemoval();
+       
+    }
+ 
+
+    /**
+     * @throws PAException
+     */
+    private void verifySuccessfulNctIdRemoval() throws PAException {
+        StudyIdentifiersService siService = mock(StudyIdentifiersService.class);
+        StudyIdentifierDTO nctDTO = new StudyIdentifierDTO(
+                StudyIdentifierType.CTGOV, "NCT283048923");
+        StudyIdentifierDTO ctepDTO = new StudyIdentifierDTO(
+                StudyIdentifierType.CTEP, "CTEP0001");
+        when(
+                siService.getStudyIdentifiers(eq(IiConverter
+                        .convertToStudyProtocolIi(1L)))).thenReturn(
+                Arrays.asList(nctDTO, ctepDTO));
+
+        spqAction.setDocumentWorkflowStatusService(dwsService);
+        spqAction.setStudyIdentifiersService(siService);
+
+        final String outcome = spqAction.removeNctId();
+        assertNull(outcome);
+        verify(siService, times(1)).delete(
+                eq(IiConverter.convertToStudyProtocolIi(1L)), eq(nctDTO));
+        verify(siService, never()).delete(
+                eq(IiConverter.convertToStudyProtocolIi(1L)), eq(ctepDTO));
     }
 
     /**

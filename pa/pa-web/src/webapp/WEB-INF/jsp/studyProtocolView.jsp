@@ -67,6 +67,50 @@
                 $('comment-dialog').show();
             }    
             
+            var removeNctIdURL = '<c:url value='/protected/studyProtocolremoveNctId.action'/>';
+            (function($){    
+            	//******************
+                //** On DOM Ready **
+                //******************
+            	$(function () {
+            		
+            		$( "#confirmNctIdDialog" ).dialog({
+                        autoOpen: false,
+                        resizable: false,
+                        modal: true,                      
+                        buttons: {
+                            "Confirm": function() {
+                              $(this).dialog("close");
+                              $("#removeNctIdIcon").hide();
+                              $("#removeNctIdWaitIndicator").show();
+                              
+                              $.ajax(removeNctIdURL, {                  
+                                  data: {
+                                	  studyProtocolId : ${sessionScope.trialSummary.studyProtocolId}
+                                  },     
+                                  cache: false,
+                                  timeout : 30000
+                              }).always(function() {
+                            	  $("#removeNctIdWaitIndicator").hide();
+                            	  $("#removeNctIdIcon").show();
+                              }).done(function() {
+                            	  $("#removeNctIdIcon").hide();
+                            	  $("#td_CTGOV_value").fadeOut(1500);
+                              });
+                              
+                            },
+                            Cancel: function() {
+                              $( this ).dialog("close");
+                            }
+                          }
+                     });            		
+            		
+            		$('#removeNctIdIcon').click(function(e) {
+            			$( "#confirmNctIdDialog" ).dialog( "open" );
+                    });            		
+            	});
+            }(jQuery));
+            
         </script>
         <style type="text/css">
             
@@ -80,6 +124,7 @@
     <body>
         <c:set var="topic" scope="request" value="trialdetails"/>
         <c:set scope="request" var="suAbs" value="${sessionScope.isSuAbstractor==true}"></c:set>
+        <c:set var="isRejected" value="${trialSummary.documentWorkflowStatusCode.code  == 'Rejected'}"/>
         <h1>Trial Identification</h1>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
         <div class="box">
@@ -139,6 +184,16 @@
 	                        </td>
 	                        <td nowrap="nowrap" id="td_${identifier.key.name}_value">
 	                            <c:out value="${identifier.value}"/>
+	                            <c:if test="${isRejected && identifier.key.name=='CTGOV'}">
+                                    <img id="removeNctIdIcon" src="<c:url value="/images/ico_delete.gif"/>"
+                                        style="cursor:pointer;"
+                                        alt="Icon to remove ClinicalTrials.gov Identifier from the trial"
+                                        title="Click here to remove the ClinicalTrials.gov Identifier from this trial." /> 
+                                    <img id="removeNctIdWaitIndicator" style="display:none;" src="<c:url value="/images/loading.gif"/>"
+                                        height="16" width="16"
+                                        alt="AJAX Wait Indicator"
+                                        title="AJAX Wait Indicator" />                                        
+	                            </c:if>
 	                        </td>
 	                    </tr>
                     </c:forEach>                                 
@@ -284,7 +339,10 @@
                                    onclick="$('comment-dialog').hide();"><i class="fa-times-circle"></i>Cancel</button>
                            </div>
                        </div>
-            </div>    
+            </div>   
+            <div id="confirmNctIdDialog" title="Confirm ClinicalTrials.gov ID Removal">
+                <p>Please confirm you want to remove ClinicalTrials.gov Identifier from this trial</p>
+            </div> 
             </s:form>
         </div>
     </body>

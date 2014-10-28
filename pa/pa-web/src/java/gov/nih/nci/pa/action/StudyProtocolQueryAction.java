@@ -80,15 +80,21 @@ package gov.nih.nci.pa.action;
 
 import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.StudyIdentifierDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyIdentifierType;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
@@ -103,7 +109,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList; 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -142,6 +148,8 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private TSRReportGeneratorServiceLocal tsrReportGeneratorService;
     private StudyProtocolService studyProtocolService;
     private PlannedMarkerServiceLocal plannedMarkerService;
+    private StudyIdentifiersService studyIdentifiersService;
+    private DocumentWorkflowStatusService documentWorkflowStatusService;
     private List<StudyProtocolQueryDTO> records;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private HttpServletResponse servletResponse;
@@ -167,6 +175,8 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
         tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorServiceLocal();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         plannedMarkerService = PaRegistry.getPlannedMarkerService();
+        studyIdentifiersService = PaRegistry.getStudyIdentifiersService();
+        documentWorkflowStatusService = PaRegistry.getDocumentWorkflowStatusService();
         if (httpServletRequest.getServletPath().contains(BARE)) {
             // we are in BARE mode, which is typically used just to look up and
             // pick a trial in a pop-up
@@ -388,7 +398,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
      */
     @SuppressWarnings("unchecked")
     public String popUpStudyAlternateTitles() throws PAException {
-        Long studyProtocolId =  Long.valueOf(ServletActionContext.getRequest().getParameter("studyProtocolId"));        
+        Long studyProtocolId = getProtocolIdFromRequest();        
         StudyProtocolDTO studyDTO = studyProtocolService.getStudyProtocol(
                 IiConverter.convertToIi(studyProtocolId));
         Set<StudyAlternateTitleDTO> studyAlternateTitles = 
@@ -398,6 +408,41 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
         return POPUP_STUDY_ALTERNATE_TITLES;
     }
     
+    /**
+     * @return res
+     * @throws PAException
+     *             exception
+     */
+    public String removeNctId() throws PAException {
+        Ii spID = IiConverter
+                .convertToStudyProtocolIi(getProtocolIdFromRequest());
+        DocumentWorkflowStatusDTO statusDTO = documentWorkflowStatusService
+                .getCurrentByStudyProtocol(spID);
+        if (ActionUtils.isAbstractor(ServletActionContext.getRequest()
+                .getSession())
+                && statusDTO.getStatusCode().getCode()
+                        .equals(DocumentWorkflowStatusCode.REJECTED.getCode())) {
+            for (StudyIdentifierDTO dto : studyIdentifiersService
+                    .getStudyIdentifiers(spID)) {
+                if (StudyIdentifierType.CTGOV == dto.getType()) {
+                    studyIdentifiersService.delete(spID, dto);
+                }
+            }
+            return null;
+        }
+        throw new PAException(
+                "Only Abstractors can remove ClinicalTrials.gov ID and only from rejected trials.");
+    }
+
+    /**
+     * @return
+     * @throws NumberFormatException
+     */
+    private Long getProtocolIdFromRequest() {
+        return Long.valueOf(ServletActionContext.getRequest().getParameter(
+                "studyProtocolId"));
+    }
+
     private boolean isInRole(String roleFlag) {
         return Boolean.TRUE.equals(ServletActionContext.getRequest()
                 .getSession().getAttribute(roleFlag));
@@ -596,5 +641,21 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
      */
     public void setStudyAlternateTitlesPresent(Boolean studyAlternateTitlesPresent) {
         this.studyAlternateTitlesPresent = studyAlternateTitlesPresent;
+    }
+
+    /**
+     * @param studyIdentifiersService the studyIdentifiersService to set
+     */
+    public void setStudyIdentifiersService(
+            StudyIdentifiersService studyIdentifiersService) {
+        this.studyIdentifiersService = studyIdentifiersService;
+    }
+
+    /**
+     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
+     */
+    public void setDocumentWorkflowStatusService(
+            DocumentWorkflowStatusService documentWorkflowStatusService) {
+        this.documentWorkflowStatusService = documentWorkflowStatusService;
     }
 }
