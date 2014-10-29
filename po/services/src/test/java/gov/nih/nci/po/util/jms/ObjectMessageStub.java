@@ -116,7 +116,7 @@ public class ObjectMessageStub implements ObjectMessage {
     }
 
     public String getJMSMessageID() throws JMSException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "";
     }
 
     public void setJMSMessageID(String arg0) throws JMSException {
@@ -124,7 +124,7 @@ public class ObjectMessageStub implements ObjectMessage {
     }
 
     public long getJMSTimestamp() throws JMSException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return System.currentTimeMillis();
     }
 
     public void setJMSTimestamp(long arg0) throws JMSException {
@@ -144,7 +144,7 @@ public class ObjectMessageStub implements ObjectMessage {
     }
 
     public String getJMSCorrelationID() throws JMSException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "";
     }
 
     public Destination getJMSReplyTo() throws JMSException {
@@ -164,7 +164,7 @@ public class ObjectMessageStub implements ObjectMessage {
     }
 
     public int getJMSDeliveryMode() throws JMSException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return 0;
     }
 
     public void setJMSDeliveryMode(int arg0) throws JMSException {
@@ -180,7 +180,7 @@ public class ObjectMessageStub implements ObjectMessage {
     }
 
     public String getJMSType() throws JMSException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "";
     }
 
     public void setJMSType(String arg0) throws JMSException {

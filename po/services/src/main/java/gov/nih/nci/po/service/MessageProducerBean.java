@@ -82,12 +82,16 @@
  */
 package gov.nih.nci.po.service;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.util.JndiUtils;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.JMSLogRecord;
 import gov.nih.nci.po.data.convert.IdConverterRegistry;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
-import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -101,9 +105,13 @@ import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Properties;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
+
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.util.JndiUtils;
 
 /**
  * EJB that handles publishing changes to people and organizations to
@@ -111,8 +119,10 @@ import java.util.Properties;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class MessageProducerBean implements MessageProducerLocal {
 
+    private static final int JMS_MSG_LEN = 4096;
     /**
      * Name of the topic to which PO publishes.
      */
@@ -121,6 +131,7 @@ public class MessageProducerBean implements MessageProducerLocal {
     private static Properties jndiProps;
     static final String USERNAME_PROPERTY = "jms.publisher.username";
     static final String PASSWORD_PROPERTY = "jms.publisher.password";
+    static final String ANNOUNCEMENT_TYPE = "announcementType";
 
     private final TopicConnectionFactory connectionFactory;
     private final Topic topic;
@@ -175,8 +186,7 @@ public class MessageProducerBean implements MessageProducerLocal {
      */
     interface ObjectMessageAdjusterCallback {
         String CREATE = "CREATE";
-        String UPDATE = "UPDATE";
-        String ANNOUNCEMENT_TYPE = "announcementType";
+        String UPDATE = "UPDATE";        
         void adjust(ObjectMessage msg) throws JMSException;
     }
 
@@ -228,11 +238,35 @@ public class MessageProducerBean implements MessageProducerLocal {
             ObjectMessage msg = session.createObjectMessage(o);
             callback.adjust(msg);
             sender.send(msg);
+            logJmsMessage(msg);
         } finally {
             close(sender);
             close(session);
             close(connection);
         }
+    }
+
+    private void logJmsMessage(ObjectMessage msg) throws JMSException {
+        JMSLogRecord record = new JMSLogRecord();
+        record.setCreatedDate(new Date());
+        record.setMsg(StringUtils.left(toString(msg), JMS_MSG_LEN));
+        PoHibernateUtil.getCurrentSession().save(record);
+    }
+
+    /**
+     * @param msg ObjectMessage
+     * @return String
+     * @throws JMSException JMSException
+     */
+    static String toString(ObjectMessage msg) throws JMSException {
+        return new ToStringBuilder(msg)
+                .append(ANNOUNCEMENT_TYPE,
+                        msg.getStringProperty(ANNOUNCEMENT_TYPE))
+                .append("JMSCorrelationID", msg.getJMSCorrelationID())
+                .append("JMSDeliveryMode", msg.getJMSDeliveryMode())
+                .append("JMSMessageID", msg.getJMSMessageID())                
+                .append("JMSType", msg.getJMSType())
+                .append("Object", msg.getObject()).toString();
     }
 
     private void close(Connection connection) {

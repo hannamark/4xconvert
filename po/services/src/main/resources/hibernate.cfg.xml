@@ -19,6 +19,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.show_sql">false</property>
 
         <mapping class="gov.nih.nci.po.data.bo.CtepJMSLogRecord"/>
+        <mapping class="gov.nih.nci.po.data.bo.JMSLogRecord"/>
         <mapping class="gov.nih.nci.po.data.bo.Address" />
         <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaff" />
         <mapping class="gov.nih.nci.po.data.bo.ClinicalResearchStaffCR" />

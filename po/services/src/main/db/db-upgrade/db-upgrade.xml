@@ -219,4 +219,8 @@
        <comment>Changes to set 'createdBy' for legacy entity</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/4.1/PO-7741.sql"/>       
     </changeSet>
+    <changeSet id="PO-8194" author="krylovd">
+       <comment>Replaced jms_messages table.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/1.0.1/PO-8194.sql"/>       
+    </changeSet>
 </databaseChangeLog>

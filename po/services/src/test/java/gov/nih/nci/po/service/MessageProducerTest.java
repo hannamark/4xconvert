@@ -88,9 +88,11 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
 import gov.nih.nci.po.data.bo.Curatable;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.JMSLogRecord;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.data.convert.IiConverter;
+import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.jms.TopicConnectionFactoryStub;
 import gov.nih.nci.po.util.jms.TopicStub;
 import gov.nih.nci.services.SubscriberUpdateMessage;
@@ -135,6 +137,11 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         } else {
             assertEquals("UPDATE", om.getStringProperty("announcementType"));
         }
+        
+        assertNotNull(
+        ((JMSLogRecord) PoHibernateUtil.getCurrentSession()
+                .createQuery(" from JMSLogRecord order by createdDate desc")
+                .setMaxResults(1).list().get(0)));
     }
 
     public static <T extends Curatable<?, ?>> void assertNoMessageCreated(T id, AbstractCuratableServiceBean<T> service) {

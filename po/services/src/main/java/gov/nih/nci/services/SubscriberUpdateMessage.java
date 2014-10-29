@@ -86,6 +86,8 @@ import gov.nih.nci.iso21090.Ii;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Announcement message for Entity/Role update notifications.
  */
@@ -106,6 +108,11 @@ public class SubscriberUpdateMessage implements Serializable {
      */
     public Ii getId() {
         return id;
+    }
+    
+    @Override
+    public String toString() {     
+        return ToStringBuilder.reflectionToString(id);
     }
 
 }
