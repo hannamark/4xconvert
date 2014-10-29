@@ -12,6 +12,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -42,6 +43,8 @@ import org.hibernate.Session;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class FamilySynchronizationServiceBean implements FamilySynchronizationServiceLocal {
 
+    private static final long PO_WAIT_TIME = 5000L;
+
     private static final Logger LOG = Logger.getLogger(FamilySynchronizationServiceBean.class);
 
     private static final String COMMENT = "Change in PO organization family structure.";
@@ -71,17 +74,41 @@ public class FamilySynchronizationServiceBean implements FamilySynchronizationSe
             LOG.error("Referenced object not found in PO in FamilySynchronizationServiceBean."
                     + "synchronizeFamilyOrganizationRelationship().");
             return;
-        }
+        }        
         if (isDelete(dto)) {
-            Long orgId = IiConverter.convertToLong(dto.getOrgIdentifier());
-            removeFamilyAccessToOrgsSubmitters(orgId);
-            removeFamilyAccessToOrgsTrials(orgId, FamilyServiceBeanLocal.HQL_COMPLETE, 
-                    StudySiteFunctionalCode.LEAD_ORGANIZATION);
-            removeFamilyAccessToOrgsTrials(orgId, FamilyServiceBeanLocal.HQL_ABBR, 
-                    StudySiteFunctionalCode.TREATING_SITE);
+            boolean isOrgBeingNullifiedIntoFamilyMember = isOrgBeingNullifiedIntoFamilyMember(
+                    dto.getOrgIdentifier(), dto.getFamilyIdentifier());
+            if (!isOrgBeingNullifiedIntoFamilyMember) {
+                Long orgId = IiConverter.convertToLong(dto.getOrgIdentifier());
+                removeFamilyAccessToOrgsSubmitters(orgId);
+                removeFamilyAccessToOrgsTrials(orgId,
+                        FamilyServiceBeanLocal.HQL_COMPLETE,
+                        StudySiteFunctionalCode.LEAD_ORGANIZATION);
+                removeFamilyAccessToOrgsTrials(orgId,
+                        FamilyServiceBeanLocal.HQL_ABBR,
+                        StudySiteFunctionalCode.TREATING_SITE);
+            }
         } else {
             addOrgToFamily(IiConverter.convertToLong(dto.getFamilyIdentifier()));
         }
+    }
+
+    private boolean isOrgBeingNullifiedIntoFamilyMember(final Ii orgIdentifier,
+            final Ii familyIdentifier) {
+        // Sleep for a bit just in case to let PO fully commit its transaction,
+        // if any.
+        try {
+            Thread.sleep(PO_WAIT_TIME);
+            final Ii dupId = new PAServiceUtils()
+                    .getDuplicateOrganizationIi(orgIdentifier);
+            if (!ISOUtil.isIiNull(dupId)) {
+                return getAllOrgs(IiConverter.convertToLong(familyIdentifier))
+                        .contains(IiConverter.convertToLong(dupId));
+            }
+        } catch (InterruptedException | PAException e) {
+            LOG.error(e, e);
+        }
+        return false;
     }
 
     private boolean isDelete(FamilyOrganizationRelationshipDTO dto) {
@@ -118,10 +145,11 @@ public class FamilySynchronizationServiceBean implements FamilySynchronizationSe
     /**
      * Remove all family accrual access from family accrual submitters affiliated with given organization.
      * @param orgId the affiliated organization
+     * @param isOrgBeingNullifiedIntoFamilyMember isOrgBeingNullifiedIntoFamilyMember
      * @throws PAException exception
      */
     @SuppressWarnings("unchecked")
-    private void removeFamilyAccessToOrgsSubmitters(Long orgId) throws PAException {
+    private void removeFamilyAccessToOrgsSubmitters(Long orgId) throws PAException {      
         Session session = PaHibernateUtil.getCurrentSession();
         List<RegistryUser> users = registryUserService.findByAffiliatedOrg(orgId);
         for (RegistryUser user : users) {
@@ -159,6 +187,8 @@ public class FamilySynchronizationServiceBean implements FamilySynchronizationSe
         }
         session.flush();
    }
+
+    
 
     /**
      * Remove all family accrual access to trials for which this is lead org.
