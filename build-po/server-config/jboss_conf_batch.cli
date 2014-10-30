@@ -57,6 +57,25 @@ connect
     ] \
 ) {allow-resource-service-restart=true}
 
+
+if (outcome == success) of /subsystem=logging/logger=org.hornetq.core.server:read-resource
+	/subsystem=logging/logger=org.hornetq.core.server:remove
+end-if
+if (outcome == success) of /subsystem=logging/periodic-rotating-file-handler=HORNETQ:read-resource
+	/subsystem=logging/periodic-rotating-file-handler=HORNETQ:remove
+end-if
+
+/subsystem=logging/periodic-rotating-file-handler=HORNETQ:add(file={"path"=>"hornetq.log", "relative-to"=>"jboss.server.log.dir"},suffix=".yyyy-MM-dd")
+/subsystem=logging/periodic-rotating-file-handler=HORNETQ:change-log-level(level="DEBUG")
+/subsystem=logging/periodic-rotating-file-handler=HORNETQ:write-attribute(name="append", value="true")
+/subsystem=logging/periodic-rotating-file-handler=HORNETQ:write-attribute(name="autoflush", value="true")
+/subsystem=logging/periodic-rotating-file-handler=HORNETQ:write-attribute(name="formatter", value="%d{HH:mm:ss,SSS} %s%E%n")
+/subsystem=logging/periodic-rotating-file-handler=HORNETQ:write-attribute(name="suffix", value=".yyyy-MM-dd")
+/subsystem=logging/logger=org.hornetq.core.server:add
+/subsystem=logging/logger=org.hornetq.core.server:write-attribute(name="level", value="DEBUG")
+/subsystem=logging/logger=org.hornetq.core.server:assign-handler(name="HORNETQ")
+/subsystem=logging/logger=org.hornetq.core.server:write-attribute(name="use-parent-handlers", value="false")
+
 reload
 
 if (outcome == success) of /subsystem=datasources/xa-data-source=po-xa-ds:read-resource
