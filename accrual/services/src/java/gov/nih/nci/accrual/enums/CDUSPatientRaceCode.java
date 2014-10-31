@@ -85,12 +85,11 @@ package gov.nih.nci.accrual.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
-
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -150,12 +149,30 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
      * @param cdusCodes the cdus codes
      * @return the list of race codes
      */
-    public static Set<String> getCodesByCdusCodes(List<String> cdusCodes) {
+    public static Set<String> getCodesByCdusCodes(Collection<String> cdusCodes) {
         Set<String> races = new HashSet<String>();
         for (String cdusCode : cdusCodes) {
             CDUSPatientRaceCode raceCode = getByCode(cdusCode);
             if (raceCode != null) {
                 races.add(raceCode.getValue().getCode());
+            }
+        }
+        return races;
+    }
+    
+    /**
+     * Returns a list of race codes corresponding to the given cdus codes.
+     * 
+     * @param enumNames
+     *            the enum names
+     * @return the list of race codes
+     */
+    public static Set<String> getCodesByEnumNames(final String[] enumNames) {
+        Set<String> races = new HashSet<String>();
+        for (String enumName : enumNames) {
+            PatientRaceCode prc = PatientRaceCode.valueOf(enumName);
+            if (prc != null) {
+                races.add(prc.getCode());
             }
         }
         return races;
@@ -190,5 +207,7 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
     public String getCdusCode() {
         return cdusCode;
     }
+
+   
 
 }

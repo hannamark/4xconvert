@@ -94,8 +94,6 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.accrual.util.PaServiceLocator;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -105,7 +103,6 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 
 import java.util.ArrayList;
@@ -116,7 +113,6 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -258,20 +254,7 @@ public class BaseBatchUploadReader {
      * @return the study protocol with the given id or null if no such study exists
      */
     protected StudyProtocolDTO getStudyProtocol(String protocolId, BatchFileErrors errMsg) {
-        StudyProtocolServiceRemote spSvc = PaServiceLocator.getInstance().getStudyProtocolService();
-        StudyProtocolDTO foundStudy = null;
-        Ii protocolIi = IiConverter.convertToAssignedIdentifierIi(protocolId);
-        if (StringUtils.startsWith(protocolId, "NCI")) {
-            foundStudy = spSvc.loadStudyProtocol(protocolIi);
-        }
-        if (foundStudy == null) {
-            //No good way to distinguish if the id is CTEP or DCP so we'll just have to perform a lookup and see
-            //if we get a match.
-            protocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
-            foundStudy = spSvc.loadStudyProtocol(protocolIi);
-            protocolIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
-            foundStudy = foundStudy != null ? foundStudy : spSvc.loadStudyProtocol(protocolIi);
-        }
+        StudyProtocolDTO foundStudy = AccrualUtil.findStudy(protocolId);
         if (foundStudy == null) {
             errMsg.append(new StringBuffer().append("Study " + protocolId + " not found in CTRP."));
         } else {
@@ -284,6 +267,8 @@ public class BaseBatchUploadReader {
         }
         return foundStudy;
     }
+
+    
     
     /**
      * @author Mackson2

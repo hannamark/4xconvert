@@ -87,11 +87,13 @@ import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -459,5 +461,31 @@ public class AccrualUtil {
             }
         }
         return null;
+    }
+    
+    /**
+     * @param protocolId
+     *            protocolId
+     * @return StudyProtocolDTO
+     */
+    public static final StudyProtocolDTO findStudy(String protocolId) {
+        StudyProtocolServiceRemote spSvc = PaServiceLocator.getInstance()
+                .getStudyProtocolService();
+        StudyProtocolDTO foundStudy = null;
+        Ii protocolIi = IiConverter.convertToAssignedIdentifierIi(protocolId);
+        if (StringUtils.startsWith(protocolId, "NCI")) {
+            foundStudy = spSvc.loadStudyProtocol(protocolIi);
+        }
+        if (foundStudy == null) {
+            // No good way to distinguish if the id is CTEP or DCP so we'll just
+            // have to perform a lookup and see
+            // if we get a match.
+            protocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+            foundStudy = spSvc.loadStudyProtocol(protocolIi);
+            protocolIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+            foundStudy = foundStudy != null ? foundStudy : spSvc
+                    .loadStudyProtocol(protocolIi);
+        }
+        return foundStudy;
     }
 }

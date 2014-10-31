@@ -58,6 +58,10 @@ public class MockOrganizationEntityService implements
     public static final Map<String, String> PO_ID_TO_CTEP_ID = new HashMap<String, String>();
 
     public static long CT_GOV_ID; // NOPMD
+    
+    public static long CTEP_ID; // NOPMD
+    
+    public static long DCP_ID; // NOPMD
 
     static {
         reset(1, true);
@@ -91,6 +95,7 @@ public class MockOrganizationEntityService implements
             createOrg(org);
             if (createROs)
                 createRO(org);
+            CTEP_ID = IiConverter.convertToLong(org.getIdentifier());
             PO_ID_TO_CTEP_ID.put(
                     IiConverter.convertToString(org.getIdentifier()), "CTEP");
 
@@ -99,6 +104,7 @@ public class MockOrganizationEntityService implements
             createOrg(org);
             if (createROs)
                 createRO(org);
+            DCP_ID = IiConverter.convertToLong(org.getIdentifier());
             PO_ID_TO_CTEP_ID.put(
                     IiConverter.convertToString(org.getIdentifier()), "DCP");
 

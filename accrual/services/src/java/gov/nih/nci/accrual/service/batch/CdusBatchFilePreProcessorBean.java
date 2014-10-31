@@ -32,6 +32,8 @@ public class CdusBatchFilePreProcessorBean implements
     private final List<CdusBatchFilePreProcessor> preprocessorsChain = new ArrayList<CdusBatchFilePreProcessor>();
     { //NOPMD
         preprocessorsChain.add(new DuplicateSubjectLinePreprocessor());
+        preprocessorsChain
+                .add(new DuplicateSubjectAcrossSitesLinePreprocessor());
     }
 
     /*

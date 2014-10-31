@@ -1,5 +1,14 @@
 package gov.nih.nci.accrual.accweb.integration;
 
+import gov.nih.nci.accrual.webservices.types.CountryISO31661Alpha3Code;
+import gov.nih.nci.accrual.webservices.types.DiseaseCode;
+import gov.nih.nci.accrual.webservices.types.Ethnicity;
+import gov.nih.nci.accrual.webservices.types.Gender;
+import gov.nih.nci.accrual.webservices.types.MethodOfPayment;
+import gov.nih.nci.accrual.webservices.types.ObjectFactory;
+import gov.nih.nci.accrual.webservices.types.Race;
+import gov.nih.nci.accrual.webservices.types.StudySubject;
+import gov.nih.nci.accrual.webservices.types.StudySubjects;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 import gov.nih.nci.pa.webservices.test.integration.AbstractRestServiceTest;
 import gov.nih.nci.pa.webservices.types.ParticipatingSite;
@@ -10,23 +19,35 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.namespace.QName;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -122,10 +143,10 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         submitBatchFile(batchFile);
         pause(10000);
         server.stop();
-        
+
         String error = getLatestAccrualCollectionMessage();
         verifyErrorMessageContainsDupePatientInfo(error);
-        
+
         assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
         SmtpMessage email = (SmtpMessage) emailIter.next();
@@ -133,9 +154,173 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         assertTrue(error.contains("CTRP processed your file successfully"));
         assertTrue(error.contains("Number of Subjects Registered: </b> 1"));
         verifyErrorMessageContainsDupePatientInfo(error);
-       
+
         verifySu002IsOnTrial(rConf);
 
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testDuplicateSubjectHandlingAcrossSitesPO8110()
+            throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        TrialRegistrationConfirmation rConf = setupTrialWithTwoSitesAndSu001Subject();
+
+        File batchFile = writeBatchFileWithDuplicateSubjectOnAnotherSite(rConf);
+
+        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        submitBatchFile(batchFile);
+        pause(10000);
+        server.stop();
+
+        String error = getLatestAccrualCollectionMessage();
+        verifySubjectOnOtherSiteError(error);
+
+        assertEquals(1, server.getReceivedEmailSize());
+        Iterator emailIter = server.getReceivedEmail();
+        SmtpMessage email = (SmtpMessage) emailIter.next();
+        error = email.getBody();
+        assertTrue(error.contains("CTRP processed your file successfully"));
+        assertTrue(error.contains("Number of Subjects Registered: </b> 1"));
+        verifySubjectOnOtherSiteError(error);
+
+        verifySu002IsOnTrial(rConf);
+
+    }
+
+    /**
+     * @return
+     * @throws JAXBException
+     * @throws SAXException
+     * @throws SQLException
+     * @throws ClientProtocolException
+     * @throws ParseException
+     * @throws IOException
+     * @throws NumberFormatException
+     * @throws DatatypeConfigurationException
+     * @throws ParseException
+     * @throws UnsupportedEncodingException
+     */
+    private TrialRegistrationConfirmation setupTrialWithTwoSitesAndSu001Subject()
+            throws JAXBException, SAXException, SQLException,
+            ClientProtocolException, ParseException, IOException,
+            NumberFormatException, DatatypeConfigurationException,
+            java.text.ParseException, UnsupportedEncodingException {
+        // Register trial, add a site, and add a patient.
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+
+        // Now add a second site.
+        upd = readParticipatingSiteFromFile("/integration_ps_accruing_ctep_add.xml");
+        response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long site2ID = Long.parseLong(EntityUtils.toString(
+                response.getEntity(), "utf-8"));
+
+        grantAccrualAccess("submitter-ci", siteID);
+        grantAccrualAccess("submitter-ci", site2ID);
+
+        // Add a subject that will serve as a potential duplicate
+        StudySubjects subjects = new ObjectFactory().createStudySubjects();
+        StudySubject subject = createSubject("SU001");
+        subjects.getStudySubject().add(subject);
+        submitSubjects(subjects, "/sites/" + siteID);
+        return rConf;
+    }
+
+    /**
+     * @param error
+     */
+    private void verifySubjectOnOtherSiteError(String error) {
+        assertTrue(error
+                .contains("The following lines contain Patient IDs already in use by Patients registered on a different site for "
+                        + "this study with matching Gender, Date of Birth, Race, and Ethnicity. "
+                        + "Patients were not processed:"));
+        assertTrue(error
+                .contains("Line 2: Patient ID SU001 is already registered at "
+                        + "National Cancer Institute Division of Cancer Prevention, Site PO ID: "
+                        + 3 + ", Site CTEP ID: DCP"));
+    }
+
+    /**
+     * @param subjects
+     * @param serviceURL
+     * @throws JAXBException
+     * @throws UnsupportedEncodingException
+     * @throws IOException
+     * @throws ClientProtocolException
+     */
+    protected void submitSubjects(StudySubjects subjects, String serviceURL)
+            throws JAXBException, UnsupportedEncodingException, IOException,
+            ClientProtocolException {
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/accrual-services";
+        String xml = marshall(subjects);
+        StringEntity entity = new StringEntity(xml);
+        String url = baseURL + serviceURL;
+        LOG.info("Hitting " + url);
+        LOG.info("Payload: " + xml);
+
+        HttpPut req = new HttpPut(url);
+        req.addHeader("Accept", TEXT_PLAIN);
+        req.addHeader("Content-Type", APPLICATION_XML);
+        req.setEntity(entity);
+
+        HttpResponse response = httpClient.execute(req);
+        LOG.info("Response code: " + getReponseCode(response));
+        assertEquals(200, getReponseCode(response));
+        EntityUtils.consumeQuietly(response.getEntity());
+    }
+
+    private String marshall(StudySubjects subjects) throws JAXBException {
+        JAXBContext jc = JAXBContext.newInstance(ObjectFactory.class);
+        Marshaller m = jc.createMarshaller();
+        StringWriter out = new StringWriter();
+        m.marshal(new JAXBElement<StudySubjects>(new QName(
+                "gov.nih.nci.accrual.webservices.types", "studySubjects"),
+                StudySubjects.class, subjects), out);
+        return out.toString();
+    }
+
+    private StudySubject createSubject(String id)
+            throws DatatypeConfigurationException, java.text.ParseException {
+        StudySubject ss = new StudySubject();
+
+        final GregorianCalendar gc = new GregorianCalendar();
+        gc.setTime(DateUtils.parseDate("01/01/2010",
+                new String[] { "MM/dd/yyyy" }));
+        ss.setBirthDate(DatatypeFactory.newInstance().newXMLGregorianCalendar(
+                gc));
+
+        ss.setCountry(CountryISO31661Alpha3Code.USA);
+
+        final DiseaseCode disease = new DiseaseCode();
+        disease.setCodeSystem("ICD10");
+        disease.setValue("B46.9");
+        ss.setDisease(disease);
+
+        ss.getRace().add(Race.AMERICAN_INDIAN_OR_ALASKA_NATIVE);
+        ss.getRace().add(Race.WHITE);
+        ss.setEthnicity(Ethnicity.HISPANIC_OR_LATINO);
+        ss.setGender(Gender.FEMALE);
+        ss.setIdentifier(id);
+        ss.setMethodOfPayment(MethodOfPayment.MEDICAID_AND_MEDICARE);
+        gc.setTime(DateUtils.parseDate("01/01/2014",
+                new String[] { "MM/dd/yyyy" }));
+        ss.setRegistrationDate(DatatypeFactory.newInstance()
+                .newXMLGregorianCalendar(gc));
+        ss.setZipCode("20171");
+
+        return ss;
     }
 
     /**
@@ -145,10 +330,8 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         assertTrue(error
                 .contains("The following lines contain duplicate subject data and were not processed into the system. "
                         + "Please remove the duplicate lines and resubmit the file"));
-        assertTrue(error
-                .contains("Line 2, Site ID: 3, Subject ID: SU001"));
-        assertTrue(error
-                .contains("Line 3, Site ID: 3, Subject ID: SU001"));
+        assertTrue(error.contains("Line 2, Site ID: 3, Subject ID: SU001"));
+        assertTrue(error.contains("Line 3, Site ID: 3, Subject ID: SU001"));
     }
 
     /**
@@ -164,13 +347,22 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                         batchFile,
                         "UTF-8",
                         Arrays.asList(new String[] {
-                        "COLLECTIONS,"+rConf.getNciTrialID()+",,,,,,,,,",
-                        "PATIENTS,"+rConf.getNciTrialID()+",SU001,77058,,193106,Female,Not Hispanic or Latino,,20110513,, 3 ,,,,,,,,,,B46.9,,",
-                        "PATIENTS, "+rConf.getNciTrialID()+", SU001 ,33908,,195306,Female,Not Hispanic or Latino,,20110930,,3,,,,,,,,,,B46.9,,",
-                        "PATIENTS,"+rConf.getNciTrialID()+",SU002,33908,,195306,Female,Not Hispanic or Latino,,20110930,,3,,,,,,,,,,B46.9,,",                                
-                        "", 
-                        "PATIENT_RACES,"+rConf.getNciTrialID()+",SU001,White",
-                        "PATIENT_RACES,"+rConf.getNciTrialID()+",SU002,Asian" }));
+                                "COLLECTIONS," + rConf.getNciTrialID()
+                                        + ",,,,,,,,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU001,77058,,193106,Female,Not Hispanic or Latino,,20110513,, 3 ,,,,,,,,,,B46.9,,",
+                                "PATIENTS, "
+                                        + rConf.getNciTrialID()
+                                        + ", SU001 ,33908,,195306,Female,Not Hispanic or Latino,,20110930,,3,,,,,,,,,,B46.9,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU002,33908,,195306,Female,Not Hispanic or Latino,,20110930,,3,,,,,,,,,,B46.9,,",
+                                "",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",SU001,White",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",SU002,Asian" }));
     }
 
     /**
@@ -196,7 +388,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         grantAccrualAccess("submitter-ci", siteID);
         return rConf;
     }
-    
+
     @SuppressWarnings("rawtypes")
     @Test
     public void testDuplicateSubjectHandlingZipUploadPO8106() throws Exception {
@@ -215,37 +407,37 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                 .randomUUID().toString() + ".txt");
         writeValidBatchFileButWithDuplicatePatients(rConf, batchFile1);
         writeInvalidBatchFileWithDuplicatePatients(rConf, batchFile2);
-        
+
         FileOutputStream fos = new FileOutputStream(zip);
-        ZipOutputStream zos = new ZipOutputStream(fos);        
+        ZipOutputStream zos = new ZipOutputStream(fos);
         addToZipFile(batchFile1, zos);
-        addToZipFile(batchFile2, zos);        
+        addToZipFile(batchFile2, zos);
         zos.close();
         fos.close();
-        
+
         SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
         submitBatchFile(zip);
         pause(10000);
         server.stop();
-        
+
         assertEquals(2, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
         SmtpMessage email1 = (SmtpMessage) emailIter.next();
-        String msg1 = email1.getBody();        
+        String msg1 = email1.getBody();
         SmtpMessage email2 = (SmtpMessage) emailIter.next();
         String msg2 = email2.getBody();
-        
+
         String success = msg1;
         String error = msg2;
         if (msg2.contains("CTRP processed your file successfully")) {
             success = msg2;
             error = msg1;
         }
-        
+
         assertTrue(success.contains("CTRP processed your file successfully"));
         assertTrue(success.contains("Number of Subjects Registered: </b> 1"));
         verifyErrorMessageContainsDupePatientInfo(success);
-        
+
         assertTrue(error
                 .contains("Unfortunately, the submission failed due to the following errors"));
         assertTrue(error
@@ -254,9 +446,112 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         verifySu002IsOnTrial(rConf);
 
     }
-    
-   
-    
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testDuplicateSubjectHandlingAcrossSitesWithErrorsPO8110()
+            throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        TrialRegistrationConfirmation rConf = setupTrialWithTwoSitesAndSu001Subject();
+
+        File batchFile = writeInvalidBatchFileWithDuplicateSubjectOnAnotherSite(rConf);
+
+        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        submitBatchFile(batchFile);
+        pause(10000);
+        server.stop();
+
+        String error = getLatestAccrualCollectionMessage();
+        verifySubjectOnOtherSiteError(error);
+
+        assertEquals(1, server.getReceivedEmailSize());
+        Iterator emailIter = server.getReceivedEmail();
+        SmtpMessage email = (SmtpMessage) emailIter.next();
+        error = email.getBody();
+        assertTrue(error
+                .contains("Unfortunately, the submission failed due to the following errors"));
+        assertTrue(error
+                .contains("Patient race code is not valid for patient ID SU002 at line 7"));
+        verifySubjectOnOtherSiteError(error);
+
+        clickAndWait("link=Trial Search");
+        clickAndWait("link=" + rConf.getNciTrialID());
+        assertFalse(selenium.isElementPresent("xpath=//a[text()='SU002']"));
+
+    }
+
+    /**
+     * @param rConf
+     * @return
+     * @throws IOException
+     */
+    private File writeInvalidBatchFileWithDuplicateSubjectOnAnotherSite(
+            TrialRegistrationConfirmation rConf) throws IOException {
+        // Now submit a batch file with SU001 duplicate but on a different site.
+        File batchFile = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
+                .toString() + ".txt");
+        FileUtils
+                .writeLines(
+                        batchFile,
+                        "UTF-8",
+                        Arrays.asList(new String[] {
+                                "COLLECTIONS," + rConf.getNciTrialID()
+                                        + ",,,,,,,,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU001,77058,,201001,Female,Hispanic or Latino,,20110513,, 2 ,,,,,,,,,,B46.9,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU002,33908,,195306,Female,Not Hispanic or Latino,,20110930,,2,,,,,,,,,,B46.9,,",
+                                "",
+                                "PATIENT_RACES,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU001,American Indian or Alaska Native",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",SU001,White",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",SU002,Black" }));
+        return batchFile;
+    }
+
+    /**
+     * @param rConf
+     * @return
+     * @throws IOException
+     */
+    private File writeBatchFileWithDuplicateSubjectOnAnotherSite(
+            TrialRegistrationConfirmation rConf) throws IOException {
+        File batchFile = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
+                .toString() + ".txt");
+        FileUtils
+                .writeLines(
+                        batchFile,
+                        "UTF-8",
+                        Arrays.asList(new String[] {
+                                "COLLECTIONS," + rConf.getNciTrialID()
+                                        + ",,,,,,,,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU001,77058,,201001,Female,Hispanic or Latino,,20110513,, 2 ,,,,,,,,,,B46.9,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU002,33908,,195306,Female,Not Hispanic or Latino,,20110930,,2,,,,,,,,,,B46.9,,",
+                                "",
+                                "PATIENT_RACES,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU001,American Indian or Alaska Native",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",SU001,White",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",SU002,Asian" }));
+        return batchFile;
+    }
+
     @SuppressWarnings("rawtypes")
     @Test
     public void testDuplicateSubjectHandlingWithErrorsPO8106() throws Exception {
@@ -275,10 +570,10 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         submitBatchFile(batchFile);
         pause(10000);
         server.stop();
-        
+
         String error = getLatestAccrualCollectionMessage();
         verifyErrorMessageContainsDupePatientInfo(error);
-        
+
         assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
         SmtpMessage email = (SmtpMessage) emailIter.next();
@@ -309,13 +604,22 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                         batchFile,
                         "UTF-8",
                         Arrays.asList(new String[] {
-                        "COLLECTIONS,"+rConf.getNciTrialID()+",,,,,,,,,",
-                        "PATIENTS,"+rConf.getNciTrialID()+",SU001,77058,,193106,Female,Not Hispanic or Latino,,20110513,, 3 ,,,,,,,,,,B46.9,,",
-                        "PATIENTS, "+rConf.getNciTrialID()+", SU001 ,33908,,195306,Female,Not Hispanic or Latino,,20110930,,3,,,,,,,,,,B46.9,,",
-                        "PATIENTS,"+rConf.getNciTrialID()+",SU002,33908,,195306,Female,Not Hispanic or Latino,,20110930,,3,,,,,,,,,,B46.9,,",                                
-                        "", 
-                        "PATIENT_RACES,"+rConf.getNciTrialID()+",SU001,Black",
-                        "PATIENT_RACES,"+rConf.getNciTrialID()+",SU002,Black" }));
+                                "COLLECTIONS," + rConf.getNciTrialID()
+                                        + ",,,,,,,,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU001,77058,,193106,Female,Not Hispanic or Latino,,20110513,, 3 ,,,,,,,,,,B46.9,,",
+                                "PATIENTS, "
+                                        + rConf.getNciTrialID()
+                                        + ", SU001 ,33908,,195306,Female,Not Hispanic or Latino,,20110930,,3,,,,,,,,,,B46.9,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",SU002,33908,,195306,Female,Not Hispanic or Latino,,20110930,,3,,,,,,,,,,B46.9,,",
+                                "",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",SU001,Black",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",SU002,Black" }));
     }
 
     /**
@@ -390,7 +694,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         clickAndWait("id=acceptDisclaimer");
 
     }
-    
+
     private static void addToZipFile(File file, ZipOutputStream zos)
             throws FileNotFoundException, IOException {
         FileInputStream fis = new FileInputStream(file);
