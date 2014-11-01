@@ -17,6 +17,7 @@
     <property name="java.major.version" value="1.7"/>
     <property name="java.encoding" value="utf-8"/>
 
+	<property name="webservices.dir" value="${software.dir}/accrual/webservices"/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="web.report.dir" value="${software.dir}/target/accrual/reports/accrual-web"/>
@@ -173,6 +174,9 @@
 	        <ant target="compile-tests" dir="${pa.dir}/pa-webservices" inheritAll="false">
 	              <property name="tier" value="${tier}"/>
 	        </ant>
+            <ant target="compile" dir="${webservices.dir}" inheritAll="false">
+                  <property name="tier" value="${tier}"/>
+            </ant>		
 		    <javac destdir="${web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
 		               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
 	            <src>                
@@ -185,6 +189,7 @@
 	                <path refid="selenium.classpath"/>
 	                <pathelement location="${pa.dir}/pa-webservices/target/test-classes"/>
 	                <pathelement location="${pa.dir}/pa-webservices/target/classes"/>
+	            	<pathelement location="${webservices.dir}/target/classes"/>
 	            </classpath>
 	        </javac>       
 	</target>
@@ -268,9 +273,10 @@
                 <path location="${web.build.testOutputDir}"/>
                 <path refid="selenium.classpath"/>
                 <path refid="compile.classpath"/>
-                <path refid="test.classpath"/>
+                <path refid="test.classpath"/>            	
                 <path location="${pa.dir}/pa-webservices/target/test-classes"/>
                 <path location="${pa.dir}/pa-webservices/target/classes"/>
+            	<path location="${webservices.dir}/target/classes"/>
             </classpath>
             <batchtest todir="${web.test.reports}">
             	 <fileset dir="${web.build.integrationTestSrcDir}">
