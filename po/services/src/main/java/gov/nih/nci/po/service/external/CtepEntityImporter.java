@@ -82,11 +82,28 @@
  */
 package gov.nih.nci.po.service.external;
 
+import static org.apache.commons.lang3.StringUtils.left;
+import gov.nih.nci.common.exceptions.CTEPEntException;
+import gov.nih.nci.coppa.domain.Organization;
 import gov.nih.nci.coppa.services.OrganizationService;
 import gov.nih.nci.coppa.services.PersonService;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.po.data.bo.CtepRemoteCallRecord;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationDTO;
+
+import java.util.Date;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+
+import org.apache.commons.lang3.builder.RecursiveToStringStyle;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -98,6 +115,8 @@ public class CtepEntityImporter {
 
     private OrganizationService ctepOrgService;
     private PersonService ctepPersonService;
+    
+    private static final Logger LOG = Logger.getLogger(CtepEntityImporter.class);
 
     /**
      * Constructor.
@@ -141,7 +160,7 @@ public class CtepEntityImporter {
      * @return the ctepOrgService
      */
     protected OrganizationService getCtepOrgService() {
-        return this.ctepOrgService;
+        return new LoggingOrganizationService(this.ctepOrgService); // NOPMD 
     }
 
     /**
@@ -150,4 +169,122 @@ public class CtepEntityImporter {
     protected void setCtepPersonService(PersonService ctepPersonService) {
         this.ctepPersonService = ctepPersonService;
     }
+    
+    /**
+     * @author dkrylov
+     * 
+     */
+    private static final class LoggingOrganizationService implements
+            OrganizationService {
+        private static final int L_8192 = 8192;
+        private static final int L_1024 = 1024;
+
+        /**
+         * @param service
+         */
+        private LoggingOrganizationService(OrganizationService service) {
+            this.service = service;
+        }
+
+        private final OrganizationService service;
+
+        /**
+         * @param arg0
+         * @return
+         * @throws CTEPEntException
+         * @see gov.nih.nci.coppa.services.OrganizationService#getHealthCareFacility(gov.nih.nci.iso21090.Ii)
+         */
+        public HealthCareFacilityDTO getHealthCareFacility(final Ii arg0)
+                throws CTEPEntException {
+            try {
+                final HealthCareFacilityDTO result = service
+                        .getHealthCareFacility(arg0);
+                log("getHealthCareFacility", arg0, result);
+                return result;
+            } catch (CTEPEntException e) {
+                log("getHealthCareFacility", arg0, e.getMessage());
+                throw e;
+            }
+        }
+
+        private void log(final String op, final Ii arg, final Object result) {
+            try {
+                CtepRemoteCallRecord record = new CtepRemoteCallRecord();
+                record.setCreatedDate(new Date());
+                record.setOperation(op);
+                record.setArguments(left(
+                        ToStringBuilder.reflectionToString(arg), L_1024));
+                record.setResult(left(new ReflectionToStringBuilder(result,
+                        new RecursiveToStringStyle()).toString(), L_8192));
+                PoRegistry.getGenericService().saveInNewTx(record);
+            } catch (Exception e) {
+                LOG.error(e, e);
+            }
+        }
+
+        /**
+         * @param arg0
+         * @return
+         * @throws CTEPEntException
+         * @see gov.nih.nci.coppa.services.OrganizationService#getOrganizationById(gov.nih.nci.iso21090.Ii)
+         */
+        public OrganizationDTO getOrganizationById(Ii arg0)
+                throws CTEPEntException {
+            try {
+                final OrganizationDTO result = service
+                        .getOrganizationById(arg0);
+                log("getOrganizationById", arg0,
+                        result);
+                return result;
+            } catch (CTEPEntException e) {
+                log("getOrganizationById", arg0, e.getMessage());
+                throw e;
+            }
+        }
+
+        /**
+         * @param arg0
+         * @return
+         * @throws CTEPEntException
+         * @see gov.nih.nci.coppa.services.OrganizationService#
+         * getOrganizationsByCriteria(gov.nih.nci.coppa.domain.Organization)
+         */
+        public List<Organization> getOrganizationsByCriteria(Organization arg0)
+                throws CTEPEntException {
+            return service.getOrganizationsByCriteria(arg0);
+        }
+
+        /**
+         * @param arg0
+         * @return
+         * @throws CTEPEntException
+         * @see gov.nih.nci.coppa.services.OrganizationService#
+         * getOrganizationsByCriteria(gov.nih.nci.services.organization.OrganizationDTO)
+         */
+        public List<OrganizationDTO> getOrganizationsByCriteria(
+                OrganizationDTO arg0) throws CTEPEntException {
+            return service.getOrganizationsByCriteria(arg0);
+        }
+
+        /**
+         * @param arg0
+         * @return
+         * @throws CTEPEntException
+         * @see gov.nih.nci.coppa.services.OrganizationService#getResearchOrganization(gov.nih.nci.iso21090.Ii)
+         */
+        public ResearchOrganizationDTO getResearchOrganization(Ii arg0)
+                throws CTEPEntException {
+            try {
+                final ResearchOrganizationDTO result = service
+                        .getResearchOrganization(arg0);
+                log("getResearchOrganization", arg0, result);
+                return result;
+            } catch (CTEPEntException e) {
+                log("getResearchOrganization", arg0, e.getMessage());
+                throw e;
+            }
+
+        }
+    }
+    
 }

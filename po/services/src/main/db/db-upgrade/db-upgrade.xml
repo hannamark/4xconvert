@@ -223,4 +223,8 @@
        <comment>Replaced jms_messages table.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/1.0.1/PO-8194.sql"/>       
     </changeSet>
+    <changeSet id="PO-8237" author="krylovd">
+       <comment>Added ctepremotecallsrecord table.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/1.0.1/PO-8237.sql"/>       
+    </changeSet>    
 </databaseChangeLog>

@@ -126,4 +126,11 @@ public class GenericServiceStub implements GenericServiceLocal {
      */
     public void refreshObject(PersistentObject o) {
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void saveInNewTx(PersistentObject o) {               
+    }
 }

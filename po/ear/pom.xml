@@ -509,6 +509,11 @@
                             <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
+                            <groupId>org.apache.commons</groupId>
+                            <artifactId>commons-lang3</artifactId>
+                            <includeInApplicationXml>false</includeInApplicationXml>
+                        </jarModule>                        
+                        <jarModule>
                             <groupId>commons-discovery</groupId>
                             <artifactId>commons-discovery</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>

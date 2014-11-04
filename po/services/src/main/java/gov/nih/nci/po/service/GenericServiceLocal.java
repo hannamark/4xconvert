@@ -100,4 +100,12 @@ public interface GenericServiceLocal extends GenericDataService {
      * @param o the object to refresh.
      */
     void refreshObject(PersistentObject o);
+    
+    /**
+     * Saves the given entity in a new transaction.
+     * 
+     * @param o
+     *            the object
+     */
+    void saveInNewTx(PersistentObject o);
 }

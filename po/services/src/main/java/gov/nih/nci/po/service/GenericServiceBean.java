@@ -112,4 +112,14 @@ public class GenericServiceBean implements GenericServiceLocal {
     public void refreshObject(PersistentObject o) {
         PoHibernateUtil.getCurrentSession().refresh(o);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void saveInNewTx(PersistentObject o) {
+        PoHibernateUtil.getCurrentSession().save(o);
+        PoHibernateUtil.getCurrentSession().flush();
+    }
 }
