@@ -67,6 +67,14 @@
     <build>
         <pluginManagement>
             <plugins>
+ 		       <plugin>
+		          <groupId>org.apache.maven.plugins</groupId>
+		          <artifactId>maven-release-plugin</artifactId>
+		          <version>2.5.1</version>
+		          <configuration>
+                    <tagBase>https://ncisvn.nci.nih.gov/svn/coppa/tags</tagBase>
+                  </configuration>
+		       </plugin>            
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.3.2</version>
