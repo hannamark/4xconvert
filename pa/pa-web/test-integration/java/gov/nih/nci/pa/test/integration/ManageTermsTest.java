@@ -470,7 +470,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         List<WebElement> childTerms = driver.findElement(By.xpath("//select[@id='childTerms']")).findElements(
                 By.tagName("option"));
         assertEquals(1, childTerms.size());
-        assertEquals("C9133: adenosquamous cell lung cancer", childTerms.get(0).getText());
+        assertEquals("C4878: lung cancer", childTerms.get(0).getText());
 
         // Remove child term
         // Remove does not work on phanton Js driver, so test only if not using phanton driver

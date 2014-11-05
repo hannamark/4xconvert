@@ -83,6 +83,8 @@
 package gov.nih.nci.pa.noniso.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Michael Visee
@@ -95,7 +97,8 @@ public class PDQDiseaseNode implements Serializable {
     private String name;
     private Long parentId;
     private Boolean hasChildren;
-    private String [] alterNames;
+    private List<String> alterNames = new ArrayList<String>();
+    private String ncitId;
 
     /**
      * @return the id
@@ -157,7 +160,7 @@ public class PDQDiseaseNode implements Serializable {
      * Get synonyms
      * @return alterNames
      */
-    public String[] getAlterNames() {
+    public List<String> getAlterNames() {
         return alterNames;
     }
 
@@ -165,9 +168,22 @@ public class PDQDiseaseNode implements Serializable {
      * Set synonyms
      * @param alterNames alterNames
      */
-    public void setAlterNames(String[] alterNames) {
+    public void setAlterNames(List<String> alterNames) {
         this.alterNames = alterNames;
     }
-    
+
+    /**
+     * @return the ncitId
+     */
+    public String getNcitId() {
+        return ncitId;
+    }
+
+    /**
+     * @param ncitId the ncitId to set
+     */
+    public void setNcitId(String ncitId) {
+        this.ncitId = ncitId;
+    }
     
 }

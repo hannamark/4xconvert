@@ -123,10 +123,10 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  * @author asharma
  */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@Interceptors({ RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
 public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQDisease, PDQDiseaseConverter>
-    implements PDQDiseaseServiceLocal {
+        implements PDQDiseaseServiceLocal {
 
     /**
      * {@inheritDoc}
@@ -136,12 +136,12 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
     public List<PDQDiseaseDTO> search(PDQDiseaseDTO searchCriteria) throws PAException {
         checkSearchCriteria(searchCriteria);
 
-        boolean includeSynonyms =
-                BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()));
+        boolean includeSynonyms = BooleanUtils
+                .toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()));
         boolean exactMatch = BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()));
         String preferredName = StConverter.convertToString(searchCriteria.getPreferredName());
         String ntTermIdentifier = StConverter.convertToString(searchCriteria.getNtTermIdentifier());
-        
+
         PDQDisease criteria = new PDQDisease();
         if (includeSynonyms) {
             criteria.setDiseaseAlternames(new ArrayList<PDQDiseaseAltername>());
@@ -150,12 +150,11 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
             criteria.getDiseaseAlternames().add(alt);
         }
 
-        
         criteria.setStatusCode(ActiveInactivePendingCode.ACTIVE);
         if (StringUtils.isNotEmpty(ntTermIdentifier)) {
             criteria.setNtTermIdentifier(ntTermIdentifier);
         }
-        
+
         if (StringUtils.isNotEmpty(preferredName)) {
             if (exactMatch) {
                 preferredName = stringToSearch(preferredName);
@@ -164,9 +163,8 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
             }
         }
 
-        PageSortParams<PDQDisease> params =
-                new PageSortParams<PDQDisease>(PAConstants.MAX_SEARCH_RESULTS, 0,
-                       PDQDiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
+        PageSortParams<PDQDisease> params = new PageSortParams<PDQDisease>(PAConstants.MAX_SEARCH_RESULTS, 0,
+                PDQDiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
         PDQDiseaseBeanSearchCriteria<PDQDisease> crit;
         if (StringUtils.isNotEmpty(preferredName)) {
             crit = new PDQDiseaseBeanSearchCriteria<PDQDisease>(criteria, includeSynonyms, exactMatch, preferredName);
@@ -206,13 +204,14 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
     /**
      * String to search.
      *
-     * @param searchTerm the search term
+     * @param searchTerm
+     *            the search term
      *
      * @return the string
      */
     private String stringToSearch(String searchTerm) {
         String term = "";
-        //checks if wildcard is present within the string not at extremities
+        // checks if wildcard is present within the string not at extremities
         Pattern pat = Pattern.compile("^[^*].*\\**.*[^*]$");
         Matcher mat = pat.matcher(searchTerm);
 
@@ -242,17 +241,17 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
             if (CollectionUtils.isEmpty(disease.getDiseaseParents())) {
                 tree.add(getNode(disease, null, !CollectionUtils.isEmpty(disease.getDiseaseChildren())));
             } else {
-                // Get unique ACTIVE parent ids, there could be duplicates in the DB
+                // Get unique ACTIVE parent ids, there could be duplicates in
+                // the DB
                 HashSet<Long> parentIds = new HashSet<Long>();
                 for (PDQDiseaseParent parent : disease.getDiseaseParents()) {
                     if (parent.getStatusCode() == ActiveInactiveCode.ACTIVE) {
                         parentIds.add(parent.getParentDisease().getId());
                     }
                 }
-                
-                for (Long parentId: parentIds) {
-                    tree.add(getNode(disease, parentId,
-                            !CollectionUtils.isEmpty(disease.getDiseaseChildren())));
+
+                for (Long parentId : parentIds) {
+                    tree.add(getNode(disease, parentId, !CollectionUtils.isEmpty(disease.getDiseaseChildren())));
                 }
             }
         }
@@ -265,14 +264,14 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         node.setName(disease.getPreferredName());
         node.setParentId(parentId);
         node.setHasChildren(hasChildren);
+        node.setNcitId(disease.getNtTermIdentifier());
         // Set alternate names
         List<PDQDiseaseAltername> alts = disease.getDiseaseAlternames();
-        if (alts != null &&  !alts.isEmpty()) {
-            String[] altNames = new String [alts.size()];
+        if (alts != null && !alts.isEmpty()) {
+          
             for (int i = 0; i < alts.size(); i++) {
-                altNames[i] = alts.get(i).getAlternateName().toLowerCase();
+                node.getAlterNames().add(alts.get(i).getAlternateName());
             }
-            node.setAlterNames(altNames);
         }
         return node;
     }
@@ -294,6 +293,60 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
                 result.add(builder.toString());
             }
         }
+        return result;
+    }
+
+    /**
+     * Search diseases and return weighted results 
+     * @param searchCriteria searchCriteria
+     * @return matched diseases
+     */
+    public List<PDQDiseaseNode> weightedSearchDisease(PDQDiseaseDTO searchCriteria) {
+        List<PDQDiseaseNode> result = new ArrayList<PDQDiseaseNode>();
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query;
+
+        boolean searchSyn = Boolean.valueOf(searchCriteria.getIncludeSynonym().getValue());
+        String searchString = searchCriteria.getPreferredName().getValue();
+        if (!searchSyn) {
+            query = session.createQuery(
+                    "select distinct pd from PDQDisease pd where lower(pd.preferredName) like "
+                    + ":name order by pd.preferredName")
+                    .setString("name", "%" + searchString.toLowerCase() + "%");
+        } else {
+            query = session
+                    .createQuery(
+                            "select distinct pd from PDQDisease pd  where lower(pd.preferredName) like :name "
+                            + "or lower(pd.diseaseAlternames.alternateName) like :name order by pd.preferredName")
+                    .setString("name", "%" + searchString.toLowerCase() + "%");
+        }
+
+        for (Iterator iterator = query.list().iterator(); iterator.hasNext();) {
+            boolean exactMatch = false;
+            PDQDisease d = (PDQDisease) iterator.next();
+            PDQDiseaseNode dn = new PDQDiseaseNode();
+            dn.setId(d.getId());
+            dn.setName(d.getPreferredName());
+            if (dn.getName().equalsIgnoreCase(searchString)) {
+                exactMatch = true;
+            }
+            dn.setNcitId(d.getNtTermIdentifier());
+            if (searchSyn) {
+                for (Iterator iterator2 = d.getDiseaseAlternames().iterator(); iterator2.hasNext();) {
+                    PDQDiseaseAltername altName = (PDQDiseaseAltername) iterator2.next();
+                    if (!exactMatch && altName.getAlternateName().equalsIgnoreCase(searchString)) {
+                        exactMatch = true;
+                    }
+                    dn.getAlterNames().add(altName.getAlternateName());
+                }
+            }
+            if (exactMatch) {
+                result.add(0, dn);
+            } else {
+                result.add(dn);
+            }
+        }
+
         return result;
     }
 }

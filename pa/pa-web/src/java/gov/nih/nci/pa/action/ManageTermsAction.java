@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -33,6 +34,8 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.json.JSONException;
+import org.apache.struts2.json.JSONUtil;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -79,6 +82,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private boolean importTerm = false;
 
     private InputStream ajaxResponseStream;
+    
+    private String diseaseSearchTerm;
+    private boolean searchSynonyms = false;
 
     /**
      * {@inheritDoc}
@@ -534,7 +540,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, lexe.getLocalizedMessage());
             return DISEASE;
         }
-        PopUpDisAction.getDiseaseTreeCache().removeAll();
         return SUCCESS;
     }
 
@@ -667,7 +672,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             return DISEASE;
         }
-        PopUpDisAction.getDiseaseTreeCache().removeAll();
         return SUCCESS;
     }
 
@@ -857,6 +861,26 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         return AJAX_RESPONSE;
     }
     
+
+
+    /** 
+     * Search disease asynchronously and return JSON result 
+     * @return ajaxrespose
+     * @throws PAException exception
+     * @throws JSONException exception
+     */
+    public String ajaxDiseaseSearch() throws PAException, JSONException {
+        List<PDQDiseaseNode> result = null;
+        if (!StringUtils.isEmpty(diseaseSearchTerm)) {
+            PDQDiseaseDTO criteria = new PDQDiseaseDTO();
+            criteria.setPreferredName(StConverter.convertToSt(diseaseSearchTerm));
+            criteria.setIncludeSynonym(StConverter.convertToSt(String.valueOf(searchSynonyms)));
+            result = diseaseService.weightedSearchDisease(criteria);
+        }
+        ajaxResponseStream = new ByteArrayInputStream(JSONUtil.serialize(result).toString().getBytes());
+        return AJAX_RESPONSE;
+    }
+    
     /**
      * @return the ajaxResponseStream
      */
@@ -885,4 +909,34 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             
         }
     }
+
+    /**
+     * @return the diseaseSearchTerm
+     */
+    public String getDiseaseSearchTerm() {
+        return diseaseSearchTerm;
+    }
+
+    /**
+     * @param diseaseSearchTerm the diseaseSearchTerm to set
+     */
+    public void setDiseaseSearchTerm(String diseaseSearchTerm) {
+        this.diseaseSearchTerm = diseaseSearchTerm;
+    }
+
+    /**
+     * @return the searchSynonyms
+     */
+    public boolean isSearchSynonyms() {
+        return searchSynonyms;
+    }
+
+    /**
+     * @param searchSynonyms the searchSynonyms to set
+     */
+    public void setSearchSynonyms(boolean searchSynonyms) {
+        this.searchSynonyms = searchSynonyms;
+    }
+    
+    
 }

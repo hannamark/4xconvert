@@ -7,7 +7,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
-
+<c:url value="/protected/manageTermsajaxDiseaseSearch.action?" var="ajaxDiseaseSearchUrl" />
 <title><fmt:message key="diseases.widget.title" /></title>
 
 <link href="${stylePath}/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
@@ -26,7 +26,8 @@
 
 <script type="text/javascript">
     var treeAjaxURL = '<c:url value='/protected/ajaxDiseaseTreegetChildren.action'/>';
-    var diseaseTree = <s:property escape="false" value="diseaseTree"/>;
+    var getBranchesURL = '<c:url value='/protected/ajaxDiseaseTreegetBranches.action'/>';
+    var autoCompleteList = <s:property escape="false" value="autoCompleteList"/>;
 </script>
 
 <script type="text/javascript" src="${scriptPath}/js/jquery-1.7.1.min.js"></script>
@@ -47,6 +48,7 @@
    staticPath: "${staticPath}",
    stylePath: "${stylePath}"
  };
+ 
 </script>
 
 <script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>
@@ -118,7 +120,7 @@ function addDisease(diseaseid) {
                                      </div>
                                      <div class="whiteline"></div>
                                      <div>
-                                        <input type="checkbox" name="searchSynonym" value="true" id="searchSynonym"><label for="searchSynonym">Search Synonyms</label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <input type="checkbox" name="searchSynonym" id="searchSynonym"><label for="searchSynonym">Search Synonyms</label>&nbsp;&nbsp;&nbsp;&nbsp;
                                         <span class="quickresults_count"><fmt:message key="diseases.widget.quickResultCount" /></span>
                                      </div>
                                  </div>
@@ -141,7 +143,7 @@ function addDisease(diseaseid) {
                              </div>
                              <div class="clear"></div>
                              <div class="selectionslist">
-                                 <ul class="selectionslist_body">
+                                 <ul id="selectedDiseases"  name="selectedDiseases" class="selectionslist_body">
                                  </ul>
                              </div>
                          </div>

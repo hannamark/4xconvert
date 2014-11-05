@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -283,5 +284,32 @@ public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
         assertTrue(bean.getAllDisplayNames().contains("\"Disease 1\""));
         assertTrue(bean.getAllDisplayNames().contains("\"Disease 2\""));
         assertTrue(bean.getAllDisplayNames().contains("\"menuDisplayName\""));
+    }
+    
+    @Test
+    public void testweightedSearchDisease(){
+        TestSchema.addUpdObject(TestSchema.createPdqDisease("Disease"));        
+        TestSchema.addUpdObject(TestSchema.createPdqDisease("A Disease"));
+        TestSchema.addUpdObject(TestSchema.createPdqDisease("Z Disease"));
+        TestSchema.addUpdObject(TestSchema.createPdqDisease("Test"));
+        PDQDiseaseDTO searchCriteria = new PDQDiseaseDTO();
+        searchCriteria.setPreferredName(StConverter.convertToSt("disease"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("false"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        List<PDQDiseaseNode> r =  bean.weightedSearchDisease(searchCriteria);
+        assertEquals(3, r.size());
+        
+        assertEquals("Disease",r.get(0).getName()); 
+        assertEquals("A Disease",r.get(1).getName());
+        assertEquals("Z Disease",r.get(2).getName());
+        
+        // Search for non exitsing disease
+        
+        searchCriteria.setPreferredName(StConverter.convertToSt("Non existing"));
+        searchCriteria.setIncludeSynonym(StConverter.convertToSt("true"));
+        searchCriteria.setExactMatch(StConverter.convertToSt("false"));
+        r =  bean.weightedSearchDisease(searchCriteria);
+        assertEquals(0, r.size());
+
     }
 }

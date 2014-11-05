@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
@@ -99,8 +100,10 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,23 +154,24 @@ public class PopUpDisAction extends ActionSupport implements Preparable { // NOP
     
     // Cache for disease tree.
     private static CacheManager cacheManager;
-    private static final String CACHE_KEY = "DISEASE_TREE_CACHE_KEY";
-    private static final int CACHE_MAX_ELEMENTS = 1;
+    private static final String TREE_CACHE_KEY = "DISEASE_TREE_CACHE_KEY";
+    private static final String AUTO_COMPLETE_CACHE_KEY = "DISEASE_AUTOCOMP_CACHE_KEY";
+    private static final int CACHE_MAX_ELEMENTS = 2;
     private static final long CACHE_TIME = 3600;
 
     /**
      * Get disease tree cache
      * @return disease tree cache
      */
-    public static Cache getDiseaseTreeCache() {
+    private Cache getDiseaseTreeCache() {
         if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
             cacheManager = CacheManager.create();
-            Cache cache = new Cache(CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
+            Cache cache = new Cache(TREE_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
                     CACHE_TIME, CACHE_TIME, false, CACHE_TIME, null, null, 0);
-            cacheManager.removeCache(CACHE_KEY);
+            cacheManager.removeCache(TREE_CACHE_KEY);
             cacheManager.addCache(cache);
         }
-        return cacheManager.getCache(CACHE_KEY);
+        return cacheManager.getCache(TREE_CACHE_KEY);
     }
 
     /**
@@ -189,6 +193,17 @@ public class PopUpDisAction extends ActionSupport implements Preparable { // NOP
     public String getDiseaseTree() throws JSONException {
         List<PDQDiseaseNode> diseaseTree = getDiseaseTreeFromCache();
         return JSONUtil.serialize(diseaseTree);
+    }
+    
+    /**
+     * Get the disease auto complete list
+     * @return The result name
+     * @throws JSONException JSON Translation exception
+     * @throws PAException PAException
+     */
+    public String getAutoCompleteList() throws JSONException, PAException {
+        List<String> autoCompleteList = getAutoCompleteListFromCache();
+        return JSONUtil.serialize(autoCompleteList);
     }
     
     /**
@@ -224,7 +239,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable { // NOP
             child.put("attr", attr);
 
             JSONObject data = new JSONObject();
-            data.put("title", StringUtils.lowerCase(pdqDiseaseNode.getName()));
+            data.put("title", pdqDiseaseNode.getName());
             data.put("icon", "folder");
             child.put("data", data);
 
@@ -238,22 +253,145 @@ public class PopUpDisAction extends ActionSupport implements Preparable { // NOP
         return new StreamResult(new ByteArrayInputStream(children.toString()
                 .getBytes("UTF-8")));
     }
+    
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException 
+     * @throws org.json.JSONException 
+     */
+    public StreamResult getBranches() throws UnsupportedEncodingException, org.json.JSONException {        
+        final Long nodeIdLong = Long.parseLong(getNodeID());
+        
+        // Collect all instances of the disease with the given ID within the tree (can be multiple).
+        List<PDQDiseaseNode> leafs = getDiseaseTreeFromCache();
+        CollectionUtils.filter(leafs, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                PDQDiseaseNode node = (PDQDiseaseNode) arg0;
+                return nodeIdLong.equals(node.getId());
+            }
+        });
+        
+        
+        // Each leaf establishes a separate branch.
+        final List<ArrayList<PDQDiseaseNode>> listOfBranches = new ArrayList<>();
+        for (PDQDiseaseNode leaf : leafs) {
+            ArrayList<PDQDiseaseNode> branch = new ArrayList<>();
+            branch.add(leaf);
+            listOfBranches.add(branch);
+        }
+        
+        // For each branch, start going backwards and figure out the parents all
+        // the way up to the root. Number of branches may grow as we traverse the tree.
+        final List<PDQDiseaseNode> tree = Collections
+                .unmodifiableList(getDiseaseTreeFromCache());
+        for (ArrayList<PDQDiseaseNode> branch : new ArrayList<ArrayList<PDQDiseaseNode>>(
+                listOfBranches)) {
+            completeBranch(branch, tree, listOfBranches);
+        }
+        
+        JSONArray arrayOfBranches = new JSONArray();
+        for (ArrayList<PDQDiseaseNode> branch : listOfBranches) {
+            JSONArray branchArray = new JSONArray();
+            for (PDQDiseaseNode node : branch) {
+                branchArray.put(node.getId().longValue());
+            }
+            arrayOfBranches.put(branchArray);
+        }
+
+        return new StreamResult(new ByteArrayInputStream(arrayOfBranches
+                .toString().getBytes("UTF-8")));
+    }
+
+    private void completeBranch(final ArrayList<PDQDiseaseNode> branch,
+            final List<PDQDiseaseNode> tree,
+            final List<ArrayList<PDQDiseaseNode>> listOfBranches) {
+        final PDQDiseaseNode currentNode = branch.get(0);
+        if (currentNode.getParentId() != null) {
+            final PDQDiseaseNode parent = (PDQDiseaseNode) CollectionUtils
+                    .find(tree, new Predicate() {
+                        @Override
+                        public boolean evaluate(Object arg0) {
+                            PDQDiseaseNode parent = (PDQDiseaseNode) arg0;
+                            return parent.getId().equals(currentNode.getParentId());
+                        }
+                    });
+
+            if (parent != null && !branch.contains(parent)) {
+                List<PDQDiseaseNode> allParentsWithThisDiseaseID = getDiseaseTreeFromCache();
+                CollectionUtils.filter(allParentsWithThisDiseaseID,
+                        new Predicate() {
+                            @Override
+                            public boolean evaluate(Object arg0) {
+                                PDQDiseaseNode node = (PDQDiseaseNode) arg0;
+                                return parent.getId().equals(node.getId());
+                            }
+                        });
+
+                listOfBranches.remove(branch);
+                for (PDQDiseaseNode oneOfManyParents : allParentsWithThisDiseaseID) {
+                    ArrayList<PDQDiseaseNode> newBranch = new ArrayList<>(
+                            branch);
+                    listOfBranches.add(newBranch);
+                    newBranch.add(0, oneOfManyParents);
+                    completeBranch(newBranch, tree, listOfBranches);
+                }
+            }
+        }
+
+    }
 
     /**
      * @return
      */
     @SuppressWarnings("unchecked")
     private List<PDQDiseaseNode> getDiseaseTreeFromCache() {
-        Element el = getDiseaseTreeCache().get(CACHE_KEY);
+        Element el = getDiseaseTreeCache().get(TREE_CACHE_KEY);
         if (el != null) {
             return new ArrayList<PDQDiseaseNode>(
                     (List<PDQDiseaseNode>) el.getObjectValue());
         }
         List<PDQDiseaseNode> diseaseTree = PaRegistry.getDiseaseService()
                 .getDiseaseTree();
-        Element element = new Element(CACHE_KEY, diseaseTree);
+        Element element = new Element(TREE_CACHE_KEY, diseaseTree);
         getDiseaseTreeCache().put(element);
         return new ArrayList<PDQDiseaseNode>(diseaseTree);
+    }
+    
+    /**
+     * Get the disease auto complete list from cache
+     */
+    private List<String> getAutoCompleteListFromCache() throws PAException{
+        Element el = getDiseaseTreeCache().get(AUTO_COMPLETE_CACHE_KEY);
+        if( el == null) {
+            Set<String> autoCmpSet = new HashSet<String>();
+            // Add add disease words
+            List<PDQDiseaseDTO> diseaseList = PaRegistry.getDiseaseService().getAll();
+            for (Iterator iterator = diseaseList.iterator(); iterator.hasNext();) {
+                PDQDiseaseDTO pdqDiseaseDTO = (PDQDiseaseDTO) iterator.next();
+                String[] words = pdqDiseaseDTO.getPreferredName().getValue().split(" ");
+                for (int i = 0; i < words.length; i++) {
+                    autoCmpSet.add(words[i].toLowerCase());
+                }
+            }
+            
+            // Add all synonyms words
+            List<PDQDiseaseAlternameDTO> altNameList = PaRegistry.getDiseaseAlternameService().getAll();
+            for (Iterator iterator = altNameList.iterator(); iterator.hasNext();) {
+                PDQDiseaseAlternameDTO pdqDiseaseAltDTO = (PDQDiseaseAlternameDTO) iterator.next();
+                String[] words = pdqDiseaseAltDTO.getAlternateName().getValue().split(" ");
+                for (int i = 0; i < words.length; i++) {
+                    autoCmpSet.add(words[i].toLowerCase());
+                }
+            }
+            
+            el = new Element(AUTO_COMPLETE_CACHE_KEY, autoCmpSet);
+            getDiseaseTreeCache().put(el);
+        }
+        
+        return new ArrayList<String>(
+                (Set<String>) el.getObjectValue());
+        
     }
 
     /**
@@ -463,6 +601,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable { // NOP
     }
     
 
+  
     /**
      * Creates the new study disease dto with the provided diseaseId.
      * @return the new study disease dto.
