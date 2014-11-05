@@ -168,9 +168,9 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-        	<groupId>gov.nih.nci.coppa</groupId>
+        	<groupId>${project.parent.groupId}</groupId>
         	<artifactId>nci-commons-ctrp-core</artifactId>
-        	<version>1.4.3-SNAPSHOT</version>
+        	<version>${project.parent.version}</version>
         	<type>jar</type>
         	<scope>compile</scope>
         </dependency>
