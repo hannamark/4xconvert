@@ -463,16 +463,29 @@ public class AbstractMockitoTest {
         interventionAltNameDtoList = new ArrayList<InterventionAlternateNameDTO>();
         interventionAltNameDto = new InterventionAlternateNameDTO();
         interventionAltNameDto.setNameTypeCode(StConverter.convertToSt(PAConstants.SYNONYM));
-        interventionAltNameDto.setName(StConverter.convertToSt("name 1"));
+        interventionAltNameDto.setName(StConverter.convertToSt("duplicate name"));
         interventionAltNameDtoList.add(interventionAltNameDto);
         interventionAltNameDto = new InterventionAlternateNameDTO();
         interventionAltNameDto.setNameTypeCode(StConverter.convertToSt(PAConstants.ABBREVIATION));
-        interventionAltNameDto.setName(StConverter.convertToSt("name 2"));
+        interventionAltNameDto.setName(StConverter.convertToSt("duplicate name"));
+        interventionAltNameDtoList.add(interventionAltNameDto);
+        
+        interventionAltNameDto = new InterventionAlternateNameDTO();
+        interventionAltNameDto.setNameTypeCode(StConverter.convertToSt(PAConstants.ABBREVIATION));
+        interventionAltNameDto.setName(StConverter.convertToSt("Z name starting with Z"));
+        interventionAltNameDtoList.add(interventionAltNameDto);
+        
+        interventionAltNameDto = new InterventionAlternateNameDTO();
+        interventionAltNameDto.setNameTypeCode(StConverter.convertToSt(PAConstants.ABBREVIATION));
+        interventionAltNameDto.setName(StConverter.convertToSt("A name starting with A"));
         interventionAltNameDtoList.add(interventionAltNameDto);
 
         interventionDto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
 
-        interventionDto.setName(StConverter.convertToSt("interventionName"));
+        interventionDto.setName(StConverter.convertToSt("This is to test if name is more than 160 characters hence"
+        		+ " adding very long name to check. Also this string should contains very long name full 200 length "
+        		+" string to check we are setting this string 123 "	));
+        
     }
 
     private void setupPlEcDto() {
@@ -576,10 +589,15 @@ public class AbstractMockitoTest {
 
     private void setupArmDto() {
         armDto = new ArmDTO();
-        armDto.setName(StConverter.convertToSt("some name"));
+        armDto.setName(StConverter.convertToSt("Bname"));
         armDto.setDescriptionText(StConverter.convertToSt("some description"));
         armDto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.EXPERIMENTAL));
         armDtoList = new ArrayList<ArmDTO>();
+        armDtoList.add(armDto);
+        armDto = new ArmDTO();
+        armDto.setName(StConverter.convertToSt("Aname"));
+        armDto.setDescriptionText(StConverter.convertToSt("some description"));
+        armDto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.EXPERIMENTAL));
         armDtoList.add(armDto);
     }
 
@@ -603,14 +621,38 @@ public class AbstractMockitoTest {
         studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.PRIMARY.getCode()));
         studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
+        
+        studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
+        studyOutcomeMeasureDto.setName(StConverter.convertToSt("A name"));
+        studyOutcomeMeasureDto.setSafetyIndicator(BlConverter.convertToBl(true));
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.PRIMARY.getCode()));
+        studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
+        studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
+        
+        
         studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
         studyOutcomeMeasureDto.setName(StConverter.convertToSt("some name"));
         studyOutcomeMeasureDto.setSafetyIndicator(BlConverter.convertToBl(true));
         studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
         studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.SECONDARY.getCode()));
         studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
+        
+        studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
+        studyOutcomeMeasureDto.setName(StConverter.convertToSt("A name"));
+        studyOutcomeMeasureDto.setSafetyIndicator(BlConverter.convertToBl(true));
+        studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.SECONDARY.getCode()));
+        studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
+        
         studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
         studyOutcomeMeasureDto.setName(StConverter.convertToSt("some name"));
+        studyOutcomeMeasureDto.setSafetyIndicator(BlConverter.convertToBl(false));
+        studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
+        studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.OTHER_PRE_SPECIFIED.getCode()));
+        studyOutcomeMeasureDtoList.add(studyOutcomeMeasureDto);
+        
+        studyOutcomeMeasureDto = new StudyOutcomeMeasureDTO();
+        studyOutcomeMeasureDto.setName(StConverter.convertToSt("A name"));
         studyOutcomeMeasureDto.setSafetyIndicator(BlConverter.convertToBl(false));
         studyOutcomeMeasureDto.setTimeFrame(StConverter.convertToSt("some time"));
         studyOutcomeMeasureDto.setTypeCode(CdConverter.convertStringToCd(OutcomeMeasureTypeCode.OTHER_PRE_SPECIFIED.getCode()));
@@ -799,6 +841,12 @@ public class AbstractMockitoTest {
         otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
         otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
         otherId.setExtension("OtherId");
+        iis.add(otherId);
+        
+        otherId = new Ii();
+        otherId.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        otherId.setIdentifierName(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
+        otherId.setExtension("AAAAId");
         iis.add(otherId);
         
         secondaryIdentifiers.setItem(iis);

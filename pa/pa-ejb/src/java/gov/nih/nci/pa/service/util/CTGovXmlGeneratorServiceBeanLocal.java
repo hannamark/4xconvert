@@ -162,6 +162,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -1027,6 +1028,31 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     private void addGrantInfo(StudyProtocolDTO spDTO, Document doc, Element idInfoNode) throws PAException {
         List<StudyResourcingDTO> srDtos = getStudyResourcingService()
             .getStudyResourcingByStudyProtocol(spDTO.getIdentifier());
+        
+        Collections.sort(srDtos, new Comparator<StudyResourcingDTO>() {
+
+            @Override
+           public int compare(StudyResourcingDTO o1, StudyResourcingDTO o2) {
+
+           if (!ISOUtil.isCdNull(o1.getFundingMechanismCode()) &&  !ISOUtil.isCdNull(o1.getFundingMechanismCode())
+                 && !ISOUtil.isCdNull(o1.getFundingMechanismCode()) && !ISOUtil.isCdNull(o2.getFundingMechanismCode()) 
+                 &&  !ISOUtil.isCdNull(o2.getFundingMechanismCode()) 
+                 && !ISOUtil.isCdNull(o2.getFundingMechanismCode()) 
+             ) {
+             String first = o1.getFundingMechanismCode().getCode() + o1.getNihInstitutionCode().getCode()
+                         + o1.getSerialNumber().getValue();
+                        String second = o2.getFundingMechanismCode().getCode()  + o2.getNihInstitutionCode().getCode() 
+                         + o2.getSerialNumber().getValue();
+                        return first.compareToIgnoreCase(second);
+              } else {
+               return 1;
+             }
+               
+          }
+
+        });
+        
+        
 
         for (StudyResourcingDTO srDto : srDtos) {
             if (!ISOUtil.isBlNull(srDto.getActiveIndicator()) && srDto.getActiveIndicator().getValue()) {
@@ -1275,6 +1301,13 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         if (CollectionUtils.isEmpty(arms)) {
             return;
         }
+        Collections.sort(arms, new Comparator<ArmDTO>() {
+
+            @Override
+            public int compare(ArmDTO o1, ArmDTO o2) {
+              return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
+           }
+         });
         for (ArmDTO armDTO : arms) {
             Element armGroup = doc.createElement("arm_group");
             XmlGenHelper.appendElement(armGroup,
@@ -1303,8 +1336,29 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
 
     private void createIntervention(Ii studyProtocolIi, Document doc, Element root) throws PAException {
         List<PlannedActivityDTO> paList = getPlannedActivityService().getByStudyProtocol(studyProtocolIi);
-
-        for (PlannedActivityDTO pa : paList) {
+        List <PlannedActivityDTO> sortedList = new ArrayList<PlannedActivityDTO>();
+        //sort intervention based on name
+        for (PlannedActivityDTO plannedActivityDTO :paList) {
+            if (PAUtil.isTypeIntervention(plannedActivityDTO.getCategoryCode())) {
+              sortedList.add(plannedActivityDTO);
+           }
+        }
+      Collections.sort(sortedList, new Comparator<PlannedActivityDTO>() {
+            @Override
+            public int compare(PlannedActivityDTO plannedActivityDTO1, PlannedActivityDTO plannedActivityDTO2) {
+            InterventionDTO iDto1 = null;
+            InterventionDTO iDto2 = null;
+            try {
+              iDto1 = getInterventionService().get(plannedActivityDTO1.getInterventionIdentifier());
+              iDto2 = getInterventionService().get(plannedActivityDTO2.getInterventionIdentifier());
+            } catch (PAException e) { 
+              LOG.error("Error while generating Intervention xml", e);
+            }
+               return iDto1.getName().getValue().compareToIgnoreCase(iDto2.getName().getValue());
+            }
+        });
+            
+        for (PlannedActivityDTO pa : sortedList) {
             if (PAUtil.isTypeIntervention(pa.getCategoryCode())) {
                 Element intervention = doc.createElement("intervention");
                 InterventionDTO iDto = getInterventionService().get(pa.getInterventionIdentifier());
@@ -1315,8 +1369,8 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                             doc));
                 }
                 XmlGenHelper.appendElement(intervention,
-                        XmlGenHelper.createElementWithTextblock("intervention_name", StringUtils.substring(StConverter
-                        .convertToString(iDto.getName()), 0, PAAttributeMaxLen.LEN_160), doc));
+                        XmlGenHelper.createElementWithTextblock("intervention_name", StConverter
+                        .convertToString(iDto.getName()), doc));
                 addInterventionCdrValue(iDto, intervention, doc);
                 createTextBlock("intervention_description", StringUtils.substring(
                         StConverter.convertToString(pa.getTextDescription()), 0, PAAttributeMaxLen.LEN_1000), doc,
@@ -1324,8 +1378,24 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 Iterator<InterventionAlternateNameDTO> ianIt =
                     getInterventionAlternateNameService().getByIntervention(iDto
                         .getIdentifier()).iterator();
-                List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
-                for (int i = 0; ianIt.hasNext() && i < PAAttributeMaxLen.LEN_5; i++) {
+              //  List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
+                //change is to include all other names excluding duplicates
+                  Set<String> otherNamesSet = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+                  while (ianIt.hasNext()) {
+                      InterventionAlternateNameDTO ian = ianIt.next();
+                      if (isPlannedActivityTypeName(ian.getNameTypeCode())) {
+                          otherNamesSet.add(ian.getName().getValue());
+                     }
+                   }
+                  
+                  Iterator<String> otherNamesIterator = otherNamesSet.iterator();
+               while (otherNamesIterator.hasNext()) {
+                     XmlGenHelper.appendElement(intervention,
+                              XmlGenHelper.createElement("intervention_other_name", 
+                            otherNamesIterator.next(), doc));
+                  }
+                  
+                /*for (int i = 0; ianIt.hasNext() && i < PAAttributeMaxLen.LEN_5; i++) {
                         InterventionAlternateNameDTO ian = ianIt.next();
                         if (isPlannedActivityTypeName(ian.getNameTypeCode())) {
                             interventionNames.add(ian);
@@ -1341,10 +1411,10 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
 
                 for (InterventionAlternateNameDTO ian : interventionNames) {
                     XmlGenHelper.appendElement(intervention,
-                            XmlGenHelper.createElementWithTextblock("intervention_other_name", StringUtils.substring(
-                            StConverter.convertToString(ian.getName()), 0, PAAttributeMaxLen.LEN_160), doc));
+                            XmlGenHelper.createElementWithTextblock("intervention_other_name", 
+                            StConverter.convertToString(ian.getName()), doc));
                 }
-
+*/
                 List<ArmDTO> armDtos = getArmService().getByPlannedActivity(pa.getIdentifier());
                 for (ArmDTO armDTO : armDtos) {
                     XmlGenHelper.appendElement(intervention,
@@ -1476,6 +1546,18 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         if (CollectionUtils.isEmpty(somDtos)) {
             return;
         }
+        
+        Collections.sort(somDtos , new Comparator<StudyOutcomeMeasureDTO>() {
+            @Override
+            public int compare(StudyOutcomeMeasureDTO o1, StudyOutcomeMeasureDTO o2) {
+            if (o1.getName() != null && o2.getName() != null) {
+               return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
+            } else {
+              return 1;
+            }
+            
+            }
+         });
         for (StudyOutcomeMeasureDTO smDTO : somDtos) {
             if (!ISOUtil.isCdNull(smDTO.getTypeCode()) 
                     && smDTO.getTypeCode().getCode().equalsIgnoreCase(OutcomeMeasureTypeCode.PRIMARY.getCode())) {
@@ -1513,6 +1595,19 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         if (CollectionUtils.isEmpty(somDtos)) {
             return;
         }
+        
+        Collections.sort(somDtos , new Comparator<StudyOutcomeMeasureDTO>() {
+            @Override
+            public int compare(StudyOutcomeMeasureDTO o1, StudyOutcomeMeasureDTO o2) {
+            if (o1.getName() != null && o2.getName() != null) {
+               return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
+            } else {
+              return 1;
+            }
+            
+            }
+         });
+        
         for (StudyOutcomeMeasureDTO smDTO : somDtos) {
             if (!ISOUtil.isCdNull(smDTO.getTypeCode()) 
                     && smDTO.getTypeCode().getCode().equalsIgnoreCase(OutcomeMeasureTypeCode.SECONDARY.getCode())) {
@@ -1527,6 +1622,18 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         if (CollectionUtils.isEmpty(somDtos)) {
             return;
         }
+        Collections.sort(somDtos , new Comparator<StudyOutcomeMeasureDTO>() {
+            @Override
+            public int compare(StudyOutcomeMeasureDTO o1, StudyOutcomeMeasureDTO o2) {
+            if (o1.getName() != null && o2.getName() != null) {
+               return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
+            } else {
+              return 1;
+            }
+            
+            }
+         });
+        
         for (StudyOutcomeMeasureDTO smDTO : somDtos) {
             if (!ISOUtil.isCdNull(smDTO.getTypeCode()) 
                     && smDTO.getTypeCode().getCode().equalsIgnoreCase(
@@ -1679,6 +1786,14 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         List<Element> collaborators = new ArrayList<Element>();
         List<Organization> orgs = getOrgCorrelationService().getOrganizationByStudySite(Long.valueOf(studyProtocolIi
                 .getExtension()), StudySiteFunctionalCode.COLLABORATORS);
+        
+        Collections.sort(orgs, new Comparator<Organization>() {
+
+            @Override
+           public int compare(Organization o1, Organization o2) {
+             return o1.getName().compareToIgnoreCase(o2.getName());
+          }
+        });
     
         for (Organization eachOrg : orgs) {
             Element collaborator = doc.createElement("collaborator");

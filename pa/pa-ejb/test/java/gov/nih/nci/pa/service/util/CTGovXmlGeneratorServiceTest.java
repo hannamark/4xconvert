@@ -118,6 +118,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -131,6 +133,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -431,6 +437,65 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     public void testPlSubCatNull() throws PAException {
         plannedActDto.setSubcategoryCode(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<intervention_type>"));
+    }
+    
+    @Test
+    public void testSecondaryIdOrder() throws PAException {
+    	 String xml  = getBean().generateCTGovXml(spId);
+    	 String newXML = createUnformattedXML(xml);
+    	 assertTrue(newXML.contains
+        ("<secondary_id><id>AAAAId</id></secondary_id>"
+        +"<secondary_id><id>OtherId</id></secondary_id>"));
+    }
+    
+    @Test
+    public void testArmsGroupOrder() throws PAException {
+    	 String xml  = getBean().generateCTGovXml(spId);
+    	 String newXML = createUnformattedXML(xml);
+    	         assertTrue(newXML.contains
+        		("<arm_group><arm_group_label>Aname</arm_group_label>"
+        	     +"<arm_type>Experimental</arm_type><arm_group_description>"
+        		 +"<textblock>some description</textblock></arm_group_description>"
+        	     +"</arm_group><arm_group><arm_group_label>Bname</arm_group_label>"));
+    }
+    
+    @Test
+    public void testOutComeMeasureOrder() throws PAException {
+    	 String xml  = getBean().generateCTGovXml(spId);
+    	 String newXML = createUnformattedXML(xml);
+    	         assertTrue(newXML.contains
+        		("<primary_outcome><outcome_measure>A name</outcome_measure>"
+        	     +"<outcome_safety_issue>Yes</outcome_safety_issue><outcome_time_frame>some time</outcome_time_frame>"
+        		 +"</primary_outcome><primary_outcome><outcome_measure>some name</outcome_measure>"));
+    	         
+    	         assertTrue(newXML.contains
+    	         		("<secondary_outcome><outcome_measure>A name</outcome_measure>"
+    	         		+"<outcome_safety_issue>Yes</outcome_safety_issue><outcome_time_frame>some time</outcome_time_frame>"
+    	         		+"</secondary_outcome><secondary_outcome><outcome_measure>some name</outcome_measure>"));
+    	         
+    	         assertTrue(newXML.contains
+     	         		("<other_outcome><outcome_measure>A name</outcome_measure>"
+     	         		+"<outcome_safety_issue>No</outcome_safety_issue><outcome_time_frame>some time</outcome_time_frame>"
+     	         	    +"</other_outcome><other_outcome><outcome_measure>some name</outcome_measure>"));
+    }
+    
+    @Test
+    public void testLongInterventionName() throws PAException {
+    	 String xml  = getBean().generateCTGovXml(spId);
+    	 String newXML = createUnformattedXML(xml);
+    	         assertTrue(newXML.contains
+        		("<intervention_name>This is to test if name is more than 160 characters hence adding very "
+        		+"long name to check. Also this string should contains very long name full 200 length string "
+        		+ "to check we are setting this string 123</intervention_name>"));
+    }
+    
+    @Test
+    public void testInterventionOtherNamesOrder() throws PAException {
+    	 String xml  = getBean().generateCTGovXml(spId);
+    	 String newXML = createUnformattedXML(xml);
+    	         assertTrue(newXML.contains
+        		("<intervention_other_name>A name starting with A</intervention_other_name><intervention_other_name>"
+        		 +"duplicate name</intervention_other_name><intervention_other_name>Z name starting with Z</intervention_other_name>"));
     }
 
     @Test
@@ -843,5 +908,20 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         String expected = "     criteria 3 operator unit\n";
         assertEquals(expected, result);
 
+    }
+    public String createUnformattedXML(String xml) throws PAException {
+    	 StringWriter sw;
+    	 OutputFormat format = OutputFormat.createCompactFormat();
+    	 try {
+    	 org.dom4j.Document document = DocumentHelper.parseText(xml);
+    	 sw = new StringWriter();
+    	 XMLWriter writer = new XMLWriter(sw, format);
+         writer.write(document);
+    	 }
+    	 catch(Exception e) {
+    		 throw new PAException(e);
+    	 }
+    	 String newXML = sw.toString();	
+    	 return newXML;
     }
 }
