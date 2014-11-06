@@ -413,7 +413,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Message. New Disease CTEST1234 added successfully."));
     } */
     
-    @Test
+    /*@Test
     public void testEnterDiseaseWithParentAndChildTerm() {
         Actions action = new Actions(driver);
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
@@ -495,7 +495,7 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         // Click save and Cancel
         selenium.click("link=Save");
         assertTrue(selenium.isTextPresent("Message. New Disease CTEST1235 added successfully."));
-    }
+    } */
 
     /**
      * Test cancel on disease details page 
