@@ -88,6 +88,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
 
@@ -115,7 +116,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Document Type Code must be Entered"));
         assertTrue(selenium.isTextPresent("FileName must be Entered"));
 
-        if (!isPhantomJS()) {
+        if (!(isPhantomJS() && SystemUtils.IS_OS_LINUX)) {
             String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
             System.out.println("trialDocPath: "+trialDocPath);
             selenium.select("id=typeCode", "label=Protocol Highlighted Document");
@@ -125,6 +126,57 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
             
             assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[5]/a"));        
             assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[6]//input"));
+        }
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testHowDocumentsAppearInTrialHistoryPO_8189()
+            throws URISyntaxException, SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
+
+        clickAndWait("link=Trial History");
+        assertEquals("Protocol Document - Protocol.doc",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]/a"));
+        assertTrue(selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]")
+                .contains("Original"));
+
+        clickAndWait("link=Trial Related Documents");
+        clickAndWait("link=Add");
+
+        if (!(isPhantomJS() && SystemUtils.IS_OS_LINUX)) {
+            String trialDocPath = (new File(ClassLoader.getSystemResource(
+                    TRIAL_DOCUMENT).toURI()).toString());
+            selenium.select("id=typeCode", "label=Other");
+            selenium.type("id=fileUpload", trialDocPath);
+            clickAndWait("link=Save");
+            assertTrue(selenium.isTextPresent("Record Created"));
+
+            clickAndWait("link=Trial History");
+            assertEquals(
+                    "Other - " + TRIAL_DOCUMENT,
+                    selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]/a[2]"));
+            assertEquals("Protocol Document - Protocol.doc Original Other - "
+                    + TRIAL_DOCUMENT,
+                    selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]")
+                            .replaceAll("\\s+", " "));
+
+            clickAndWait("link=Trial Related Documents");
+            selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[6]//input");
+            ((JavascriptExecutor) driver)
+                    .executeScript("handleMultiDelete('', 'trialDocumentdelete.action');");
+            waitForPageToLoad();
+            selenium.type("inactiveComment", "inactive");
+            clickAndWait("link=Done");
+            assertTrue(selenium.isTextPresent("Record(s) Deleted"));
+
+            clickAndWait("link=Trial History");
+            assertEquals("Protocol Document - Protocol.doc Original Other - "
+                    + TRIAL_DOCUMENT + " Deleted",
+                    selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]")
+                            .replaceAll("\\s+", " "));
         }
     }
 

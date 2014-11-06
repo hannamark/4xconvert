@@ -526,9 +526,9 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      * @return the documents
      * @throws PAException the PA exception
      */
-    private String getDocuments(StudyProtocolDTO sp) throws PAException {       
-        List<DocumentDTO> documentDTO = documentService.
-                getOriginalDocumentsByStudyProtocol(sp.getIdentifier());
+    private String getDocuments(StudyProtocolDTO sp) throws PAException {
+        List<DocumentDTO> documentDTO = documentService.getByStudyProtocol(sp
+                .getIdentifier());
         return getDocumentsAsString(documentDTO);
     }
 
@@ -550,7 +550,18 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
             documents.append(CdConverter.convertCdToString(docDto.getTypeCode()));
             documents.append("&nbsp;- <B>");
             documents.append(fileName);
-            documents.append("</B></a><br>");
+            documents.append("</B></a>");
+            if (Boolean.TRUE.equals(BlConverter.convertToBoolean(docDto
+                    .getOriginal()))) {
+                documents
+                        .append("&nbsp;&nbsp;&nbsp;<i style='font-size:90%;'>Original</i>");
+            }
+            if (Boolean.FALSE.equals(BlConverter.convertToBoolean(docDto
+                    .getActiveIndicator()))) {
+                documents
+                        .append("&nbsp;&nbsp;&nbsp;<i style='font-size:90%;'>Deleted</i>");
+            }
+            documents.append("<br>");           
         }
         return documents.toString();
     }
