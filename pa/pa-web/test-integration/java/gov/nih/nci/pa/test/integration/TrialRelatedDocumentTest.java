@@ -188,7 +188,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
 
         clickAndWait("link=Trial Related Documents");
         
-        if (!isPhantomJS()) {
+        if (!(isPhantomJS() && SystemUtils.IS_OS_LINUX)) {
             String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
             System.out.println("trialDocPath: "+trialDocPath);
             addProtocolHighlighDocument();
@@ -197,7 +197,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
             selenium.type("id=fileUpload", trialDocPath);
             clickAndWait("link=Save");
             assertTrue(selenium.isTextPresent("Record Updated"));
-            assertTrue(selenium.isTextPresent("One item found"));
+            assertTrue(selenium.isTextPresent("2 items found"));
         }
     }
 
@@ -209,14 +209,14 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
 
         clickAndWait("link=Trial Related Documents");
         
-        if (!isPhantomJS()) {
+        if (!(isPhantomJS() && SystemUtils.IS_OS_LINUX)) {
             addProtocolHighlighDocument();    
             selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[6]//input");
             ((JavascriptExecutor) driver).executeScript("handleMultiDelete('', 'trialDocumentdelete.action');");
             waitForPageToLoad();
             selenium.type("inactiveComment", "inactive");
             clickAndWait("link=Done");       
-            assertTrue(selenium.isTextPresent("No Trial Documents exist on the trial"));
+            assertTrue(selenium.isTextPresent("One item found"));
         }
         
     }
@@ -233,6 +233,6 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         selenium.type("id=fileUpload", trialDocPath);
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Created"));
-        assertTrue(selenium.isTextPresent("One item found"));
+        assertTrue(selenium.isTextPresent("2 items found"));
     }
 }
