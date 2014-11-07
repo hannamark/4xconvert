@@ -110,6 +110,9 @@ connect
 
 reload
 
+/:read-children-names(child-type=subsystem)
+:read-config-as-xml
+
 /subsystem=logging/logger=stdout:remove
     
 /subsystem=logging/logger=stdout:add(level=@log.level@)
