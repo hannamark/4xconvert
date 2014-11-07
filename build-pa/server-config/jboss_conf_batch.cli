@@ -110,6 +110,12 @@ connect
 
 reload
 
+/subsystem=logging/logger=stdout:remove
+    
+/subsystem=logging/logger=stdout:add(level=@log.level@)
+/subsystem=logging/root-logger=ROOT:change-root-log-level(level=@log.level@)
+/subsystem=logging/root-logger=ROOT:remove-handler(name=CONSOLE)
+
 data-source remove --name=paDS
 
 xa-data-source add \
@@ -130,8 +136,3 @@ xa-data-source add \
 
 xa-data-source enable --name=paDS
 
-/subsystem=logging/logger=stdout:remove
-    
-/subsystem=logging/logger=stdout:add(level=@log.level@)
-/subsystem=logging/root-logger=ROOT:change-root-log-level(level=@log.level@)
-/subsystem=logging/root-logger=ROOT:remove-handler(name=CONSOLE)
