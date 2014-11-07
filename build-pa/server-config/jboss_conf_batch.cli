@@ -110,8 +110,25 @@ connect
 
 reload
 
+# The next block is here to simply introduce a delay as there is no "sleep" command. This CLI has been failing on a random basis; it appears that
+# sometimes the script procedes while the reload (see above) has not in fact finished. This leads to odd errors such as Management resource '[("subsystem" => "datasources")]' not found
 /:read-children-names(child-type=subsystem)
 :read-config-as-xml
+/:read-children-names(child-type=subsystem)
+:read-config-as-xml
+/:read-children-names(child-type=subsystem)
+:read-config-as-xml
+/:read-children-names(child-type=subsystem)
+:read-config-as-xml
+/:read-children-names(child-type=subsystem)
+:read-config-as-xml
+/:read-children-names(child-type=subsystem)
+:read-config-as-xml
+/:read-children-names(child-type=subsystem)
+:read-config-as-xml
+/:read-children-names(child-type=subsystem)
+:read-config-as-xml
+# End
 
 /subsystem=logging/logger=stdout:remove
     
