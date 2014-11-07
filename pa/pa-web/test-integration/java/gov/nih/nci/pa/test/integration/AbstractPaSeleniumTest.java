@@ -597,8 +597,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected TrialInfo createSubmittedTrial() throws SQLException {
         return createSubmittedTrial(false);
     }
-
+    
     protected TrialInfo createSubmittedTrial(boolean isAbbr) throws SQLException {
+        return createSubmittedTrial(isAbbr, false);
+    }
+
+    protected TrialInfo createSubmittedTrial(boolean isAbbr, boolean skipDocuments) throws SQLException {
         TrialInfo info = new TrialInfo();
         info.uuid = UUID.randomUUID().toString();
         info.title = "Title " + info.uuid;
@@ -652,7 +656,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         addLeadOrg(info, "ClinicalTrials.gov");
         addPI(info, "1");
         addSOS(info, "APPROVED");
-        addDocument(info, "PROTOCOL_DOCUMENT", "Protocol.doc");
+        if (!skipDocuments)
+            addDocument(info, "PROTOCOL_DOCUMENT", "Protocol.doc");
 
         LOG.info("Registered a new trial: " + info);
         return info;
@@ -779,12 +784,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected TrialInfo createAcceptedTrial() throws SQLException {
         return createAcceptedTrial(false);
     }
-
-    protected TrialInfo createAcceptedTrial(boolean isAbbreviated) throws SQLException {
-        TrialInfo info = createSubmittedTrial(isAbbreviated);
+    
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated, boolean skipDocuments) throws SQLException {
+        TrialInfo info = createSubmittedTrial(isAbbreviated, skipDocuments);
         addDWS(info, "ACCEPTED");
         addMilestone(info, "SUBMISSION_ACCEPTED");
         return info;
+    }
+
+
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated) throws SQLException {       
+        return createAcceptedTrial(isAbbreviated, false);
     }
 
     protected void addSOS(TrialInfo info, String code) throws SQLException {

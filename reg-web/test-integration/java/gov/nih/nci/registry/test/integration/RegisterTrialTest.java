@@ -147,7 +147,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
             return;
         }
         loginAndAcceptDisclaimer();
-        TrialInfo info = createAcceptedTrial(true);
+        TrialInfo info = createAcceptedTrial(true, true);
         assignTrialOwner("abstractor-ci", info.id);
         final String nciID = info.nciID;
         searchForTrialByNciID(nciID);
