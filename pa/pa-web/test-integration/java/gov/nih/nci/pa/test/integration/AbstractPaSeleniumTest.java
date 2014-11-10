@@ -87,7 +87,6 @@ import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_PASSWO
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_URL;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_USER;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
-import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
 
 import java.io.File;
 import java.sql.Connection;
@@ -1132,13 +1131,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
 
     }
-    
-    protected void enableCtroOverride(TrialRegistrationConfirmation conf)
-            throws SQLException {
-        final Number paTrialID = conf.getPaTrialID();
-        enableCtroOverride(paTrialID);
-    }
-
+   
     /**
      * @param paTrialID
      * @throws SQLException

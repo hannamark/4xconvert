@@ -76,7 +76,7 @@ public class UpdateAbbreviatedTrialTest extends AbstractRestServiceTest {
     public void testUpdateDoesNotResetCtroOverride() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
         makeAbbreviated(rConf);
-        enableCtroOverride(rConf);
+        enableCtroOverride(rConf.getPaTrialID());
 
         AbbreviatedTrialUpdate upd = readAbbreviatedTrialUpdateFromFile("/integration_update_abbr.xml");
         HttpResponse response = updateTrialFromJAXBElement("pa",

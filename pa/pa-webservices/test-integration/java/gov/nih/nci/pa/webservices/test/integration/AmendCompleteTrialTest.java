@@ -87,7 +87,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         addDummyCtepDcpToTrial();
 
         prepareTrialForAmendment(rConf);
-        enableCtroOverride(rConf);
+        enableCtroOverride(rConf.getPaTrialID());
 
         CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
         HttpResponse response = amendTrialFromJAXBElement("pa",

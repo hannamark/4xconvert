@@ -65,7 +65,7 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
     @Test
     public void testUpdateDoesNotResetCtroOverride() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
-        enableCtroOverride(rConf);
+        enableCtroOverride(rConf.getPaTrialID());
         
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
         HttpResponse response = updateTrialFromJAXBElement("pa",
