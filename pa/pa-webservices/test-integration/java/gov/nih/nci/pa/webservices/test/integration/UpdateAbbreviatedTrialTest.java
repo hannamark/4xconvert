@@ -73,6 +73,21 @@ public class UpdateAbbreviatedTrialTest extends AbstractRestServiceTest {
     }
     
     @Test
+    public void testUpdateDoesNotResetCtroOverride() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        makeAbbreviated(rConf);
+        enableCtroOverride(rConf);
+
+        AbbreviatedTrialUpdate upd = readAbbreviatedTrialUpdateFromFile("/integration_update_abbr.xml");
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+
+        clickAndWait("link=NCI Specific Information");
+        assertTrue(selenium.isChecked("ctroOverride"));
+    }
+    
+    @Test
     public void testEmptyUpdate() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
         makeAbbreviated(rConf);

@@ -61,6 +61,20 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         verifyUpdate(upd, uConf);
 
     }
+    
+    @Test
+    public void testUpdateDoesNotResetCtroOverride() throws Exception {
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        enableCtroOverride(rConf);
+        
+        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        clickAndWait("link=NCI Specific Information");
+        assertTrue(selenium.isChecked("ctroOverride"));
+
+    }
 
     @Test
     public void testUpdateByNciID() throws Exception {

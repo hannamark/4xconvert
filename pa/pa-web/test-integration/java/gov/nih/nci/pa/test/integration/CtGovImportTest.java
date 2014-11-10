@@ -48,8 +48,38 @@ public class CtGovImportTest extends AbstractPaSeleniumTest {
     public void testImportNCT00038610() throws Exception {
         importAndVerify("NCT00038610");
     }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testImportDoesNotResetCtroOverride() throws Exception {
+        final String nctID = "NCT01963949";
+        importAndVerify(nctID);
+        Number id = getTrialIdByNct(nctID);
+        enableCtroOverride(id);
+
+        clickAndWait("id=importCtGovMenuOption");
+        selenium.type("id=nctID", nctID);
+        clickAndWait("link=Search Studies");
+        clickAndWait("link=Import & Update Trial");
+        assertTrue(selenium
+                .isTextPresent("An update to trial(s) with identifiers "
+                        + nctID + " and " + getLastNciId()
+                        + " has been made successfully"));
+
+        clickAndWait("id=trialSearchMenuOption");
+        selenium.type("id=identifier", nctID);
+        selenium.select("id=identifierType", "NCT");
+        clickAndWait("link=Search");
+        waitForElementById("row", 30);
+        assertTrue(selenium.isTextPresent("One item found"));
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        acceptTrial();
+        clickAndWait("link=NCI Specific Information");
+        assertTrue(selenium.isChecked("ctroOverride"));
+    }
 
 
+    @SuppressWarnings("deprecation")
     private void importAndVerify(String nctID) throws SQLException {
         deactivateTrialByNctId(nctID);
         loginAsSuperAbstractor();

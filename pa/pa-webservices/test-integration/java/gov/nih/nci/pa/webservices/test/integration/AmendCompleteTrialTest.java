@@ -20,6 +20,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
+import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.http.HttpResponse;
@@ -77,6 +78,29 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         verifyAmendment(upd, uConf);
 
     }
+    
+    @Test
+    public void testAmendDoesNotResetCtroOverride() throws Exception {
+        CompleteTrialRegistration reg = readCompleteTrialRegistrationFromFile("/integration_register_complete_success.xml");
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_success.xml");
+
+        addDummyCtepDcpToTrial();
+
+        prepareTrialForAmendment(rConf);
+        enableCtroOverride(rConf);
+
+        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
+        HttpResponse response = amendTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+
+        logInFindAndAcceptTrial(uConf);
+        clickAndWait("link=NCI Specific Information");
+        assertTrue(selenium.isChecked("ctroOverride"));
+
+    }
+
+   
 
     /**
      * @throws InterruptedException

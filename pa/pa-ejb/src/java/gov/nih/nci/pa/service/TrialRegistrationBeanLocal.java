@@ -402,8 +402,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
 
         try {
             validateStudyExist(studyProtocolDTO, AMENDMENT);
-            studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
-            studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
+            studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));            
             Ii spIi = studyProtocolDTO.getIdentifier();
             St amender = studyProtocolDTO.getUserLastCreated();
             
@@ -1159,6 +1158,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs) throws PAException {
         
         prepareAbbreviatedProtocolForCreationOrUpdate(studyProtocolDTO);
+        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
+        
         TrialRegistrationValidator validator = createValidator();
         validator.validateProprietaryCreation(studyProtocolDTO, nctID,
                 leadOrgDTO, leadOrgID, sponsorDTO, investigatorDTO,
@@ -1299,6 +1300,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         // CHECKSTYLE:ON
         // validate method needs to be here
         prepareAbbreviatedProtocolForCreationOrUpdate(studyProtocolDTO);
+        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
+        
         TrialRegistrationValidator validator = createValidator();
         validator.validateProprietaryCreation(studyProtocolDTO, studySiteAccrualStatusDTO, documentDTOs,
                                               leadOrganizationDTO, studySiteInvestigatorDTO,
@@ -1361,8 +1364,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudyProtocolDTO studyProtocolDTO) {
         setPhaseAdditionalQualifier(studyProtocolDTO, studyProtocolDTO);
         setPrimaryPurposeCode(studyProtocolDTO, studyProtocolDTO);
-        studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
+        studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));        
     }
     
 
