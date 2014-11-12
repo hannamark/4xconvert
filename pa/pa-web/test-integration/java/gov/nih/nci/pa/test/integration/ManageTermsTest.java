@@ -566,6 +566,21 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
 
     }
     
+    @Test
+    public void testIfAddRemoveButtonNotPresent() {
+    	  Actions action = new Actions(driver);
+          action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
+          clickAndWait("xpath=//a[@href='manageTermssearchDisease.action?searchStart=true']");
+          
+          
+          selenium.type("id=ntTermIdentifier", "C3568");
+          clickAndWait("link=Look Up");
+          assertFalse(selenium.isElementPresent("//span[@class='add']"));
+          assertFalse(selenium.isElementPresent("//span[@class='delete']"));
+          
+          
+    }
+    
     private void searchAndAddDisease(String searchName) {
         selenium.type("id=disease", searchName);
         clickAndWaitAjax("alt=Search");

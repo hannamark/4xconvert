@@ -289,7 +289,7 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
             String dn = (String) iterator.next();
             if (dn != null && !dn.isEmpty()) {
                 StringBuilder builder = new StringBuilder();
-                builder.append("\"").append(dn).append("\"");
+                builder.append("\"").append(dn.replace("\"", "\\\"")).append("\"");
                 result.add(builder.toString());
             }
         }

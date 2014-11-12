@@ -243,6 +243,7 @@
 						name="disease.parentTermList" cssStyle="width:400px"
 						list="disease.parentTermList" multiple="true"
 						readonly="%{importTerm}" /></td>
+						<s:if test="%{!importTerm}">
 				<td><div style="float: left; width: 100%;">
 						<s:a href="javascript:void(0)" cssClass="btn"
 							onClick="lookupParentDisease()">
@@ -256,7 +257,7 @@
 							onclick="removeFromList('parentTerms')">
 							<span class="btn_img"><span class="delete">Remove</span></span>
 						</s:a>
-					</div></td>
+					</div></td></s:if>
 			</tr>
 			<tr>
 				<td scope="row" ><label for="childTerms">Child
@@ -265,6 +266,7 @@
 						name="disease.childTermList" cssStyle="width:400px"
 						list="disease.childTermList" multiple="true"
 						readonly="%{importTerm}" /></td>
+						<s:if test="%{!importTerm}">
 				<td><div style="float: left; width: 100%;">
 						<s:a href="javascript:void(0)" cssClass="btn"
 							onclick="lookupChildDisease()">
@@ -278,7 +280,7 @@
 							onclick="removeFromList('childTerms')">
 							<span class="btn_img"><span class="delete">Remove</span></span>
 						</s:a>
-					</div></td>
+					</div></td></s:if>
 			</tr>
 
 		</table>
