@@ -28,9 +28,11 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -481,7 +483,10 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
                 // Save alter names
                 if (disease.getAlterNameList() != null) {
-                    for (String altName : disease.getAlterNameList()) {
+                   //remove duplicate synonyms
+                Set<String> namesSet = new HashSet<String>(disease.getAlterNameList());
+                    List<String> uniqueNamesList = new ArrayList<String>(namesSet);
+                    for (String altName : uniqueNamesList) {
                         PDQDiseaseAlternameDTO altDto = new PDQDiseaseAlternameDTO();
                         altDto.setAlternateName(StConverter.convertToSt(altName));
                         altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
@@ -645,10 +650,15 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                         diseaseAltNameService.delete(diseaseAlternateNameDTO.getIdentifier());
                     }
                 }
+                
+                
 
                 // Save new synonyms
                 if (disease.getAlterNameList() != null) {
-                    for (String altName : disease.getAlterNameList()) {
+                    //remove duplicate synonyms
+                    Set<String> namesSet = new HashSet<String>(disease.getAlterNameList());
+                    List<String> uniqueNamesList = new ArrayList<String>(namesSet);
+                    for (String altName : uniqueNamesList) {
                         PDQDiseaseAlternameDTO altDto = new PDQDiseaseAlternameDTO();
                         altDto.setAlternateName(StConverter.convertToSt(altName));
                         altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));

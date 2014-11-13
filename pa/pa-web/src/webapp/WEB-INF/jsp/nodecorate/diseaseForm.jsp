@@ -42,7 +42,7 @@
 
 	function lookupParentDisease() {
 		showPopWin('${lookupUrl}', 1100, 500, addToParentList,
-				'Lookup Parent Diseases');
+				'Look Up Parent Diseases');
 	}
 
 	function lookupChildDisease() {

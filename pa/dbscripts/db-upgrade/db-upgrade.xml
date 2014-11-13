@@ -1670,4 +1670,8 @@
         <comment>Updated 'accrual.confirmation.body' PA Property.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.1.1/PO-8106.sql"/>
      </changeSet>          
+     <changeSet id="PO-8258" author="khandalkara">
+        <comment>Increase db field lengths to accommodate certain EVS terms longer than 200 chars.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8258.sql"/>
+     </changeSet>   
 </databaseChangeLog>

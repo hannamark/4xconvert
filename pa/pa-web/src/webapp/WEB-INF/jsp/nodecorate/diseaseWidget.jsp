@@ -81,7 +81,7 @@ function addDisease(diseaseid) {
 </head>
 <body>
     <h2>
-        <a href="#"><fmt:message key="diseases.widget.header" /></a>
+        <a href="#"></a>
     </h2>
     
      <div id="diseasesSection">
