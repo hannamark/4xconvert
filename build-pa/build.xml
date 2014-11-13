@@ -1663,14 +1663,26 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <target name="build-and-populate-data-warehouse" description="Constructs and populates the data warehouse">
+    	
+    	<!--
+    	<condition property="datawarehouse.dest.db.password.final" value="${datawarehouse.dest.db.password}">
+    	      <isset property="datawarehouse.dest.db.password"/>
+    	</condition>
+       	<condition property="datawarehouse.dest.db.password.final" value="${database.password}">
+       		<not>
+       		  	<isset property="datawarehouse.dest.db.password.final"/>
+       		</not>        	
+       	</condition>
+    	-->
+    	
         <ant inheritAll="false" inheritRefs="false" antfile="${data-warehouse.build.file}" dir="${data-warehouse.base.dir}" >
-            <property name="datawarehouse.pa.dest.jdbc.driver" value="${database.driver}"/>
-            <property name="datawarehouse.pa.dest.jdbc.url"  value="${database.url}"/>
-            <property name="datawarehouse.pa.dest.db.username" value="${database.user}" />
-            <property name="datawarehouse.pa.dest.db.password" value="${database.password}"/>
+            <property name="datawarehouse.pa.dest.jdbc.driver" value="${datawarehouse.dest.jdbc.driver}"/>
+            <property name="datawarehouse.pa.dest.jdbc.url"  value="${datawarehouse.dest.jdbc.url}"/>
+            <property name="datawarehouse.pa.dest.db.username" value="${datawarehouse.dest.db.username}" />
+            <property name="datawarehouse.pa.dest.db.password" value="${datawarehouse.dest.db.password}"/>
 
             <property name="datawarehouse.pa.source.jdbc.driver" value="${datawarehouse.pa.source.jdbc.driver}"/>
-            <property name="datawarehouse.pa.source.jdbc.url"  value="${datawarehouse.pa.source.jdbc.url}"/>
+            <property name="datawarehouse.pa.source.jdbc.url"    value="${datawarehouse.pa.source.jdbc.url}"/>
             <property name="datawarehouse.pa.source.db.username" value="${datawarehouse.pa.source.db.username}" />
             <property name="datawarehouse.pa.source.db.password" value="${datawarehouse.pa.source.db.password}"/>
 

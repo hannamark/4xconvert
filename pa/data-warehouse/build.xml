@@ -16,7 +16,8 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="bda-utils.classpath"/>
     <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath" name="groovy"/>
 
-    <target name="populate" description="Rename from staging to final tables, add indexes">    	
+    <target name="populate" description="Rename from staging to final tables, add indexes">   
+    	<echoproperties/>
     	<parallel threadCount="1" timeout="${datawarehouse.timeout}" failonany="true">    	 
     	  <sequential>    	
                 <antcall target="gen"/>    	    
@@ -76,6 +77,7 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
             expandproperties="true" autocommit="true">
+        	<transaction src="${basedir}/sql/prime.sql"/>
             <transaction src="${basedir}/sql/study_accrual_count_audit.sql"/>
             <transaction src="${basedir}/sql/organization.sql"/>
             <transaction src="${basedir}/sql/organization_role.sql"/>
