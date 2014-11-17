@@ -109,6 +109,7 @@ import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudySiteStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.NonInterventionalStudyProtocolConverter;
@@ -1006,7 +1007,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      */
     private void createOverallStatus(StudyOverallStatusDTO overallStatusDTO,
             Ii spIi) throws PAException {
-        if (overallStatusDTO != null) {
+        StudyOverallStatusDTO currentStatus = studyOverallStatusService
+                .getCurrentByStudyProtocol(spIi);
+        if (overallStatusDTO != null
+                && (currentStatus == null || CdConverter
+                        .convertCdToEnum(StudyStatusCode.class,
+                                overallStatusDTO.getStatusCode()) != CdConverter
+                        .convertCdToEnum(StudyStatusCode.class,
+                                currentStatus.getStatusCode()))) {
             overallStatusDTO.setStudyProtocolIdentifier(spIi);
             studyOverallStatusService.createRelaxed(overallStatusDTO);
         }

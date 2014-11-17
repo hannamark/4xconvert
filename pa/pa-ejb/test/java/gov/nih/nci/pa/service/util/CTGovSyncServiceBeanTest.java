@@ -32,6 +32,7 @@ import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
@@ -817,6 +818,62 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             deactivateTrial(session, id);
         }
     }
+    
+    @Test
+    public final void testUpdateDoesNotCreateDuplicateStudyStatusPO8265()
+            throws PAException, ParseException {
+        // Create protocol by performing a new trial import.
+        String nctID = "NCT01440088";
+        String nciID = serviceBean.importTrial(nctID);
+
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
+
+        final long id = getProtocolIdByNciId(nciID, session);
+        try {
+            // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML that
+            // actually belongs to a different trial.
+            changeNCTNumber("NCT01440088", "NCT01861054");            
+            nctID = "NCT01861054";
+            
+            InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
+                    .get(InterventionalStudyProtocol.class, id);
+            assertEquals(1, sp.getStudyOverallStatuses().size());
+            StudyOverallStatus status = sp.getStudyOverallStatuses().iterator()
+                    .next();
+            final Timestamp newDate = new Timestamp(DateUtils.addYears(
+                    new Date(), -10).getTime());
+            status.setStatusDate(newDate);
+            session.save(status);
+            session.flush();
+            session.clear();
+
+            // Apply update on top of the existing record.
+            String newNciID = serviceBean.importTrial(nctID);
+            final long newId = getProtocolIdByNciId(newNciID, session);
+
+            session.flush();
+            session.clear();
+
+            // Make sure we didn't create two protocols.
+            assertEquals(nciID, newNciID);
+            assertEquals(id, newId);
+
+            sp = (InterventionalStudyProtocol) session.get(
+                    InterventionalStudyProtocol.class, id);
+            assertEquals(1, sp.getStudyOverallStatuses().size());
+            assertEquals(StudyStatusCode.ACTIVE, sp.getStudyOverallStatuses()
+                    .iterator().next().getStatusCode());
+            assertTrue(DateUtils.isSameDay(sp.getStudyOverallStatuses()
+                    .iterator().next().getStatusDate(), newDate));
+        } finally {
+            // Delete the trial.
+            deactivateTrial(session, id);
+        }
+    }
+    
+
     
     @Test
     public final void testPO6835_LeadOrgIdChange() throws PAException, ParseException {
