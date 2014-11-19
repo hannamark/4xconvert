@@ -39,7 +39,11 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
 		<![CDATA[SELECT
        (SELECT SUM(target_accrual)
         FROM dw_study_participating_site
-        WHERE nci_id = dt4.nci_id
+        WHERE recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND nci_id = dt4.nci_id
           AND org_po_id IN
               (SELECT organization_id
                FROM dw_family_organization
@@ -51,7 +55,11 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps.internal_system_id = ssad.site_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
        ) AS center_total,
 
@@ -59,7 +67,10 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date < $P{Calculated_Start_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION')
+                        AND sps.internal_system_id = ssad.site_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
        ) AS center_total_before,
 
@@ -67,7 +78,11 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps.internal_system_id = ssad.site_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
        ) AS affiliate_total,
 
@@ -75,7 +90,11 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <  $P{Calculated_Start_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps.internal_system_id = ssad.site_id) IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
        ) AS affiliate_total_before,
 
@@ -83,7 +102,11 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date <= $P{End_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) NOT IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps.internal_system_id = ssad.site_id) NOT IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
            AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total,
@@ -92,7 +115,11 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
          FROM dw_study_site_accrual_details ssad
          WHERE nci_id = dt4.nci_id AND ssad.status = 'ACTIVE'
            AND registration_date < $P{Calculated_Start_Date}
-           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.internal_system_id = ssad.site_id) NOT IN
+           AND (SELECT sps.org_po_id FROM dw_study_participating_site sps WHERE sps.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps.internal_system_id = ssad.site_id) NOT IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
            AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total_before,
@@ -103,17 +130,7 @@ org.apache.commons.lang.time.DateUtils.addYears($P{End_Date}, -1)
 FROM "dw_data_table_4" dt4
 JOIN dw_study std ON (dt4.nci_id = std.nci_id)
 LEFT JOIN dw_family_trial_data ftd ON (ftd.nci_id = dt4.nci_id AND ftd.family_name = $P{Center})
-WHERE summary_level_accrual = false
-  AND dt4.nci_id IN (select nci_id
-                 from dw_study_overall_status
-                 where ( date_trunc('day', status_date) between $P{Calculated_Start_Date} and $P{End_Date}
-                         or internal_system_id in ( select max(internal_system_id )
-                                                    from dw_study_overall_status
-                                                    where date_trunc('day', status_date) < $P{Calculated_Start_Date}
-                                                    group by nci_id ))
-                    and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
-                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
-                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
+WHERE summary_level_accrual = false 
   AND dt4.nci_id NOT IN (SELECT nci_id
                      FROM dw_study_processing_status
                      WHERE (nci_id, date) IN (
@@ -124,7 +141,12 @@ WHERE summary_level_accrual = false
                        AND status IN ('Rejected', 'Submission Terminated'))
   AND dt4.nci_id IN ( SELECT nci_id
                   FROM dw_study_participating_site
-                  WHERE  org_org_family = $P{Center} )
+                  WHERE recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND                                   
+                  org_org_family = $P{Center} )
   AND std.start_date <= $P{End_Date}
   AND NOT (std.completion_date IS NOT NULL
            AND std.completion_date_type_code IS NOT NULL
@@ -133,23 +155,17 @@ WHERE summary_level_accrual = false
   AND NOT (std.primary_completion_date IS NOT NULL
            AND std.primary_completion_date_type_code IS NOT NULL
            AND (std.primary_completion_date < $P{Calculated_Start_Date}
-                AND std.primary_completion_date_type_code = 'ACTUAL'))
-  AND dt4.nci_id NOT IN (SELECT nci_id
-                         FROM dw_study_overall_status
-                         WHERE date_trunc('day', status_date) < $P{Calculated_Start_Date}
-                           AND status in ('ADMINISTRATIVELY_COMPLETE','CLOSED_TO_ACCRUAL',
-                                          'CLOSED_TO_ACCRUAL_AND_INTERVENTION', 'COMPLETE')
-                           AND nci_id NOT IN (SELECT nci_id
-                                              FROM dw_study_overall_status
-                                              WHERE status = 'ACTIVE'
-                                               AND date_trunc('day', status_date)
-                                                   BETWEEN $P{Calculated_Start_Date} AND $P{End_Date}))
+                AND std.primary_completion_date_type_code = 'ACTUAL'))  
   AND (std.current_trial_status IS NULL OR std.current_trial_status != 'Withdrawn')
 UNION
 SELECT
       ( SELECT SUM(target_accrual)
         FROM dw_study_participating_site
-        WHERE nci_id = dt4.nci_id
+        WHERE recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND nci_id = dt4.nci_id
           AND org_po_id IN
               (SELECT organization_id
                FROM dw_family_organization
@@ -170,7 +186,11 @@ SELECT
              )
            ) AS saca1
          JOIN dw_study_participating_site sps1 ON (saca1.study_site_id = sps1.internal_system_id)
-         WHERE sps1.nci_id = dt4.nci_id
+         WHERE sps1.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps1.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps1.nci_id = dt4.nci_id
            AND sps1.org_po_id IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
        ) AS center_total,
@@ -189,7 +209,11 @@ SELECT
              )
            ) AS saca2
          JOIN dw_study_participating_site sps2 ON (saca2.study_site_id = sps2.internal_system_id)
-         WHERE sps2.nci_id = dt4.nci_id
+         WHERE sps2.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps2.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps2.nci_id = dt4.nci_id
            AND sps2.org_po_id IN
                  (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype = 'ORGANIZATIONAL')
        ) AS center_total_before,
@@ -208,7 +232,11 @@ SELECT
               )
             ) AS saca3
           JOIN dw_study_participating_site sps3 ON (saca3.study_site_id = sps3.internal_system_id)
-          WHERE sps3.nci_id = dt4.nci_id
+          WHERE sps3.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps3.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps3.nci_id = dt4.nci_id
             AND sps3.org_po_id IN
                   (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
        ) AS affiliate_total,
@@ -227,7 +255,11 @@ SELECT
               )
             ) AS saca4
           JOIN dw_study_participating_site sps4 ON (saca4.study_site_id = sps4.internal_system_id)
-          WHERE sps4.nci_id = dt4.nci_id
+          WHERE sps4.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps4.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps4.nci_id = dt4.nci_id
             AND sps4.org_po_id IN
                   (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center} AND functionaltype != 'ORGANIZATIONAL')
        ) AS affiliate_total_before,
@@ -246,7 +278,11 @@ SELECT
               )
             ) AS saca5
           JOIN dw_study_participating_site sps5 ON (saca5.study_site_id = sps5.internal_system_id)
-          WHERE sps5.nci_id = dt4.nci_id
+          WHERE sps5.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps5.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps5.nci_id = dt4.nci_id
             AND sps5.org_po_id NOT IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
             AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total,
@@ -265,7 +301,11 @@ SELECT
               )
             ) AS saca6
           JOIN dw_study_participating_site sps6 ON (saca6.study_site_id = sps6.internal_system_id)
-          WHERE sps6.nci_id = dt4.nci_id
+          WHERE sps6.recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', sps6.recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND sps6.nci_id = dt4.nci_id
             AND sps6.org_po_id NOT IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
             AND dt4.lead_org_po_id IN (SELECT organization_id FROM dw_family_organization WHERE family_name = $P{Center})
        ) AS non_affiliate_total_before,
@@ -277,22 +317,7 @@ SELECT
 FROM "dw_data_table_4" dt4
 JOIN dw_study std ON (dt4.nci_id = std.nci_id)
 LEFT JOIN dw_family_trial_data ftd ON (ftd.nci_id = dt4.nci_id AND ftd.family_name = $P{Center})
-WHERE summary_level_accrual = true
-  AND ( dt4.nci_id IN (select nci_id
-                 from dw_study_overall_status
-                 where (date_trunc('day', status_date) between $P{Calculated_Start_Date} and $P{End_Date}
-                         or internal_system_id in ( select max(internal_system_id )
-                                                    from dw_study_overall_status
-                                                    where date_trunc('day', status_date) < $P{Calculated_Start_Date}
-                                                    group by nci_id ))
-                    and status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
-                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
-                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION'))
-        OR (is_industrial = TRUE AND dt4.nci_id IN (select nci_id
-                      from dw_data_table_4
-                      where nci_id not in ( select nci_id
-                                            from dw_study_overall_status
-	                                  where date_trunc('day', status_date) < $P{Calculated_Start_Date} ))))
+WHERE summary_level_accrual = true  
   AND dt4.nci_id NOT IN (SELECT nci_id
                      FROM dw_study_processing_status
                      WHERE (nci_id, date) IN (
@@ -303,7 +328,11 @@ WHERE summary_level_accrual = true
                        AND status IN ('Rejected', 'Submission Terminated'))
   AND dt4.nci_id IN ( SELECT nci_id
                   FROM dw_study_participating_site
-                  WHERE  org_org_family = $P{Center} )
+                  WHERE recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
+                                   'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+                                   'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
+                        AND date_trunc('day', recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
+                        AND org_org_family = $P{Center} )
   AND std.start_date <= $P{End_Date}
   AND NOT (std.completion_date IS NOT NULL
            AND std.completion_date_type_code IS NOT NULL
@@ -312,17 +341,7 @@ WHERE summary_level_accrual = true
   AND NOT (std.primary_completion_date IS NOT NULL
            AND std.primary_completion_date_type_code IS NOT NULL
            AND (std.primary_completion_date < $P{Calculated_Start_Date}
-                AND std.primary_completion_date_type_code = 'ACTUAL'))
-  AND dt4.nci_id NOT IN (SELECT nci_id
-                         FROM dw_study_overall_status
-                         WHERE date_trunc('day', status_date) < $P{Calculated_Start_Date}
-                           AND status in ('ADMINISTRATIVELY_COMPLETE','CLOSED_TO_ACCRUAL',
-                                          'CLOSED_TO_ACCRUAL_AND_INTERVENTION', 'COMPLETE')
-                           AND nci_id NOT IN (SELECT nci_id
-                                              FROM dw_study_overall_status
-                                              WHERE status = 'ACTIVE'
-                                               AND date_trunc('day', status_date)
-                                                   BETWEEN $P{Calculated_Start_Date} AND $P{End_Date}))
+                AND std.primary_completion_date_type_code = 'ACTUAL'))  
   AND (std.current_trial_status IS NULL OR std.current_trial_status != 'Withdrawn')
 ORDER BY clinical_research_cat, nci_id]]>
 	</queryString>
