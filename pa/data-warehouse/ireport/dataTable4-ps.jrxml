@@ -139,14 +139,24 @@ WHERE summary_level_accrual = false
                                          WHERE date <= $P{End_Date}
                                          GROUP BY nci_id)
                        AND status IN ('Rejected', 'Submission Terminated'))
-  AND dt4.nci_id IN ( SELECT nci_id
+  AND dt4.nci_id IN ( 
+                  SELECT nci_id
                   FROM dw_study_participating_site
                   WHERE recruitment_status in ('APPROVED','ACTIVE','ENROLLING_BY_INVITATION','TEMPORARILY_CLOSED_TO_ACCRUAL',
                                    'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
                                    'CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION') 
                         AND date_trunc('day', recruitment_status_date) between $P{Calculated_Start_Date} and $P{End_Date} 
                         AND                                   
-                  org_org_family = $P{Center} )
+                  org_org_family = $P{Center}
+                  UNION
+                  SELECT ps.nci_id
+                      FROM dw_study_participating_site ps JOIN dw_study_overall_status sos on sos.nci_id=ps.nci_id
+                      WHERE ps.recruitment_status in ('ACTIVE') AND sos.status IN ('CLOSED_TO_ACCRUAL', 'CLOSED_TO_ACCRUAL_AND_INTERVENTION')
+                      AND sos.status_date=(SELECT max(sos2.status_date) FROM dw_study_overall_status sos2 WHERE sos2.nci_id=sos.nci_id)
+                      AND date_trunc('day', ps.recruitment_status_date) <= $P{End_Date}  
+                      AND date_trunc('day', sos.status_date) >= $P{Calculated_Start_Date}
+                      AND date_trunc('day', ps.recruitment_status_date)<=date_trunc('day', sos.status_date)                  
+                  )
   AND std.start_date <= $P{End_Date}
   AND NOT (std.completion_date IS NOT NULL
            AND std.completion_date_type_code IS NOT NULL
