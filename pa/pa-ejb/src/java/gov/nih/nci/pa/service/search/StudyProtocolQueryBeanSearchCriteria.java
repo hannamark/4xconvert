@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -226,6 +227,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String INACTIVE_MILESTONES_PARAM = "inactiveMilestones";
         private static final String PROCESSING_PRIORITY_PARAM = "processingPriorityParam";
         private static final String STUDY_SOURCE_PARAM = "studySourceParam";
+        private static final String TREATING_SITE_CODE_PARAM = "treatingSiteCodeParam";
+        private static final String NULLIFIED_STATUS_PARAM = "nulifiedStatusParam";
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;        
 
@@ -994,12 +997,22 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" %s  ( sowner.id = :%s or :%s in (select id from RegistryUser where "
                         + "affiliatedOrgUserType = :%s and str(affiliatedOrganizationId) in ( select "
                         + "ss.researchOrganization.organization.identifier from  %s.studySites ss where "
-                        + "ss.functionalCode = :%s ))) and dws.statusCode  != :%s ", operator, STUDY_OWNER_PARAM,
+                        + "ss.functionalCode = :%s )) or (:%s in (select id from RegistryUser where "
+                        + "str(affiliatedOrganizationId) in (select "
+                        + "ss.healthCareFacility.organization.identifier from  %s.studySites ss where "
+                        + "ss.functionalCode = :%s and ss.statusCode != :%s)) and %s.proprietaryTrialIndicator=true)) "
+                        + "and dws.statusCode  != :%s ", 
+                        operator, STUDY_OWNER_PARAM,
                         STUDY_OWNER_PARAM, STUDY_OWNER_TYPE_PARAM, SearchableUtils.ROOT_OBJ_ALIAS,
-                        STUDY_OWNER_SITE_PARAM, STUDY_OWNER_DWS_PARAM));
+                        STUDY_OWNER_SITE_PARAM, STUDY_OWNER_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, 
+                        TREATING_SITE_CODE_PARAM, 
+                        NULLIFIED_STATUS_PARAM, SearchableUtils.ROOT_OBJ_ALIAS, 
+                        STUDY_OWNER_DWS_PARAM));
                 params.put(STUDY_OWNER_PARAM, spo.getUserId());
                 params.put(STUDY_OWNER_TYPE_PARAM, UserOrgType.ADMIN);
                 params.put(STUDY_OWNER_SITE_PARAM, StudySiteFunctionalCode.LEAD_ORGANIZATION);
+                params.put(TREATING_SITE_CODE_PARAM, StudySiteFunctionalCode.TREATING_SITE);
+                params.put(NULLIFIED_STATUS_PARAM, FunctionalRoleStatusCode.NULLIFIED);
                 params.put(STUDY_OWNER_DWS_PARAM, DocumentWorkflowStatusCode.REJECTED);
             } else if (!spo.isMyTrialsOnly() && spo.getUserId() != null) {
                 String operator = determineOperator(whereClause);

@@ -131,6 +131,8 @@ import org.apache.commons.lang.StringUtils;
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServiceLocal {
 
+    private static final String IDS = "ids";
+
     @EJB
     private DataAccessServiceLocal dataAccessService;
 
@@ -292,6 +294,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     private static final int ACCESS_NO = 0;
     private static final int ACCESS_ADMIN = 1;
     private static final int ACCESS_OWNER = 2;
+    private static final int ACCESS_SITE = 3;
 
     /**
      * {@inheritDoc}
@@ -304,16 +307,18 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             return new ArrayList<StudyProtocolQueryDTO>();
         }
         RegistryUser user = registryUserService.getPartialUserById(userId);
-        Map<Long, Integer> ownerMap = getOwnerMapAndFilterTrials(protocols, myTrialsOnly, userId, user);
+        Map<Long, Boolean> studyIDAndSiteOwnershipMap = getStudiesOnWhichUserHasSite(user);
+        Map<Long, Integer> ownerMap = getOwnerMapAndFilterTrials(protocols,
+                myTrialsOnly, userId, user, studyIDAndSiteOwnershipMap.keySet());
         if (ownerMap.isEmpty()) {
             return new ArrayList<StudyProtocolQueryDTO>();
         }
-        Map<Long, Boolean> studyIDAndSiteOwnershipMap = getStudiesOnWhichUserHasSite(user);
+        
         List<String> rssOrgs = getRSSOrganizationNames();
         DAQuery query = new DAQuery();
         query.setSql(true);
         query.setText(QRY_STRING);
-        query.addParameter("ids", ownerMap.keySet());
+        query.addParameter(IDS, ownerMap.keySet());
         List<Object[]> queryList = dataAccessService.findByQuery(query);
          
         List<StudyProtocolQueryDTO> dtoList = convertResults(queryList, 
@@ -322,7 +327,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         query = new DAQuery();
         query.setSql(true);
         query.setText(OTHER_IDENTIFIERS_QRY_STRING);
-        query.addParameter("ids", ownerMap.keySet());       
+        query.addParameter(IDS, ownerMap.keySet());       
         List<Object[]> otherIdentifierQueryList = dataAccessService.findByQuery(query);
         
         for (Object[] obj : otherIdentifierQueryList) { 
@@ -340,7 +345,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         query = new DAQuery();
         query.setSql(true);
         query.setText(STUDY_ALTERNATE_TITLE_QRY_STRING);
-        query.addParameter("ids", protocols);
+        query.addParameter(IDS, protocols);
         List<Object[]> studyAlternateTitlesQueryList = dataAccessService.findByQuery(query);
         
         for (Object[] obj : studyAlternateTitlesQueryList) {
@@ -363,7 +368,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         query = new DAQuery();
         query.setSql(true);
         query.setText(LAST_UPDATED_DATE);
-        query.addParameter("ids", ownerMap.keySet());       
+        query.addParameter(IDS, ownerMap.keySet());       
         List<Object[]> lastUpdatedDateQueryList = dataAccessService.findByQuery(query);
         for (StudyProtocolQueryDTO dto : dtoList) {   
             for (Object[] obj : lastUpdatedDateQueryList) {
@@ -394,7 +399,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         DAQuery query = new DAQuery();
         query.setSql(true);
         query.setText(QRY_STRING);
-        query.addParameter("ids", ids);
+        query.addParameter(IDS, ids);
         List<Object[]> qryList = dataAccessService.findByQuery(query);
         List<StudyProtocolQueryDTO> result = new ArrayList<StudyProtocolQueryDTO>();
         for (Object[] row : qryList) {
@@ -446,18 +451,18 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
 
     private Map<Long, Integer> getOwnerMapAndFilterTrials(
             List<Long> protocols, boolean myTrialsOnly, Long userId,
-            RegistryUser user) throws PAException {
-        Set<Long> ownedStudies = getOwnedStudies(userId);
+            RegistryUser user, Set<Long> studiesOnWhichUserHasSite) throws PAException {
+        Set<Long> ownedStudies = getOwnedStudies(userId);        
         Map<Long, Integer> ownerMap = new HashMap<Long, Integer>();
         final boolean isAdmin = isAdmin(user);
         for (Long spID : protocols) {
-            Integer access = ACCESS_NO;
+            Integer access = ACCESS_NO;     
             if (ownedStudies.contains(spID)) {
                 access = ACCESS_OWNER;
-            } else {                
-                if (isAdmin) {
-                    access = ACCESS_ADMIN;
-                }
+            } else if (studiesOnWhichUserHasSite.contains(spID)) {
+                access = ACCESS_SITE;
+            } else if (isAdmin) {
+                access = ACCESS_ADMIN;
             }
             if (access != ACCESS_NO || !myTrialsOnly) {
                 ownerMap.put(spID, access);
@@ -508,22 +513,26 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         List<StudyProtocolQueryDTO> result = new ArrayList<StudyProtocolQueryDTO>();
         for (Object[] row : qryList) {
             StudyProtocolQueryDTO dto = convertRow(row, rssOrgs);
+            String poid = (String) row[LEAD_ORG_POID_IDX];
             int access = ownerMap.get(dto.getStudyProtocolId());
             switch (access) {
-            case ACCESS_OWNER:
-                dto.setSearcherTrialOwner(true);
-                result.add(dto);
-                break;
-            case ACCESS_ADMIN:
-                String poid = (String) row[LEAD_ORG_POID_IDX];
-                dto.setSearcherTrialOwner(StringUtils.equals(affiliatedOrg, poid));
-                if (!myTrialsOnly || dto.isSearcherTrialOwner()) {
+                case ACCESS_OWNER:
+                    dto.setSearcherTrialOwner(true);
                     result.add(dto);
-                }
-                break;
-            default:
-                dto.setSearcherTrialOwner(false);
-                result.add(dto);
+                    break;
+                case ACCESS_SITE:                    
+                    dto.setSearcherTrialOwner(StringUtils.equals(affiliatedOrg, poid));
+                    result.add(dto);
+                    break;
+                case ACCESS_ADMIN:                    
+                    dto.setSearcherTrialOwner(StringUtils.equals(affiliatedOrg, poid));
+                    if (!myTrialsOnly || dto.isSearcherTrialOwner()) {
+                        result.add(dto);
+                    }
+                    break;
+                default:
+                    dto.setSearcherTrialOwner(false);
+                    result.add(dto);
             }            
             if (studyIDAndSiteOwnershipMap.containsKey(dto.getStudyProtocolId())) {
                 dto.setCurrentUserHasSite(true);
