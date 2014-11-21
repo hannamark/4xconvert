@@ -638,7 +638,7 @@ var diseases = [];
                 .dialog({
                     autoOpen: false,
                     modal: false, 
-                    title: 'CTRP Disease Tree',
+                    title: 'CTRP Disease Hierarchy',
                     position: [30,5],
                     width: 570,
                     height: 300
