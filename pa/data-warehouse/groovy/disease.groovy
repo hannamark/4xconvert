@@ -1,5 +1,37 @@
 import groovy.sql.Sql
 
+////////
+class TimerTaskExample extends TimerTask {
+	public void run() {
+				System.out
+						.println("---------------------------------------------------------------------------------");
+				System.out
+						.println("I am a periodic thread dump logger. Please excuse me for verbose output and ignore for now.");
+				Map allThreads = Thread.getAllStackTraces();
+				Iterator iterator = allThreads.keySet().iterator();
+				StringBuffer stringBuffer = new StringBuffer();
+				while (iterator.hasNext()) {
+					Thread key = (Thread) iterator.next();
+					StackTraceElement[] trace = (StackTraceElement[]) allThreads
+							.get(key);
+					stringBuffer.append(key.toString() + "\r\n");
+					for (int i = 0; i < trace.length; i++) {
+						stringBuffer.append(" " + trace[i].toString() + "\r\n");
+					}
+					stringBuffer.append("\r\n");
+				}
+				System.out.println(stringBuffer);
+			}
+}
+
+int delay = 1000   
+int period = 300000  
+Timer timer = new Timer()
+timer.scheduleAtFixedRate(new TimerTaskExample(), delay, period)
+////////
+
+
+
 def sql = """SELECT
                 CASE WHEN sd.ctgovxml_indicator THEN 'YES'
                      ELSE 'NO'
