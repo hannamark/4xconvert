@@ -87,6 +87,8 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 11, 2009
@@ -138,6 +140,15 @@ public class MockCsmUtil implements CsmUtil {
     @Override
     public String extractUserName(String userName) {
         return null;
+    }
+     
+    @Override
+    public String getGridIdentityUsername(String gridIdentity) {
+       String splitString = "CN=";
+        if (StringUtils.contains(gridIdentity, splitString)) {
+            return gridIdentity.split(splitString)[1];
+        }
+        return gridIdentity;
     }
     
     

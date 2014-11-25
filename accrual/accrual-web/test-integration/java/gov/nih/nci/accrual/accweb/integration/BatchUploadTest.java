@@ -190,7 +190,8 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         verifySubjectOnOtherSiteError(error);
 
         verifySu002IsOnTrial(rConf);
-
+        String entityName = getAuditDetails();
+        assertTrue(entityName.equals("BATCH_FILE"));
     }
 
     /**
@@ -709,6 +710,15 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         zos.closeEntry();
         fis.close();
+    }
+    
+    
+    private String getAuditDetails() throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (String) runner.query(connection,
+                "select entityname from auditlogrecord  "
+                + "where id = (select max(id) from auditlogrecord )",
+                new ArrayHandler())[0];
     }
 
 }

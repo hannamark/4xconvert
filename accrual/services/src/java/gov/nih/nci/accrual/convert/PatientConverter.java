@@ -86,18 +86,24 @@ import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 28, 2009
  */
 public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
-
+    private static final Logger LOG = Logger.getLogger(PatientConverter.class);
     /**
      * {@inheritDoc}
      */
@@ -136,6 +142,31 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setRaceCode(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, dto.getRaceCode()));
         bo.setZip(StConverter.convertToString(dto.getZip()));
+        if (!ISOUtil.isCdNull(dto.getStatusCode())) {
+            bo.setStatusCode(StructuralRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
+        }
+        if (!ISOUtil.isTsNull(dto.getDateLastCreated())) {
+            bo.setDateLastCreated(TsConverter.convertToTimestamp(dto.getDateLastCreated()));
+        }
+        if (!ISOUtil.isTsNull(dto.getDateLastUpdated())) {
+            bo.setDateLastUpdated(TsConverter.convertToTimestamp(dto.getDateLastUpdated()));
+        }
+        setUserFields(dto, bo);
         return bo;
+    }
+    
+    private void setUserFields(PatientDto dto, Patient bo) {
+        String isoStUserLastCreated = StConverter.convertToString(dto
+                .getUserLastCreated());
+        if (StringUtils.isNotEmpty(isoStUserLastCreated)) {
+            try {
+                bo.setUserLastCreated(AbstractStudyProtocolConverter
+                        .getCsmUserUtil().getCSMUserById(Long.valueOf(isoStUserLastCreated)));
+            } catch (Exception e) {
+                LOG.error("Exception in setting userLastCreated for Patient: "
+                        + dto.getIdentifier() + ", for userid: "
+                        + isoStUserLastCreated, e);
+            }
+        }
     }
 }

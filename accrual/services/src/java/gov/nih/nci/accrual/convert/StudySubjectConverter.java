@@ -94,6 +94,7 @@ import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -102,12 +103,14 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Hugh Reinhart
  */
 public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, StudySubject> {
-
+    private static final Logger LOG = Logger.getLogger(StudySubjectConverter.class);
     /**
      * {@inheritDoc}
      */
@@ -119,7 +122,8 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setPatientIdentifier(IiConverter.convertToIi(bo.getPatient().getId()));
         dto.setPaymentMethodCode(CdConverter.convertToCd(bo.getPaymentMethodCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
+             bo.getStudyProtocol() == null ? null : bo.getStudyProtocol().getId()));
         dto.setStudySiteIdentifier(IiConverter.convertToIi(bo.getStudySite() == null ? null 
                 : bo.getStudySite().getId()));
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease() == null ? null : bo.getDisease().getId()));
@@ -165,9 +169,43 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
             bo.setSubmissionTypeCode(AccrualSubmissionTypeCode.getByCode(dto.getSubmissionTypeCode().getCode()));
         }
         bo.setDeleteReason(StConverter.convertToString(dto.getDeleteReason()));
+        if (!ISOUtil.isTsNull(dto.getDateLastCreated())) {
+            bo.setDateLastCreated(TsConverter.convertToTimestamp(dto.getDateLastCreated()));
+        }
+        if (!ISOUtil.isTsNull(dto.getDateLastUpdated())) {
+            bo.setDateLastUpdated(TsConverter.convertToTimestamp(dto.getDateLastUpdated()));
+        }
+        setUserFields(dto, bo);
         return bo;
     }
 
+    private void setUserFields(StudySubjectDto dto, StudySubject bo) {
+        String isoStUserLastCreated = StConverter.convertToString(dto
+                .getUserLastCreated());
+        if (StringUtils.isNotEmpty(isoStUserLastCreated)) {
+            try {
+                bo.setUserLastCreated(AbstractStudyProtocolConverter
+                        .getCsmUserUtil().getCSMUserById(Long.valueOf(isoStUserLastCreated)));
+            } catch (Exception e) {
+                LOG.error("Exception in setting userLastCreated for Study Subject: "
+                        + dto.getIdentifier() + ", for userid: "
+                        + isoStUserLastCreated, e);
+            }
+        }
+
+        String isoStUserLastUpdated = StConverter.convertToString(dto
+                .getUserLastUpdated());
+        if (StringUtils.isNotEmpty(isoStUserLastUpdated)) {
+            try {
+                bo.setUserLastUpdated(AbstractStudyProtocolConverter
+                        .getCsmUserUtil().getCSMUserById(Long.valueOf(isoStUserLastUpdated)));
+            } catch (Exception e) {
+                LOG.error("Exception in setting userLastUpdated for Study Subject: "
+                        + dto.getIdentifier() + ", for userid: "
+                        + isoStUserLastUpdated, e);
+            }
+        }
+    }
     /**
      * Converts a StudySubject to the condensed study subject/patient dto.
      * @param bo the business object to convert

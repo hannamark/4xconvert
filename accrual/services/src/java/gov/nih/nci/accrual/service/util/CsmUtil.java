@@ -119,4 +119,12 @@ public interface CsmUtil {
      * @return the extracted username
      */
     String extractUserName(String userName);
+    
+    /**
+     * Given a username string, determines if its in the grid format, returns the CN.
+     * @param gridIdentity the grid identity string.
+     * @return the username or the grid identity.
+     */
+    
+    String getGridIdentityUsername(String gridIdentity);
 }

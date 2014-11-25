@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
@@ -99,6 +100,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,6 +112,7 @@ import javax.interceptor.Interceptors;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -244,11 +247,24 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
                     + ") does not belong to an Industrial trial.");
         }
         if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToStudySiteIi(site.getId()))) {
-            throw new PAException("User (" + CaseSensitiveUsernameHolder.getUser() 
-                    + ") doesn't have accrual access to site (" + site.getId() + ")");
+            User user = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser());
+            Organization org = getOrganizationByStudySiteId(site.getId());
+            throw new PAException("User " + user.getFirstName() + " " +  user.getLastName() 
+                    + " (User ID " + AccrualCsmUtil.getInstance().getGridIdentityUsername(user.getLoginName()) 
+                    + ") does not have accrual access to site: " 
+                    + (org != null ? org.getName() : null) + " (PO ID = "
+                    + (org != null ? org.getIdentifier() : null) + ")");
         }
     }
 
+    private Organization getOrganizationByStudySiteId(Long ssid) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudySite ss = (StudySite) session.get(StudySite.class, ssid);
+        if (ss.getHealthCareFacility() != null) {
+            return ss.getHealthCareFacility().getOrganization();
+        }
+        return null;
+    }
     /**
      * @param searchTrialService the searchTrialService to set
      */

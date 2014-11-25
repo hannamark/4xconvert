@@ -267,7 +267,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         TestSchema.addUpdObject(testAccess);
 
         thrown.expect(PAException.class);
-        thrown.expectMessage("User (curator) doesn't have accrual access to site (3)");
+        thrown.expectMessage("User Joe Smith (User ID curator) does not have accrual access to site: orga name (PO ID = 1)");
         bean.save(accrualCounts);
     }
 

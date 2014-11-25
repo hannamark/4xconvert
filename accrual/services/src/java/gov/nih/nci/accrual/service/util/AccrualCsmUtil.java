@@ -201,4 +201,17 @@ public class AccrualCsmUtil implements CsmUtil {
     public static void setCsmUtil(CsmUtil csmUtil) {
         AccrualCsmUtil.csmUtil = csmUtil;
     }
+    
+    /**
+     * Given a username string, determines if its in the grid format, returns the CN.
+     * @param gridIdentity the grid identity string.
+     * @return the username or the grid identity.
+     */
+    public String getGridIdentityUsername(String gridIdentity) {
+        String splitString = "CN=";
+        if (StringUtils.contains(gridIdentity, splitString)) {
+            return gridIdentity.split(splitString)[1];
+        }
+        return gridIdentity;
+    }
 }

@@ -101,12 +101,14 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @Entity
 @Table(name = "BATCH_FILE")
-public class BatchFile extends AbstractEntity {
+public class BatchFile extends AbstractEntity implements Auditable {
     private static final long serialVersionUID = 1L;
     private List<AccrualCollections> accrualCollections = new ArrayList<AccrualCollections>();
     private RegistryUser submitter;

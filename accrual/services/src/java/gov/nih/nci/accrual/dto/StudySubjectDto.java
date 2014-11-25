@@ -82,6 +82,7 @@ package gov.nih.nci.accrual.dto;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Ts;
 
 /**
  * @author Hugh Reinhart
@@ -100,8 +101,10 @@ public class StudySubjectDto extends AbstractStudyDto {
     private St registrationGroupId;
     private Cd submissionTypeCode;
     private St deleteReason;
-    
-    
+    private St userLastUpdated;
+    private St userLastCreated;
+    private Ts dateLastUpdated;
+    private Ts dateLastCreated;
     /**
      * @return the assignedIdentifier
      */
@@ -221,5 +224,60 @@ public class StudySubjectDto extends AbstractStudyDto {
      */
     public void setDeleteReason(St deleteReason) {
         this.deleteReason = deleteReason;
+    }
+    
+    /**
+     * @return the userLastUpdated
+     */
+    public St getUserLastUpdated() {
+        return userLastUpdated;
+    }
+
+    /**
+     * @param userLastUpdated the userLastUpdated to set
+     */
+    public void setUserLastUpdated(St userLastUpdated) {
+        this.userLastUpdated = userLastUpdated;
+    }
+
+    /**
+     * @return the userLastCreated
+     */
+    public St getUserLastCreated() {
+        return userLastCreated;
+    }
+
+    /**
+     * @param userLastCreated the userLastCreated to set
+     */
+    public void setUserLastCreated(St userLastCreated) {
+        this.userLastCreated = userLastCreated;
+    }
+
+    /**
+     * @return the dateLastCreated
+     */
+    public Ts getDateLastCreated() {
+        return dateLastCreated;
+    }
+
+    /**
+     * @param dateLastCreated the dateLastCreated to set
+     */
+    public void setDateLastCreated(Ts dateLastCreated) {
+        this.dateLastCreated = dateLastCreated;
+    }
+    /**
+     * @return the dateLastUpdated
+     */
+    public Ts getDateLastUpdated() {
+        return dateLastUpdated;
+    }
+
+    /**
+     * @param dateLastUpdated the dateLastUpdated to set
+     */
+    public void setDateLastUpdated(Ts dateLastUpdated) {
+        this.dateLastUpdated = dateLastUpdated;
     }
 }

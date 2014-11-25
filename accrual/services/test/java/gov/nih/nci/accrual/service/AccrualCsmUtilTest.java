@@ -84,7 +84,6 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -159,5 +158,11 @@ public class AccrualCsmUtilTest extends AbstractServiceTest<AccrualCsmUtil> {
     @Test
     public void extractUsernameTwoUsers() throws Exception {        
         assertEquals("testUser", bean.extractUserName("ejbclient||testUser"));
+    }
+    
+    @Test
+    public void getGridIdentityUsernameTest()  throws Exception {
+        assertEquals("loginName", bean.getGridIdentityUsername("CN=loginName"));
+        assertEquals("loginName", bean.getGridIdentityUsername("loginName"));
     }
 }

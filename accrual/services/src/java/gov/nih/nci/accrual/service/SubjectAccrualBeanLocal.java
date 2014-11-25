@@ -122,7 +122,6 @@ import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -147,7 +146,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -167,7 +165,7 @@ import net.sf.ehcache.Status;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -186,7 +184,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
     "PMD.NPathComplexity" })
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final Logger LOG = Logger.getLogger(SubjectAccrualBeanLocal.class);
-    private static final String IDENTIFIER = "identifier";
+//    private static final String IDENTIFIER = "identifier";
 
     /** Number of hours witch the batch processing thread will run before being killed. */
     public static final int BATCH_PROCESSING_THREAD_TIMEOUT_HOURS = 24;
@@ -342,27 +340,35 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (!ssasList.isEmpty()) {
             ssaa = ssasList.get(0);
         }
-        Long userid = AccrualCsmUtil.getInstance().getCSMUser(ru.getCsmUser().getLoginName()).getUserId();
-        Session session = PaHibernateUtil.getCurrentSession();
         if (ssaa == null) {
-        String sql = "INSERT INTO study_site_accrual_access(identifier, study_site_identifier, status_code," 
-            + "status_date_range_low, date_last_created, date_last_updated,user_last_created_id,"
-            + "registry_user_id, source) VALUES (:identifier, :study_site_identifier, :status_code, "
-            + ":status_date_range_low, now(), now(),:user_last_created_id, :registry_user_id, :source)";
-            SQLQuery queryObject  = session.createSQLQuery(sql);
-            queryObject.setParameter(IDENTIFIER, getNextId(session));
-            queryObject.setParameter("study_site_identifier", ssId);
-            queryObject.setParameter("status_code", ActiveInactiveCode.ACTIVE.getName());
-            queryObject.setParameter("status_date_range_low", new Timestamp(new Date().getTime()));
-            queryObject.setParameter("user_last_created_id", userid);
-            queryObject.setParameter("registry_user_id", ru.getId());
-            queryObject.setParameter("source", AccrualAccessSourceCode.ACC_GENERATED.getName());
-            queryObject.executeUpdate();
+             ssaa = new StudySiteAccrualAccess();
+             StudySite ss = new StudySite();
+             ss.setId(ssId);
+             ssaa.setStudySite(ss);
+             ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+             ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+             ssaa.setDateLastCreated(new Date());
+             ssaa.setDateLastUpdated(new Date());
+             ssaa.setRegistryUser(ru);
+             ssaa.setUserLastCreated(ru.getCsmUser());
+             ssaa.setUserLastUpdated(ru.getCsmUser());
+             ssaa.setSource(AccrualAccessSourceCode.ACC_GENERATED);
+             try {
+                 PaHibernateUtil.getCurrentSession().save(ssaa);
+                 PaHibernateUtil.getCurrentSession().flush();
+             } catch (HibernateException hbe) {
+                 throw new PAException("Error while saving study site accrual access.", hbe);
+             }
         } else if (ssaa.getStatusCode().getName().equals(ActiveInactiveCode.INACTIVE.getName())) {
-            String sql = "UPDATE study_site_accrual_access SET status_code='" + ActiveInactiveCode.ACTIVE.getName() 
-                    + "',date_last_updated=now(),user_last_updated_id=" + userid
-                    + " WHERE identifier=" + ssaa.getId(); 
-            session.createSQLQuery(sql).executeUpdate();
+            ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+            ssaa.setDateLastUpdated(new Date());
+            ssaa.setUserLastUpdated(ru.getCsmUser());
+            try {
+                PaHibernateUtil.getCurrentSession().merge(ssaa);
+                PaHibernateUtil.getCurrentSession().flush();
+            } catch (HibernateException hbe) {
+                throw new PAException("Error while saving study site accrual access.", hbe);
+            }
         }
     }
 
@@ -377,21 +383,23 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         }
         Long spId = IiConverter.convertToLong(spIi);
         Long newId = updatePatientTable(dto, userId, null);
-        updateStudySubjectTable(dto, userId, null, spId, newId);
+        Long newSSId = updateStudySubjectTable(dto, userId, null, spId, newId);
 
         Session session = PaHibernateUtil.getCurrentSession();
+        
         String sql = "INSERT INTO performed_activity(identifier, study_protocol_identifier, performed_activity_type," 
                 + "date_last_created, date_last_updated, study_subject_identifier, registration_date, " 
-                + "user_last_created_id) "
-                + "VALUES (:psmId, :spId, 'PerformedSubjectMilestone', now(), now(), :ssId, :regDate, :userId)";
+                + "user_last_created_id, user_last_updated_id) "
+                + "VALUES (:psmId, :spId, 'PerformedSubjectMilestone', now(), now(),"
+                + " :ssId, :regDate, :userId, :userId)";
         SQLQuery qry = session.createSQLQuery(sql);
         qry.setLong("psmId", newId);
         qry.setLong("spId", spId);
-        qry.setLong("ssId", newId);
+        qry.setLong("ssId", newSSId);
         qry.setTimestamp("regDate", TsConverter.convertToTimestamp(dto.getRegistrationDate()));
         qry.setLong("userId", userId);
         qry.executeUpdate();
-        return new Long[]{newId, newId};
+        return new Long[]{newSSId, newId};
     }
 
     /**
@@ -447,103 +455,99 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         }
         patientDTO.setRaceCode(races);
         patientDTO.setZip(dto.getZipCode());
-        Patient p = Converters.get(PatientConverter.class).convertFromDtoToDomain(patientDTO);
-
-        String sql = "";
-        Session session = PaHibernateUtil.getCurrentSession();
-        SQLQuery queryObject = null;
+        patientDTO.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        patientDTO.setDateLastUpdated(TsConverter.convertToTs(new Date()));
+        patientDTO.setUserLastUpdated(StConverter.convertToSt(userId.toString()));
         Long result;
         if (ids != null) {
             result = ids[1];
-            sql = "UPDATE patient SET race_code=:race_code, sex_code=:sex_code, ethnic_code=:ethnic_code, "
-                    + "birth_date=:birth_date, status_code='ACTIVE', date_last_updated=now(), "
-                    + "country_identifier=:country_identifier, zip=:zip , user_last_updated_id=:user_id "
-                    + "WHERE identifier= :identifier";
+            patientDTO.setIdentifier(IiConverter.convertToIi(result));
+            Patient p = Converters.get(PatientConverter.class).convertFromDtoToDomain(patientDTO);
+            try {
+                PaHibernateUtil.getCurrentSession().merge(p);
+                PaHibernateUtil.getCurrentSession().flush();
+            } catch (HibernateException hbe) {
+                throw new PAException("Error while updating patient.", hbe);
+            }
         } else {
-            result = getNextId(session);
-            sql = "INSERT INTO patient(identifier, race_code, sex_code, ethnic_code, birth_date, status_code, " 
-                    + "date_last_created, date_last_updated, country_identifier, zip, user_last_created_id) " 
-                    + "VALUES (:identifier, :race_code, :sex_code, :ethnic_code, :birth_date,'ACTIVE', "
-                    + "now(), now(), :country_identifier, :zip, :user_id)";
+           patientDTO.setDateLastCreated(TsConverter.convertToTs(new Date()));
+           patientDTO.setUserLastCreated(StConverter.convertToSt(userId.toString()));
+           Patient p = Converters.get(PatientConverter.class).convertFromDtoToDomain(patientDTO);
+            try {
+                PaHibernateUtil.getCurrentSession().save(p);
+                PaHibernateUtil.getCurrentSession().flush();
+            } catch (HibernateException hbe) {
+                throw new PAException("Error while saving study subject.", hbe);
+            }
+            result = p.getId();
         }
-        queryObject = session.createSQLQuery(sql);
-        queryObject.setParameter(IDENTIFIER, result);
-        queryObject.setParameter("race_code", p.getRaceCode());
-        queryObject.setParameter("sex_code", p.getSexCode().getName());
-        queryObject.setParameter("ethnic_code", p.getEthnicCode().getName());
-        queryObject.setParameter("birth_date", p.getBirthDate(), Hibernate.TIMESTAMP);
-        queryObject.setParameter("country_identifier", p.getCountry().getId());
-        queryObject.setParameter("zip", p.getZip());
-        queryObject.setParameter("user_id", userId);
-        queryObject.executeUpdate();
         return result;
     }
     
-    private synchronized Long getNextId(Session session) {
-        long seq = 0;
-        if (useTestSeq) {
-            Random rand = new Random();
-            seq = rand.nextLong();
-        } else {
-            SQLQuery queryObject = session.createSQLQuery("select nextval('hibernate_sequence')");
-            seq = Long.valueOf(queryObject.uniqueResult().toString());
-        }
-        return seq;
-    }
+//    private synchronized Long getNextId(Session session) {
+//        long seq = 0;
+//        if (useTestSeq) {
+//            Random rand = new Random();
+//            seq = rand.nextLong();
+//        } else {
+//            SQLQuery queryObject = session.createSQLQuery("select nextval('hibernate_sequence')");
+//            seq = Long.valueOf(queryObject.uniqueResult().toString());
+//        }
+//        return seq;
+//    }
 
     private Long updateStudySubjectTable(SubjectAccrualDTO dto, Long userId, Long[] ids, Long spId, Long newPatientId) 
             throws PAException {
-        String sql = "";
-        Session session = PaHibernateUtil.getCurrentSession();
-        SQLQuery queryObject = null;
-        dto.setPaymentMethod(CdConverter.convertToCd(
-                CDUSPaymentMethodCode.getByCode(CdConverter.convertCdToString(dto.getPaymentMethod()))));
-        Ii dii = dto.getDiseaseIdentifier();
-        Ii siteDii = dto.getSiteDiseaseIdentifier();
-        String diseaseString = ISOUtil.isIiNull(dii) ? "NULL" : IiConverter.convertToString(dii);
-        String siteDiseaseString = ISOUtil.isIiNull(siteDii) ? "NULL" : IiConverter.convertToString(siteDii);
-        Long result;
-        if (ids != null) {
-            result = ids[0];
-            sql = "UPDATE study_subject SET study_site_identifier= :study_site_identifier, " 
-                + "payment_method_code=:pmCode, status_code= :status_code, date_last_updated=now(), "
-                + "assigned_identifier= :assigned_identifier, user_last_updated_id= :user_id, " 
-                + "disease_identifier=" + diseaseString + ", " 
-                + "site_disease_identifier=" + siteDiseaseString + ", "
-                + "registration_group_id= :registration_group_id, submission_type= :submission_type "
-                + "WHERE identifier= :identifier";
-
-            queryObject = session.createSQLQuery(sql);
-        } else {
-            result = newPatientId;
-            sql = "INSERT INTO study_subject(identifier, patient_identifier, study_protocol_identifier, " 
-                    + "study_site_identifier, disease_identifier, payment_method_code, status_code," 
-                    + "date_last_created, date_last_updated, assigned_identifier, submission_type," 
-                    + "user_last_created_id, registration_group_id, site_disease_identifier) "
-                    + "VALUES (:identifier, :patient_identifier, :study_protocol_identifier, "
-                    + ":study_site_identifier, " + diseaseString + ", :pmCode, :status_code, "
-                    + "now(), now(), :assigned_identifier, :submission_type," 
-                    + ":user_id,  :registration_group_id, " + siteDiseaseString + ")";
-            queryObject = session.createSQLQuery(sql);
-            queryObject.setParameter("patient_identifier", newPatientId);
-            queryObject.setParameter("study_protocol_identifier", spId);
-        }
-        queryObject.setParameter(IDENTIFIER, result);
-        queryObject.setParameter("registration_group_id", StConverter.convertToString(dto.getRegistrationGroupId()));
-        AccrualSubmissionTypeCode submissionType = CdConverter.convertCdToEnum(AccrualSubmissionTypeCode.class, 
-                dto.getSubmissionTypeCode());
-        queryObject.setParameter("submission_type", submissionType == null ? null : submissionType.getName());
-        queryObject.setParameter("study_site_identifier", IiConverter.convertToLong(
-                dto.getParticipatingSiteIdentifier()));
-        queryObject.setParameter("status_code", FunctionalRoleStatusCode.ACTIVE.getName());
-        queryObject.setParameter("assigned_identifier", StConverter.convertToString(dto.getAssignedIdentifier()));
-        queryObject.setParameter("user_id", userId);
-        PaymentMethodCode paymentMethod = CdConverter.convertCdToEnum(PaymentMethodCode.class, dto.getPaymentMethod());
-        queryObject.setParameter("pmCode", paymentMethod == null ? null : paymentMethod.getName());
-        queryObject.executeUpdate();
-        return result;
+        return saveStudySubject(dto, userId, ids, spId, newPatientId);
     }
 
+    private Long saveStudySubject(SubjectAccrualDTO dto, Long userId, Long[] ids, 
+             Long spId, Long newPatientId) throws PAException {
+       StudySubject ss = new StudySubject();
+       StudySubjectDto sdto = new StudySubjectDto();
+       Long result;
+       sdto.setStudySiteIdentifier(dto.getParticipatingSiteIdentifier());
+     
+       dto.setPaymentMethod(CdConverter.convertToCd(
+               CDUSPaymentMethodCode.getByCode(CdConverter.convertCdToString(
+               dto.getPaymentMethod()))));
+       sdto.setPaymentMethodCode(dto.getPaymentMethod());
+       sdto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+       sdto.setDateLastUpdated(TsConverter.convertToTs(new Date()));
+       sdto.setAssignedIdentifier(dto.getAssignedIdentifier());
+       sdto.setUserLastUpdated(StConverter.convertToSt(userId.toString()));
+       sdto.setDiseaseIdentifier(dto.getDiseaseIdentifier());
+       sdto.setSiteDiseaseIdentifier(dto.getSiteDiseaseIdentifier());
+       sdto.setRegistrationGroupId(dto.getRegistrationGroupId());
+       sdto.setSubmissionTypeCode(dto.getSubmissionTypeCode());
+       if (ids != null) {
+           result = ids[0];
+           sdto.setIdentifier(IiConverter.convertToIi(result));
+           sdto.setPatientIdentifier(IiConverter.convertToIi(ids[1]));
+//           sdto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(spId));
+           ss = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(sdto);
+           try {
+               PaHibernateUtil.getCurrentSession().merge(ss);
+               PaHibernateUtil.getCurrentSession().flush();
+           } catch (HibernateException hbe) {
+               throw new PAException("Error while updating study subject.", hbe);
+           }
+       } else {
+           sdto.setDateLastCreated(TsConverter.convertToTs(new Date()));
+           sdto.setUserLastCreated(StConverter.convertToSt(userId.toString()));
+           sdto.setPatientIdentifier(IiConverter.convertToIi(newPatientId));
+           sdto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(spId));
+           ss = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(sdto);
+           try {
+               PaHibernateUtil.getCurrentSession().save(ss);
+               PaHibernateUtil.getCurrentSession().flush();
+           } catch (HibernateException hbe) {
+               throw new PAException("Error while saving study subject.", hbe);
+           }
+           result = ss.getId();
+       }
+       return result;
+    }
     /**
      * {@inheritDoc}
      */
@@ -721,11 +725,18 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         return result;
     }
 
-    private void nullifyStudySubject(StudySubject ss, String deleteReason) {
+    private void nullifyStudySubject(StudySubject ss, String deleteReason) throws PAException {
         ss.setStatusCode(FunctionalRoleStatusCode.NULLIFIED);
         ss.setDeleteReason(deleteReason);
+        ss.setDateLastUpdated(new Date());
+        ss.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+        ss.setSubmissionTypeCode(AccrualSubmissionTypeCode.UI);
         Patient patient = ss.getPatient();
         patient.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
+        patient.setDateLastUpdated(new Date());
+        patient.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
         PaHibernateUtil.getCurrentSession().merge(ss);
         PaHibernateUtil.getCurrentSession().merge(patient);
     }
