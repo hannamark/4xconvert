@@ -1,36 +1,5 @@
 import groovy.sql.Sql
 
-////////
-class TimerTaskExample extends TimerTask {
-	public void run() {
-				System.out
-						.println("---------------------------------------------------------------------------------");
-				System.out
-						.println("I am a periodic thread dump logger. Please excuse me for verbose output and ignore for now.");
-				Map allThreads = Thread.getAllStackTraces();
-				Iterator iterator = allThreads.keySet().iterator();
-				StringBuffer stringBuffer = new StringBuffer();
-				while (iterator.hasNext()) {
-					Thread key = (Thread) iterator.next();
-					StackTraceElement[] trace = (StackTraceElement[]) allThreads
-							.get(key);
-					stringBuffer.append(key.toString() + "\r\n");
-					for (int i = 0; i < trace.length; i++) {
-						stringBuffer.append(" " + trace[i].toString() + "\r\n");
-					}
-					stringBuffer.append("\r\n");
-				}
-				System.out.println(stringBuffer);
-			}
-}
-
-int delay = 1000   
-int period = 300000  
-Timer timer = new Timer()
-timer.scheduleAtFixedRate(new TimerTaskExample(), delay, period)
-////////
-
-
 
 def sql = """SELECT
                 CASE WHEN sd.ctgovxml_indicator THEN 'YES'
@@ -86,12 +55,18 @@ sourceConnection.eachRow(sql_parents) { row ->
 System.out.println("Creating disease parents table...");
 def rowsAffected = -1;
 while (rowsAffected != 0) {
+	
+	def buffer = new StringBuffer();
+	destinationConnection.eachRow("SELECT disease_identifier, parent_disease_identifier FROM stg_dw_disease_parents") { row ->
+		buffer.append("(${row.disease_identifier},${row.parent_disease_identifier}),")
+	}
+	buffer.append("(-1,-1)")
+	
     def inserted = destinationConnection.executeInsert("""INSERT INTO stg_dw_disease_parents (
                                    SELECT DISTINCT dp1.disease_identifier, dp2.parent_disease_identifier, dp2.disease_code, dp2.nt_term_identifier, dp2.preferred_name, dp2.menu_display_name
                                    FROM stg_dw_disease_parents dp1
                                    JOIN stg_dw_disease_parents dp2 ON (dp1.parent_disease_identifier = dp2.disease_identifier)
-                                   WHERE (dp1.disease_identifier, dp2.parent_disease_identifier) NOT IN (
-                                          SELECT disease_identifier, parent_disease_identifier FROM stg_dw_disease_parents) 
+                                   WHERE (dp1.disease_identifier, dp2.parent_disease_identifier) NOT IN (${buffer}) 
                               )""");
     rowsAffected = inserted.size;
 }
