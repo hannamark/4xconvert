@@ -970,20 +970,39 @@ public class TSRReportGeneratorTest {
         List<TSRReportPlannedMarker> plannedMarkers = new ArrayList<TSRReportPlannedMarker>();
         TSRReportPlannedMarker marker = new TSRReportPlannedMarker();
         marker.setName("Marker #1");
+        marker.setEvaluationType("Level/Quantity");
         marker.setAssayType("PCR");
         marker.setAssayUse("Research");
         marker.setAssayPurpose("Research");
         marker.setTissueSpecimenType("Plasma");
-        marker.setTissueCollectionMethod("Mandatory");
         plannedMarkers.add(marker);
 
         marker = new TSRReportPlannedMarker();
         marker.setName("Marker #2");
+        marker.setEvaluationType("Level/Quantity");
         marker.setAssayType("Other: Assay Type Other Text");
         marker.setAssayUse("Research");
         marker.setAssayPurpose("Other: Assay Purpose Other Text");
         marker.setTissueSpecimenType("Plasma");
-        marker.setTissueCollectionMethod("Mandatory");
+        plannedMarkers.add(marker);
+        
+        marker = new TSRReportPlannedMarker();
+        marker.setName("Marker #1");
+        marker.setEvaluationType("Level/Quantity");
+        marker.setAssayType("In Situ Hybridization");
+        marker.setAssayUse("Research");
+        marker.setAssayPurpose("Research");
+        marker.setTissueSpecimenType("Plasma");
+        plannedMarkers.add(marker);
+        tsrReportGenerator.setPlannedMarkers(plannedMarkers);
+        
+        marker = new TSRReportPlannedMarker();
+        marker.setName("M-protein (Monoclonal protein, M-Spike) (Monoclonal protein; M-Spike)");
+        marker.setEvaluationType("Level/Quantity");
+        marker.setAssayType("In Situ Hybridization");
+        marker.setAssayUse("Research");
+        marker.setAssayPurpose("Research");
+        marker.setTissueSpecimenType("Plasma");
         plannedMarkers.add(marker);
         tsrReportGenerator.setPlannedMarkers(plannedMarkers);
 

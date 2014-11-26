@@ -1119,11 +1119,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceL
         }
         Collections.sort(tsrMarkers, new Comparator<TSRReportPlannedMarker>() {
             public int compare(TSRReportPlannedMarker o1, TSRReportPlannedMarker o2) {
-                if (o1.getName().compareToIgnoreCase(o2.getName()) == 1) {
-                    return o1.getAssayType().compareTo(o2.getAssayType());
-                } else {
-                    return o1.getName().compareToIgnoreCase(o2.getName());
-                }
+                return o1.getName().compareToIgnoreCase(o2.getName());
             }
         });
         tsrReportGenerator.setPlannedMarkers(tsrMarkers);
