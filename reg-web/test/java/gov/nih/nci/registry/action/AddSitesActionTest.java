@@ -127,6 +127,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         ParticipatingSiteDTO participatingSiteDTO = new ParticipatingSiteDTO();
         participatingSiteDTO
                 .setIdentifier(IiConverter.convertToStudySiteIi(1L));
+        participatingSiteDTO.setSiteOrgPoId("1");
         when(
                 participatingSiteServiceLocal.updateStudySiteParticipant(
                         any(StudySiteDTO.class),
@@ -141,6 +142,10 @@ public class AddSitesActionTest extends AbstractRegWebTest {
                 participatingSiteServiceLocal.getParticipatingSite(
                         any(Ii.class), any(String.class))).thenReturn(
                 studySiteDTO);
+        when(
+                participatingSiteServiceLocal.getParticipatingSite(
+                        any(Ii.class))).thenReturn(
+                                participatingSiteDTO);        
 
         when(
                 participatingOrgServiceLocal.getOrganizationsThatAreNotSiteYet(

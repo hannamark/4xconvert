@@ -263,7 +263,8 @@
         <action name="addSitepopup*" class="gov.nih.nci.registry.action.AddUpdateSiteAction" method="{1}">
             <result name="success">/WEB-INF/jsp/nodecorate/addSite.jsp</result>
             <result name="error">/WEB-INF/jsp/nodecorate/addSite.jsp</result>
-            <result name="wait">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>            
+            <result name="wait">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
+            <result name="pickASite">/WEB-INF/jsp/nodecorate/addSitePickASite.jsp</result>            
         </action>        
         
         <action name="updateTrial*" class="gov.nih.nci.registry.action.UpdateTrialAction" method="{1}">

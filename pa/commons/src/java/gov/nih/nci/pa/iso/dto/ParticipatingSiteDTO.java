@@ -113,6 +113,7 @@ public class ParticipatingSiteDTO extends StudyDTO {
     private Int targetAccrualNumber;
     private Ivl<Ts> accrualDateRange;
     private St programCodeText;
+    private String siteOrgPoId;
 
     /**
      * @return the organization role identifiers
@@ -266,5 +267,19 @@ public class ParticipatingSiteDTO extends StudyDTO {
      */
     public void setProgramCodeText(St programCodeText) {
         this.programCodeText = programCodeText;
+    }
+
+    /**
+     * @return the siteOrgPoId
+     */
+    public String getSiteOrgPoId() {
+        return siteOrgPoId;
+    }
+
+    /**
+     * @param siteOrgPoId the siteOrgPoId to set
+     */
+    public void setSiteOrgPoId(String siteOrgPoId) {
+        this.siteOrgPoId = siteOrgPoId;
     }
 }

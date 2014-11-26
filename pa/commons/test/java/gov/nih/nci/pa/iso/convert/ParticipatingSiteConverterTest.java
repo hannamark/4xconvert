@@ -85,6 +85,8 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
@@ -131,6 +133,13 @@ public class ParticipatingSiteConverterTest extends
         studySite.setAccrualDateRangeLow(new Timestamp(today.getTime()));
         studySite.setAccrualDateRangeHigh(new Timestamp(today.getTime()));
         studySite.getStudySiteContacts().add(makeStudySiteContact());
+        
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setIdentifier("123");
+        Organization org = new Organization();
+        org.setIdentifier("456");
+        hcf.setOrganization(org);
+        studySite.setHealthCareFacility(hcf);
 
         Date yesterday = DateUtils.addDays(today, -1);
         Date twoDaysAgo = DateUtils.addDays(today, -2);
@@ -265,6 +274,7 @@ public class ParticipatingSiteConverterTest extends
         assertEquals(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode(), dto.getStudySiteAccrualStatus()
             .getStatusCode().getCode());
         assertEquals(today, dto.getStudySiteAccrualStatus().getStatusDate().getValue());
+        assertEquals("456", dto.getSiteOrgPoId());
     }
 
 }

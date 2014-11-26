@@ -87,6 +87,8 @@ import java.util.List;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -94,6 +96,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -213,6 +216,18 @@ public interface ParticipatingSiteServiceLocal {
     Ii getParticipatingSiteIi(Ii studyProtocolIi, Ii someHcfIi) throws PAException;
 
     /**
+     * Gets the Participating site with the given Ii.
+     * 
+     * @param studySiteIi
+     *            The study site Ii
+     * @return The Participating site with the given Ii.
+     * @throws PAException
+     *             if an error occurs
+     */
+    ParticipatingSiteDTO getParticipatingSite(Ii studySiteIi)
+            throws PAException;
+
+    /**
      * Add a investigator contact. Either a po crs id or po hcp id is needed or can be null if creating a new person
      * from the person dto. If crs or hcp ids are set they must be po ids or ctep ids for the person. If crs or hcp are
      * provided but the ids are not set, they will be used in creating new SRs for Person.
@@ -272,4 +287,15 @@ public interface ParticipatingSiteServiceLocal {
      * @throws PAException on error
      */
     void mergeParicipatingSites(Long srcId, Long destId) throws PAException;
+
+    /**
+     * Returns a list of participating sites acting on the given trial, which user can update.
+     * @param user RegistryUser
+     * @param studyProtocolID studyProtocolID
+     * @return List<Organization>
+     * @throws PAException  PAException
+     * @throws NullifiedRoleException  NullifiedRoleException
+     */
+    List<Organization> getListOfSitesUserCanUpdate(RegistryUser user,
+            Ii studyProtocolID) throws PAException, NullifiedRoleException;
 }

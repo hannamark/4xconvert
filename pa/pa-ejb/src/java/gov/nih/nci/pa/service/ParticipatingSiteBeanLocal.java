@@ -92,6 +92,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -112,18 +113,22 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -143,6 +148,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -159,7 +165,7 @@ import org.hibernate.exception.ConstraintViolationException;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean // NOPMD
-implements ParticipatingSiteServiceLocal { // NOPMD
+    implements ParticipatingSiteServiceLocal { // NOPMD
     
     private static final Logger LOG = Logger.getLogger(ParticipatingSiteBeanLocal.class);
     
@@ -258,7 +264,8 @@ implements ParticipatingSiteServiceLocal { // NOPMD
      * @return The Participating site with the given Ii.
      * @throws PAException if an error occurs
      */
-    ParticipatingSiteDTO getParticipatingSite(Ii studySiteIi) throws PAException {
+    @Override
+    public ParticipatingSiteDTO getParticipatingSite(Ii studySiteIi) throws PAException {
         ParticipatingSiteDTO participatingSiteDTO = new ParticipatingSiteConverter()
             .convertFromDomainToDto(getStudySite(studySiteIi));
         // we should be able just to do a participatingSiteDTO.getStudySiteContacts() to fetch the StudySiteContactlist,
@@ -728,5 +735,64 @@ implements ParticipatingSiteServiceLocal { // NOPMD
                 }
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Organization> getListOfSitesUserCanUpdate(RegistryUser user,
+            Ii studyProtocolID) throws PAException, NullifiedRoleException {
+        Long userOrgPoId = user.getAffiliatedOrganizationId();
+        List<Long> allFamilyMembersPoIds = FamilyHelper
+                .getAllRelatedOrgs(userOrgPoId);
+        // If the user is affiliated directly to the Cancer Center, she can
+        // update any org from the allFamilyMembers list. Otherwise, remove
+        // Cancer Centers from the list.
+        if (!isCancerCenter(userOrgPoId)) {
+            removeCancerCentersFromCollection(allFamilyMembersPoIds);
+        }
+        allFamilyMembersPoIds.add(userOrgPoId);
+
+        Query qry = PaHibernateUtil.getCurrentSession().createQuery(
+                "select org " + "from StudySite ss "
+                        + "inner join ss.studyProtocol sp "
+                        + "inner join ss.healthCareFacility hf "
+                        + "inner join hf.organization org "
+                        + "where sp.id = :spId "
+                        + "and ss.functionalCode = :functionalCode "
+                        + "and cast(org.identifier as long) in (:orgId)");
+        qry.setParameter("spId", IiConverter.convertToLong(studyProtocolID));
+        qry.setParameter("functionalCode",
+                StudySiteFunctionalCode.TREATING_SITE);
+        qry.setParameterList("orgId", allFamilyMembersPoIds);
+        return qry.list();
+    }
+
+    private void removeCancerCentersFromCollection(
+            final List<Long> allFamilyMembersPoIds) {
+        CollectionUtils.filter(allFamilyMembersPoIds, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                try {
+                    return !isCancerCenter((Long) arg0);
+                } catch (NullifiedRoleException e) {
+                    throw new RuntimeException(e); // NOPMD
+                }
+            }
+        });
+    }
+
+    private boolean isCancerCenter(Long poOrgId) throws NullifiedRoleException {
+        List<ResearchOrganizationDTO> roList = PoRegistry
+                .getResearchOrganizationCorrelationService()
+                .getCorrelationsByPlayerIds(
+                        new Ii[] {IiConverter
+                                .convertToPoOrganizationIi(poOrgId.toString()) });
+        for (ResearchOrganizationDTO ro : roList) {
+            if (StringUtils.equalsIgnoreCase(
+                    CdConverter.convertCdToString(ro.getTypeCode()), "CCR")) {
+                return true;
+            }
+        }
+        return false;
     }
 }

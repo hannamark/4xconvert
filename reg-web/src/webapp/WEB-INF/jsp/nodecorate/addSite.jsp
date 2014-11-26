@@ -101,7 +101,7 @@
 					readonly="true" cssClass="form-control readonly" />
 					<span class="alert-danger"> <s:fielderror>
 						<s:param>investigator</s:param>
-					</s:fielderror>
+					</s:fielderror> </span>
 				 </div>
 				 <div class="col-xs-2">
 					<button type="button" class="btn btn-icon btn-default" onclick="lookupSiteInvestigator();"><i class="fa-search"></i>Look Up</button>

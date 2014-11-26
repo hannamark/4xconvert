@@ -84,10 +84,12 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
@@ -97,13 +99,21 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -127,6 +137,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -5720501246071254426L;
     private static final Logger LOG = Logger
             .getLogger(AddUpdateSiteAction.class);
+    private static final String PICK_A_SITE = "pickASite";
 
     private SubmittedOrganizationDTO siteDTO = new SubmittedOrganizationDTO();
 
@@ -138,10 +149,12 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     private StudyProtocolServiceLocal studyProtocolService;
     private StudySiteContactServiceLocal studySiteContactService;
     private ProtocolQueryServiceLocal protocolQueryService;
+    private OrganizationEntityServiceRemote organizationService;
     
 
     private boolean redirectToSummary;
     private String studyProtocolId;    
+    private String pickedSiteOrgPoId;
 
     /**
      * Prepare and display the site add/update pop-up.
@@ -150,25 +163,17 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
      */
     public String view() {
         try {
-            Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(studyProtocolId));
-            StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, spDTO);
+            prepareProtocolData();            
             populateSiteDTO();
-            StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
-            studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
-                    Long.parseLong(studyProtocolId));
-            ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_NCI_ID_ATTRIBUTE, 
-                    studyProtocolQueryDTO.getNciIdentifier());
-            ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_TITLE_ATTRIBUTE, 
-                    studyProtocolQueryDTO.getOfficialTitle());
-            ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_LEAD_ORG_IDENTIFIER_ATTRIBUTE, 
-                    studyProtocolQueryDTO.getLocalStudyProtocolIdentifier());
-            ServletActionContext
-                    .getRequest()
-                    .getSession()
-                    .setAttribute(TrialUtil.SESSION_TRIAL_SITE_ATTRIBUTE,
-                            getSiteDTO());
-            return SUCCESS;
+            setSiteDtoInSession();
+            // PO-8268 kicks in here. If user can actually update multiple
+            // sites, we need to present a dialog
+            // asking which one she or he wants to update.
+            if (canUpdateMultipleSites()) {
+                return PICK_A_SITE;
+            } else {
+                return SUCCESS;
+            }
         } catch (Exception e) {
             addActionError(e.getMessage());
             LOG.error(e, e);
@@ -176,27 +181,134 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
         }
     }
 
-    void populateSiteDTO() throws PAException {
-        siteDTO.setId(null);
-        RegistryUser loggedInUser = getRegistryUser();
-        final String org = loggedInUser.getAffiliateOrg();
-        final Long orgId = loggedInUser.getAffiliatedOrganizationId();
-        if (StringUtils.isBlank(org) || orgId == null) {
-            throw new PAException(
-                    "We are unable to determine your affiliation with an organization. "
-                            + "You will not be able to add your site to this trial. Sorry.");
+    /**
+     * @throws NumberFormatException
+     * @throws PAException
+     */
+    private void prepareProtocolData() throws 
+            PAException {
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(studyProtocolId));
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, spDTO);             
+        StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
+        studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
+                Long.parseLong(studyProtocolId));
+        ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_NCI_ID_ATTRIBUTE, 
+                studyProtocolQueryDTO.getNciIdentifier());
+        ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_TITLE_ATTRIBUTE, 
+                studyProtocolQueryDTO.getOfficialTitle());
+        ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_LEAD_ORG_IDENTIFIER_ATTRIBUTE, 
+                studyProtocolQueryDTO.getLocalStudyProtocolIdentifier());
+    }
+    
+    /**
+     * @return String
+     */
+    public String pickSite() {
+        try {
+            makeSureUserDidNotManipulateSiteIdInForm();
+            prepareProtocolData();
+            populateSiteDTOBasedOnOrg(getPickedSiteOrgPoId());
+            setSiteDtoInSession();
+            return SUCCESS;
+        } catch (Exception e) {
+            addActionError(e.getMessage());
+            LOG.error(e, e);
+            return ERROR;
         }
-        siteDTO.setName(org);
 
-        String poOrgId = orgId.toString();        
+    }
+
+    private void makeSureUserDidNotManipulateSiteIdInForm()
+            throws NullifiedRoleException, PAException {
+        if (CollectionUtils.find(getListOfSitesUserCanUpdate(),
+                new Predicate() {
+                    @Override
+                    public boolean evaluate(Object o) {
+                        return StringUtils.equals(
+                                ((Organization) o).getIdentifier(),
+                                getPickedSiteOrgPoId());
+
+                    }
+                }) == null) {
+            throw new PAException(
+                    "User is not allowed to update the selected site.");
+        }
+    }
+
+    /**
+     * 
+     */
+    private void setSiteDtoInSession() {
+        ServletActionContext
+                .getRequest()
+                .getSession()
+                .setAttribute(TrialUtil.SESSION_TRIAL_SITE_ATTRIBUTE,
+                        getSiteDTO());
+    }
+
+    private boolean canUpdateMultipleSites() throws PAException,
+            NullifiedRoleException {
+        return StringUtils.isNotBlank(siteDTO.getId())
+                && getListOfSitesUserCanUpdate().size() > 1;
+    }
+
+    /**
+     * @return List<Organization>
+     * @throws PAException
+     *             PAException
+     * @throws NullifiedRoleException
+     *             NullifiedRoleException
+     */
+    public final List<Organization> getListOfSitesUserCanUpdate() throws PAException,
+            NullifiedRoleException {
+        RegistryUser loggedInUser = getRegistryUser();
+        Ii spID = IiConverter.convertToStudyProtocolIi(Long
+                .parseLong(getStudyProtocolId()));
+        return participatingSiteService.getListOfSitesUserCanUpdate(
+                loggedInUser, spID);
+    }
+
+    void populateSiteDTO() throws PAException, NullifiedEntityException {        
+        String poOrgId = getUserAffiliationPoOrgId();  
+        populateSiteDTOBasedOnOrg(poOrgId);
+    }
+
+    /**
+     * @param poOrgId
+     * @throws NumberFormatException
+     * @throws PAException
+     * @throws NullifiedEntityException
+     */
+    private void populateSiteDTOBasedOnOrg(String poOrgId)
+            throws PAException, NullifiedEntityException {
         Ii spID = IiConverter.convertToStudyProtocolIi(Long
                 .parseLong(getStudyProtocolId()));        
         StudySiteDTO studySiteDTO = participatingSiteService.getParticipatingSite(spID, poOrgId);
+        siteDTO.setId(null);
+        siteDTO.setName(EnOnConverter.convertEnOnToString(organizationService
+                .getOrganization(
+                        IiConverter.convertToPoOrganizationIi(poOrgId))
+                .getName()));
         if (studySiteDTO != null) {
             // Participating site already exists. Preparing for 'update' mode.
             siteDTO = trialUtil.getSubmittedOrganizationDTO(studySiteDTO);
         }
+    }
 
+    /**
+     * @return UserAffiliationPoOrgId
+     * @throws PAException PAException
+     */
+    public String getUserAffiliationPoOrgId() throws PAException {
+        RegistryUser loggedInUser = getRegistryUser();
+        final Long orgId = loggedInUser.getAffiliatedOrganizationId();
+        if (orgId == null) {
+            throw new PAException(
+                    "We are unable to determine your affiliation with an organization. "
+                            + "You will not be able to add your site to this trial. Sorry.");
+        }
+        return orgId.toString();
     }
 
     /**
@@ -297,6 +409,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
         registryUserService = PaRegistry.getRegistryUserService();
         participatingSiteService = PaRegistry.getParticipatingSiteService();
         studySiteContactService = PaRegistry.getStudySiteContactService();
+        organizationService = PoRegistry.getOrganizationEntityService();
     }
 
     /**
@@ -365,5 +478,27 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
      */
     public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
         this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @return the pickedSiteOrgPoId
+     */
+    public String getPickedSiteOrgPoId() {
+        return pickedSiteOrgPoId;
+    }
+
+    /**
+     * @param pickedSiteOrgPoId the pickedSiteOrgPoId to set
+     */
+    public void setPickedSiteOrgPoId(String pickedSiteOrgPoId) {
+        this.pickedSiteOrgPoId = pickedSiteOrgPoId;
+    }
+
+    /**
+     * @param organizationService the organizationService to set
+     */
+    public void setOrganizationService(
+            OrganizationEntityServiceRemote organizationService) {
+        this.organizationService = organizationService;
     }
 }

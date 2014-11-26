@@ -1991,6 +1991,14 @@ public class TestSchema {
 
     public static RegistryUser getRegistryUser() {
         User user = getUser();
+        return createRegistryUser(user);
+    }
+
+    /**
+     * @param user
+     * @return
+     */
+    public static RegistryUser createRegistryUser(User user) {
         RegistryUser ru = new RegistryUser();
         ru.setFirstName("Test");
         ru.setLastName("User");

@@ -31,10 +31,13 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.lang.reflect.InvocationTargetException;
@@ -64,6 +67,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
     private StudySiteContactServiceLocal studySiteContactServiceLocal;
     private StudyProtocolServiceLocal studyProtocolServiceLocal;
     private ProtocolQueryServiceLocal protocolQueryServiceLocal;
+    private OrganizationEntityServiceRemote organizationEntityServiceRemote;
 
     private SubmittedOrganizationDTO existentSiteDTO;
     private ClinicalResearchStaffDTO researchStaffDTO;
@@ -105,6 +109,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         ParticipatingSiteDTO participatingSiteDTO = new ParticipatingSiteDTO();
         participatingSiteDTO
                 .setIdentifier(IiConverter.convertToStudySiteIi(1L));
+        participatingSiteDTO.setSiteOrgPoId("1");
         when(
                 participatingSiteServiceLocal.updateStudySiteParticipant(
                         any(StudySiteDTO.class),
@@ -119,6 +124,10 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                 participatingSiteServiceLocal.getParticipatingSite(
                         any(Ii.class), any(String.class))).thenReturn(
                 studySiteDTO);
+        when(
+                participatingSiteServiceLocal.getParticipatingSite(
+                        any(Ii.class))).thenReturn(
+                                participatingSiteDTO);   
         StudyProtocolDTO studyDTO = setupSpDto();
         when(
                 studyProtocolServiceLocal.getStudyProtocol(eq(IiConverter
@@ -126,6 +135,8 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         StudyProtocolQueryDTO queryDTO = new StudyProtocolQueryDTO();
         when(protocolQueryServiceLocal.getTrialSummaryByStudyProtocolId(1L)).thenReturn(
                 queryDTO);
+        
+        organizationEntityServiceRemote = new MockOrganizationEntityService();
 
     }
 
@@ -174,15 +185,17 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         action.setStudySiteContactService(studySiteContactServiceLocal);
         action.setStudyProtocolService(studyProtocolServiceLocal);
         action.setProtocolQueryService(protocolQueryServiceLocal);
+        action.setOrganizationService(organizationEntityServiceRemote);
         action.setStudyProtocolId("1");
     }
 
     /**
      * @throws PAException
+     * @throws NullifiedEntityException 
      * 
      */
     @Test
-    public void testPopulateSiteDTO() throws PAException {
+    public void testPopulateSiteDTO() throws PAException, NullifiedEntityException {
         prepareAction();
         action.populateSiteDTO();
         assertEquals(existentSiteDTO, action.getSiteDTO());

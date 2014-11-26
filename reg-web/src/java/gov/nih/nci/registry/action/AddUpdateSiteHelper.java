@@ -162,7 +162,8 @@ public final class AddUpdateSiteHelper {
                 .getInvestigatorId().toString());
         addInvestigator(studySiteID, investigatorIi,
                 StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode(),
-                orgPoId);
+                participatingSiteService.getParticipatingSite(studySiteID)
+                        .getSiteOrgPoId());
     }
 
     @SuppressWarnings("deprecation")

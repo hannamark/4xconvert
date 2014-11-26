@@ -133,6 +133,9 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
         if (bo.getHealthCareFacility() != null) {
             Ii id = IiConverter.convertToPoHealthCareFacilityIi(bo.getHealthCareFacility().getIdentifier());
             dto.setOrganizationRoleIdentifiers(DSetConverter.convertIiToDset(id));
+            dto.setSiteOrgPoId(bo.getHealthCareFacility().getOrganization() != null ? bo
+                    .getHealthCareFacility().getOrganization().getIdentifier()
+                    : null);
         }
 
         dto.setIdentifier(IiConverter.convertToStudySiteIi(bo.getId()));

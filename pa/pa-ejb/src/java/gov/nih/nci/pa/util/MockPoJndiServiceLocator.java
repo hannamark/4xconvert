@@ -82,16 +82,8 @@
  */
 package gov.nih.nci.pa.util;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.pomock.MockClinicalResearchStaffCorrelationService;
+import gov.nih.nci.pa.util.pomock.MockFamilyService;
 import gov.nih.nci.pa.util.pomock.MockHealthCareFacilityCorrelationService;
 import gov.nih.nci.pa.util.pomock.MockHealthCareProviderCorrelationService;
 import gov.nih.nci.pa.util.pomock.MockIdentifiedOrganizationCorrelationService;
@@ -102,7 +94,6 @@ import gov.nih.nci.pa.util.pomock.MockOversightComitteeCorrelationService;
 import gov.nih.nci.pa.util.pomock.MockPersonEntityService;
 import gov.nih.nci.pa.util.pomock.MockResearchOrganizationCorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
@@ -110,13 +101,9 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
-import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 /**
@@ -203,7 +190,7 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
      * {@inheritDoc}
      */
     public FamilyServiceRemote getFamilyService() {
-        FamilyServiceRemote remote = mock(FamilyServiceRemote.class);
+        /*FamilyServiceRemote remote = mock(FamilyServiceRemote.class);
         try {
             FamilyDTO family = new FamilyDTO();
             family.setName(EnOnConverter.convertToEnOn("some family name"));
@@ -218,7 +205,8 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
         } catch (Exception e) {
             LOG.error(ERROR_MSG, e);
         }
-        return remote;
+        return remote;*/
+        return new MockFamilyService();
     }
 
     
