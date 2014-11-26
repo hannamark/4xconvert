@@ -66,7 +66,7 @@ while (rowsAffected != 0) {
                                    SELECT DISTINCT dp1.disease_identifier, dp2.parent_disease_identifier, dp2.disease_code, dp2.nt_term_identifier, dp2.preferred_name, dp2.menu_display_name
                                    FROM stg_dw_disease_parents dp1
                                    JOIN stg_dw_disease_parents dp2 ON (dp1.parent_disease_identifier = dp2.disease_identifier)
-                                   WHERE (dp1.disease_identifier, dp2.parent_disease_identifier) NOT IN (${buffer.toString()}) 
+                                   WHERE (dp1.disease_identifier, dp2.parent_disease_identifier) NOT IN ("""+buffer.toString()+""") 
                               )""");
     rowsAffected = inserted.size;
 }
