@@ -97,6 +97,11 @@ while (rowsAffected != 0) {
 }
 
 System.out.println("Populating data warehouse report table with study diseases..."); 
+
+sourceConnection.close();
+sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
+	properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
+
 sourceConnection.eachRow(sql) { row ->
     diseases.add(ct_gov_xml_indicator: row.ct_indicator, date_last_created: row.date_last_created, date_last_updated: row.date_last_updated,
             disease_code: row.disease_code, disease_preferred_name: row.preferred_name, disease_menu_display_name: row.menu_display_name,
