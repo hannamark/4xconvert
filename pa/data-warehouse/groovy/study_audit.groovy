@@ -503,3 +503,6 @@ def usql = """
     FROM stg_dw_user b WHERE lower(a.username) = lower(b.login_name)
     """
 destinationConnection.executeUpdate(usql)
+
+sourceConnection.close()
+destinationConnection.close()

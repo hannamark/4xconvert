@@ -73,4 +73,7 @@ destinationConnection.execute("""UPDATE STG_DW_STUDY_PROCESSING_STATUS SET STATU
 	where STATUS='ON_HOLD'""")            
 destinationConnection.execute("""UPDATE STG_DW_STUDY_PROCESSING_STATUS SET STATUS='Submission Terminated'
 	where STATUS='SUBMISSION_TERMINATED'""")
+
+sourceConnection.close()
+destinationConnection.close()
             

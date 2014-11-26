@@ -101,5 +101,8 @@ destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIM
 	where TISSUE_SPECIMEN_TYPE_CODE='CITRATED_PLASMA'""")
 destinationConnection.execute("""UPDATE STG_DW_STUDY_BIOMARKER SET TISSUE_SPECIMEN_TYPE_CODE='Other Fluid'    
 	where TISSUE_SPECIMEN_TYPE_CODE='OTHER_FLUID'""")
+
+sourceConnection.close()
+destinationConnection.close()
 	
 	

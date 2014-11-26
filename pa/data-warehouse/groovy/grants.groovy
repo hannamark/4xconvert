@@ -31,3 +31,6 @@ destinationConnection.execute("""UPDATE stg_dw_study_grant g
                                  WHERE g.user_last_updated_id = us.csm_user_id
                                    AND g.active_indicator = 'NO'
                               """);
+						  
+						  sourceConnection.close()
+						  destinationConnection.close()

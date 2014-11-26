@@ -114,3 +114,6 @@ sourceConnection.eachRow("""SELECT jt.person_id, u.value
                                            WHERE po_id = ?
                                         """, [row.value, row.value, row.person_id]);
 }
+							
+							sourceConnection.close()
+							destinationConnection.close()

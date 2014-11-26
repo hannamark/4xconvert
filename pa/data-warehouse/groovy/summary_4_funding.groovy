@@ -38,3 +38,7 @@ destinationConnection.execute("""UPDATE stg_dw_summary_4_funding s4
                                      family = fo.family_name
                                  FROM stg_dw_family_organization fo
                                  WHERE fo.organization_id = s4.sponsor_id""");
+							 
+							 
+							 sourceConnection.close()
+							 destinationConnection.close()

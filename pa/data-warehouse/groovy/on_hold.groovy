@@ -51,3 +51,5 @@ destinationConnection.execute("""UPDATE STG_DW_STUDY_ON_HOLD_STATUS holds
                                  FROM stg_dw_user us where holds.user_last_updated_id = us.csm_user_id""");
 
 
+							 sourceConnection.close()
+							 destinationConnection.close()

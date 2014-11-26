@@ -34,3 +34,6 @@ sourceConnection.eachRow(sql) { row ->
     ORG_PO_ID: row.assigned_identifier
   )
 }
+
+sourceConnection.close()
+destinationConnection.close()

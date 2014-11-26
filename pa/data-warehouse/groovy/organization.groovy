@@ -149,4 +149,7 @@ sourceConnection.eachRow("""SELECT rel.organization_id, e.name, rel.functionalty
                                        AND family IS NULL
                                   """, [row.name, row.functionaltype, row.organization_id]);
 }
+							
+							sourceConnection.close()
+							destinationConnection.close()
 

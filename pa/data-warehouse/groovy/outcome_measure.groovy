@@ -54,3 +54,6 @@ sourceConnection.eachRow(sql) { row ->
             last_name_last_updated: row.updater_last,
     	nci_id: row.extension)
 }
+
+sourceConnection.close()
+destinationConnection.close()

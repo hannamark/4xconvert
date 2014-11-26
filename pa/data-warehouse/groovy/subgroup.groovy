@@ -20,3 +20,6 @@ sourceConnection.eachRow(sql) { row ->
     	group_code: row.group_code, 
     	nci_id: row.extension)
 }
+
+sourceConnection.close()
+destinationConnection.close()

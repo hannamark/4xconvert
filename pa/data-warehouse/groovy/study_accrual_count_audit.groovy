@@ -41,3 +41,6 @@ sourceConnection.eachRow(sql2) { row ->
             createddate: row.createddate
             )
     }
+
+sourceConnection.close()
+destinationConnection.close()

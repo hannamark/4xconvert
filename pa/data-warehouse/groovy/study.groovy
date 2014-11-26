@@ -416,3 +416,5 @@ destinationConnection.execute("""UPDATE STG_DW_STUDY SET STUDY_PROTOCOL_TYPE='In
 destinationConnection.execute("""UPDATE STG_DW_STUDY SET STUDY_PROTOCOL_TYPE='Non-interventional'
 	where STUDY_PROTOCOL_TYPE='NonInterventionalStudyProtocol'""")
 
+sourceConnection.close()
+destinationConnection.close()

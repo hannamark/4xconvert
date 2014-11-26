@@ -68,4 +68,5 @@ def pasql = """
     WHERE lower(username) = 'ejbclient'
     """
 destinationConnection.executeUpdate(pasql)
-
+sourceConnection.close()
+destinationConnection.close()

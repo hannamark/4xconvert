@@ -25,3 +25,6 @@ sourceConnection.eachRow(sql) { row ->
         scientific_close_date: row.scientific_close_date
     )
 }
+
+sourceConnection.close()
+destinationConnection.close()

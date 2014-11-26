@@ -23,3 +23,6 @@ sourceConnectionPa.eachRow(sql) { row ->
 		affiliated_org_id: row.affiliated_org_id
 	)
 }
+
+sourceConnectionPa.close()
+destinationConnection.close()

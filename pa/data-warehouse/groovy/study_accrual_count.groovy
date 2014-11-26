@@ -28,4 +28,7 @@ destinationConnection.execute("""UPDATE stg_dw_study_accrual_count sac
 destinationConnection.execute("""INSERT INTO stg_dw_study_accrual_count(accrual_count, count_type, nci_id)
                                  SELECT sum(accrual_count), 'STUDY_TOTAL', nci_id
                                  FROM stg_dw_study_accrual_count
-                                 GROUP BY nci_id""");                                 
+                                 GROUP BY nci_id""");    
+							 
+							 sourceConnection.close()
+							 destinationConnection.close()

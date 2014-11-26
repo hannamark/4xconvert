@@ -67,3 +67,6 @@ destinationConnection.execute("""UPDATE STG_DW_STUDY_ASSOCIATION SET study_subty
                                  WHERE study_subtype_code='OBSERVATIONAL'""")
 destinationConnection.execute("""UPDATE STG_DW_STUDY_ASSOCIATION SET study_subtype_code='Ancillary-Correlative'
                                  WHERE study_subtype_code='ANCILLARY_CORRELATIVE'""")
+
+sourceConnection.close()
+destinationConnection.close()

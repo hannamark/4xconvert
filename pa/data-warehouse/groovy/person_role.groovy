@@ -63,4 +63,7 @@ destinationConnection.executeUpdate("""UPDATE stg_dw_person_role pr
                                            tty = person.tty
                                        FROM stg_dw_person person
                                        WHERE pr.person_po_id = person.po_id""");
+								   
+								   sourceConnection.close()
+								   destinationConnection.close()
 

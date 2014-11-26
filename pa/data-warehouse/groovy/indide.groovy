@@ -36,3 +36,6 @@ sourceConnection.eachRow(sql) { row ->
             nci_div_prog_holder_code: row.nci_div_prog_holder_code, nci_id: row.extension, nih_instholder_code: row.nih_inst_holder_code,
             user_last_created: row.creator, user_last_updated: row.updater)
 }
+
+sourceConnection.close()
+destinationConnection.close()

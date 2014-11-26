@@ -20,3 +20,6 @@ sourceConnection.eachRow(sql) { row ->
         secondary_purpose_other_text:row.secondary_purpose_other_text,
         nci_id: row.extension)
 }
+
+sourceConnection.close()
+destinationConnection.close()

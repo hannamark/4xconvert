@@ -52,3 +52,6 @@ sourceConnection.eachRow(sql) { row ->
     	username: row.username
 	)
 }
+
+sourceConnection.close()
+destinationConnection.close()

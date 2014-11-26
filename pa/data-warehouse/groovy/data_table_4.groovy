@@ -153,3 +153,6 @@ destinationConnection.execute("""UPDATE stg_dw_data_table_4 SET summary_level_ac
                                    SELECT nci_id FROM stg_dw_study_site_accrual_details WHERE status = 'ACTIVE')""");
 destinationConnection.execute("""UPDATE stg_dw_data_table_4 SET summary_level_accrual = TRUE WHERE nci_id IN (
                                    SELECT nci_id FROM stg_dw_study_accrual_count WHERE count_type = 'SITE_TOTAL' AND accrual_count > 0)""");
+							   
+							   sourceConnection.close()
+							   destinationConnection.close()

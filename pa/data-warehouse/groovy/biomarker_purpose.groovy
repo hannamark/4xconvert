@@ -26,3 +26,5 @@ sourceConnection.eachRow(sql) { row ->
         }
     }
 }
+sourceConnection.close()
+destinationConnection.close()

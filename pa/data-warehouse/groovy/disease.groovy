@@ -104,3 +104,6 @@ sourceConnection.eachRow(sql) { row ->
             nci_thesaurus_concept_id: row.nt_term_identifier, user_last_created: row.creator, user_last_updated: row.updater,
             internal_system_id2: row.internal_system_id2, inclusion_indicator: row.inclusion_indicator)
 }
+
+sourceConnection.close()
+destinationConnection.close()

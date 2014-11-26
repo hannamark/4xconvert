@@ -29,3 +29,6 @@ destinationConnection.eachRow("""SELECT DISTINCT org_org_family, nci_id, program
                                        AND program_codes IS NULL
                                  """, [row.program_code, row.org_org_family, row.nci_id]);
 }
+								   
+								   
+								   destinationConnection.close()

@@ -40,3 +40,6 @@ i2eConnection.eachRow(sql) { row ->
         common_email_addr       : row.common_email_addr
         )
 }
+
+i2eConnection.close()
+destinationConnection.close()

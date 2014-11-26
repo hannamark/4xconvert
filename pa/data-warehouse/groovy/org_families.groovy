@@ -13,3 +13,6 @@ sourceConnection.eachRow(sql) { row ->
     org_families.add(family_name: row.family_name, organization_name: row.org_name,
                      functionaltype: row.functionaltype, family_id: row.family_id, organization_id: row.org_id)
 }
+
+sourceConnection.close()
+destinationConnection.close()

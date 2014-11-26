@@ -83,4 +83,7 @@ destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
                                  SET sdc_disease_code = disease_code,
                                      sdc_disease_term = preferred_name 
                                  WHERE code_system = 'SDC'""");
+							 
+							 sourceConnection.close()
+							 destinationConnection.close()
                              

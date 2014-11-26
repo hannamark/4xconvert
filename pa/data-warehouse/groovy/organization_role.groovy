@@ -453,3 +453,6 @@ sourceConnection.eachRow("""SELECT rel.oc_id, e.value
                                        AND tty IS NULL
                                   """, [row.value, row.oc_id]);
 }
+							
+							sourceConnection.close()
+							destinationConnection.close()

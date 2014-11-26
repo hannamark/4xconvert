@@ -9,3 +9,6 @@ def generic_contacts = destinationConnection.dataSet("STG_DW_GENERIC_CONTACT");
 sourceConnection.eachRow(sql) { row ->
     generic_contacts.add(identifier: row.id, title: row.title)
 }
+
+sourceConnection.close()
+destinationConnection.close()

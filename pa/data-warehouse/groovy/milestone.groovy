@@ -87,3 +87,5 @@ destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='On-goin
 destinationConnection.execute("""UPDATE STG_DW_STUDY_MILESTONE SET NAME='Late Rejection Date'    
 	where NAME='LATE_REJECTION_DATE'""")
 
+sourceConnection.close()
+destinationConnection.close()

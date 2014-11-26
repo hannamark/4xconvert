@@ -92,3 +92,7 @@ destinationConnection.execute("""UPDATE stg_dw_user absu
 destinationConnection.execute("""UPDATE stg_dw_user absu
                                  SET user_name_last_updated = us.name 
                                  FROM stg_dw_user us where absu.user_last_updated_id = us.csm_user_id""");
+							 
+							 
+							 sourceConnectionPa.close()
+							 destinationConnection.close()

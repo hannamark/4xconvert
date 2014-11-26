@@ -12,3 +12,6 @@ def anatomic_sites = destinationConnection.dataSet("STG_DW_STUDY_ANATOMIC_SITE")
 sourceConnection.eachRow(sql) { row ->
     anatomic_sites.add(anatomic_site_name: row.display_name, nci_id: row.extension)
 }
+
+sourceConnection.close()
+destinationConnection.close()

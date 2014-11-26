@@ -47,3 +47,6 @@ sourceConnection.eachRow(sql) { row ->
             why_study_stopped: row.comment_text
             )
 }
+
+sourceConnection.close()
+destinationConnection.close()

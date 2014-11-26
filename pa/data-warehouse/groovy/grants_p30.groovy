@@ -19,3 +19,5 @@ sourceConnection.eachRow(sql) { row ->
         serial_number: row.serialnumber
     )
 }
+sourceConnection.close()
+destinationConnection.close()
