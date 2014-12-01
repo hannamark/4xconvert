@@ -5,6 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
 
@@ -80,5 +83,18 @@ public class NCItTermsLookupTest {
         InterventionWebDTO intervention = lookup.lookupIntervention("C1");
         assertNull(intervention);
     }
-
+    
+   @Test
+    public void testFetchParent() throws Exception {
+    	List<String> parentTermsList = lookup.fetchTree("C4878", true);
+    	assertFalse(parentTermsList.isEmpty());
+    	assertTrue(parentTermsList.contains("C2916"));
+    }
+   
+   @Test
+   public void testFetchChild() throws Exception {
+   	List<String> parentTermsList = lookup.fetchTree("C4878", false);
+   	assertFalse(parentTermsList.isEmpty());
+   	assertTrue(parentTermsList.contains("C27925"));
+   }
 }

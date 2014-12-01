@@ -90,6 +90,7 @@ import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseParent;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.convert.PDQDiseaseParentConverter;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
@@ -101,6 +102,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -122,6 +124,9 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 public class PDQDiseaseParentServiceBean
         extends AbstractBaseIsoService<PDQDiseaseParentDTO, PDQDiseaseParent, PDQDiseaseParentConverter>
         implements PDQDiseaseParentServiceRemote {
+    
+ @EJB
+private PDQDiseaseServiceLocal diseaseService;
 
     /**
      * @param ii index of disease
@@ -172,4 +177,54 @@ public class PDQDiseaseParentServiceBean
         }
         return resultList;
     }
+    
+/**
+     * @param currDisease diseaseDTO
+     * @param parents parents list to be deleted
+     * @param children children list to be added
+     * @param parentsToAdd parents list to add
+     * @param childsToAdd  childs list to add
+     * @throws PAException exception
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void syncDisease(PDQDiseaseDTO currDisease, List<PDQDiseaseParentDTO> parents,
+            List<PDQDiseaseParentDTO> children,
+            List<PDQDiseaseParentDTO> parentsToAdd,
+            List<PDQDiseaseParentDTO> childsToAdd) throws PAException {
+        try {
+            diseaseService.update(currDisease);
+            // delete parents
+            deleteList(parents);
+            // delete childs
+            deleteList(children);
+            // add parents
+            for (PDQDiseaseParentDTO diseaseParentDTO : parentsToAdd) {
+                create(diseaseParentDTO);
+            }
+            for (PDQDiseaseParentDTO diseaseParentDTO : childsToAdd) {
+                create(diseaseParentDTO);
+            }
+        } catch (Exception e) {
+            throw new PAException(e.getMessage());
+        }
+    }
+
+    private void deleteList(List<PDQDiseaseParentDTO> pDQDiseaseParentDTOList)
+            throws Exception {
+
+        for (PDQDiseaseParentDTO diseaseParentDTO : pDQDiseaseParentDTOList) {
+            if (get(diseaseParentDTO.getIdentifier()) != null) {
+                delete(diseaseParentDTO.getIdentifier());
+            }
+
+        }
+    }
+
+ /**
+ * @param diseaseService diseaseService
+ */
+public void setDiseaseService(PDQDiseaseServiceLocal diseaseService) {
+        this.diseaseService = diseaseService;
+    }
+
 }

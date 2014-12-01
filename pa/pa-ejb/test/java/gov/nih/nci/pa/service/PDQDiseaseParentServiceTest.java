@@ -87,13 +87,18 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseParent;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
@@ -117,6 +122,8 @@ public class PDQDiseaseParentServiceTest extends AbstractHibernateTestCase {
         CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         dIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
+        bean.setDiseaseService(diseaseBean);
+        
      }
 
     private void compareDataAttributes(PDQDiseaseParent bo1, PDQDiseaseParent bo2) {
@@ -198,5 +205,75 @@ public class PDQDiseaseParentServiceTest extends AbstractHibernateTestCase {
         remote.delete(ii);
         dtoList = bean.getByChildDisease(dIi);
         assertEquals(oldSize - 1, dtoList.size());
+    }
+    
+   
+    
+    @Test
+    public void syncTest() throws Exception {
+    	
+        List<PDQDiseaseParentDTO> parents = bean.getByChildDisease(dIi);
+        List<PDQDiseaseParentDTO>childs = bean.getByParentDisease(dIi);
+        
+        PDQDiseaseDTO tn = diseaseBean.create(diseaseBean.convertFromDomainToDto(TestSchema.createPdqDisease("toenail cancer")));
+        PDQDisease pdqDisease = diseaseBean.convertFromDtoToDomain(tn);
+        pdqDisease.setDisplayName("new name");
+        tn = diseaseBean.convertFromDomainToDto(pdqDisease);
+        
+        List<PDQDiseaseParentDTO> parentstoAdd = new ArrayList<PDQDiseaseParentDTO>();
+        List<PDQDiseaseParentDTO> childsToAdd = new ArrayList<PDQDiseaseParentDTO>();
+        
+        PDQDiseaseDTO parentBean = diseaseBean.create(diseaseBean.convertFromDomainToDto(TestSchema.createPdqDisease("parent bean"))); 
+        PDQDiseaseDTO childBean = diseaseBean.create(diseaseBean.convertFromDomainToDto(TestSchema.createPdqDisease("parent bean")));
+
+        //create a new parent that needs to be added
+        //and old parent got successfully deleted
+        PDQDiseaseParentDTO p = new PDQDiseaseParentDTO();
+        p.setParentDiseaseCode(StConverter
+                .convertToSt("ISA"));
+        p.setParentDiseaseIdentifier(parentBean.getIdentifier());
+        p.setStatusCode(CdConverter
+                .convertToCd(ActiveInactivePendingCode.ACTIVE));
+        p.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp(PAUtil.today())));
+        p.setDiseaseIdentifier(tn.getIdentifier());
+      
+        parentstoAdd.add(p);
+        
+        //create a new child
+        
+        PDQDiseaseParentDTO c = new PDQDiseaseParentDTO();
+        c.setParentDiseaseCode(StConverter
+                .convertToSt("ISA"));
+        c.setParentDiseaseIdentifier(tn.getIdentifier());
+        c.setStatusCode(CdConverter
+                .convertToCd(ActiveInactivePendingCode.ACTIVE));
+        c.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp(PAUtil.today())));
+        c.setDiseaseIdentifier(childBean.getIdentifier());
+        
+        childsToAdd.add(c);
+       
+    	bean.syncDisease(tn, parents, childs, parentstoAdd, childsToAdd);
+    	
+    	//check if parent got successfully added
+    	
+        List<PDQDiseaseParentDTO> newParents = bean.getByChildDisease(tn.getIdentifier());
+        assertTrue(newParents.size()>0);
+        PDQDiseaseParentDTO  diseaseParentDTO = newParents.get(0);
+        assertTrue(diseaseParentDTO.getDiseaseIdentifier().equals(tn.getIdentifier()));
+        assertTrue(diseaseParentDTO.getParentDiseaseIdentifier().equals(parentBean.getIdentifier()));
+        
+        //check of child got successfully added
+    	
+        List<PDQDiseaseParentDTO> newChilds = bean.getByParentDisease(tn.getIdentifier());
+        assertTrue(newChilds.size()>0);
+        PDQDiseaseParentDTO diseaseParentDTO2 = newChilds.get(0);
+        assertTrue(diseaseParentDTO2.getDiseaseIdentifier().equals(childBean.getIdentifier()));
+        assertTrue(diseaseParentDTO2.getParentDiseaseIdentifier().equals(tn.getIdentifier()));
+    	pdqDisease = diseaseBean.convertFromDtoToDomain(tn);
+    	
+    	assertTrue(pdqDisease.getDisplayName().equals("new name"));
+    	
     }
 }

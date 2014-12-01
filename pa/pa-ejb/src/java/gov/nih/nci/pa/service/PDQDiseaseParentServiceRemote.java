@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 
 import java.util.List;
@@ -112,4 +113,18 @@ public interface PDQDiseaseParentServiceRemote extends BasePaService<PDQDiseaseP
      * @throws PAException exception
      */
     List<PDQDiseaseParentDTO> getByChildDisease(Ii[] iis) throws PAException;
+    
+     /**
+     * @param currDisease diseaseDTO
+     * @param parents parents list to be deleted
+     * @param children children list to be added
+     * @param parentsToAdd parents list to add
+     * @param childsToAdd  childs list to add
+     * @throws PAException exception
+     */
+    void syncDisease(PDQDiseaseDTO currDisease,
+         List<PDQDiseaseParentDTO> parents, List<PDQDiseaseParentDTO> children,
+         List<PDQDiseaseParentDTO> parentsToAdd, List<PDQDiseaseParentDTO> childsToAdd)throws PAException;
+    
+   
 }

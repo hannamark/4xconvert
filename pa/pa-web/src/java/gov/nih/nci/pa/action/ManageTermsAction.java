@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -51,7 +52,8 @@ import com.opensymphony.xwork2.Preparable;
  *        holder, NCI.
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity",
-        "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" })
+        "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" ,
+        "PMD.SignatureDeclareThrowsException" , "PMD.PreserveStackTrace" })
 public class ManageTermsAction extends ActionSupport implements Preparable {
 
     private static final String ALTNAME_TYPECODE_SYNONYM = "Synonym";
@@ -60,11 +62,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     private static final long serialVersionUID = 9154119501161489767L;
 
-    private static final String INTERVENTION = "intervention"; // NOPMD
+    private static final String INTERVENTION = "intervention"; 
     private static final String SEARCH_INTERVENTION = "searchIntervention";
     private static final String SYNC_INTERVENTION = "syncIntervention";
 
-    private static final String DISEASE = "disease"; // NOPMD
+    private static final String DISEASE = "disease"; 
     private static final String SEARCH_DISEASE = "searchDisease";
     private static final String SYNC_DISEASE = "syncDisease";
 
@@ -427,6 +429,31 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 List<String> missingTerms = new ArrayList<String>();
                 List<PDQDiseaseParentDTO> parentDtos = new ArrayList<PDQDiseaseParentDTO>();
                 List<PDQDiseaseParentDTO> childDtos = new ArrayList<PDQDiseaseParentDTO>();
+                
+                PDQDiseaseDTO diseaseDto = new PDQDiseaseDTO();
+                diseaseDto.setDiseaseCode(StConverter.convertToSt(disease.getCode()));
+                diseaseDto.setNtTermIdentifier(StConverter.convertToSt(disease.getNtTermIdentifier()));
+                diseaseDto.setPreferredName(StConverter.convertToSt(disease.getPreferredName()));
+                diseaseDto.setDisplayName(StConverter.convertToSt(disease.getMenuDisplayName()));
+                diseaseDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                diseaseDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
+                diseaseDto = diseaseService.create(diseaseDto);
+                
+                // Save alter names
+                if (disease.getAlterNameList() != null) {
+                   //remove duplicate synonyms
+                Set<String> namesSet = new HashSet<String>(disease.getAlterNameList());
+                    List<String> uniqueNamesList = new ArrayList<String>(namesSet);
+                    for (String altName : uniqueNamesList) {
+                        PDQDiseaseAlternameDTO altDto = new PDQDiseaseAlternameDTO();
+                        altDto.setAlternateName(StConverter.convertToSt(altName));
+                        altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                        altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil
+                                .today())));
+                        altDto.setDiseaseIdentifier(diseaseDto.getIdentifier());
+                        diseaseAltNameService.create(altDto);
+                    }
+                }
 
                 // Check if all parent and children terms exists in CTRP
                 for (Iterator<String> iterator = disease.getParentTermList().iterator(); iterator.hasNext();) {
@@ -472,44 +499,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     childDtos.add(c);
                 }
 
-                PDQDiseaseDTO diseaseDto = new PDQDiseaseDTO();
-                diseaseDto.setDiseaseCode(StConverter.convertToSt(disease.getCode()));
-                diseaseDto.setNtTermIdentifier(StConverter.convertToSt(disease.getNtTermIdentifier()));
-                diseaseDto.setPreferredName(StConverter.convertToSt(disease.getPreferredName()));
-                diseaseDto.setDisplayName(StConverter.convertToSt(disease.getMenuDisplayName()));
-                diseaseDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                diseaseDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
-                diseaseDto = diseaseService.create(diseaseDto);
-
-                // Save alter names
-                if (disease.getAlterNameList() != null) {
-                   //remove duplicate synonyms
-                Set<String> namesSet = new HashSet<String>(disease.getAlterNameList());
-                    List<String> uniqueNamesList = new ArrayList<String>(namesSet);
-                    for (String altName : uniqueNamesList) {
-                        PDQDiseaseAlternameDTO altDto = new PDQDiseaseAlternameDTO();
-                        altDto.setAlternateName(StConverter.convertToSt(altName));
-                        altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
-                        altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil
-                                .today())));
-                        altDto.setDiseaseIdentifier(diseaseDto.getIdentifier());
-                        diseaseAltNameService.create(altDto);
-                    }
-                }
-
-                // Save parents
-                for (Iterator<PDQDiseaseParentDTO> iterator = parentDtos.iterator(); iterator.hasNext();) {
-                    PDQDiseaseParentDTO parentDto = iterator.next();
-                    parentDto.setDiseaseIdentifier(diseaseDto.getIdentifier());
-                    diseaseParentService.create(parentDto);
-                }
-
-                // Save Children
-                for (Iterator<PDQDiseaseParentDTO> iterator = childDtos.iterator(); iterator.hasNext();) {
-                    PDQDiseaseParentDTO childDto = iterator.next();
-                    childDto.setParentDiseaseIdentifier(diseaseDto.getIdentifier());
-                    diseaseParentService.create(childDto);
-                }
+                 
+                saveParentChilds(diseaseDto);
 
                 if (!missingTerms.isEmpty()) {
                     String errorMsg = createTermsMissingErrorMessage(missingTerms);
@@ -545,6 +536,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, lexe.getLocalizedMessage());
             return DISEASE;
         }
+        PopUpDisAction.getDiseaseTreeCache().removeAll();
         return SUCCESS;
     }
 
@@ -669,7 +661,10 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     }
                 }
 
-                diseaseService.update(currDisease);
+                            
+
+                saveParentChilds(currDisease);
+                PopUpDisAction.getDiseaseTreeCache().removeAll();
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                         "Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() 
                         + "' synchronized from NCIt");
@@ -677,12 +672,130 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                         "No Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() + "' found in CTRP");
             }
-        } catch (PAException e) {
+        } catch (Exception e) {
             LOG.error("Error saving disease", e);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             return DISEASE;
         }
         return SUCCESS;
+    }
+    
+    /**
+     * This method retrieves parent list recursivly
+     * 
+     * @param ncitCode
+     * @param parentDtos
+     * @param identifier
+     * @param parents
+     * @throws Exception
+     */
+    private void fetchParents(String ncitCode,
+            List<PDQDiseaseParentDTO> parentDtos, Ii identifier,
+            List<PDQDiseaseParentDTO> parents) throws Exception {
+        List<String> ncitCodesList = new NCItTermsLookup().fetchTree(ncitCode,
+                true);
+
+        parents.addAll(diseaseParentService.getByChildDisease(identifier));
+
+        // this is to avoid duplicates
+        Set<String> ncitCodesSet = new HashSet<String>(ncitCodesList);
+        for (String parentCode : ncitCodesSet) {
+            PDQDiseaseDTO parent = null;
+
+            parent = getExistingDisease(parentCode);
+            if (parent == null) {
+                parent = retrieveAndSaveMissingTerm(parentCode);
+            }
+            PDQDiseaseParentDTO p = new PDQDiseaseParentDTO();
+            p.setParentDiseaseCode(StConverter
+                    .convertToSt(PARENT_DISEASE_CODE_ISA));
+            p.setParentDiseaseIdentifier(parent.getIdentifier());
+            p.setStatusCode(CdConverter
+                    .convertToCd(ActiveInactivePendingCode.ACTIVE));
+            p.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil
+                    .dateStringToTimestamp(PAUtil.today())));
+            p.setDiseaseIdentifier(identifier);
+            parentDtos.add(p);
+            PDQDiseaseDTO currDisease = getExistingDisease(parentCode);
+            // System.out.println("The parent code here--->" + parentCode);
+            fetchParents(parentCode, parentDtos, currDisease.getIdentifier(),
+                    parents);
+        }
+    }
+
+    /**
+     * This method retrieves children list recursivly
+     * 
+     * @param ncitCode
+     * @param childDtos
+     * @param identifier
+     * @param childs
+     * @throws Exception
+     */
+    private void fetchChildrens(String ncitCode,
+            List<PDQDiseaseParentDTO> childDtos, Ii identifier,
+            List<PDQDiseaseParentDTO> childs) throws Exception {
+        List<String> ncitCodesList = new NCItTermsLookup().fetchTree(ncitCode,
+                false);
+
+        childs.addAll(diseaseParentService.getByParentDisease(identifier));
+        // this is to avoid duplicates
+        Set<String> ncitCodesSet = new HashSet<String>(ncitCodesList);
+        for (String childCode : ncitCodesSet) {
+            PDQDiseaseDTO child = null;
+
+            child = getExistingDisease(childCode);
+            if (child == null) {
+                child = retrieveAndSaveMissingTerm(childCode);
+            }
+            PDQDiseaseParentDTO c = new PDQDiseaseParentDTO();
+            c.setDiseaseIdentifier(child.getIdentifier());
+            c.setParentDiseaseCode(StConverter
+                    .convertToSt(PARENT_DISEASE_CODE_ISA));
+            c.setStatusCode(CdConverter
+                    .convertToCd(ActiveInactivePendingCode.ACTIVE));
+            c.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil
+                    .dateStringToTimestamp(PAUtil.today())));
+
+            PDQDiseaseDTO currDisease = getExistingDisease(childCode);
+            c.setParentDiseaseIdentifier(identifier);
+            childDtos.add(c);
+
+            fetchChildrens(childCode, childDtos, currDisease.getIdentifier(),
+                    childs);
+        }
+    }
+
+    /**
+     * This method save entire parent child and child tree from Ncit if not
+     * already exists
+     * 
+     * @param currDisease
+     * @throws PAException
+     */
+    private void saveParentChilds(PDQDiseaseDTO currDisease) throws PAException {
+
+        try {
+            List<PDQDiseaseParentDTO> parents = new ArrayList<PDQDiseaseParentDTO>();
+
+            List<PDQDiseaseParentDTO> childs = new ArrayList<PDQDiseaseParentDTO>();
+
+            List<PDQDiseaseParentDTO> parentDtos = new ArrayList<PDQDiseaseParentDTO>();
+            List<PDQDiseaseParentDTO> childDtos = new ArrayList<PDQDiseaseParentDTO>();
+
+            fetchParents(disease.getNtTermIdentifier(), parentDtos,
+                    currDisease.getIdentifier(), parents);
+            fetchChildrens(disease.getNtTermIdentifier(), childDtos,
+                    currDisease.getIdentifier(), childs);
+
+            // this is moved to separate method because either all changes
+            // should be done or none
+            diseaseParentService.syncDisease(currDisease,
+                    parents, childs, parentDtos, childDtos);
+
+        } catch (Exception e) {
+            throw new PAException(e.getMessage());
+        }
     }
 
     /**

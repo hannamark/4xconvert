@@ -133,7 +133,7 @@ import com.opensymphony.xwork2.Preparable;
 * @author Hugh Reinhart
 * @since 11/31/2008
 */
-public class PopUpDisAction extends ActionSupport implements Preparable { // NOPMD
+public class PopUpDisAction extends ActionSupport implements Preparable { 
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpDisAction.class);
@@ -163,7 +163,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable { // NOP
      * Get disease tree cache
      * @return disease tree cache
      */
-    private Cache getDiseaseTreeCache() {
+    public static Cache getDiseaseTreeCache() {
         if (cacheManager == null || cacheManager.getStatus() != Status.STATUS_ALIVE) {
             cacheManager = CacheManager.create();
             Cache cache = new Cache(TREE_CACHE_KEY, CACHE_MAX_ELEMENTS, null, false, null, false,
@@ -220,12 +220,12 @@ public class PopUpDisAction extends ActionSupport implements Preparable { // NOP
             @Override
             public boolean evaluate(Object arg0) {
                 PDQDiseaseNode node = (PDQDiseaseNode) arg0;
-                return clickedDiseaseId.equals(0L) ? node.getParentId() == null // NOPMD
+                return clickedDiseaseId.equals(0L) ? node.getParentId() == null 
                         : clickedDiseaseId.equals(node.getParentId());
             }
         });
         
-        String nodeIdPrefix = clickedDiseaseId.equals(0L) ? "" // NOPMD
+        String nodeIdPrefix = clickedDiseaseId.equals(0L) ? "" 
                 : getNodeID().replace("ptid", "");
         JSONArray children = new JSONArray();
         for (PDQDiseaseNode pdqDiseaseNode : diseaseTree) {

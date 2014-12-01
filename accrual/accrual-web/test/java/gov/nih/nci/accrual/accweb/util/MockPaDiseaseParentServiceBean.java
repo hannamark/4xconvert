@@ -2,6 +2,7 @@ package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -104,5 +105,16 @@ public class MockPaDiseaseParentServiceBean implements PDQDiseaseParentServiceRe
     public List<PDQDiseaseParentDTO> getAll() throws PAException {
         return null;
     }
+
+	@Override
+	public void syncDisease(PDQDiseaseDTO currDisease, List<PDQDiseaseParentDTO> parents,
+			List<PDQDiseaseParentDTO> childs,
+			List<PDQDiseaseParentDTO> parentsToAdd,
+			List<PDQDiseaseParentDTO> childsToAdd) throws PAException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }

@@ -455,4 +455,28 @@ public class NCItTermsLookup {
         }
         return result;
     }
-}
+    
+    
+ /**
+ * @param ncitCode ncitCode
+ * @param isParent true indicates if parents needs to fetch false indicates childs to be fetched
+ * @return List<String>
+ * @throws LEXEVSLookupException Exception
+ */
+public List<String> fetchTree(String ncitCode, boolean isParent) throws LEXEVSLookupException {
+        List<String> ncitCodeList = new ArrayList<String>();
+        NCItTerm term = null;
+        List<NCItTerm> termsList = new ArrayList<NCItTerm>();
+        if (isParent) {
+           term = retrieveNCItDiseaseTermViaLexEVSCTS(ncitCode, true);
+           termsList = term.parentTerms;
+        } else {
+          termsList = retrieveDiseaseChildren(ncitCode);
+        }
+       for (NCItTerm term2:termsList) {
+         ncitCodeList.add(term2.ncitCode);
+       }
+       
+       return ncitCodeList;
+     }
+ }
