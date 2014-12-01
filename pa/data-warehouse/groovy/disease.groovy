@@ -52,7 +52,7 @@ sourceConnection.eachRow(sql_parents) { row ->
         disease_code: row.disease_code, nt_term_identifier: row.nt_term_identifier, preferred_name: row.preferred_name, menu_display_name: row.menu_display_name)
 }
 
-/*
+
 System.out.println("Creating disease parents table...");
 def rowsAffected = -1;
 while (rowsAffected != 0) {
@@ -60,12 +60,13 @@ while (rowsAffected != 0) {
                                    SELECT DISTINCT dp1.disease_identifier, dp2.parent_disease_identifier, dp2.disease_code, dp2.nt_term_identifier, dp2.preferred_name, dp2.menu_display_name
                                    FROM stg_dw_disease_parents dp1
                                    JOIN stg_dw_disease_parents dp2 ON (dp1.parent_disease_identifier = dp2.disease_identifier)
-                                   WHERE (dp1.disease_identifier, dp2.parent_disease_identifier) NOT IN (
-                                          SELECT disease_identifier, parent_disease_identifier FROM stg_dw_disease_parents) 
+                                   WHERE 
+                                   	(SELECT count(dp3.disease_identifier) FROM stg_dw_disease_parents dp3 where dp1.disease_identifier=dp3.disease_identifier AND dp2.parent_disease_identifier=dp3.parent_disease_identifier)=0 
+ 
                               )""");
     rowsAffected = inserted.size;
 }
-*/
+
 
 System.out.println("Populating data warehouse report table with study diseases..."); 
 
