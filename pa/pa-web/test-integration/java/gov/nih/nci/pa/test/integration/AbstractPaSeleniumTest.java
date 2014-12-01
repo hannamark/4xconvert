@@ -263,7 +263,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected void login(String username, String password) {
-        openAndWait("/pa");
+        login("/pa", username, password);       
+    }
+    
+    protected void login(String path, String username, String password) {
+        openAndWait(path);
         verifyLoginPage();
         selenium.type("j_username", username);
         selenium.type("j_password", password);
