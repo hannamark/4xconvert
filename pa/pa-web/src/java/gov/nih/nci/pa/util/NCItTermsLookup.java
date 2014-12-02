@@ -422,6 +422,8 @@ public class NCItTermsLookup {
                 return document.getDocumentElement();
             } else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
                 return null; // term not found
+            } else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                return null; // term not found
             } else {
                 throw new Exception("Error making LexEVS request: " + response.getStatusLine());
             }
@@ -469,7 +471,10 @@ public List<String> fetchTree(String ncitCode, boolean isParent) throws LEXEVSLo
         List<NCItTerm> termsList = new ArrayList<NCItTerm>();
         if (isParent) {
            term = retrieveNCItDiseaseTermViaLexEVSCTS(ncitCode, true);
-           termsList = term.parentTerms;
+           if (term != null) {
+               termsList = term.parentTerms;    
+           }
+           
         } else {
           termsList = retrieveDiseaseChildren(ncitCode);
         }
