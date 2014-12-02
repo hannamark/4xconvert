@@ -7,6 +7,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
@@ -38,10 +39,37 @@ public final class MockFamilyService implements FamilyServiceRemote { // NOPMD
 
     public static final Map<Long, FamilyOrganizationRelationshipDTO> RELATIONSHIPS = new HashMap<Long, FamilyOrganizationRelationshipDTO>();
 
+    public static Ii NCI_FAMILY_ID;
+
+    static {
+        reset();
+    }
+
     public FamilyDTO createFamily(FamilyDTO dto) {
+        return create(dto);
+    }
+
+    /**
+     * @param dto
+     * @return
+     */
+    private static FamilyDTO create(FamilyDTO dto) {
         dto.setIdentifier(IiConverter.convertToPoFamilyIi((SEQ++) + ""));
         FAMILIES.put(IiConverter.convertToLong(dto.getIdentifier()), dto);
         return dto;
+    }
+
+    public static void reset() {
+        SEQ = 1;
+        FAMILIES.clear();
+        RELATIONSHIPS.clear();
+
+        FamilyDTO dto = new FamilyDTO();
+        dto.setName(EnOnConverter.convertToEnOn("National Cancer Institute"));
+        dto.setStatusCode(CdConverter.convertStringToCd("Active"));
+        create(dto);
+        NCI_FAMILY_ID = dto.getIdentifier();
+
     }
 
     public FamilyOrganizationRelationshipDTO createFamilyOrganizationRelationship(
@@ -169,7 +197,7 @@ public final class MockFamilyService implements FamilyServiceRemote { // NOPMD
     @Override
     public List<FamilyDTO> search(FamilyDTO arg0, LimitOffset arg1)
             throws TooManyResultsException {
-       return new ArrayList<>();
+        return new ArrayList<>();
     }
 
     @SuppressWarnings("unchecked")

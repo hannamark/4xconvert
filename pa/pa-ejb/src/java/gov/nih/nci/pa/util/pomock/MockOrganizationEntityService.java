@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.util.pomock;
 
+import static gov.nih.nci.pa.util.pomock.MockFamilyService.NCI_FAMILY_ID;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
@@ -58,9 +59,9 @@ public class MockOrganizationEntityService implements
     public static final Map<String, String> PO_ID_TO_CTEP_ID = new HashMap<String, String>();
 
     public static long CT_GOV_ID; // NOPMD
-    
+
     public static long CTEP_ID; // NOPMD
-    
+
     public static long DCP_ID; // NOPMD
 
     static {
@@ -87,58 +88,67 @@ public class MockOrganizationEntityService implements
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CTGOV_ORG_NAME));
             createOrg(org);
             if (createROs)
-                createRO(org);
+                createRO(org, "RSB");
             CT_GOV_ID = IiConverter.convertToLong(org.getIdentifier());
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CTEP_ORG_NAME));
             createOrg(org);
             if (createROs)
-                createRO(org);
+                createRO(org, "RSB");
             CTEP_ID = IiConverter.convertToLong(org.getIdentifier());
             PO_ID_TO_CTEP_ID.put(
                     IiConverter.convertToString(org.getIdentifier()), "CTEP");
+            new MockFamilyService().relate(org,
+                    new MockFamilyService().getFamily(NCI_FAMILY_ID));
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.DCP_ORG_NAME));
             createOrg(org);
             if (createROs)
-                createRO(org);
+                createRO(org, "RSB");
             DCP_ID = IiConverter.convertToLong(org.getIdentifier());
             PO_ID_TO_CTEP_ID.put(
                     IiConverter.convertToString(org.getIdentifier()), "DCP");
+            new MockFamilyService().relate(org,
+                    new MockFamilyService().getFamily(NCI_FAMILY_ID));
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.NCI_ORG_NAME));
             createOrg(org);
             if (createROs)
-                createRO(org);
+                createRO(org, "CCR");
             PO_ID_TO_CTEP_ID.put(
                     IiConverter.convertToString(org.getIdentifier()), "NCI");
+            new MockFamilyService().relate(org,
+                    new MockFamilyService().getFamily(NCI_FAMILY_ID));
 
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn(PAConstants.CCR_ORG_NAME));
             createOrg(org);
             if (createROs)
-                createRO(org);
-            
+                createRO(org, "RSB");
+
             org = new OrganizationDTO();
             org.setName(EnOnConverter.convertToEnOn("CT.Gov Dupe"));
             createOrg(org);
             PO_ID_TO_CTEP_ID.put(
-                    IiConverter.convertToString(org.getIdentifier()), "CTGOVDUPE");
-            org.setStatusCode(CdConverter.convertToCd(EntityStatusCode.NULLIFIED));            
+                    IiConverter.convertToString(org.getIdentifier()),
+                    "CTGOVDUPE");
+            org.setStatusCode(CdConverter
+                    .convertToCd(EntityStatusCode.NULLIFIED));
 
         } catch (Exception e) {
             e.printStackTrace(); // NOPMD
         }
     }
 
-    private static void createRO(OrganizationDTO org)
+    private static void createRO(OrganizationDTO org, String roType)
             throws EntityValidationException, CurationException {
         ResearchOrganizationDTO dto = new ResearchOrganizationDTO();
         dto.setName(org.getName());
         dto.setPlayerIdentifier(org.getIdentifier());
+        dto.setTypeCode(CdConverter.convertStringToCd(roType));
         new MockResearchOrganizationCorrelationService().createCorrelation(dto);
     }
 
@@ -199,7 +209,8 @@ public class MockOrganizationEntityService implements
         }
         if (CdConverter.convertCdToEnum(EntityStatusCode.class,
                 dto.getStatusCode()) == EntityStatusCode.NULLIFIED) {
-            throw new NullifiedEntityException(ii, IiConverter.convertToPoOrganizationIi(CT_GOV_ID+"")); // NOPMD
+            throw new NullifiedEntityException(ii,
+                    IiConverter.convertToPoOrganizationIi(CT_GOV_ID + "")); // NOPMD
         }
         return dto;
     }

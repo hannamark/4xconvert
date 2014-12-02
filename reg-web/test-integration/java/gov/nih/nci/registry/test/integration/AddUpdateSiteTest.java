@@ -84,17 +84,11 @@ package gov.nih.nci.registry.test.integration;
 
 import java.net.URISyntaxException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
 
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * Tests trial search in Registry, as well as search-related functionality.
@@ -106,25 +100,16 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testUpdateSitesFromFamily_PO8268_SingleSiteFromFamily()
-            throws URISyntaxException, SQLException {
-        deactivateAllTrials();
-        TrialInfo info = createAcceptedTrial(true);
+    public void testPO8268_SingleSiteFromFamily() throws URISyntaxException,
+            SQLException {
+        TrialInfo info = createAndSelectTrial();
 
-        login("/pa", "ctrpsubstractor", "Coppa#12345");
-        disclaimer(true);
-        searchAndSelectTrial(info.title);
         String siteCtepId = "DCP";
         addSiteToTrial(info, siteCtepId);
 
-        loginAsSubmitter();
-        handleDisclaimer(true);
-        accessTrialSearchScreen();
-        selenium.click("runSearchBtn");
-        clickAndWait("link=My Trials");
-        waitForElementById("row", 10);
-
+        findInMyTrials();
         invokeUpdateMySite();
+
         // Since there is only one site from the family on this trial at this
         // point, we should have gone straight
         // to updating it.
@@ -137,6 +122,142 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium
                 .isTextPresent("Your site information has been updated."));
 
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testPO8268_AllSitesFromFamilyAndNotAffiliatedWithCancerCenter()
+            throws URISyntaxException, SQLException {
+        TrialInfo info = createAndSelectTrial();
+
+        addSiteToTrial(info, "DCP");
+        addSiteToTrial(info, "CTEP");
+        addSiteToTrial(info, "NCI");
+
+        findInMyTrials();
+        invokeUpdateMySite();
+
+        // We must be presented with an option to update one of the two
+        // non-cancer center sites.
+        assertWeAreOnSiteSelectionScreen("National Cancer Institute Division of Cancer Prevention");
+
+        String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
+        assertEquals(2, options.length);
+        assertTrue(ArrayUtils.contains(options,
+                "Cancer Therapy Evaluation Program"));
+        assertTrue(ArrayUtils.contains(options,
+                "National Cancer Institute Division of Cancer Prevention"));
+
+        pickAndUpdateCTEP();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testPO8268_AllSitesFromFamilyAndAffiliatedWithCancerCenter()
+            throws URISyntaxException, SQLException {
+
+        changeUserAffiliation("submitter-ci@example.com", "4",
+                "National Cancer Institute");
+
+        TrialInfo info = createAndSelectTrial();
+
+        addSiteToTrial(info, "DCP");
+        addSiteToTrial(info, "CTEP");
+        addSiteToTrial(info, "NCI");
+
+        findInMyTrials();
+        invokeUpdateMySite();
+
+        // We must be presented with an option to update one of the 3
+        // non-cancer center sites.
+        assertWeAreOnSiteSelectionScreen("National Cancer Institute");
+
+        String[] options = selenium.getSelectOptions("pickedSiteOrgPoId");
+        assertEquals(3, options.length);
+        assertTrue(ArrayUtils.contains(options,
+                "Cancer Therapy Evaluation Program"));
+        assertTrue(ArrayUtils.contains(options, "National Cancer Institute"));
+        assertTrue(ArrayUtils.contains(options,
+                "National Cancer Institute Division of Cancer Prevention"));
+
+        pickAndUpdateCTEP();
+
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        changeUserAffiliation("submitter-ci@example.com", "3",
+                "National Cancer Institute Division of Cancer Prevention");
+        super.tearDown();
+    }
+
+    private void changeUserAffiliation(String email, String poID, String orgName)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "UPDATE registry_user SET affiliated_org_id=" + poID
+                + ", affiliate_org='" + orgName + "' WHERE email_address='"
+                + email + "'";
+        runner.update(connection, sql);
+
+    }
+
+    /**
+     * 
+     */
+    private void pickAndUpdateCTEP() {
+        selenium.select("pickedSiteOrgPoId",
+                "label=Cancer Therapy Evaluation Program");
+        clickAndWait("pickSiteBtn");
+        assertEquals("Cancer Therapy Evaluation Program",
+                selenium.getValue("organizationName"));
+        selenium.type("programCode", "CTEP_PGCODE");
+        driver.findElement(By.xpath("//button[normalize-space(text())='Save']"))
+                .click();
+        driver.switchTo().defaultContent();
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("Your site information has been updated."));
+        // Make sure the right site got updated.
+        assertEquals("Cancer Therapy Evaluation Program",
+                selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
+        assertEquals("CTEP_PGCODE",
+                selenium.getText("//table[@id='row']/tbody/tr[2]/td[4]"));
+    }
+
+    /**
+     * 
+     */
+    private void assertWeAreOnSiteSelectionScreen(String orgName) {
+        assertTrue(selenium
+                .isTextPresent("Based on the fact that your organization belongs to a family, you can update more than one "
+                        + "site on this trial. Please select the site you would like to update below:"));
+        assertEquals(orgName, selenium.getSelectedLabel("pickedSiteOrgPoId"));
+    }
+
+    /**
+     * 
+     */
+    private void findInMyTrials() {
+        loginAsSubmitter();
+        handleDisclaimer(true);
+        accessTrialSearchScreen();
+        selenium.click("runSearchBtn");
+        clickAndWait("link=My Trials");
+        waitForElementById("row", 10);
+    }
+
+    /**
+     * @return
+     * @throws SQLException
+     */
+    private TrialInfo createAndSelectTrial() throws SQLException {
+        deactivateAllTrials();
+        TrialInfo info = createAcceptedTrial(true);
+        login("/pa", "ctrpsubstractor", "Coppa#12345");
+        disclaimer(true);
+        searchAndSelectTrial(info.title);
+        return info;
     }
 
     /**
