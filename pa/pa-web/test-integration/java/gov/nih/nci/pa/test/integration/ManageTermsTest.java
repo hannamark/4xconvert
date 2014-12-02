@@ -328,36 +328,36 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Message. No disease with NCIt code 'CTEST123' found in NCI Thesaurus, try a different code."));
         
         // Test valid import
-        selenium.type("id=ntTermIdentifier", "C4877");
+        selenium.type("id=ntTermIdentifier", "C97111");
         clickAndWait("link=Look Up");
         assertTrue(selenium.isTextPresent("Import New Disease/Condition From NCIt"));
-        assertEquals("C4877",selenium.getValue("id=ntTermIdentifier"));
-        assertEquals("Rectosigmoid Neoplasm",selenium.getValue("id=preferredName"));
+        assertEquals("C97111",selenium.getValue("id=ntTermIdentifier"));
+        assertEquals("Ecchordosis Physaliphora",selenium.getValue("id=preferredName"));
         assertEquals("",selenium.getValue("id=code"));
         Select select = new Select(driver.findElement(By.id("alterNames")));
         List<WebElement> altNames = select.getOptions();
-        assertEquals(7, altNames.size());
-        assertEquals("C2956: Colorectal Neoplasm",selenium.getValue("id=parentTerms"));
-        assertEquals("C7420: Malignant Rectosigmoid Neoplasm",selenium.getValue("id=childTerms"));
+        assertEquals(2, altNames.size());
+        assertEquals("C3075: Hamartoma",selenium.getValue("id=parentTerms"));
+        //assertEquals("C7420: Malignant Rectosigmoid Neoplasm",selenium.getValue("id=childTerms"));
         
         selenium.type("id=code", "CDR123");    
         clickAndWait("link=Import");
         
-        assertTrue(selenium.isTextPresent("Message. The CTRP system imported the disease C4877 successfully. It also imported the following parent/child terms:C2956, C7420."));
+        assertTrue(selenium.isTextPresent("Message. The CTRP system imported the disease C97111 successfully. It also imported the following parent/child terms:C3075."));
         
         //Test sync        
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
         clickAndWait("xpath=//a[@href='manageTermssearchDisease.action?searchStart=true']");
                
-        selenium.type("id=ntTermIdentifier", "C4877");
+        selenium.type("id=ntTermIdentifier", "C97111");
         clickAndWait("link=Look Up");
         assertTrue(selenium.isTextPresent("Synchronize Existing Disease Term With NCIt"));
-        assertTrue(selenium.isTextPresent("Message. Disease with NCIt code 'C4877' already present in CTRP, compare the values below and click 'Sync Term' to update the CTRP term with values from NCIt."));
+        assertTrue(selenium.isTextPresent("Message. Disease with NCIt code 'C97111' already present in CTRP, compare the values below and click 'Sync Term' to update the CTRP term with values from NCIt."));
         assertTrue(selenium.isTextPresent("Value in CTRP"));
         assertTrue(selenium.isTextPresent("Value in NCIt"));
         clickAndWait("link=Sync Term");
         
-        assertTrue(selenium.isTextPresent("Disease/Condition with NCIt code 'C4877' synchronized from NCIt."));        
+        assertTrue(selenium.isTextPresent("Disease/Condition with NCIt code 'C97111' synchronized from NCIt."));        
     }
         
     /**
