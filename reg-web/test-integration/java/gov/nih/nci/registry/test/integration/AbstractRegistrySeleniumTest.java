@@ -319,8 +319,8 @@ public abstract class AbstractRegistrySeleniumTest extends
 
         // Select Sponsor
         driver.switchTo().defaultContent();
-        hover(By.id("trialDTO.sponsorNameField"));
-        clickAndWaitAjax("link=Cancer Therapy Evaluation Program");
+        hover(By.id("trialDTO.sponsorNameField"));       
+        clickAndWaitAjax("xpath=//table[@id='dropdown-sponsorOrganization']//a[text()='Cancer Therapy Evaluation Program']");
 
         selenium.select("trialDTO.responsiblePartyType", "label=Sponsor");
 
