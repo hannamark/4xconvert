@@ -4,6 +4,7 @@ pa.server.name=localhost
 jboss.port=39480
 jboss.server.jndi.port=1099
 
+po.tier=local
 po.server.name=localhost
 po.port.number=31099
 po.principal=ejbclient
@@ -50,3 +51,8 @@ register.mail.body.url=http://localhost:39480/registry/registerUseractivate.acti
 ################################
 maven.username=
 maven.password=
+
+# SSH Connection Information. Currently used only to push PDQ files to remote servers.
+pa.ssh.host=
+pa.ssh.user=
+pa.ssh.password=
