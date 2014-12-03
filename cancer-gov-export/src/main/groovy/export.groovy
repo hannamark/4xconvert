@@ -3,19 +3,27 @@ import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang3.StringUtils
 
-def poJdbcUrl = "jdbc:postgresql://${properties['database.server']}:${properties['database.port']}/${properties['database.name']}"
-def paJdbcUrl = "jdbc:postgresql://${properties['db.server']}:${properties['db.port']}/${properties['db.name']}"
+def resolvedProperties = [:]
+
+if (!properties['ant.home']) {
+	println 'We are not running from Ant; so accepting properties passed to JVM'
+	resolvedProperties << System.getProperties()
+} else
+	resolvedProperties << properties
+
+def poJdbcUrl = "jdbc:postgresql://${resolvedProperties['database.server']}:${resolvedProperties['database.port']}/${resolvedProperties['database.name']}"
+def paJdbcUrl = "jdbc:postgresql://${resolvedProperties['db.server']}:${resolvedProperties['db.port']}/${resolvedProperties['db.name']}"
 
 println "PO DB: ${poJdbcUrl}"
 println "PA DB: ${paJdbcUrl}"
 
-def poConn = Sql.newInstance(poJdbcUrl, properties['database.user'],
-	properties['database.password'], 'org.postgresql.Driver')
-def paConn = Sql.newInstance(paJdbcUrl, , properties['db.username'],
-	properties['db.password'], 'org.postgresql.Driver')
+def poConn = Sql.newInstance(poJdbcUrl, resolvedProperties['database.user'],
+		resolvedProperties['po.db.password'], 'org.postgresql.Driver')
+def paConn = Sql.newInstance(paJdbcUrl, , resolvedProperties['db.username'],
+		resolvedProperties['pa.db.password'], 'org.postgresql.Driver')
 
+// Cache some PO data...
 def preLoader = new PoPreLoad(poConn)
-
 def crsMap = preLoader.getCrsMap()
 println "got Crs " + crsMap.size()
 def orgsMap = preLoader.getOrgsMap()
@@ -26,21 +34,14 @@ def rosMap = preLoader.getRosMap()
 println "got Ros " + rosMap.size()
 
 
-
-def ctgovRoId = paConn.firstRow(Queries.roIdSQL, ['ClinicalTrials.gov']).identifier
-def ctepRoId = paConn.firstRow(Queries.roIdSQL, ['Cancer Therapy Evaluation Program']).identifier
-def dcpRoId = paConn.firstRow(Queries.roIdSQL, ['National Cancer Institute Division of Cancer Prevention']).identifier
-
-def collabTrialsSQL = """
+def getTrialsSQL = """
     select sp.identifier,
         nci_id.extension as nciId,
         ctepSs.local_sp_indentifier as ctepId,
         dcpSs.local_sp_indentifier as dcpId,
-        ctgovSs.local_sp_indentifier as nctId,
-        leadOrgSs.local_sp_indentifier as leadOrgId,
-        leadOrgRo.assigned_identifier as leadRoId,
-        sum4Org.assigned_identifier as sum4OrgId,
-        sponsorRo.assigned_identifier as sponsorRoId,
+        rv_trial_id_nct.local_sp_indentifier as nctId,
+        leadOrgSs.local_sp_indentifier as leadOrgId,        
+        sum4Org.assigned_identifier as sum4OrgId,        
         sp.public_tittle as brief_title,
         sp.public_description as brief_summary,
         sp.scientific_description as detailed_description,
@@ -149,24 +150,17 @@ def collabTrialsSQL = """
             WHEN sp.study_classification_code = 'SAFETY' then 'Safety Study'
         END as classification_code
      from study_protocol sp
-     join study_site sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier and sponsorSs.functional_code = 'SPONSOR'
-     join document_workflow_status dws on dws.study_protocol_identifier = sp.identifier
-        and dws.status_code in ('ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')
-        and dws.identifier=(select max(identifier) from document_workflow_status where document_workflow_status.study_protocol_identifier=sp.identifier)
-     inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sp.identifier
-        and nci_id.root = '2.16.840.1.113883.3.26.4.3'
-     left outer join study_site ctepSs on ctepSs.study_protocol_identifier = sp.identifier and ctepSs.functional_code = 'IDENTIFIER_ASSIGNER'
-        and ctepSs.research_organization_identifier = $ctepRoId
-     left outer join study_site ctgovSs on ctgovSs.study_protocol_identifier = sp.identifier and ctgovSs.functional_code = 'IDENTIFIER_ASSIGNER'
-        and ctgovSs.research_organization_identifier = $ctgovRoId
-     left outer join study_site dcpSs on dcpSs.study_protocol_identifier = sp.identifier and dcpSs.functional_code = 'IDENTIFIER_ASSIGNER'
-        and dcpSs.research_organization_identifier = $dcpRoId
-     left outer join study_site leadOrgSs on leadOrgSs.study_protocol_identifier = sp.identifier and leadOrgSs.functional_code = 'LEAD_ORGANIZATION'
-     join research_organization leadOrgRo on leadOrgRo.identifier = leadOrgSs.research_organization_identifier
+     inner join rv_trial_id_nct on rv_trial_id_nct.study_protocol_identifier = sp.identifier
+     join rv_sponsor_organization sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier 
+     inner join rv_dwf_current dws on dws.study_protocol_identifier = sp.identifier
+        and dws.status_code in ('ABSTRACTED','VERIFICATION_PENDING','ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')        
+     inner join rv_trial_id_nci as nci_id on nci_id.study_protocol_id = sp.identifier       
+     left outer join rv_ctep_id ctepSs on ctepSs.study_protocol_identifier = sp.identifier 
+     left outer join rv_dcp_id dcpSs on dcpSs.study_protocol_identifier = sp.identifier 
+     left outer join rv_lead_organization leadOrgSs on leadOrgSs.study_protocol_identifier = sp.identifier
      left outer join study_resourcing as summary4 on summary4.study_protocol_identifier = sp.identifier and summary4.summ_4_rept_indicator is true
         and summary4.identifier = (select max(identifier) from study_resourcing where study_protocol_identifier = sp.identifier and summ_4_rept_indicator is true)
-     left outer join organization as sum4Org on cast(summary4.organization_identifier as integer) = sum4Org.identifier
-     join research_organization sponsorRo on sponsorRo.identifier = sponsorSs.research_organization_identifier
+     left outer join organization as sum4Org on cast(summary4.organization_identifier as integer) = sum4Org.identifier     
      left outer join study_contact as respPartySc on respPartySc.study_protocol_identifier = sp.identifier and respPartySc.role_code = 'RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR'
      left outer join study_site_contact respPartySponsorContact on
         respPartySponsorContact.study_site_identifier in (select identifier from study_site where study_site.functional_code='RESPONSIBLE_PARTY_SPONSOR' and study_site.study_protocol_identifier=sp.identifier)
@@ -186,469 +180,464 @@ def collabTrialsSQL = """
      left outer join primary_purpose pp on sp.primary_purpose_code = pp.name        
      left outer join document_workflow_status as processing_status on processing_status.study_protocol_identifier = sp.identifier
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
-     where sp.status_code = 'ACTIVE'  and
-        ((select local_sp_indentifier from study_site where study_site.study_protocol_identifier=sp.identifier and study_site.functional_code = 'IDENTIFIER_ASSIGNER'
-            and study_site.research_organization_identifier = $ctepRoId) is not null OR
-        (select local_sp_indentifier from study_site where study_site.study_protocol_identifier=sp.identifier and study_site.functional_code = 'IDENTIFIER_ASSIGNER'
-            and study_site.research_organization_identifier = $dcpRoId) is not null)
+     where sp.status_code = 'ACTIVE'  and rv_trial_id_nct.local_sp_indentifier is not null
 """
 
-def nbOfTrials = 0
-def failedTrials = []
+def nbOfTrials = 0 
 
-paConn.eachRow(collabTrialsSQL) { spRow ->
-    try{
-        def out = new FileOutputStream("temp/" + spRow.nciId +  ".xml")
-        def writer = new OutputStreamWriter( out , "UTF-8")
-        writer.write """<?xml version="1.0" encoding="UTF-8"?>\n"""
-        
-        def xml = new MarkupBuilder(writer)
-        xml.setDoubleQuotes(true)
-        
-        def studyProtocolID = spRow.identifier
-    
-        xml.clinical_study {
-            xml.id_info {
-                xml.org_study_id(spRow.leadOrgId)
-                xml.secondary_id {
-                    xml.id(spRow.nciId)
-                    xml.id_type("Registry Identifier")
-                    xml.id_domain("CTRP (Clinical Trial Reporting Program)")
-                }
-                paConn.eachRow(Queries.otherIdsSQL, [studyProtocolID]) { row ->
-                    xml.secondary_id {
-                        xml.id (row.extension)
-                    }
-                }
-                if (spRow.ctepId != null) {
-                    xml.secondary_id {
-                        xml.id(spRow.ctepId)
-                        xml.id_type("ctep-id")
-                        xml.id_domain("CTEP")
-                    }
-                }
-                if (spRow.dcpId != null) {
-                    xml.secondary_id {
-                        xml.id(spRow.dcpId)
-                        xml.id_type("dcp-id")
-                        xml.id_domain("DCP")
-                    }
-                }
-                if (spRow.nctId != null) {
-                    xml.secondary_id {
-                        xml.id(spRow.nctId)
-                        xml.id_type("nct-id")
-                        xml.id_domain("NCT")
-                    }
-                }
-                paConn.eachRow(Queries.fundingsSQL, [studyProtocolID]) { row ->
-                     if (row.funding_mechanism_code != null) {
-                         xml.secondary_id {
-                             xml.id(row.funding_mechanism_code + row.nih_institute_code + row.serial_number)
-                             xml.id_type("NIH Grant Number")
-                         }
-                     }
-                }
-                xml.org_name(spRow.prs_org_name == null || spRow.prs_org_name.size() == 0?
-                    "replace with PRS Organization Name you log in with":
-                    spRow.prs_org_name)
-            }
-            
-            paConn.eachRow(Queries.ownersSQL, [studyProtocolID]) { row ->
-                xml.trial_owners {
-                    xml.name(row.ownerName)
-                }
-            }
-            
-            xml.lead_org {
-                if(spRow.leadRoId != null){
-                    def roRow = rosMap.get(spRow.leadRoId.toLong())
-                    xml.name(roRow.orgname)
-                    xml.po_id(roRow.org_poid)
-                    xml.ctep_id(roRow.ctep_id)
-                    addressAndPhoneDetail(xml, roRow, null,false)
-                }
-            }
-            
-            xml.nci_specific_information {
-                xml.reporting_data_set_method(spRow.accr_rept_meth_code)
-                xml.summary_4_funding_category(spRow.summary4_type_code)
-                xml.summary_4_funding_sponsor_source {
-                    if (spRow.sum4OrgId != null) {
-                        def sum4Org = orgsMap.get(spRow.sum4OrgId.toLong())
-                        xml.name(sum4Org.name)
-                        xml.po_id(sum4Org.org_poid)
-                        addressAndPhoneDetail(xml, sum4Org, null, false)
-                    }
-                }
-            }
-    
-            xml.is_fda_regulated(spRow.fda_indicator)
-            xml.is_section_801(spRow.section801_indicator)
-            xml.delayed_posting(spRow.delayed_posting_indicator)
-            xml.brief_title(spRow.brief_title)
-            xml.official_title(spRow.official_title)
-    
-            xml.sponsors {
-                xml.lead_sponsor {
-                    if(spRow.sponsorRoId != null) {
-                        def roRow = rosMap.get(spRow.sponsorRoId.toLong())
-                        xml.name(changeSponsorNameIfNeeded(roRow.orgname))
-                        xml.po_id(roRow.org_poid)
-                        xml.ctep_id(roRow.ctep_id)
-                        addressAndPhoneDetail(xml, roRow, null, false)
-                    }
-                }
-                xml.resp_party {
-                    xml.resp_party_person {
-                        if (spRow.respPartyCrsId != null) {
-                            def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
-                            crsDetail(xml, crsRow)
-                            addressAndPhoneDetail(xml, crsRow, spRow, true)
-                        }
-                    }
-                    xml.resp_party_organization {
-                        if (spRow.sponsorRoId != null && spRow.respPartySponsorIdentifier!=null) {
-                            def roRow = rosMap.get(spRow.sponsorRoId.toLong())
-                            xml.name(roRow.orgname)
-                            xml.po_id(roRow.org_poid)
-                            xml.ctep_id(roRow.ctep_id)
-                            def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
-                            addressAndPhoneDetail(xml, roRow,
-                                sponsorContactInfo, true)
-                        }
-                    }
-                }
-                paConn.eachRow(Queries.collabsSQL, [studyProtocolID]) { collabRow ->
-                    xml.collaborator {
-                        if(collabRow.ro_poid != null){
-                            def roRow = rosMap.get(collabRow.ro_poid.toLong())
-                            xml.name(collabRow.name)
-                            xml.po_id(collabRow.org_poid)
-                            xml.ctep_id(roRow.ctep_id)
-                            addressAndPhoneDetail(xml, roRow, null, false)
-                        } 
-                    }
-                }
-            } // end sponsors
-            
-            xml.oversight_info {
-                xml.regulatory_authority(spRow.reg_authority)
-                xml.has_dmc(spRow.dmc_indicator)
-            }
-                
-            xml.brief_summary {
-                xml.textblock(spRow.brief_summary)
-            }
-            
-            xml.detailed_description {
-                xml.textblock(spRow.detailed_description)
-            }
-            
-            xml.trial_status {
-                xml.current_trial_status(spRow.current_trial_status)
-                xml.current_trial_status_date(spRow.current_trial_status_date)
-                xml.current_trial_start_date(spRow.start_date)
-                xml.current_trial_start_date_type(spRow.start_date_type_code)
-                xml.current_trial_completion_date(spRow.pri_compl_date)
-                xml.current_trial_completion_date_type(spRow.pri_compl_date_type_code)
-            }
-            
-            xml.trial_funding {
-               paConn.eachRow(Queries.fundingsSQL, [studyProtocolID]) { fundRow ->
-                   if (fundRow.funding_mechanism_code != null) {
-                       xml.funding_info {
-                           xml.funding_code(fundRow.funding_mechanism_code)
-                           xml.funding_nih_inst_code(fundRow.nih_institute_code)
-                           xml.funding_serial_number(fundRow.serial_number)
-                           xml.funding_nci_div_program(fundRow.nci_division_program_code)
-                       }
-                   }
-               }
-            }
-            
-            xml.study_design {
-                xml.study_type("Interventional")
-                xml.interventional_design {
-                    xml.interventional_subtype(spRow.primary_purpose_code)
-                    xml.phase(spRow.phase_code)
-                    xml.allocation(spRow.allocation_code)
-                    xml.masking(spRow.blinding_schema_code)
-                    if (spRow.blinding_role_code_caregiver != null)
-                        xml.masked_caregiver("Yes")
-                    if (spRow.blinding_role_code_investigator != null)
-                        xml.masked_investigator("Yes")
-                    if (spRow.blinding_role_code_subject != null)
-                        xml.masked_subject("Yes")
-                    if (spRow.blinding_role_code_outcome != null)
-                        xml.masked_outcome("Yes")
-                    xml.assignment(spRow.design_configuration_code)
-                    xml.endpoint(spRow.classification_code)
-                    xml.number_of_arms(spRow.number_of_intervention_groups)
-                }
-            }
-            
-            paConn.eachRow(Queries.primOutcomesSQL, [studyProtocolID]) { row ->
-                xml.primary_outcome {
-                    xml.outcome_measure(row.prim_som_name);
-                    xml.outcome_safety_issue(row.prim_som_safety_ind)
-                    xml.outcome_time_frame(row.prim_som_timeframe)
-                }
-            }
-            
-            xml.disease_conditions {
-                paConn.eachRow(Queries.conditionsSQL, [studyProtocolID]) { row ->
-                    xml.condition_info {
-                        xml.preferred_name(row.preferred_name)
-                        xml.disease_code(row.disease_code)
-                        if (row.nci_thesaurus_id != null)
-                            xml.nci_thesaurus_id(row.nci_thesaurus_id)
-                        xml.menu_display_name(row.menu_display_name)
-                    }
-                }
-            }
-    
-            xml.enrollment(spRow.min_target_accrual_num)
-            xml.enrollment_type("anticipated")
-            
-            // try to be cheap and steal a few cycles by running 1 query instead of 3.
-            def allArmsAndInt = []
-            paConn.eachRow(Queries.armsSQL, [studyProtocolID]) { row ->
-                 allArmsAndInt.add(row.toRowResult())
-            }
-                    
-            // get arms out of it.
-            def armsList = []
-            allArmsAndInt.each {
-                def row = it
-                if (!armsList.contains(row.arm_id)) {
-                    xml.arm_group {
-                        xml.arm_group_label(row.arm_name)
-                        xml.arm_type(row.arm_type)
-                        xml.arm_group_description {
-                            xml.textblock(row.arm_desc)
-                        }
-                    }
-                    armsList.add(row.arm_id)
-                }
-            }
-            
-            def intsList =[]
-            allArmsAndInt.each {
-                def intRow = it
-                if (!intsList.contains(intRow.int_id)) {
-                    xml.intervention("cdr-id": intRow.cdr_id) {
-                        xml.intervention_type(intRow.int_type)
-                        xml.intervention_name(intRow.int_name)
-                        if (intRow.int_desc != null) {
-                            xml.intervention_description {
-                                xml.textblock(intRow.int_desc)
-                            }
-                        }
-                        // other names
-                        otherNamesList = []
-                        allArmsAndInt.each {
-                            def otherNameRow = it
-                            if (intRow.int_id == otherNameRow.int_id && !otherNamesList.contains(otherNameRow.alt_name)
-                                && otherNameRow.alt_name != null && otherNameRow.alt_name.size() > 0) {
-                                xml.intervention_other_name(otherNameRow.alt_name)
-                                otherNamesList.add(otherNameRow.alt_name)
-                            }
-                        }
-                        
-                        groupNamesList = []
-                        allArmsAndInt.each {
-                            def groupRow = it
-                            if (intRow.int_id == groupRow.int_id && !groupNamesList.contains(groupRow.arm_name)) {
-                                xml.arm_group_label(groupRow.arm_name)
-                                groupNamesList.add(groupRow.arm_name)
-                            }
-                        }
-                    }
-                    intsList.add(intRow.int_id)
-                }
-            }
-            
-            xml.eligibility {
-                def gender
-                def minAge
-                def maxAge
-                paConn.eachRow(Queries.eligsSQL, [studyProtocolID]) { row ->
-                    if (row.gender != null) {
-                        gender = row.gender
-                    } else if (row.criterion_name == 'AGE') {
-                        minAge = row.min_age
-                        maxAge = row.max_age
-                    } else if (row.elig_data != null) {
-                    xml.criteria {
-                            xml.criterion {
-                                xml.type(row.elig_type)
-                                xml.data("  - " + row.elig_data)
-                            }
-                        }
-                    }
-                }
-                xml.healthy_volunteers(spRow.healthy_volunteer_indicator)
-                if (gender != null) {
-                    xml.gender(gender)
-                }
-                xml.minimum_age(minAge)
-                xml.maximum_age(maxAge)
-            }
-            
-            xml.overall_official {
-                if(spRow.ovOffCrsId != null){
-                    def crsRow = crsMap.get(spRow.ovOffCrsId.toLong())
-                    crsDetail(xml, crsRow)
-                    addressAndPhoneDetail(xml, crsRow, null, false)
-                    xml.role("Principal Investigator")
-                    xml.affiliation {
-                        if(spRow.leadRoId != null){
-                            def roRow = rosMap.get(spRow.leadRoId.toLong())
-                            xml.name(roRow.orgname)
-                            xml.po_id(roRow.org_poid)
-                            xml.ctep_id(roRow.ctep_id)
-                            addressAndPhoneDetail(xml, roRow, null, false)
-                        }
-                    }
-                }
-            }
-            
-            xml.overall_contact {
-                if (spRow.centralContactCrsId!=null) {
-                    def crsRow = crsMap.get(spRow.centralContactCrsId.toLong())
-                    crsDetail(xml, crsRow)
-                    def centralContactInfo = ['prim_phone':spRow.centralContactPhone,'prim_email':spRow.centralContactEmail]
-                    addressAndPhoneDetail(xml, crsRow, centralContactInfo, true)
-                }
-            }
-        
-            paConn.eachRow(Queries.partSitesSQL, [studyProtocolID]) { row ->
-                xml.location {
-                    xml.facility {
-                        if(row.hcf_poid != null){
-                            def hcfRow = hcfsMap.get(row.hcf_poid.toLong())
-                            xml.name(row.name)
-                            xml.po_id(row.org_poid)
-                            xml.ctep_id(hcfRow.ctep_id)
-                            addressAndPhoneDetail(xml, hcfRow, null, false)
-                        }
-                    }
-                    
-                    xml.status(row.status)
-                    
-                    paConn.eachRow(Queries.primaryContactSQL, [row.ss_identifier,studyProtocolID]) { primconrow ->
-                        if (primconrow.prim_crs_id != null && crsMap.get(primconrow.prim_crs_id.toLong()) != null) {
-                            xml.contact {
-                                def crsRow = crsMap.get(primconrow.prim_crs_id.toLong())
-                                crsDetail(xml, crsRow)
-                                addressAndPhoneDetail(xml, crsRow, primconrow, true)
-                            }
-                        }
-                    }
-                    
-                    paConn.eachRow(Queries.investigatorsSQL, [row.ss_identifier,studyProtocolID]) { invsrow ->
-                        if (invsrow.inv_crs_id != null && crsMap.get(invsrow.inv_crs_id.toLong()) != null) {
-                            xml.investigator {
-                                def crsRow = crsMap.get(invsrow.inv_crs_id.toLong())
-                                crsDetail(xml, crsRow)
-                                addressAndPhoneDetail(xml, crsRow, null, false)
-                                xml.role("Principal Investigator")
-                            }
-                       }
-                    }
-                }
-            }  // end part sites
-            xml.verification_date(spRow.verification_date)
-        }
-        writer.flush();
-        writer.close();
-        nbOfTrials++
-    }catch(Exception e){
-        e.printStackTrace();
-        new File("temp/" + spRow.nciId +  ".xml").delete();
-        failedTrials.add(spRow.nciId);
-    }
+def outputDir = new File("${resolvedProperties['output.dir']}")
+println "Output directory: ${outputDir.getCanonicalPath()}"
+
+paConn.eachRow(getTrialsSQL) { spRow ->
+
+	def trialFile = new File(outputDir, "${spRow.nciId}.xml")
+	println "${spRow.nciId} is being written into ${trialFile.getCanonicalPath()}"
+	
+	def out = new FileOutputStream(trialFile)
+	def writer = new OutputStreamWriter( out , "UTF-8")
+	writer.write """<?xml version="1.0" encoding="UTF-8"?>\n"""
+
+	def xml = new MarkupBuilder(writer)
+	xml.setDoubleQuotes(true)
+
+	def studyProtocolID = spRow.identifier
+
+	xml.clinical_study {
+		xml.id_info {
+			xml.org_study_id(spRow.leadOrgId)
+			xml.secondary_id {
+				xml.id(spRow.nciId)
+				xml.id_type("Registry Identifier")
+				xml.id_domain("CTRP (Clinical Trial Reporting Program)")
+			}
+			paConn.eachRow(Queries.otherIdsSQL, [studyProtocolID]) { row ->
+				xml.secondary_id {
+					xml.id (row.extension)
+				}
+			}
+			if (spRow.ctepId != null) {
+				xml.secondary_id {
+					xml.id(spRow.ctepId)
+					xml.id_type("ctep-id")
+					xml.id_domain("CTEP")
+				}
+			}
+			if (spRow.dcpId != null) {
+				xml.secondary_id {
+					xml.id(spRow.dcpId)
+					xml.id_type("dcp-id")
+					xml.id_domain("DCP")
+				}
+			}
+			if (spRow.nctId != null) {
+				xml.secondary_id {
+					xml.id(spRow.nctId)
+					xml.id_type("nct-id")
+					xml.id_domain("NCT")
+				}
+			}
+			paConn.eachRow(Queries.fundingsSQL, [studyProtocolID]) { row ->
+				if (row.funding_mechanism_code != null) {
+					xml.secondary_id {
+						xml.id(row.funding_mechanism_code + row.nih_institute_code + row.serial_number)
+						xml.id_type("NIH Grant Number")
+					}
+				}
+			}
+			xml.org_name(spRow.prs_org_name == null || spRow.prs_org_name.size() == 0?
+					"replace with PRS Organization Name you log in with":
+					spRow.prs_org_name)
+		}
+
+		paConn.eachRow(Queries.ownersSQL, [studyProtocolID]) { row ->
+			xml.trial_owners {
+				xml.name(row.ownerName)
+			}
+		}
+
+		xml.lead_org {
+			if(spRow.leadRoId != null){
+				def roRow = rosMap.get(spRow.leadRoId.toLong())
+				xml.name(roRow.orgname)
+				xml.po_id(roRow.org_poid)
+				xml.ctep_id(roRow.ctep_id)
+				addressAndPhoneDetail(xml, roRow, null,false)
+			}
+		}
+
+		xml.nci_specific_information {
+			xml.reporting_data_set_method(spRow.accr_rept_meth_code)
+			xml.summary_4_funding_category(spRow.summary4_type_code)
+			xml.summary_4_funding_sponsor_source {
+				if (spRow.sum4OrgId != null) {
+					def sum4Org = orgsMap.get(spRow.sum4OrgId.toLong())
+					xml.name(sum4Org.name)
+					xml.po_id(sum4Org.org_poid)
+					addressAndPhoneDetail(xml, sum4Org, null, false)
+				}
+			}
+		}
+
+		xml.is_fda_regulated(spRow.fda_indicator)
+		xml.is_section_801(spRow.section801_indicator)
+		xml.delayed_posting(spRow.delayed_posting_indicator)
+		xml.brief_title(spRow.brief_title)
+		xml.official_title(spRow.official_title)
+
+		xml.sponsors {
+			xml.lead_sponsor {
+				if(spRow.sponsorRoId != null) {
+					def roRow = rosMap.get(spRow.sponsorRoId.toLong())
+					xml.name(changeSponsorNameIfNeeded(roRow.orgname))
+					xml.po_id(roRow.org_poid)
+					xml.ctep_id(roRow.ctep_id)
+					addressAndPhoneDetail(xml, roRow, null, false)
+				}
+			}
+			xml.resp_party {
+				xml.resp_party_person {
+					if (spRow.respPartyCrsId != null) {
+						def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
+						crsDetail(xml, crsRow)
+						addressAndPhoneDetail(xml, crsRow, spRow, true)
+					}
+				}
+				xml.resp_party_organization {
+					if (spRow.sponsorRoId != null && spRow.respPartySponsorIdentifier!=null) {
+						def roRow = rosMap.get(spRow.sponsorRoId.toLong())
+						xml.name(roRow.orgname)
+						xml.po_id(roRow.org_poid)
+						xml.ctep_id(roRow.ctep_id)
+						def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
+						addressAndPhoneDetail(xml, roRow,
+								sponsorContactInfo, true)
+					}
+				}
+			}
+			paConn.eachRow(Queries.collabsSQL, [studyProtocolID]) { collabRow ->
+				xml.collaborator {
+					if(collabRow.ro_poid != null){
+						def roRow = rosMap.get(collabRow.ro_poid.toLong())
+						xml.name(collabRow.name)
+						xml.po_id(collabRow.org_poid)
+						xml.ctep_id(roRow.ctep_id)
+						addressAndPhoneDetail(xml, roRow, null, false)
+					}
+				}
+			}
+		} // end sponsors
+
+		xml.oversight_info {
+			xml.regulatory_authority(spRow.reg_authority)
+			xml.has_dmc(spRow.dmc_indicator)
+		}
+
+		xml.brief_summary {
+			xml.textblock(spRow.brief_summary)
+		}
+
+		xml.detailed_description {
+			xml.textblock(spRow.detailed_description)
+		}
+
+		xml.trial_status {
+			xml.current_trial_status(spRow.current_trial_status)
+			xml.current_trial_status_date(spRow.current_trial_status_date)
+			xml.current_trial_start_date(spRow.start_date)
+			xml.current_trial_start_date_type(spRow.start_date_type_code)
+			xml.current_trial_completion_date(spRow.pri_compl_date)
+			xml.current_trial_completion_date_type(spRow.pri_compl_date_type_code)
+		}
+
+		xml.trial_funding {
+			paConn.eachRow(Queries.fundingsSQL, [studyProtocolID]) { fundRow ->
+				if (fundRow.funding_mechanism_code != null) {
+					xml.funding_info {
+						xml.funding_code(fundRow.funding_mechanism_code)
+						xml.funding_nih_inst_code(fundRow.nih_institute_code)
+						xml.funding_serial_number(fundRow.serial_number)
+						xml.funding_nci_div_program(fundRow.nci_division_program_code)
+					}
+				}
+			}
+		}
+
+		xml.study_design {
+			xml.study_type("Interventional")
+			xml.interventional_design {
+				xml.interventional_subtype(spRow.primary_purpose_code)
+				xml.phase(spRow.phase_code)
+				xml.allocation(spRow.allocation_code)
+				xml.masking(spRow.blinding_schema_code)
+				if (spRow.blinding_role_code_caregiver != null)
+					xml.masked_caregiver("Yes")
+				if (spRow.blinding_role_code_investigator != null)
+					xml.masked_investigator("Yes")
+				if (spRow.blinding_role_code_subject != null)
+					xml.masked_subject("Yes")
+				if (spRow.blinding_role_code_outcome != null)
+					xml.masked_outcome("Yes")
+				xml.assignment(spRow.design_configuration_code)
+				xml.endpoint(spRow.classification_code)
+				xml.number_of_arms(spRow.number_of_intervention_groups)
+			}
+		}
+
+		paConn.eachRow(Queries.primOutcomesSQL, [studyProtocolID]) { row ->
+			xml.primary_outcome {
+				xml.outcome_measure(row.prim_som_name);
+				xml.outcome_safety_issue(row.prim_som_safety_ind)
+				xml.outcome_time_frame(row.prim_som_timeframe)
+			}
+		}
+
+		xml.disease_conditions {
+			paConn.eachRow(Queries.conditionsSQL, [studyProtocolID]) { row ->
+				xml.condition_info {
+					xml.preferred_name(row.preferred_name)
+					xml.disease_code(row.disease_code)
+					if (row.nci_thesaurus_id != null)
+						xml.nci_thesaurus_id(row.nci_thesaurus_id)
+					xml.menu_display_name(row.menu_display_name)
+				}
+			}
+		}
+
+		xml.enrollment(spRow.min_target_accrual_num)
+		xml.enrollment_type("anticipated")
+
+		// try to be cheap and steal a few cycles by running 1 query instead of 3.
+		def allArmsAndInt = []
+		paConn.eachRow(Queries.armsSQL, [studyProtocolID]) { row ->
+			allArmsAndInt.add(row.toRowResult())
+		}
+
+		// get arms out of it.
+		def armsList = []
+		allArmsAndInt.each {
+			def row = it
+			if (!armsList.contains(row.arm_id)) {
+				xml.arm_group {
+					xml.arm_group_label(row.arm_name)
+					xml.arm_type(row.arm_type)
+					xml.arm_group_description {
+						xml.textblock(row.arm_desc)
+					}
+				}
+				armsList.add(row.arm_id)
+			}
+		}
+
+		def intsList =[]
+		allArmsAndInt.each {
+			def intRow = it
+			if (!intsList.contains(intRow.int_id)) {
+				xml.intervention("cdr-id": intRow.cdr_id) {
+					xml.intervention_type(intRow.int_type)
+					xml.intervention_name(intRow.int_name)
+					if (intRow.int_desc != null) {
+						xml.intervention_description {
+							xml.textblock(intRow.int_desc)
+						}
+					}
+					// other names
+					otherNamesList = []
+					allArmsAndInt.each {
+						def otherNameRow = it
+						if (intRow.int_id == otherNameRow.int_id && !otherNamesList.contains(otherNameRow.alt_name)
+						&& otherNameRow.alt_name != null && otherNameRow.alt_name.size() > 0) {
+							xml.intervention_other_name(otherNameRow.alt_name)
+							otherNamesList.add(otherNameRow.alt_name)
+						}
+					}
+
+					groupNamesList = []
+					allArmsAndInt.each {
+						def groupRow = it
+						if (intRow.int_id == groupRow.int_id && !groupNamesList.contains(groupRow.arm_name)) {
+							xml.arm_group_label(groupRow.arm_name)
+							groupNamesList.add(groupRow.arm_name)
+						}
+					}
+				}
+				intsList.add(intRow.int_id)
+			}
+		}
+
+		xml.eligibility {
+			def gender
+			def minAge
+			def maxAge
+			paConn.eachRow(Queries.eligsSQL, [studyProtocolID]) { row ->
+				if (row.gender != null) {
+					gender = row.gender
+				} else if (row.criterion_name == 'AGE') {
+					minAge = row.min_age
+					maxAge = row.max_age
+				} else if (row.elig_data != null) {
+					xml.criteria {
+						xml.criterion {
+							xml.type(row.elig_type)
+							xml.data("  - " + row.elig_data)
+						}
+					}
+				}
+			}
+			xml.healthy_volunteers(spRow.healthy_volunteer_indicator)
+			if (gender != null) {
+				xml.gender(gender)
+			}
+			xml.minimum_age(minAge)
+			xml.maximum_age(maxAge)
+		}
+
+		xml.overall_official {
+			if(spRow.ovOffCrsId != null){
+				def crsRow = crsMap.get(spRow.ovOffCrsId.toLong())
+				crsDetail(xml, crsRow)
+				addressAndPhoneDetail(xml, crsRow, null, false)
+				xml.role("Principal Investigator")
+				xml.affiliation {
+					if(spRow.leadRoId != null){
+						def roRow = rosMap.get(spRow.leadRoId.toLong())
+						xml.name(roRow.orgname)
+						xml.po_id(roRow.org_poid)
+						xml.ctep_id(roRow.ctep_id)
+						addressAndPhoneDetail(xml, roRow, null, false)
+					}
+				}
+			}
+		}
+
+		xml.overall_contact {
+			if (spRow.centralContactCrsId!=null) {
+				def crsRow = crsMap.get(spRow.centralContactCrsId.toLong())
+				crsDetail(xml, crsRow)
+				def centralContactInfo = ['prim_phone':spRow.centralContactPhone,'prim_email':spRow.centralContactEmail]
+				addressAndPhoneDetail(xml, crsRow, centralContactInfo, true)
+			}
+		}
+
+		paConn.eachRow(Queries.partSitesSQL, [studyProtocolID]) { row ->
+			xml.location {
+				xml.facility {
+					if(row.hcf_poid != null){
+						def hcfRow = hcfsMap.get(row.hcf_poid.toLong())
+						xml.name(row.name)
+						xml.po_id(row.org_poid)
+						xml.ctep_id(hcfRow.ctep_id)
+						addressAndPhoneDetail(xml, hcfRow, null, false)
+					}
+				}
+
+				xml.status(row.status)
+
+				paConn.eachRow(Queries.primaryContactSQL, [
+					row.ss_identifier,
+					studyProtocolID
+				]) { primconrow ->
+					if (primconrow.prim_crs_id != null && crsMap.get(primconrow.prim_crs_id.toLong()) != null) {
+						xml.contact {
+							def crsRow = crsMap.get(primconrow.prim_crs_id.toLong())
+							crsDetail(xml, crsRow)
+							addressAndPhoneDetail(xml, crsRow, primconrow, true)
+						}
+					}
+				}
+
+				paConn.eachRow(Queries.investigatorsSQL, [
+					row.ss_identifier,
+					studyProtocolID
+				]) { invsrow ->
+					if (invsrow.inv_crs_id != null && crsMap.get(invsrow.inv_crs_id.toLong()) != null) {
+						xml.investigator {
+							def crsRow = crsMap.get(invsrow.inv_crs_id.toLong())
+							crsDetail(xml, crsRow)
+							addressAndPhoneDetail(xml, crsRow, null, false)
+							xml.role("Principal Investigator")
+						}
+					}
+				}
+			}
+		}  // end part sites
+		xml.verification_date(spRow.verification_date)
+	}
+	writer.flush();
+	writer.close();
+	nbOfTrials++
+
 }
 
 void crsDetail(MarkupBuilder xml, Object crsRow) {
-    xml.first_name(crsRow.firstname)
-    if (crsRow.middlename != null)
-        xml.middle_initial(crsRow.middlename.substring(0, 1))
-    xml.last_name(crsRow.lastname)
-    xml.po_id(crsRow.person_poid)
-    if (crsRow.ctep_id != null)
-        xml.ctep_id(crsRow.ctep_id)
+	xml.first_name(crsRow.firstname)
+	if (crsRow.middlename != null)
+		xml.middle_initial(crsRow.middlename.substring(0, 1))
+	xml.last_name(crsRow.lastname)
+	xml.po_id(crsRow.person_poid)
+	if (crsRow.ctep_id != null)
+		xml.ctep_id(crsRow.ctep_id)
 }
 
 void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {
-    
-    xml.address {
-        
-       if (StringUtils.equalsIgnoreCase(row.stateorprovince, "UM")) {
-           xml.street("")
-           xml.city("")
-           xml.state("")
-           xml.zip("")
-           xml.country("")
-       } else {
-           if (!StringUtils.equalsIgnoreCase(row.streetaddressline, "unknown")) {
-               xml.street(row.streetaddressline)
-           } else {
-               xml.street("");
-           }
-           if(!StringUtils.equalsIgnoreCase(row.cityormunicipality, "unknown")) {
-               xml.city(row.cityormunicipality)
-           }else{
-               xml.city("");
-           }
-           
-           xml.state(row.stateorprovince)
-           
-           if(StringUtils.equals(row.postalcode, "96960")) {
-               xml.zip("")
-           }else{
-               xml.zip(row.postalcode)
-           }
-           
-           xml.country(row.country_name)
-       }
-   }
-    
-    //suppressPhoneAndEmail=true implies, use phone, fax & email values from PA only. DO NOT use phone, fax and email values from PO. 
-    //suppressPhoneAndEmail=false implies, use phone, fax and email values from PA, if not available in PA then use the ones available in PO.
 
-    xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:(suppressPhoneAndEmail?"":row.phone)))
-    
-    if (row.faxnumber != null && !suppressPhoneAndEmail) {
-        xml.fax(row.faxnumber)
-    }
-    
-    xml.email(( spRow!=null && 
-                    spRow.prim_email!=null && 
-                        !StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") && 
-                            !Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email) ? spRow.prim_email : 
-                                (StringUtils.containsIgnoreCase(row.email, "unknown") || 
-                                    Constants.SUPRESS_EMAIL_IDS.contains(row.email) || 
-                                        suppressPhoneAndEmail ? "" : row.email)))
-}    
+	xml.address {
+
+		if (StringUtils.equalsIgnoreCase(row.stateorprovince, "UM")) {
+			xml.street("")
+			xml.city("")
+			xml.state("")
+			xml.zip("")
+			xml.country("")
+		} else {
+			if (!StringUtils.equalsIgnoreCase(row.streetaddressline, "unknown")) {
+				xml.street(row.streetaddressline)
+			} else {
+				xml.street("");
+			}
+			if(!StringUtils.equalsIgnoreCase(row.cityormunicipality, "unknown")) {
+				xml.city(row.cityormunicipality)
+			}else{
+				xml.city("");
+			}
+
+			xml.state(row.stateorprovince)
+
+			if(StringUtils.equals(row.postalcode, "96960")) {
+				xml.zip("")
+			}else{
+				xml.zip(row.postalcode)
+			}
+
+			xml.country(row.country_name)
+		}
+	}
+
+	//suppressPhoneAndEmail=true implies, use phone, fax & email values from PA only. DO NOT use phone, fax and email values from PO.
+	//suppressPhoneAndEmail=false implies, use phone, fax and email values from PA, if not available in PA then use the ones available in PO.
+
+	xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:(suppressPhoneAndEmail?"":row.phone)))
+
+	if (row.faxnumber != null && !suppressPhoneAndEmail) {
+		xml.fax(row.faxnumber)
+	}
+
+	xml.email(( spRow!=null &&
+			spRow.prim_email!=null &&
+			!StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") &&
+			!Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email) ? spRow.prim_email :
+			(StringUtils.containsIgnoreCase(row.email, "unknown") ||
+			Constants.SUPRESS_EMAIL_IDS.contains(row.email) ||
+			suppressPhoneAndEmail ? "" : row.email)))
+}
 
 String changeSponsorNameIfNeeded(orgName) {
-    return (orgName==Constants.CTEP_ORG_NAME || orgName==Constants.DCP_ORG_NAME)?Constants.NCI_ORG_NAME:orgName
+	return (orgName==Constants.CTEP_ORG_NAME || orgName==Constants.DCP_ORG_NAME)?Constants.NCI_ORG_NAME:orgName
 }
 
 println ""
 println "************PDQ EXPORT SUMMARY******************"
 println ""
 println "Exported $nbOfTrials trials"
-if(failedTrials.size() > 0) {
-    println "Failed to export " + failedTrials.size() + " trial(s)"
-    println "List of failed trial(s)"
-        failedTrials.each {
-            print it + ","
-        }
-    println ""
-}
 println ""
 println "************************************************"
 println ""

@@ -6,6 +6,25 @@
 	<property file="${basedir}/../build-po/tier-properties/${po.tier}.properties" />
 	<property file="${basedir}/../build-po/install.properties" />
 	<property name="output.dir" value="${basedir}/output" />
+	
+	<condition property="po.db.password" value="${po.db.password}">
+		<isset property="po.db.password" />
+	</condition>
+	<condition property="po.db.password" value="${database.password}">
+		<not>
+			<isset property="po.db.password" />
+		</not>
+	</condition>
+
+	<condition property="pa.db.password" value="${pa.db.password}">
+		<isset property="pa.db.password" />
+	</condition>
+	<condition property="pa.db.password" value="${db.password}">
+		<not>
+			<isset property="pa.db.password" />
+		</not>
+	</condition>
+	
 	<echoproperties />
 
 	<mkdir dir="${output.dir}" />
