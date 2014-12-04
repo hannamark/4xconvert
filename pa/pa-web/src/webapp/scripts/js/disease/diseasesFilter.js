@@ -334,7 +334,7 @@ var diseases = [];
             	}).always(function() {
             		$( "#waitDialog" ).dialog( "close" );
             	}).done(function( jsonStr ) {            		
-            		
+            		$('#pdq_tree').jstree("close_all");
             		var branches = jsonStr;
             		var idsOfNodesToHighlight = [];
             		
