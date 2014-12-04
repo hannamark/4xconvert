@@ -2,6 +2,7 @@ class Queries {
     
     public static def otherIdsSQL = """
         select extension from study_otheridentifiers where study_protocol_id = ? and root <> '2.16.840.1.113883.3.26.4.3'
+			and extension is not null
     """
     
     public static def partSitesSQL = """
@@ -37,8 +38,8 @@ class Queries {
             org.assigned_identifier as org_poid,
             ss.functional_code
         from Study_Site ss
-            join research_organization ro on ro.identifier = ss.research_organization_identifier
-            join organization org on org.identifier = ro.organization_identifier
+            inner join research_organization ro on ro.identifier = ss.research_organization_identifier
+            inner join organization org on org.identifier = ro.organization_identifier
         where ss.functional_code in ('FUNDING_SOURCE', 'LABORATORY', 'AGENT_SOURCE')
             and ss.study_protocol_identifier = ?
     """

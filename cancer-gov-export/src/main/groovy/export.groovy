@@ -39,13 +39,18 @@ def getTrialsSQL = """
         nci_id.extension as nciId,
         ctepSs.local_sp_indentifier as ctepId,
         dcpSs.local_sp_indentifier as dcpId,
+		ccr.local_sp_indentifier as ccrId,
         rv_trial_id_nct.local_sp_indentifier as nctId,
         leadOrgSs.local_sp_indentifier as leadOrgId,        
+		leadOrgSs.name as leadOrgName,
+		sponsorSs.name as sponsorOrgName,
+		submitter.submitter_org_name as source,
         sum4Org.assigned_identifier as sum4OrgId,        
         sp.public_tittle as brief_title,
         sp.public_description as brief_summary,
         sp.scientific_description as detailed_description,
         sp.official_title,
+		sp.acronym,
         respPartyCrs.assigned_identifier as respPartyCrsId,
         respPartySc.email as prim_email,
         respPartySc.telephone as prim_phone,
@@ -54,28 +59,38 @@ def getTrialsSQL = """
         central_contact.email as centralContactEmail,
         central_contact.telephone as centralContactPhone,
         respPartySponsorContact.identifier as respPartySponsorIdentifier,
-        ra_country.name || ' : ' || ra.authority_name as reg_authority,
+        ra_country.name || ': ' || ra.authority_name as reg_authority,
+		ra_country.identifier as reg_authority_country_id,
         CASE
-            WHEN sos.status_code = 'APPROVED' then 'Approved'
-            WHEN sos.status_code = 'IN_REVIEW' then 'In Review'
-            WHEN sos.status_code = 'ACTIVE' then 'Active'
-            WHEN sos.status_code = 'ENROLLING_BY_INVITATION' then 'Enrolling by Invitation'
-            WHEN sos.status_code = 'CLOSED_TO_ACCRUAL' then 'Closed to Accrual'
-            WHEN sos.status_code = 'CLOSED_TO_ACCRUAL_AND_INTERVENTION' then 'Closed to Accrual and Intervention'
-            WHEN sos.status_code = 'TEMPORARILY_CLOSED_TO_ACCRUAL' then 'Temporarily Closed to Accrual'
-            WHEN sos.status_code = 'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION' then 'Temporarily Closed to Accrual and Intervention'
+            WHEN sos.status_code = 'APPROVED' then 'Approved for marketing'
+            WHEN sos.status_code = 'IN_REVIEW' then 'Not yet recruiting'
+            WHEN sos.status_code = 'ACTIVE' then 'Recruiting'
+            WHEN sos.status_code = 'ENROLLING_BY_INVITATION' then 'Enrolling by invitation'
+            WHEN sos.status_code = 'CLOSED_TO_ACCRUAL' then 'Active, not recruiting'
+            WHEN sos.status_code = 'CLOSED_TO_ACCRUAL_AND_INTERVENTION' then 'Active, not recruiting'
+            WHEN sos.status_code = 'TEMPORARILY_CLOSED_TO_ACCRUAL' then 'Suspended'
+            WHEN sos.status_code = 'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION' then 'Suspended'
             WHEN sos.status_code = 'WITHDRAWN' then 'Withdrawn'
-            WHEN sos.status_code = 'ADMINISTRATIVELY_COMPLETE' then 'Administratively Complete'
-            WHEN sos.status_code = 'COMPLETED' then 'Complete'
-            WHEN sos.status_code = 'COMPLETE' then 'Complete'
+            WHEN sos.status_code = 'ADMINISTRATIVELY_COMPLETE' then 'Terminated'
+            WHEN sos.status_code = 'COMPLETED' then 'Completed'
+            WHEN sos.status_code = 'COMPLETE' then 'Completed'
         END as current_trial_status,
+		CASE
+            WHEN sos.status_code in ('TEMPORARILY_CLOSED_TO_ACCRUAL','TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION',
+				'WITHDRAWN','ADMINISTRATIVELY_COMPLETE') THEN sos.comment_text			
+        END as why_stopped,
         sos.status_date::date as current_trial_status_date,
         sp.start_date:: date as start_date,
         CASE
             WHEN sp.start_date_type_code = 'ACTUAL' then 'Actual'
             WHEN sp.start_date_type_code = 'ANTICIPATED' then 'Anticipated'
         END as start_date_type_code,
-        sp.pri_compl_date::date as pri_compl_date,
+        sp.completion_date::date as completion_date,
+        CASE
+            WHEN sp.completion_date_type_code = 'ACTUAL' then 'Actual'
+            WHEN sp.completion_date_type_code = 'ANTICIPATED' then 'Anticipated'
+        END as completion_date_type_code,
+		sp.pri_compl_date::date as pri_compl_date,
         CASE
             WHEN sp.pri_compl_date_type_code = 'ACTUAL' then 'Actual'
             WHEN sp.pri_compl_date_type_code = 'ANTICIPATED' then 'Anticipated'
@@ -86,10 +101,25 @@ def getTrialsSQL = """
             WHEN sp.accr_rept_meth_code = 'AE' then 'AE'
         END as accr_rept_meth_code,
         pp.code as primary_purpose_code,
-        sp.phase_code,
+		CASE
+            WHEN sp.phase_code = 'O' then 'Phase 0'           
+			WHEN sp.phase_code = 'I' then 'Phase 1'
+			WHEN sp.phase_code = 'I_II' then 'Phase 1/Phase 2'
+			WHEN sp.phase_code = 'II' then 'Phase 2'
+			WHEN sp.phase_code = 'II_III' then 'Phase 2/Phase 3'
+			WHEN sp.phase_code = 'III' then 'Phase 3'
+			WHEN sp.phase_code = 'IV' then 'Phase 4'
+			WHEN sp.phase_code = 'NA' then 'N/A'
+        END as phase_code,   
+		CASE
+            WHEN sp.study_protocol_type = 'NonInterventionalStudyProtocol' then 'Observational'
+			WHEN sp.study_protocol_type = 'InterventionalStudyProtocol' AND sp.expd_access_indidicator=true then 'Expanded Access'
+            ELSE 'Interventional'
+        END as study_type,
         CASE
             WHEN sp.allocation_code = 'RANDOMIZED_CONTROLLED_TRIAL' then 'Randomized'
             WHEN sp.allocation_code = 'NON_RANDOMIZED_TRIAL' then 'Non-randomized'
+			WHEN sp.allocation_code = 'NA' then 'N/A'			
         END as allocation_code,
         CASE
             WHEN sp.blinding_schema_code = 'OPEN' then 'Open'
@@ -148,6 +178,7 @@ def getTrialsSQL = """
             WHEN sp.study_classification_code = 'PHARMACODYNAMICS' then 'Pharmacodynamics Study'
             WHEN sp.study_classification_code = 'PHARMACOKINETICS_OR_DYNAMICS' then 'Pharmacokinetics/dynamics Study'
             WHEN sp.study_classification_code = 'SAFETY' then 'Safety Study'
+			WHEN sp.study_classification_code = 'NA' then 'N/A'
         END as classification_code
      from study_protocol sp
      inner join rv_trial_id_nct on rv_trial_id_nct.study_protocol_identifier = sp.identifier
@@ -157,7 +188,9 @@ def getTrialsSQL = """
      inner join rv_trial_id_nci as nci_id on nci_id.study_protocol_id = sp.identifier       
      left outer join rv_ctep_id ctepSs on ctepSs.study_protocol_identifier = sp.identifier 
      left outer join rv_dcp_id dcpSs on dcpSs.study_protocol_identifier = sp.identifier 
+	 left outer join rv_ccr_id ccr on ccr.study_protocol_identifier = sp.identifier
      left outer join rv_lead_organization leadOrgSs on leadOrgSs.study_protocol_identifier = sp.identifier
+	 left outer join rv_trial_submitter submitter on submitter.study_protocol_identifier = sp.identifier
      left outer join study_resourcing as summary4 on summary4.study_protocol_identifier = sp.identifier and summary4.summ_4_rept_indicator is true
         and summary4.identifier = (select max(identifier) from study_resourcing where study_protocol_identifier = sp.identifier and summ_4_rept_indicator is true)
      left outer join organization as sum4Org on cast(summary4.organization_identifier as integer) = sum4Org.identifier     
@@ -183,16 +216,14 @@ def getTrialsSQL = """
      where sp.status_code = 'ACTIVE'  and rv_trial_id_nct.local_sp_indentifier is not null
 """
 
-def nbOfTrials = 0 
+def nbOfTrials = 0
 
 def outputDir = new File("${resolvedProperties['output.dir']}")
 println "Output directory: ${outputDir.getCanonicalPath()}"
 
 paConn.eachRow(getTrialsSQL) { spRow ->
 
-	def trialFile = new File(outputDir, "${spRow.nciId}.xml")
-	println "${spRow.nciId} is being written into ${trialFile.getCanonicalPath()}"
-	
+	def trialFile = new File(outputDir, "${spRow.nctId.toUpperCase()}.xml")
 	def out = new FileOutputStream(trialFile)
 	def writer = new OutputStreamWriter( out , "UTF-8")
 	writer.write """<?xml version="1.0" encoding="UTF-8"?>\n"""
@@ -203,50 +234,98 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 	def studyProtocolID = spRow.identifier
 
 	xml.clinical_study {
+		xml.required_header {
+			xml.download_date(new Date().toString())
+			xml.link_text("Link to the current ClinicalTrials.gov record.")
+			xml.url("http://clinicaltrials.gov/show/${spRow.nctId}")
+		}
 		xml.id_info {
 			xml.org_study_id(spRow.leadOrgId)
-			xml.secondary_id {
-				xml.id(spRow.nciId)
-				xml.id_type("Registry Identifier")
-				xml.id_domain("CTRP (Clinical Trial Reporting Program)")
-			}
+			xml.secondary_id (spRow.nciId)
 			paConn.eachRow(Queries.otherIdsSQL, [studyProtocolID]) { row ->
-				xml.secondary_id {
-					xml.id (row.extension)
-				}
+				xml.secondary_id (row.extension)
 			}
 			if (spRow.ctepId != null) {
-				xml.secondary_id {
-					xml.id(spRow.ctepId)
-					xml.id_type("ctep-id")
-					xml.id_domain("CTEP")
-				}
+				xml.secondary_id (spRow.ctepId)
 			}
 			if (spRow.dcpId != null) {
-				xml.secondary_id {
-					xml.id(spRow.dcpId)
-					xml.id_type("dcp-id")
-					xml.id_domain("DCP")
+				xml.secondary_id (spRow.dcpId)
+			}
+			if (spRow.ccrId != null) {
+				xml.secondary_id (spRow.ccrId)
+			}
+			xml.nct_id(spRow.nctId)
+		}
+		xml.brief_title(spRow.brief_title)
+		if (spRow.acronym)
+			xml.acronym(spRow.acronym)
+		if (spRow.official_title)
+			xml.official_title(spRow.official_title)
+
+		xml.sponsors {
+			xml.lead_sponsor {
+				if(spRow.sponsorOrgName) {
+					xml.agency(spRow.sponsorOrgName.trim())
+					xml.agency_class("Other")
 				}
 			}
-			if (spRow.nctId != null) {
-				xml.secondary_id {
-					xml.id(spRow.nctId)
-					xml.id_type("nct-id")
-					xml.id_domain("NCT")
+			paConn.eachRow(Queries.collabsSQL, [studyProtocolID]) { collabRow ->
+				xml.collaborator {
+					xml.agency(collabRow.name.trim())
+					xml.agency_class("Other")
 				}
 			}
-			paConn.eachRow(Queries.fundingsSQL, [studyProtocolID]) { row ->
-				if (row.funding_mechanism_code != null) {
-					xml.secondary_id {
-						xml.id(row.funding_mechanism_code + row.nih_institute_code + row.serial_number)
-						xml.id_type("NIH Grant Number")
-					}
+		} // end sponsors
+
+		xml.source(spRow.source?:"Unknown")
+		if (spRow.reg_authority_country_id)
+			xml.oversight_info {
+				xml.regulatory_authority(spRow.reg_authority)
+				xml.has_dmc(spRow.dmc_indicator)
+			}
+
+		if (spRow.brief_summary)
+			xml.brief_summary {
+				xml.textblock(spRow.brief_summary)
+			}
+		if (spRow.detailed_description)
+			xml.detailed_description {
+				xml.textblock(spRow.detailed_description)
+			}
+
+		xml.overall_status(spRow.current_trial_status)
+		if (spRow.why_stopped)
+			xml.why_stopped(spRow.why_stopped)
+		if (spRow.start_date)
+			xml.start_date(type:spRow.start_date_type_code, spRow.start_date.format("MMMM yyyy"))
+		if (spRow.completion_date)
+			xml.completion_date(type:spRow.completion_date_type_code, spRow.completion_date.format("MMMM yyyy"))
+		if (spRow.pri_compl_date)
+			xml.primary_completion_date(type:spRow.pri_compl_date_type_code, spRow.pri_compl_date.format("MMMM yyyy"))
+		xml.phase(spRow.phase_code)
+		xml.study_type(spRow.study_type)
+		xml.study_design(buildStudyDesign(spRow))
+
+
+		xml.resp_party {
+			xml.resp_party_person {
+				if (spRow.respPartyCrsId != null) {
+					def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
+					crsDetail(xml, crsRow)
+					addressAndPhoneDetail(xml, crsRow, spRow, true)
 				}
 			}
-			xml.org_name(spRow.prs_org_name == null || spRow.prs_org_name.size() == 0?
-					"replace with PRS Organization Name you log in with":
-					spRow.prs_org_name)
+			xml.resp_party_organization {
+				if (spRow.sponsorRoId != null && spRow.respPartySponsorIdentifier!=null) {
+					def roRow = rosMap.get(spRow.sponsorRoId.toLong())
+					xml.name(roRow.orgname)
+					xml.po_id(roRow.org_poid)
+					xml.ctep_id(roRow.ctep_id)
+					def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
+					addressAndPhoneDetail(xml, roRow,
+							sponsorContactInfo, true)
+				}
+			}
 		}
 
 		paConn.eachRow(Queries.ownersSQL, [studyProtocolID]) { row ->
@@ -281,64 +360,16 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		xml.is_fda_regulated(spRow.fda_indicator)
 		xml.is_section_801(spRow.section801_indicator)
 		xml.delayed_posting(spRow.delayed_posting_indicator)
-		xml.brief_title(spRow.brief_title)
-		xml.official_title(spRow.official_title)
 
-		xml.sponsors {
-			xml.lead_sponsor {
-				if(spRow.sponsorRoId != null) {
-					def roRow = rosMap.get(spRow.sponsorRoId.toLong())
-					xml.name(changeSponsorNameIfNeeded(roRow.orgname))
-					xml.po_id(roRow.org_poid)
-					xml.ctep_id(roRow.ctep_id)
-					addressAndPhoneDetail(xml, roRow, null, false)
-				}
-			}
-			xml.resp_party {
-				xml.resp_party_person {
-					if (spRow.respPartyCrsId != null) {
-						def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
-						crsDetail(xml, crsRow)
-						addressAndPhoneDetail(xml, crsRow, spRow, true)
-					}
-				}
-				xml.resp_party_organization {
-					if (spRow.sponsorRoId != null && spRow.respPartySponsorIdentifier!=null) {
-						def roRow = rosMap.get(spRow.sponsorRoId.toLong())
-						xml.name(roRow.orgname)
-						xml.po_id(roRow.org_poid)
-						xml.ctep_id(roRow.ctep_id)
-						def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
-						addressAndPhoneDetail(xml, roRow,
-								sponsorContactInfo, true)
-					}
-				}
-			}
-			paConn.eachRow(Queries.collabsSQL, [studyProtocolID]) { collabRow ->
-				xml.collaborator {
-					if(collabRow.ro_poid != null){
-						def roRow = rosMap.get(collabRow.ro_poid.toLong())
-						xml.name(collabRow.name)
-						xml.po_id(collabRow.org_poid)
-						xml.ctep_id(roRow.ctep_id)
-						addressAndPhoneDetail(xml, roRow, null, false)
-					}
-				}
-			}
-		} // end sponsors
 
-		xml.oversight_info {
-			xml.regulatory_authority(spRow.reg_authority)
-			xml.has_dmc(spRow.dmc_indicator)
-		}
 
-		xml.brief_summary {
-			xml.textblock(spRow.brief_summary)
-		}
 
-		xml.detailed_description {
-			xml.textblock(spRow.detailed_description)
-		}
+
+
+
+
+
+
 
 		xml.trial_status {
 			xml.current_trial_status(spRow.current_trial_status)
@@ -366,7 +397,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 			xml.study_type("Interventional")
 			xml.interventional_design {
 				xml.interventional_subtype(spRow.primary_purpose_code)
-				xml.phase(spRow.phase_code)
+
 				xml.allocation(spRow.allocation_code)
 				xml.masking(spRow.blinding_schema_code)
 				if (spRow.blinding_role_code_caregiver != null)
@@ -630,8 +661,19 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
 			suppressPhoneAndEmail ? "" : row.email)))
 }
 
-String changeSponsorNameIfNeeded(orgName) {
-	return (orgName==Constants.CTEP_ORG_NAME || orgName==Constants.DCP_ORG_NAME)?Constants.NCI_ORG_NAME:orgName
+
+/**
+ * Builds study design string that matches the format ClinicalTrials.gov uses.
+ * @param spRow
+ * @return
+ */
+String buildStudyDesign(spRow)	{
+	def design = new StringBuilder()
+	if (spRow.allocation_code)
+		design << (design.size()>0?', ':'') << "Allocation:  ${spRow.allocation_code}"
+	if (spRow.classification_code)
+		design << (design.size()>0?', ':'') << "Endpoint Classification:  ${spRow.classification_code}"
+	return design.size()>0?design:'N/A'
 }
 
 println ""
