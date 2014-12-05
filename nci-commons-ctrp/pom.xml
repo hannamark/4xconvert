@@ -43,6 +43,11 @@
             <url>dav:https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
+		<!--<site>
+            <id>sites</id>
+            <name>CTRP Software Project Sites</name>
+            <url>dav:https://ncimvn.nci.nih.gov/nexus/content/sites/cbiit-sites/ctrp/nci-commons-ctrp</url>
+        </site>-->
     </distributionManagement>
 
     <repositories>
@@ -72,10 +77,21 @@
 		          <artifactId>maven-release-plugin</artifactId>
 		          <version>2.5.1</version>
 		          <configuration>
-                    <tagBase>https://ncisvn.nci.nih.gov/svn/coppa/tags</tagBase>
+                    <tagBase>https://ncisvn.nci.nih.gov/svn/coppa/tags/nci-commons-ctrp-releases</tagBase>
+					<stagingRepository>releases::default::https://ncimvn.nci.nih.gov/nexus/service/local/staging/deploy/maven2</stagingRepository>
                   </configuration>
-		       </plugin>            
-                <plugin>
+		       </plugin> 
+				<plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>1.9</version>
+                    <configuration>
+                        <connectionType>developerConnection</connectionType>
+                        <goals>install</goals>
+						<username>nciscm</username>
+                    </configuration>
+                </plugin>
+				   <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>2.3.2</version>
                     <configuration>
