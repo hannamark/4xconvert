@@ -50,6 +50,7 @@
     </head>
     <body>
         <h1><fmt:message key="disease.details.title"/></h1>
+         <s:hidden name="pageDiscriminator" value="disease"/>
         <c:set var="topic" scope="request" value="abstractdisease"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
         <div class="box">
@@ -138,11 +139,11 @@
 					                          NCIt Terms &nabla;</span>
 					                      <ul>
 					                          <li class="action"><a
-					                              href="manageTermscreateDisease.action"> <fmt:message
+					                              href="manageTermscreateDisease.action?pageDiscriminator=disease"> <fmt:message
 					                                      key="manageTerms.button.create" />
 					                          </a></li>
 					                          <li class="action"><a
-					                              href="manageTermssearchDisease.action?searchStart=true"> <fmt:message
+					                              href="manageTermssearchDisease.action?searchStart=true&pageDiscriminator=disease"> <fmt:message
 					                                      key="manageTerms.button.import" />
 					                          </a></li>
 					                          <li class="action"><a

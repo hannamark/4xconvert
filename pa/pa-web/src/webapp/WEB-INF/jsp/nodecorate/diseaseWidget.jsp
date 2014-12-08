@@ -75,15 +75,17 @@ function addDisease(diseaseid) {
 	    jQuery.get(url, function(data) {
 	        window.top.hidePopWin(true);
 	    });
-    }   
+    }  
 }
+  function cancel(){ 
+      window.top.hidePopWin(true);
+  }
 </script>
 </head>
 <body>
     <h2>
         <a href="#"></a>
     </h2>
-    
      <div id="diseasesSection">
          <input type="hidden" id="returnVal" name="returnVal" />
          <fmt:message key="diseases.widget.tableTitle" var="tableTitle" />
@@ -163,7 +165,10 @@ function addDisease(diseaseid) {
              <ul class="btnrow">
                   <a href="javascript:void(0)" class="btn" onclick="addDisease()">
                       <span class="btn_img"><span class="add">Add</span></span>
-                  </a>                                
+                  </a>
+                  <s:a onclick="javascript:cancel();" href="javascript:void(0)" cssClass="btn">
+                      <span class="btn_img"><span class="cancel">Cancel</span></span>
+                 </s:a>                                
              </ul>
          </del>
      </div>        

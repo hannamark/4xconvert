@@ -213,6 +213,7 @@
                     alert("Please enter a valid Alternate Title.");
                 }
             }
+            
         </script>
     </head>
     
@@ -221,6 +222,7 @@
         <c:set var="topic" scope="request" value="abstractgeneral"/>
         <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+                <s:url id="cancelUrl" namespace="/protected" action="generalTrialDesignquery"/>
         <div class="box">
             <pa:sucessMessage/>
             <pa:failureMessage/>
@@ -233,7 +235,9 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <pa:adminAbstractorDisplayWhenCheckedOut>
-                                <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                                <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a>
+                                <pa:cancelBtn cancelUrl="${cancelUrl}"/>
+                                </li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>
@@ -437,7 +441,9 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <pa:adminAbstractorDisplayWhenCheckedOut>
-                                <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                                <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a>
+                                <pa:cancelBtn cancelUrl="${cancelUrl}"/>
+                                </li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>

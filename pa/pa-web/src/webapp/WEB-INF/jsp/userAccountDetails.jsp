@@ -8,6 +8,7 @@
         <title><fmt:message key="userAccountDetails.title"/></title>
         <s:head/>
         <c:url value="/protected/popupOrglookuporgs.action" var="lookupUrl" />
+        <s:url id="cancelUrl" namespace="/protected" action="userAccountDetailsexecute"/>
         <script type="text/javascript" language="javascript">
         
 	        function handleAction() {
@@ -97,6 +98,7 @@
                         <ul class="btnrow">
                             <li>
                                 <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                                <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                             </li>
                         </ul>
                     </del>

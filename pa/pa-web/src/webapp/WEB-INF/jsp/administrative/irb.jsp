@@ -109,6 +109,7 @@
         <c:set var="topic" scope="request" value="abstractsafety"/>
         <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+        <s:url id="cancelUrl" namespace="/protected" action="irb"/>
         <div class="box">
             <pa:sucessMessage />
             <s:if test="hasActionErrors()">
@@ -219,6 +220,7 @@
                             <pa:adminAbstractorDisplayWhenCheckedOut>
                                 <li>
                                     <s:a href="javascript:void(0)" cssClass="btn" onclick="irbSave();"><span class="btn_img"> <span class="save">Save</span></span></s:a>
+                                    <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                 </li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>

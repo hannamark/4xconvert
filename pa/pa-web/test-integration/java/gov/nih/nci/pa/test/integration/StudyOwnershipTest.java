@@ -117,5 +117,10 @@ public class StudyOwnershipTest extends AbstractPaSeleniumTest {
         assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[6]"), "Remove Ownership");
         clickAndWait("link=Remove Ownership");
         assertTrue(selenium.isTextPresent("Ownership has been removed"));
+        selenium.type("id=firstName", "ClinicalTrials.gov Import");
+        selenium.type("id=lastName", "lastName");
+        clickAndWait("link=Cancel");
+        assertEquals(selenium.getText("id=firstName"),"");
+        assertEquals(selenium.getText("id=lastName"),"");
     }
 }

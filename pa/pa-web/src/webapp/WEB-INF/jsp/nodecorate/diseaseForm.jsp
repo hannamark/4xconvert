@@ -132,6 +132,9 @@
 					.remove();		}
 		}
 	}
+	function cancel() {
+		submitXsrfForm('${pageContext.request.contextPath}/protected/disease.action')
+	}
 	
 </script>
 </head>
@@ -297,9 +300,26 @@
 								onclick="saveDisease()">
 								<span class="btn_img"><span class="copy">Import</span></span>
 							</s:a>
-						</s:else> <s:a href="manageTerms.action" cssClass="btn">
+						</s:else>
+						 <s:if test="%{pageDiscriminator.equals('lookup')}">
+						 <s:a href="manageTermssearchDisease.action?searchStart=true" cssClass="btn">
+                           <span class="btn_img"><span class="cancel">Cancel</span></span>
+                         </s:a>
+						 </s:if>
+						 <s:else>
+						<s:if test="%{pageDiscriminator.equals('disease')}">
+						
+						 <s:a onclick="javascript:cancel();" href="javascript:void(0)" cssClass="btn">
+                           <span class="btn_img"><span class="cancel">Cancel</span></span>
+                         </s:a>
+						</s:if>
+						<s:else>
+						<s:a href="manageTerms.action" cssClass="btn">
 							<span class="btn_img"><span class="cancel">Cancel</span></span>
-						</s:a></li>
+						</s:a>
+						</s:else> 
+						</s:else>
+						</li>
 			</del>
 		</div>
 	</s:form>

@@ -100,6 +100,15 @@
                 }    
                 return false;
             }
+            function cancel(){ 
+                var element2 = document.getElementById("countries");
+                element2.value='';
+                loadDiv();
+                $('fdaindid').value ='';
+                $('sec801id').value ='';
+                $('delpostindid').value ='';
+                $('datamonid').value ='';
+            }
         </script>
     </head>
     <body>
@@ -207,7 +216,11 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <pa:adminAbstractorDisplayWhenCheckedOut>
-                                <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+                                <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                               <s:a onclick="javascript:cancel();" href="javascript:void(0)" cssClass="btn">
+                                    <span class="btn_img"><span class="cancel">Cancel</span></span>
+                                </s:a>
+                                </li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>

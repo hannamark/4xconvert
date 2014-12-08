@@ -139,6 +139,7 @@ function initialize() {
 <c:set var="topic" scope="request" value="abstractdesign"/>
 <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+ <s:url id="cancelUrl" namespace="/protected" action="interventionalStudyDesigndetailsQuery"/>
 <div class="box">
 <pa:sucessMessage/>
    <pa:failureMessage/>
@@ -388,7 +389,9 @@ function initialize() {
 	<del class="btnwrapper">
 		<ul class="btnrow">
             <pa:scientificAbstractorDisplayWhenCheckedOut>
-                <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+                <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                <pa:cancelBtn cancelUrl="${cancelUrl}"/>
+                </li>
             </pa:scientificAbstractorDisplayWhenCheckedOut>    
 		</ul>	
 	</del>

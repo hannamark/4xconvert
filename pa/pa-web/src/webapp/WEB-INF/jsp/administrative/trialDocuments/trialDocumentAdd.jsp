@@ -31,6 +31,7 @@ function tooltip() {
 BubbleTips.activateTipOn("acronym");
 BubbleTips.activateTipOn("dfn"); 
 }
+
 </SCRIPT>
 <body>
 <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
@@ -41,6 +42,7 @@ BubbleTips.activateTipOn("dfn");
 </c:if>
  <h1><fmt:message key="trialDocument.title" /></h1>
  <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+ <s:url id="cancelUrl" namespace="/protected" action="trialDocumentquery"/>
   <div class="box">  
    <pa:sucessMessage/>
    <pa:failureMessage/>
@@ -95,7 +97,9 @@ BubbleTips.activateTipOn("dfn");
 		<div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
-                    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>                
+                    <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                     <pa:cancelBtn cancelUrl="${cancelUrl}"/>
+                    </li>                
                 </ul>   
             </del>
         </div> 

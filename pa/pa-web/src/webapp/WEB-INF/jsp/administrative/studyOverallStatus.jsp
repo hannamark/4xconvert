@@ -75,6 +75,7 @@
         </c:if>
         <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+        <s:url id="cancelUrl" namespace="/protected" action="studyOverallStatus"/>
         <div class="box">
             <pa:sucessMessage/>
             <s:form name="studyoverallstatus">
@@ -169,6 +170,7 @@
                             <pa:adminAbstractorDisplayWhenCheckedOut>
                                 <li>
                                     <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                                    <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                 </li>
                             </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>   

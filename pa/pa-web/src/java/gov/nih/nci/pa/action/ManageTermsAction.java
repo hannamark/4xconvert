@@ -84,6 +84,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     private DiseaseWebDTO currentDisease = new DiseaseWebDTO();
 
     private boolean importTerm = false;
+    private String pageDiscriminator;
 
     private InputStream ajaxResponseStream;
     
@@ -124,6 +125,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      */
     public String createIntervention() {
         importTerm = false;
+        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter("pageDiscriminator");
         return INTERVENTION;
     }
 
@@ -134,6 +136,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      */
     public String createDisease() {
         importTerm = false;
+        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter("pageDiscriminator");
         disease.setDisplayNameList(diseaseService.getAllDisplayNames());
         return DISEASE;
     }
@@ -202,6 +205,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     public String searchIntervention() {
         String ncitCode = intervention.getNtTermIdentifier();
         importTerm = true;
+        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter("pageDiscriminator");
         if (StringUtils.isEmpty(ncitCode)) {
             if (ServletActionContext.getRequest().getParameter("searchStart") == null) {
                 ServletActionContext.getRequest()
@@ -548,6 +552,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     public String searchDisease() {
         String ncitCode = disease.getNtTermIdentifier();
         importTerm = true;
+        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter("pageDiscriminator");
         if (StringUtils.isEmpty(ncitCode)) {
             if (ServletActionContext.getRequest().getParameter("searchStart") == null) {
                 ServletActionContext.getRequest()
@@ -1059,6 +1064,20 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      */
     public void setSearchSynonyms(boolean searchSynonyms) {
         this.searchSynonyms = searchSynonyms;
+    }
+    /**
+     * 
+     * @return pageDiscriminator pageDiscriminator
+     */
+    public String getPageDiscriminator() {
+        return pageDiscriminator;
+    }
+    /**
+     * 
+     * @param pageDiscriminator pageDiscriminator
+     */
+    public void setPageDiscriminator(String pageDiscriminator) {
+        this.pageDiscriminator = pageDiscriminator;
     }
     
     

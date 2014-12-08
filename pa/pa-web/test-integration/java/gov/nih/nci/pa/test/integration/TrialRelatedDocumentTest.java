@@ -198,6 +198,13 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
             clickAndWait("link=Save");
             assertTrue(selenium.isTextPresent("Record Updated"));
             assertTrue(selenium.isTextPresent("2 items found"));
+
+            assertTrue(selenium.isElementPresent("link=Add"));
+            clickAndWait("link=Add");
+            selenium.select("id=typeCode", "label=Protocol Highlighted Document");
+            selenium.type("id=fileUpload", trialDocPath);
+            clickAndWait("link=Cancel");
+            assertTrue(selenium.isTextPresent("2 items found"));
         }
     }
 

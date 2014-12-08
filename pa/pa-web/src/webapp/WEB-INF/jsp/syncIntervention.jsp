@@ -73,7 +73,7 @@
 				<li><s:a href="manageTermssyncIntervention.action" cssClass="btn">
 						<span class="btn_img"><span class="save">Sync Term</span></span>
 					</s:a> 
-					<s:a href="manageTerms.action" cssClass="btn">
+					<s:a href="manageTermssearchIntervention.action?searchStart=true" cssClass="btn">
 						<span class="btn_img"><span class="cancel">Cancel</span></span>
 					</s:a></li>
 			</ul>

@@ -87,7 +87,7 @@
 			<ul class="btnrow">
 				<li><s:a href="manageTermssyncDisease.action" cssClass="btn">
 						<span class="btn_img"><span class="save">Sync Term</span></span>
-					</s:a> <s:a href="manageTerms.action" cssClass="btn">
+					</s:a> <s:a href="manageTermssearchDisease.action?searchStart=true" cssClass="btn">
 						<span class="btn_img"><span class="cancel">Cancel</span></span>
 					</s:a></li>
 			</ul>

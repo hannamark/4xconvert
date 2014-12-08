@@ -24,7 +24,7 @@
     function handleAction() {
         document.trialDescription.action="trialDescriptionupdate.action";
         document.trialDescription.submit();
-    }    
+    }  
 </script>
      
 </head>
@@ -34,6 +34,7 @@
 <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
 <c:set var="mandatoryText" value="${!sessionScope.trialSummary.proprietaryTrial?'Mandatory at Abstraction Validation':''}" scope="request"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+ <s:url id="cancelUrl" namespace="/protected" action="trialDescriptionquery"/>
 <div class="box">
 <pa:sucessMessage/>
 <pa:failureMessage/>
@@ -101,7 +102,9 @@
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <pa:scientificAbstractorDisplayWhenCheckedOut>
-                        <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
+                        <li><a href="javascript:void(0)" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a>
+                      <pa:cancelBtn cancelUrl="${cancelUrl}"/>
+                        </li>
                     </pa:scientificAbstractorDisplayWhenCheckedOut>
                 </ul>   
             </del>

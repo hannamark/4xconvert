@@ -110,7 +110,11 @@
                     });            		
             	});
             }(jQuery));
-            
+            function resetValues(){
+              var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
+              document.forms[0].action="studyProtocolview.action?studyProtocolId=" + studyProtocolId;
+              document.forms[0].submit();
+            }
         </script>
         <style type="text/css">
             
@@ -317,7 +321,10 @@
                                              <li><s:a href="javascript:void(0)" cssClass="btn"
                                                      onclick="handleAction('save');">
                                                      <span class="btn_img"><span class="search">Save</span></span>
-                                                 </s:a></li>
+                                                 </s:a>
+                                                 <s:a onclick="resetValues();" href="javascript:void(0)" cssClass="btn">
+                                                <span class="btn_img"><span class="cancel">Cancel</span></span>
+                                            </s:a></li>
                                          </ul>
                                      </del>
                                  </div>                                        

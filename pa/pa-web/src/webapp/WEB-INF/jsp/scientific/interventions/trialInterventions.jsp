@@ -176,11 +176,11 @@ function handleCreate(){
                             NCIt Terms &nabla;</span>
                         <ul>
                             <li class="action"><a
-                                href="manageTermscreateIntervention.action"> <fmt:message
+                                href="manageTermscreateIntervention.action?pageDiscriminator=intervention"> <fmt:message
                                         key="manageTerms.button.create" />
                             </a></li>
                             <li  class="action" ><a
-                                href="manageTermssearchIntervention.action?searchStart=true">
+                                href="manageTermssearchIntervention.action?searchStart=true&pageDiscriminator=intervention">
                                     <fmt:message key="manageTerms.button.import" />
                             </a></li>
                             <li  class="action"><a

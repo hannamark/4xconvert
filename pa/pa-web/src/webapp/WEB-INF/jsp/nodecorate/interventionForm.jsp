@@ -42,12 +42,16 @@
 		}
 
 	}
+	function cancel() {
+	    submitXsrfForm('${pageContext.request.contextPath}/protected/trialInterventions.action')
+	}
 </script>
 </head>
 <div id="box">
 	<pa:failureMessage />
 	<s:form name="interventionForm" method="post">
 		<s:hidden id="importTerm" name="importTerm" />
+		
 		<table class="form">
 			<tr>
 				<td scope="row" width="20%"><label for="ntTermIdentifier">
@@ -160,9 +164,25 @@
 								onclick="importIntrv()">
 								<span class="btn_img"><span class="copy">Import</span></span>
 							</s:a>
-						</s:else> <s:a href="manageTerms.action" cssClass="btn">
+						</s:else> 
+						<s:if test="%{pageDiscriminator.equals('lookup')}">
+                         <s:a href="manageTermssearchIntervention.action?searchStart=true" cssClass="btn">
+                           <span class="btn_img"><span class="cancel">Cancel</span></span>
+                         </s:a>
+                         </s:if>
+                         <s:else>
+                         <s:if test="%{pageDiscriminator.equals('intervention')}">
+                         <s:a onclick="javascript:cancel();" href="javascript:void(0)" cssClass="btn">
+                           <span class="btn_img"><span class="cancel">Cancel</span></span>
+                         </s:a>
+                        </s:if>
+                        <s:else>
+						<s:a href="manageTerms.action" cssClass="btn">
 							<span class="btn_img"><span class="cancel">Cancel</span></span>
-						</s:a></li>
+						</s:a>
+						</s:else>
+						</s:else>
+						</li>
 				</ul>
 			</del>
 		</div>

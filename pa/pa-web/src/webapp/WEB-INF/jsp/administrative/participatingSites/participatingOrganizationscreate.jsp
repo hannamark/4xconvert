@@ -196,6 +196,7 @@
         <c:set var="topic" scope="request" value="abstractsite"/>
         <c:set var="asterisk" value="${sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+        <s:url id="cancelUrl" namespace="/protected" action="participatingOrganizations"/>
         <div class="box">
             <pa:sucessMessage/>
             <pa:failureMessage/>
@@ -252,6 +253,7 @@
                                                             <span class="btn_img"><span class="save">Save</span></span>
                                                         </s:a>
                                                     </s:else>
+                                                   <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                                 </li>
                                             </ul>
                                         </del>
@@ -291,6 +293,7 @@
                                                  <s:a href="javascript:void(0)" cssClass="btn" onclick="savePrimaryContact();">
                                                     <span class="btn_img"><span class="save">Save</span></span>
                                                 </s:a>
+                                                <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                             </li>    
                                         </ul>
                                     </del>

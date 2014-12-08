@@ -113,9 +113,9 @@
 											<span class="btn_img"><span class="search">
 											${studyExists?'Import &amp; Update Trial':'Import Trial'}
 											</span></span>
-										</s:a> <c:url value="/protected/studyProtocolshowCriteria.action"
+										</s:a> <c:url value="/protected/importCtGovexecute.action"
 											var="cancelUrl" /> <s:a
-											action="studyProtocolshowCriteria.action" cssClass="btn">
+											action="importCtGovexecute.action" cssClass="btn">
 											<span class="btn_img"><span class="cancel">Cancel</span></span>
 										</s:a></li>
 								</ul>

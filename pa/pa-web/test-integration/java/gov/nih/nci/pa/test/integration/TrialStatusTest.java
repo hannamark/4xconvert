@@ -142,6 +142,9 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         changeStatus("Active", false, false, null);
         changeStatus("Temporarily Closed to Accrual and Intervention", false, false, "Temporarily Closed Reason.");
         changeStatus("Administratively Complete", false, true, null);
+        selenium.type("id=statusReason", "Test Status Reason");
+        clickAndWait("link=Cancel");
+        assertEquals("Administratively Complete", selenium.getSelectedValue("id=currentTrialStatus"));
     }
 
     /**

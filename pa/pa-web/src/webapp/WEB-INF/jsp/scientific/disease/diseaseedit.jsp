@@ -34,6 +34,7 @@
         <h1><fmt:message key="disease.details.title" /></h1>
         <c:set var="topic" scope="request" value="abstractdisease"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+         <s:url id="cancelUrl" namespace="/protected" action="disease"/>
         <div class="box">
             <pa:sucessMessage /> 
             <s:if test="hasActionErrors()"><div class="error_msg"><s:actionerror /></div></s:if>
@@ -59,6 +60,7 @@
                                             <s:a href="javascript:void(0)" cssClass="btn" onclick="diseaseUpdate();">
                                                 <span class="btn_img"> <span class="save">Save</span></span>
                                             </s:a>
+                                         <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                         </s:if> 
                                     </li>
                                 </ul>

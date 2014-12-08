@@ -6,6 +6,12 @@
 <s:set name="action" value="action" />
 <title><fmt:message key="manageTerms.lookupIntrv.page.title" /></title>
 <s:head />
+<script type="text/javascript">
+function cancel() {
+    submitXsrfForm('${pageContext.request.contextPath}/protected/trialInterventions.action')
+}
+
+</script>
 </head>
 <body>
 	<c:set var="topic" scope="request" value="importintervention" />
@@ -18,6 +24,7 @@
 		<s:form name="lookupintrvForm" method="post"
 			action="manageTermssearchIntervention.action">
 			<s:hidden name="importTerm" />
+			<s:hidden  name="pageDiscriminator" value="lookup"></s:hidden>
 			<table class="form">
 				<tr>
 					<td colspan="3"><span class="info"><fmt:message key="manageTerms.lookup.helpmessage" /> </span></td>
@@ -34,6 +41,24 @@
 						</s:a></td>
 				</tr>
 			</table>
+			<div class="actionsrow">
+            <del class="btnwrapper">
+                <ul class="btnrow">
+                    <li>
+                      <s:if test="%{pageDiscriminator.equals('intervention')}">
+                         <s:a onclick="javascript:cancel();" href="javascript:void(0)" cssClass="btn">
+                           <span class="btn_img"><span class="cancel">Cancel</span></span>
+                         </s:a>
+                        </s:if>
+                        <s:else>
+                        <s:a href="manageTerms.action" cssClass="btn">
+                            <span class="btn_img"><span class="cancel">Cancel</span></span>
+                        </s:a>
+                        </s:else>
+                   </li>
+                </ul>
+            </del>
+        </div>
 		</s:form>
 	</div>
 </body>

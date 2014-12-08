@@ -53,6 +53,7 @@
         <h1><fmt:message key="participatingOrganizations.collaborators.title" /></h1>
         <c:set var="topic" scope="request" value="abstractcollaborator"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+         <s:url id="cancelUrl" namespace="/protected" action="collaborators"/>
         <div class="box">
             <pa:sucessMessage /> 
             <s:if test="hasActionErrors()">
@@ -104,6 +105,7 @@
                                                 <span class="btn_img"> <span class="save">Save</span></span>
                                             </s:a>
                                         </s:else>
+                                     <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                     </li>
                                 </ul>
                             </del>

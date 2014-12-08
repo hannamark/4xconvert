@@ -223,3 +223,8 @@ function handleTrialSelect(trialId, trialNciId) {
 		window.parent.trialSelected(trialId, trialNciId);
 	}
 }
+
+function cancelAction(url){
+    document.forms[0].setAttribute("action", url);
+    document.forms[0].submit();
+}

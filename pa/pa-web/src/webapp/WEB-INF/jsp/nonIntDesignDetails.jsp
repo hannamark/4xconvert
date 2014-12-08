@@ -5,6 +5,7 @@
 <title><fmt:message key="osdesign.details.title"/></title>
 <s:head />
 </head>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
 <SCRIPT LANGUAGE="JavaScript">
 // this function is called from body onload in main.jsp (decorator)
@@ -95,6 +96,7 @@ function displayPhaseAdditonalCode(){
 <c:set var="topic" scope="request" value="abstractdesignnoninterventional"/>
 <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
+<s:url id="cancelUrl" namespace="/protected" action="noninterventionalStudyDesigndetailsQuery"/>
 <div class="box">
 <pa:sucessMessage/>
    <pa:failureMessage/>
@@ -335,7 +337,9 @@ function displayPhaseAdditonalCode(){
 	<del class="btnwrapper">
 		<ul class="btnrow">
             <pa:scientificAbstractorDisplayWhenCheckedOut>
-                <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+                <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                   <pa:cancelBtn cancelUrl="${cancelUrl}"/>
+                </li>
             </pa:scientificAbstractorDisplayWhenCheckedOut>         
 		</ul>	
 	</del>

@@ -245,9 +245,7 @@
                                             <s:a cssClass="btn" href="javascript:void(0)" onclick="document.forms[0].submit();">
                                                 <span class="btn_img"><span class="add">Save</span></span>
                                             </s:a>
-                                            <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
-                                                <span class="btn_img"><span class="cancel">Cancel</span></span>
-                                            </s:a>
+                                          <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                               
                                                 <s:a cssClass="btn" href="javascript:void(0)" id="addVariation" onclick="addVariation('true');">
                                                     <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span>
@@ -270,9 +268,7 @@
                                             <s:a cssClass="btn" href="javascript:void(0)" onclick="document.forms[0].submit();">
                                                 <span class="btn_img"><span class="add">Save</span></span>
                                             </s:a>
-                                            <s:a onclick="javascript:cancelAction('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
-                                                <span class="btn_img"><span class="cancel">Cancel</span></span>
-                                            </s:a>
+                                            <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                               
                                                     <s:a cssClass="btn" href="javascript:void(0)" id="addVariation" onclick="addVariation('true');">
                                                         <span class="btn_img"><fmt:message key="plannedMarker.addVariation"/></span>
