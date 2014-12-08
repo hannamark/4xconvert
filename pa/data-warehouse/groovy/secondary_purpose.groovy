@@ -4,9 +4,9 @@ def sql = """select sec.name,sp.secondary_purpose_other_text,
              nci_id.extension 
              from study_protocol_sec_purpose spsp
              inner join secondary_purpose sec on sec.identifier = spsp.secondary_purpose_id
-             inner join study_otheridentifiers nci_id on nci_id.study_protocol_id = spsp.study_protocol_id
+             inner join rv_trial_id_nci nci_id on nci_id.study_protocol_id = spsp.study_protocol_id
              inner join study_protocol sp on sp.identifier = spsp.study_protocol_id
-             and nci_id.root = '2.16.840.1.113883.3.26.4.3'"""
+             where sp.status_code = 'ACTIVE'"""
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'], 
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
