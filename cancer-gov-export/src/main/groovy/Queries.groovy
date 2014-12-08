@@ -12,23 +12,24 @@ class Queries {
             org.assigned_identifier as org_poid,
             ss.identifier as ss_identifier,
             CASE 
-                WHEN ssas.status_code = 'APPROVED' then 'Approved'
-                WHEN ssas.status_code = 'IN_REVIEW' then 'In Review'
-                WHEN ssas.status_code = 'ACTIVE' then 'Active'
-                WHEN ssas.status_code = 'ENROLLING_BY_INVITATION' then 'Enrolling by Invitation'
-                WHEN ssas.status_code = 'CLOSED_TO_ACCRUAL' then 'Closed to Accrual'
-                WHEN ssas.status_code = 'CLOSED_TO_ACCRUAL_AND_INTERVENTION' then 'Closed to Accrual and Intervention'
-                WHEN ssas.status_code = 'TEMPORARILY_CLOSED_TO_ACCRUAL' then 'Temporarily Closed to Accrual'
-                WHEN ssas.status_code = 'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION' then 'Temporarily Closed to Accrual and Intervention'
+                WHEN ssas.status_code = 'APPROVED' then 'Not yet recruiting'
+                WHEN ssas.status_code = 'IN_REVIEW' then 'Not yet recruiting'
+                WHEN ssas.status_code = 'ACTIVE' then 'Recruiting'
+                WHEN ssas.status_code = 'ENROLLING_BY_INVITATION' then 'Enrolling by invitation'
+                WHEN ssas.status_code = 'CLOSED_TO_ACCRUAL' then 'Active, not recruiting'
+                WHEN ssas.status_code = 'CLOSED_TO_ACCRUAL_AND_INTERVENTION' then 'Active, not recruiting'
+                WHEN ssas.status_code = 'TEMPORARILY_CLOSED_TO_ACCRUAL' then 'Suspended'
+                WHEN ssas.status_code = 'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION' then 'Suspended'
                 WHEN ssas.status_code = 'WITHDRAWN' then 'Withdrawn'
-                WHEN ssas.status_code = 'ADMINISTRATIVELY_COMPLETE' then 'Administratively Complete'
+                WHEN ssas.status_code = 'ADMINISTRATIVELY_COMPLETE' then 'Terminated'
                 WHEN ssas.status_code = 'COMPLETED' then 'Completed'
+				WHEN ssas.status_code = 'COMPLETE' then 'Completed'
             END as status
         FROM Study_Site ss
-        join healthcare_facility hcf on hcf.identifier = ss.healthcare_facility_identifier
-        join organization org on org.identifier = hcf.organization_identifier
+        inner join healthcare_facility hcf on hcf.identifier = ss.healthcare_facility_identifier
+        inner join organization org on org.identifier = hcf.organization_identifier
         left outer join study_site_accrual_status ssas on ssas.study_site_identifier = ss.identifier and ssas.identifier = (select max(identifier) from study_site_accrual_status ssas2 where ssas2.study_site_identifier = ss.identifier)
-        where ss.functional_code = 'TREATING_SITE'
+        where ss.functional_code = 'TREATING_SITE' and ss.status_code in ('ACTIVE','PENDING')
         and ss.study_protocol_identifier = ?
     """
 
@@ -74,7 +75,7 @@ class Queries {
             d.menu_display_name,
             d.preferred_name
         from study_disease sd
-             join pdq_disease d on d.identifier = sd.disease_identifier
+             inner join pdq_disease d on d.identifier = sd.disease_identifier
         where sd.study_protocol_identifier = ?
     """
     
@@ -87,7 +88,7 @@ class Queries {
                 WHEN a.type_code = 'ACTIVE_COMPARATOR' then 'Active Comparator' 
                 WHEN a.type_code = 'PLACEBO_COMPARATOR' then 'Placebo Comparator' 
                 WHEN a.type_code = 'SHAM_COMPARATOR' then 'Sham Comparator' 
-                WHEN a.type_code = 'NO_INTERVENTION' then 'No intervention' 
+                WHEN a.type_code = 'NO_INTERVENTION' then 'No Intervention' 
                 WHEN a.type_code = 'OTHER' then 'Other' 
             END as arm_type,
             a.description_text as arm_desc,
@@ -100,7 +101,7 @@ class Queries {
         from ARM a
             left outer join arm_intervention a_i on a_i.arm_identifier = a.identifier   
             left outer join planned_activity pa on pa.identifier = a_i.planned_activity_identifier   
-            join intervention int on int.identifier = pa.intervention_identifier 
+            left join intervention int on int.identifier = pa.intervention_identifier 
             left outer join intervention_alternate_name altName on altName.intervention_identifier = int.identifier 
         where a.study_protocol_identifier = ?            
     """
@@ -111,16 +112,45 @@ class Queries {
             CASE WHEN prim_som.safety_indicator then 'Yes'
                 ELSE 'No'
             END as prim_som_safety_ind,
-            prim_som.timeframe as prim_som_timeframe
+            prim_som.timeframe as prim_som_timeframe,
+			prim_som.description
         from study_outcome_measure prim_som 
             where prim_som.study_protocol_identifier = ?
-            and prim_som.primary_indicator = true
+            and type_code='PRIMARY'
     """
-    
+	
+	public static def secondOutcomesSQL = """
+        select 
+            prim_som.name as prim_som_name,
+            CASE WHEN prim_som.safety_indicator then 'Yes'
+                ELSE 'No'
+            END as prim_som_safety_ind,
+            prim_som.timeframe as prim_som_timeframe,
+			prim_som.description
+        from study_outcome_measure prim_som 
+            where prim_som.study_protocol_identifier = ?
+            and type_code='SECONDARY'
+    """
+
+	public static def otherOutcomesSQL = """
+        select 
+            prim_som.name as prim_som_name,
+            CASE WHEN prim_som.safety_indicator then 'Yes'
+                ELSE 'No'
+            END as prim_som_safety_ind,
+            prim_som.timeframe as prim_som_timeframe,
+			prim_som.description
+        from study_outcome_measure prim_som 
+            where prim_som.study_protocol_identifier = ?
+            and type_code='OTHER_PRE_SPECIFIED'
+    """
+
     public static def eligsSQL = """
         select 
-            CASE WHEN elig.inclusion_indicator THEN 'Inclusion Criteria'
-                 ELSE 'Exclusion Criteria'
+            CASE 
+				 WHEN elig.inclusion_indicator=true THEN 'Inclusion Criteria'
+				 WHEN elig.inclusion_indicator=false THEN 'Exclusion Criteria'
+                 ELSE 'Criteria'
             END as elig_type,
             CASE WHEN elig.eligible_gender_code = 'MALE' THEN 'Male'
                 WHEN elig.eligible_gender_code = 'FEMALE' THEN 'Female'
@@ -128,13 +158,16 @@ class Queries {
                 ELSE null
             END as gender,
             criterion_name,
-            CASE WHEN max_value = '999' THEN 'N/A'
-                ELSE max_value || ' ' || max_unit
+            CASE WHEN max_value = 999 THEN 'N/A'
+                ELSE regexp_replace(cast(max_value as varchar),'\\.0+\\Z','') || ' ' || max_unit
             END as max_age,            
-            CASE WHEN min_value = '0' THEN 'N/A'
-            ELSE min_value || ' ' || min_unit
-            END as min_age,            
-            text_description as elig_data
+            CASE WHEN min_value = 0 THEN 'N/A'
+            ELSE regexp_replace(cast(min_value as varchar),'\\.0+\\Z','') || ' ' || min_unit
+            END as min_age,
+			CASE 
+				WHEN (elig.criterion_name is null OR elig.criterion_name NOT IN ('GENDER', 'AGE', 'MINIMUM-AGE')) 
+					AND category_code in ('ELIGIBILITY_CRITERION','OTHER') THEN text_description                
+            END as elig_criteria_text
          from planned_eligibility_criterion elig
             join planned_activity pa on pa.identifier = elig.identifier 
         where pa.study_protocol_identifier = ?

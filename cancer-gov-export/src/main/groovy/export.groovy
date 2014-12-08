@@ -50,7 +50,7 @@ def getTrialsSQL = """
         sp.public_description as brief_summary,
         sp.scientific_description as detailed_description,
         sp.official_title,
-		sp.acronym,
+		sp.acronym,		
         respPartyCrs.assigned_identifier as respPartyCrsId,
         respPartySc.email as prim_email,
         respPartySc.telephone as prim_phone,
@@ -122,7 +122,7 @@ def getTrialsSQL = """
 			WHEN sp.allocation_code = 'NA' then 'N/A'			
         END as allocation_code,
         CASE
-            WHEN sp.blinding_schema_code = 'OPEN' then 'Open'
+            WHEN sp.blinding_schema_code = 'OPEN' then 'Open Label'
             WHEN sp.blinding_schema_code = 'SINGLE_BLIND' then 'Single Blind'
             WHEN sp.blinding_schema_code = 'DOUBLE_BLIND' then 'Double Blind'
         END as blinding_schema_code,
@@ -132,13 +132,39 @@ def getTrialsSQL = """
             WHEN sp.design_configuration_code = 'CROSSOVER' then 'Crossover Assignment'
             WHEN sp.design_configuration_code = 'FACTORIAL' then 'Factorial Assignment'
         END as design_configuration_code,
+		CASE
+            WHEN sp.study_model_code = 'CASE_ONLY' then 'Case-Only'
+			WHEN sp.study_model_code = 'COHORT' then 'Cohort'
+			WHEN sp.study_model_code = 'CASE_CONTROL' then 'Case Control'
+			WHEN sp.study_model_code = 'FAMILY_BASED' then 'Family-Based'
+			WHEN sp.study_model_code = 'OTHER' then 'Other'
+			WHEN sp.study_model_code = 'ECOLOGIC_OR_COMMUNITY_STUDIES' then 'Ecologic or Community'
+			WHEN sp.study_model_code = 'CASE_CROSSOVER' then 'Case-Crossover'
+        END as study_model_code,
+		CASE
+            WHEN sp.time_perspective_code = 'PROSPECTIVE' then 'Prospective'
+			WHEN sp.time_perspective_code = 'RETROSPECTIVE' then 'Retrospective'
+			WHEN sp.time_perspective_code = 'CROSS_SECTION' then 'Cross-Sectional'
+			WHEN sp.time_perspective_code = 'OTHER' then 'Other'
+        END as time_perspective_code,
         sp.number_of_intervention_groups,
+		sp.number_of_groups,
         CASE
             WHEN sp.min_target_accrual_num is null then 0
             ELSE sp.min_target_accrual_num
         END as min_target_accrual_num,
         ov_off_crs.assigned_identifier as ovOffCrsId,
+		pi.assigned_identifier as pi_po_id,
+		pi.first_name as pi_first_name,
+		pi.last_name as pi_last_name,
+		pi.middle_name as pi_middle_name,
+
         central_contact_crs.assigned_identifier as centralContactCrsId,
+		central_contact_person.assigned_identifier as cc_po_id,
+		central_contact_person.first_name as cc_first_name,
+		central_contact_person.last_name as cc_last_name,
+		central_contact_person.middle_name as cc_middle_name,
+
         subm_ru.prs_org_name,
         CASE WHEN sp.proprietary_trial_indicator then 'Abbreviated'
                 ELSE 'Complete'
@@ -179,7 +205,18 @@ def getTrialsSQL = """
             WHEN sp.study_classification_code = 'PHARMACOKINETICS_OR_DYNAMICS' then 'Pharmacokinetics/dynamics Study'
             WHEN sp.study_classification_code = 'SAFETY' then 'Safety Study'
 			WHEN sp.study_classification_code = 'NA' then 'N/A'
-        END as classification_code
+        END as classification_code,
+		CASE
+            WHEN sp.bio_specimen_retention_code = 'SAMPLES_WITH_DNA' then 'Samples With DNA'
+            WHEN sp.bio_specimen_retention_code = 'SAMPLES_WITHOUT_DNA' then 'Samples Without DNA'
+            WHEN sp.bio_specimen_retention_code = 'NONE_RETAINED' then 'None Retained'
+        END as biospec_retention,
+		sp.bio_specimen_description as biospec_descr,
+		sp.study_population_description as study_pop,
+		CASE
+            WHEN sp.sampling_method_code = 'NON_PROBABILITY_SAMPLE' then 'Non-Probability Sample'
+            WHEN sp.sampling_method_code = 'PROBABILITY_SAMPLE' then 'Probability Sample'            
+        END as sampling_method		
      from study_protocol sp
      inner join rv_trial_id_nct on rv_trial_id_nct.study_protocol_identifier = sp.identifier
      join rv_sponsor_organization sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier 
@@ -206,8 +243,10 @@ def getTrialsSQL = """
          and (sos.identifier = (select max(identifier) from study_overall_status where study_protocol_identifier = sp.identifier))
      left outer join study_contact ov_off on ov_off.study_protocol_identifier = sp.identifier and ov_off.role_code = 'STUDY_PRINCIPAL_INVESTIGATOR'
      left outer join clinical_research_staff ov_off_crs on ov_off_crs.identifier = ov_off.clinical_research_staff_identifier
+     left outer join person pi on pi.identifier = ov_off_crs.person_identifier
      left outer join study_contact central_contact on central_contact.study_protocol_identifier = sp.identifier and central_contact.role_code = 'CENTRAL_CONTACT'
      left outer join clinical_research_staff central_contact_crs on central_contact_crs.identifier = central_contact.clinical_research_staff_identifier
+	 left outer join person central_contact_person on central_contact_person.identifier = central_contact_crs.person_identifier
      left outer join csm_user subm_csm on subm_csm.user_id = sp.user_last_created_id
      left outer join registry_user subm_ru on subm_ru.csm_user_id = subm_csm.user_id
      left outer join primary_purpose pp on sp.primary_purpose_code = pp.name        
@@ -305,8 +344,234 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		xml.phase(spRow.phase_code)
 		xml.study_type(spRow.study_type)
 		xml.study_design(buildStudyDesign(spRow))
+		paConn.eachRow(Queries.primOutcomesSQL, [studyProtocolID]) { row ->
+			xml.primary_outcome {
+				xml.measure(row.prim_som_name);
+				xml.safety_issue(row.prim_som_safety_ind)
+				if (row.prim_som_timeframe)
+					xml.time_frame(row.prim_som_timeframe)
+				if (row.description)
+					xml.description(row.description)
+			}
+		}
+		paConn.eachRow(Queries.secondOutcomesSQL, [studyProtocolID]) { row ->
+			xml.secondary_outcome {
+				xml.measure(row.prim_som_name);
+				xml.safety_issue(row.prim_som_safety_ind)
+				if (row.prim_som_timeframe)
+					xml.time_frame(row.prim_som_timeframe)
+				if (row.description)
+					xml.description(row.description)
+			}
+		}
+		paConn.eachRow(Queries.otherOutcomesSQL, [studyProtocolID]) { row ->
+			xml.other_outcome {
+				xml.measure(row.prim_som_name);
+				xml.safety_issue(row.prim_som_safety_ind)
+				if (row.prim_som_timeframe)
+					xml.time_frame(row.prim_som_timeframe)
+				if (row.description)
+					xml.description(row.description)
+			}
+		}
+		if (spRow.study_type=='Observational') {
+			if (spRow.number_of_groups)
+				xml.number_of_groups(spRow.number_of_groups)
+		} else {
+			if (spRow.number_of_intervention_groups)
+				xml.number_of_arms(spRow.number_of_intervention_groups)
+		}
+		xml.enrollment(type:'Anticipated', spRow.min_target_accrual_num)
+		paConn.eachRow(Queries.conditionsSQL, [studyProtocolID]) { row ->
+			xml.condition(row.preferred_name)
+		}
+		// try to be cheap and steal a few cycles by running 1 query instead of 3.
+		def allArmsAndInt = []
+		paConn.eachRow(Queries.armsSQL, [studyProtocolID]) { row ->
+			allArmsAndInt.add(row.toRowResult())
+		}
+		// get arms out of it.
+		def armsList = []
+		allArmsAndInt.each {
+			def row = it
+			if (!armsList.contains(row.arm_id)) {
+				xml.arm_group {
+					xml.arm_group_label(row.arm_name)
+					if (row.arm_type)
+						xml.arm_group_type(row.arm_type)
+					if (row.arm_desc)
+						xml.description(row.arm_desc)
+				}
+				armsList.add(row.arm_id)
+			}
+		}
+
+		// interventions.
+		def intsList =[]
+		allArmsAndInt.each {
+			def intRow = it
+			if (!intsList.contains(intRow.int_id)) {
+				xml.intervention  {
+					xml.intervention_type(intRow.int_type)
+					xml.intervention_name(intRow.int_name)
+					if (intRow.int_desc) {
+						xml.description (intRow.int_desc)
+					}
+
+					groupNamesList = []
+					allArmsAndInt.each {
+						def groupRow = it
+						if (intRow.int_id == groupRow.int_id && !groupNamesList.contains(groupRow.arm_name)) {
+							xml.arm_group_label(groupRow.arm_name)
+							groupNamesList.add(groupRow.arm_name)
+						}
+					}
+
+					// other names
+					otherNamesList = []
+					allArmsAndInt.each {
+						def otherNameRow = it
+						if (intRow.int_id == otherNameRow.int_id && !otherNamesList.contains(otherNameRow.alt_name)
+						&& otherNameRow.alt_name != null && otherNameRow.alt_name.size() > 0) {
+							xml.other_name(otherNameRow.alt_name)
+							otherNamesList.add(otherNameRow.alt_name)
+						}
+					}
+
+				}
+				intsList.add(intRow.int_id)
+			}
+		}
+		if (spRow.study_type=='Observational') {
+			if (spRow.biospec_retention)
+				xml.biospec_retention(spRow.biospec_retention)
+			if (spRow.biospec_descr)
+				xml.biospec_descr {
+					xml.textblock(spRow.biospec_descr)
+				}
+		}
+
+		// Eligibility
+		def gender
+		def minAge
+		def maxAge
+		def inCriteria = new StringBuilder()
+		def exCriteria = new StringBuilder()
+		def genCriteria = new StringBuilder()
+
+		paConn.eachRow(Queries.eligsSQL, [studyProtocolID]) { row ->
+			if (row.gender) {
+				gender = row.gender
+			} else if (row.criterion_name == 'AGE') {
+				minAge = row.min_age
+				maxAge = row.max_age
+			} else if (row.elig_criteria_text) {
+				switch (row.elig_type) {
+					case 'Inclusion Criteria':
+						inCriteria << buildEligibilityCriterionDescription(row.elig_criteria_text)
+						break
+					case 'Exclusion Criteria':
+						exCriteria << buildEligibilityCriterionDescription(row.elig_criteria_text)
+						break
+					default:
+						genCriteria << buildEligibilityCriterionDescription(row.elig_criteria_text)
+				}
+			}
+		}
+		// To satisfy the XSD, we must include eligibility element only if all three are provided.
+		if (gender && minAge && maxAge) {
+			xml.eligibility {
+				if (spRow.study_type=='Observational') {
+					if (spRow.study_pop)
+						xml.study_pop {
+							xml.textblock(spRow.study_pop)
+						}
+					if (spRow.sampling_method)
+						xml.sampling_method(spRow.sampling_method)
+				}
+				if (inCriteria || exCriteria || genCriteria) {
+					def criteria = new StringBuilder("\n")
+					if (genCriteria)
+						criteria << "Criteria: \n\n" << genCriteria << "\n"
+					if (inCriteria)
+						criteria << "Inclusion Criteria: \n\n" << inCriteria << "\n"
+					if (exCriteria)
+						criteria << "Exclusion Criteria: \n\n" << exCriteria << "\n"
+					xml.criteria { xml.textblock(criteria) }
+				}
+				xml.gender(gender)
+				xml.minimum_age(minAge)
+				xml.maximum_age(maxAge)
+				xml.healthy_volunteers(spRow.healthy_volunteer_indicator)
+			}
+		}
+
+		if(spRow.pi_po_id) {
+			xml.overall_official {
+				xml.first_name(spRow.pi_first_name)
+				if (spRow.pi_middle_name)
+					xml.middle_name(spRow.pi_middle_name)
+				xml.last_name(spRow.pi_last_name)
+				xml.role("Principal Investigator")
+				xml.affiliation(spRow.leadOrgName?.trim())
+			}
+		}
+
+		if (spRow.cc_po_id) {
+			xml.overall_contact {
+				xml.first_name(spRow.cc_first_name)
+				if (spRow.cc_middle_name)
+					xml.middle_name(spRow.cc_middle_name)
+				xml.last_name(spRow.cc_last_name)
+				if (spRow.centralContactPhone)
+					xml.phone(spRow.centralContactPhone)
+				if (spRow.centralContactEmail)
+					xml.email(spRow.centralContactEmail)
+			}
+		}
+
+		// Participating sites.
+		paConn.eachRow(Queries.partSitesSQL, [studyProtocolID]) { row ->
+			xml.location {
+				xml.facility {
+					xml.name(row.name?.trim())
+					def orgRow = orgsMap.get(row.org_poid.toLong())
+					address(xml, orgRow)
+				}
+				
+				xml.status(row.status)
+				
+				paConn.eachRow(Queries.primaryContactSQL, [
+					row.ss_identifier,
+					studyProtocolID
+				]) { primconrow ->
+					if (primconrow.prim_crs_id != null && crsMap.get(primconrow.prim_crs_id.toLong()) != null) {
+						xml.contact {
+							def crsRow = crsMap.get(primconrow.prim_crs_id.toLong())
+							crsDetail(xml, crsRow)
+							addressAndPhoneDetail(xml, crsRow, primconrow, true)
+						}
+					}
+				}
+
+				paConn.eachRow(Queries.investigatorsSQL, [
+					row.ss_identifier,
+					studyProtocolID
+				]) { invsrow ->
+					if (invsrow.inv_crs_id != null && crsMap.get(invsrow.inv_crs_id.toLong()) != null) {
+						xml.investigator {
+							def crsRow = crsMap.get(invsrow.inv_crs_id.toLong())
+							crsDetail(xml, crsRow)
+							addressAndPhoneDetail(xml, crsRow, null, false)
+							xml.role("Principal Investigator")
+						}
+					}
+				}
+			}
+		}  // end part sites
 
 
+		////////////////////////////////////////////////////////////////
 		xml.resp_party {
 			xml.resp_party_person {
 				if (spRow.respPartyCrsId != null) {
@@ -410,187 +675,23 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					xml.masked_outcome("Yes")
 				xml.assignment(spRow.design_configuration_code)
 				xml.endpoint(spRow.classification_code)
-				xml.number_of_arms(spRow.number_of_intervention_groups)
+
 			}
 		}
 
-		paConn.eachRow(Queries.primOutcomesSQL, [studyProtocolID]) { row ->
-			xml.primary_outcome {
-				xml.outcome_measure(row.prim_som_name);
-				xml.outcome_safety_issue(row.prim_som_safety_ind)
-				xml.outcome_time_frame(row.prim_som_timeframe)
-			}
-		}
 
-		xml.disease_conditions {
-			paConn.eachRow(Queries.conditionsSQL, [studyProtocolID]) { row ->
-				xml.condition_info {
-					xml.preferred_name(row.preferred_name)
-					xml.disease_code(row.disease_code)
-					if (row.nci_thesaurus_id != null)
-						xml.nci_thesaurus_id(row.nci_thesaurus_id)
-					xml.menu_display_name(row.menu_display_name)
-				}
-			}
-		}
 
-		xml.enrollment(spRow.min_target_accrual_num)
-		xml.enrollment_type("anticipated")
 
-		// try to be cheap and steal a few cycles by running 1 query instead of 3.
-		def allArmsAndInt = []
-		paConn.eachRow(Queries.armsSQL, [studyProtocolID]) { row ->
-			allArmsAndInt.add(row.toRowResult())
-		}
 
-		// get arms out of it.
-		def armsList = []
-		allArmsAndInt.each {
-			def row = it
-			if (!armsList.contains(row.arm_id)) {
-				xml.arm_group {
-					xml.arm_group_label(row.arm_name)
-					xml.arm_type(row.arm_type)
-					xml.arm_group_description {
-						xml.textblock(row.arm_desc)
-					}
-				}
-				armsList.add(row.arm_id)
-			}
-		}
 
-		def intsList =[]
-		allArmsAndInt.each {
-			def intRow = it
-			if (!intsList.contains(intRow.int_id)) {
-				xml.intervention("cdr-id": intRow.cdr_id) {
-					xml.intervention_type(intRow.int_type)
-					xml.intervention_name(intRow.int_name)
-					if (intRow.int_desc != null) {
-						xml.intervention_description {
-							xml.textblock(intRow.int_desc)
-						}
-					}
-					// other names
-					otherNamesList = []
-					allArmsAndInt.each {
-						def otherNameRow = it
-						if (intRow.int_id == otherNameRow.int_id && !otherNamesList.contains(otherNameRow.alt_name)
-						&& otherNameRow.alt_name != null && otherNameRow.alt_name.size() > 0) {
-							xml.intervention_other_name(otherNameRow.alt_name)
-							otherNamesList.add(otherNameRow.alt_name)
-						}
-					}
 
-					groupNamesList = []
-					allArmsAndInt.each {
-						def groupRow = it
-						if (intRow.int_id == groupRow.int_id && !groupNamesList.contains(groupRow.arm_name)) {
-							xml.arm_group_label(groupRow.arm_name)
-							groupNamesList.add(groupRow.arm_name)
-						}
-					}
-				}
-				intsList.add(intRow.int_id)
-			}
-		}
 
-		xml.eligibility {
-			def gender
-			def minAge
-			def maxAge
-			paConn.eachRow(Queries.eligsSQL, [studyProtocolID]) { row ->
-				if (row.gender != null) {
-					gender = row.gender
-				} else if (row.criterion_name == 'AGE') {
-					minAge = row.min_age
-					maxAge = row.max_age
-				} else if (row.elig_data != null) {
-					xml.criteria {
-						xml.criterion {
-							xml.type(row.elig_type)
-							xml.data("  - " + row.elig_data)
-						}
-					}
-				}
-			}
-			xml.healthy_volunteers(spRow.healthy_volunteer_indicator)
-			if (gender != null) {
-				xml.gender(gender)
-			}
-			xml.minimum_age(minAge)
-			xml.maximum_age(maxAge)
-		}
 
-		xml.overall_official {
-			if(spRow.ovOffCrsId != null){
-				def crsRow = crsMap.get(spRow.ovOffCrsId.toLong())
-				crsDetail(xml, crsRow)
-				addressAndPhoneDetail(xml, crsRow, null, false)
-				xml.role("Principal Investigator")
-				xml.affiliation {
-					if(spRow.leadRoId != null){
-						def roRow = rosMap.get(spRow.leadRoId.toLong())
-						xml.name(roRow.orgname)
-						xml.po_id(roRow.org_poid)
-						xml.ctep_id(roRow.ctep_id)
-						addressAndPhoneDetail(xml, roRow, null, false)
-					}
-				}
-			}
-		}
 
-		xml.overall_contact {
-			if (spRow.centralContactCrsId!=null) {
-				def crsRow = crsMap.get(spRow.centralContactCrsId.toLong())
-				crsDetail(xml, crsRow)
-				def centralContactInfo = ['prim_phone':spRow.centralContactPhone,'prim_email':spRow.centralContactEmail]
-				addressAndPhoneDetail(xml, crsRow, centralContactInfo, true)
-			}
-		}
 
-		paConn.eachRow(Queries.partSitesSQL, [studyProtocolID]) { row ->
-			xml.location {
-				xml.facility {
-					if(row.hcf_poid != null){
-						def hcfRow = hcfsMap.get(row.hcf_poid.toLong())
-						xml.name(row.name)
-						xml.po_id(row.org_poid)
-						xml.ctep_id(hcfRow.ctep_id)
-						addressAndPhoneDetail(xml, hcfRow, null, false)
-					}
-				}
 
-				xml.status(row.status)
 
-				paConn.eachRow(Queries.primaryContactSQL, [
-					row.ss_identifier,
-					studyProtocolID
-				]) { primconrow ->
-					if (primconrow.prim_crs_id != null && crsMap.get(primconrow.prim_crs_id.toLong()) != null) {
-						xml.contact {
-							def crsRow = crsMap.get(primconrow.prim_crs_id.toLong())
-							crsDetail(xml, crsRow)
-							addressAndPhoneDetail(xml, crsRow, primconrow, true)
-						}
-					}
-				}
 
-				paConn.eachRow(Queries.investigatorsSQL, [
-					row.ss_identifier,
-					studyProtocolID
-				]) { invsrow ->
-					if (invsrow.inv_crs_id != null && crsMap.get(invsrow.inv_crs_id.toLong()) != null) {
-						xml.investigator {
-							def crsRow = crsMap.get(invsrow.inv_crs_id.toLong())
-							crsDetail(xml, crsRow)
-							addressAndPhoneDetail(xml, crsRow, null, false)
-							xml.role("Principal Investigator")
-						}
-					}
-				}
-			}
-		}  // end part sites
 		xml.verification_date(spRow.verification_date)
 	}
 	writer.flush();
@@ -607,6 +708,17 @@ void crsDetail(MarkupBuilder xml, Object crsRow) {
 	xml.po_id(crsRow.person_poid)
 	if (crsRow.ctep_id != null)
 		xml.ctep_id(crsRow.ctep_id)
+}
+
+void address(MarkupBuilder xml, Object row) {
+	xml.address {
+		xml.city(row.cityormunicipality?.trim())
+		if (row.stateorprovince)
+			xml.state(row.stateorprovince?.trim())
+		if (row.postalcode)
+			xml.zip(row.postalcode?.trim())
+		xml.country(row.country_name?.trim())
+	}
 }
 
 void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {
@@ -661,6 +773,23 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
 			suppressPhoneAndEmail ? "" : row.email)))
 }
 
+String buildEligibilityCriterionDescription(criterion) {
+	return "  - " <<  applyPrsFormattingFixes(criterion) << '\n'
+}
+
+/**
+ * Apply some formatting fixes to achieve a better display in PRS.
+ * @param text
+ * @return
+ */
+String applyPrsFormattingFixes(String text) {
+	text = text.replaceAll("(?m)^ \\*", "  *");
+	text = text.replaceAll("(?m)^\\*", "  *");
+	text = text.replaceAll("(?m)^ \\-\\s", "  * ");
+	text = text.replaceAll("(?m)^\\-\\s", "  * ");
+	return text;
+}
+
 
 /**
  * Builds study design string that matches the format ClinicalTrials.gov uses.
@@ -669,13 +798,42 @@ void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean 
  */
 String buildStudyDesign(spRow)	{
 	def design = new StringBuilder()
-	if (spRow.allocation_code)
-		design << (design.size()>0?', ':'') << "Allocation:  ${spRow.allocation_code}"
-	if (spRow.classification_code)
-		design << (design.size()>0?', ':'') << "Endpoint Classification:  ${spRow.classification_code}"
+	if (spRow.study_type=='Observational') {
+		if (spRow.study_model_code)
+			design << (design.size()>0?', ':'') << "Observational Model:  ${spRow.study_model_code}"
+		if (spRow.time_perspective_code)
+			design << (design.size()>0?', ':'') << "Time Perspective:  ${spRow.time_perspective_code}"
+	} else {
+		if (spRow.allocation_code)
+			design << (design.size()>0?', ':'') << "Allocation:  ${spRow.allocation_code}"
+		if (spRow.classification_code)
+			design << (design.size()>0?', ':'') << "Endpoint Classification:  ${spRow.classification_code}"
+		if (spRow.design_configuration_code)
+			design << (design.size()>0?', ':'') << "Intervention Model:  ${spRow.design_configuration_code}"
+		if (spRow.blinding_schema_code) {
+			design << (design.size()>0?', ':'') << "Masking:  ${spRow.blinding_schema_code}"
+			if (spRow.blinding_role_code_caregiver || spRow.blinding_role_code_investigator || spRow.blinding_role_code_subject || spRow.blinding_role_code_outcome) {
+				design << ' ('
+				def maskingRoles = new StringBuilder()
+				if (spRow.blinding_role_code_subject)
+					maskingRoles << (maskingRoles.size()>0?', ':'') << "Subject"
+				if (spRow.blinding_role_code_caregiver)
+					maskingRoles << (maskingRoles.size()>0?', ':'') << "Caregiver"
+				if (spRow.blinding_role_code_investigator)
+					maskingRoles << (maskingRoles.size()>0?', ':'') << "Investigator"
+				if (spRow.blinding_role_code_outcome)
+					maskingRoles << (maskingRoles.size()>0?', ':'') << "Outcomes Assessor"
+				design << maskingRoles << ')'
+			}
+		}
+
+	}
+
+	if (spRow.primary_purpose_code)
+		design << (design.size()>0?', ':'') << "Primary Purpose:  ${spRow.primary_purpose_code}"
+
 	return design.size()>0?design:'N/A'
 }
-
 println ""
 println "************PDQ EXPORT SUMMARY******************"
 println ""
