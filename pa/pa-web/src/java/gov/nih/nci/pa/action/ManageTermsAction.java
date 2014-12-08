@@ -68,6 +68,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     private static final String DISEASE = "disease"; 
     private static final String SEARCH_DISEASE = "searchDisease";
+    private static final String PAGE_DISCRIMINATOR = "pageDiscriminator";
     private static final String SYNC_DISEASE = "syncDisease";
 
     private static final String AJAX_RESPONSE = "ajaxResponse";
@@ -125,7 +126,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      */
     public String createIntervention() {
         importTerm = false;
-        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter("pageDiscriminator");
+        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter(PAGE_DISCRIMINATOR);
         return INTERVENTION;
     }
 
@@ -136,7 +137,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      */
     public String createDisease() {
         importTerm = false;
-        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter("pageDiscriminator");
+        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter(PAGE_DISCRIMINATOR);
         disease.setDisplayNameList(diseaseService.getAllDisplayNames());
         return DISEASE;
     }
@@ -205,7 +206,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     public String searchIntervention() {
         String ncitCode = intervention.getNtTermIdentifier();
         importTerm = true;
-        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter("pageDiscriminator");
+        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter(PAGE_DISCRIMINATOR);
         if (StringUtils.isEmpty(ncitCode)) {
             if (ServletActionContext.getRequest().getParameter("searchStart") == null) {
                 ServletActionContext.getRequest()
@@ -552,7 +553,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     public String searchDisease() {
         String ncitCode = disease.getNtTermIdentifier();
         importTerm = true;
-        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter("pageDiscriminator");
+        pageDiscriminator = (String) ServletActionContext.getRequest().getParameter(PAGE_DISCRIMINATOR);
         if (StringUtils.isEmpty(ncitCode)) {
             if (ServletActionContext.getRequest().getParameter("searchStart") == null) {
                 ServletActionContext.getRequest()
