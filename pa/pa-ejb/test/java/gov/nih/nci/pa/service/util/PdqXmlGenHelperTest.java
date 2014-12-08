@@ -286,7 +286,7 @@ public class PdqXmlGenHelperTest extends AbstractMockitoTest {
                 "<street>street</street>" + NEWLINE, "<city>city</city>" + NEWLINE,
                 "<state>MD</state>" + NEWLINE, "<zip>20000</zip>" + NEWLINE,
                 "<country>United States</country>" + NEWLINE, "</address>" + NEWLINE,
-                "<phone>111-222-3333</phone>" + NEWLINE, "<email>X</email>" + NEWLINE,
+                "<phone>111-222-3333ext444</phone>" + NEWLINE, "<email>X</email>" + NEWLINE,
                 "</organization>" + NEWLINE, "</test>"};
         for (String s : ss) {
             StringBuffer assertMsg = new StringBuffer("\n=====================================================\n");

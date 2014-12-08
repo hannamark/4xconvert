@@ -154,6 +154,10 @@ public class XmlGenHelper extends BaseXmlGenHelper {
      */
     public static final String PHONE = "phone";
     /**
+     * PHONE EXTN.
+     */
+    public static final String PHONE_EXT = "phone_ext";
+    /**
      * EMAIL.
      */
     public static final String EMAIL = "email";

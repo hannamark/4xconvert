@@ -714,7 +714,7 @@ public class AbstractMockitoTest {
         email.setValue(new URI("mailto:X"));
         telSet.add(email);
         TelPhone phone = new TelPhone();
-        phone.setValue(new URI("tel:111-222-3333"));
+        phone.setValue(new URI("tel:111-222-3333ext444"));
         telSet.add(phone);
         TelUrl url = new TelUrl();
         url.setValue(new URI("http://ctrp.com"));

@@ -1973,9 +1973,29 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         List<String> phones = DSetConverter.convertDSetToList(dSet, "PHONE");
         
         if (phones != null && !phones.isEmpty()) {
-            XmlGenHelper.appendElement(element,
-                    XmlGenHelper.createElementWithTextblock(XmlGenHelper.PHONE, StringUtils.substring(
-                            phones.get(0), 0, PAAttributeMaxLen.LEN_30), doc));
+            String phone = phones.get(0);
+            boolean isExtnPresent = false;
+            String extn  = null;
+            String phoneWithOutExtn = null;
+            if (phone.indexOf("ext") > 0) {
+                isExtnPresent = true;
+                extn = PAUtil.getPhoneExtn(phone);
+                phoneWithOutExtn = PAUtil.getPhone(phone);
+            }
+            if (isExtnPresent) {
+                XmlGenHelper.appendElement(element,
+                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.PHONE, StringUtils.substring(
+                                phoneWithOutExtn, 0, PAAttributeMaxLen.LEN_30), doc));  
+                
+                XmlGenHelper.appendElement(element,
+                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.PHONE_EXT, StringUtils.substring(
+                                extn, 0, PAAttributeMaxLen.LEN_30), doc));  
+            } else {
+                XmlGenHelper.appendElement(element,
+                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.PHONE, StringUtils.substring(
+                                phones.get(0), 0, PAAttributeMaxLen.LEN_30), doc));    
+            }
+            
         }
         List<String> emails = DSetConverter.convertDSetToList(dSet, "EMAIL");
         if (emails != null && !emails.isEmpty()) {

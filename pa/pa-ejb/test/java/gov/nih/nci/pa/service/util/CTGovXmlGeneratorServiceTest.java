@@ -497,6 +497,16 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         		("<intervention_other_name>A name starting with A</intervention_other_name><intervention_other_name>"
         		 +"duplicate name</intervention_other_name><intervention_other_name>Z name starting with Z</intervention_other_name>"));
     }
+    
+    @Test
+    public void testPhoneWithExt() throws PAException {
+         String xml  = getBean().generateCTGovXml(spId);
+         String newXML = createUnformattedXML(xml);
+                 assertTrue(newXML.contains
+                ("<location><facility><name>some name</name><address/></facility><contact>"
+                 +"<first_name>first name</first_name><last_name>last Name</last_name><phone>111-222-3333</phone>"
+                 +"<phone_ext>444</phone_ext><email>X</email></contact>"));
+    }
 
     @Test
     public void testAPlCatNull() throws PAException {
