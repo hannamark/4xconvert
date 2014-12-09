@@ -246,7 +246,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 	xml.clinical_study {
 		xml.required_header {
-			xml.download_date(new Date().toString())
+			xml.download_date(new Date().format("MMMM dd, yyyy"))
 			xml.link_text("Link to the current ClinicalTrials.gov record.")
 			xml.url("http://clinicaltrials.gov/show/${spRow.nctId}")
 		}
