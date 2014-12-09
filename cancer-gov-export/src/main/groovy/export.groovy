@@ -277,13 +277,13 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 			xml.lead_sponsor {
 				if(spRow.sponsorOrgName) {
 					xml.agency(spRow.sponsorOrgName.trim())
-					xml.agency_class("Other")
+					xml.agency_class(determineAgencyClass(spRow.sponsorOrgName.trim(), poConn))
 				}
 			}
 			paConn.eachRow(Queries.collabsSQL, [studyProtocolID]) { collabRow ->
 				xml.collaborator {
 					xml.agency(collabRow.name.trim())
-					xml.agency_class("Other")
+					xml.agency_class(determineAgencyClass(collabRow.name.trim(), poConn))
 				}
 			}
 		} // end sponsors
@@ -579,7 +579,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		xml.is_fda_regulated(spRow.fda_indicator)
 		xml.is_section_801(spRow.section801_indicator)
 		xml.has_expanded_access(spRow.has_expanded_access)
-		
+
 
 	}
 	writer.flush();
@@ -587,11 +587,22 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 	// We need to validate the file we just produced against the NLM's XSD to make sure we didn't produce something odd due to a bug or something.
 	def factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-	def schema = factory.newSchema(new StreamSource(new File("src/main/resources/public.xsd")))
+	def schema = factory.newSchema(new StreamSource(new File("${outputDir}/../src/main/resources/public.xsd")))
 	def validator = schema.newValidator()
 	validator.validate(new StreamSource(trialFile))
 	nbOfTrials++
 
+}
+
+String determineAgencyClass(org, poConn) {
+	def agencyClass
+	poConn.eachRow(Queries.familyNamesByOrgSQL, [org]) { row ->
+		if (!agencyClass && row.name)
+			agencyClass = "Other"
+		if (row.name==Constants.CCR)
+			agencyClass = "NIH"
+	}
+	return agencyClass?:"Industry"
 }
 
 

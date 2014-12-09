@@ -210,5 +210,11 @@ class Queries {
 			WHERE role_code in ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR')
 			AND sc.study_protocol_identifier=?
     """
+	
+	public static def familyNamesByOrgSQL = """
+	     select f.name from family f inner join familyorganizationrelationship rel on rel.family_id=f.id 
+			inner join organization o on rel.organization_id=o.id where f.enddate is null and rel.enddate is null
+			and o.name=?
+    """
     
 }
