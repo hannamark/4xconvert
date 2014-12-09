@@ -24,15 +24,8 @@ def paConn = Sql.newInstance(paJdbcUrl, , resolvedProperties['db.username'],
 
 // Cache some PO data...
 def preLoader = new PoPreLoad(poConn)
-def crsMap = preLoader.getCrsMap()
-println "got Crs " + crsMap.size()
 def orgsMap = preLoader.getOrgsMap()
 println "got Orgs " + orgsMap.size()
-def hcfsMap = preLoader.getHcfsMap()
-println "got HCFs " + hcfsMap.size()
-def rosMap = preLoader.getRosMap()
-println "got Ros " + rosMap.size()
-
 
 def getTrialsSQL = """
     select sp.identifier,
@@ -44,21 +37,15 @@ def getTrialsSQL = """
         leadOrgSs.local_sp_indentifier as leadOrgId,        
 		leadOrgSs.name as leadOrgName,
 		sponsorSs.name as sponsorOrgName,
-		submitter.submitter_org_name as source,
-        sum4Org.assigned_identifier as sum4OrgId,        
+		submitter.submitter_org_name as source,                
         sp.public_tittle as brief_title,
         sp.public_description as brief_summary,
         sp.scientific_description as detailed_description,
         sp.official_title,
 		sp.acronym,		
-        respPartyCrs.assigned_identifier as respPartyCrsId,
-        respPartySc.email as prim_email,
-        respPartySc.telephone as prim_phone,
-        respPartySponsorContact.telephone as respPartySponsorPhone,
-        respPartySponsorContact.email as respPartySponsorEmail,
+		rp_sponsor.assigned_identifier as rp_sponsor_po_id,
         central_contact.email as centralContactEmail,
-        central_contact.telephone as centralContactPhone,
-        respPartySponsorContact.identifier as respPartySponsorIdentifier,
+        central_contact.telephone as centralContactPhone,        
         ra_country.name || ': ' || ra.authority_name as reg_authority,
 		ra_country.identifier as reg_authority_country_id,
         CASE
@@ -94,12 +81,7 @@ def getTrialsSQL = """
         CASE
             WHEN sp.pri_compl_date_type_code = 'ACTUAL' then 'Actual'
             WHEN sp.pri_compl_date_type_code = 'ANTICIPATED' then 'Anticipated'
-        END as pri_compl_date_type_code,
-        CASE
-            WHEN sp.accr_rept_meth_code = 'ABBREVIATED' then 'Abbreviated'
-            WHEN sp.accr_rept_meth_code = 'COMPLETE' then 'Complete'
-            WHEN sp.accr_rept_meth_code = 'AE' then 'AE'
-        END as accr_rept_meth_code,
+        END as pri_compl_date_type_code,   
         pp.code as primary_purpose_code,
 		CASE
             WHEN sp.phase_code = 'O' then 'Phase 0'           
@@ -152,20 +134,17 @@ def getTrialsSQL = """
         CASE
             WHEN sp.min_target_accrual_num is null then 0
             ELSE sp.min_target_accrual_num
-        END as min_target_accrual_num,
-        ov_off_crs.assigned_identifier as ovOffCrsId,
+        END as min_target_accrual_num,        
 		pi.assigned_identifier as pi_po_id,
 		pi.first_name as pi_first_name,
 		pi.last_name as pi_last_name,
 		pi.middle_name as pi_middle_name,
-
-        central_contact_crs.assigned_identifier as centralContactCrsId,
+        
 		central_contact_person.assigned_identifier as cc_po_id,
 		central_contact_person.first_name as cc_first_name,
 		central_contact_person.last_name as cc_last_name,
 		central_contact_person.middle_name as cc_middle_name,
-
-        subm_ru.prs_org_name,
+        
         CASE WHEN sp.proprietary_trial_indicator then 'Abbreviated'
                 ELSE 'Complete'
             END as category,
@@ -181,16 +160,13 @@ def getTrialsSQL = """
         CASE WHEN sp.data_monty_comty_apptn_indicator THEN 'Yes'
                  ELSE 'No'
             END as dmc_indicator,
-        CASE
-            WHEN summary4.type_code = 'EXTERNALLY_PEER_REVIEWED' then 'Externally Peer Reviewed'
-            WHEN summary4.type_code = 'INSTITUTIONAL' then 'Institutional'
-            WHEN summary4.type_code = 'INDUSTRIAL' then 'Industrial'
-            WHEN summary4.type_code = 'NATIONAL' then 'National'
-        END as summary4_type_code,
+		CASE
+            WHEN sp.expd_access_indidicator=true then 'Yes'			
+            ELSE 'No'
+        END as has_expanded_access,
         CASE WHEN sp.accept_healthy_volunteers_indicator THEN 'Yes'
                  ELSE 'No'
-            END as healthy_volunteer_indicator,
-        processing_status.status_date_range_low::date as verification_date,
+            END as healthy_volunteer_indicator,        
         sp.blinding_role_code_subject,
         sp.blinding_role_code_caregiver,
         sp.blinding_role_code_investigator,
@@ -216,7 +192,9 @@ def getTrialsSQL = """
 		CASE
             WHEN sp.sampling_method_code = 'NON_PROBABILITY_SAMPLE' then 'Non-Probability Sample'
             WHEN sp.sampling_method_code = 'PROBABILITY_SAMPLE' then 'Probability Sample'            
-        END as sampling_method		
+        END as sampling_method,
+	 sp.record_verification_date as verification_date,
+	 sp.keyword_text as keywords		
      from study_protocol sp
      inner join rv_trial_id_nct on rv_trial_id_nct.study_protocol_identifier = sp.identifier
      join rv_sponsor_organization sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier 
@@ -228,14 +206,6 @@ def getTrialsSQL = """
 	 left outer join rv_ccr_id ccr on ccr.study_protocol_identifier = sp.identifier
      left outer join rv_lead_organization leadOrgSs on leadOrgSs.study_protocol_identifier = sp.identifier
 	 left outer join rv_trial_submitter submitter on submitter.study_protocol_identifier = sp.identifier
-     left outer join study_resourcing as summary4 on summary4.study_protocol_identifier = sp.identifier and summary4.summ_4_rept_indicator is true
-        and summary4.identifier = (select max(identifier) from study_resourcing where study_protocol_identifier = sp.identifier and summ_4_rept_indicator is true)
-     left outer join organization as sum4Org on cast(summary4.organization_identifier as integer) = sum4Org.identifier     
-     left outer join study_contact as respPartySc on respPartySc.study_protocol_identifier = sp.identifier and respPartySc.role_code = 'RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR'
-     left outer join study_site_contact respPartySponsorContact on
-        respPartySponsorContact.study_site_identifier in (select identifier from study_site where study_site.functional_code='RESPONSIBLE_PARTY_SPONSOR' and study_site.study_protocol_identifier=sp.identifier)
-        and respPartySponsorContact.role_code = 'RESPONSIBLE_PARTY_SPONSOR_CONTACT'
-     left outer join clinical_research_staff respPartyCrs on respPartyCrs.identifier = respPartySc.clinical_research_staff_identifier
      left outer join study_regulatory_authority sra on sra.study_protocol_identifier = sp.identifier
      left outer join regulatory_authority ra on ra.identifier = sra.regulatory_authority_identifier
      left outer join country ra_country on ra_country.identifier = ra.country_identifier
@@ -246,12 +216,11 @@ def getTrialsSQL = """
      left outer join person pi on pi.identifier = ov_off_crs.person_identifier
      left outer join study_contact central_contact on central_contact.study_protocol_identifier = sp.identifier and central_contact.role_code = 'CENTRAL_CONTACT'
      left outer join clinical_research_staff central_contact_crs on central_contact_crs.identifier = central_contact.clinical_research_staff_identifier
-	 left outer join person central_contact_person on central_contact_person.identifier = central_contact_crs.person_identifier
-     left outer join csm_user subm_csm on subm_csm.user_id = sp.user_last_created_id
-     left outer join registry_user subm_ru on subm_ru.csm_user_id = subm_csm.user_id
+	 left outer join person central_contact_person on central_contact_person.identifier = central_contact_crs.person_identifier          
      left outer join primary_purpose pp on sp.primary_purpose_code = pp.name        
      left outer join document_workflow_status as processing_status on processing_status.study_protocol_identifier = sp.identifier
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
+	 left outer join rv_organization_responsible_party rp_sponsor on rp_sponsor.study_protocol_identifier=sp.identifier
      where sp.status_code = 'ACTIVE'  and rv_trial_id_nct.local_sp_indentifier is not null
 """
 
@@ -531,168 +500,96 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		}
 
 		// Participating sites.
+		def countryList = new TreeSet()
 		paConn.eachRow(Queries.partSitesSQL, [studyProtocolID]) { row ->
 			xml.location {
 				xml.facility {
 					xml.name(row.name?.trim())
 					def orgRow = orgsMap.get(row.org_poid.toLong())
 					address(xml, orgRow)
+					countryList.add(orgRow.country_name)
 				}
-				
+
 				xml.status(row.status)
-				
+
 				paConn.eachRow(Queries.primaryContactSQL, [
 					row.ss_identifier,
 					studyProtocolID
 				]) { primconrow ->
-					if (primconrow.prim_crs_id != null && crsMap.get(primconrow.prim_crs_id.toLong()) != null) {
-						xml.contact {
-							def crsRow = crsMap.get(primconrow.prim_crs_id.toLong())
-							crsDetail(xml, crsRow)
-							addressAndPhoneDetail(xml, crsRow, primconrow, true)
-						}
+					xml.contact {
+						xml.first_name(primconrow.first_name)
+						if (primconrow.middle_name)
+							xml.middle_name(primconrow.middle_name)
+						xml.last_name(primconrow.last_name)
+						if (primconrow.prim_phone)
+							xml.phone(primconrow.prim_phone)
+						if (primconrow.prim_email)
+							xml.email(primconrow.prim_email)
 					}
+
 				}
 
 				paConn.eachRow(Queries.investigatorsSQL, [
 					row.ss_identifier,
 					studyProtocolID
 				]) { invsrow ->
-					if (invsrow.inv_crs_id != null && crsMap.get(invsrow.inv_crs_id.toLong()) != null) {
-						xml.investigator {
-							def crsRow = crsMap.get(invsrow.inv_crs_id.toLong())
-							crsDetail(xml, crsRow)
-							addressAndPhoneDetail(xml, crsRow, null, false)
-							xml.role("Principal Investigator")
-						}
+					xml.investigator {
+						xml.first_name(invsrow.first_name)
+						if (invsrow.middle_name)
+							xml.middle_name(invsrow.middle_name)
+						xml.last_name(invsrow.last_name)
+						xml.role("Principal Investigator")
 					}
+
 				}
 			}
 		}  // end part sites
 
+		// Participating site countries.
+		if (!countryList.empty)
+			xml.location_countries {
+				countryList.each {  xml.country(it) }
+			}
 
-		////////////////////////////////////////////////////////////////
-		xml.resp_party {
-			xml.resp_party_person {
-				if (spRow.respPartyCrsId != null) {
-					def crsRow = crsMap.get(spRow.respPartyCrsId.toLong())
-					crsDetail(xml, crsRow)
-					addressAndPhoneDetail(xml, crsRow, spRow, true)
+		xml.link {
+			xml.url("http://clinicaltrials.gov/show/${spRow.nctId}")
+			xml.description("Clinical trial summary from the National Library of Medicine (NLM)'s database")
+		}
+
+		if (spRow.verification_date)
+			xml.verification_date(spRow.verification_date.format("MMMM yyyy"))
+
+		def firstSubmitDate = paConn.firstRow(Queries.firstSubmissionSQL, [spRow.nciId])?.milestone_date
+		xml.firstreceived_date(firstSubmitDate?firstSubmitDate.format("MMMM d, yyyy"):'N/A')
+
+		// Responsible Party
+		def partyRow = paConn.firstRow(Queries.respPartySQL, [studyProtocolID])
+		if (partyRow || spRow.rp_sponsor_po_id)
+			xml.responsible_party {
+				if (spRow.rp_sponsor_po_id) {
+					xml.responsible_party_type("Sponsor")
+				} else {
+					xml.responsible_party_type(partyRow.type)
+					xml.investigator_affiliation(partyRow.org_name)
+					xml.investigator_full_name("${partyRow.first_name} ${partyRow.middle_name?:''} ${partyRow.last_name}".trim().replaceAll('\\s+', ' '))
+					if (partyRow.title)
+						xml.investigator_title(partyRow.title)
 				}
 			}
-			xml.resp_party_organization {
-				if (spRow.sponsorRoId != null && spRow.respPartySponsorIdentifier!=null) {
-					def roRow = rosMap.get(spRow.sponsorRoId.toLong())
-					xml.name(roRow.orgname)
-					xml.po_id(roRow.org_poid)
-					xml.ctep_id(roRow.ctep_id)
-					def sponsorContactInfo = ['prim_phone':spRow.respPartySponsorPhone,'prim_email':spRow.respPartySponsorEmail]
-					addressAndPhoneDetail(xml, roRow,
-							sponsorContactInfo, true)
-				}
+
+		if (spRow.keywords) {
+			spRow.keywords.split(',|;|\\n|\\r\\n').each {
+				if (it.trim())
+					xml.keyword(it.trim())
 			}
 		}
 
-		paConn.eachRow(Queries.ownersSQL, [studyProtocolID]) { row ->
-			xml.trial_owners {
-				xml.name(row.ownerName)
-			}
-		}
-
-		xml.lead_org {
-			if(spRow.leadRoId != null){
-				def roRow = rosMap.get(spRow.leadRoId.toLong())
-				xml.name(roRow.orgname)
-				xml.po_id(roRow.org_poid)
-				xml.ctep_id(roRow.ctep_id)
-				addressAndPhoneDetail(xml, roRow, null,false)
-			}
-		}
-
-		xml.nci_specific_information {
-			xml.reporting_data_set_method(spRow.accr_rept_meth_code)
-			xml.summary_4_funding_category(spRow.summary4_type_code)
-			xml.summary_4_funding_sponsor_source {
-				if (spRow.sum4OrgId != null) {
-					def sum4Org = orgsMap.get(spRow.sum4OrgId.toLong())
-					xml.name(sum4Org.name)
-					xml.po_id(sum4Org.org_poid)
-					addressAndPhoneDetail(xml, sum4Org, null, false)
-				}
-			}
-		}
 
 		xml.is_fda_regulated(spRow.fda_indicator)
 		xml.is_section_801(spRow.section801_indicator)
+		xml.has_expanded_access(spRow.has_expanded_access)
 		xml.delayed_posting(spRow.delayed_posting_indicator)
 
-
-
-
-
-
-
-
-
-
-
-		xml.trial_status {
-			xml.current_trial_status(spRow.current_trial_status)
-			xml.current_trial_status_date(spRow.current_trial_status_date)
-			xml.current_trial_start_date(spRow.start_date)
-			xml.current_trial_start_date_type(spRow.start_date_type_code)
-			xml.current_trial_completion_date(spRow.pri_compl_date)
-			xml.current_trial_completion_date_type(spRow.pri_compl_date_type_code)
-		}
-
-		xml.trial_funding {
-			paConn.eachRow(Queries.fundingsSQL, [studyProtocolID]) { fundRow ->
-				if (fundRow.funding_mechanism_code != null) {
-					xml.funding_info {
-						xml.funding_code(fundRow.funding_mechanism_code)
-						xml.funding_nih_inst_code(fundRow.nih_institute_code)
-						xml.funding_serial_number(fundRow.serial_number)
-						xml.funding_nci_div_program(fundRow.nci_division_program_code)
-					}
-				}
-			}
-		}
-
-		xml.study_design {
-			xml.study_type("Interventional")
-			xml.interventional_design {
-				xml.interventional_subtype(spRow.primary_purpose_code)
-
-				xml.allocation(spRow.allocation_code)
-				xml.masking(spRow.blinding_schema_code)
-				if (spRow.blinding_role_code_caregiver != null)
-					xml.masked_caregiver("Yes")
-				if (spRow.blinding_role_code_investigator != null)
-					xml.masked_investigator("Yes")
-				if (spRow.blinding_role_code_subject != null)
-					xml.masked_subject("Yes")
-				if (spRow.blinding_role_code_outcome != null)
-					xml.masked_outcome("Yes")
-				xml.assignment(spRow.design_configuration_code)
-				xml.endpoint(spRow.classification_code)
-
-			}
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		xml.verification_date(spRow.verification_date)
 	}
 	writer.flush();
 	writer.close();
@@ -700,15 +597,6 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 }
 
-void crsDetail(MarkupBuilder xml, Object crsRow) {
-	xml.first_name(crsRow.firstname)
-	if (crsRow.middlename != null)
-		xml.middle_initial(crsRow.middlename.substring(0, 1))
-	xml.last_name(crsRow.lastname)
-	xml.po_id(crsRow.person_poid)
-	if (crsRow.ctep_id != null)
-		xml.ctep_id(crsRow.ctep_id)
-}
 
 void address(MarkupBuilder xml, Object row) {
 	xml.address {
@@ -721,57 +609,6 @@ void address(MarkupBuilder xml, Object row) {
 	}
 }
 
-void addressAndPhoneDetail(MarkupBuilder xml, Object row, Object spRow, boolean suppressPhoneAndEmail) {
-
-	xml.address {
-
-		if (StringUtils.equalsIgnoreCase(row.stateorprovince, "UM")) {
-			xml.street("")
-			xml.city("")
-			xml.state("")
-			xml.zip("")
-			xml.country("")
-		} else {
-			if (!StringUtils.equalsIgnoreCase(row.streetaddressline, "unknown")) {
-				xml.street(row.streetaddressline)
-			} else {
-				xml.street("");
-			}
-			if(!StringUtils.equalsIgnoreCase(row.cityormunicipality, "unknown")) {
-				xml.city(row.cityormunicipality)
-			}else{
-				xml.city("");
-			}
-
-			xml.state(row.stateorprovince)
-
-			if(StringUtils.equals(row.postalcode, "96960")) {
-				xml.zip("")
-			}else{
-				xml.zip(row.postalcode)
-			}
-
-			xml.country(row.country_name)
-		}
-	}
-
-	//suppressPhoneAndEmail=true implies, use phone, fax & email values from PA only. DO NOT use phone, fax and email values from PO.
-	//suppressPhoneAndEmail=false implies, use phone, fax and email values from PA, if not available in PA then use the ones available in PO.
-
-	xml.phone((spRow!=null && spRow.prim_phone!=null?spRow.prim_phone:(suppressPhoneAndEmail?"":row.phone)))
-
-	if (row.faxnumber != null && !suppressPhoneAndEmail) {
-		xml.fax(row.faxnumber)
-	}
-
-	xml.email(( spRow!=null &&
-			spRow.prim_email!=null &&
-			!StringUtils.containsIgnoreCase(spRow.prim_email, "unknown") &&
-			!Constants.SUPRESS_EMAIL_IDS.contains(spRow.prim_email) ? spRow.prim_email :
-			(StringUtils.containsIgnoreCase(row.email, "unknown") ||
-			Constants.SUPRESS_EMAIL_IDS.contains(row.email) ||
-			suppressPhoneAndEmail ? "" : row.email)))
-}
 
 String buildEligibilityCriterionDescription(criterion) {
 	return "  - " <<  applyPrsFormattingFixes(criterion) << '\n'

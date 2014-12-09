@@ -44,29 +44,7 @@ class Queries {
         where ss.functional_code in ('FUNDING_SOURCE', 'LABORATORY', 'AGENT_SOURCE')
             and ss.study_protocol_identifier = ?
     """
-
-    public static def ownersSQL = """
-        select ru.first_name ||  ' ' || ru.last_name as ownerName
-            from registry_user ru
-        join study_owner own on own.user_id = ru.identifier
-                and own.study_id = ?
-    """
-
-    public static def roIdSQL = """
-        select ro.identifier
-        from research_organization ro
-        join organization org on org.identifier = ro.organization_identifier
-        where org.name = ?
-    """
-    
-    public static def fundingsSQL = """
-        select funding_mechanism_code,
-            nih_institute_code,
-            serial_number,
-            nci_division_program_code
-        from study_resourcing
-            where study_protocol_identifier = ?
-    """
+  
     
     public static def conditionsSQL = """
         select 
@@ -177,27 +155,60 @@ class Queries {
         select 
         prim_crs.assigned_identifier as prim_crs_id,
         prim_ssc.telephone as prim_phone,
-        prim_ssc.email as prim_email
-        from study_site_contact prim_ssc, clinical_research_staff prim_crs 
+        prim_ssc.email as prim_email,
+   		p.first_name,
+		p.middle_name,
+		p.last_name,
+		p.assigned_identifier as person_po_id
+        from study_site_contact prim_ssc, clinical_research_staff prim_crs, person p 
         where 
         prim_ssc.role_code = 'PRIMARY_CONTACT' and
         prim_crs.identifier = prim_ssc.clinical_research_staff_identifier and
+   		p.identifier=prim_crs.person_identifier and
+   		p.assigned_identifier is not null and
         prim_ssc.study_site_identifier = ? and
-        prim_ssc.study_protocol_identifier = ?
+        prim_ssc.study_protocol_identifier = ? LIMIT 1
    """
    
    public static def investigatorsSQL = """
         select 
         inv_crs.assigned_identifier as inv_crs_id,
         inv_ssc.telephone as inv_phone,
-        inv_ssc.email as inv_email
-        from study_site_contact inv_ssc, clinical_research_staff inv_crs
+        inv_ssc.email as inv_email,
+		p.first_name,
+		p.middle_name,
+		p.last_name,
+		p.assigned_identifier as person_po_id
+        from study_site_contact inv_ssc, clinical_research_staff inv_crs, person p 
         where
         inv_ssc.role_code = 'PRINCIPAL_INVESTIGATOR' and
         inv_crs.identifier = inv_ssc.clinical_research_staff_identifier and
+   		p.identifier=inv_crs.person_identifier and
+   	    p.assigned_identifier is not null and
         inv_ssc.study_site_identifier = ? and
         inv_ssc.study_protocol_identifier = ?
    """
     
+   public static def firstSubmissionSQL = """
+        SELECT sm.milestone_date FROM STUDY_MILESTONE sm
+			inner join rv_trial_id_nci as nci_id on nci_id.study_protocol_id = sm.study_protocol_identifier     
+		     where sm.milestone_code='SUBMISSION_RECEIVED' 
+		     and extension=?
+		     order by sm.milestone_date asc LIMIT 1
+    """
+   
+	public static def respPartySQL = """
+		SELECT sc.study_protocol_identifier,per.first_name,per.last_name, per.middle_name, org.name as org_name, sc.title,
+			CASE
+				WHEN role_code='RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR' THEN 'Principal Investigator'
+				WHEN role_code='RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR' THEN 'Sponsor-Investigator'
+			END as type
+			FROM study_contact sc
+			INNER JOIN clinical_research_staff crs ON (crs.identifier = sc.clinical_research_staff_identifier)
+			INNER JOIN person per ON (crs.person_identifier = per.identifier)
+			INNER JOIN organization org ON crs.organization_identifier=org.identifier
+			WHERE role_code in ('RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR','RESPONSIBLE_PARTY_SPONSOR_INVESTIGATOR')
+			AND sc.study_protocol_identifier=?
+    """
     
 }
