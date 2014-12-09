@@ -416,25 +416,7 @@ public class FilterOrganizationUtil {
          * @throws PAException problems retrieving the id.
          */
         private static String getCtepId(final String poId) throws PAException {
-           return (String) CacheUtils.getFromCacheOrBackend(CacheUtils.getOrganizationCtepIdCache(),
-                   poId,
-                   new Closure() {
-                    
-                    @Override
-                    public Object execute() throws PAException {
-                        PaOrganizationDTO poOrg;
-                        try {
-                            poOrg = PADomainUtils.getOrgDetailsPopup(poId);
-                        } catch (Exception e) {
-                            throw new PAException(
-                                    "An exception occured while trying to retrieve the CTEP id for " + poId, e);
-                        } 
-                        if (poOrg != null) {
-                            return poOrg.getCtepId();
-                        }
-                        return null;
-                    }
-                });
+           return PADomainUtils.getCtepId(poId);
         }
     }
     

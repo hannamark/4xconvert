@@ -121,6 +121,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.AbstractRoleDTO;
@@ -1222,6 +1223,34 @@ public class PADomainUtils {
             transferAddressAndContactsFromRole(person, dto);
         }
 
+    }
+    
+    /**
+     * gets the CTEP id of the org from the cache or PO if needed.
+     * @param poId the organization's po id
+     * @return the ctep id
+     * @throws PAException problems retrieving the id.
+     */
+    public static String getCtepId(final String poId) throws PAException {
+       return (String) CacheUtils.getFromCacheOrBackend(CacheUtils.getOrganizationCtepIdCache(),
+               poId,
+               new Closure() {
+                
+                @Override
+                public Object execute() throws PAException {
+                    PaOrganizationDTO poOrg;
+                    try {
+                        poOrg = PADomainUtils.getOrgDetailsPopup(poId);
+                    } catch (Exception e) {
+                        throw new PAException(
+                                "An exception occured while trying to retrieve the CTEP id for " + poId, e);
+                    } 
+                    if (poOrg != null) {
+                        return poOrg.getCtepId();
+                    }
+                    return null;
+                }
+            });
     }
     
     /**

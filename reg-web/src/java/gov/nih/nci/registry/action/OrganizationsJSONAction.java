@@ -2,13 +2,23 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.registry.util.FilterOrganizationUtil;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.TransformerUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -64,10 +74,23 @@ public class OrganizationsJSONAction extends ActionSupport {
             LOG.error("Error calling organization service", e);
             orgDtos = new ArrayList<PaOrganizationDTO>();
         }
-
+        
+        Collection<String> orgNms = CollectionUtils.collect(orgDtos, TransformerUtils.invokerTransformer("getName"));
         for (PaOrganizationDTO orgDto : orgDtos) {
-            getOrganizationDtos().put(orgDto.getName(), orgDto.getId());
+        	if(Collections.frequency(orgNms, orgDto.getName()) > 1) {
+        		String poOrgIdOrCtepId = null;
+				try {
+					poOrgIdOrCtepId = PADomainUtils.getCtepId(orgDto.getIdentifier());
+				} catch (PAException e) {
+					LOG.error("Error getting ctepId", e);
+				}
+				poOrgIdOrCtepId = poOrgIdOrCtepId == null ? orgDto.getIdentifier() : poOrgIdOrCtepId;
+        		organizationDtos.put( String.format("%s (%s)", orgDto.getName(),  poOrgIdOrCtepId), orgDto.getId() );
+        	} else {
+        		organizationDtos.put(orgDto.getName(), orgDto.getId());
+        	}
         }
+        
         return SUCCESS;
     }
 
