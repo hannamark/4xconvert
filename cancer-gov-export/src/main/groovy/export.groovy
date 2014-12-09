@@ -477,21 +477,15 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 		if(spRow.pi_po_id) {
 			xml.overall_official {
-				xml.first_name(spRow.pi_first_name)
-				if (spRow.pi_middle_name)
-					xml.middle_name(spRow.pi_middle_name)
-				xml.last_name(spRow.pi_last_name)
+				xml.last_name("${spRow.pi_first_name} ${spRow.pi_middle_name?:''} ${spRow.pi_last_name}".trim().replaceAll('\\s+', ' '))
 				xml.role("Principal Investigator")
 				xml.affiliation(spRow.leadOrgName?.trim())
 			}
 		}
 
 		if (spRow.cc_po_id) {
-			xml.overall_contact {
-				xml.first_name(spRow.cc_first_name)
-				if (spRow.cc_middle_name)
-					xml.middle_name(spRow.cc_middle_name)
-				xml.last_name(spRow.cc_last_name)
+			xml.overall_contact {	
+				xml.last_name("${spRow.cc_first_name} ${spRow.cc_middle_name?:''} ${spRow.cc_last_name}".trim().replaceAll('\\s+', ' '))
 				if (spRow.centralContactPhone)
 					xml.phone(spRow.centralContactPhone)
 				if (spRow.centralContactEmail)
@@ -516,11 +510,8 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					row.ss_identifier,
 					studyProtocolID
 				]) { primconrow ->
-					xml.contact {
-						xml.first_name(primconrow.first_name)
-						if (primconrow.middle_name)
-							xml.middle_name(primconrow.middle_name)
-						xml.last_name(primconrow.last_name)
+					xml.contact {					
+						xml.last_name("${primconrow.first_name} ${primconrow.middle_name?:''} ${primconrow.last_name}".trim().replaceAll('\\s+', ' '))
 						if (primconrow.prim_phone)
 							xml.phone(primconrow.prim_phone)
 						if (primconrow.prim_email)
@@ -533,11 +524,8 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					row.ss_identifier,
 					studyProtocolID
 				]) { invsrow ->
-					xml.investigator {
-						xml.first_name(invsrow.first_name)
-						if (invsrow.middle_name)
-							xml.middle_name(invsrow.middle_name)
-						xml.last_name(invsrow.last_name)
+					xml.investigator {				
+						xml.last_name("${invsrow.first_name} ${invsrow.middle_name?:''} ${invsrow.last_name}".trim().replaceAll('\\s+', ' '))
 						xml.role("Principal Investigator")
 					}
 
