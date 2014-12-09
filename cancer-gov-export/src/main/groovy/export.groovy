@@ -2,6 +2,9 @@ import groovy.sql.Sql
 import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.lang3.StringUtils
+import javax.xml.XMLConstants
+import javax.xml.transform.stream.StreamSource
+import javax.xml.validation.SchemaFactory
 
 def resolvedProperties = [:]
 
@@ -288,7 +291,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		xml.source(spRow.source?:"Unknown")
 		if (spRow.reg_authority_country_id)
 			xml.oversight_info {
-				xml.regulatory_authority(spRow.reg_authority)
+				xml.authority(spRow.reg_authority)
 				xml.has_dmc(spRow.dmc_indicator)
 			}
 
@@ -316,9 +319,9 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		paConn.eachRow(Queries.primOutcomesSQL, [studyProtocolID]) { row ->
 			xml.primary_outcome {
 				xml.measure(row.prim_som_name);
-				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.prim_som_timeframe)
 					xml.time_frame(row.prim_som_timeframe)
+				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.description)
 					xml.description(row.description)
 			}
@@ -326,9 +329,9 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		paConn.eachRow(Queries.secondOutcomesSQL, [studyProtocolID]) { row ->
 			xml.secondary_outcome {
 				xml.measure(row.prim_som_name);
-				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.prim_som_timeframe)
 					xml.time_frame(row.prim_som_timeframe)
+				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.description)
 					xml.description(row.description)
 			}
@@ -336,9 +339,9 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		paConn.eachRow(Queries.otherOutcomesSQL, [studyProtocolID]) { row ->
 			xml.other_outcome {
 				xml.measure(row.prim_som_name);
-				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.prim_som_timeframe)
 					xml.time_frame(row.prim_som_timeframe)
+				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.description)
 					xml.description(row.description)
 			}
@@ -484,7 +487,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		}
 
 		if (spRow.cc_po_id) {
-			xml.overall_contact {	
+			xml.overall_contact {
 				xml.last_name("${spRow.cc_first_name} ${spRow.cc_middle_name?:''} ${spRow.cc_last_name}".trim().replaceAll('\\s+', ' '))
 				if (spRow.centralContactPhone)
 					xml.phone(spRow.centralContactPhone)
@@ -510,7 +513,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					row.ss_identifier,
 					studyProtocolID
 				]) { primconrow ->
-					xml.contact {					
+					xml.contact {
 						xml.last_name("${primconrow.first_name} ${primconrow.middle_name?:''} ${primconrow.last_name}".trim().replaceAll('\\s+', ' '))
 						if (primconrow.prim_phone)
 							xml.phone(primconrow.prim_phone)
@@ -524,7 +527,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					row.ss_identifier,
 					studyProtocolID
 				]) { invsrow ->
-					xml.investigator {				
+					xml.investigator {
 						xml.last_name("${invsrow.first_name} ${invsrow.middle_name?:''} ${invsrow.last_name}".trim().replaceAll('\\s+', ' '))
 						xml.role("Principal Investigator")
 					}
@@ -576,11 +579,17 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		xml.is_fda_regulated(spRow.fda_indicator)
 		xml.is_section_801(spRow.section801_indicator)
 		xml.has_expanded_access(spRow.has_expanded_access)
-		xml.delayed_posting(spRow.delayed_posting_indicator)
+		
 
 	}
 	writer.flush();
 	writer.close();
+
+	// We need to validate the file we just produced against the NLM's XSD to make sure we didn't produce something odd due to a bug or something.
+	def factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
+	def schema = factory.newSchema(new StreamSource(new File("src/main/resources/public.xsd")))
+	def validator = schema.newValidator()
+	validator.validate(new StreamSource(trialFile))
 	nbOfTrials++
 
 }
