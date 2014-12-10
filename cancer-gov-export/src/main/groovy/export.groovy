@@ -357,14 +357,18 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 		paConn.eachRow(Queries.conditionsSQL, [studyProtocolID]) { row ->
 			xml.condition(row.preferred_name)
 		}
-		// try to be cheap and steal a few cycles by running 1 query instead of 3.
-		def allArmsAndInt = []
+
+		def allArms = []
 		paConn.eachRow(Queries.armsSQL, [studyProtocolID]) { row ->
-			allArmsAndInt.add(row.toRowResult())
+			allArms.add(row.toRowResult())
+		}
+		def allInts = []
+		paConn.eachRow(Queries.interventionsSQL, [studyProtocolID]) { row ->
+			allInts.add(row.toRowResult())
 		}
 		// get arms out of it.
 		def armsList = []
-		allArmsAndInt.each {
+		allArms.each {
 			def row = it
 			if (!armsList.contains(row.arm_id)) {
 				xml.arm_group {
@@ -380,7 +384,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 		// interventions.
 		def intsList =[]
-		allArmsAndInt.each {
+		allInts.each {
 			def intRow = it
 			if (!intsList.contains(intRow.int_id)) {
 				xml.intervention  {
@@ -391,7 +395,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					}
 
 					groupNamesList = []
-					allArmsAndInt.each {
+					allArms.each {
 						def groupRow = it
 						if (intRow.int_id == groupRow.int_id && !groupNamesList.contains(groupRow.arm_name)) {
 							xml.arm_group_label(groupRow.arm_name)
@@ -401,7 +405,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 					// other names
 					otherNamesList = []
-					allArmsAndInt.each {
+					allInts.each {
 						def otherNameRow = it
 						if (intRow.int_id == otherNameRow.int_id && !otherNamesList.contains(otherNameRow.alt_name)
 						&& otherNameRow.alt_name != null && otherNameRow.alt_name.size() > 0) {

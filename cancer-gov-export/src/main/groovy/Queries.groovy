@@ -83,6 +83,34 @@ class Queries {
             left outer join intervention_alternate_name altName on altName.intervention_identifier = int.identifier 
         where a.study_protocol_identifier = ?            
     """
+	
+	public static def interventionsSQL = """
+        select 
+            a.identifier as arm_id,
+            a.name as arm_name,
+            CASE 
+                WHEN a.type_code = 'EXPERIMENTAL' then 'Experimental' 
+                WHEN a.type_code = 'ACTIVE_COMPARATOR' then 'Active Comparator' 
+                WHEN a.type_code = 'PLACEBO_COMPARATOR' then 'Placebo Comparator' 
+                WHEN a.type_code = 'SHAM_COMPARATOR' then 'Sham Comparator' 
+                WHEN a.type_code = 'NO_INTERVENTION' then 'No Intervention' 
+                WHEN a.type_code = 'OTHER' then 'Other' 
+            END as arm_type,
+            a.description_text as arm_desc,
+            int.identifier as int_id,
+            int.pdq_term_identifier as cdr_id,
+            pa.subcategory_code as int_type,
+            int.name as int_name,
+            pa.text_description as int_desc,
+            altName.name as alt_name
+        from intervention int
+			inner join planned_activity pa on pa.intervention_identifier = int.identifier
+			left outer join arm_intervention a_i on a_i.planned_activity_identifier = pa.identifier
+			left outer join arm a on a.identifier = a_i.arm_identifier
+			left outer join intervention_alternate_name altName on altName.intervention_identifier = int.identifier
+        where pa.study_protocol_identifier = ?            
+    """
+
     
     public static def primOutcomesSQL = """
         select 
