@@ -533,7 +533,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 				]) { invsrow ->
 					xml.investigator {
 						xml.last_name("${invsrow.first_name} ${invsrow.middle_name?:''} ${invsrow.last_name}".trim().replaceAll('\\s+', ' '))
-						xml.role("Principal Investigator")
+						xml.role(invsrow.role)
 					}
 
 				}

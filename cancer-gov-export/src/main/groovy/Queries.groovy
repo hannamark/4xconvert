@@ -206,10 +206,13 @@ class Queries {
 		p.first_name,
 		p.middle_name,
 		p.last_name,
-		p.assigned_identifier as person_po_id
+		p.assigned_identifier as person_po_id,
+   		CASE WHEN inv_ssc.role_code = 'PRINCIPAL_INVESTIGATOR' THEN 'Principal Investigator'               
+                ELSE 'Sub-Investigator'
+        END as role
         from study_site_contact inv_ssc, clinical_research_staff inv_crs, person p 
         where
-        inv_ssc.role_code = 'PRINCIPAL_INVESTIGATOR' and
+        inv_ssc.role_code in ('PRINCIPAL_INVESTIGATOR', 'SUB_INVESTIGATOR') and
         inv_crs.identifier = inv_ssc.clinical_research_staff_identifier and
    		p.identifier=inv_crs.person_identifier and
    	    p.assigned_identifier is not null and
