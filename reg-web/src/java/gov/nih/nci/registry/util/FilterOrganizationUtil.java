@@ -1,12 +1,10 @@
 package gov.nih.nci.registry.util;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.FamilyHelper;
-import gov.nih.nci.pa.util.CacheUtils;
-import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -22,8 +20,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /**
  * Various functions to return the organization lists needed for populating the registry
