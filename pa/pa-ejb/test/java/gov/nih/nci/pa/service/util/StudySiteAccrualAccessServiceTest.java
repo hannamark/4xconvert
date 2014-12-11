@@ -146,7 +146,6 @@ public class StudySiteAccrualAccessServiceTest extends AbstractEjbTestCase {
     StudySiteAccrualAccessServiceBean bean;
     StudySiteAccrualStatusBeanLocal statusBean;
     ParticipatingOrgServiceBean participatingOrgServiceLocal;
-    
 
     @Before
     public void setUp() throws Exception {        
@@ -156,7 +155,6 @@ public class StudySiteAccrualAccessServiceTest extends AbstractEjbTestCase {
         statusBean = (StudySiteAccrualStatusBeanLocal) getEjbBean(StudySiteAccrualStatusServiceBean.class);        
         participatingOrgServiceLocal = (ParticipatingOrgServiceBean) getEjbBean(ParticipatingOrgServiceBean.class);
         this.bean = (StudySiteAccrualAccessServiceBean) getEjbBean(StudySiteAccrualAccessServiceBean.class);
-        
         Method m = ReflectionUtils.findMethod(StudySiteAccrualAccessServiceBean.class, "getIndTrialCache");
         ReflectionUtils.makeAccessible(m);
         Cache cache = (Cache) ReflectionUtils.invokeMethod(m, null);
@@ -263,8 +261,22 @@ public class StudySiteAccrualAccessServiceTest extends AbstractEjbTestCase {
     }
 
     @Test
-    public void testGetTreatingSites() throws PAException {
-        assertNotNull(bean.getTreatingSites(TestSchema.studyProtocolIds.get(0)));
+    public void testGetTreatingSites() throws Exception {
+        assertNotNull(bean.getTreatingSites(spId));
+        
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
+        StudySite site = TestSchema.createParticipatingSite(sp);
+        StudySiteAccrualStatus studySiteAccrualStatus = site.getStudySiteAccrualStatuses().get(0);
+        studySiteAccrualStatus.setStatusCode(RecruitmentStatusCode.IN_REVIEW);
+        TestSchema.addUpdObject(studySiteAccrualStatus);
+        
+        assertTrue(bean.getTreatingSites(sp.getId()).size() == 0);
+        
+        studySiteAccrualStatus.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        TestSchema.addUpdObject(studySiteAccrualStatus);
+        
+        assertTrue(bean.getTreatingSites(sp.getId()).size() == 1);
+        
     }
     
     @Test

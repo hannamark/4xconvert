@@ -232,11 +232,13 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
         List<Object[]> queryList = null;
         session = PaHibernateUtil.getCurrentSession();
         Query query = null;
-        String hql = "select ss.id, org, ssas from StudyProtocol sp join sp.studySites ss "
+        String hql = "select ss.id, org, ssas from StudyProtocol sp join sp.studySites ss"
             + " join ss.studySiteAccrualStatuses ssas "
             + " join ss.healthCareFacility hcf join hcf.organization org "
             + " where sp.id = :spId "
             + " and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
+            + " and ssas.id = (select max(ssas.id) "
+            + " from StudySiteAccrualStatus ssas where ssas.studySite.id =ss.id) "
             + " order by org.name, ss.id ";
         query = session.createQuery(hql);
         query.setParameter(SP_ID, studyProtocolId);
