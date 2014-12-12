@@ -98,4 +98,10 @@ public class CommonsConstant {
     public static final String NO = "No";
     /** Pa Internal. **/
     public static final String PA_INTERNAL = "PA-InternalIdentifier";
+    
+    /**
+     * SELECT_NEXTVAL_NCI_IDENTIFIERS_SEQ
+     */
+    // CHECKSTYLE:OFF
+    public static String SELECT_NEXTVAL_NCI_IDENTIFIERS_SEQ = "select nextval('nci_identifiers_seq')"; // NOPMD
 }

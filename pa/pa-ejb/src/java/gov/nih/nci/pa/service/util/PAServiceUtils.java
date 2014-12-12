@@ -315,7 +315,7 @@ public class PAServiceUtils {
     protected String generateNciIdentifier(Session session) {
         Calendar today = Calendar.getInstance();
         int currentYear  = today.get(Calendar.YEAR);
-        String query = "select nextval('nci_identifiers_seq')";
+        String query = CommonsConstant.SELECT_NEXTVAL_NCI_IDENTIFIERS_SEQ;
         StringBuffer nciIdentifier = new StringBuffer();
         nciIdentifier.append("NCI-");
         nciIdentifier.append(currentYear);

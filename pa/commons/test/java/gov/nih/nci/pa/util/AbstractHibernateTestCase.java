@@ -150,10 +150,15 @@ public abstract class AbstractHibernateTestCase {
         SchemaExport se = new SchemaExport(PaHibernateUtil.getHibernateHelper().getConfiguration());
         se.drop(false, true);
         se.create(false, true);
+        TestSchema.finalizeSchema();
         TestSchema.loadPrimaryPurposeCodes();
-        TestSchema.alterStudyOwnerTable();
+        makeHsqlDbSpecificAdjustments();
         tx.commit();
         transaction = PaHibernateUtil.getHibernateHelper().beginTransaction();
+    }
+
+    private void makeHsqlDbSpecificAdjustments() {
+        CommonsConstant.SELECT_NEXTVAL_NCI_IDENTIFIERS_SEQ = "call next value for nci_identifiers_seq";
     }
 
     private void createPrsSyncHistoryTable() throws HibernateException,

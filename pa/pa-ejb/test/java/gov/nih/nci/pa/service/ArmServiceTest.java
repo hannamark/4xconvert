@@ -119,6 +119,7 @@ public class ArmServiceTest extends AbstractEjbTestCase {
 
     @Before
     public void init() throws Exception {
+        TestSchema.primeData();
         remoteEjb = (ArmBeanLocal) getEjbBean(ArmBeanLocal.class);
         paRemoteEjb = (PlannedActivityBeanLocal) getEjbBean(PlannedActivityBeanLocal.class);
     

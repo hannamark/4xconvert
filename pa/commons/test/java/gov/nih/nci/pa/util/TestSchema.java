@@ -2012,12 +2012,16 @@ public class TestSchema {
         return ru;
     }
 
-    public static void alterStudyOwnerTable() {
-        PaHibernateUtil
-                .getCurrentSession()
-                .createSQLQuery(
-                        "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
+    public static void finalizeSchema() {
+        final Session s = PaHibernateUtil.getCurrentSession();
+        s.createSQLQuery(
+                "alter table study_owner add column enable_emails bit DEFAULT true NOT NULL ")
                 .executeUpdate();
+        s.createSQLQuery(
+                "alter table csm_user add column automated_curation bit DEFAULT false NOT NULL ")
+                .executeUpdate();
+        s.createSQLQuery("DROP SEQUENCE nci_identifiers_seq IF EXISTS").executeUpdate();
+        s.createSQLQuery("CREATE SEQUENCE nci_identifiers_seq").executeUpdate();
 
     }
 

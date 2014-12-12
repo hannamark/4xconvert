@@ -15,10 +15,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.CTGovImportLog;
@@ -28,7 +24,6 @@ import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
@@ -43,9 +38,7 @@ import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
-import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyInboxTypeCode;
@@ -53,76 +46,47 @@ import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.AbstractTrialRegistrationTestBase;
-import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRegulatoryAuthorityBeanLocal;
 import gov.nih.nci.pa.service.search.CTGovImportLogSearchCriteria;
-import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.AbstractEjbTestCase;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
-import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
-import gov.nih.nci.services.entity.NullifiedEntityException;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.math.BigInteger;
-import java.net.InetSocketAddress;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.junit.rules.ExpectedException;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 
 /**
  * @author Denis G. Krylov
  * 
  */
-public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase {
+public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
 
-    private CTGovSyncServiceBean serviceBean = new CTGovSyncServiceBean();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-    private HttpServer server;
-    public static final int CTGOV_API_MOCK_PORT = 51235;
+    private CTGovSyncServiceBean serviceBean;
 
-    private static final Map<String, ClinicalResearchStaffDTO> crsMap = new HashMap<String, ClinicalResearchStaffDTO>();
-    
-    private static final MockOrganizationEntityService ORGANIZATION_ENTITY_SERVICE = new MockOrganizationEntityService();
-    private static final MockPersonEntityService PERSON_ENTITY_SERVICE = new MockPersonEntityService();
-    
-    private static final ProtocolComparisonServiceBean COMPARISON_SERVICE_LOCAL = new ProtocolComparisonServiceBean();
-    
     private User ctgovimportUser;
     private User notCtgovimportUser;
 
@@ -131,136 +95,14 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     @Before
     public void setUp() throws Exception {
-        injectBeanReferences();
-
+        serviceBean = (CTGovSyncServiceBean) getEjbBean(CTGovSyncServiceBean.class);
         setUpCtgovUser();
-
-        setUpPoMocks();
-
-        setUpCorrelationMocks();
-
-        startNctApiMock();
-
         PaHibernateUtil.disableAudit();
     }
 
     /**
-     * @throws PAException
-     */
-    private void setUpCorrelationMocks() throws PAException {
-        when(ocsr.getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE)).thenCallRealMethod();
-        when(ocsr.getPOOrgIdentifierByOrgName("ClinicalTrials.gov")).thenCallRealMethod();
-        when(ocsr.createResearchOrganizationCorrelations(any(String.class)))
-                .thenAnswer(new Answer<Long>() {
-                    @Override
-                    public Long answer(InvocationOnMock invocation)
-                            throws Throwable {
-                        final Session session = PaHibernateUtil.getCurrentSession();
-                        
-                        String poOrgId = (String) invocation.getArguments()[0];
-                        Organization org = (Organization) session
-                                .createCriteria(Organization.class)
-                                .add(Restrictions.eq("identifier", poOrgId))
-                                .uniqueResult();
-                        if (org == null) {
-                            org = new Organization();
-                            org.setIdentifier(poOrgId);
-                            org.setStatusCode(EntityStatusCode.PENDING);
-                            org.setName(EnOnConverter
-                                    .convertEnOnToString(MockOrganizationEntityService.STORE
-                                            .get(poOrgId).getName()));
-
-                            session.save(org);
-                            session.flush();
-                        }
-
-                        ResearchOrganization ro = new ResearchOrganization();
-                        ro.setOrganization(org);
-                        ro.setStatusCode(StructuralRoleStatusCode.PENDING);
-                        ro.setIdentifier(poOrgId);
-                        session.save(ro);
-                        session.flush();
-
-                        return ro.getId();
-                    }
-                });
-        
-        ocsr.createResearchOrganizationCorrelations(MockOrganizationEntityService.CT_GOV_ID+""); // <-- CT.Gov
-    }
-
-    /**
-     * @throws EntityValidationException
-     * @throws CurationException
-     * @throws NullifiedEntityException
-     * @throws NullifiedRoleException
-     */
-    private void setUpPoMocks() throws EntityValidationException,
-            CurationException, NullifiedEntityException, NullifiedRoleException {
-        when(poSvcLoc.getOrganizationEntityService()).thenReturn(ORGANIZATION_ENTITY_SERVICE);
-        when(poSvcLoc.getPersonEntityService()).thenReturn(PERSON_ENTITY_SERVICE);
-        
-        when(crsSvc.createCorrelation(any(ClinicalResearchStaffDTO.class)))
-                .thenAnswer(new Answer<Ii>() {
-                    @Override
-                    public Ii answer(InvocationOnMock invocation)
-                            throws Throwable {
-                        ClinicalResearchStaffDTO crs = (ClinicalResearchStaffDTO) invocation
-                                .getArguments()[0];
-                        final String poId = (MockOrganizationEntityService.PO_ID_SEQ++) + "";
-                        crsMap.put(poId, crs);
-                        Ii ii = IiConverter
-                                .convertToPoClinicalResearchStaffIi(poId);
-                        DSet<Ii> dset = new DSet<Ii>();
-                        dset.setItem(new java.util.HashSet<Ii>());
-                        dset.getItem().add(ii);
-                        crs.setIdentifier(dset);
-                        crs.setStatus(CdConverter
-                                .convertToCd(EntityStatusCode.PENDING));
-                        return ii;
-                    }
-                });
-
-        when(crsSvc.getCorrelation(any(Ii.class))).thenAnswer(
-                new Answer<ClinicalResearchStaffDTO>() {
-                    @Override
-                    public ClinicalResearchStaffDTO answer(
-                            InvocationOnMock invocation) throws Throwable {
-                        Ii ii = (Ii) invocation.getArguments()[0];
-                        String crsId = ii.getExtension();
-                        if (crsMap.get(crsId) != null) {
-                            return crsMap.get(crsId);
-                        }
-                        return null;
-                    }
-                });
-    }
-
-    /**
-     * 
-     */
-    private void injectBeanReferences() {
-        
-        COMPARISON_SERVICE_LOCAL.setPlannedActivityService(plannedActivityService);
-        COMPARISON_SERVICE_LOCAL.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
-        COMPARISON_SERVICE_LOCAL.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
-        COMPARISON_SERVICE_LOCAL.setRegulatoryInformationService(regulatoryInfoSvc);
-
-        
-        serviceBean.setLookUpTableService(lookUpTableServiceRemote);
-        serviceBean.setRegulatoryAuthorityService(regulatoryInfoSvc);
-        serviceBean.setTrialRegistrationService(super.bean);
-        serviceBean.setStudyProtocolService(studyProtocolService);
-        serviceBean.setRegistryUserService(new MockRegistryUserServiceBean());
-        serviceBean.setDocumentWorkflowStatusService(documentWrkService);
-        serviceBean.setPaServiceUtils(new MockPAServiceUtils());
-        serviceBean.setProtocolComparisonService(COMPARISON_SERVICE_LOCAL);
-        serviceBean.setStudyMilestoneService(studyMilestoneSvc);
-        serviceBean.setStudyInboxService(studyInboxSvc);
-    }
-
-    /**
      * @throws HibernateException
-     * @throws PAException 
+     * @throws PAException
      */
     private void setUpCtgovUser() throws HibernateException, PAException {
         ctgovimportUser = new User();
@@ -275,7 +117,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         ctgovimportRegistryUser.setFirstName("ctgovimport");
         ctgovimportRegistryUser.setLastName("ctgovimport");
         TestSchema.addUpdObject(ctgovimportRegistryUser);
-        
+
         notCtgovimportUser = new User();
         notCtgovimportUser.setLoginName("notCtgovimportUser");
         notCtgovimportUser.setFirstName("notCtgovimportUser");
@@ -284,51 +126,14 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         TestSchema.addUpdObject(notCtgovimportUser);
 
         RegistryUser notCtgovimportUser = new RegistryUser();
-        notCtgovimportUser.setCsmUser(ctgovimportUser);
+        notCtgovimportUser.setCsmUser(this.notCtgovimportUser);
         notCtgovimportUser.setFirstName("notCtgovimportUser");
         notCtgovimportUser.setLastName("notCtgovimportUser");
         TestSchema.addUpdObject(notCtgovimportUser);
 
         PaHibernateUtil.getCurrentSession().flush();
-        MockCSMUserService.users.add(ctgovimportUser);
-        MockCSMUserService.users.add(this.notCtgovimportUser);
-        UsernameHolder.setUser(ctgovimportUser.getLoginName());
-        CSMUserUtil csmUserService = mock(CSMUserService.class);
-        CSMUserService.setInstance(csmUserService);
-        when(CSMUserService.getInstance().getCSMUser(any(String.class))).thenReturn(ctgovimportUser);
-    }
+        UsernameHolder.setUserCaseSensitive(ctgovimportUser.getLoginName());
 
-    private void startNctApiMock() throws IOException {
-        server = HttpServer.create(new InetSocketAddress(CTGOV_API_MOCK_PORT),
-                0);
-        server.createContext("/ctgov", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange t) throws IOException {
-                try {
-                    String uri = t.getRequestURI().toString();
-                    String nctid = uri.substring(uri.lastIndexOf("?") + 1);
-                    if ("NCT404".equalsIgnoreCase(nctid)) {
-                        t.sendResponseHeaders(404, 0);
-                    } else if ("NCT500".equalsIgnoreCase(nctid)) {
-                        t.sendResponseHeaders(500, 0);
-                    } else {
-                        String xml = IOUtils.toString(this.getClass()
-                                .getResourceAsStream("/" + nctid + ".xml"));
-                        t.sendResponseHeaders(200, 0);
-                        OutputStream os = t.getResponseBody();
-                        os.write(xml.getBytes("UTF-8"));
-                        os.flush();
-                        os.close();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
-
-            }
-        });
-        server.setExecutor(null); // creates a default executor
-        server.start();
     }
 
     /**
@@ -336,14 +141,9 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     @After
     public void done() throws Exception {
-        try {
-            server.stop(1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         PaHibernateUtil.enableAudit();
-      
+
     }
 
     /**
@@ -423,7 +223,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("301-728-7094",
                 serviceBean.convertCtGovPhone("3017287094"));
     }
-    
+
     @Test
     public final void testDropLeftOver() {
         assertEquals(
@@ -487,7 +287,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("Barry", getNamePart(converted, GIV, 0));
         assertEquals("Skikne", getNamePart(converted, FAM));
         assertEquals("M.D., FACP", getNamePart(converted, SFX));
-        
+
         name = getEnPn("Drhubo J Ghaal, MD");
         converted = serviceBean.breakDownCtGovPersonName(name);
         assertEquals("Drhubo", getNamePart(converted, GIV, 0));
@@ -501,166 +301,178 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     private EnPn getEnPn(String string) {
         return convertToEnPn(null, null, string, null, null);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public final void testPO6968() throws PAException {
         String nctID = "NCT01727869";
         String newNctID = "NCT01727870";
         String officialTitle = "Study of REGN1400 Alone and in Combination With Erlotinib or Cetuximab in Patients With Certain Types of Cancer";
-        //Exercise new import trial
+        // Exercise new import trial
         String nciID = serviceBean.importTrial(nctID);
         assertTrue(StringUtils.isNotEmpty(nciID));
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
-        
+
         final long id = getProtocolIdByNciId(nciID, session);
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
             assertNotNull(sp.getOfficialTitle());
-            assertTrue("Official title must match", sp.getOfficialTitle().equals(officialTitle));            
-                        
-            // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML 
-            //that actually belongs to a different trial.
+            assertTrue("Official title must match", sp.getOfficialTitle()
+                    .equals(officialTitle));
+
+            // Change NCT identifier to be able to update this protocol with a
+            // different ClinicalTrials.gov XML
+            // that actually belongs to a different trial.
             changeNCTNumber(nctID, newNctID);
-            
+
             // Apply update on top of the existing record.
             String newNciID = serviceBean.importTrial(newNctID);
             final long newId = getProtocolIdByNciId(newNciID, session);
-            
+
             session.flush();
             session.clear();
-            
+
             // Make sure we didn't create two protocols.
             assertEquals(nciID, newNciID);
             assertEquals(id, newId);
-            
-            sp = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class, id);
+
+            sp = (InterventionalStudyProtocol) session.get(
+                    InterventionalStudyProtocol.class, id);
             assertNotNull(sp.getOfficialTitle());
-            assertTrue("Official title must match", sp.getOfficialTitle().equals(officialTitle));
+            assertTrue("Official title must match", sp.getOfficialTitle()
+                    .equals(officialTitle));
             StudyInbox inbox = sp.getStudyInbox().iterator().next();
             assertNotNull(inbox);
-            assertEquals(inbox.getComments(), 
+            assertEquals(
+                    inbox.getComments(),
                     "Trial has been updated from ClinicalTrials.gov\rDetailed Description changed\rEligibility Criteria changed");
-            //fields of interest don't get auto acknowledged
-            assertNull(inbox.getCloseDate());            
+            // fields of interest don't get auto acknowledged
+            assertNull(inbox.getCloseDate());
         } finally {
             deactivateTrial(session, id);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public final void testPO7090() throws PAException {
         String nctID = "NCT00001111";
         String newNctID = "NCT00001112";
-        //Exercise new import trial
+        // Exercise new import trial
         String nciID = serviceBean.importTrial(nctID);
         assertTrue(StringUtils.isNotEmpty(nciID));
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
-        
+
         final long id = getProtocolIdByNciId(nciID, session);
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
-            // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML 
-            //that actually belongs to a different trial.
+            // Change NCT identifier to be able to update this protocol with a
+            // different ClinicalTrials.gov XML
+            // that actually belongs to a different trial.
             changeNCTNumber(nctID, newNctID);
-            
+
             // Apply update on top of the existing record.
             String newNciID = serviceBean.importTrial(newNctID);
             final long newId = getProtocolIdByNciId(newNciID, session);
-            
+
             session.flush();
             session.clear();
-            
+
             // Make sure we didn't create two protocols.
             assertEquals(nciID, newNciID);
             assertEquals(id, newId);
-            
-            sp = (InterventionalStudyProtocol) session.get(InterventionalStudyProtocol.class, id);
+
+            sp = (InterventionalStudyProtocol) session.get(
+                    InterventionalStudyProtocol.class, id);
             StudyInbox inbox = sp.getStudyInbox().iterator().next();
             assertNotNull(inbox);
-            assertEquals(inbox.getComments(), "Trial has been updated from ClinicalTrials.gov");
-            //non fields of interest get auto acknowledged
-            assertNotNull(inbox.getCloseDate());            
+            assertEquals(inbox.getComments(),
+                    "Trial has been updated from ClinicalTrials.gov");
+            // non fields of interest get auto acknowledged
+            assertNotNull(inbox.getCloseDate());
         } finally {
             deactivateTrial(session, id);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
-    public final void testPO6438EligCriteriaHandling() throws PAException, ParseException {
+    public final void testPO6438EligCriteriaHandling() throws PAException,
+            ParseException {
         String nciID = serviceBean.importTrial("NCT00324155");
         assertTrue(StringUtils.isNotEmpty(nciID));
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
-        
+
         final long id = getProtocolIdByNciId(nciID, session);
         Ii ii = IiConverter.convertToStudyProtocolIi(id);
-        
+
         List<PlannedEligibilityCriterion> exclList = getExclusionCriteriaList(
                 session, id);
         assertEquals(4, exclList.size());
         assertEquals("Pregnant / nursing", exclList.get(0).getTextDescription());
-        assertEquals("Primary ocular or mucosal melanoma", exclList.get(3).getTextDescription());
+        assertEquals("Primary ocular or mucosal melanoma", exclList.get(3)
+                .getTextDescription());
 
         List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
                 session, id);
         assertEquals(7, inclList.size());
-        assertEquals("Informed Consent", inclList.get(0)
-                .getTextDescription());
-        assertEquals("Prior therapy restriction (adjuvant only)", inclList.get(6)
-                .getTextDescription());
-        
+        assertEquals("Informed Consent", inclList.get(0).getTextDescription());
+        assertEquals("Prior therapy restriction (adjuvant only)",
+                inclList.get(6).getTextDescription());
+
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
-    public final void testPO6467EligCriteriaHandling() throws PAException, ParseException {
+    public final void testPO6467EligCriteriaHandling() throws PAException,
+            ParseException {
         String nciID = serviceBean.importTrial("NCT01023880");
         assertTrue(StringUtils.isNotEmpty(nciID));
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
-        
+
         final long id = getProtocolIdByNciId(nciID, session);
-        
+
         List<PlannedEligibilityCriterion> exclList = getExclusionCriteriaList(
                 session, id);
         assertEquals(1, exclList.size());
-        assertTrue(exclList.get(0).getTextDescription().trim().startsWith("Key Inclusion Criteria:"));
-        
+        assertTrue(exclList.get(0).getTextDescription().trim()
+                .startsWith("Key Inclusion Criteria:"));
 
         List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
                 session, id);
         assertEquals(1, inclList.size());
-        assertTrue(inclList.get(0).getTextDescription().trim().startsWith("Key Inclusion Criteria:"));
-        
+        assertTrue(inclList.get(0).getTextDescription().trim()
+                .startsWith("Key Inclusion Criteria:"));
+
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
-    public final void testPO6548EligCriteriaHandling() throws PAException, ParseException {
+    public final void testPO6548EligCriteriaHandling() throws PAException,
+            ParseException {
         String nciID = serviceBean.importTrial("NCT00653939");
         assertTrue(StringUtils.isNotEmpty(nciID));
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
-        
+
         final long id = getProtocolIdByNciId(nciID, session);
-        
+
         List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
                 session, id);
         assertEquals(6, inclList.size());
@@ -670,7 +482,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals(
                 "Subjects or their legal representatives must be able to read, understand and provide written informed consent to participate in the trial.",
                 inclList.get(5).getTextDescription());
-        
+
         List<PlannedEligibilityCriterion> exclList = getExclusionCriteriaList(
                 session, id);
         assertEquals(10, exclList.size());
@@ -680,8 +492,6 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 "Known hypersensitivity to any of the components of CA4P, paclitaxel, carboplatin, bevacizumab, or radiologic contrast dyes.",
                 exclList.get(9).getTextDescription());
 
-       
-        
     }
 
     /**
@@ -715,7 +525,6 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                                 + spID + " order by so.displayOrder").list();
         return exclList;
     }
-    
 
     /**
      * Test method for
@@ -740,85 +549,88 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
-            
+
             checkNCT01861054PersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
-            checkNCT01861054OtherData(session, sp);    
+            checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, false);
-            
+
         } finally {
             deactivateTrial(session, id);
         }
     }
-    
+
     @Test
     public final void testImportDoubleMaskingNoLongerFails()
             throws PAException, ParseException {
 
         final String nctID = "NCT1111111";
         String nciID = serviceBean.importTrial(nctID);
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
-        
+
         final long id = getProtocolIdByNciId(nciID, session);
         InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                 .get(InterventionalStudyProtocol.class, id);
 
-        assertEquals(BlindingSchemaCode.DOUBLE_BLIND, sp.getBlindingSchemaCode());
+        assertEquals(BlindingSchemaCode.DOUBLE_BLIND,
+                sp.getBlindingSchemaCode());
         assertNull(sp.getBlindingRoleCodeCaregiver());
         assertNull(sp.getBlindingRoleCodeSubject());
         assertNull(sp.getBlindingRoleCodeInvestigator());
         assertNull(sp.getBlindingRoleCodeOutcome());
 
     }
-    
+
     @Test
     public final void testUpdateTrial() throws PAException, ParseException {
         // Create protocol by performing a new trial import.
         String nctID = "NCT01440088";
         String nciID = serviceBean.importTrial(nctID);
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
 
         final long id = getProtocolIdByNciId(nciID, session);
-        
-        // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML that
+
+        // Change NCT identifier to be able to update this protocol with a
+        // different ClinicalTrials.gov XML that
         // actually belongs to a different trial.
         changeNCTNumber("NCT01440088", "NCT01861054");
-        
+
         nctID = "NCT01861054";
-        
+
         // Apply update on top of the existing record.
         String newNciID = serviceBean.importTrial(nctID);
         final long newId = getProtocolIdByNciId(newNciID, session);
-        
+
         session.flush();
         session.clear();
-        
+
         // Make sure we didn't create two protocols.
         assertEquals(nciID, newNciID);
         assertEquals(id, newId);
-        
+
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
-            
-            // The update should have altered all fields except the Lead Org (by design).
+
+            // The update should have altered all fields except the Lead Org (by
+            // design).
             checkNCT01861054PersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
-            checkNCT01861054OtherData(session, sp);    
+            checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, true);
             checkAdminScientificMarkedInLogEntry(nctID, nciID, session);
             checkInboxEntry(sp);
-            
+
         } finally {
             // Delete the trial.
             deactivateTrial(session, id);
         }
     }
-    
+
     @Test
     public final void testUpdateDoesNotCreateDuplicateStudyStatusPO8265()
             throws PAException, ParseException {
@@ -832,11 +644,12 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
 
         final long id = getProtocolIdByNciId(nciID, session);
         try {
-            // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML that
+            // Change NCT identifier to be able to update this protocol with a
+            // different ClinicalTrials.gov XML that
             // actually belongs to a different trial.
-            changeNCTNumber("NCT01440088", "NCT01861054");            
+            changeNCTNumber("NCT01440088", "NCT01861054");
             nctID = "NCT01861054";
-            
+
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
             assertEquals(1, sp.getStudyOverallStatuses().size());
@@ -857,8 +670,8 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             session.clear();
 
             // Make sure we didn't create two protocols.
-            assertEquals(nciID, newNciID);
             assertEquals(id, newId);
+            assertEquals(nciID, newNciID);
 
             sp = (InterventionalStudyProtocol) session.get(
                     InterventionalStudyProtocol.class, id);
@@ -872,57 +685,56 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             deactivateTrial(session, id);
         }
     }
-    
 
-    
     @Test
-    public final void testPO6835_LeadOrgIdChange() throws PAException, ParseException {
+    public final void testPO6835_LeadOrgIdChange() throws PAException,
+            ParseException {
         // Create protocol by performing a new trial import.
         String nctID = "NCT01440088";
         String nciID = serviceBean.importTrial(nctID);
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
 
         final long id = getProtocolIdByNciId(nciID, session);
-        
-        // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML that
+
+        // Change NCT identifier to be able to update this protocol with a
+        // different ClinicalTrials.gov XML that
         // actually belongs to a different trial.
         changeNCTNumber("NCT01440088", "NCT01861055");
-        
+
         nctID = "NCT01861055";
-        
+
         // Apply update on top of the existing record.
         String newNciID = serviceBean.importTrial(nctID);
         final long newId = getProtocolIdByNciId(newNciID, session);
-        
+
         session.flush();
         session.clear();
-        
+
         // Make sure we didn't create two protocols.
         assertEquals(nciID, newNciID);
         assertEquals(id, newId);
-        
+
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
-            
-            // New Lead Org ID should be in place.           
+
+            // New Lead Org ID should be in place.
             assertEquals("REP0211",
                     getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
                             .getLocalStudyProtocolIdentifier());
-            
+
             // Old Lead Org ID should have been recorded as Other Identifier.
             ensureOtherIdentifierExists(sp, "REP0210");
-            
+
         } finally {
             // Delete the trial.
             deactivateTrial(session, id);
         }
     }
 
-    
     private void ensureOtherIdentifierExists(InterventionalStudyProtocol sp,
             String otherID) {
         for (Ii ii : sp.getOtherIdentifiers()) {
@@ -940,7 +752,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         CTGovImportLog log = findLogEntry(nciID, session);
         assertTrue(log.getAdmin());
         assertTrue(log.getScientific());
-        
+
     }
 
     private void checkInboxEntry(InterventionalStudyProtocol sp) {
@@ -958,74 +770,79 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     }
 
     /**
-     * PO-6482: For existing trials in CTRP where the submitter is NOT Clinicaltrials.gov, DO NOT UPDATE these with the data from Clinicaltrials.gov XML
-     * -    Sponsor
-     * -   Summary4 Funding Sponsor
-     * -   Lead Org
+     * PO-6482: For existing trials in CTRP where the submitter is NOT
+     * Clinicaltrials.gov, DO NOT UPDATE these with the data from
+     * Clinicaltrials.gov XML - Sponsor - Summary4 Funding Sponsor - Lead Org
+     * 
      * @throws PAException
      * @throws ParseException
      */
     @Test
-    public final void testUpdateNonCtgovSubmittedTrial() throws PAException, ParseException {
+    public final void testUpdateNonCtgovSubmittedTrial() throws PAException,
+            ParseException {
         // Create protocol by performing a new trial import.
         String nctID = "NCT01440088";
         String nciID = serviceBean.importTrial(nctID);
-        
+
         final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
 
         final long id = getProtocolIdByNciId(nciID, session);
-        
-        // Change NCT identifier to be able to update this protocol with a different ClinicalTrials.gov XML that
+
+        // Change NCT identifier to be able to update this protocol with a
+        // different ClinicalTrials.gov XML that
         // actually belongs to a different trial.
         changeNCTNumber("NCT01440088", "NCT01861054");
-        
-        // Change submitter to a different user other than ctgovimportuser in order to trigger the behavior
+
+        // Change submitter to a different user other than ctgovimportuser in
+        // order to trigger the behavior
         // described in PO-6482.
         changeSubmitter(id, notCtgovimportUser);
-        
+
         // Switch to the mode described in PO-6482. Import orgs, skip persons.
-        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
-        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "false";       
-       
+        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";
+        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "false";
+
         nctID = "NCT01861054";
         // Apply update on top of the existing record.
         String newNciID = serviceBean.importTrial(nctID);
         final long newId = getProtocolIdByNciId(newNciID, session);
-        
+
         session.flush();
         session.clear();
-        
+
         // Make sure we didn't create two protocols.
         assertEquals(nciID, newNciID);
         assertEquals(id, newId);
-        
+
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
-            
-            // The update should have altered all fields except the Lead Org (by design).
-            checkNCT01861054OrgData(sp, "Sponsor Inc.", "Threshold Pharmaceuticals");
-           
+
+            // The update should have altered all fields except the Lead Org (by
+            // design).
+            checkNCT01861054OrgData(sp, "Sponsor Inc.",
+                    "Threshold Pharmaceuticals");
+
             // respossible party should have remained the same: Sponsor
-            StudySite rp = getStudySite(sp, StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR);
+            StudySite rp = getStudySite(sp,
+                    StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR);
             assertNotNull(rp);
-            
+
             // Other data come from update.
-            checkNCT01861054OtherData(session, sp);    
+            checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, true);
             checkInboxEntry(sp);
-            
+
         } finally {
-            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
-            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "true";       
+            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";
+            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "true";
             // Delete the trial.
             deactivateTrial(session, id);
         }
     }
-    
-    
+
     private void changeSubmitter(long id, User u) {
         final Session session = PaHibernateUtil.getCurrentSession();
         session.createSQLQuery(
@@ -1042,17 +859,25 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                         + "' where local_sp_indentifier='" + from + "'")
                 .executeUpdate();
         session.flush();
+        session.clear();
     }
 
     @Test
-    public final void testImportTrialNoPoData() throws PAException, ParseException {
-        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "false";        
-        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "false";
+    public final void testImportTrialNoPoData() throws PAException,
+            ParseException {
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.createSQLQuery(
+                "update pa_properties set value='false' where name='ctgov.sync.import_orgs'")
+                .executeUpdate();
+        session.createSQLQuery(
+                "update pa_properties set value='false' where name='ctgov.sync.import_persons'")
+                .executeUpdate();
+        session.flush();
+        session.clear();
         final String nctID = "NCT01861054";
         String nciID = serviceBean.importTrial(nctID);
         assertTrue(StringUtils.isNotEmpty(nciID));
 
-        final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
 
@@ -1060,27 +885,51 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
-            
+
             checkNCT01861054EmptyPersonOrgData(sp);
-            checkNCT01861054OtherData(session, sp);    
+            checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, false);
-            
+
         } finally {
-            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
-            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "true";        
+            restoreImportOrgsPersonFlags(session);
             deactivateTrial(session, id);
         }
     }
-    
+
+    /**
+     * @param session
+     * @throws HibernateException
+     */
+    private void restoreImportOrgsPersonFlags(final Session session)
+            throws HibernateException {
+        session.createSQLQuery(
+                "update pa_properties set value='true' where name='ctgov.sync.import_orgs'")
+                .executeUpdate();
+        session.createSQLQuery(
+                "update pa_properties set value='true' where name='ctgov.sync.import_persons'")
+                .executeUpdate();
+        session.flush();
+        session.clear();
+    }
+
     @Test
-    public final void testImportTrialOrgsNoPersonsData() throws PAException, ParseException {
-        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
-        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "false";
+    public final void testImportTrialOrgsNoPersonsData() throws PAException,
+            ParseException {
+
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.createSQLQuery(
+                "update pa_properties set value='true' where name='ctgov.sync.import_orgs'")
+                .executeUpdate();
+        session.createSQLQuery(
+                "update pa_properties set value='false' where name='ctgov.sync.import_persons'")
+                .executeUpdate();
+        session.flush();
+        session.clear();
+
         final String nctID = "NCT01861054";
         String nciID = serviceBean.importTrial(nctID);
         assertTrue(StringUtils.isNotEmpty(nciID));
 
-        final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
 
@@ -1088,28 +937,35 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
-            
+
             checkNCT01861054OrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
             checkNCT01861054EmptyPersonData(sp);
-            checkNCT01861054OtherData(session, sp);    
+            checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, false);
-            
+
         } finally {
-            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
-            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "true";        
+            restoreImportOrgsPersonFlags(session);
             deactivateTrial(session, id);
         }
     }
-    
+
     @Test
-    public final void testImportTrialPersonsNoOrgData() throws PAException, ParseException {
-        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "false";        
-        MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "true";
+    public final void testImportTrialPersonsNoOrgData() throws PAException,
+            ParseException {
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.createSQLQuery(
+                "update pa_properties set value='false' where name='ctgov.sync.import_orgs'")
+                .executeUpdate();
+        session.createSQLQuery(
+                "update pa_properties set value='true' where name='ctgov.sync.import_persons'")
+                .executeUpdate();
+        session.flush();
+        session.clear();
+
         final String nctID = "NCT01861054";
         String nciID = serviceBean.importTrial(nctID);
         assertTrue(StringUtils.isNotEmpty(nciID));
 
-        final Session session = PaHibernateUtil.getCurrentSession();
         session.flush();
         session.clear();
 
@@ -1117,15 +973,14 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         try {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
-            
+
             checkNCT01861054PersonData(sp);
             checkNCT01861054EmptyOrgData(sp);
-            checkNCT01861054OtherData(session, sp);    
+            checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, false);
-            
+
         } finally {
-            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_ORGS = "true";        
-            MockLookUpTableServiceBean.CTGOV_SYNC_IMPORT_PERSONS = "true";        
+            restoreImportOrgsPersonFlags(session);
             deactivateTrial(session, id);
         }
     }
@@ -1137,10 +992,10 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     private void deactivateTrial(final Session session, final long id)
             throws HibernateException {
-            session.createSQLQuery(
-                    "update study_protocol set status_code='INACTIVE' where identifier="
-                            + id).executeUpdate();
-            session.flush();
+        session.createSQLQuery(
+                "update study_protocol set status_code='INACTIVE' where identifier="
+                        + id).executeUpdate();
+        session.flush();
     }
 
     /**
@@ -1150,7 +1005,8 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      * @throws HibernateException
      */
     private void checkSuccessfulImportLogEntry(final String nctID,
-            String nciID, final Session session, boolean hasStudyInbox) throws HibernateException {
+            String nciID, final Session session, boolean hasStudyInbox)
+            throws HibernateException {
         CTGovImportLog log = findLogEntry(nciID, session);
         assertEquals(nctID, log.getNctID());
         assertEquals("Success", log.getImportStatus());
@@ -1167,9 +1023,11 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      */
     private CTGovImportLog findLogEntry(String nciID, final Session session)
             throws HibernateException {
-        CTGovImportLog log = (CTGovImportLog) session.createQuery(
-                " from CTGovImportLog log where log.nciID='" + nciID + "' order by log.dateCreated desc")
-                .list().get(0);
+        CTGovImportLog log = (CTGovImportLog) session
+                .createQuery(
+                        " from CTGovImportLog log where log.nciID='" + nciID
+                                + "' order by log.dateCreated desc").list()
+                .get(0);
         return log;
     }
 
@@ -1212,9 +1070,9 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 "A Single Arm, Preoperative, Pilot Study to Evaluate the Safety and Biological Effects of Orally Administered Reparixin in Early Breast Cancer Patients Who Are Candidates for Surgery",
                 sp.getOfficialTitle());
         assertTrue(sp.getDataMonitoringCommitteeAppointedIndicator());
-        
+
         checkRegulatoryInformation(ii);
-        
+
         assertEquals(
                 "cancer investigating use of reparixin as single agent in the time period between clinical",
                 sp.getPublicDescription());
@@ -1235,13 +1093,15 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 sp.getStudyClassificationCode());
         assertEquals(DesignConfigurationCode.SINGLE_GROUP,
                 sp.getDesignConfigurationCode());
-        
-        assertEquals(BlindingSchemaCode.DOUBLE_BLIND, sp.getBlindingSchemaCode());
-        assertEquals(BlindingRoleCode.CAREGIVER, sp.getBlindingRoleCodeCaregiver());
+
+        assertEquals(BlindingSchemaCode.DOUBLE_BLIND,
+                sp.getBlindingSchemaCode());
+        assertEquals(BlindingRoleCode.CAREGIVER,
+                sp.getBlindingRoleCodeCaregiver());
         assertEquals(BlindingRoleCode.SUBJECT, sp.getBlindingRoleCodeSubject());
         assertNull(sp.getBlindingRoleCodeInvestigator());
         assertNull(sp.getBlindingRoleCodeOutcome());
-        
+
         assertEquals("TREATMENT", sp.getPrimaryPurposeCode().getName());
 
         List<StudyOutcomeMeasure> outcomes = session.createQuery(
@@ -1297,7 +1157,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("Female aged > 18 years.", inclList.get(0)
                 .getTextDescription());
         verifyDisplayOrder(inclList);
-      
+
         assertEquals(
                 "Cancer Stem Cells, Novel targeted therapy, CXCR1/2 Inhibitors",
                 sp.getKeywordText());
@@ -1325,22 +1185,26 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             NumberFormatException {
         assertEquals(
                 "Food and Drug Administration",
-                regulatoryInfoSvc.get(
-                        Long.parseLong(studyRegulatoryAuthorityService
-                                .getCurrentByStudyProtocol(spID)
-                                .getRegulatoryAuthorityIdentifier()
-                                .getExtension())).getAuthorityName());
+                ((RegulatoryInformationBean) getEjbBean(RegulatoryInformationBean.class))
+                        .get(Long
+                                .parseLong(((StudyRegulatoryAuthorityBeanLocal) getEjbBean(StudyRegulatoryAuthorityBeanLocal.class))
+                                        .getCurrentByStudyProtocol(spID)
+                                        .getRegulatoryAuthorityIdentifier()
+                                        .getExtension())).getAuthorityName());
         // Check only one record in study_regulatory_authority table.
-        assertEquals(1, studyRegulatoryAuthorityService
-                                .getByStudyProtocol(spID).size());
+        assertEquals(
+                1,
+                ((StudyRegulatoryAuthorityBeanLocal) getEjbBean(StudyRegulatoryAuthorityBeanLocal.class))
+                        .getByStudyProtocol(spID).size());
     }
 
     /**
      * @param sp
      */
-    private void checkNCT01861054PersonOrgData(InterventionalStudyProtocol sp, String leadOrgName, String sponsorName) {
-        checkNCT01861054OrgData(sp, leadOrgName, sponsorName);        
-        checkNCT01861054PersonData(sp);        
+    private void checkNCT01861054PersonOrgData(InterventionalStudyProtocol sp,
+            String leadOrgName, String sponsorName) {
+        checkNCT01861054OrgData(sp, leadOrgName, sponsorName);
+        checkNCT01861054PersonData(sp);
         checkNCT01861054RespPartyData(sp);
     }
 
@@ -1348,15 +1212,16 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
      * @param sp
      */
     private void checkNCT01861054RespPartyData(InterventionalStudyProtocol sp) {
-        StudyContact rp = getStudyContact(sp,
+        StudyContact rp = getStudyContact(
+                sp,
                 StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR);
-        assertEquals("Goldstein", rp.getClinicalResearchStaff()
-                .getPerson().getLastName());
-        assertEquals("Lori", rp.getClinicalResearchStaff()
-                .getPerson().getFirstName());
+        assertEquals("Goldstein", rp.getClinicalResearchStaff().getPerson()
+                .getLastName());
+        assertEquals("Lori", rp.getClinicalResearchStaff().getPerson()
+                .getFirstName());
         assertEquals("Associate professor of pediatrics", rp.getTitle());
-        assertEquals("Children's Hospital Boston", rp.getClinicalResearchStaff()
-                .getOrganization().getName());
+        assertEquals("Children's Hospital Boston", rp
+                .getClinicalResearchStaff().getOrganization().getName());
     }
 
     /**
@@ -1365,26 +1230,26 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     private void checkNCT01861054PersonData(InterventionalStudyProtocol sp) {
         StudyContact pi = getStudyContact(sp,
                 StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
-        assertEquals("Goldstein", pi.getClinicalResearchStaff()
-                .getPerson().getLastName());
-        assertEquals("Lori", pi.getClinicalResearchStaff()
-                .getPerson().getFirstName());
-        assertEquals("J", pi.getClinicalResearchStaff()
-                .getPerson().getMiddleName());
-       
+        assertEquals("Goldstein", pi.getClinicalResearchStaff().getPerson()
+                .getLastName());
+        assertEquals("Lori", pi.getClinicalResearchStaff().getPerson()
+                .getFirstName());
+        assertEquals("J", pi.getClinicalResearchStaff().getPerson()
+                .getMiddleName());
 
         StudyContact cc = getStudyContact(sp,
                 StudyContactRoleCode.CENTRAL_CONTACT);
-        assertEquals("Ruffini", cc.getClinicalResearchStaff()
-                .getPerson().getLastName());
-        assertEquals("Pieradelchi", cc.getClinicalResearchStaff()
-                .getPerson().getFirstName());
+        assertEquals("Ruffini", cc.getClinicalResearchStaff().getPerson()
+                .getLastName());
+        assertEquals("Pieradelchi", cc.getClinicalResearchStaff().getPerson()
+                .getFirstName());
     }
 
     /**
      * @param sp
      */
-    private void checkNCT01861054OrgData(InterventionalStudyProtocol sp, String leadOrgName, String sponsorName) {
+    private void checkNCT01861054OrgData(InterventionalStudyProtocol sp,
+            String leadOrgName, String sponsorName) {
         assertEquals(leadOrgName,
                 getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
                         .getResearchOrganization().getOrganization().getName());
@@ -1394,15 +1259,17 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("National Institutes of Health (NIH)",
                 getStudySite(sp, StudySiteFunctionalCode.LABORATORY)
                         .getResearchOrganization().getOrganization().getName());
-        
+
         StudyResourcing summary4 = sp.getStudyResourcings().get(0);
         assertTrue(summary4.getSummary4ReportedResourceIndicator());
         assertEquals(SummaryFourFundingCategoryCode.INDUSTRIAL,
                 summary4.getTypeCode());
         assertEquals(
                 sponsorName,
-                ((Organization)PaHibernateUtil.getCurrentSession().get(Organization.class,
-                        new Long(summary4.getOrganizationIdentifier()))).getName());
+                ((Organization) PaHibernateUtil.getCurrentSession().get(
+                        Organization.class,
+                        new Long(summary4.getOrganizationIdentifier())))
+                        .getName());
     }
 
     @Test
@@ -1412,22 +1279,30 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         thrown.expect(PAException.class);
         thrown.expectMessage("Complete trials cannot be updated from ClinicalTrials.gov");
 
-        final StudyProtocolServiceLocal mock = mock(StudyProtocolServiceLocal.class);
-        final StudyProtocolDTO dto = new StudyProtocolDTO();
-        dto.setIdentifier(TestSchema.nonPropTrialData());
+        // Create protocol by performing a new trial import.
+        String nctID = "NCT01440088";
+        String nciID = serviceBean.importTrial(nctID);
+        long id = 0;
 
-        final String nctID = "NCT01861054";
-        when(mock.getStudyProtocolsByNctId(nctID)).thenReturn(
-                Arrays.asList(dto));
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        session.clear();
 
         try {
-            serviceBean.setStudyProtocolService(mock);
+
+            id = getProtocolIdByNciId(nciID, session);
+            StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class,
+                    id);
+            sp.setProprietaryTrialIndicator(Boolean.FALSE);
+            session.update(sp);
+            session.flush();
             serviceBean.importTrial(nctID);
         } finally {
-            serviceBean.setStudyProtocolService(studyProtocolService);
+            // Delete the trial.
+            deactivateTrial(session, id);
         }
     }
-    
+
     @Test
     public final void testImportNCT00760500_PO_6462() throws PAException,
             ParseException {
@@ -1446,10 +1321,10 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 sp.getStudyModelCode());
 
     }
-    
+
     @Test
-    public final void testImportObservationalPatientRegistry() throws PAException,
-            ParseException {
+    public final void testImportObservationalPatientRegistry()
+            throws PAException, ParseException {
         final String nctID = "NCT01963949";
         String nciID = serviceBean.importTrial(nctID);
         assertTrue(StringUtils.isNotEmpty(nciID));
@@ -1459,12 +1334,11 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         session.clear();
 
         final long id = getProtocolIdByNciId(nciID, session);
-        StudyProtocol sp = (StudyProtocol) session
-                .get(StudyProtocol.class, id);
+        StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class, id);
         assertTrue(sp instanceof NonInterventionalStudyProtocol);
 
     }
-    
+
     private void checkNCT01861054EmptyPersonOrgData(
             InterventionalStudyProtocol sp) {
         checkNCT01861054EmptyOrgData(sp);
@@ -1497,11 +1371,11 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
                         .getResearchOrganization().getOrganization().getName());
         assertNull(getStudySite(sp, StudySiteFunctionalCode.SPONSOR));
-        assertNull(getStudySite(sp, StudySiteFunctionalCode.LABORATORY));        
+        assertNull(getStudySite(sp, StudySiteFunctionalCode.LABORATORY));
         assertTrue(sp.getStudyResourcings().isEmpty());
-       
+
     }
-    
+
     private StudyContact getStudyContact(InterventionalStudyProtocol sp,
             StudyContactRoleCode code) {
         for (StudyContact ss : sp.getStudyContacts()) {
@@ -1533,7 +1407,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
     @Test
     public final void testGetLogEntries() throws ParseException, PAException {
         final Session session = PaHibernateUtil.getCurrentSession();
-        
+
         CTGovImportLog log1 = new CTGovImportLog();
         log1.setNciID("NCI1");
         log1.setNctID("NCT1");
@@ -1556,7 +1430,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 new String[] { "MM/dd/yyyy" }));
         session.save(log2);
         session.flush();
-        
+
         CTGovImportLog log3 = new CTGovImportLog();
         log3.setNciID("NCI3");
         log3.setNctID("NCT3");
@@ -1571,35 +1445,35 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
 
         StudyProtocol sp = TestSchema.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
-        
+
         StudyInbox inbox1 = createStudyInbox(sp);
-        inbox1.setAdmin(true);        
+        inbox1.setAdmin(true);
         session.save(inbox1);
         session.flush();
-        
+
         StudyInbox inbox2 = createStudyInbox(sp);
         inbox2.setScientific(true);
         session.save(inbox2);
         session.flush();
-        
+
         StudyInbox inbox3 = createStudyInbox(sp);
         inbox3.setAdmin(true);
         inbox3.setScientific(true);
         session.save(inbox3);
         session.flush();
-        
+
         StudyInbox inbox4 = createStudyInbox(sp);
         inbox4.setAdmin(true);
         inbox4.setAdminCloseDate(new Timestamp(new Date().getTime()));
         session.save(inbox4);
         session.flush();
-        
+
         StudyInbox inbox5 = createStudyInbox(sp);
         inbox5.setScientific(true);
         inbox5.setScientificCloseDate(new Timestamp(new Date().getTime()));
         session.save(inbox5);
         session.flush();
-        
+
         StudyInbox inbox6 = createStudyInbox(sp);
         inbox6.setAdmin(true);
         inbox6.setScientific(true);
@@ -1607,7 +1481,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         inbox6.setScientificCloseDate(new Timestamp(new Date().getTime()));
         session.save(inbox6);
         session.flush();
-        
+
         CTGovImportLog log4 = new CTGovImportLog();
         log4.setNciID("NCI4");
         log4.setNctID("NCT4");
@@ -1620,7 +1494,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         log4.setStudyInbox(inbox1);
         session.save(log4);
         session.flush();
-        
+
         CTGovImportLog log5 = new CTGovImportLog();
         log5.setNciID("NCI5");
         log5.setNctID("NCT5");
@@ -1633,7 +1507,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         log5.setStudyInbox(inbox2);
         session.save(log5);
         session.flush();
-        
+
         CTGovImportLog log6 = new CTGovImportLog();
         log6.setNciID("NCI6");
         log6.setNctID("NCT6");
@@ -1646,7 +1520,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         log6.setStudyInbox(inbox3);
         session.save(log6);
         session.flush();
-        
+
         CTGovImportLog log7 = new CTGovImportLog();
         log7.setNciID("NCI7");
         log7.setNctID("NCT7");
@@ -1659,7 +1533,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         log7.setStudyInbox(inbox4);
         session.save(log7);
         session.flush();
-        
+
         CTGovImportLog log8 = new CTGovImportLog();
         log8.setNciID("NCI8");
         log8.setNctID("NCT8");
@@ -1672,7 +1546,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         log8.setStudyInbox(inbox5);
         session.save(log8);
         session.flush();
-        
+
         CTGovImportLog log9 = new CTGovImportLog();
         log9.setNciID("NCI9");
         log9.setNctID("NCT9");
@@ -1684,13 +1558,14 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
                 new String[] { "MM/dd/yyyy" }));
         log9.setStudyInbox(inbox6);
         session.save(log9);
-        session.flush();        
-        
-        //exercise start and end dates are specified
+        session.flush();
+
+        // exercise start and end dates are specified
         CTGovImportLogSearchCriteria searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setOnOrAfter(new Date(0));
         searchCriteria.setOnOrBefore(new Date(System.currentTimeMillis()));
-        List<CTGovImportLog> entries = serviceBean.getLogEntries(searchCriteria);
+        List<CTGovImportLog> entries = serviceBean
+                .getLogEntries(searchCriteria);
         assertEquals(9, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
         assertEquals("NCI2", entries.get(1).getNciID());
@@ -1701,25 +1576,29 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("NCI7", entries.get(6).getNciID());
         assertEquals("NCI8", entries.get(7).getNciID());
         assertEquals("NCI9", entries.get(8).getNciID());
-        
-        //exercise start and end dates are specified
-        searchCriteria = new CTGovImportLogSearchCriteria(); 
-        searchCriteria.setOnOrAfter(DateUtils.parseDate("07/30/2013", new String[] {"MM/dd/yyyy"}));
-        searchCriteria.setOnOrBefore(DateUtils.parseDate("08/01/2013", new String[] {"MM/dd/yyyy"}));
+
+        // exercise start and end dates are specified
+        searchCriteria = new CTGovImportLogSearchCriteria();
+        searchCriteria.setOnOrAfter(DateUtils.parseDate("07/30/2013",
+                new String[] { "MM/dd/yyyy" }));
+        searchCriteria.setOnOrBefore(DateUtils.parseDate("08/01/2013",
+                new String[] { "MM/dd/yyyy" }));
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
-        
-        //exercise start date is specified
+
+        // exercise start date is specified
         searchCriteria = new CTGovImportLogSearchCriteria();
-        searchCriteria.setOnOrAfter(DateUtils.parseDate("07/30/2013", new String[] {"MM/dd/yyyy"}));
+        searchCriteria.setOnOrAfter(DateUtils.parseDate("07/30/2013",
+                new String[] { "MM/dd/yyyy" }));
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
-        
-        //exercise end date is specified
+
+        // exercise end date is specified
         searchCriteria = new CTGovImportLogSearchCriteria();
-        searchCriteria.setOnOrBefore(DateUtils.parseDate("07/30/2013", new String[] {"MM/dd/yyyy"}));
+        searchCriteria.setOnOrBefore(DateUtils.parseDate("07/30/2013",
+                new String[] { "MM/dd/yyyy" }));
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(8, entries.size());
         assertEquals("NCI2", entries.get(0).getNciID());
@@ -1731,21 +1610,21 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("NCI8", entries.get(6).getNciID());
         assertEquals("NCI9", entries.get(7).getNciID());
 
-        //exercise NCI identifier is specified
+        // exercise NCI identifier is specified
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setNciIdentifier("NCI3");
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI3", entries.get(0).getNciID());
-        
-        //exercise NCT identifier is specified
+
+        // exercise NCT identifier is specified
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setNctIdentifier("NCT2");
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCT2", entries.get(0).getNctID());
-        
-        //exercise title is specified
+
+        // exercise title is specified
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setOfficialTitle("Title :");
         entries = serviceBean.getLogEntries(searchCriteria);
@@ -1759,14 +1638,14 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("NCI7", entries.get(6).getNciID());
         assertEquals("NCI8", entries.get(7).getNciID());
         assertEquals("NCI9", entries.get(8).getNciID());
-        
-        //exercise action is specified
+
+        // exercise action is specified
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setAction("New Trial");
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI1", entries.get(0).getNciID());
-                
+
         searchCriteria.setAction("Update");
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(8, entries.size());
@@ -1778,8 +1657,8 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("NCI7", entries.get(5).getNciID());
         assertEquals("NCI8", entries.get(6).getNciID());
         assertEquals("NCI9", entries.get(7).getNciID());
-        
-        //exercise import status is specified
+
+        // exercise import status is specified
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setImportStatus("Success");
         entries = serviceBean.getLogEntries(searchCriteria);
@@ -1792,13 +1671,13 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("NCI7", entries.get(5).getNciID());
         assertEquals("NCI8", entries.get(6).getNciID());
         assertEquals("NCI9", entries.get(7).getNciID());
-        
+
         searchCriteria.setImportStatus("Failure");
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI2", entries.get(0).getNciID());
-        
-        //exercise user is specified
+
+        // exercise user is specified
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setUserCreated("User1");
         entries = serviceBean.getLogEntries(searchCriteria);
@@ -1811,61 +1690,56 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
         assertEquals("NCI7", entries.get(5).getNciID());
         assertEquals("NCI8", entries.get(6).getNciID());
         assertEquals("NCI9", entries.get(7).getNciID());
-        
+
         searchCriteria.setUserCreated("User2");
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(1, entries.size());
         assertEquals("NCI3", entries.get(0).getNciID());
-        
-        //exercise pending admin ack
+
+        // exercise pending admin ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPendingAdminAcknowledgment(true);
         searchCriteria.setPendingScientificAcknowledgment(false);
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(6, entries.size());
-             
-        
-        //exercise pending sci ack
+
+        // exercise pending sci ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPendingAdminAcknowledgment(false);
         searchCriteria.setPendingScientificAcknowledgment(true);
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(6, entries.size());
-       
-        
-        //exercise pending admin and sci ack
+
+        // exercise pending admin and sci ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPendingAdminAcknowledgment(true);
         searchCriteria.setPendingScientificAcknowledgment(true);
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(6, entries.size());
-        
-        
-        //exercise performed admin ack
+
+        // exercise performed admin ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPerformedAdminAcknowledgment(true);
         searchCriteria.setPerformedScientificAcknowledgment(false);
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(6, entries.size());
-        
-        
-        //exercise performed sci ack
+
+        // exercise performed sci ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPerformedAdminAcknowledgment(false);
-        searchCriteria.setPerformedScientificAcknowledgment(true);        
+        searchCriteria.setPerformedScientificAcknowledgment(true);
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(6, entries.size());
-        
-        
-        //exercise performed admin and sci ack
+
+        // exercise performed admin and sci ack
         searchCriteria = new CTGovImportLogSearchCriteria();
         searchCriteria.setPerformedAdminAcknowledgment(true);
         searchCriteria.setPerformedScientificAcknowledgment(true);
         entries = serviceBean.getLogEntries(searchCriteria);
         assertEquals(6, entries.size());
-       
+
     }
-    
+
     @Test
     public final void testUpdateRejectedTrialFails() throws Exception {
 
@@ -1885,8 +1759,12 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
 
             StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class,
                     id);
-            DocumentWorkflowStatus dws = TestSchema
-                    .createDocumentWorkflowStatus(sp);
+            DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+            dws.setStudyProtocol(sp);
+            dws.setStatusDateRangeLow(TestSchema.TODAY);
+            dws.setCommentText("");
+            dws.setUserLastUpdated(ctgovimportUser);
+            dws.setDateLastUpdated(TestSchema.TODAY);
             dws.setStatusCode(DocumentWorkflowStatusCode.REJECTED);
             session.save(dws);
             session.flush();
@@ -1897,6 +1775,7 @@ public class CTGovSyncServiceBeanTest extends AbstractTrialRegistrationTestBase 
             deactivateTrial(session, id);
         }
     }
+
     @Test
     public void isNctIdValidTest() {
         assertEquals(true, serviceBean.isNctIdValid("NCT1"));

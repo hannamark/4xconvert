@@ -148,7 +148,8 @@ public class StudySiteAccrualAccessServiceTest extends AbstractEjbTestCase {
     ParticipatingOrgServiceBean participatingOrgServiceLocal;
 
     @Before
-    public void setUp() throws Exception {        
+    public void setUp() throws Exception {     
+        TestSchema.primeData();
         ssId = TestSchema.studySiteIds.get(0);
         spId = TestSchema.studyProtocolIds.get(0);
         REGISTRY_USER_IDENTIFIER = IiConverter.convertToIi(TestSchema.registryUserIds.get(0));
@@ -159,6 +160,9 @@ public class StudySiteAccrualAccessServiceTest extends AbstractEjbTestCase {
         ReflectionUtils.makeAccessible(m);
         Cache cache = (Cache) ReflectionUtils.invokeMethod(m, null);
         cache.removeAll();
+        
+        UsernameHolder
+        .setUserCaseSensitive("/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=SuAbstractor");
      }
 
     @Test

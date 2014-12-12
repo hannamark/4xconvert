@@ -134,6 +134,7 @@ public class ParticipatingSiteBeanLocalTest extends AbstractEjbTestCase {
 
     @Before
     public void init() throws Exception {
+        TestSchema.primeData();
         remoteEjb = (ParticipatingSiteBeanLocal) getEjbBean(ParticipatingSiteBeanLocal.class);
 
         // Family
