@@ -172,13 +172,21 @@ sourceConnection.eachRow("""select ec.eligible_gender_code, pa.study_protocol_id
     }
 
 sourceConnection.eachRow("""select trunc(ec.min_value) || ' ' || ec.min_unit as min_age, trunc(ec.max_value) || ' ' || ec.max_unit as max_age,
+    ec.max_value as eligible_max_age_number, 
+    ec.max_unit as eligible_max_age_unit,
+    ec.min_value as eligible_min_age_number,
+    ec.min_unit as eligible_min_age_unit,
     pa.study_protocol_identifier from planned_activity pa
     inner join planned_eligibility_criterion ec on ec.identifier = pa.identifier and ec.criterion_name = 'AGE'
     where pa.category_code = 'ELIGIBILITY_CRITERION'""") { row ->
         id = row.study_protocol_identifier
         min_age = row.min_age
         max_age = row.max_age
-        destinationConnection.execute("UPDATE STG_DW_STUDY SET ELIGIBLE_MIN_AGE = ?, ELIGIBLE_MAX_AGE = ? where internal_system_id = ? ", [min_age, max_age, id])
+        eligible_max_age_number = row.eligible_max_age_number
+        eligible_max_age_unit = row.eligible_max_age_unit 
+        eligible_min_age_number = row.eligible_min_age_number 
+        eligible_min_age_unit = row.eligible_min_age_unit     
+        destinationConnection.execute("UPDATE STG_DW_STUDY SET eligible_max_age_number=?,eligible_max_age_unit=?,eligible_min_age_number=?,eligible_min_age_unit=?,ELIGIBLE_MIN_AGE = ?, ELIGIBLE_MAX_AGE = ? where internal_system_id = ? ", [eligible_max_age_number,eligible_max_age_unit,eligible_min_age_number,eligible_min_age_unit,min_age, max_age, id])
     }
 
 sourceConnection.eachRow("""select cc.first_name || ' ' || cc.last_name as central_contact, sc.study_protocol_identifier from study_contact sc
