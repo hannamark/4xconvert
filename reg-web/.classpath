@@ -14,7 +14,7 @@
 	<classpathentry kind="var" path="PA_LIB/reg-web/freemarker-2.3.19.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/reg-web/nci-commons-ctrp-struts2-1.4.10.1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="PA_LIB/reg-web/nci-commons-ctrp-struts2-1.4.10.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/ognl-3.0.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/poi-3.2-FINAL.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/sitemesh-2.3.jar"/>
@@ -40,7 +40,7 @@
 	<classpathentry kind="var" path="PA_LIB/ear/joda-time-1.6.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/jollyday-0.4.5.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/mockito-all-1.9.5.jar"/>
-	<classpathentry kind="var" path="PA_LIB/ear/nci-commons-ctrp-core-1.4.10.1-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="PA_LIB/ear/nci-commons-ctrp-core-1.4.10.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ognl-3.0.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/ojdbc6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/po-services-1.0.1-SNAPSHOT-client.jar"/>
