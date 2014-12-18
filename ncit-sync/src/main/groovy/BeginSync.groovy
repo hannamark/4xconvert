@@ -23,13 +23,15 @@ String preferredNameUrl = "${resolvedProperties['ncit.interventionPreferredNameU
 String interventionSyncUrl ="${resolvedProperties['ncit.interventionSyncUrl']}"
 
 
-
+println "the url here--->"+url
+println "the preferredNameUrl here--->"+preferredNameUrl
+println "the paJdbcUrl here--->"+paJdbcUrl
 
 //SyncDiseasesFromNCIt lexc = new SyncDiseasesFromNCIt()
 //lexc.syncDiseaseTerms(paJdbcUrl,outputDir,url,user,password);
 
-PDQNCItInterventionMapper interventionMapper = new PDQNCItInterventionMapper()
-interventionMapper.syncIntervention(outputDir,preferredNameUrl,interventionSyncUrl,paJdbcUrl,user,password)
+//PDQNCItInterventionMapper interventionMapper = new PDQNCItInterventionMapper()
+//interventionMapper.syncIntervention(outputDir,preferredNameUrl,interventionSyncUrl,paJdbcUrl,user,password)
 
 
 
