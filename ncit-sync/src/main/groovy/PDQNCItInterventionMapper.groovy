@@ -115,10 +115,10 @@ public class PDQNCItInterventionMapper{
          def  sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          def ctrpTerms = sql.rows("select distinct(nt_term_identifier) from intervention");
          
-       // ctrpTerms.each (){
+        ctrpTerms.each (){
              
-         //ncitCode= it.nt_term_identifier;
-        ncitCode ="C116892"
+         ncitCode= it.nt_term_identifier;
+        
          
          if(ncitCode!=null) {
             println "Syncing intervention term "+ncitCode
@@ -130,10 +130,9 @@ public class PDQNCItInterventionMapper{
             // Get Intervention synonyms
             def syns
             syns  = getInvSynonyms(ncitCode ,interventionUrl)
-            println "the syns here--->"+syns
             generateInvSynUpdateSQL(ncitCode,syns[1])
              }
-         //}
+         }
          def outputFile = new File(outputDir)
          File sqlFile = new File(outputFile, "interventionQueries.sql")
          if(sqlFile.exists()) {
