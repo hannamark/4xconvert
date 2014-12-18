@@ -118,6 +118,7 @@ public class PDQNCItInterventionMapper{
         ctrpTerms.each (){
              
          ncitCode= it.nt_term_identifier;
+        
          
          if(ncitCode!=null) {
             println "Syncing intervention term "+ncitCode

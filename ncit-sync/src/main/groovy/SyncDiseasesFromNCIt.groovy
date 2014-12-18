@@ -207,7 +207,7 @@ public class SyncDiseasesFromNCIt{
         
         
     ncitTerm= it.nt_term_identifier;
-    //ncitTerm="C26871"
+    
     
      println "-- SYNCING disease term "+ncitTerm
      insertOrUpdateTerm(ncitTerm, url)

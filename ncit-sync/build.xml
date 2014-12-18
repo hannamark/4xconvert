@@ -3,19 +3,9 @@
 	<property name="tier" value="LOCAL" />
 	<property file="${basedir}/../build-pa/tier-properties/build-lite-${tier}.properties" />
 	<property file="${basedir}/../build-pa/tier-properties/build-lite.properties" />
-	<property file="${basedir}/../build-po/tier-properties/${po.tier}.properties" />
-	<property file="${basedir}/../build-po/install.properties" />
 	<property name="output.dir" value="${basedir}/output" />
 	
-	<condition property="po.db.password" value="${po.db.password}">
-		<isset property="po.db.password" />
-	</condition>
-	<condition property="po.db.password" value="${database.password}">
-		<not>
-			<isset property="po.db.password" />
-		</not>
-	</condition>
-
+	
 	<condition property="pa.db.password" value="${pa.db.password}">
 		<isset property="pa.db.password" />
 	</condition>
@@ -42,9 +32,6 @@
 	<taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="ncitsync.classpath" name="groovy" />
 
 	<target name="syncTerms" description="Sync disease and intervention terms form NCIT">
-		<tstamp>
-			<format property="TODAY" pattern="yyyy-MM-dd" locale="US" />
-		</tstamp>
 		<echo message="Sync Terms..." />
 		<groovy classpathref="ncitsync.classpath" src="src/main/groovy/BeginSync.groovy" />
 	</target>
