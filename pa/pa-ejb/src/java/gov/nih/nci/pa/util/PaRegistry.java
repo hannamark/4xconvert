@@ -114,6 +114,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.StudySubjectServiceLocal;
 import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
@@ -747,10 +748,17 @@ public final class PaRegistry {
     }
     
     /**
-     * @return StudyMilestoneService
+     * @return StudyMilestoneService 
      */
     public static AccrualUtilityService getAccrualUtilityService() {
         return getInstance().getServiceLocator().getAccrualUtilityService();
+    }
+    /**
+     * 
+     * @return StudySubjectServiceLocal StudySubjectServiceLocal
+     */
+    public static StudySubjectServiceLocal getStudySubjectService() {
+        return getInstance().getServiceLocator().getStudySubjectService();
     }
     
 }

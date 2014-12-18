@@ -116,6 +116,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.StudySubjectServiceLocal;
 import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
@@ -750,5 +751,10 @@ public class JndiServiceLocator implements ServiceLocator {
     public PlannedMarkerSynonymsServiceLocal getPMSynonymService() {
         return lookup("PlannedMarkerSynonymsBeanLocal"
                 + "!gov.nih.nci.pa.service.PlannedMarkerSynonymsServiceLocal");
+    }
+
+    @Override
+    public StudySubjectServiceLocal getStudySubjectService() {
+        return lookup("StudySubjectBeanLocal!gov.nih.nci.pa.service.StudySubjectServiceLocal");
     }
 }

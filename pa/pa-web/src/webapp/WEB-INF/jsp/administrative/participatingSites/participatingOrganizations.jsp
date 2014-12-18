@@ -29,6 +29,41 @@ function handleEdit(studyResourcingId){
     document.partOrgs.submit();
 }
 
+function handleDelete() {
+    var deleteObj = document.getElementsByName("objectsToDelete");
+    var deleteObjFinal ='';
+    var atLeastOne = false;
+    for (var i=0; i < deleteObj.length; i++) {
+        if (deleteObj[i].checked == true) { 
+        	atLeastOne = true;
+        	deleteObjFinal = (deleteObj[i].value) + ", " + deleteObjFinal;     
+        } 
+    }
+    
+    
+   if (atLeastOne == true) {
+    var url = '/pa/protected/popupParticipatingOrganizationsaccrualDeleteWarning.action?objectsToDelete=' +deleteObjFinal;
+    showPopWin(url, 453, 300, '', 'Participating Sites Accrual Data');
+   }
+   else {
+       document.partOrgs.action="participatingOrganizationsdelete.action";
+       document.partOrgs.submit();
+   }
+}
+
+function loadTopPage(objectsToDelete) {
+       document.partOrgs.action="participatingOrganizationsdelete.action";
+       document.partOrgs.submit();
+       return true;
+}
+
+function loadDiv() {
+    document.partOrgs.action="participatingOrganizations.action";
+    document.partOrgs.submit();
+    return true;
+}
+
+
 </SCRIPT>
 
 <body>
@@ -49,7 +84,7 @@ function handleEdit(studyResourcingId){
                     <pa:adminAbstractorDisplayWhenCheckedOut>
                         <li><a href="participatingOrganizationscreate.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add</span></span></a></li>
                         <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
-                            <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                            <li><s:a href="javascript:void(0);" onclick="handleDelete();" onkeypress="handleDelete();" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                             <li><pa:toggleDeleteBtn/></li>
                         </s:if>                
                     </pa:adminAbstractorDisplayWhenCheckedOut>
@@ -97,7 +132,7 @@ function handleEdit(studyResourcingId){
             <pa:adminAbstractorDisplayWhenCheckedOut>
                 <li><a href="participatingOrganizationscreate.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add</span></span></a></li>
                 <s:if test="%{organizationList != null && !organizationList.isEmpty()}">
-                    <li><s:a href="javascript:void(0);" onclick="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" onkeypress="handleMultiDelete('Click OK to remove selected participating site(s) from the study. Cancel to abort.', 'participatingOrganizationsdelete.action');" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
+                    <li><s:a href="javascript:void(0);" onclick="handleDelete();" onkeypress="handleDelete();" cssClass="btn"><span class="btn_img"><span class="delete">Delete</span></span></s:a></li>
                     <li><pa:toggleDeleteBtn/></li>
                 </s:if>                
             </pa:adminAbstractorDisplayWhenCheckedOut>

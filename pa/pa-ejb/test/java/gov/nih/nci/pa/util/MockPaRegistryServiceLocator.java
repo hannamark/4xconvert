@@ -49,6 +49,7 @@ import gov.nih.nci.pa.service.StudySiteContactBeanLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.StudySubjectServiceLocal;
 import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
@@ -724,4 +725,10 @@ public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public StudySubjectServiceLocal getStudySubjectService() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -116,6 +116,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.StudySubjectServiceLocal;
 import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
@@ -525,5 +526,10 @@ public interface ServiceLocator {
      * @return AccrualUtilityService
      */
     AccrualUtilityService getAccrualUtilityService();
+    /**
+     * 
+     * @return StudySubjectServiceLocal
+     */
+    StudySubjectServiceLocal getStudySubjectService();
 }
 

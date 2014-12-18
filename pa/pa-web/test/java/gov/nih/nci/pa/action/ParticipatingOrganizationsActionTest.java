@@ -87,12 +87,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -107,6 +115,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.StudySubjectServiceLocal;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -114,6 +123,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.service.MockCorrelationUtils;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
 import gov.nih.nci.service.MockStudySiteService;
@@ -408,4 +418,42 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         assertNull(StConverter.convertToString(studySite.getProgramCodeText()));
         assertNull(IntConverter.convertToInteger(studySite.getTargetAccrualNumber()));
     }
+    
+    @Test
+    public void accrualDeleteWarningTest() throws PAException {
+        StudySubjectServiceLocal ssservice = mock(StudySubjectServiceLocal.class);
+        act.setStudySubjectService(ssservice);
+        List<StudySubject> subjectList = new ArrayList<StudySubject>();
+        StudySubject ss = new StudySubject();
+        ss.setId(1L);
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(1L);
+        Organization org = new Organization();
+        org.setName("Mayo University");
+        org.setDateLastUpdated(new Date());
+        org.setIdentifier("1");
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        org.setIdentifier("123");
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setOrganization(org);
+        hcf.setIdentifier("1");
+        hcf.setStatusCode(StructuralRoleStatusCode.PENDING);
+        StudySite ssite = new StudySite();
+        ssite.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ssite.setLocalStudyProtocolIdentifier("Ecog1");
+        ssite.setDateLastUpdated(new Date());
+        ssite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ssite.setStudyProtocol(sp);
+        ssite.setHealthCareFacility(hcf);
+        ss.setStudySite(ssite);
+        subjectList.add(ss);
+        String[] str = new String[1];
+        str[0] = "1";
+        act.setObjectsToDelete(str);
+        when(ssservice.getBySiteAndStudyId(any(Long.class), any(Long.class))).thenReturn(subjectList);
+        assertEquals("deleteStatus", act.accrualDeleteWarning());
+        assertNotNull(act.getSubjects());
+        assertTrue(act.getSubjects().size() > 0);
+    }
+    
 }

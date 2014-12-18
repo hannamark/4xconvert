@@ -85,6 +85,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
@@ -92,6 +93,7 @@ import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.dto.StudySubjectWebDto;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -115,6 +117,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.StudySubjectServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
@@ -155,7 +158,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
-
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -202,6 +204,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private StudySiteServiceLocal studySiteService;
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     private StudySiteContactServiceLocal studySiteContactService;
+    private StudySubjectServiceLocal studySubjectService;
     
     private Ii spIi;
     private List<PaOrganizationDTO> organizationList;
@@ -228,6 +231,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private String programCode;
     private String statusCode;
     private List<StudyOverallStatusWebDTO> overallStatusList;
+    private List<StudySubjectWebDto> subjects;
 
     // Cache for org list
     private static CacheManager cacheManager;
@@ -262,6 +266,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         studySiteService = PaRegistry.getStudySiteService();
         studySiteAccrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
         studySiteContactService = PaRegistry.getStudySiteContactService();
+        studySubjectService = PaRegistry.getStudySubjectService();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
@@ -560,7 +565,31 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         getStudyParticipationPrimContact();
         return ACT_EDIT;
     }
-
+    /**
+     * 
+     * @return String string
+     * @throws PAException PAException
+     */
+    public String accrualDeleteWarning() throws PAException {
+        String[] str = getObjectsToDelete();
+        subjects = new ArrayList<StudySubjectWebDto>();
+        for (String strValue : str) {
+            List<StudySubject> subjectList = (studySubjectService.getBySiteAndStudyId(
+                 IiConverter.convertToLong(spIi), Long.parseLong(strValue)));
+            if (!subjectList.isEmpty()) { 
+                StudySubjectWebDto dto = new StudySubjectWebDto();
+                dto.setAccuralCount((long) subjectList.size());
+                dto.setPoID(subjectList.get(0).getStudySite()
+                     .getHealthCareFacility().getOrganization().getIdentifier());
+                dto.setSiteName(subjectList.get(0).getStudySite()
+                     .getHealthCareFacility().getOrganization().getName());
+                subjects.add(dto);
+            }
+            subjectList.clear();
+        }
+        return "deleteStatus";
+    }
+    
     /**
      * @return result
      * @throws PAException  exception
@@ -569,8 +598,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         getPartSiteCache().remove(spIi);
         clearErrorsAndMessages();
         try {
-            deleteSelectedObjects();
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
+           deleteSelectedObjects();
+           ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.MULTI_DELETE_MESSAGE);
         } catch (PAException e) {
             ServletActionContext.getRequest().setAttribute(
                     Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -1683,4 +1712,32 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         this.studySiteContactService = studySiteContactService;
     }
 
+    /**
+     * 
+     * @return studySubjectService studySubjectService
+     */
+    public StudySubjectServiceLocal getStudySubjectService() {
+        return studySubjectService;
+    }
+    /**
+     * 
+     * @param studySubjectService studySubjectService
+     */
+    public void setStudySubjectService(StudySubjectServiceLocal studySubjectService) {
+        this.studySubjectService = studySubjectService;
+    }
+    /**
+     * 
+     * @return subjects subjects
+     */
+    public List<StudySubjectWebDto> getSubjects() {
+        return subjects;
+    }
+    /**
+     *  
+     * @param subjects subjects
+     */
+    public void setSubjects(List<StudySubjectWebDto> subjects) {
+        this.subjects = subjects;
+    }
 }
