@@ -25,7 +25,7 @@ String interventionSyncUrl ="${resolvedProperties['ncit.interventionSyncUrl']}"
 
 println "the url here--->"+url
 println "the preferredNameUrl here--->"+preferredNameUrl
-println "the paJdbcUrl here--->"+paJdbcUrl
+println "the interventionSyncUrl here--->"+interventionSyncUrl
 
 //SyncDiseasesFromNCIt lexc = new SyncDiseasesFromNCIt()
 //lexc.syncDiseaseTerms(paJdbcUrl,outputDir,url,user,password);
