@@ -736,7 +736,16 @@
             </interceptor-ref>                 
             <result name="error">/WEB-INF/jsp/outOfScopeAccruals.jsp</result>
             <result name="success">/WEB-INF/jsp/outOfScopeAccruals.jsp</result>            
-        </action> 
+        </action>
+        <action name="manageFlaggedTrials*" class="gov.nih.nci.pa.action.ManageFlaggedTrialsAction" method="{1}">   
+            <interceptor-ref name="paDefaultInterceptor" />
+            <result name="error">/WEB-INF/jsp/manageFlaggedTrials.jsp</result>
+            <result name="success">/WEB-INF/jsp/manageFlaggedTrials.jsp</result>            
+        </action>
+        <action name="ajaxManageFlaggedTrials*" class="gov.nih.nci.pa.action.ManageFlaggedTrialsAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />
+            <result type="stream"/>
+        </action>
         <action name="manageTerms*" class="gov.nih.nci.pa.action.ManageTermsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />   
             <result name="success">/WEB-INF/jsp/manageTerms.jsp</result> 

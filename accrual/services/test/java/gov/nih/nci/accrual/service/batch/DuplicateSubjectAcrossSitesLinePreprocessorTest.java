@@ -28,6 +28,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.StudyFlagReasonCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -35,6 +36,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.FlaggedTrialServiceRemote;
 import gov.nih.nci.pa.util.pomock.MockIdentifiedOrganizationCorrelationService;
 import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 
@@ -59,6 +61,8 @@ import org.mockito.stubbing.Answer;
 public class DuplicateSubjectAcrossSitesLinePreprocessorTest {
 
     protected DuplicateSubjectAcrossSitesLinePreprocessor processor;
+    
+    FlaggedTrialServiceRemote flaggedService;
 
     /**
      * @throws java.lang.Exception
@@ -83,6 +87,17 @@ public class DuplicateSubjectAcrossSitesLinePreprocessorTest {
         when(poServiceLocator.getIdentifiedOrganizationEntityService())
                 .thenReturn(new MockIdentifiedOrganizationCorrelationService());
         PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
+        
+        // Flagged Trials.
+        flaggedService = mock(FlaggedTrialServiceRemote.class);
+        when(
+                flaggedService
+                        .isFlagged(
+                                any(StudyProtocolDTO.class),
+                                eq(StudyFlagReasonCode.DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES)))
+                .thenReturn(false);
+        when(serviceLocator.getFlaggedTrialService())
+                .thenReturn(flaggedService);      
 
         // Protocol.
         StudyProtocolServiceRemote studyProtocolServiceRemote = mock(StudyProtocolServiceRemote.class);
@@ -294,6 +309,38 @@ public class DuplicateSubjectAcrossSitesLinePreprocessorTest {
                         + MockOrganizationEntityService.CTEP_ID
                         + ", Site CTEP ID: CTEP", error.getErrorDetails()
                         .get(0));
+
+    }
+    
+    @Test
+    public void testFlaggedTrial() throws IOException, PAException {
+        
+        when(
+                flaggedService
+                        .isFlagged(
+                                any(StudyProtocolDTO.class),
+                                eq(StudyFlagReasonCode.DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES)))
+                .thenReturn(true);
+        
+        File file = createTempFile();
+
+        FileUtils
+                .writeLines(
+                        file,
+                        "UTF-8",
+                        Arrays.asList(new String[] {
+                                "\uFEFFCOLLECTIONS,NCI-2014-0001,,,,,,,,,",
+                                "PATIENTS, NCI-2014-0001 ,fhCRC 2000.013,77058,, 196106 , Female , Hispanic or Latino ,,20110513,, dcp ,,,,,,,,,,10029462,,",
+                                "PATIENTS, NCI-2014-0001, A0009 ,33908,,195306,Female,Not Hispanic or Latino,,20110930,,DCP,,,,,,,,,,10029462,,",
+                                "",
+                                "PATIENT_RACES,NCI-2014-0001,fhCRC 2000.013,Not Reported",
+                                "PATIENT_RACES,NCI-2014-0001,fhCRC 2000.013,White",
+                                "PATIENT_RACES,NCI-2014-00416,A0009,Black" }));
+
+        PreprocessingResult result = processor.preprocess(file);
+        assertTrue(file.equals(result.getPreprocessedFile()));
+        assertTrue(result.getValidationErrors().isEmpty());
+
 
     }
 

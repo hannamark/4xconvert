@@ -246,6 +246,9 @@
             <fileset dir="${commons.build.outputDir}">
                 <include name="**/*.class" />	
             	<exclude name="**/StudyIdentifierType.class"/>
+            	<exclude name="**/StudyProtocolFlag.class"/>
+            	<exclude name="**/StudyProtocolFlagDTO.class"/>
+            	<exclude name="**/StudyFlagReasonCode.class"/>
             	<exclude name="**/gov/nih/nci/po/ws/common/types/*.class" />
             </fileset>
         	<auxClasspath>

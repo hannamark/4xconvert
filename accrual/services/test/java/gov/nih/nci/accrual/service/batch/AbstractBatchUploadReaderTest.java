@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.service.batch;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -124,6 +125,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.StudyFlagReasonCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
@@ -144,6 +146,7 @@ import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.FlaggedTrialServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -459,8 +462,18 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         
         accDisTerminologySvc = mock(AccrualDiseaseTerminologyServiceRemote.class);
         when(accDisTerminologySvc.getCodeSystem(anyLong())).thenReturn("SDC");
+        
+        // Flagged Trials.
+        FlaggedTrialServiceRemote flaggedService = mock(FlaggedTrialServiceRemote.class);
+        when(
+                flaggedService
+                        .isFlagged(
+                                any(StudyProtocolDTO.class),
+                                eq(StudyFlagReasonCode.DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES)))
+                .thenReturn(false);
 
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        when(paSvcLocator.getFlaggedTrialService()).thenReturn(flaggedService);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);

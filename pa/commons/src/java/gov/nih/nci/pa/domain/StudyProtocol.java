@@ -84,6 +84,7 @@ import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.LastCreatedComparator;
 import gov.nih.nci.pa.util.NotEmptyIiExtension;
@@ -119,8 +120,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Columns;
@@ -1035,5 +1038,18 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      */
     public void setSubmitingOrganization(Organization submitingOrganization) {
         this.submitingOrganization = submitingOrganization;
+    }
+
+    /**
+     * @return NciID
+     */
+    @Transient
+    public String getNciID() {
+       for (Ii ii: getOtherIdentifiers()) {
+           if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+               return ii.getExtension();
+           }
+       }
+       return StringUtils.EMPTY;
     }    
 }

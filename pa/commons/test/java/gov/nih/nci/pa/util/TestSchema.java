@@ -2022,6 +2022,9 @@ public class TestSchema {
                 .executeUpdate();
         s.createSQLQuery("DROP SEQUENCE nci_identifiers_seq IF EXISTS").executeUpdate();
         s.createSQLQuery("CREATE SEQUENCE nci_identifiers_seq").executeUpdate();
+        s.createSQLQuery(
+                "CREATE UNIQUE INDEX idx01 ON study_protocol_flags (study_protocol_id, flag_reason, deleted)")
+                .executeUpdate();
 
     }
 

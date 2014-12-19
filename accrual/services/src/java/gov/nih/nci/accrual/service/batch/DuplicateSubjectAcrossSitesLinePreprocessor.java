@@ -20,6 +20,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.StudyFlagReasonCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -101,7 +102,7 @@ public final class DuplicateSubjectAcrossSitesLinePreprocessor implements
     private ValidationError removeDuplicateSubjectLines(
             final List<String> writeThroughLines) {
         StudyProtocolDTO study = findStudyProtocol(writeThroughLines);
-        if (study == null) {
+        if (study == null || isExcept(study)) {
             return null;
         }
         List<Patient> allPatients = parsePatients(writeThroughLines);
@@ -116,16 +117,35 @@ public final class DuplicateSubjectAcrossSitesLinePreprocessor implements
                         + "Patients were not processed:");
         for (PotentialDuplicate dupe : duplicates) {
             writeThroughLines.set(dupe.patient.lineNumber, StringUtils.EMPTY);
-            error.getErrorDetails()
-                    .add(String
-                            .format("Line %s: Patient ID %s is already registered at "
+            error.getErrorDetails().add(
+                    String.format(
+                            "Line %s: Patient ID %s is already registered at "
                                     + "%s, Site PO ID: %s, Site CTEP ID: %s",
-                                    dupe.patient.lineNumber + 1,
-                                    dupe.patient.subjectID, dupe.siteName,
-                                    dupe.sitePoId, StringUtils.defaultString(
-                                            dupe.siteCtepId, "N/A")));
+                            dupe.patient.lineNumber + 1,
+                            dupe.patient.subjectID, dupe.siteName,
+                            dupe.sitePoId,
+                            StringUtils.defaultString(dupe.siteCtepId, "N/A")));
         }
         return error;
+    }
+
+    /**
+     * @param study
+     * @return
+     * @throws PAException
+     */
+    private boolean isExcept(StudyProtocolDTO study) {
+        try {
+            return PaServiceLocator
+                    .getInstance()
+                    .getFlaggedTrialService()
+                    .isFlagged(
+                            study,
+                            StudyFlagReasonCode.DO_NOT_ENFORCE_UNIQUE_SUBJECTS_ACCROSS_SITES);
+        } catch (PAException e) {
+            LOG.error(e, e);
+            return false;
+        }
     }
 
     @SuppressWarnings({ "unchecked" })

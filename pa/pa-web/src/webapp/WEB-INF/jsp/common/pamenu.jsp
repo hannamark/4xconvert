@@ -31,6 +31,10 @@
             <pa:menuLink href="${pageContext.request.contextPath}/protected/outOfScopeAccruals.action" id="outOfScopeAccrualsMenuOption" labelKey="pamenu.outOfScopeAccruals" selected="${requestScope.topic == 'outofscopeaccruals'}"/>            
             <pa:menuLink href="${pageContext.request.contextPath}/../registry/protected/submitProprietaryTrial.action?sum4FundingCatCode=Industrial" id="submitProprietaryTrialMenuOption" labelKey="pamenu.submitProprietaryTrial" newWindow="${true}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/manageTerms.action" id="manageTermsMenuOption" labelKey="pamenu.manageTerms" selected="${requestScope.topic == 'manageterms'}"/>
+            <c:if test="${sessionScope.isSuAbstractor}">
+                <pa:menuLink href="${pageContext.request.contextPath}/protected/manageFlaggedTrials.action" id="manageFlaggedTrialsOption" 
+                    labelKey="pamenu.abstraction.manageFlaggedTrials" selected="${requestScope.topic == 'manageFlaggedTrials'}"/>            
+            </c:if>             
             <c:if test="${pageContext.request.remoteUser != null}">
                 <pa:menuLink href="${pageContext.request.contextPath}/logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>
             </c:if>

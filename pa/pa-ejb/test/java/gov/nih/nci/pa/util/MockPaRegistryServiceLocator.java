@@ -63,6 +63,7 @@ import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
+import gov.nih.nci.pa.service.util.FlaggedTrialService;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.I2EGrantsServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -726,9 +727,14 @@ public RegulatoryInformationServiceLocal getRegulatoryInformationService() {
         return null;
     }
 
-	@Override
+    @Override
 	public StudySubjectServiceLocal getStudySubjectService() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public FlaggedTrialService getFlaggedTrialService() {       
+        return null;
+    }
 }

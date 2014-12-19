@@ -85,6 +85,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityServiceRemote;
+import gov.nih.nci.pa.service.util.FlaggedTrialServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -195,6 +196,11 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
             ctx = new InitialContext();
         }
         return ctx;
+    }
+
+    @Override
+    public FlaggedTrialServiceRemote getFlaggedTrialService() {
+        return lookup("FlaggedTrialRemoteService!gov.nih.nci.pa.service.util.FlaggedTrialServiceRemote");
     }
 
 }

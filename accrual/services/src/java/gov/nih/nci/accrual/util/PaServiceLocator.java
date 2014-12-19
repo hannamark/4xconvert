@@ -85,6 +85,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityServiceRemote;
+import gov.nih.nci.pa.service.util.FlaggedTrialServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -193,5 +194,10 @@ public final class PaServiceLocator implements ServiceLocatorPaInterface {
     @Override
     public ParticipatingSiteServiceRemote getParticipatingSiteServiceRemote() {
         return serviceLocator.getParticipatingSiteServiceRemote();
+    }
+
+    @Override
+    public FlaggedTrialServiceRemote getFlaggedTrialService() {
+        return serviceLocator.getFlaggedTrialService();
     }
 }
