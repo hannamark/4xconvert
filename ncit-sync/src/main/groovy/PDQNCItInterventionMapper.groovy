@@ -114,13 +114,14 @@ public class PDQNCItInterventionMapper{
          String ncitCode =null;
          def  sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          def ctrpTerms = sql.rows("select distinct(nt_term_identifier) from intervention");
-         
+        
         ctrpTerms.each (){
              
          ncitCode= it.nt_term_identifier;
         
          
          if(ncitCode!=null) {
+             
             println "Syncing intervention term "+ncitCode
             String  prefName = getPreferredName(ncitCode,preferredNameUrl)
             if(prefName!=null) {
@@ -144,7 +145,7 @@ public class PDQNCItInterventionMapper{
          writer.write fileContents.toString()
          writer.flush();
          writer.close();
-         
+         sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          sql.executeUpdate(fileContents.toString());
     
   }
