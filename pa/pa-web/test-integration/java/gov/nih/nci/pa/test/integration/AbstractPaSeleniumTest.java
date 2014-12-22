@@ -1166,6 +1166,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         public Long registryUserID;
         public Long csmUserID;
         public String rand;
+        public String flaggedReason;
 
         @Override
         public String toString() {
