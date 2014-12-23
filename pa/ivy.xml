@@ -104,7 +104,7 @@
     <dependency conf="ear->master" org="commons-logging" name="commons-logging" rev="1.0.4"/>
     <dependency conf="ear->master" org="de.jollyday" name="jollyday" rev="0.4.5"/>
     <dependency conf="ear->master" org="dom4j" name="dom4j" rev="1.6.1"/>
-    <dependency conf="ear->master" org="gov.nih.nci.coppa" name="coppa-commons" rev="1.3.10.3-SNAPSHOT"/>
+    <dependency conf="ear->master" org="gov.nih.nci.coppa" name="coppa-commons" rev="1.3.10.3"/>
     <dependency conf="ear->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-core" rev="1.4.10.1"/>
     <dependency conf="ear->master" org="gov.nih.nci.coppa.po" name="po-services" rev="1.0.1-SNAPSHOT" changing="true">
           <artifact name="po-services" ext="jar" conf="*" m:classifier="client"/>
