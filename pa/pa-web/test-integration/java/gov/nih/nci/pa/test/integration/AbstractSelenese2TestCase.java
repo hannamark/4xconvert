@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -90,6 +92,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -109,7 +112,10 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
     protected Selenium selenium;
     protected WebDriver driver;
     protected String url;
+    
+    protected File downloadDir = new File("./");
 
+    @SuppressWarnings("deprecation")
     @Override
     @Before
     public void setUp() throws Exception {
@@ -119,7 +125,19 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         url = port == 0 ? "http://" + hostname : "http://" + hostname
                 + ":" + port;
 
-        driver = (WebDriver) Class.forName(driverClass).newInstance();
+        FirefoxProfile profile = new FirefoxProfile();
+        profile.setPreference("browser.download.dir", downloadDir.getCanonicalPath());
+        profile.setPreference("browser.download.folderList", 2);
+        profile.setPreference("browser.helperApps.neverAsk.saveToDisk", "text/csv");
+        
+        final Class<?> clazz = Class.forName(driverClass);
+        try {
+            driver = (WebDriver) clazz.getConstructor(FirefoxProfile.class)
+                    .newInstance(profile);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            driver = (WebDriver) clazz.newInstance();
+        }       
         driver.manage().window().setSize(new Dimension(1500, 900));
         selenium = new WebDriverBackedSelenium(driver, url);
         selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));

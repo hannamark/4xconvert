@@ -85,6 +85,8 @@ package gov.nih.nci.pa.test.integration;
 import static org.apache.commons.lang.time.DateUtils.parseDate;
 import static org.apache.commons.lang.time.DateUtils.truncate;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -96,6 +98,8 @@ import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -106,6 +110,7 @@ import org.openqa.selenium.By;
  */
 public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
+    private static final String MM_DD_YYYY_HH_MM_AAA = "MM/dd/yyyy hh:mm aaa";
     private static final String[] REASONS = new String[] {
             "Do not enforce unique Subject ID across sites",
             "Do not send to ClinicalTrials.gov",
@@ -119,6 +124,76 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         trial.flaggedReason = "Do not send to ClinicalTrials.gov";
         addFlaggedTrial(trial);
         verifySingleFlaggedTrial(trial);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testAddDuplicateFlagValidation() throws SQLException,
+            ParseException {
+        TrialInfo trial = createTrialAndAccessManageFlags();
+        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        addFlaggedTrial(trial);
+        clickAndWait("link=Manage Flagged Trials");
+        populateAddFlagDialogAndHitSave(trial);
+        pause(2000);
+        assertTrue(selenium.isAlertPresent());
+        assertFalse(selenium
+                .isTextPresent("Flagged trial has been added successfully."));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testInvalidNciId() throws SQLException, ParseException {
+        TrialInfo trial = createTrialAndAccessManageFlags();
+        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.nciID = "NCI-2014-";
+        populateAddFlagDialogAndHitSave(trial);
+        assertTrue(selenium.isVisible("err"));
+        assertEquals("NCI Trial ID is invalid.", selenium.getText("err"));
+        selenium.click("xpath=//button/span[normalize-space(text())='Cancel']");
+
+        trial.nciID = "NCI-2014-238947238947";
+        populateAddFlagDialogAndHitSave(trial);
+        pause(2000);
+        assertTrue(selenium.isAlertPresent());
+        assertFalse(selenium
+                .isTextPresent("Flagged trial has been added successfully."));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testEditDuplicateFlagValidation() throws SQLException,
+            ParseException {
+        TrialInfo trial = createTrialAndAccessManageFlags();
+        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        addFlaggedTrial(trial);
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
+        addFlaggedTrial(trial);
+
+        clickAndWait("link=Manage Flagged Trials");
+        selenium.click("xpath=//table[@id='flaggedTrials']/thead/tr[1]/th[2]");
+        selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[6]");
+        selenium.select("reason", "label=Do not send to ClinicalTrials.gov");
+        selenium.type("comments", "This is edited comment.");
+        selenium.click("xpath=//button/span[normalize-space(text())='Save']");
+        pause(2000);
+        assertFalse(selenium.isTextPresent("Changes saved!"));
+        assertTrue(selenium.isAlertPresent());
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testNavigateToTrialHistory() throws SQLException,
+            ParseException {
+        TrialInfo trial = createTrialAndAccessManageFlags();
+        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        addFlaggedTrial(trial);
+        selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[1]");
+        waitForPageToLoad();
+        assertEquals("Trial History Information", selenium.getTitle());
     }
 
     @SuppressWarnings("deprecation")
@@ -151,27 +226,150 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
     }
 
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    @Test
+    public void testMultiDelete() throws SQLException, ParseException,
+            IOException {
+        List<TrialInfo> trials = addMultipleFlaggedTrials();
+        selenium.select("name=flaggedTrials_length", "label=25");
+        pause(500);
+        selenium.click("link=Select All");
+        selenium.click("link=Delete");
+        assertTrue(selenium.isVisible("comment-form"));
+        selenium.type("deleteCommentsBox", "This is a delete comment.");
+        selenium.click("xpath=//button/span[normalize-space(text())='Delete']");
+        waitForPageToLoad();
+
+        assertTrue(selenium.isTextPresent("Message. Record(s) Deleted."));
+        assertTrue(selenium.isTextPresent("No flagged trials found."));
+        assertTrue(selenium.isVisible("deletedFlaggedTrials"));
+        selenium.select("name=deletedFlaggedTrials_length", "label=25");
+        pause(500);
+        assertTrue(selenium
+                .isElementPresent("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[11]"));
+
+    }
+
     @SuppressWarnings("deprecation")
     @Test
+    public void testSelectDeselectAll() throws SQLException, ParseException {
+        TrialInfo trial = createTrialAndAccessManageFlags();
+        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        addFlaggedTrial(trial);
+
+        selenium.click("link=Select All");
+        assertTrue(selenium
+                .isChecked("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[7]//input[@type='checkbox']"));
+        selenium.click("link=Deselect All");
+        assertFalse(selenium
+                .isChecked("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[7]//input[@type='checkbox']"));
+
+        selenium.click("link=Delete");
+        assertFalse(selenium.isVisible("comment-form"));
+
+    }
+
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    @Test
+    public void testEnsureDeletedTrialsIncludedInExport() throws SQLException,
+            ParseException, IOException {
+        TrialInfo trial1 = createTrialAndAccessManageFlags();
+        trial1.flaggedReason = "Do not send to ClinicalTrials.gov";
+        addFlaggedTrial(trial1);
+
+        TrialInfo trial2 = createAcceptedTrial();
+        trial2.flaggedReason = "Do not send to ClinicalTrials.gov";
+        addFlaggedTrial(trial2);
+
+        selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[7]//input[@type='checkbox']");
+        selenium.click("link=Delete");
+        selenium.type("deleteCommentsBox", "This is a delete comment.");
+        selenium.click("xpath=//button/span[normalize-space(text())='Delete']");
+        waitForPageToLoad();
+        assertTrue(selenium.isTextPresent("Message. Record(s) Deleted."));
+
+        // Finally, download CSV.
+        if (!isPhantomJS()) {
+            selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
+            File csv = new File(downloadDir, "flagged_trials_all.csv");
+            assertTrue(csv.exists());
+            csv.deleteOnExit();
+            List<String> lines = FileUtils.readLines(csv);
+            assertEquals(3, lines.size());
+            assertTrue((lines.get(1).startsWith(trial1.nciID) && lines.get(2)
+                    .startsWith(trial2.nciID))
+                    || (lines.get(1).startsWith(trial2.nciID) && lines.get(2)
+                            .startsWith(trial1.nciID)));
+            csv.delete();
+        }
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testDeleteFlaggedTrial() throws SQLException, ParseException {
+        TrialInfo trial = createTrialAndAccessManageFlags();
+        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        addFlaggedTrial(trial);
+
+        selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[7]//input[@type='checkbox']");
+        selenium.click("link=Delete");
+        assertTrue(selenium.isVisible("comment-form"));
+
+        selenium.click("xpath=//button/span[normalize-space(text())='Delete']");
+        assertTrue(selenium.isVisible("commentErr"));
+        assertEquals("Comment is mandatory.", selenium.getText("commentErr"));
+        selenium.click("xpath=//div[@aria-describedby='comment-form']//button/span[normalize-space(text())='Cancel']");
+        assertFalse(selenium.isVisible("comment-form"));
+
+        selenium.click("link=Delete");
+        selenium.type("deleteCommentsBox", "This is a delete comment.");
+        assertEquals("3975 characters left", selenium.getText("limitlbl_1"));
+        selenium.click("xpath=//button/span[normalize-space(text())='Delete']");
+        waitForPageToLoad();
+        assertTrue(selenium.isTextPresent("Message. Record(s) Deleted."));
+        assertTrue(selenium.isTextPresent("No flagged trials found."));
+
+        assertTrue(selenium.isVisible("deletedFlaggedTrials"));
+        assertEquals(
+                trial.nciID,
+                selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[1]"));
+        assertEquals(
+                "Do not send to ClinicalTrials.gov",
+                selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[2]"));
+        assertEquals(
+                "CI, ctrpsubstractor "
+                        + DateFormatUtils.format(
+                                truncate(getDateOfLastFlaggedTrial(),
+                                        Calendar.MINUTE), MM_DD_YYYY_HH_MM_AAA),
+                selenium.getText(
+                        "xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[3]")
+                        .replaceAll("\\s+", " "));
+        assertEquals(
+                "CI, ctrpsubstractor "
+                        + DateFormatUtils.format(
+                                truncate(getDeleteDateOfLastFlaggedTrial(),
+                                        Calendar.MINUTE), MM_DD_YYYY_HH_MM_AAA),
+                selenium.getText(
+                        "xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[4]")
+                        .replaceAll("\\s+", " "));
+        assertEquals(
+                "General Comments: This is a comment Delete Comments: This is a delete comment.",
+                selenium.getText(
+                        "xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[5]")
+                        .replaceAll("\\s+", " "));
+
+    }
+
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    @Test
     public void testFlaggedTrialsTableControls() throws SQLException,
-            ParseException {
-        deleteAllFlaggedTrials();
-        List<TrialInfo> trials = new ArrayList<>();
-        for (int i = 0; i < 11; i++) {
-            TrialInfo trial = createAcceptedTrial();
-            trials.add(trial);
-        }
-
-        loginAsSuperAbstractor();
-        clickAndWait("link=Manage Flagged Trials");
-
-        for (TrialInfo trialInfo : trials) {
-            trialInfo.flaggedReason = REASONS[trials.indexOf(trialInfo) % 3];
-            addFlaggedTrial(trialInfo);
-        }
+            ParseException, IOException {
+        List<TrialInfo> trials = addMultipleFlaggedTrials();
 
         // Page Size control.
         selenium.select("name=flaggedTrials_length", "label=25");
+        pause(500);
         assertTrue(selenium.isTextPresent("Showing 1 to 11 of 11 entries"));
         assertFalse(selenium
                 .isElementPresent("xpath=//a[normalize-space(text())='2']"));
@@ -190,7 +388,151 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                     selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr["
                             + (trials.indexOf(trialInfo) + 1) + "]/td[1]"));
         }
+        selenium.click("xpath=//table[@id='flaggedTrials']/thead/tr[1]/th[2]");
+        assertEquals(
+                "Do not enforce unique Subject ID across sites",
+                selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[2]"));
+        assertEquals(
+                "Do not send to ClinicalTrials.gov",
+                selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[11]/td[2]"));
 
+        // Searching
+        TrialInfo trial = trials.get(0);
+        driver.findElement(By.xpath("//input[@type='search']")).sendKeys(
+                trial.nciID);
+        assertTrue(selenium
+                .isTextPresent("Showing 1 to 1 of 1 entries (filtered from 11 total entries)"));
+        assertEquals(
+                trial.nciID,
+                selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[1]"));
+        assertFalse(selenium
+                .isElementPresent("xpath=//table[@id='flaggedTrials']/tbody/tr[2]"));
+
+        // Paging
+        selenium.type("xpath=//input[@type='search']", "");
+        driver.findElement(By.xpath("//input[@type='search']")).sendKeys(" ");
+        selenium.click("xpath=//table[@id='flaggedTrials']/thead/tr[1]/th[1]");
+        selenium.select("name=flaggedTrials_length", "label=10");
+        pause(500);
+        selenium.click("xpath=//a[normalize-space(text())='2']");
+        assertEquals(
+                trial.nciID,
+                selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[1]"));
+        assertFalse(selenium
+                .isElementPresent("xpath=//table[@id='flaggedTrials']/tbody/tr[2]"));
+
+        // Finally, download CSV.
+        if (!isPhantomJS()) {
+            selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
+            File csv = new File(downloadDir, "flagged_trials_all.csv");
+            assertTrue(csv.exists());
+            csv.deleteOnExit();
+            List<String> lines = FileUtils.readLines(csv);
+            assertEquals(12, lines.size());
+            assertEquals(
+                    "NCI Trial ID,Flag Reason,Flagged By,Flagged On,Comments,Deleted By,Deleted On,Delete Comments",
+                    lines.get(0));
+            assertTrue(lines
+                    .get(11)
+                    .matches(
+                            "^"
+                                    + trial.nciID
+                                    + ","
+                                    + trial.flaggedReason
+                                    + ",\"CI, ctrpsubstractor\",.*?,This is a comment,,,"
+                                    + "$"));
+            csv.delete();
+        }
+
+    }
+
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    @Test
+    public void testDeletedTrialsTableControls() throws SQLException,
+            ParseException, IOException {
+        List<TrialInfo> trials = addMultipleFlaggedTrials();
+
+        // Delete ALL
+        selenium.select("name=flaggedTrials_length", "label=25");
+        pause(500);
+        selenium.click("link=Select All");
+        selenium.click("link=Delete");
+        selenium.type("deleteCommentsBox", "This is a delete comment.");
+        selenium.click("xpath=//button/span[normalize-space(text())='Delete']");
+        waitForPageToLoad();
+        assertTrue(selenium.isTextPresent("Message. Record(s) Deleted."));
+
+        // Sorting
+        selenium.select("name=deletedFlaggedTrials_length", "label=25");
+        pause(500);
+        selenium.click("xpath=//table[@id='deletedFlaggedTrials']/thead/tr[1]/th[1]");
+        Collections.sort(trials, new Comparator<TrialInfo>() {
+            @Override
+            public int compare(TrialInfo o1, TrialInfo o2) {
+                return o2.nciID.compareTo(o1.nciID);
+            }
+        });
+        for (TrialInfo trialInfo : trials) {
+            assertEquals(
+                    trialInfo.nciID,
+                    selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr["
+                            + (trials.indexOf(trialInfo) + 1) + "]/td[1]"));
+        }
+        selenium.click("xpath=//table[@id='deletedFlaggedTrials']/thead/tr[1]/th[2]");
+        assertEquals(
+                "Do not enforce unique Subject ID across sites",
+                selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[2]"));
+        assertEquals(
+                "Do not send to ClinicalTrials.gov",
+                selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[11]/td[2]"));
+
+        // Searching
+        TrialInfo trial = trials.get(0);
+        driver.findElement(By.xpath("//input[@type='search']")).sendKeys(
+                trial.nciID);
+        assertTrue(selenium
+                .isTextPresent("Showing 1 to 1 of 1 entries (filtered from 11 total entries)"));
+        assertEquals(
+                trial.nciID,
+                selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[1]"));
+        assertFalse(selenium
+                .isElementPresent("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[2]"));
+
+        // Paging
+        selenium.type("xpath=//input[@type='search']", "");
+        driver.findElement(By.xpath("//input[@type='search']")).sendKeys(" ");
+        selenium.click("xpath=//table[@id='deletedFlaggedTrials']/thead/tr[1]/th[1]");
+        selenium.select("name=deletedFlaggedTrials_length", "label=10");
+        pause(500);
+        selenium.click("xpath=//a[normalize-space(text())='2']");
+        assertEquals(
+                trial.nciID,
+                selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[1]"));
+        assertFalse(selenium
+                .isElementPresent("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[2]"));
+
+    }
+
+    /**
+     * @return
+     * @throws SQLException
+     */
+    private List<TrialInfo> addMultipleFlaggedTrials() throws SQLException {
+        deleteAllFlaggedTrials();
+        List<TrialInfo> trials = new ArrayList<>();
+        for (int i = 0; i < 11; i++) {
+            TrialInfo trial = createAcceptedTrial();
+            trials.add(trial);
+        }
+
+        loginAsSuperAbstractor();
+        clickAndWait("link=Manage Flagged Trials");
+
+        for (TrialInfo trialInfo : trials) {
+            trialInfo.flaggedReason = REASONS[trials.indexOf(trialInfo) % 3];
+            addFlaggedTrial(trialInfo);
+        }
+        return trials;
     }
 
     /**
@@ -216,7 +558,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 truncate(
                         parseDate(
                                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[4]"),
-                                new String[] { "MM/dd/yyyy hh:mm aaa" }),
+                                new String[] { MM_DD_YYYY_HH_MM_AAA }),
                         Calendar.MINUTE));
         assertEquals(
                 "This is a comment",
@@ -228,15 +570,24 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
      */
     @SuppressWarnings("deprecation")
     private void addFlaggedTrial(TrialInfo trial) {
+        populateAddFlagDialogAndHitSave(trial);
+        waitForPageToLoad();
+        waitForElementToBecomeVisible(By.className("confirm_msg"), 5);
+        assertTrue(selenium
+                .isTextPresent("Flagged trial has been added successfully."));
+    }
+
+    /**
+     * @param trial
+     */
+    @SuppressWarnings("deprecation")
+    private void populateAddFlagDialogAndHitSave(TrialInfo trial) {
         selenium.click("xpath=//span[normalize-space(text())='Add Flagged Trial']");
         selenium.type("nciID", trial.nciID);
         selenium.select("reason", "label=" + trial.flaggedReason);
         selenium.type("comments", "This is a comment");
         assertEquals("3983 characters left", selenium.getText("limitlbl_0"));
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-        waitForPageToLoad();
-        waitForElementToBecomeVisible(By.className("confirm_msg"), 5);
-        assertTrue(selenium.isTextPresent("Flagged trial has been added successfully."));
     }
 
     /**
@@ -270,6 +621,14 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         return (Date) runner
                 .query(connection,
                         "select date_flagged from study_protocol_flags order by identifier desc limit 1",
+                        new ArrayHandler())[0];
+    }
+
+    private Date getDeleteDateOfLastFlaggedTrial() throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (Date) runner
+                .query(connection,
+                        "select date_deleted from study_protocol_flags order by identifier desc limit 1",
                         new ArrayHandler())[0];
     }
 
