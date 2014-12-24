@@ -30,7 +30,8 @@
         <maven-surefire-plugin.version>2.4.3</maven-surefire-plugin.version>
         <cobertura-maven-plugin.version>2.4</cobertura-maven-plugin.version>
         <buildnumber-maven-plugin.version>1.2</buildnumber-maven-plugin.version>
-        <maven-release-plugin.version>2.0-beta-9</maven-release-plugin.version>
+        <maven-release-plugin.version>2.2.2</maven-release-plugin.version>
+		<maven-scm-plugin.version>1.7</maven-scm-plugin.version>
         <sql-maven-plugin.version>1.4</sql-maven-plugin.version>
         <maven-javadoc-plugin.version>2.4</maven-javadoc-plugin.version>
         <jdepend-maven-plugin.version>2.0-beta-2</jdepend-maven-plugin.version>
@@ -291,7 +292,20 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>${maven-release-plugin.version}</version>
+				<configuration>
+					<tagBase>https://ncisvn.nci.nih.gov/svn/coppa/tags/po-releases</tagBase>
+					<stagingRepository>releases::default::https://ncimvn.nci.nih.gov/nexus/service/local/staging/deploy/maven2</stagingRepository>
+				</configuration>
             </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>${maven-scm-plugin.version}</version>
+				<configuration>
+					<username>nciscm</username>
+					<password />
+				</configuration>
+			</plugin>
         </plugins>
         <pluginManagement>
             <plugins>
