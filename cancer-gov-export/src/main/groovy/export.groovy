@@ -200,7 +200,7 @@ def getTrialsSQL = """
 	 sp.keyword_text as keywords		
      from study_protocol sp
      inner join rv_trial_id_nct on rv_trial_id_nct.study_protocol_identifier = sp.identifier
-     join rv_sponsor_organization sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier 
+     left join rv_sponsor_organization sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier 
      inner join rv_dwf_current dws on dws.study_protocol_identifier = sp.identifier
         and dws.status_code in ('ABSTRACTED','VERIFICATION_PENDING','ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')        
      inner join rv_trial_id_nci as nci_id on nci_id.study_protocol_id = sp.identifier       
@@ -275,9 +275,10 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 		xml.sponsors {
 			xml.lead_sponsor {
-				if(spRow.sponsorOrgName) {
-					xml.agency(spRow.sponsorOrgName.trim())
-					xml.agency_class(determineAgencyClass(spRow.sponsorOrgName.trim(), poConn))
+				def sponsor = spRow.sponsorOrgName ?: spRow.leadOrgName
+				if (sponsor) {
+					xml.agency(sponsor.trim())
+					xml.agency_class(determineAgencyClass(sponsor.trim(), poConn))
 				}
 			}
 			paConn.eachRow(Queries.collabsSQL, [studyProtocolID]) { collabRow ->
