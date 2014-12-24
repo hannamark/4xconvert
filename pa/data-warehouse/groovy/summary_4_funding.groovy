@@ -8,7 +8,7 @@ def sql = """SELECT DISTINCT sr.identifier, soi.extension, sr.type_code, org.nam
              INNER JOIN organization org ON (CAST(sr.organization_identifier AS bigint) = org.identifier)
              WHERE sr.summ_4_rept_indicator = TRUE
                AND sp.status_code = 'ACTIVE'
-               AND org.status_code NOT IN ('NULLIFIED')              
+                             
           """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
