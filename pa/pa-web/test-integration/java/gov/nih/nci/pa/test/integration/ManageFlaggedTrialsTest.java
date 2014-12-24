@@ -135,7 +135,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         addFlaggedTrial(trial);
         clickAndWait("link=Manage Flagged Trials");
         populateAddFlagDialogAndHitSave(trial);
-        pause(2000);
+        pause(5000);
         assertTrue(selenium.isAlertPresent());
         assertFalse(selenium
                 .isTextPresent("Flagged trial has been added successfully."));
@@ -155,7 +155,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
         trial.nciID = "NCI-2014-238947238947";
         populateAddFlagDialogAndHitSave(trial);
-        pause(2000);
+        pause(5000);
         assertTrue(selenium.isAlertPresent());
         assertFalse(selenium
                 .isTextPresent("Flagged trial has been added successfully."));
@@ -178,7 +178,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         selenium.select("reason", "label=Do not send to ClinicalTrials.gov");
         selenium.type("comments", "This is edited comment.");
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-        pause(2000);
+        pause(5000);
         assertFalse(selenium.isTextPresent("Changes saved!"));
         assertTrue(selenium.isAlertPresent());
 
@@ -213,7 +213,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         selenium.select("reason", "label=Do not process CDUS accrual files");
         selenium.type("comments", "This is edited comment.");
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-        waitForElementToBecomeVisible(By.id("msg"), 5);
+        waitForElementToBecomeVisible(By.id("msg"), 15);
         assertTrue(selenium.isTextPresent("Changes saved!"));
 
         assertEquals(
@@ -232,7 +232,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
             IOException {
         List<TrialInfo> trials = addMultipleFlaggedTrials();
         selenium.select("name=flaggedTrials_length", "label=25");
-        pause(500);
+        pause(1000);
         selenium.click("link=Select All");
         selenium.click("link=Delete");
         assertTrue(selenium.isVisible("comment-form"));
@@ -244,7 +244,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("No flagged trials found."));
         assertTrue(selenium.isVisible("deletedFlaggedTrials"));
         selenium.select("name=deletedFlaggedTrials_length", "label=25");
-        pause(500);
+        pause(1000);
         assertTrue(selenium
                 .isElementPresent("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[11]"));
 
@@ -369,7 +369,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
         // Page Size control.
         selenium.select("name=flaggedTrials_length", "label=25");
-        pause(500);
+        pause(1500);
         assertTrue(selenium.isTextPresent("Showing 1 to 11 of 11 entries"));
         assertFalse(selenium
                 .isElementPresent("xpath=//a[normalize-space(text())='2']"));
@@ -413,7 +413,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         driver.findElement(By.xpath("//input[@type='search']")).sendKeys(" ");
         selenium.click("xpath=//table[@id='flaggedTrials']/thead/tr[1]/th[1]");
         selenium.select("name=flaggedTrials_length", "label=10");
-        pause(500);
+        pause(1500);
         selenium.click("xpath=//a[normalize-space(text())='2']");
         assertEquals(
                 trial.nciID,
@@ -454,7 +454,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
         // Delete ALL
         selenium.select("name=flaggedTrials_length", "label=25");
-        pause(500);
+        pause(1500);
         selenium.click("link=Select All");
         selenium.click("link=Delete");
         selenium.type("deleteCommentsBox", "This is a delete comment.");
@@ -464,7 +464,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
         // Sorting
         selenium.select("name=deletedFlaggedTrials_length", "label=25");
-        pause(500);
+        pause(1500);
         selenium.click("xpath=//table[@id='deletedFlaggedTrials']/thead/tr[1]/th[1]");
         Collections.sort(trials, new Comparator<TrialInfo>() {
             @Override
@@ -503,7 +503,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         driver.findElement(By.xpath("//input[@type='search']")).sendKeys(" ");
         selenium.click("xpath=//table[@id='deletedFlaggedTrials']/thead/tr[1]/th[1]");
         selenium.select("name=deletedFlaggedTrials_length", "label=10");
-        pause(500);
+        pause(1500);
         selenium.click("xpath=//a[normalize-space(text())='2']");
         assertEquals(
                 trial.nciID,
@@ -572,7 +572,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     private void addFlaggedTrial(TrialInfo trial) {
         populateAddFlagDialogAndHitSave(trial);
         waitForPageToLoad();
-        waitForElementToBecomeVisible(By.className("confirm_msg"), 5);
+        waitForElementToBecomeVisible(By.className("confirm_msg"), 15);
         assertTrue(selenium
                 .isTextPresent("Flagged trial has been added successfully."));
     }
