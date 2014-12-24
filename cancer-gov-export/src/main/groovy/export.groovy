@@ -25,6 +25,20 @@ def poConn = Sql.newInstance(poJdbcUrl, resolvedProperties['database.user'],
 def paConn = Sql.newInstance(paJdbcUrl, , resolvedProperties['db.username'],
 		resolvedProperties['pa.db.password'], 'org.postgresql.Driver')
 
+// First, create log table if needed
+paConn.executeUpdate("""
+create table if not exists pdq_export_log (
+	study_protocol_id int8,
+	nci_id varchar(32) NOT NULL,
+	nct_id varchar(32) NOT NULL,
+	datetime timestamp NOT NULL DEFAULT current_timestamp,
+	xml text NOT NULL,
+	CONSTRAINT study_protocol_id FOREIGN KEY (study_protocol_id) REFERENCES study_protocol(identifier) ON DELETE SET NULL	
+)
+"""
+)
+
+
 // Cache some PO data...
 def preLoader = new PoPreLoad(poConn)
 def orgsMap = preLoader.getOrgsMap()
@@ -225,6 +239,19 @@ def getTrialsSQL = """
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
 	 left outer join rv_organization_responsible_party rp_sponsor on rp_sponsor.study_protocol_identifier=sp.identifier
      where sp.status_code = 'ACTIVE'  and rv_trial_id_nct.local_sp_indentifier is not null
+"""
+
+def getAmendedSQL = """
+  select sp.identifier,
+         nci_id.extension as nciId,
+         rv_trial_id_nct.local_sp_indentifier as nctId
+        from study_protocol sp
+	     inner join rv_trial_id_nct on rv_trial_id_nct.study_protocol_identifier = sp.identifier	    
+	     inner join rv_trial_id_nci as nci_id on nci_id.study_protocol_id = sp.identifier    
+	     inner join rv_dwf_current dws on dws.study_protocol_identifier = sp.identifier
+	        and dws.status_code in ('AMENDMENT_SUBMITTED','ACCEPTED','ON_HOLD')        
+	     where sp.status_code = 'ACTIVE'  and rv_trial_id_nct.local_sp_indentifier is not null 
+	     and amendment_date is not null and submission_number>=2
 """
 
 def nbOfTrials = 0
@@ -595,8 +622,27 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 	def schema = factory.newSchema(new StreamSource(new File("${outputDir}/../src/main/resources/public.xsd")))
 	def validator = schema.newValidator()
 	validator.validate(new StreamSource(trialFile))
+	
+	// All looks normal; store in the log table.
+	paConn.executeInsert("INSERT INTO pdq_export_log (study_protocol_id,nci_id,nct_id,xml) VALUES (?,?,?,?)", [
+		studyProtocolID,
+		spRow.nciId,
+		spRow.nctId.toUpperCase(),
+		trialFile.getText()
+	])
+	
 	nbOfTrials++
 
+}
+
+// Now handle PO-8440: amendments that have not been abstracted yet must include the previous XML file from the log.
+paConn.eachRow(getAmendedSQL) { spRow ->		
+		// see if we have a log entry for this trial.
+		def xml = paConn.firstRow("select xml from pdq_export_log where study_protocol_id=? order by datetime desc LIMIT 1", [spRow.identifier])?.xml
+		if (xml) {
+			def trialFile = new File(outputDir, "${spRow.nctId.toUpperCase()}.xml")
+			trialFile.setText(xml, "UTF-8")
+		}
 }
 
 String determineAgencyClass(org, poConn) {
