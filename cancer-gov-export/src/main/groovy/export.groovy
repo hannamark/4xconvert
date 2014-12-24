@@ -324,7 +324,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					xml.time_frame(row.prim_som_timeframe)
 				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.description)
-					xml.description(row.description)
+					xml.description(row.description.replace('\u001F', ' '))
 			}
 		}
 		paConn.eachRow(Queries.secondOutcomesSQL, [studyProtocolID]) { row ->
@@ -334,7 +334,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					xml.time_frame(row.prim_som_timeframe)
 				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.description)
-					xml.description(row.description)
+					xml.description(row.description.replace('\u001F', ' '))
 			}
 		}
 		paConn.eachRow(Queries.otherOutcomesSQL, [studyProtocolID]) { row ->
@@ -344,7 +344,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 					xml.time_frame(row.prim_som_timeframe)
 				xml.safety_issue(row.prim_som_safety_ind)
 				if (row.description)
-					xml.description(row.description)
+					xml.description(row.description.replace('\u001F', ' '))
 			}
 		}
 		if (spRow.study_type=='Observational') {
