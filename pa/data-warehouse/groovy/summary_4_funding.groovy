@@ -1,14 +1,14 @@
 import groovy.sql.Sql
 
-def sql = """SELECT sr.identifier, soi.extension, sr.type_code, org.name, CAST(org.assigned_identifier AS bigint)
+def sql = """SELECT DISTINCT sr.identifier, soi.extension, sr.type_code, org.name, CAST(org.assigned_identifier AS bigint)
                     , sp.identifier sp_identifier
              FROM study_resourcing sr
-             JOIN study_protocol sp ON (sp.identifier = sr.study_protocol_identifier)
-             JOIN study_otheridentifiers soi ON (soi.study_protocol_id = sp.identifier)
-             LEFT JOIN organization org ON (CAST(sr.organization_identifier AS bigint) = org.identifier)
+             INNER JOIN study_protocol sp ON (sp.identifier = sr.study_protocol_identifier)
+             INNER JOIN rv_trial_id_nci soi ON (soi.study_protocol_id = sp.identifier)
+             INNER JOIN organization org ON (CAST(sr.organization_identifier AS bigint) = org.identifier)
              WHERE sr.summ_4_rept_indicator = TRUE
                AND sp.status_code = 'ACTIVE'
-               AND soi.root = '2.16.840.1.113883.3.26.4.3'
+               AND org.status_code NOT IN ('NULLIFIED')              
           """
 
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
