@@ -1739,6 +1739,18 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
         assertEquals(6, entries.size());
 
     }
+    
+    @Test
+    public final void testWithheldTrialsCannotBeImported() throws PAException,
+            ParseException {
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Trials with status of 'Withheld' cannot be imported or updated in CTRP");
+
+        final String nctID = "NCT01916083";
+        serviceBean.importTrial(nctID);
+
+    }
 
     @Test
     public final void testUpdateRejectedTrialFails() throws Exception {

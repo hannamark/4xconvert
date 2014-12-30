@@ -175,6 +175,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
         "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
+    private static final String WITHHELD = "Withheld";
+
     /**
      * Identifies CTGOV Import status as failure
      */
@@ -329,7 +331,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         CTGOV_TO_CTRP_MAP.put("Approved for marketing",
                 StudyStatusCode.APPROVED.getCode());
         CTGOV_TO_CTRP_MAP.put("Withdrawn", StudyStatusCode.WITHDRAWN.getCode());
-        CTGOV_TO_CTRP_MAP.put("Withheld", StudyStatusCode.WITHDRAWN.getCode());
+        CTGOV_TO_CTRP_MAP.put(WITHHELD, StudyStatusCode.WITHDRAWN.getCode());
         CTGOV_TO_CTRP_MAP.put("Available", StudyStatusCode.ACTIVE.getCode());
         CTGOV_TO_CTRP_MAP.put("Recruiting", StudyStatusCode.ACTIVE.getCode());
         CTGOV_TO_CTRP_MAP.put("Enrolling by invitation",
@@ -1104,8 +1106,14 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private StudyOverallStatusDTO extractOverallStatusDTO(ClinicalStudy study)
             throws PAException {
 
+        final String overallStatus = study.getOverallStatus();
+        if (WITHHELD.equalsIgnoreCase(overallStatus)) {
+            throw new PAException(
+                    "Trials with status of 'Withheld' cannot be imported or updated in CTRP");
+        }
+        
         StudyOverallStatusDTO status = new StudyOverallStatusDTO();
-        final String studyStatus = convertCtGovValue(study.getOverallStatus());
+        final String studyStatus = convertCtGovValue(overallStatus);
         status.setStatusCode(CdConverter.convertStringToCd(checkCodeExistence(
                 studyStatus, StudyStatusCode.class)));
         status.setStatusDate(TsConverter.convertToTs(new Date()));
