@@ -291,6 +291,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         // Finally, download CSV.
         if (!isPhantomJS()) {
             selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
+            pause(5000);
             File csv = new File(downloadDir, "flagged_trials_all.csv");
             assertTrue(csv.exists());
             csv.deleteOnExit();
@@ -424,6 +425,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         // Finally, download CSV.
         if (!isPhantomJS()) {
             selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
+            pause(5000);
             File csv = new File(downloadDir, "flagged_trials_all.csv");
             assertTrue(csv.exists());
             csv.deleteOnExit();
