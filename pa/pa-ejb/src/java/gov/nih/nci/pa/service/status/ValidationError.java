@@ -12,28 +12,32 @@ public class ValidationError {
     private String errorMessage;
     
     /**
-     * @return errorType
+     * Returns error type
+     * @return ErrorType enum
      */
     public ErrorType getErrorType() {
         return errorType;
     }
     
     /**
-     * @param errorType ErrorType
+     * Set error type
+     * @param errorType - ErrorType enum
      */
     public void setErrorType(ErrorType errorType) {
         this.errorType = errorType;
     }
     
     /**
-     * @return errorMessage
+     * Returns error message String
+     * @return error message String
      */
     public String getErrorMessage() {
         return errorMessage;
     }
     
     /**
-     * @param errorMessage String
+     * Set error message string
+     * @param errorMessage - String
      */
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
