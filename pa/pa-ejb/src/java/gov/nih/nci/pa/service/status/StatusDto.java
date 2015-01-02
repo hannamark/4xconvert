@@ -5,27 +5,29 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author vinodh
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @author vinodh copyright NCI 2008. All rights reserved. This code may not be
+ *         used without the express written permission of the copyright holder,
+ *         NCI.
  */
 public class StatusDto {
-    
+
     private String statusCode;
     private Date statusDate;
     private String reason;
     private boolean systemCreated;
     private Long id;
-    
+
     private boolean editable;
     private boolean deletable;
     private boolean undoable;
-    
-    private List<String> comments = new ArrayList<String>();
-    
-    private List<ValidationError> validationErrors = new ArrayList<ValidationError>();
 
+    private List<String> comments = new ArrayList<String>();
+
+    private List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+    // CHECKSTYLE:OFF
+    /**
+     * @return statusCode
+     */
     public String getStatusCode() {
         return statusCode;
     }
@@ -91,7 +93,7 @@ public class StatusDto {
     }
 
     public List<String> getComments() {
-        if(comments == null) {
+        if (comments == null) {
             comments = new ArrayList<String>();
         }
         return comments;
@@ -102,7 +104,7 @@ public class StatusDto {
     }
 
     public List<ValidationError> getValidationErrors() {
-        if(validationErrors == null) {
+        if (validationErrors == null) {
             validationErrors = new ArrayList<ValidationError>();
         }
         return validationErrors;
@@ -111,7 +113,7 @@ public class StatusDto {
     public void setValidationErrors(List<ValidationError> validationErrors) {
         this.validationErrors = validationErrors;
     }
-    
+
     public boolean hasErrors() {
         return getValidationErrors().isEmpty();
     }

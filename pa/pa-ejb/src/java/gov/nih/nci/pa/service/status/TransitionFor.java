@@ -7,6 +7,12 @@ package gov.nih.nci.pa.service.status;
  * copyright holder, NCI.
  */
 public enum TransitionFor {
+    /**
+     * TRIAL_STATUS
+     */
     TRIAL_STATUS,
+    /**
+     * SITE_STATUS
+     */
     SITE_STATUS
 }

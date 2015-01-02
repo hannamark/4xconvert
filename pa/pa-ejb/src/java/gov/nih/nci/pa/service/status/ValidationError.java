@@ -11,18 +11,30 @@ public class ValidationError {
     private ErrorType errorType;
     private String errorMessage;
     
+    /**
+     * @return errorType
+     */
     public ErrorType getErrorType() {
         return errorType;
     }
     
+    /**
+     * @param errorType ErrorType
+     */
     public void setErrorType(ErrorType errorType) {
         this.errorType = errorType;
     }
     
+    /**
+     * @return errorMessage
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
     
+    /**
+     * @param errorMessage String
+     */
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }

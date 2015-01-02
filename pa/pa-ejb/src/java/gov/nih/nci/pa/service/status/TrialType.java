@@ -7,6 +7,12 @@ package gov.nih.nci.pa.service.status;
  * copyright holder, NCI.
  */
 public enum TrialType {
+    /**
+     * ABBREVIATED
+     */
     ABBREVIATED,
+    /**
+     * COMPLETE
+     */
     COMPLETE
 }
