@@ -132,6 +132,7 @@ import org.apache.log4j.Logger;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTaskServiceLocal {
+    private static final String CTRP = "CTRP-";
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private static final String ZIP_ARCHIVE_NAME = "CTRP-TRIALS-";
     private static final int MAX_FILE_AGE = -30;
@@ -234,7 +235,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         File[] listOfFiles = folder.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.startsWith("CTRP") && name.endsWith(".zip");
+                return name.contains(CTRP) && name.endsWith(".zip");
             }
         });
         for (int i = 0; i < listOfFiles.length; i++) {
@@ -255,7 +256,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         StringBuffer filePath = new StringBuffer();
         filePath.append(PaEarPropertyReader.getPDQUploadPath()).append(File.separator);
         String fileRequested = "";
-        if (StringUtils.contains(requestedFileName, ZIP_ARCHIVE_NAME)) {
+        if (StringUtils.contains(requestedFileName, CTRP)) {
             fileRequested = requestedFileName;
         } else {
             fileRequested = ZIP_ARCHIVE_NAME + requestedFileName + "-T";
