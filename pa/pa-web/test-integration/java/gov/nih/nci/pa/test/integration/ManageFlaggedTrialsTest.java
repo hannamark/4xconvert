@@ -474,6 +474,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 return o2.nciID.compareTo(o1.nciID);
             }
         });
+        pause(1500);
         for (TrialInfo trialInfo : trials) {
             assertEquals(
                     trialInfo.nciID,
@@ -481,6 +482,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                             + (trials.indexOf(trialInfo) + 1) + "]/td[1]"));
         }
         selenium.click("xpath=//table[@id='deletedFlaggedTrials']/thead/tr[1]/th[2]");
+        pause(1500);
         assertEquals(
                 "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[2]"));
@@ -507,6 +509,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         selenium.select("name=deletedFlaggedTrials_length", "label=10");
         pause(1500);
         selenium.click("xpath=//a[normalize-space(text())='2']");
+        pause(1000);
         assertEquals(
                 trial.nciID,
                 selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[1]"));
