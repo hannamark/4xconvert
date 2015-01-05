@@ -107,15 +107,17 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @org.hibernate.annotations.Table(appliesTo = "STUDY_OVERALL_STATUS", indexes = 
                                  {@Index(name = "study_overall_status_study_protocol_idx", 
                                  columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
-public class StudyOverallStatus extends AbstractStudyEntity implements Auditable {
+public class StudyOverallStatus extends AbstractStudyEntity implements Auditable, SoftDeletable {
 
     private static final long serialVersionUID = 1234567890L;
     private static final int MAX_COMMENT_LENGTH = 2000;
 
     private String commentText;
+    private String additionalComments;
     private StudyStatusCode statusCode;
     private Timestamp statusDate;
     private Boolean systemCreated = Boolean.FALSE;
+    private Boolean deleted = Boolean.FALSE;
 
 
     /**
@@ -200,5 +202,38 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
      */
     public void setSystemCreated(Boolean systemCreated) {
         this.systemCreated = systemCreated;
+    }
+
+    /**
+     * @return the additionalComments
+     */
+    @Column(name = "addl_comments")
+    @Length(max = MAX_COMMENT_LENGTH)
+    public String getAdditionalComments() {
+        return additionalComments;
+    }
+
+    /**
+     * @param additionalComments the additionalComments to set
+     */
+    public void setAdditionalComments(String additionalComments) {
+        this.additionalComments = additionalComments;
+    }
+
+    /**
+     * @return the deleted
+     */
+    @Column(name = "deleted")
+    @NotNull
+    @Searchable
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 }

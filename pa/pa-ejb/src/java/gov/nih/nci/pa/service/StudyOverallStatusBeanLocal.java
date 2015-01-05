@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
@@ -95,10 +96,16 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.service.status.ErrorType;
+import gov.nih.nci.pa.service.status.StatusDto;
+import gov.nih.nci.pa.service.status.StatusTransitionServiceLocal;
+import gov.nih.nci.pa.service.status.TransitionFor;
+import gov.nih.nci.pa.service.status.TrialType;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -137,6 +144,8 @@ public class StudyOverallStatusBeanLocal extends
     private StudyProtocolServiceLocal studyProtocolService;
     @EJB
     private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
+    @EJB
+    private StatusTransitionServiceLocal statusTransitionService;
 
     /**
      * {@inheritDoc}
@@ -168,6 +177,7 @@ public class StudyOverallStatusBeanLocal extends
         if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier()) 
                 && !statusTextChanged) {
             //this means no change in update
+            updateAdditionalCommentsIfNeeded(oldStatus, dto.getAdditionalComments());
             return oldStatus;
         }
         StudyStatusCode oldCode = null;
@@ -198,6 +208,20 @@ public class StudyOverallStatusBeanLocal extends
         return convertFromDomainToDto(bo);
     }
     
+
+    private void updateAdditionalCommentsIfNeeded(
+            StudyOverallStatusDTO oldStatusDTO, St additionalComments) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyOverallStatus sos = (StudyOverallStatus) session.load(
+                StudyOverallStatus.class,
+                IiConverter.convertToLong(oldStatusDTO.getIdentifier()));
+        String newComments = StConverter.convertToString(additionalComments);
+        if (!StringUtils.equals(newComments, sos.getAdditionalComments())) {
+            sos.setAdditionalComments(newComments);
+            session.saveOrUpdate(sos);
+            oldStatusDTO.setAdditionalComments(additionalComments); 
+        }
+    }
 
     /**
      * Creates intermediate statuses if the transition from one status to the other skips one.
@@ -413,7 +437,7 @@ public class StudyOverallStatusBeanLocal extends
     public void validateRelaxed(StudyOverallStatusDTO statusDto,
             StudyProtocolDTO studyProtocolDTO) throws PAException {
         StringBuilder errorMsg = new StringBuilder();
-        validate(statusDto, studyProtocolDTO, errorMsg, true);
+        validate(statusDto, studyProtocolDTO, errorMsg, true, true);
         if (errorMsg.length() > 0) {
             throw new PAValidationException("Validation Exception " + errorMsg);
         }
@@ -460,7 +484,7 @@ public class StudyOverallStatusBeanLocal extends
      * @return
      */
     private StringBuffer enforceBusniessRuleForUpdate(StudyOverallStatusDTO statusDto, // NOPMD
-            StudyProtocolDTO studyProtocolDTO, boolean relaxed) throws PAException {
+            StudyProtocolDTO studyProtocolDTO, boolean relaxed, boolean skipTransitionValidation) throws PAException {
         StringBuffer errMsg = new StringBuffer();
         StudyStatusCode newCode = StudyStatusCode.getByCode(statusDto.getStatusCode().getCode());
         DateMidnight newStatusDate = TsConverter.convertToDateMidnight(statusDto.getStatusDate());
@@ -476,9 +500,12 @@ public class StudyOverallStatusBeanLocal extends
 
         if (newCode == null) {
             errMsg.append("Invalid new study status: '" + statusDto.getStatusCode().getCode() + "'. ");
-        } else if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode) && !relaxed) {
-            errMsg.append("Invalid study status transition from '" + oldStatusCode.getCode()
-                    + "' to '" + newCode.getCode() + "'.  ");
+        } else if (oldStatusCode != null
+                && !oldStatusCode.canTransitionTo(newCode) && !relaxed
+                && !skipTransitionValidation) {
+            errMsg.append("Invalid study status transition from '"
+                    + oldStatusCode.getCode() + "' to '" + newCode.getCode()
+                    + "'.  ");
         }
         if (!ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())
                 && ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
@@ -673,12 +700,12 @@ public class StudyOverallStatusBeanLocal extends
     @Override
     public void validate(StudyOverallStatusDTO statusDto,
             StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
-        validate(statusDto, studyProtocolDTO, errorMsg, false);
+        validate(statusDto, studyProtocolDTO, errorMsg, false, false);
     }
     
     private void validate(StudyOverallStatusDTO statusDto,
             StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg,
-            boolean relaxed) {
+            boolean relaxed, boolean skipTransitionValidation) {
         try {
             if (statusDto == null) {
                 errorMsg.append("Study Overall Status cannot be null. ");
@@ -687,7 +714,7 @@ public class StudyOverallStatusBeanLocal extends
                         && this.isTrialStatusOrDateChanged(statusDto,
                                 studyProtocolDTO.getIdentifier())) {
                     errorMsg.append(enforceBusniessRuleForUpdate(statusDto,
-                            studyProtocolDTO, relaxed));
+                            studyProtocolDTO, relaxed, skipTransitionValidation));
                 }
                 errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
                 validateReasonText(statusDto);
@@ -710,8 +737,8 @@ public class StudyOverallStatusBeanLocal extends
         final Ii studyProtocolIdentifier = dto
                 .getStudyProtocolIdentifier();
         List<StudyOverallStatusDTO> list = getByStudyProtocol(studyProtocolIdentifier);
-        // The list is know to be sorted by ID. We delete this status and all
-        // immediately preceeding
+        // The list is known to be sorted by ID. We delete this status and all
+        // immediately preceding
         // system-created statues.
         int index = list.indexOf(CollectionUtils.find(list, new Predicate() {
             public boolean evaluate(Object arg0) {
@@ -754,5 +781,73 @@ public class StudyOverallStatusBeanLocal extends
             StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal) {
         this.studyRecruitmentStatusServiceLocal = studyRecruitmentStatusServiceLocal;
     }
-    
+
+    /**
+     * @param statusTransitionService the statusTransitionService to set
+     */
+    public void setStatusTransitionService(
+            StatusTransitionServiceLocal statusTransitionService) {
+        this.statusTransitionService = statusTransitionService;
+    }
+
+    @Override
+    public boolean statusHistoryHasWarnings(Ii spID) throws PAException {
+        List<StatusDto> validatedList = getValidatedStatusHistory(spID);
+        return CollectionUtils.exists(validatedList, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                StatusDto s = (StatusDto) arg0;
+                return s.hasErrorOfType(ErrorType.WARNING);
+            }
+        });
+    }
+
+    /**
+     * @param spID
+     * @return
+     * @throws PAException
+     */
+    private List<StatusDto> getValidatedStatusHistory(Ii spID)
+            throws PAException {
+        StudyProtocolDTO dto = studyProtocolService.getStudyProtocol(spID);
+        TrialType trialType = BlConverter.convertToBool(dto
+                .getProprietaryTrialIndicator()) ? TrialType.ABBREVIATED
+                : TrialType.COMPLETE;
+        List<StatusDto> statusList = convertStatusHistory(dto);
+        List<StatusDto> validatedList = statusTransitionService
+                .validateStatusHistory(trialType, TransitionFor.TRIAL_STATUS,
+                        statusList);
+        return validatedList;
+    }
+
+    private List<StatusDto> convertStatusHistory(StudyProtocolDTO sp) throws PAException {
+        List<StatusDto> list = new ArrayList<StatusDto>();
+        for (StudyOverallStatusDTO dto: getByStudyProtocol(sp.getIdentifier())) {
+            list.add(convert(dto));
+        }
+        return list;
+    }
+
+    private StatusDto convert(StudyOverallStatusDTO dto) {
+        StatusDto status = new StatusDto();
+        status.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        status.setStatusCode(CdConverter.convertCdToString(dto.getStatusCode()));
+        status.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
+        status.setSystemCreated(BlConverter.convertToBool(dto
+                .getSystemCreated()));
+        return status;
+    }
+
+    @Override
+    public boolean statusHistoryHasErrors(Ii spID) throws PAException {
+        List<StatusDto> validatedList = getValidatedStatusHistory(spID);
+        return CollectionUtils.exists(validatedList, new Predicate() {
+            @Override
+            public boolean evaluate(Object arg0) {
+                StatusDto s = (StatusDto) arg0;
+                return s.hasErrorOfType(ErrorType.ERROR);
+            }
+        });
+    }
+
 }

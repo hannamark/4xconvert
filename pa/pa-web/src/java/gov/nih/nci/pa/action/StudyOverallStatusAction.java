@@ -78,9 +78,11 @@
 */
 package gov.nih.nci.pa.action;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -90,9 +92,13 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -129,6 +135,8 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyOverallStatusServiceLocal studyOverallStatusService;
     private StudyProtocolServiceLocal studyProtocolService;
+    private StudyCheckoutServiceLocal studyCheckoutService;
+   
 
     private Ii spIdIi;
     private String currentTrialStatus;
@@ -140,6 +148,8 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     private String startDateType;
     private String primaryCompletionDateType;
     private String completionDateType;
+    private String additionalComments;
+    private boolean displaySuAbstractorAutoCheckoutMessage;
     
     private HttpServletRequest request;
 
@@ -165,7 +175,8 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     void prepareServices() {
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyOverallStatusService = PaRegistry.getStudyOverallStatusService();
-        studyProtocolService = PaRegistry.getStudyProtocolService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();      
+        studyCheckoutService = PaRegistry.getStudyCheckoutService();
     }
 
     /**
@@ -213,11 +224,53 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
             if (!hasActionErrors()) {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
                 loadForm();
-            }
+                // PO-8409: run transitions validations.
+                runTransitionValidationAndInvokeSuAbstractorLogic(studyProtocolDTO);
+            }            
         } catch (PAException e) {
             addActionError(e.getMessage());
         }
         return Action.SUCCESS;
+    }
+
+    private void runTransitionValidationAndInvokeSuAbstractorLogic(
+            StudyProtocolDTO spDTO) throws PAException {
+        boolean errors = studyOverallStatusService.statusHistoryHasErrors(spDTO
+                .getIdentifier());
+        boolean warnings = studyOverallStatusService
+                .statusHistoryHasWarnings(spDTO.getIdentifier());
+        if (errors && warnings) {
+            addActionError(getText("trialStatus.warningsAndErrors"));
+        } else if (errors) {
+            addActionError(getText("trialStatus.errors"));
+        } else if (warnings) {
+            addActionError(getText("trialStatus.warnings"));
+        }
+
+        // If validation Errors were found, and the trial is not checked-out by
+        // anyone for Admin or Scientific abstraction, the system must:
+        // Check-out the trial for Admin abstraction under the SuperAbstractor's
+        // name, and,
+        // Display the message on the next slide
+        final HttpServletRequest r = ServletActionContext.getRequest();
+        HttpSession session = r.getSession();
+        StudyProtocolQueryDTO queryDTO = (StudyProtocolQueryDTO) session
+                .getAttribute(Constants.TRIAL_SUMMARY);
+        if (errors && request.isUserInRole(Constants.SUABSTRACTOR)
+                && isEmpty(queryDTO.getAdminCheckout().getCheckoutBy())
+                && isEmpty(queryDTO.getScientificCheckout().getCheckoutBy())) {
+            studyCheckoutService.checkOut(spIdIi,
+                    CdConverter.convertToCd(CheckOutType.ADMINISTRATIVE),
+                    StConverter.convertToSt(r.getRemoteUser()));
+            queryDTO = PaRegistry
+                    .getCachingProtocolQueryService()
+                    .getTrialSummaryByStudyProtocolId(
+                            IiConverter.convertToLong(spIdIi));
+            ActionUtils.loadProtocolDataInSession(queryDTO,
+                    new CorrelationUtils(), new PAServiceUtils());
+            displaySuAbstractorAutoCheckoutMessage = true;
+        }
+        
     }
 
     /**
@@ -251,21 +304,24 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
             setCurrentTrialStatus((sosDto.getStatusCode() != null) ? sosDto.getStatusCode().getCode() : null);
             setStatusDate(TsConverter.convertToString(sosDto.getStatusDate()));
             setStatusReason(StConverter.convertToString(sosDto.getReasonText()));
+            setAdditionalComments(StConverter.convertToString(sosDto.getAdditionalComments()));
         } else {
             setCurrentTrialStatus(null);
             setStatusDate(null);
             setStatusReason(null);
+            setAdditionalComments(null);
         }
     }
 
     /**
      * Extract the StudyOverallStatusDTO from the submitted data.
      * @return The StudyOverallStatusDTO extracted from the form submitted data
-     */
+     */ 
     StudyOverallStatusDTO getStudyOverallStatus() {
         StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
         statusDto.setIdentifier(IiConverter.convertToStudyOverallStatusIi((Long) null));
         statusDto.setReasonText(StConverter.convertToSt(getStatusReason()));
+        statusDto.setAdditionalComments(StConverter.convertToSt(getAdditionalComments()));
         statusDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
         statusDto.setStatusDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(statusDate)));
         statusDto.setStudyProtocolIdentifier(spIdIi);
@@ -297,28 +353,19 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
             //don't validate primary completion date if it is non interventional trial 
             //and CTGovXmlRequired is false.
             StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIdIi);
-            if (spDto != null) {
-                if (PAUtil.isPrimaryCompletionDateRequired(spDto)) {
-                    if (StringUtils.isBlank(primaryCompletionDate)) {
-                        sb.append("Primary Completion Date is required. ");
-                    }
-                    if (StringUtils.isBlank(primaryCompletionDateType)) {
-                        sb.append("Primary Completion Date type (Anticipated or Actual) is required. ");
-                    }                
-                }                
+            if (spDto != null && PAUtil.isPrimaryCompletionDateRequired(spDto)) {
+                if (StringUtils.isBlank(primaryCompletionDate)) {
+                    sb.append("Primary Completion Date is required. ");
+                }
+                if (StringUtils.isBlank(primaryCompletionDateType)) {
+                    sb.append("Primary Completion Date type (Anticipated or Actual) is required. ");
+                }
             }
         }
         if (sb.length() > 0) {
             throw new PAException(sb.toString());
         }
-        boolean isSuAbstractor = request
-                .isUserInRole(Constants.SUABSTRACTOR);
-        if (!isSuAbstractor) {
-            studyOverallStatusService.validate(statusDto, studyProtocolDTO);
-        } else {
-            studyOverallStatusService.validateRelaxed(statusDto,
-                    studyProtocolDTO);
-        }
+        studyOverallStatusService.validateRelaxed(statusDto, studyProtocolDTO);
         
     }
 
@@ -340,8 +387,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      * @param statusDto The status to insert or update
      * @throws PAException If an error occurs
      */
-    void insertOrUpdateStudyOverallStatus(StudyOverallStatusDTO statusDto) throws PAException {
-        boolean isSuAbstractor = request.isUserInRole(Constants.SUABSTRACTOR);
+    void insertOrUpdateStudyOverallStatus(StudyOverallStatusDTO statusDto) throws PAException {        
         if (StringUtils.isNotBlank(currentTrialStatus)) {
             StudyProtocolQueryDTO spqDTO =
                     protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIdIi));
@@ -355,11 +401,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
                 statusDto.setIdentifier(sosDto.getIdentifier());
                 studyOverallStatusService.update(statusDto);
             } else {
-                if (isSuAbstractor) {
-                    studyOverallStatusService.createRelaxed(statusDto);
-                } else {
-                    studyOverallStatusService.create(statusDto);
-                }
+                studyOverallStatusService.createRelaxed(statusDto);
             }
             // set the current date and status to the session
             spqDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
@@ -553,5 +595,26 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      */
     public void setSosDto(StudyOverallStatusDTO sosDto) {
         this.sosDto = sosDto;
+    }
+
+    /**
+     * @return the additionalComments
+     */
+    public String getAdditionalComments() {
+        return additionalComments;
+    }
+
+    /**
+     * @param additionalComments the additionalComments to set
+     */
+    public void setAdditionalComments(String additionalComments) {
+        this.additionalComments = additionalComments;
+    }
+
+    /**
+     * @return the displaySuAbstractorAutoCheckoutMessage
+     */
+    public boolean isDisplaySuAbstractorAutoCheckoutMessage() {
+        return displaySuAbstractorAutoCheckoutMessage;
     }
 }

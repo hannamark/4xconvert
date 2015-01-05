@@ -246,4 +246,16 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         return new ArrayList<String>();
     }
 
+    @Override
+    public boolean statusHistoryHasWarnings(Ii dto) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean statusHistoryHasErrors(Ii dto) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

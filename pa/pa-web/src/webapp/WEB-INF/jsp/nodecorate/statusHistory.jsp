@@ -4,6 +4,22 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
+        <link href="<c:url value='/scripts/js/jquery-ui-1.11.2.custom/jquery-ui.css'/>" rel="stylesheet" media="all" type="text/css" />
+        <link rel="stylesheet" type="text/css"
+            href="<c:url value='/scripts/js/DataTables-1.10.4/media/css/jquery.dataTables.min.css'/>">
+        
+		<script type="text/javascript"
+		    src="<c:url value='/scripts/js/jquery-1.11.1.min.js'/>"></script>
+		<script type="text/javascript"
+		    src="<c:url value='/scripts/js/jquery-ui-1.11.2.custom/jquery-ui.min.js'/>"></script>
+		<!-- DataTables -->
+		<script type="text/javascript" charset="utf8"
+		    src="<c:url value='/scripts/js/DataTables-1.10.4/media/js/jquery.dataTables.min.js'/>"></script>  
+		    
+		<script type="text/javascript" language="javascript">
+		  jQuery.noConflict();
+		</script>
+		          
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <script type="text/javascript" language="javascript">
@@ -81,41 +97,35 @@
                             <s:set name="overallStatusList" value="overallStatusList" scope="request"/>
                             <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" uid="row"
                                     name="overallStatusList" export="false">
-                                <display:column escapeXml="true" property="statusCode" titleKey="studyOverallStatus.statusCode" sortable="false"/>
-                                <display:column escapeXml="true" property="statusDate" titleKey="studyOverallStatus.statusDate" sortable="false"/>
-                                <display:column escapeXml="true" property="reason" titleKey = "studyOverallStatus.reason" sortable="false"/>
-                                <s:if test="%{superAbstractor}">
-	                                <display:column titleKey="studyOverallStatus.actions" sortable="false">
-	                                
-	                                    <s:if test="%{#attr.row.editable}">
-	                                       <a href="javascript:void(0);" onclick="editStatus(<s:property value="%{#attr.row.id}"/>,
-	                                           '<s:property value="%{#attr.row.statusCode}"/>', '<s:property value="%{#attr.row.statusDate}"/>',
-	                                               '<s:property value="%{@org.apache.commons.lang.StringEscapeUtils@escapeJavaScript(#attr.row.reason)}"/>');">  
-		                                       <img 
-			                                        src='<c:url value="/images/ico_edit.gif"/>' alt="<fmt:message key="studyOverallStatus.edit" />"
-			                                        title="<fmt:message key="studyOverallStatus.edit" />" 
-			                                        width="16" height="16"/></a>
-		                                   
-	                                    </s:if>
-	                                                                  
-		                                <s:if test="%{#attr.row.deletable}">
-		                                        <a href="javascript:void(0);" onclick="deleteStatus(<s:property value="%{#attr.row.id}"/>);">                                        
-			                                    <img 
-			                                        src='<c:url value="/images/ico_delete.gif"/>' alt="<fmt:message key="studyOverallStatus.delete" />"
-			                                        title="<fmt:message key="studyOverallStatus.delete" />" 
-			                                        width="16" height="16"/></a>
-		                                </s:if>
-		                                
-		                                <s:if test="%{#attr.row.undoable}">   
-		                                    <a href="javascript:void(0);" onclick="undoStatus(<s:property value="%{#attr.row.id}"/>);"> 
-		                                    <img 
-		                                        src='<c:url value="/images/ico_back.gif"/>' alt="<fmt:message key="studyOverallStatus.undo" />"
-		                                        title="<fmt:message key="studyOverallStatus.undo" />" 
+                                <display:column escapeXml="true" property="statusDate" title="Status Date" sortable="false"/>
+                                <display:column escapeXml="true" property="statusCode" title="Status" sortable="false"/>                                
+                                <display:column escapeXml="true" property="comments" title="Comments" sortable="false"/>                                
+                                <display:column titleKey="studyOverallStatus.actions" sortable="false">                                
+                                    <s:if test="%{#attr.row.editable}">
+                                       <a href="javascript:void(0);" onclick="editStatus(<s:property value="%{#attr.row.id}"/>,
+                                           '<s:property value="%{#attr.row.statusCode}"/>', '<s:property value="%{#attr.row.statusDate}"/>',
+                                               '<s:property value="%{@org.apache.commons.lang.StringEscapeUtils@escapeJavaScript(#attr.row.reason)}"/>');">  
+	                                       <img 
+		                                        src='<c:url value="/images/ico_edit.gif"/>' alt="<fmt:message key="studyOverallStatus.edit" />"
+		                                        title="<fmt:message key="studyOverallStatus.edit" />" 
 		                                        width="16" height="16"/></a>
-	                                    </s:if>
-	                                    
-	                                </display:column>
-                                </s:if>
+	                                   
+                                    </s:if>                                                                  
+	                                <s:if test="%{#attr.row.deletable}">
+	                                        <a href="javascript:void(0);" onclick="deleteStatus(<s:property value="%{#attr.row.id}"/>);">                                        
+		                                    <img 
+		                                        src='<c:url value="/images/ico_delete.gif"/>' alt="<fmt:message key="studyOverallStatus.delete" />"
+		                                        title="<fmt:message key="studyOverallStatus.delete" />" 
+		                                        width="16" height="16"/></a>
+	                                </s:if>	                                
+	                                <s:if test="%{#attr.row.undoable}">   
+	                                    <a href="javascript:void(0);" onclick="undoStatus(<s:property value="%{#attr.row.id}"/>);"> 
+	                                    <img 
+	                                        src='<c:url value="/images/ico_back.gif"/>' alt="<fmt:message key="studyOverallStatus.undo" />"
+	                                        title="<fmt:message key="studyOverallStatus.undo" />" 
+	                                        width="16" height="16"/></a>
+                                    </s:if>                                    
+                                </display:column>                              
                             </display:table>
                         </td>
                     </tr>

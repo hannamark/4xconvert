@@ -165,6 +165,7 @@ import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.status.StatusTransitionService;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
@@ -1048,6 +1049,11 @@ public class MockServiceLocator implements ServiceLocator {
     @Override
     public FlaggedTrialService getFlaggedTrialService() {       
         return null;
+    }
+
+    @Override
+    public StatusTransitionService getStatusTransitionService() {
+        return Mockito.mock(StatusTransitionService.class);
     }  
     
 }

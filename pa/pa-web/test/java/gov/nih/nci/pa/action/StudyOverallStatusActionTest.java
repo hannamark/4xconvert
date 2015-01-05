@@ -530,7 +530,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         InOrder inOrder = inOrder(protocolQueryService, studyOverallStatusService, studyProtocolService);
         inOrder.verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         inOrder.verify(studyProtocolService).getStudyProtocol(spIi);
-        inOrder.verify(studyOverallStatusService).create(statusDto);
+        inOrder.verify(studyOverallStatusService).createRelaxed(statusDto);
         assertEquals("Wrong study status code", StudyStatusCode.ACTIVE, studyProtocolQueryDTO.getStudyStatusCode());
         assertEquals("Wrong study status date", statusDate,
                      TsConverter.convertToString(TsConverter.convertToTs(studyProtocolQueryDTO.getStudyStatusDate())));

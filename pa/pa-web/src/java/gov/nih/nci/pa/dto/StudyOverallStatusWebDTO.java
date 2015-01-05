@@ -100,6 +100,7 @@ public class StudyOverallStatusWebDTO implements Serializable {
     private String statusCode;
     private String statusDate;
     private String reason;
+    private String comments;
     private boolean systemCreated;
     private Long id;
     
@@ -115,6 +116,7 @@ public class StudyOverallStatusWebDTO implements Serializable {
         this.statusCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode()).getCode();
         this.statusDate = TsConverter.convertToString(dto.getStatusDate());
         this.reason = StConverter.convertToString(dto.getReasonText());
+        this.comments = StConverter.convertToString(dto.getAdditionalComments());
         this.systemCreated = BlConverter.convertToBool(dto.getSystemCreated());
     }
 
@@ -235,5 +237,12 @@ public class StudyOverallStatusWebDTO implements Serializable {
      */
     public void setUndoable(boolean undoable) {
         this.undoable = undoable;
+    }
+
+    /**
+     * @return the comments
+     */
+    public String getComments() {
+        return comments;
     }
 }

@@ -121,6 +121,7 @@ import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.status.StatusTransitionService;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
@@ -762,5 +763,10 @@ public class JndiServiceLocator implements ServiceLocator {
     @Override
     public FlaggedTrialService getFlaggedTrialService() {
         return lookup("FlaggedTrialServiceBean!gov.nih.nci.pa.service.util.FlaggedTrialServiceLocal");
+    }
+
+    @Override
+    public StatusTransitionService getStatusTransitionService() {
+        return lookup("StatusTransitionServiceBean!gov.nih.nci.pa.service.status.StatusTransitionServiceLocal");
     }
 }

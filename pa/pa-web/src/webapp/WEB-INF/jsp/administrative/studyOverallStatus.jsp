@@ -13,6 +13,13 @@
         <script type="text/javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
         <c:url value="/protected/studyOverallStatusHistorypopup.action" var="lookupUrl" />
         
+        <style type="text/css">
+            #formTable td:nth-child(3), #formTable td:nth-child(3) > label {
+                text-align: right;
+                padding-right: 30px;
+            }
+        </style>
+        
         <script type="text/javascript">
             addCalendar("Cal1", "Select Date", "statusDate", "studyoverallstatus");
             addCalendar("Cal2", "Select Date", "startDate", "studyoverallstatus");
@@ -63,6 +70,33 @@
             document.observe("dom:loaded", function() {
                 displayTrialStatusDefinition('currentTrialStatus');
                 });
+            
+            
+            var displaySuAbstractorAutoCheckoutMessage = ${displaySuAbstractorAutoCheckoutMessage};
+            
+            (function($) {
+                $(function() {
+                	if (displaySuAbstractorAutoCheckoutMessage) {
+                		 $( "#displaySuAbstractorAutoCheckoutMessage" ).dialog({
+                			     autoOpen : true,	                			 
+	                			 height:220,
+	                			 width:430,
+	                			 modal: true,
+	                			 buttons: {
+	                				    "Trial Status History": function() {
+	                				    	   $( this ).dialog( "close" );
+	                				    	   lookup();
+	                				     },
+	                				     "Cancel": function() {
+	                				           $( this ).dialog( "close" );
+	                				         }
+	                				     }
+                		    });                		 
+                	}
+                });
+            })(jQuery);
+
+            
         </script>
     </head>
     <body>
@@ -82,10 +116,10 @@
                 <s:token/>
                 <pa:studyUniqueToken/>
                 <s:if test="hasActionErrors()">
-                    <div class="error_msg"><s:actionerror/></div>
+                    <div class="error_msg"><s:actionerror escape="false"/></div>
                 </s:if>
                 <h2><fmt:message key="trialStatus.title" /></h2>
-                <table class="form">
+                <table class="form" id="formTable">
                     <tr>
                         <td width="0">
                             <table>
@@ -125,9 +159,14 @@
                                     <td>&nbsp;</td>
                                     <td class="info" colspan="2">Administratively Complete, Withdrawn, and Temporarily Closed statuses only</td>
                                 </tr>
-                                <pa:valueRow labelFor="statusReason" labelKey="trialStatus.current.trial.status.reason">
-                                    <s:textarea name="statusReason" id="statusReason" rows="3" cssStyle="width:280px;" maxlength="160" cssClass="charcounter"/>
-                                </pa:valueRow>
+                                <tr>
+	                                <pa:valueRow labelFor="statusReason" labelKey="trialStatus.current.trial.status.reason" cellOnly="true">
+	                                    <s:textarea name="statusReason" id="statusReason" rows="3" cssStyle="width:280px;" maxlength="160" cssClass="charcounter"/>
+	                                </pa:valueRow>
+	                                <pa:valueRow labelFor="additionalComments" labelKey="trialStatus.current.trial.status.additionalComments" cellOnly="true">
+                                        <s:textarea name="additionalComments" id="additionalComments" rows="3" cssStyle="width:240px;" maxlength="160" cssClass="charcounter"/>
+                                    </pa:valueRow>
+                                </tr>
                                 <pa:spaceRow/>
                                 <pa:valueRow labelFor="startDate" labelKey="trialStatus.trial.start.date" required="true">
                                     <s:textfield name="startDate" id="startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
@@ -177,6 +216,13 @@
                     </del>
                 </div>
             </s:form>
+        </div>
+        <div id="displaySuAbstractorAutoCheckoutMessage" title="Trial Status Validation" style="display:none;">
+            <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+            The system has checked-out this trial under your name because Trial Status Transition errors were found.
+            Trial record cannot be checked-in until all Status Transition Errors have been resolved.
+            Please use the Trial Status History button to review and make corrections, or Cancel to dismiss this message.
+            </p>
         </div>
     </body>
 </html>

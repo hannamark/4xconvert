@@ -111,10 +111,12 @@ public class StudyOverallStatusConverter extends AbstractConverter<StudyOverallS
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setIdentifier(IiConverter.convertToStudyOverallStatusIi(bo.getId()));
         dto.setReasonText(StConverter.convertToSt(bo.getCommentText()));
+        dto.setAdditionalComments(StConverter.convertToSt(bo.getAdditionalComments()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setSystemCreated(BlConverter.convertToBl(bo.isSystemCreated()));
+        dto.setDeleted(BlConverter.convertToBl(bo.getDeleted()));
         return dto;
     }
 
@@ -145,6 +147,7 @@ public class StudyOverallStatusConverter extends AbstractConverter<StudyOverallS
         }
         bo.setDateLastUpdated(new Date());
         bo.setCommentText(StConverter.convertToString(dto.getReasonText()));
+        bo.setAdditionalComments(StConverter.convertToString(dto.getAdditionalComments()));
         bo.setStatusCode(StudyStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
         bo.setStudyProtocol(spBo);

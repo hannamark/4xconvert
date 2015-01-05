@@ -98,8 +98,10 @@ public class StudyOverallStatusDTO extends StudyDTO {
     private Cd statusCode;
     private Ts statusDate;
     private St reasonText;
+    private St additionalComments;
     //Defaulting to false for convenience.
     private Bl systemCreated = BlConverter.convertToBl(Boolean.FALSE);
+    private Bl deleted;
 
     /**
      * @return the statusCode
@@ -150,5 +152,29 @@ public class StudyOverallStatusDTO extends StudyDTO {
      */
     public void setSystemCreated(Bl systemCreated) {
         this.systemCreated = systemCreated;
+    }
+    /**
+     * @return the additionalComments
+     */
+    public St getAdditionalComments() {
+        return additionalComments;
+    }
+    /**
+     * @param additionalComments the additionalComments to set
+     */
+    public void setAdditionalComments(St additionalComments) {
+        this.additionalComments = additionalComments;
+    }
+    /**
+     * @return the deleted
+     */
+    public Bl getDeleted() {
+        return deleted;
+    }
+    /**
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(Bl deleted) {
+        this.deleted = deleted;
     }
 }

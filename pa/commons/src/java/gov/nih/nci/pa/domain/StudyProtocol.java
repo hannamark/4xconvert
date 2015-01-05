@@ -135,6 +135,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -408,6 +409,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @Sort(type = SortType.COMPARATOR, comparator = LastCreatedComparator.class)
+    @Where(clause = "deleted='false'")
     public Set<StudyOverallStatus> getStudyOverallStatuses() {
         return studyOverallStatuses;
     }

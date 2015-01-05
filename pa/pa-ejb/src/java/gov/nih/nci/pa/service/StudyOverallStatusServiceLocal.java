@@ -156,4 +156,18 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      * @throws PAException PAException
      */
     void undo(Ii statusIi) throws PAException;
+
+    /**
+     * @param ii  StudyProtocolDTO
+     * @return statusHistoryHasWarnings
+     * @throws PAException  PAException
+     */
+    boolean statusHistoryHasWarnings(Ii ii) throws PAException;
+
+    /**
+     * @param ii StudyProtocolDTO
+     * @return statusHistoryHasErrors
+     * @throws PAException  PAException
+     */
+    boolean statusHistoryHasErrors(Ii ii) throws PAException;
 }

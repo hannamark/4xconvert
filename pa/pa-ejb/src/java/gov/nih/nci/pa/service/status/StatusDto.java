@@ -199,4 +199,18 @@ public class StatusDto {
     public boolean hasErrors() {
         return getValidationErrors().isEmpty();
     }
+
+    /**
+     * @param type
+     *            ErrorType
+     * @return boolean
+     */
+    public boolean hasErrorOfType(ErrorType type) {
+        for (ValidationError err : getValidationErrors()) {
+            if (err.getErrorType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

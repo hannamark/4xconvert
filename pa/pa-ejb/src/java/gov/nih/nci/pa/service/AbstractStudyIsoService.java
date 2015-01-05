@@ -82,6 +82,7 @@ package gov.nih.nci.pa.service; // NOPMD
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.MappingIdentifier;
+import gov.nih.nci.pa.domain.SoftDeletable;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
@@ -129,6 +130,8 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         // step 1: form the hql
         String hql = "select alias from " + getTypeArgument().getName()
                 + " alias join alias.studyProtocol sp where sp.id = :studyProtocolId"
+                + (SoftDeletable.class.isAssignableFrom(getTypeArgument()) ? " and alias.deleted=false "
+                        : "")
                 + getQueryOrderClause();
         // step 2: construct query object
         Query query = session.createQuery(hql);
