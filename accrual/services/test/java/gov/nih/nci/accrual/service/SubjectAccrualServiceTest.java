@@ -109,12 +109,14 @@ import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
@@ -141,16 +143,22 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.pa.util.pomock.MockFamilyService;
+import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -175,7 +183,6 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     private StudySiteServiceRemote studySiteSvc;
     private StudySite participatingSite;
     private StudySite labSite;
-    
     @Before
     public void setUp() throws Exception {
         participatingSite = new StudySite();
@@ -232,7 +239,6 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
-
     }
     
     @Test 
@@ -596,10 +602,41 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void deleteSubjectAccrualUserAuthFailure() throws PAException {
         StudySubject ss = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 1L);
         ss.setStudySite(TestSchema.studySites.get(0));
+//        ss.getStudySite().set
         PaHibernateUtil.getCurrentSession().merge(ss);
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site.");
         bean.deleteSubjectAccrual(IiConverter.convertToIi(1L), null);
+    }
+    
+    
+    @Test
+    public void deleteSubjectSiteSubmitterUser() throws PAException {
+        StudySubject ss = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 1L);
+        ss.setStudySite(TestSchema.studySites.get(0));
+        ss.getStudySite().setHealthCareFacility(TestSchema.healthCareFacilities.get(0));
+        PaHibernateUtil.getCurrentSession().merge(ss);
+        PoServiceLocator poServiceLocator = mock(PoServiceLocator.class);
+        when(poServiceLocator.getOrganizationEntityService()).thenReturn(
+                new MockOrganizationEntityService());
+        when(poServiceLocator.getFamilyService())
+                .thenReturn(new MockFamilyService());
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(true);
+        ru.setFamilyAccrualSubmitter(false);
+        when(registrySvr.getUser(any(String.class))).thenReturn(ru);
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        AccrualDiseaseTerminologyServiceRemote accrualDiseaseSvr = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(accrualDiseaseSvr.canChangeCodeSystemForSpIds(new ArrayList<Long>())).thenReturn(new HashMap<Long, Boolean>());
+        when(svcLocal.getAccrualDiseaseTerminologyService()).thenReturn(accrualDiseaseSvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        bean.deleteSubjectAccrual(IiConverter.convertToIi(1L), null);
+        assertEquals(FunctionalRoleStatusCode.NULLIFIED, ss.getStatusCode());
+        assertEquals(StructuralRoleStatusCode.NULLIFIED, ss.getPatient().getStatusCode());
     }
 
     @Test

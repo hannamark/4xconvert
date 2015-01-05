@@ -80,8 +80,10 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -118,7 +120,6 @@ import org.hibernate.criterion.Restrictions;
 public class SearchStudySiteBean implements SearchStudySiteService {
 
     private static final String FUNCTIONAL_CODE = "functionalCode";
-
     /**
      * {@inheritDoc}
      */
@@ -138,9 +139,11 @@ public class SearchStudySiteBean implements SearchStudySiteService {
                 query.setParameter(FUNCTIONAL_CODE, StudySiteFunctionalCode.TREATING_SITE);
                 List<Object> queryList = query.list();
                 Set<Long> authIds = getAuthorizedSites(registryUserIi);
+                Set<String> siteAndFamilySubmitterSites = getSiteAndFamilySubmitterSites(registryUserIi);
+              
                 for (Object qArr : queryList) {
                     Object[] site = (Object[]) qArr;
-                    if (authIds.contains(site[0])) {
+                    if (authIds.contains(site[0]) || siteAndFamilySubmitterSites.contains(site[2])) {
                         SearchStudySiteResultDto dto = new SearchStudySiteResultDto();
                         dto.setStudySiteIi(IiConverter.convertToIi((Long) site[0]));
                         dto.setOrganizationName(StConverter.convertToSt((String) site[1]));
@@ -156,6 +159,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         return result;
     }
 
+    
     /**
      * {@inheritDoc}
      */
@@ -273,4 +277,19 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         }
         return result;
     }
-}
+    
+    private Set<String> getSiteAndFamilySubmitterSites(Ii registryUserIi) throws PAException {
+        List<Long> result = new ArrayList<Long>();
+        Long userId = IiConverter.convertToLong(registryUserIi);
+        RegistryUser ru = PaServiceLocator.getInstance().getRegistryUserService()
+                .getUserById(userId);
+        if (ru.getSiteAccrualSubmitter()) {
+            result.add(ru.getAffiliatedOrganizationId());
+        } 
+        if (ru.getFamilyAccrualSubmitter()) {
+            result.addAll(new AccrualUtil().getAllFamilyOrgs(ru.getAffiliatedOrganizationId()));
+        }
+        return AccrualUtil.convertPoOrgIdsToStrings(result);
+    }
+    
+} 

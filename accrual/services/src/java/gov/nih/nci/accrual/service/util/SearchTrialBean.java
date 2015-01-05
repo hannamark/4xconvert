@@ -98,6 +98,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -114,6 +115,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -130,6 +132,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -139,9 +142,10 @@ import org.hibernate.Session;
  * @author Hugh Reinhart
  * @since Aug 17, 2009
  */
-
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength", 
+"PMD.NPathComplexity", "PMD.CyclomaticComplexity" })
 public class SearchTrialBean implements SearchTrialService {
     
     private static final int SP_IDENTIFIER_IDX = 0;
@@ -152,9 +156,53 @@ public class SearchTrialBean implements SearchTrialService {
     private static final int SOS_STATUS_IDX = 5;
     private static final int PERSON_IDX = 6;
     private static final int DIS_CODE_SYSTEM_IDX = 7;
-
-    private static final String UNCHECKED = "unchecked";    
-
+    private static final String UNCHECKED = "unchecked"; 
+    private static final String SPID = "spIds";
+    private AccrualUtil accrualUtil = new AccrualUtil();
+    
+    /** The Constant DWF_QRY. */
+    private static final String DWF_QRY = "select study_protocol_identifier, status_code from rv_dwf_current "
+            + "where study_protocol_identifier in (:spIds)";
+    
+    /** The Constant NO_CTEP_DCP_TRIALID_SQRY_SITE. */
+    public static final String NO_CTEP_DCP_TRIALID_SQRY_SITE =
+    "select distinct(sp.identifier) from study_site_accrual_status ssas" 
+    + " join study_site ss on ssas.study_site_identifier=ss.identifier"
+    + " join study_protocol sp on ss.study_protocol_identifier=sp.identifier"
+    + " join study_otheridentifiers so on sp.identifier=so.study_protocol_id"
+    + " join study_resourcing sr on sr.study_protocol_identifier=sp.identifier"
+    + " join healthcare_facility hcf on hcf.identifier=ss.healthcare_facility_identifier"
+    + " join organization org on org.identifier= hcf.organization_identifier"
+    + " where so.root='2.16.840.1.113883.3.26.4.3' and sp.status_code='ACTIVE'"
+    + " and ss.functional_code = 'TREATING_SITE' and ssas.status_code <> 'IN_REVIEW' "
+    + " and sr.summ_4_rept_indicator='true' and sr.type_code!='NATIONAL'"
+    + " and ssas.identifier in (select max(identifier) from study_site_accrual_status where "
+    + " study_site_identifier  = ss.identifier) and  org.assigned_identifier = (select "
+    + " cast(affiliated_org_id as varchar)  from registry_user "
+    + " where identifier = :userId  and site_accrual_submitter=true)"
+    + " and( not exists (select study_protocol_identifier from rv_ctep_id where study_protocol_identifier"
+    + " = sp.identifier and local_sp_indentifier is not null) and not exists "
+    + " (select study_protocol_identifier from rv_dcp_id where study_protocol_identifier "
+    + " =sp.identifier and local_sp_indentifier is not null))";
+    
+    /** The Constant NO_CTEP_DCP_TRIALID_SQRY_FAMILY. */
+    public static final String NO_CTEP_DCP_TRIALID_SQRY_FAMILY =
+    "select distinct(sp.identifier) from study_site_accrual_status ssas" 
+    + " join study_site ss on ssas.study_site_identifier=ss.identifier"
+    + " join study_protocol sp on ss.study_protocol_identifier=sp.identifier"
+    + " join study_otheridentifiers so on sp.identifier=so.study_protocol_id"
+    + " join study_resourcing sr on sr.study_protocol_identifier=sp.identifier"
+    + " join healthcare_facility hcf on hcf.identifier=ss.healthcare_facility_identifier"
+    + " join organization org on org.identifier= hcf.organization_identifier"
+    + " where so.root='2.16.840.1.113883.3.26.4.3' and sp.status_code='ACTIVE'"
+    + " and ss.functional_code = 'TREATING_SITE' and ssas.status_code <> 'IN_REVIEW' "
+    + " and sr.summ_4_rept_indicator='true' and sr.type_code!='NATIONAL'"
+    + " and ssas.identifier in (select max(identifier) from study_site_accrual_status where "
+    + " study_site_identifier  = ss.identifier) and org.assigned_identifier IN (:orgIDS)"
+    + " and( not exists (select study_protocol_identifier from rv_ctep_id where study_protocol_identifier"
+    + " = sp.identifier and local_sp_indentifier is not null) and not exists "
+    + " (select study_protocol_identifier from rv_dcp_id where study_protocol_identifier "
+    + " =sp.identifier and local_sp_indentifier is not null))";
     /**
      * {@inheritDoc}
      */
@@ -168,6 +216,13 @@ public class SearchTrialBean implements SearchTrialService {
                 Query query = session.createQuery(hql);
                 List<Long> queryList = query.list();
                 Set<Long> authIds = getAuthorizedTrials(IiConverter.convertToLong(authorizedUser));
+                Set<Long> siteSubmitterIds = getSiteAccrualSumbitterTrials(
+                   IiConverter.convertToLong(authorizedUser));
+                for (Long trialId : siteSubmitterIds) {
+                    if (!authIds.contains(trialId)) {
+                        authIds.add(trialId);
+                    }
+                }
                 Collection<Long> searchIds = CollectionUtils.intersection(queryList, authIds);
                 result = getTrialSummariesByStudyProtocolIdentifiers(searchIds);
                 List<Long> searchIdList = new ArrayList<Long>(searchIds);
@@ -188,8 +243,14 @@ public class SearchTrialBean implements SearchTrialService {
      * {@inheritDoc}
      */
     public Bl isAuthorized(Ii studyProtocolIi, Ii authorizedUser) throws PAException {
-        return BlConverter.convertToBl(getAuthorizedTrials(IiConverter.convertToLong(authorizedUser))
-                .contains(IiConverter.convertToLong(studyProtocolIi)));
+        Bl returnValue = BlConverter.convertToBl(false);
+        Set<Long> authIds = getAuthorizedTrials(IiConverter.convertToLong(authorizedUser));
+        Set<Long> siteSubmitterIds = getSiteAccrualSumbitterTrials(IiConverter.convertToLong(authorizedUser));
+        if (authIds.contains(IiConverter.convertToLong(studyProtocolIi)) 
+          || siteSubmitterIds.contains(IiConverter.convertToLong(studyProtocolIi))) {
+           returnValue = BlConverter.convertToBl(true);
+        } 
+        return returnValue;
     }
 
     /**
@@ -296,7 +357,89 @@ public class SearchTrialBean implements SearchTrialService {
         }
         return result;
     }
+    
+    @SuppressWarnings(UNCHECKED)
+    private Set<Long> getSiteAccrualSumbitterTrials(Long registryUserId) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        RegistryUser ru = PaServiceLocator.getInstance().getRegistryUserService()
+            .getUserById(registryUserId);
+        Set<Long> finalTrialsWithoutCTEPOrDCPId = new HashSet<Long>();
+        Set<Long> finalTrialsWithoutCTEPOrDCPIdFamily = new HashSet<Long>();
+        if (ru.getSiteAccrualSubmitter()) {
+            List<Long> noCtepDcpTrialIdsList = new ArrayList<Long>(); 
+            SQLQuery query = session.createSQLQuery(NO_CTEP_DCP_TRIALID_SQRY_SITE);
+            query.setParameter("userId", registryUserId);
+            List<BigInteger> queryList = query.list();
+            for (BigInteger obj : queryList) {
+                Long studyProtocolId = obj.longValue();
+                noCtepDcpTrialIdsList.add(studyProtocolId);
+            }
+            Map<Long, String> trialsWorkFlowStatus = new HashMap<Long, String>();
+            SQLQuery qr = session.createSQLQuery(DWF_QRY);
+            if (!noCtepDcpTrialIdsList.isEmpty()) {
+                qr.setParameterList(SPID, noCtepDcpTrialIdsList);   
+            } else {
+                qr.setParameter(SPID, null,  Hibernate.LONG);  
+            }
+            List<Object[]> trialsDWFS = qr.list();
+            for (Object[] row : trialsDWFS) {
+                 Long studyId = ((BigInteger) row[0]).longValue();
+                 String status = row[1].toString();
+                 trialsWorkFlowStatus.put(studyId, status);
+            }
 
+            for (Long trialId : noCtepDcpTrialIdsList) {
+               if (isEligibleForAccrual(trialId, trialsWorkFlowStatus)) {
+                    finalTrialsWithoutCTEPOrDCPId.add(trialId);
+               }
+            }
+        }
+        if (ru.getFamilyAccrualSubmitter()) {
+            List<Long> values = accrualUtil.getAllFamilyOrgs(ru.getAffiliatedOrganizationId());
+            SQLQuery query = session.createSQLQuery(NO_CTEP_DCP_TRIALID_SQRY_FAMILY);
+            query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
+            List<BigInteger> queryList = query.list();
+            List<Long> noCtepDcpTrialIdsFamilyList = new ArrayList<Long>(); 
+            for (BigInteger obj : queryList) {
+                Long studyProtocolId = obj.longValue();
+                noCtepDcpTrialIdsFamilyList.add(studyProtocolId);
+            }
+            Map<Long, String> trialsWorkFlowStatus1 = new HashMap<Long, String>();
+            SQLQuery qr = session.createSQLQuery(DWF_QRY);
+            if (!noCtepDcpTrialIdsFamilyList.isEmpty()) {
+                qr.setParameterList(SPID, noCtepDcpTrialIdsFamilyList);   
+            } else {
+                qr.setParameter(SPID, null,  Hibernate.LONG);  
+            }
+            List<Object[]> trialsDWFS1 = qr.list();
+            for (Object[] row : trialsDWFS1) {
+                 Long studyId = ((BigInteger) row[0]).longValue();
+                 String status = row[1].toString();
+                 trialsWorkFlowStatus1.put(studyId, status);
+            }
+            for (Long trialId : noCtepDcpTrialIdsFamilyList) {
+               if (isEligibleForAccrual(trialId, trialsWorkFlowStatus1)) {
+                  finalTrialsWithoutCTEPOrDCPIdFamily.add(trialId);
+               }
+            }
+           for (Long trialId : finalTrialsWithoutCTEPOrDCPIdFamily) {
+               if (!finalTrialsWithoutCTEPOrDCPId.contains(trialId)) {
+                 finalTrialsWithoutCTEPOrDCPId.add(trialId);
+                }
+           }
+        }
+        return finalTrialsWithoutCTEPOrDCPId;
+    }
+    
+    
+    private boolean isEligibleForAccrual(Long trialId, Map<Long, String> trialsWorkFlowStatus)
+          throws PAException {
+        boolean result = false;
+        DocumentWorkflowStatusCode code = DocumentWorkflowStatusCode.valueOf(trialsWorkFlowStatus.get(trialId));
+        result = code.isEligibleForAccrual();
+        return result;
+    }
+    
     private String generateStudyProtocolQuery(SearchTrialCriteriaDto criteria) throws PAException {
         StringBuffer hql = new StringBuffer();
         try {
@@ -509,4 +652,14 @@ public class SearchTrialBean implements SearchTrialService {
         }
         return retIdentifier;
     }
+    /**
+     * 
+     * @param accrualUtil accrualUtil
+     */
+    public void setAccrualUtil(AccrualUtil accrualUtil) {
+        this.accrualUtil = accrualUtil;
+    }
+
+    
 }
+

@@ -104,20 +104,32 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.pa.util.pomock.MockFamilyService;
+import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
+import gov.nih.nci.services.family.FamilyDTO;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
@@ -349,5 +361,79 @@ public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
     public void testforwardslash() {
     	String histologyCode = "8000/6";
     	assertEquals("8000", AccrualUtil.checkIfStringHasForwardSlash(histologyCode));
+    }
+    
+    @Test
+    public void testisUserAllowedSiteOrFamilyAccrualAccess() throws PAException {
+    	PoServiceLocator poServiceLocator = mock(PoServiceLocator.class);
+        when(poServiceLocator.getOrganizationEntityService()).thenReturn(
+                new MockOrganizationEntityService());
+        when(poServiceLocator.getFamilyService())
+                .thenReturn(new MockFamilyService());
+       PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
+    	ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(true);
+        ru.setFamilyAccrualSubmitter(false);
+        when(registrySvr.getUser(any(String.class))).thenReturn(ru);
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        AccrualDiseaseTerminologyServiceRemote accrualDiseaseSvr = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(accrualDiseaseSvr.canChangeCodeSystemForSpIds(new ArrayList<Long>())).thenReturn(new HashMap<Long, Boolean>());
+        when(svcLocal.getAccrualDiseaseTerminologyService()).thenReturn(accrualDiseaseSvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        AccrualUtil au = new AccrualUtil();
+        assertTrue(au.isUserAllowedSiteOrFamilyAccrualAccess("1"));
+        
+        ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(false);
+        ru.setFamilyAccrualSubmitter(true);
+        when(registrySvr.getUser(any(String.class))).thenReturn(ru);
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        FamilyServiceRemote fs = mock(FamilyServiceRemote.class);
+        when(fs.getActiveRelationships(any(Long.class))).thenReturn(getRelationships(new Long[] {1L, 2L}));
+        when(poServiceLocator.getFamilyService())
+        .thenReturn(fs);
+        PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
+        Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
+        FamilyDTO family = new FamilyDTO();
+        family.setName(EnOnConverter.convertToEnOn("family name"));
+        familyMap.put(IiConverter.convertToPoFamilyIi("1"), family);
+        when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
+        au = new AccrualUtil();
+        assertTrue(au.isUserAllowedSiteOrFamilyAccrualAccess("1"));
+    }
+    
+    @Test
+    public void testgetAllFamilyOrgs() throws PAException {
+        PoServiceLocator poServiceLocator = mock(PoServiceLocator.class);
+        FamilyServiceRemote fs = mock(FamilyServiceRemote.class);
+        when(poServiceLocator.getOrganizationEntityService()).thenReturn(
+                new MockOrganizationEntityService());
+
+        when(fs.getActiveRelationships(any(Long.class))).thenReturn(getRelationships(new Long[] {1L, 2L}));
+        when(poServiceLocator.getFamilyService())
+        .thenReturn(fs);
+        PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
+        Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
+        FamilyDTO family = new FamilyDTO();
+        family.setName(EnOnConverter.convertToEnOn("family name"));
+        familyMap.put(IiConverter.convertToPoFamilyIi("1"), family);
+        when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
+        AccrualUtil au = new AccrualUtil();
+        List<Long> list = au.getAllFamilyOrgs(1L);
+        assertTrue(list.size()==2);
+        assertEquals("1",list.get(0).toString());
+    }
+    
+    public static List<FamilyOrganizationRelationshipDTO> getRelationships(Long[] orgIds) {
+        List<FamilyOrganizationRelationshipDTO> result = new ArrayList<FamilyOrganizationRelationshipDTO>();
+        for (Long orgId : orgIds) {
+            FamilyOrganizationRelationshipDTO rel = new FamilyOrganizationRelationshipDTO();
+            rel.setOrgIdentifier(IiConverter.convertToPaOrganizationIi(orgId));
+            result.add(rel);
+        }
+        return result;
     }
 }

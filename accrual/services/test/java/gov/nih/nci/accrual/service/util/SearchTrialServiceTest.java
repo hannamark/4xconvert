@@ -104,14 +104,17 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
+import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
@@ -123,9 +126,11 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -133,15 +138,18 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -162,6 +170,8 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
     
     Organization CTGOV_ORG;
     ResearchOrganization CTGOV_RO;
+    HealthCareFacility CTGOV_HCF;
+    private static int count = 0;
 
     @Override
     @Before
@@ -192,31 +202,81 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         TestSchema.addUpdObject(ro);
         CTGOV_RO = ro;
         
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setIdentifier("123");
+        hcf.setOrganization(CTGOV_ORG);
+        hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        TestSchema.addUpdObject(hcf);
+        
+
+        StudyProtocol sp = TestSchema.studyProtocols.get(0);
+        sp.getStudyResourcings().clear();
+        
+        StudyResourcing sr = new StudyResourcing();
+        sr.setStudyProtocol(sp);
+        sr.setSummary4ReportedResourceIndicator(true);
+        sr.setTypeCode(SummaryFourFundingCategoryCode.INSTITUTIONAL);
+        TestSchema.addUpdObject(sr);
+        
         StudySite ss = new StudySite();
-        ss.setLocalStudyProtocolIdentifier("NCT111111111111111");
+        ss.setLocalStudyProtocolIdentifier("NCT11");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-        ss.setResearchOrganization(CTGOV_RO);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(CTGOV_HCF);
         ss.setStudyProtocol(TestSchema.studyProtocols.get(0));
         TestSchema.addUpdObject(ss);
+        StudySite ss1 = new StudySite();
+        ss1.setLocalStudyProtocolIdentifier("NCT111111111111111");
+        ss1.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss1.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        ss1.setResearchOrganization(CTGOV_RO);
+        ss1.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        TestSchema.addUpdObject(ss1);
+        StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+        ssas.setStudySite(ss);
+        ssas.setStatusDate(new Timestamp(new Date().getTime()));
+        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        TestSchema.addUpdObject(ssas);
        
-       
-    }
+        List<Long> values = new ArrayList<Long>();
+        values.add(1L);
+        AccrualUtil acu = mock(AccrualUtil.class);
+        bean.setAccrualUtil(acu);
+        when(acu.getAllFamilyOrgs(any(Long.class))).thenReturn(values);
 
+    }
     @Test
     public void searchUser1() throws Exception {
+    	TestSchema.createStudyProtocol();
+    	executeCreateStatements();
         search(TestSchema.registryUsers.get(1).getId(), true);
     }
 
     @Test
     public void searchUser2() throws Exception {
+    	TestSchema.createStudyProtocol();
+    	executeCreateStatements();
         search(0L, false);
     }
 
     public void search(Long registryUserId, boolean shouldBeAuthorized) throws Exception {
+    	
         Ii ruIi = IiConverter.convertToIi(registryUserId);
-        int goodCount = shouldBeAuthorized ? 1: 0;
-
+        int goodCount = shouldBeAuthorized ? 2: 1;
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(true);
+        ru.setFamilyAccrualSubmitter(true);
+        when(registrySvr.getUserById(any(Long.class))).thenReturn(TestSchema.registryUsers.get(1));
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        AccrualDiseaseTerminologyServiceRemote accrualDiseaseSvr = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(accrualDiseaseSvr.canChangeCodeSystemForSpIds(new ArrayList<Long>())).thenReturn(new HashMap<Long, Boolean>());
+        when(svcLocal.getAccrualDiseaseTerminologyService()).thenReturn(accrualDiseaseSvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        
         // second study is inactive
         List<SearchTrialResultDto> results = bean.search(new SearchTrialCriteriaDto(), ruIi);
         assertEquals(goodCount, results.size());
@@ -238,6 +298,20 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
             assertNotNull(spi);
             Cd status = str.getStudyStatusCode();
             assertNotNull(status);
+            
+            if (goodCount > 1) {
+               str = results.get(1);
+               aid = str.getAssignedIdentifier();
+               assertEquals("NCI-2009-00005", aid.getValue());
+               id = str.getIdentifier();
+               assertEquals("5", id.getExtension());
+               lon = str.getLeadOrgName();
+               assertEquals("orga name",lon.getValue());
+               ot = str.getOfficialTitle();
+               assertEquals("Phase II study for Melanomaaa", ot.getValue());
+               spi = str.getStudyProtocolIdentifier();
+               assertEquals("5", spi.getExtension());
+            }
         }
 
         // get by assigned identifier
@@ -251,25 +325,44 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         }
 
         crit.setAssignedIdentifier(StConverter.convertToSt(assignedId.getExtension()));
-        assertEquals(goodCount, bean.search(crit, ruIi).size());
+        assertEquals(goodCount-1, bean.search(crit, ruIi).size());
         crit.setAssignedIdentifier(BST);
         assertEquals(0, bean.search(crit, ruIi).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
-        assertEquals(goodCount, bean.search(crit, ruIi).size());
+        if (goodCount == 2) {
+            assertEquals(2, bean.search(crit, ruIi).size());
+        } else {
+            assertEquals(1, bean.search(crit, ruIi).size());
+        }
         crit.setOfficialTitle(BST);
         assertEquals(0, bean.search(crit, ruIi).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt("NCT111111111111111"));
-        assertEquals(goodCount, bean.search(crit, ruIi).size());
+        assertEquals(goodCount-1, bean.search(crit, ruIi).size());
         crit.setLeadOrgTrialIdentifier(BST);
         assertEquals(0, bean.search(crit, ruIi).size());
-    }
+        
 
+    }
+    private int executeCreateStatements() {
+        if(count == 0) {
+      	 Session session = PaHibernateUtil.getCurrentSession();
+         
+         session.createSQLQuery("create table  rv_ctep_id(study_protocol_identifier bigint, local_sp_indentifier character varying)").executeUpdate();
+         session.createSQLQuery("create table  rv_dcp_id(study_protocol_identifier bigint, local_sp_indentifier character varying)").executeUpdate();
+         session.createSQLQuery("create table rv_dwf_current(status_code character varying, status_date_range_low timestamp, study_protocol_identifier bigint)").executeUpdate();
+         session.createSQLQuery("insert into rv_ctep_id values (" + new BigInteger(TestSchema.studyProtocols.get(0).getId().toString()) + ", 'test');").executeUpdate();
+         session.createSQLQuery("insert into rv_dcp_id values (" + new BigInteger(TestSchema.studyProtocols.get(0).getId().toString()) + ", 'test');").executeUpdate();   
+         session.createSQLQuery("insert into rv_dwf_current values ('ABSTRACTION_VERIFIED_RESPONSE'," + "now(), "
+         		+ new BigInteger(TestSchema.studyProtocols.get(4).getId().toString()) + ");").executeUpdate();
+        }
+    	 return count++;
+    }
     @Test
     public void getTrialSummaryByStudyProtocolIi() throws Exception {
         SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
@@ -415,6 +508,18 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
     @Test
     public void getStudyOverallStatus() throws Exception {
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(false);
+        ru.setFamilyAccrualSubmitter(false);
+        when(registrySvr.getUserById(any(Long.class))).thenReturn(TestSchema.registryUsers.get(1));
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        AccrualDiseaseTerminologyServiceRemote accrualDiseaseSvr = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(accrualDiseaseSvr.canChangeCodeSystemForSpIds(new ArrayList<Long>())).thenReturn(new HashMap<Long, Boolean>());
+        when(svcLocal.getAccrualDiseaseTerminologyService()).thenReturn(accrualDiseaseSvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
         List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto(), BII);
         for (SearchTrialResultDto r : rList) {
             if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(0).getId())) {
@@ -530,4 +635,6 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
             // good
         }
     }
+    
+  
 }

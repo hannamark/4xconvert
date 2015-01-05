@@ -97,6 +97,7 @@ import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.AccrualAccessSourceCode;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
@@ -110,6 +111,7 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -118,6 +120,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.StudySiteComparator;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -126,6 +129,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.Session;
 
@@ -148,6 +152,7 @@ public class TestSchema {
     public static List<StudySiteAccrualAccess> studySiteAccrualAccess;
     public static List<Country> countries;
     public static List<RegistryUser> registryUsers;
+    public static List<StudySiteAccrualStatus> studySiteAccrualStatus;
 
     /**
      * @param <T> t
@@ -184,6 +189,7 @@ public class TestSchema {
         studySiteAccrualAccess = new ArrayList<StudySiteAccrualAccess>();
         countries = new ArrayList<Country>();
         registryUsers = new ArrayList<RegistryUser>();
+        studySiteAccrualStatus = new ArrayList<StudySiteAccrualStatus>();
 
         Country c =  new Country();
         c.setName("United States");
@@ -495,6 +501,15 @@ public class TestSchema {
         addUpdObject(ss);
         studySites.add(ss);
         
+        //StudySiteAccrualStatus
+        StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+        ssas.setStudySite(studySites.get(1));
+        ssas.setStatusDate(new Timestamp(new Date().getTime()));
+        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        addUpdObject(ssas);
+        studySiteAccrualStatus.add(ssas);
+
+        
         // StudySiteAccrualAccess
         RegistryUser registryUser = getRegistryUser();
         registryUsers.add(registryUser);
@@ -564,7 +579,7 @@ public class TestSchema {
         ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
-
+        
         // Patient
         Patient p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("7/1/1963"));
@@ -715,6 +730,7 @@ public class TestSchema {
         ru.setEmailAddress("test@example.com");
         ru.setPhone("123-456-7890");
         ru.setCsmUser(user);
+        ru.setSiteAccrualSubmitter(true);
         ru.setAffiliatedOrganizationId(organizations.get(0).getId());
         TestSchema.addUpdObject(ru);
         return ru;
@@ -730,5 +746,72 @@ public class TestSchema {
         create.setUserLastUpdated(createUser());
         create.setDateLastUpdated(new Timestamp(new Date().getTime()));
         return create;
+    }
+    
+    
+    public static StudyProtocol createStudyProtocol() {
+        
+        StudyProtocol sp = new StudyProtocol();
+        sp.setOfficialTitle("Phase II study for Melanomaaa");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+
+        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Ii assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00005");
+        assignedId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        studySecondaryIdentifiers.add(assignedId);
+
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(true);
+        sp.setAccrualDiseaseCodeSystem("SDC");
+        addUpdObject(sp);
+        studyProtocols.add(sp);
+        
+        StudyResourcing sr = new StudyResourcing();
+        sr.setTypeCode(SummaryFourFundingCategoryCode.EXTERNALLY_PEER_REVIEWED);
+        sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
+        sr.setStudyProtocol(sp);
+        addUpdObject(sr);
+        
+        StudySite ss = new StudySite();
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(healthCareFacilities.get(0));
+        ss.setStudyProtocol(sp);
+        addUpdObject(ss);
+        studySites.add(ss);
+        StudySite ss2 = new StudySite();
+        ss2.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss2.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss2.setResearchOrganization(researchOrganizations.get(0));
+        ss2.setStudyProtocol(sp);
+        addUpdObject(ss2);
+        studySites.add(ss2);
+
+        StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
+        ssas.setStudySite(ss);
+        ssas.setStatusDate(new Timestamp(new Date().getTime()));
+        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE);
+        addUpdObject(ssas);
+        List<StudySiteAccrualStatus> ssass = new ArrayList<StudySiteAccrualStatus>();
+        ssass.add(ssas);
+        ss.setStudySiteAccrualStatuses(ssass);
+        addUpdObject(ss);
+        
+        Set<StudySite> ssList = new TreeSet<StudySite>(new StudySiteComparator());
+        ssList.add(ss);
+        ssList.add(ss2);
+        sp.setStudySites(ssList);
+        List<StudyResourcing> studyResourcings = new ArrayList<StudyResourcing>();
+        studyResourcings.add(sr);
+        sp.setStudyResourcings(studyResourcings);
+        addUpdObject(sp);
+        return sp;
     }
 }

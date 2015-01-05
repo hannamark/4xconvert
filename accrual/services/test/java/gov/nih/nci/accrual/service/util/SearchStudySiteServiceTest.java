@@ -88,11 +88,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -113,12 +115,20 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.StudySiteComparator;
+import gov.nih.nci.pa.util.pomock.MockFamilyService;
+import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -126,18 +136,30 @@ import java.util.TreeSet;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 25, 2009
  */
 public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudySiteService> {
-
+    @Mock
+    AccrualUtil acu;
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
         AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
         bean = new SearchStudySiteBean();
+        List<Long> values = new ArrayList<Long>();
+        values.add(1L);
+        acu = mock(AccrualUtil.class);
+        when(acu.getAllFamilyOrgs(any(Long.class))).thenReturn(values);
+        PoServiceLocator poServiceLocator = mock(PoServiceLocator.class);
+        when(poServiceLocator.getOrganizationEntityService()).thenReturn(
+                new MockOrganizationEntityService());
+        when(poServiceLocator.getFamilyService())
+                .thenReturn(new MockFamilyService());
+       PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
     }
 
     @Test
@@ -147,7 +169,19 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
 
         // second user can only access 1 site
         Ii regUser2 = IiConverter.convertToIi(TestSchema.registryUsers.get(1).getId());
-
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(false);
+        ru.setFamilyAccrualSubmitter(false);
+        when(registrySvr.getUserById(any(Long.class))).thenReturn(TestSchema.registryUsers.get(1));
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        AccrualDiseaseTerminologyServiceRemote accrualDiseaseSvr = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(accrualDiseaseSvr.canChangeCodeSystemForSpIds(new ArrayList<Long>())).thenReturn(new HashMap<Long, Boolean>());
+        when(svcLocal.getAccrualDiseaseTerminologyService()).thenReturn(accrualDiseaseSvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        
         // first trial has 2 accrual sites
         List<SearchStudySiteResultDto> rList = bean.search(
                 IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()), regUser1);
@@ -173,6 +207,17 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
 
         rList = bean.search(BII, BII);
         assertEquals(0, rList.size());
+        
+        Ii regUser3 = IiConverter.convertToIi(TestSchema.registryUsers.get(1).getId());
+        ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(true);
+        ru.setFamilyAccrualSubmitter(true);
+        when(registrySvr.getUserById(any(Long.class))).thenReturn(TestSchema.registryUsers.get(1));
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);     
+        rList = bean.search(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId()), regUser3);
+        assertEquals(1, rList.size());
+
+        
     }
 
     @Test

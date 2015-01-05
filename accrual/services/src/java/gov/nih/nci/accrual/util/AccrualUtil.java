@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -108,7 +109,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -310,6 +313,53 @@ public class AccrualUtil {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Checks that user has accrual access for site or Family submitter
+     * @param ordId ordId
+     * @return boolean
+     * @throws PAException on error.
+     */
+    public boolean isUserAllowedSiteOrFamilyAccrualAccess(String ordId)
+        throws PAException {
+        boolean result = false;
+        User user = AccrualCsmUtil.getInstance().getCSMUser(UsernameHolder.getUser());
+
+        RegistryUser regUser = PaServiceLocator.getInstance()
+            .getRegistryUserService().getUser(user.getLoginName());
+        if (regUser.getSiteAccrualSubmitter() 
+            && StringUtils.equals(ordId, regUser.getAffiliatedOrganizationId().toString())) {
+            result = true;
+        }
+        if (regUser.getFamilyAccrualSubmitter() 
+           && convertPoOrgIdsToStrings(getAllFamilyOrgs(
+               regUser.getAffiliatedOrganizationId())).contains(ordId)) {
+                result = true;
+        }
+        return result;
+    }
+    /**
+     * 
+     * @param poOrgId poOrgId
+     * @return List long
+     * @throws PAException PAException
+     */
+    public List<Long> getAllFamilyOrgs(Long poOrgId) throws PAException {
+        return FamilyHelper.getAllRelatedOrgs(poOrgId);
+    }
+    /**
+     * 
+     * @param poOrgIds poOrgIds
+     * @return set String
+     * @throws PAException PAException
+     */
+    public static Set<String> convertPoOrgIdsToStrings(List<Long> poOrgIds) throws PAException {
+        Set<String> orgIdsString = new HashSet<String>();
+        for (Long id : poOrgIds) {
+            orgIdsString.add(id.toString());
+        }
+        return orgIdsString;
     }
     
     /**

@@ -562,8 +562,14 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             throw new PAException("A Study Subject with id " + subjectAccrualIi.getExtension()
                     + " does not exist.");
         }
+        boolean isSiteFamilySubmitter = false;
+        if (studySubject.getStudySite().getHealthCareFacility() != null 
+            && new AccrualUtil().isUserAllowedSiteOrFamilyAccrualAccess(studySubject
+                .getStudySite().getHealthCareFacility().getOrganization().getIdentifier())) {
+                isSiteFamilySubmitter = true;
+        }
         if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter
-                    .convertToStudySiteIi(studySubject.getStudySite().getId()))) {
+                    .convertToStudySiteIi(studySubject.getStudySite().getId())) && !isSiteFamilySubmitter) {
             throw new PAException("User does not have accrual access to site.");
         }
         nullifyStudySubject(studySubject, deleteReason);
