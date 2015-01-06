@@ -735,6 +735,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
 
     protected void inputAddressInfoPopup(Address address) {
         clickAndWait("add_address");
+        pause(3000);
         selenium.selectFrame("popupFrame");
         selenium.select("postalAddressForm.address.country", "label=" + address.getCountry());
         waitForElementById("address.stateOrProvince", 10);
