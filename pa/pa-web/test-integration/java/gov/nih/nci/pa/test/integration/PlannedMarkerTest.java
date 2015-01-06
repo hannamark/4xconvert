@@ -95,6 +95,8 @@ import org.openqa.selenium.JavascriptExecutor;
  */
 public class PlannedMarkerTest extends AbstractPaSeleniumTest {
 
+    private static final int CADSR_SEARCH_WAIT_TIME = 60;
+
     /**
      * Tests add/edit/deleting planned markers.
      *
@@ -304,7 +306,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         selenium.selectFrame("popupFrame");
         selenium.type("id=searchName", "alpha");
         clickAndWait("link=Search");
-        waitForElementById("row", 30);
+        waitForElementById("row", CADSR_SEARCH_WAIT_TIME);
         assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[1]")
                 .trim(), "alpha"));
@@ -313,12 +315,12 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         
         assertTrue(selenium.isElementPresent("link=caDSR"));
         clickAndWait("link=caDSR");
-        waitForElementById("popupFrame", 15);
+        waitForElementById("popupFrame", 30);
         selenium.selectFrame("popupFrame");
         selenium.type("id=searchName", "alpha");
         selenium.select("id=searchBothTerms","label=Synonym");
         clickAndWait("link=Search");
-        waitForElementById("row", 30);
+        waitForElementById("row", CADSR_SEARCH_WAIT_TIME);
         assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[3]")
                 .trim(), "alpha"));
@@ -333,7 +335,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         selenium.check("id=caseTypetrue");
         selenium.check("id=highlightRequiredtrue");
         clickAndWait("link=Search");
-        waitForElementById("row", 30);
+        waitForElementById("row", CADSR_SEARCH_WAIT_TIME);
         assertTrue(StringUtils.contains(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[1]")
                 .trim(), "alpha"));
@@ -355,7 +357,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         selenium.type("id=searchName", "alpha");
         selenium.select("id=searchBothTerms","label=Primary Term");
         clickAndWait("link=Search");
-        waitForElementById("row", 30);
+        waitForElementById("row", CADSR_SEARCH_WAIT_TIME);
         assertTrue(StringUtils.containsIgnoreCase(selenium.getText(
                 "xpath=//form//table[@class='data']//tr[1]//td[1]")
                 .trim(), "alpha"));
