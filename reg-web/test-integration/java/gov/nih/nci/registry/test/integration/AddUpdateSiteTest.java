@@ -306,6 +306,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         waitForElementById("row", 15);
         clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[9]/a");
         waitForPageToLoad();
+        pause(1000);
         driver.switchTo().defaultContent();
         assertTrue(selenium.isTextPresent("One item found"));
     }
