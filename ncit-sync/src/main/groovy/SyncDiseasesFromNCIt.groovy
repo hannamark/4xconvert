@@ -13,17 +13,26 @@ public class SyncDiseasesFromNCIt{
   def sql;
 
 
+  def checkifTermExistsInNcit(def ncitCode, url){
+      boolean isValid =false;
+      def lexEVSRESTDetailsUrl = url+"/${ncitCode}"
+    
+     def response = null;
+     try{
+          response = restClient.get(uri: lexEVSRESTDetailsUrl)
+          isValid = true;
+     }
+     catch(Exception e){
+         isValid = false;
+         
+     }
+     return isValid;
+  }   
  
   def getTermNames(def ncitCode, url){
     def lexEVSRESTDetailsUrl = url+"/${ncitCode}?format=xml"
    def response = null;
-   try{
-        response = restClient.get(uri: lexEVSRESTDetailsUrl)
-   }
-   catch(Exception e){
-        return null;
-   } 
-   
+    response = restClient.get(uri: lexEVSRESTDetailsUrl)
     
     if (! response.success || response.status != 200) {
       println "-- fetchChildren - failed to fetch children for ${ncitCode} from ${url} with error ${response.data.text}"
@@ -65,11 +74,8 @@ public class SyncDiseasesFromNCIt{
     def lexEVSRESTParentsUrl = url +"/${ncitCode}?format=xml"
     def parents = []
     def response = null
-    try{
-        response = restClient.get(uri: lexEVSRESTParentsUrl)
-    } catch(Exception e){
-        return null;
-   }  
+    response = restClient.get(uri: lexEVSRESTParentsUrl)
+     
 
     if (! response.success || response.status != 200) {
       println "-- fetchChildren - failed to fetch parents for ${ncitCode} from ${url} with error ${response.data.text}"
@@ -126,12 +132,17 @@ public class SyncDiseasesFromNCIt{
     if(termNames!=null) {
         def prefName =   termNames[0]
         def sqlInsertUpdate
+       
+        String selectExistingTerm =" select 1 from pdq_disease where nt_term_identifier = '"+term+"' ";
+        
         if (sql.rows("select identifier from pdq_disease where nt_term_identifier = '"+term+"'").size() == 0) { // If term does not exist, insert it, else update
          sqlInsertUpdate = "INSERT INTO pdq_disease(nt_term_identifier, preferred_name, menu_display_name, status_code, status_date_range_low)"+
-          " VALUES ('"+term+"','"+prefName+"','"+ prefName+"', 'ACTIVE', now());"
+          " select '"+term+"','"+prefName+"','"+ prefName+"', 'ACTIVE', now()"+
+          " WHERE NOT EXISTS("+selectExistingTerm+");"
         }else {
         sqlInsertUpdate = " UPDATE pdq_disease set preferred_name='"+prefName+"',menu_display_name='"+prefName+"', date_last_updated=now() where nt_term_identifier='"+term+"';"
        }
+        
          fileContents.append(sqlInsertUpdate);
          // Update synonyms
         generateDiseaseSynUpdateSQL(term, termNames[1])
@@ -146,12 +157,9 @@ public class SyncDiseasesFromNCIt{
   def extractChildTree(def ncitCode, url) {
     def lexEVSRESTChildrenUrl = url +"/${ncitCode}/children?maxtoreturn=1000"
     def response = null
-    try{
+  
         response = restClient.get(uri: lexEVSRESTChildrenUrl)
-    }
-    catch(Exception e) {
-        return
-    }  
+    
 
     if (! response.success || response.status != 200) {
       println "-- fetchChildren - failed to fetch children for ${ncitCode} from ${url} with error ${response.data.text}"
@@ -201,21 +209,31 @@ public class SyncDiseasesFromNCIt{
     println "-- Syncing ${ctrpTerms.size()} CTRP Disease terms from NCIt..."
   
     String ncitTerm =null;
-   
+    
    
     ctrpTerms.each (){
         
         
     ncitTerm= it.nt_term_identifier;
+   
     
     
-     println "-- SYNCING disease term "+ncitTerm
-     insertOrUpdateTerm(ncitTerm, url)
-     println "-- Syncing parents of CTRP term "+ncitTerm
-      // Retrieve parent and children tree for the term
-      extractParentTree(ncitTerm , url)
-     println "-- Syncing children of CTRP term "+ncitTerm
-      extractChildTree(ncitTerm , url)
+     boolean isExists = checkifTermExistsInNcit(ncitTerm, url);
+     
+     if(isExists) {
+        
+         println "-- SYNCING disease term "+ncitTerm
+         insertOrUpdateTerm(ncitTerm, url)
+         println "-- Syncing parents of CTRP term "+ncitTerm
+          // Retrieve parent and children tree for the term
+         extractParentTree(ncitTerm , url)
+         println "-- Syncing children of CTRP term "+ncitTerm
+         extractChildTree(ncitTerm , url)
+     }
+     else {
+         println "The term "+ncitTerm+" does not exists in ncit hence not synced"
+     }
+    
       
     
       
