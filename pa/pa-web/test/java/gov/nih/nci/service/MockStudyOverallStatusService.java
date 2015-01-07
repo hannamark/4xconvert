@@ -258,4 +258,26 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         return false;
     }
 
+    @Override
+    public void softDelete(StudyOverallStatusDTO dto) throws PAException {
+    }
+
+    @Override
+    public List<StudyOverallStatusDTO> getDeletedByStudyProtocol(Ii spIi)
+            throws PAException {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void insert(StudyOverallStatusDTO dto) throws PAException {
+             
+    }
+
+    @Override
+    public List<StudyOverallStatusDTO> getByStudyProtocolWithTransitionValidations(
+            Ii spIi) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

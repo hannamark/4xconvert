@@ -99,10 +99,15 @@ public class StudyOverallStatusDTO extends StudyDTO {
     private Ts statusDate;
     private St reasonText;
     private St additionalComments;
+    private St errors;
+    private St warnings;
     //Defaulting to false for convenience.
     private Bl systemCreated = BlConverter.convertToBl(Boolean.FALSE);
     private Bl deleted;
-
+    
+    private Ts lastUpdatedDate;
+    private St lastUpdatedUser;
+    
     /**
      * @return the statusCode
      */
@@ -177,4 +182,53 @@ public class StudyOverallStatusDTO extends StudyDTO {
     public void setDeleted(Bl deleted) {
         this.deleted = deleted;
     }
+    /**
+     * @return the lastUpdatedDate
+     */
+    public Ts getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+    /**
+     * @param lastUpdatedDate the lastUpdatedDate to set
+     */
+    public void setLastUpdatedDate(Ts lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+    /**
+     * @return the lastUpdatedUser
+     */
+    public St getLastUpdatedUser() {
+        return lastUpdatedUser;
+    }
+    /**
+     * @param lastUpdatedUser the lastUpdatedUser to set
+     */
+    public void setLastUpdatedUser(St lastUpdatedUser) {
+        this.lastUpdatedUser = lastUpdatedUser;
+    }
+    /**
+     * @return the errors
+     */
+    public St getErrors() {
+        return errors;
+    }
+    /**
+     * @param errors the errors to set
+     */
+    public void setErrors(St errors) {
+        this.errors = errors;
+    }
+    /**
+     * @return the warnings
+     */
+    public St getWarnings() {
+        return warnings;
+    }
+    /**
+     * @param warnings the warnings to set
+     */
+    public void setWarnings(St warnings) {
+        this.warnings = warnings;
+    }
+    
 }

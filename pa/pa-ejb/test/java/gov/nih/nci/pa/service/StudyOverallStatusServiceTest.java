@@ -78,11 +78,6 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -105,6 +100,7 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -113,6 +109,7 @@ import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -560,7 +557,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
 
     private StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {
         StudyOverallStatus create = new StudyOverallStatus();
-        Timestamp now = new Timestamp(new Date().getTime());
+        Timestamp now = new Timestamp(DateUtils.addDays(new Date(), -1).getTime());
         create.setStudyProtocol(sp);
         create.setStatusCode(StudyStatusCode.ACTIVE);
         create.setStatusDate(now);
@@ -638,10 +635,13 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
 
         StudyOverallStatusDTO resultDto = bean.create(dto);
         assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
 
         dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
-        dto.setStatusDate(TsConverter.convertToTs(date));
+        dto.setStatusDate(TsConverter.convertToTs(DateUtils.addDays(date, 1)));
         dto.setReasonText(StConverter.convertToSt("Test"));
         final Ii studyID = IiConverter.convertToStudyProtocolIi(spNew.getId());
         dto.setStudyProtocolIdentifier(studyID);

@@ -84,8 +84,13 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * DTO class for displaying study status history as a list.
@@ -99,25 +104,43 @@ public class StudyOverallStatusWebDTO implements Serializable {
     private static final long serialVersionUID = 1309182659162634720L;
     private String statusCode;
     private String statusDate;
+    private Date statusDateRaw;
     private String reason;
     private String comments;
+    private String updatedBy;
+    private Date updatedOn;
     private boolean systemCreated;
     private Long id;
     
     private boolean editable;
     private boolean deletable;
     private boolean undoable;
+    
+    private String errors;
+    private String warnings;
+    
 
     /**
      * @param dto The iso dto object.
+     * @throws PAException  PAException
      */
-    public StudyOverallStatusWebDTO(StudyOverallStatusDTO dto) {
+    public StudyOverallStatusWebDTO(StudyOverallStatusDTO dto) throws PAException {
         this.id = IiConverter.convertToLong(dto.getIdentifier());
         this.statusCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode()).getCode();
         this.statusDate = TsConverter.convertToString(dto.getStatusDate());
+        this.statusDateRaw = TsConverter.convertToTimestamp(dto.getStatusDate());
         this.reason = StConverter.convertToString(dto.getReasonText());
         this.comments = StConverter.convertToString(dto.getAdditionalComments());
         this.systemCreated = BlConverter.convertToBool(dto.getSystemCreated());
+        this.updatedOn = TsConverter.convertToTimestamp(dto.getLastUpdatedDate());
+        this.updatedBy = ISOUtil.isStNull(dto.getLastUpdatedUser()) ? ""
+                : CsmUserUtil.getDisplayUsername(CSMUserService.getInstance()
+                        .getCSMUser(
+                                StConverter.convertToString(dto
+                                        .getLastUpdatedUser())));      
+        this.errors = StConverter.convertToString(dto.getErrors());
+        this.warnings = StConverter.convertToString(dto.getWarnings());
+                
     }
 
     /**
@@ -245,4 +268,40 @@ public class StudyOverallStatusWebDTO implements Serializable {
     public String getComments() {
         return comments;
     }
+
+    /**
+     * @return the updatedBy
+     */
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    /**
+     * @return the updatedOn
+     */
+    public Date getUpdatedOn() {
+        return updatedOn;
+    }
+
+    /**
+     * @return the statusDateRaw
+     */
+    public Date getStatusDateRaw() {
+        return statusDateRaw;
+    }
+
+    /**
+     * @return the errors
+     */
+    public String getErrors() {
+        return errors;
+    }
+
+    /**
+     * @return the warnings
+     */
+    public String getWarnings() {
+        return warnings;
+    }
+  
 }

@@ -101,6 +101,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
@@ -176,6 +177,7 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
     
     @Test
     public void testDelete() throws PAException {
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, true);
         sut = createStudyOverallStatusHistoryAction();
         sut.setStudyProtocolId(1L);
         sut.setStatusId(1L);
@@ -192,25 +194,11 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
         assertEquals("Record Deleted", ServletActionContext.getRequest().getAttribute("successMessage"));
         
     }
-    @Test
-    public void testUndo() throws PAException {
-        sut = createStudyOverallStatusHistoryAction();
-        sut.setStatusId(1L);
-        sut.setStudyProtocolId(1L);
-        Ii spIi = IiConverter.convertToStudyProtocolIi(sut.getStudyProtocolId());
-        List<StudyOverallStatusDTO> statuses = createStatuses();
-        when(studyOverallStatusService.getByStudyProtocol(spIi)).thenReturn(statuses);
-        when(studyOverallStatusService.get(spIi)).thenReturn(statuses.get(0));
-        String result = sut.undo();
-        assertEquals("success", result);
-        assertTrue(sut.isChangesMadeFlag());
-        assertTrue(sut.getOverallStatusList().size() > 0);
-        assertTrue(sut.getOverallStatusList().get(0).isEditable());
-        assertFalse(sut.getOverallStatusList().get(0).isSystemCreated());
-    }
+   
     
     @Test
     public void testSave() throws PAException {
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, true);
     	ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
         when(PaRegistry.getStudyOverallStatusService()).thenReturn(studyOverallStatusService);
@@ -222,6 +210,7 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
         Ii spIi = IiConverter.convertToStudyProtocolIi(sut.getStudyProtocolId());
         List<StudyOverallStatusDTO> statuses = createStatuses();
         when(studyOverallStatusService.getByStudyProtocol(spIi)).thenReturn(statuses);
+        when(studyOverallStatusService.getByStudyProtocolWithTransitionValidations(spIi)).thenReturn(statuses);
         when(studyOverallStatusService.get(spIi)).thenReturn(statuses.get(0));
         String result = sut.save();
         assertEquals("success", result);

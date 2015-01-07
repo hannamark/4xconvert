@@ -671,7 +671,20 @@ UL#maintabs LI A:focus
 #edit-dialog {
     border: 2px solid black;
     width: 300px !important;
-    height: 250px !important;
+    height: 330px !important;
+    white-space: nowrap !important;
+    z-index: 100;
+    background: url("../images/bg_menu.gif") repeat-y scroll right center #E9E9E9;    
+    -moz-box-shadow: 10px 10px 5px #888;
+    -webkit-box-shadow: 10px 10px 5px #888;
+    box-shadow: 10px 10px 5px #888;     
+    
+}
+
+#delete-dialog {
+    border: 2px solid black;
+    width: 300px !important;
+    height: 150px !important;
     white-space: nowrap !important;
     z-index: 100;
     background: url("../images/bg_menu.gif") repeat-y scroll right center #E9E9E9;    
@@ -682,8 +695,7 @@ UL#maintabs LI A:focus
 }
 
 
-
-#edit-dialog * textarea {
+#edit-dialog * textarea, #delete-dialog * textarea {
      width: 100%;   
       margin-bottom: 5px;  
 }
@@ -692,10 +704,10 @@ UL#maintabs LI A:focus
      margin-bottom: 5px; 
 }
 
-#edit-dialog .body {
+#edit-dialog .body, #delete-dialog .body {
      padding: 10px;
 }
-#edit-dialog .header {
+#edit-dialog .header, #delete-dialog .header {
     background-color: #486CAE;
     border-color: #78A3F2 #204095 #000000 #78A3F2;
     border-style: solid;

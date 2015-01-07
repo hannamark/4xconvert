@@ -117,6 +117,14 @@ public class StudyOverallStatusConverter extends AbstractConverter<StudyOverallS
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setSystemCreated(BlConverter.convertToBl(bo.isSystemCreated()));
         dto.setDeleted(BlConverter.convertToBl(bo.getDeleted()));
+        if (bo.getDateLastUpdated() != null) {
+            dto.setLastUpdatedDate(TsConverter.convertToTs(bo
+                    .getDateLastUpdated()));
+        }
+        if (bo.getUserLastUpdated() != null) {
+            dto.setLastUpdatedUser(StConverter.convertToSt(bo
+                    .getUserLastUpdated().getLoginName()));
+        }
         return dto;
     }
 

@@ -106,12 +106,14 @@ import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionServiceLocal;
 import gov.nih.nci.pa.service.status.TransitionFor;
 import gov.nih.nci.pa.service.status.TrialType;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -125,8 +127,11 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateMidnight;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author asharma
@@ -134,6 +139,7 @@ import org.joda.time.DateMidnight;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyOverallStatusBeanLocal extends
         AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
         implements StudyOverallStatusServiceLocal {
@@ -146,6 +152,11 @@ public class StudyOverallStatusBeanLocal extends
     private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
     @EJB
     private StatusTransitionServiceLocal statusTransitionService;
+    
+    @Override
+    protected String getQueryOrderClause() {
+        return " order by alias.statusDate, alias.id";
+    }
 
     /**
      * {@inheritDoc}
@@ -338,12 +349,7 @@ public class StudyOverallStatusBeanLocal extends
      */
     @Override
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
-        checkCondition(StudyStatusCode.getByCode(dto.getStatusCode().getCode()) == null, "Study status must be set.");
-        checkCondition(TsConverter.convertToTimestamp(dto.getStatusDate()) == null, "Study status date must be set.");
-        StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
-        checkCondition(IntConverter.convertToInteger(studyProtocolDto.getSubmissionNumber()) > 1,
-                       "Study status Cannot be updated.");
-        validateReasonText(dto);
+        checkBasicConditions(dto);
         final StudyOverallStatusDTO updatedDTO = super.update(dto);
         
         // If this update has resulted in a change of the trial's current overall status,
@@ -352,6 +358,48 @@ public class StudyOverallStatusBeanLocal extends
             createStudyRecruitmentStatusForCurrentOverallStatus(updatedDTO.getStudyProtocolIdentifier());
         }
         return updatedDTO;
+    }
+
+    /**
+     * @param dto
+     * @throws PAException
+     */
+    private void checkBasicConditions(StudyOverallStatusDTO dto)
+            throws PAException {
+        checkCondition(
+                StudyStatusCode.getByCode(dto.getStatusCode().getCode()) == null,
+                "Study status must be set.");
+        checkCondition(
+                TsConverter.convertToTimestamp(dto.getStatusDate()) == null,
+                "Study status date must be set.");
+        checkCondition(ISOUtil.isIiNull(dto.getStudyProtocolIdentifier()),
+                "Study protocol must be set.");
+        validateReasonText(dto);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void insert(StudyOverallStatusDTO dto) throws PAException {
+        checkBasicConditions(dto);
+        StudyOverallStatus bo = convertFromDtoToDomain(dto);
+        bo.setId(null);
+        bo.setDateLastCreated(new Date());
+        bo.setUserLastCreated(CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.save(bo);
+        session.flush();
+
+        // If this update has resulted in a change of the trial's current
+        // overall status,
+        // we need to sync it up with the recruitment status.
+        StudyOverallStatusDTO newlyCreatedStatus = get(IiConverter
+                .convertToIi(bo.getId()));
+        if (isCurrentStatus(newlyCreatedStatus)) {
+            createStudyRecruitmentStatusForCurrentOverallStatus(newlyCreatedStatus
+                    .getStudyProtocolIdentifier());
+        }
     }
 
     /**
@@ -801,6 +849,22 @@ public class StudyOverallStatusBeanLocal extends
             }
         });
     }
+    
+    @Override
+    public List<StudyOverallStatusDTO> getByStudyProtocolWithTransitionValidations(
+            Ii spIi) throws PAException {
+        List<StudyOverallStatusDTO> list = getByStudyProtocol(spIi);
+        List<StatusDto> statusList = getValidatedStatusHistory(spIi);
+        for (StudyOverallStatusDTO dto : list) {
+            final StatusDto statusDto = statusList.get(list.indexOf(dto));
+            dto.setErrors(StConverter.convertToSt(statusDto
+                    .getConsolidatedErrorMessage()));
+            dto.setWarnings(StConverter.convertToSt(statusDto
+                    .getConsolidatedWarningMessage()));
+        }
+        return list;
+    }
+
 
     /**
      * @param spID
@@ -849,5 +913,38 @@ public class StudyOverallStatusBeanLocal extends
             }
         });
     }
+
+    @Override
+    public void softDelete(StudyOverallStatusDTO dto) throws PAException {
+        checkCondition(StringUtils.isBlank(StConverter.convertToString(dto
+                .getAdditionalComments())),
+                "A comment is required when deleting a status");
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyOverallStatus sos = (StudyOverallStatus) session.load(
+                StudyOverallStatus.class,
+                IiConverter.convertToLong(dto.getIdentifier()));
+        sos.setDeleted(true);
+        sos.setDateLastUpdated(new Date());
+        sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+        session.saveOrUpdate(sos);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<StudyOverallStatusDTO> getDeletedByStudyProtocol(Ii spIi)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select alias from "
+                + getTypeArgument().getName()
+                + " alias join alias.studyProtocol sp where sp.id = :studyProtocolId"
+                + " and alias.deleted=true " + getQueryOrderClause();        
+        Query query = session.createQuery(hql);
+        query.setParameter("studyProtocolId", IiConverter.convertToLong(spIi));
+        return convertFromDomainToDTOs(query.list());
+    }
+
+  
+    
 
 }

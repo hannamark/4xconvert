@@ -11,7 +11,7 @@
         <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
         <script type="text/javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
-        <c:url value="/protected/studyOverallStatusHistorypopup.action" var="lookupUrl" />
+        <c:url value="/protected/studyOverallStatusHistorypopup.action?validate=true" var="lookupUrl" />
         
         <style type="text/css">
             #formTable td:nth-child(3), #formTable td:nth-child(3) > label {

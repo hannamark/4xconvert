@@ -199,6 +199,31 @@ public class StatusDto {
     public boolean hasErrors() {
         return getValidationErrors().isEmpty();
     }
+    
+    /**
+     * @return String ConsolidatedErrorMessage
+     */
+    public String getConsolidatedErrorMessage() {
+        return consolidateValidationMessagesOfType(ErrorType.ERROR);
+    }
+    
+    /**
+     * @return String ConsolidatedErrorMessage
+     */
+    public String getConsolidatedWarningMessage() {
+        return consolidateValidationMessagesOfType(ErrorType.WARNING);
+    }
+
+    private String consolidateValidationMessagesOfType(ErrorType type) {
+        StringBuilder sb = new StringBuilder();
+        for (ValidationError err : getValidationErrors()) {
+            if (err.getErrorType() == type) {
+                sb.append(err.getErrorMessage());
+                sb.append(". ");
+            }
+        }
+        return sb.toString();
+    }
 
     /**
      * @param type

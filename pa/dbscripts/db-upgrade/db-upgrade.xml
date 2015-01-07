@@ -1685,5 +1685,9 @@
      <changeSet id="PO-8408" author="krylovd" runOnChange="false"><validCheckSum>ANY</validCheckSum>
         <comment>Added 'deleted' to study_overall_status table and updated views.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8408.sql"/>
-     </changeSet>     
+     </changeSet>
+     <changeSet id="PO-8408-2" author="krylovd">
+        <comment>Updated rv_sos_current view.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8408-2.sql"/>
+     </changeSet>
 </databaseChangeLog>

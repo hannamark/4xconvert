@@ -84,6 +84,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import org.junit.Test;
@@ -98,7 +99,7 @@ import org.junit.Test;
 public class StudyOverallStatusWebDTOTest {
 
     @Test
-    public void studyOverallStatusWebDTO() {
+    public void studyOverallStatusWebDTO() throws PAException {
         Long sId = 1L;
         String sString = "1/1/2001";
         StudyStatusCode sCode = StudyStatusCode.ADMINISTRATIVELY_COMPLETE;

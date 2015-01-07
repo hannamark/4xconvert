@@ -81,7 +81,7 @@
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/regulatoryInfoquery.action" labelKey="pamenu.admin.regulatory" selected="${requestScope.topic == 'reviewregulatory'}"/>
                             </c:when>
                             <c:otherwise>
-                                <pa:menuLink href="${pageContext.request.contextPath}/protected/studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'reviewstatus'}"/>
+                                <pa:menuLink id="studyOverallStatusLink" href="${pageContext.request.contextPath}/protected/studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'reviewstatus'}"/>
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/trialFundingquery.action" labelKey="pamenu.admin.funding" selected="${requestScope.topic == 'reviewfunding'}"/>
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/trialIndidequery.action" labelKey="pamenu.admin.indide" selected="${requestScope.topic == 'reviewind'}"/> 
                                 <pa:menuLink href="${pageContext.request.contextPath}/protected/regulatoryInfoquery.action" labelKey="pamenu.admin.regulatory" selected="${requestScope.topic == 'reviewregulatory'}"/> 
@@ -105,7 +105,7 @@
                                    <pa:menuLink href="${pageContext.request.contextPath}/protected/trialIndidequery.action" labelKey="pamenu.admin.indide" selected="${requestScope.topic == 'abstractind'}"/> 
                               </ul>
                            </li>
-                           <pa:menuLink href="${pageContext.request.contextPath}/protected/studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'abstractstatus'}"/>
+                           <pa:menuLink id="studyOverallStatusLink" href="${pageContext.request.contextPath}/protected/studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'abstractstatus'}"/>
                            <pa:menuLink href="${pageContext.request.contextPath}/protected/trialFundingquery.action" labelKey="pamenu.admin.funding" selected="${requestScope.topic == 'abstractfunding'}"/> 
                             
                             <pa:menuLink href="${pageContext.request.contextPath}/protected/participatingOrganizations.action" labelKey="pamenu.admin.participatingSites" selected="${requestScope.topic == 'abstractsite'}"/>

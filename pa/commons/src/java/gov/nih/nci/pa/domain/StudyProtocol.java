@@ -98,6 +98,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -123,6 +124,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
@@ -187,7 +189,8 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private StudySourceCode studySource;
     private Organization submitingOrganization;
 
-    private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(new LastCreatedComparator());
+    private Set<StudyOverallStatus> studyOverallStatuses = new TreeSet<StudyOverallStatus>(
+            new StudyOverallStatusComparator());
     private Set<DocumentWorkflowStatus> documentWorkflowStatuses =
         new TreeSet<DocumentWorkflowStatus>(new LastCreatedComparator());
     private Set<StudySite> studySites = new TreeSet<StudySite>(new StudySiteComparator());
@@ -408,7 +411,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      * @return studyOverallStatuses
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
-    @Sort(type = SortType.COMPARATOR, comparator = LastCreatedComparator.class)
+    @Sort(type = SortType.COMPARATOR, comparator = StudyOverallStatusComparator.class)
     @Where(clause = "deleted='false'")
     public Set<StudyOverallStatus> getStudyOverallStatuses() {
         return studyOverallStatuses;
@@ -1053,5 +1056,34 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
            }
        }
        return StringUtils.EMPTY;
-    }    
+    }   
+    
+    /**
+     * Sorts study overall statuses properly: by status dates in descending
+     * order, and by id (descending) within the same date. Thus, this comparator
+     * will always put the "current" trial status first in the collection.
+     * 
+     * @author dkrylov
+     * 
+     */
+    public static final class StudyOverallStatusComparator implements
+            Comparator<StudyOverallStatus> {
+        @Override
+        public int compare(StudyOverallStatus sos1, StudyOverallStatus sos2) {
+            String s1 = (sos1.getStatusDate() != null ? sos1.getStatusDate()
+                    .toString() : "")
+                    + "_"
+                    + ObjectUtils.defaultIfNull(sos1.getId(), "")
+                    + "_"
+                    + sos1.getStatusCode();
+            String s2 = (sos2.getStatusDate() != null ? sos2.getStatusDate()
+                    .toString() : "")
+                    + "_"
+                    + ObjectUtils.defaultIfNull(sos2.getId(), "")
+                    + "_"
+                    + sos2.getStatusCode();
+            return -s1.compareTo(s2);
+        }
+    }
+    
 }

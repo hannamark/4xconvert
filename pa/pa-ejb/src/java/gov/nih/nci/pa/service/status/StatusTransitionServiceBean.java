@@ -65,7 +65,13 @@ public class StatusTransitionServiceBean implements
                             "%s cannot transition to %s",
                             prevCode.getDisplayName(),
                             currCode.getDisplayName()));
-                    status.setValidationErrors(Arrays.asList(err));
+                    ValidationError warn = new ValidationError();
+                    warn.setErrorType(ErrorType.WARNING);
+                    warn.setErrorMessage(String.format(
+                            "%s cannot transition to %s",
+                            prevCode.getDisplayName(),
+                            currCode.getDisplayName()));
+                    status.setValidationErrors(Arrays.asList(err, warn));
                 }
             }
             validatedList.add(status);

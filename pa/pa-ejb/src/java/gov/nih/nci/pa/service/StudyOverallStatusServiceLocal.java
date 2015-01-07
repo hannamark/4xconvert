@@ -170,4 +170,32 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      * @throws PAException  PAException
      */
     boolean statusHistoryHasErrors(Ii ii) throws PAException;
+
+    /**
+     * @param dto StudyOverallStatusDTO
+     * @throws PAException PAException
+     */
+    void softDelete(StudyOverallStatusDTO dto) throws PAException;
+
+    /**
+     * @param spIi protocol ID
+     * @return List<StudyOverallStatusDTO> list of soft-deleted records.
+     * @throws PAException PAException
+     */
+    List<StudyOverallStatusDTO> getDeletedByStudyProtocol(Ii spIi) throws PAException;
+
+    /**
+     * Inserts the given status into the trial's status history.
+     * @param dto StudyOverallStatusDTO
+     * @throws PAException PAException
+     */
+    void insert(StudyOverallStatusDTO dto) throws PAException;
+
+    /**
+     * @param spIi protocol ID
+     * @return List<StudyOverallStatusDTO>
+     * @throws PAException PAException
+     */
+    List<StudyOverallStatusDTO> getByStudyProtocolWithTransitionValidations(
+            Ii spIi) throws PAException;
 }

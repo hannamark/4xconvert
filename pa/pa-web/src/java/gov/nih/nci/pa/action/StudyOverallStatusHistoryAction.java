@@ -82,9 +82,11 @@
  */
 package gov.nih.nci.pa.action;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -93,8 +95,12 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -106,8 +112,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -117,20 +123,29 @@ import com.opensymphony.xwork2.Preparable;
  * Action getting the studyOverallStatus history.
  * @author Michael Visee
  */
-public class StudyOverallStatusHistoryAction extends ActionSupport implements Preparable {
+public class StudyOverallStatusHistoryAction extends ActionSupport implements Preparable { // NOPMD
 
     private static final long serialVersionUID = 9188773431985815913L;
     
+    private static final Logger LOG = Logger
+            .getLogger(StudyOverallStatusHistoryAction.class);
+    
     private StudyOverallStatusServiceLocal studyOverallStatusService;
     private StudyProtocolServiceLocal studyProtocolServiceLocal;
+    private StudyCheckoutServiceLocal studyCheckoutService;
     private Long studyProtocolId;
     private Long statusId;
     private List<StudyOverallStatusWebDTO> overallStatusList;
+    private final List<StudyOverallStatusWebDTO> deletedList = new ArrayList<StudyOverallStatusWebDTO>();
     private boolean superAbstractor;
     private String statusDate;
     private String statusCode;
     private String reason;
+    private String comment;
+    private String deleteComment;
     private boolean changesMadeFlag;
+    private boolean validate;
+    private boolean displaySuAbstractorAutoCheckoutMessage;
 
     /**
      * {@inheritDoc}
@@ -139,6 +154,7 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
     public void prepare() {
         studyOverallStatusService = PaRegistry.getStudyOverallStatusService();
         studyProtocolServiceLocal = PaRegistry.getStudyProtocolService();
+        studyCheckoutService = PaRegistry.getStudyCheckoutService();
         final HttpServletRequest request = ServletActionContext.getRequest();
         HttpSession session = request.getSession();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) session
@@ -154,34 +170,98 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
     public String execute() throws PAException {
         overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
         Ii spIi = IiConverter.convertToStudyProtocolIi(studyProtocolId);
-        List<StudyOverallStatusDTO> isoList = studyOverallStatusService.getByStudyProtocol(spIi);
+        List<StudyOverallStatusDTO> isoList = validate ? studyOverallStatusService
+                .getByStudyProtocolWithTransitionValidations(spIi) : studyOverallStatusService
+                .getByStudyProtocol(spIi);
         for (StudyOverallStatusDTO iso : isoList) {
             overallStatusList.add(new StudyOverallStatusWebDTO(iso));
         }
         flagAvailableActions(overallStatusList);
+        
+        deletedList.clear();
+        List<StudyOverallStatusDTO> delList = studyOverallStatusService.getDeletedByStudyProtocol(spIi);
+        for (StudyOverallStatusDTO iso : delList) {
+            deletedList.add(new StudyOverallStatusWebDTO(iso));
+        }
+        
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        if (validate && !hasWarningsOrErrors(overallStatusList)
+                && request.getAttribute(Constants.SUCCESS_MESSAGE) == null) {
+            request.setAttribute(Constants.SUCCESS_MESSAGE,
+                    "All Statuses and Status Transitions are valid");
+        }
+        
         return SUCCESS;
     }
     
-    private void flagAvailableActions(final List<StudyOverallStatusWebDTO> list) {
-        for (StudyOverallStatusWebDTO dto : list) {
-            dto.setEditable(!dto.isSystemCreated());
-            dto.setDeletable(!dto.isSystemCreated() && list.size() > 1);
-            dto.setUndoable(!dto.isSystemCreated()
-                    && list.indexOf(dto) == list.size() - 1 && hasPreceedingNonSystemCreatedStatus(list, dto));
+    /**
+     * @return String
+     * @throws PAException PAException
+     */
+    public String validateStatusTransitions() throws PAException {
+        validate = true;
+        String ret = execute();
+        invokeSuperAbstractorAutoCheckoutLogic();
+        return ret;
+    }
+    
+    private void invokeSuperAbstractorAutoCheckoutLogic() throws PAException {
+        // If validation Errors were found, and the trial is not checked-out by
+        // anyone for Admin or Scientific abstraction, the system must:
+        // Check-out the trial for Admin abstraction under the SuperAbstractor's
+        // name, and,
+        // Display the message on the next slide
+        final HttpServletRequest r = ServletActionContext.getRequest();
+        HttpSession session = r.getSession();
+        StudyProtocolQueryDTO queryDTO = (StudyProtocolQueryDTO) session
+                .getAttribute(Constants.TRIAL_SUMMARY);
+        if (hasErrors(overallStatusList)
+                && r.isUserInRole(Constants.SUABSTRACTOR)
+                && isEmpty(queryDTO.getAdminCheckout().getCheckoutBy())
+                && isEmpty(queryDTO.getScientificCheckout().getCheckoutBy())) {
+            studyCheckoutService.checkOut(
+                    IiConverter.convertToStudyProtocolIi(studyProtocolId),
+                    CdConverter.convertToCd(CheckOutType.ADMINISTRATIVE),
+                    StConverter.convertToSt(r.getRemoteUser()));
+            queryDTO = PaRegistry
+                    .getCachingProtocolQueryService()
+                    .getTrialSummaryByStudyProtocolId(
+                            IiConverter.convertToLong(IiConverter
+                                    .convertToStudyProtocolIi(studyProtocolId)));
+            ActionUtils.loadProtocolDataInSession(queryDTO,
+                    new CorrelationUtils(), new PAServiceUtils());
+            displaySuAbstractorAutoCheckoutMessage = true;
+            changesMadeFlag = true;
         }
+
     }
 
-    private boolean hasPreceedingNonSystemCreatedStatus(
-            final List<StudyOverallStatusWebDTO> list,
-            final StudyOverallStatusWebDTO dto) {
-        return CollectionUtils.exists(list, new Predicate() {
-            @Override
-            public boolean evaluate(Object obj) {
-                StudyOverallStatusWebDTO preceding = (StudyOverallStatusWebDTO) obj;
-                return list.indexOf(preceding) < list.indexOf(dto)
-                        && !preceding.isSystemCreated();
+    private boolean hasWarningsOrErrors(List<StudyOverallStatusWebDTO> list) {
+        for (StudyOverallStatusWebDTO dto : list) {
+            if (StringUtils.isNotBlank(dto.getErrors())
+                    || StringUtils.isNotBlank(dto.getWarnings())) {
+                return true;
             }
-        });
+        }
+        return false;
+    }
+    
+    private boolean hasErrors(List<StudyOverallStatusWebDTO> list) {
+        for (StudyOverallStatusWebDTO dto : list) {
+            if (StringUtils.isNotBlank(dto.getErrors())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void flagAvailableActions(final List<StudyOverallStatusWebDTO> list) {
+        final boolean abstractor = ActionUtils
+                .isAbstractor(ServletActionContext.getRequest().getSession());
+        for (StudyOverallStatusWebDTO dto : list) {
+            dto.setEditable(abstractor);
+            dto.setDeletable(abstractor && list.size() > 1);
+        }
     }
 
     /**
@@ -189,33 +269,30 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
      * @throws PAException PAException
      */
     public String delete() throws PAException {        
-        Ii statusIi = IiConverter.convertToStudyProtocolIi(statusId);
-        StudyOverallStatusDTO dto = studyOverallStatusService.get(statusIi);
-        if (dto != null) {
-            studyOverallStatusService.delete(statusIi);
-            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+        try {
+            Ii statusIi = IiConverter.convertToStudyProtocolIi(statusId);
+            StudyOverallStatusDTO dto = studyOverallStatusService.get(statusIi);
+            if (dto != null) {
+                dto.setAdditionalComments(StConverter.convertToSt(getDeleteComment()));
+                studyOverallStatusService.softDelete(dto);
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
+            }
+            changesMadeFlag = true;           
+        } catch (PAException e) {
+            handle(e);
         }
-        changesMadeFlag = true;
         return execute();
     }
-    
+
     /**
-     * @return String
-     * @throws PAException
-     *             PAException
+     * @param e
      */
-    public String undo() throws PAException {
-        Ii statusIi = IiConverter.convertToStudyProtocolIi(statusId);
-        StudyOverallStatusDTO dto = studyOverallStatusService.get(statusIi);
-        if (dto != null) {
-            studyOverallStatusService.undo(statusIi);
-            ServletActionContext.getRequest().setAttribute(
-                    Constants.SUCCESS_MESSAGE,
-                    getText("studyOverallStatus.undo.done"));
-            changesMadeFlag = true;
-        }
-        return execute();
-    }   
+    private void handle(PAException e) {
+        LOG.warn(e, e);
+        ServletActionContext.getRequest().setAttribute(
+                Constants.FAILURE_MESSAGE, e.getMessage());
+    }
+    
     
     /**
      * @return String
@@ -234,12 +311,41 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
                         Constants.SUCCESS_MESSAGE,
                         getText("studyOverallStatus.edit.done"));
                 changesMadeFlag = true;
+                validate = true;
+                String ret = execute();
+                invokeSuperAbstractorAutoCheckoutLogic();
+                return ret;
             } catch (PAException e) {
-                ServletActionContext.getRequest().setAttribute(
-                        Constants.FAILURE_MESSAGE, e.getMessage());
+                handle(e);
             }
         }
         return execute();
+    }
+    
+    /**
+     * @return String
+     * @throws PAException
+     *             PAException
+     */
+    public String addNew() throws PAException {
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+        try {
+            validateUpdates();
+            loadUpdatesIntoDTO(dto);            
+            studyOverallStatusService.insert(dto);
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE,
+                    getText("studyOverallStatus.add.done"));
+            changesMadeFlag = true;
+            validate = true;            
+            String ret = execute();
+            invokeSuperAbstractorAutoCheckoutLogic();
+            return ret;
+        } catch (PAException e) {
+            handle(e);
+            return execute();
+        }        
     }
     
 
@@ -267,6 +373,7 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
 
     private void loadUpdatesIntoDTO(StudyOverallStatusDTO dto) {
         dto.setReasonText(StConverter.convertToSt(reason));
+        dto.setAdditionalComments(StConverter.convertToSt(comment));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode
                 .getByCode(statusCode)));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil
@@ -398,6 +505,70 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
     public void setStudyProtocolServiceLocal(
             StudyProtocolServiceLocal studyProtocolServiceLocal) {
         this.studyProtocolServiceLocal = studyProtocolServiceLocal;
+    }
+
+    /**
+     * @return the deletedList
+     */
+    public List<StudyOverallStatusWebDTO> getDeletedList() {
+        return deletedList; 
+    }
+
+    /**
+     * @return the comment
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param comment the comment to set
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    /**
+     * @return the validate
+     */
+    public boolean isValidate() {
+        return validate;
+    }
+
+    /**
+     * @param validate the validate to set
+     */
+    public void setValidate(boolean validate) {
+        this.validate = validate;
+    }
+
+    /**
+     * @return the deleteComment
+     */
+    public String getDeleteComment() {
+        return deleteComment;
+    }
+
+    /**
+     * @param deleteComment the deleteComment to set
+     */
+    public void setDeleteComment(String deleteComment) {
+        this.deleteComment = deleteComment;
+    }
+
+    /**
+     * @param studyCheckoutService the studyCheckoutService to set
+     */
+    public void setStudyCheckoutService(
+            StudyCheckoutServiceLocal studyCheckoutService) {
+        this.studyCheckoutService = studyCheckoutService;
+    }
+
+    /**
+     * @return the displaySuAbstractorAutoCheckoutMessage
+     */
+    public boolean isDisplaySuAbstractorAutoCheckoutMessage() {
+        return displaySuAbstractorAutoCheckoutMessage;
     }
 
    
