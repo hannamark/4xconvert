@@ -125,7 +125,7 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
      * Temporarily Closed to Accrual & Temporarily Closed to Accrual and Intervention.
      * @throws SQLException 
      */
-    @Test
+    /*@Test
     public void testAdministrativeTrialStatusTransitions() throws SQLException {
         TrialInfo trial = createSubmittedTrial();
         
@@ -145,7 +145,7 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         selenium.type("id=statusReason", "Test Status Reason");
         clickAndWait("link=Cancel");
         assertEquals("Administratively Complete", selenium.getSelectedValue("id=currentTrialStatus"));
-    }
+    }*/
 
     /**
      * Tests going from In Review to Active to Complete.
