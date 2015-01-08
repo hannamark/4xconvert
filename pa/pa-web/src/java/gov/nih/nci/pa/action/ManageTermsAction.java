@@ -60,7 +60,8 @@ import com.opensymphony.xwork2.Preparable;
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity",
         "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" ,
-        "PMD.SignatureDeclareThrowsException" , "PMD.PreserveStackTrace" })
+        "PMD.SignatureDeclareThrowsException" , "PMD.PreserveStackTrace",
+         "PMD.InefficientEmptyStringCheck", "PMD.AvoidDuplicateLiterals", "PMD.TooManyFields" })
 public class ManageTermsAction extends ActionSupport implements Preparable {
 
     private static final String ALTNAME_TYPECODE_SYNONYM = "Synonym";
@@ -764,7 +765,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         
         //send email only of email id is present for this user
         if (emailId != null && emailId.trim().length() > 0) {
-            mailManagerService.sendSyncEmail(disease.getNtTermIdentifier(), emailId , preferredName 
+            mailManagerService.sendSyncEmail(ncitTerm, emailId , preferredName 
                     , userName, displayName);
         }
     }
