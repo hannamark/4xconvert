@@ -59,6 +59,8 @@ import com.dumbster.smtp.SmtpMessage;
 @SuppressWarnings("deprecation")
 public class BatchUploadTest extends AbstractRestServiceTest {
 
+    private static final int BATCH_PROCESSING_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 20000
+            : 10000;
     public static final int PORT = 51234;
 
     /**
@@ -93,7 +95,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
         submitBatchFile(batchFile);
-        pause(10000);
+        pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
         verifyAccrualCollectionRecordHasNullifiedOrgErrorMessage("6");
         verifyEmailContainsNullifiedOrgError(server, "6");
@@ -119,7 +121,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
         submitBatchFile(batchFile);
-        pause(10000);
+        pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
         verifyAccrualCollectionRecordHasNullifiedOrgErrorMessage("CTGOVDUPE");
         verifyEmailContainsNullifiedOrgError(server, "CTGOVDUPE");
@@ -141,7 +143,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
         submitBatchFile(batchFile);
-        pause(10000);
+        pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
 
         String error = getLatestAccrualCollectionMessage();
@@ -175,7 +177,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
         submitBatchFile(batchFile);
-        pause(10000);
+        pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
 
         String error = getLatestAccrualCollectionMessage();
@@ -418,7 +420,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
         submitBatchFile(zip);
-        pause(10000);
+        pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
 
         assertEquals(2, server.getReceivedEmailSize());
@@ -464,7 +466,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
         submitBatchFile(batchFile);
-        pause(10000);
+        pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
 
         String error = getLatestAccrualCollectionMessage();
@@ -569,7 +571,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
         submitBatchFile(batchFile);
-        pause(10000);
+        pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
 
         String error = getLatestAccrualCollectionMessage();
