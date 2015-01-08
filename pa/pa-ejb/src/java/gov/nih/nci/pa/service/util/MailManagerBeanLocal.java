@@ -1966,5 +1966,45 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         //send email with zip file as an attachment
         
         sendMailWithHtmlBodyAndAttachment(mailTo, mailFrom, ccList, mailSubject, mailBody, attachments, true);
-    }        
+    } 
+    
+   @Override
+   public void sendSyncEmail(String ncitIdentifier, String toAddress, String preferredName,
+           String userName , String displayName) throws PAException {
+        
+       try {
+          
+           SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+           String submissionDate = simpleDateFormat.format(new Date());
+         
+           
+           String mailSubject = lookUpTableService.getPropertyValue("sync.email.subject");
+           mailSubject = mailSubject.replace("${ncitTerm}", ncitIdentifier);
+           mailSubject = mailSubject.replace("${preferredName}", preferredName);
+           
+           
+           String mailBody = lookUpTableService.getPropertyValue("sync.email.body");
+           mailBody = mailBody.replace("${ncitTerm}", ncitIdentifier);
+           mailBody = mailBody.replace("${preferredName}", preferredName);
+           if (userName != null) {
+               mailBody = mailBody.replace("${user}", userName);
+           } else {
+               mailBody = mailBody.replace("${user}", "");
+           }
+           
+           if (displayName != null) {
+               mailBody = mailBody.replace("${displayName}", displayName);
+           } else {
+               mailBody = mailBody.replace("${displayName}", "");
+           }
+           mailBody = mailBody.replace("${submissionDate}", submissionDate);
+           
+          
+           String fromAddress = lookUpTableService.getPropertyValue(FROMADDRESS);
+         
+           sendMailWithHtmlBodyAndAttachment(toAddress, fromAddress, null, mailSubject, mailBody, null, false);
+       } catch (Exception e) {
+           throw new PAException("An error occured while sending a q email for a CDE", e);
+       }
+    }
 }

@@ -396,4 +396,16 @@ public interface MailManagerService {
      * @throws PAException PAException.
      */
     void sendCTGovSyncStatusSummaryMail(List<CTGovImportLog> logEntries) throws PAException;   
+    
+    /**
+     * This method sends email to user after term sync has been completed
+     * @param ncitIdentifier ncitIdentifier
+     * @param toAddress toAddress
+     * @param preferredName preferredName
+     * @param userName userName
+     * @param displayName displayName
+     * @throws PAException exception
+     */
+    void sendSyncEmail(String ncitIdentifier, String toAddress, String preferredName,
+            String userName , String displayName) throws PAException;
 }

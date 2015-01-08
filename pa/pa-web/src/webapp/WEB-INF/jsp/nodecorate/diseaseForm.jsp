@@ -4,6 +4,8 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <html>
 <head>
+<link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
+    rel="stylesheet" media="all" type="text/css" />
 <c:url value="/protected/popupDisdisplayDiseaseWidget.action?lookUp=true"
 	var="lookupUrl" />
 <c:url value="/protected/manageTermsajaxGetDiseases.action?diseaseIds="
@@ -19,6 +21,23 @@
     });
     
 	function saveDisease() {
+		
+		var pageName =jQuery("#pageName").val();
+		if(pageName=="newTerm"){
+			 document.forms[0].action = "manageTermssaveDisease.action";
+	         document.forms[0].submit();
+	         return;
+		}
+		   //  addFieldError("disease.preferredName", getText("manageTerms.fieldError.name"));		
+		   var value = jQuery("#menuDisplayName").val()
+		  if(value=="") {
+			  alert('<s:text name="manageTerms.fieldError.menuDisplayName"/>');
+			  jQuery("#menuDisplayName").focus();
+			  return false;
+		  }
+		 
+		
+		
 		selectAllListItems();
 		if (checkForNullCodes('parentTerms') || checkForNullCodes('childTerms') ) {
 			var r = confirm("WARNING: One or more of the selected parent or child terms do not have a NCIt identifier, continue to Save?");
@@ -26,8 +45,41 @@
 				return;
 			}
 		}
-		document.forms[0].action = "manageTermssaveDisease.action";
-        document.forms[0].submit();
+		var termValue = jQuery("#ntTermIdentifier").val();
+		var msg ="The CTRP system is synching the term "+termValue+" with the NCIt. "
+	    msg = msg + "Depending on the number of parents and children in the disease term hierarchy,";
+	    msg = msg +" it can take from five minutes to two hours or more to sync the term.";
+	    msg = msg +" Please go to the CTRP Disease Term Tree in PA after a few minutes to verify.";
+		 
+	  //submit data then display msg to user and then take back to manage terms page     
+		 var form  = document.forms[0]
+	     var datastring = $(form).serialize();
+	        
+	      jQuery.ajax({
+	            type: "POST",
+	            url: "manageTermssaveDisease.action",
+	            data: datastring, 
+	            success: function(data)
+	            {              
+	            }
+	          });
+	      
+	      jQuery("#syncMsgDialog").text(msg);
+	       
+	        jQuery("#syncMsgDialog").dialog({
+	            autoOpen: false,
+	            resizable: false,
+	            modal: true,                      
+	            buttons: {
+	                "OK": function() {
+	                  jQuery(this).dialog("close");
+	                  document.forms[0].action = "manageTerms.action";
+	                  document.forms[0].submit();
+	              }
+	            }
+	         }); 
+	        jQuery("#syncMsgDialog").dialog("open");
+	    
 	}
 	
 	function checkForNullCodes(diseaseList){
@@ -140,8 +192,15 @@
 </head>
 <div id="box">
 	<pa:failureMessage />
+	
 	<s:form name="diseaseForm" method="post">
 		<s:hidden id="importTerm" name="importTerm" />
+		<s:if test="%{!importTerm}">
+           <s:hidden id="pageName" value="newTerm" />
+        </s:if>
+        <s:else>
+        <s:hidden id="pageName" value="importTerm" />
+         </s:else>
 		<table class="form">
 		  <tr>
 				<td scope="row" width="20%"><label for="ntTermIdentifier">
@@ -322,6 +381,8 @@
 						</li>
 			</del>
 		</div>
+		<div id="syncMsgDialog" style="display:none">
+        </div>
 	</s:form>
 </div>
 </html>

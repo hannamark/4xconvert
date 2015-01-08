@@ -7,9 +7,61 @@
 <c:set var="pagePrefix" value="disclaimer." />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+<link href="${scriptPath}/js/jquery-ui-1.11.2.custom/jquery-ui.css"
+    rel="stylesheet" media="all" type="text/css" />
 <s:set name="action" value="action" />
 <title><fmt:message key="manageTerms.syncDisease.page.title" /></title>
 <s:head />
+<script type="text/javascript">
+ 
+
+    function syncDisease() {
+        
+    	 
+    	
+        var form  = document.forms[0];
+        var datastring = $(form).serialize();
+       
+       var termValue = jQuery("#termValue").text(); 
+       var msg ="The CTRP system is synching the term "+termValue+" with the NCIt. "
+       msg = msg + "Depending on the number of parents and children in the disease term hierarchy,";
+       msg = msg +" it can take from five minutes to two hours or more to sync the term.";
+       msg = msg +" Please go to the CTRP Disease Term Tree in PA after a few minutes to verify.";
+     
+       //submit data then display msg to user and then take back to manage terms page     
+        jQuery.ajax({
+            type: "POST",
+            url: "manageTermssyncDisease.action",
+            data: datastring, 
+            success: function(data)
+            {              
+            }
+          });
+       jQuery("#syncMsgDialog").text(msg);
+       
+        jQuery("#syncMsgDialog").dialog({
+            autoOpen: false,
+            resizable: false,
+            modal: true,                      
+            buttons: {
+                "OK": function() {
+                  jQuery(this).dialog("close");
+                  document.forms[0].action = "manageTerms.action";
+                  document.forms[0].submit();
+              }
+            }
+         }); 
+        jQuery("#syncMsgDialog").dialog("open");
+        
+       
+        
+      
+    
+        
+        }
+        
+        
+</script>    
 </head>
 <body>
 	<h1>
@@ -81,11 +133,13 @@
             <td><%= ActionUtils.generateListDiffStringForManageTerms(newChildTerms, currentChildTerms ) %></td>
 		</tr>
 	</table>
+	<span id="termValue" style="display:none"><s:property value="currentDisease.ntTermIdentifier" /></span>
 	<div align="center"><span class="info">Note: 'CDR Identifier', 'Display Name', 'Parent Terms' and 'Child Terms' attributes are NOT synchronized from NCIt, their existing CTRP values shown above will be retained.</span></div>
 	<div class="actionsrow">
 		<del class="btnwrapper">
 			<ul class="btnrow">
-				<li><s:a href="manageTermssyncDisease.action" cssClass="btn">
+				<li><s:a href="javascript:void(0)" cssClass="btn"
+                                onclick="syncDisease()">
 						<span class="btn_img"><span class="save">Sync Term</span></span>
 					</s:a> <s:a href="manageTermssearchDisease.action?searchStart=true" cssClass="btn">
 						<span class="btn_img"><span class="cancel">Cancel</span></span>
@@ -93,5 +147,7 @@
 			</ul>
 		</del>
 	</div>
+	<div id="syncMsgDialog" style="display:none">
+        </div>
 </body>
 </html>

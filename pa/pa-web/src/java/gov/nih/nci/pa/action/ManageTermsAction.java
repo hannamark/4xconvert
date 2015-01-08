@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -14,17 +15,22 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
 import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.MailManagerService;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.LEXEVSLookupException;
 import gov.nih.nci.pa.util.NCItTermsLookup;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -40,6 +46,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.json.JSONException;
 import org.apache.struts2.json.JSONUtil;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -91,6 +98,14 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     
     private String diseaseSearchTerm;
     private boolean searchSynonyms = false;
+    
+    private CSMUserUtil userService;
+
+    private RegistryUserServiceLocal registryUserService;
+    
+    private MailManagerService mailManagerService;
+    
+   
 
     /**
      * {@inheritDoc}
@@ -105,6 +120,11 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
         diseaseService = PaRegistry.getDiseaseService();
         diseaseParentService = PaRegistry.getDiseaseParentService();
         diseaseAltNameService = PaRegistry.getDiseaseAlternameService();
+        userService = CSMUserService.getInstance();
+        registryUserService = PaRegistry.getRegistryUserService();
+        
+        mailManagerService = PaRegistry.getMailManagerService();
+       
     }
 
     /**
@@ -410,7 +430,8 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
     public void setImportTerm(boolean importTerm) {
         this.importTerm = importTerm;
     }
-
+    
+ 
     // Disease actions and methods
 
     /**
@@ -420,8 +441,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      */
     public String saveDisease() {
         try {
+          
             if (!validateDisease()) {
-                
+              
                 // remove terms with empty C codes 
                 removeTermsWithNullNCItCode(disease.getParentTermList());
                 removeTermsWithNullNCItCode(disease.getChildTermList());
@@ -504,9 +526,24 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     childDtos.add(c);
                 }
 
+                 saveParentChilds(diseaseDto);
                  
-                saveParentChilds(diseaseDto);
-
+                 if (importTerm) {
+                  
+                     String displayName = null;
+                     
+                     if (disease.getMenuDisplayName() != null) {
+                         displayName = disease.getMenuDisplayName();
+                     }   
+                     
+                      //send email for sync
+                     sendSyncEmail(disease.getNtTermIdentifier(), disease.getPreferredName(), displayName);
+                     
+                     
+                 }
+                 
+                
+          
                 if (!missingTerms.isEmpty()) {
                     String errorMsg = createTermsMissingErrorMessage(missingTerms);
                     ServletActionContext.getRequest().setAttribute(
@@ -541,6 +578,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, lexe.getLocalizedMessage());
             return DISEASE;
         }
+    
         PopUpDisAction.getDiseaseTreeCache().removeAll();
         return SUCCESS;
     }
@@ -625,6 +663,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      * @return view
      */
     public String syncDisease() {
+        
+       
+       
         DiseaseWebDTO newDisease = (DiseaseWebDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute("disease");
         if (newDisease != null) {
@@ -635,6 +676,10 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             ServletActionContext.getRequest().getSession().removeAttribute("currentDisease");
         }
         try {
+            
+            
+         
+            
             PDQDiseaseDTO currDisease = getExistingDisease(disease.getNtTermIdentifier());
             if (currDisease != null) {
 
@@ -667,13 +712,24 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     }
                 }
 
-                            
+                       
 
                 saveParentChilds(currDisease);
                 PopUpDisAction.getDiseaseTreeCache().removeAll();
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
-                        "Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() 
-                        + "' synchronized from NCIt");
+                
+                String displayName = null;
+                
+                if (currentDisease.getMenuDisplayName() != null) {
+                    displayName = currentDisease.getMenuDisplayName();
+                }
+                
+                //send email for sync
+                sendSyncEmail(disease.getNtTermIdentifier(), disease.getPreferredName(), displayName);
+               
+               
+               // ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
+                 //       "Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() 
+                   //     + "' synchronized from NCIt");
             } else {
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
                         "No Disease/Condition with NCIt code '" + disease.getNtTermIdentifier() + "' found in CTRP");
@@ -684,6 +740,33 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
             return DISEASE;
         }
         return SUCCESS;
+    }
+    
+    private void sendSyncEmail(String ncitTerm, String preferredName, String displayName) throws PAException  {
+        User user = null;
+        user = userService.getCSMUser(UsernameHolder.getUser());
+        String emailId = user.getEmailId();
+        String userName = null;
+       
+        RegistryUser registryUser = registryUserService.getUser(user.getLoginName());
+        
+        if (StringUtils.isBlank(user.getEmailId())) {
+            if (registryUser != null && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
+                emailId = registryUser.getEmailAddress(); 
+                userName = registryUser.getLastName() + " , " + registryUser.getFirstName();
+            } 
+        } else {
+            emailId = user.getEmailId();
+            userName = user.getLastName() + " , " + user.getFirstName();
+        }
+        
+       
+        
+        //send email only of email id is present for this user
+        if (emailId != null && emailId.trim().length() > 0) {
+            mailManagerService.sendSyncEmail(disease.getNtTermIdentifier(), emailId , preferredName 
+                    , userName, displayName);
+        }
     }
     
     /**

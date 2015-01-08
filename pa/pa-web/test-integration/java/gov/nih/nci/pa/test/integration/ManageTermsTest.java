@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.pa.test.integration;
 
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
 
 import java.sql.SQLException;
 import java.util.List;
@@ -90,6 +90,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -341,9 +342,13 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         //assertEquals("C7420: Malignant Rectosigmoid Neoplasm",selenium.getValue("id=childTerms"));
         
         selenium.type("id=code", "CDR123");    
-        clickAndWait("link=Import");
+        selenium.click("link=Import");
+       
+        assertTrue(selenium.isTextPresent("The CTRP system is synching the term C97111 with the NCIt. Depending on the number of parents and children in the disease term hierarchy, it can take from five minutes to two hours or more to sync the term. Please go to the CTRP Disease Term Tree in PA after a few minutes to verify."));
+        selenium.click("//button[@type='button']/span[text()='OK']");  
         
-        assertTrue(selenium.isTextPresent("Message. The CTRP system imported the disease C97111 successfully. It also imported the following parent/child terms:C3075."));
+        
+      
         
         //Test sync        
         action.moveToElement(driver.findElements(By.xpath("//span[@class='btn_img']")).get(1)).perform();
@@ -357,7 +362,9 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Value in NCIt"));
         clickAndWait("link=Sync Term");
         
-        assertTrue(selenium.isTextPresent("Disease/Condition with NCIt code 'C97111' synchronized from NCIt."));        
+        assertTrue(selenium.isTextPresent("The CTRP system is synching the term C97111 with the NCIt. Depending on the number of parents and children in the disease term hierarchy, it can take from five minutes to two hours or more to sync the term. Please go to the CTRP Disease Term Tree in PA after a few minutes to verify."));
+        selenium.click("//button[@type='button']/span[text()='OK']");    
+            
     }
         
     /**

@@ -1690,4 +1690,8 @@
         <comment>Updated rv_sos_current view.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8408-2.sql"/>
      </changeSet>
+     <changeSet id="PO-8354" author="khandalkara">
+        <comment>Improve performance of PO-8130</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8354.sql"/>
+     </changeSet>    
 </databaseChangeLog>
