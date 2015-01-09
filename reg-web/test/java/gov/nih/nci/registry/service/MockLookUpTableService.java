@@ -133,4 +133,9 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
         return null;
     }
 
+    @Override
+    public String getPropertyValueFromCache(String name) throws PAException {       
+        return getPropertyValue(name);
+    }
+
 }

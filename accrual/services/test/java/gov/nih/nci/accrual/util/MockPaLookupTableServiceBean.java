@@ -91,4 +91,9 @@ public class MockPaLookupTableServiceBean implements LookUpTableServiceRemote {
 		return null;
 	}
 
+    
+    public String getPropertyValueFromCache(String name) throws PAException {        
+        return getPropertyValue(name);
+    }
+
 }
