@@ -924,6 +924,7 @@ public class StudyOverallStatusBeanLocal extends
                 StudyOverallStatus.class,
                 IiConverter.convertToLong(dto.getIdentifier()));
         sos.setDeleted(true);
+        sos.setAdditionalComments(StConverter.convertToString(dto.getAdditionalComments()));
         sos.setDateLastUpdated(new Date());
         sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
                 UsernameHolder.getUser()));

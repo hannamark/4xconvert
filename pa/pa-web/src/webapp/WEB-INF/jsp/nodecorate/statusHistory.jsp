@@ -16,6 +16,10 @@ a,a:hover {
 	text-decoration: none;
 }
 
+th {
+	white-space: nowrap;
+}
+
 .error {
 	color: red;
 }
@@ -23,6 +27,34 @@ a,a:hover {
 .warning {
 	color: blue;
 }
+
+#audit-trail-table td:nth-child(4) > table {
+	background: none;
+	width: 95%;
+}
+
+#audit-trail-table td:nth-child(4) > table > thead > tr > th {
+    background: none;
+}
+
+#audit-trail-table td:nth-child(4) > table td:nth-child(1) {
+   white-space: nowrap;
+   width: 30%;
+}
+
+#audit-trail-table td:nth-child(4) > table td:nth-child(2),  #audit-trail-table td:nth-child(4) > table td:nth-child(3){  
+   width: 35%;
+}
+
+.dataTables_empty {
+    background-image: url("<c:url value='/images/loading.gif'/>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px 16px;
+    color: #f7f9ea;
+    text-align: left !important;    
+}
+
 </style>
 
 <script type="text/javascript"
@@ -43,6 +75,7 @@ a,a:hover {
 	src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript">
 
+            var trailAjax = '<c:url value='/protected/ajaxStudyOverallStatusHistorypopupgetAuditTrail.action'/>';
             var displaySuAbstractorAutoCheckoutMessage = ${displaySuAbstractorAutoCheckoutMessage};
 
             function closepopup() {
@@ -114,6 +147,15 @@ a,a:hover {
             	}
             }
             
+            var auditedStatusId = null;
+            
+            function auditTrail(statusId, statusCode) {
+            	auditedStatusId = statusId;
+            	jQuery( "#audit-trail" ).dialog('open');            	 
+            	jQuery('#audit-trail-table').DataTable().clear().draw().ajax.reload();
+            	jQuery('#auditedStatus').html(statusCode);
+            }
+            
             (function ($) {
             	 $(function() {
                      $( document ).tooltip();
@@ -134,6 +176,34 @@ a,a:hover {
                              "targets" : 5,
                              "orderable" : false
                          }]
+                     });
+                     
+                     var trail = $('#audit-trail-table').DataTable({         
+                    	 "sEmptyTable": "The table is really empty now!",                         
+                         bFilter: false,
+                         "columnDefs" : [ {
+                             "targets" : 3,
+                             "orderable" : false
+                         }],
+                         "ajax": {
+                       	    "url": trailAjax,
+                       	    "type": "POST",
+                       	    "data": function ( d ) {
+                       	    	d.statusId = auditedStatusId;
+                       	    }
+                         }
+                     });
+                     
+                     $( "#audit-trail" ).dialog({
+                         modal: true,
+                         autoOpen : false,
+                         height : $(window).height()*0.9,
+                         width : $(window).width()*0.9,
+                         buttons: {
+                           OK: function() {
+                             $( this ).dialog( "close" );
+                           }
+                         }
                      });
                      
                      if (displaySuAbstractorAutoCheckoutMessage) {
@@ -220,10 +290,18 @@ a,a:hover {
 							width="16" height="16" />
 						</a>
 					</s:if>
+					<a href="javascript:void(0);"
+						onclick="auditTrail(<s:property value="%{#attr.row.id}"/>,
+                               '<s:property value="%{#attr.row.statusCode}"/>');">
+						<img src='<c:url value="/images/ico_audittrail.png"/>'
+						alt="Audit trail icon"
+						title="Click to view Audit Trail Information for this status record"
+						width="16" height="16" />
+					</a>
 					<c:if test="${not empty row.reason}">
 						<a href="javascript:void(0);"
 							title="Why study stopped: <c:out value="${row.reason}"/>"> <img
-							src='<c:url value="/images/ico_callout.gif"/>'
+							src='<c:url value="/images/ico_callout.png"/>'
 							alt="Why Study Stopped?" width="16" height="16" /></a>
 					</c:if>
 				</display:column>
@@ -323,10 +401,18 @@ a,a:hover {
 					sortable="false" />
 				<display:column titleKey="studyOverallStatus.actions"
 					sortable="false">
+					<a href="javascript:void(0);"
+						onclick="auditTrail(<s:property value="%{#attr.del.id}"/>,
+                               '<s:property value="%{#attr.del.statusCode}"/>');">
+						<img src='<c:url value="/images/ico_audittrail.png"/>'
+						alt="Audit trail icon"
+						title="Click to view Audit Trail Information for this status record"
+						width="16" height="16" />
+					</a>
 					<c:if test="${not empty del.reason}">
 						<a href="javascript:void(0);"
 							title="Why study stopped: <c:out value="${del.reason}"/>"> <img
-							src='<c:url value="/images/ico_callout.gif"/>'
+							src='<c:url value="/images/ico_callout.png"/>'
 							alt="Why Study Stopped?" width="16" height="16" /></a>
 					</c:if>
 				</display:column>
@@ -345,6 +431,24 @@ a,a:hover {
 			dismiss this message.
 		</p>
 	</div>
+
+	<div id="audit-trail" title="Study Status Record Audit Information">
+		<div class="label">Status: <span id="auditedStatus"></span></div>
+		<br />
+		<div>
+			<table id="audit-trail-table" class="data" width="100%">
+				<thead>
+					<tr>
+						<th>Date</th>
+						<th>User</th>
+						<th>Change Type</th>
+						<th>Changes</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</div>
+
 	<jsp:include page="/WEB-INF/jsp/common/misc.jsp" />
 
 </body>

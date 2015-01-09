@@ -105,6 +105,7 @@ import org.hibernate.Query;
 import org.hibernate.mapping.PersistentClass;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
@@ -136,6 +137,24 @@ public class AuditTrailServiceBean implements AuditTrailServiceLocal {
         query.setParameter("entityId", IiConverter.convertToLong(identifier));
         query.setParameterList("excludedAttributes", EXCLUDED_FIELDS);
         populateDateParameters(startDate, endDate, query);
+        return query.list();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends Auditable> List<AuditLogRecord> getAuditTrail(
+            Class<T> clazz, Ii identifier) {
+        StringBuffer hql = new StringBuffer();
+        hql.append("select distinct record from ")
+                .append(AuditLogRecord.class.getName())
+                .append(" as record inner join fetch record.details where record.entityName = :entityName "
+                        + "and record.entityId = :entityId"
+                        + " and record.details.attribute not in (:excludedAttributes) order by record.createdDate");
+        Query query = PaHibernateUtil.getCurrentSession().createQuery(
+                hql.toString());
+        query.setParameter("entityName", getEntityName(clazz));
+        query.setParameter("entityId", IiConverter.convertToLong(identifier));
+        query.setParameterList("excludedAttributes", EXCLUDED_FIELDS);
         return query.list();
     }
 
@@ -222,4 +241,6 @@ public class AuditTrailServiceBean implements AuditTrailServiceLocal {
             query.setParameter("endDate", DateUtils.addDays(endDate, 1));
         }
     }
+
+    
 }

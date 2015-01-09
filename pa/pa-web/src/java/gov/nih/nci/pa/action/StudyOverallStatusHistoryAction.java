@@ -83,7 +83,9 @@
 package gov.nih.nci.pa.action;
 
 import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.WordUtils.capitalize;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.CheckOutType;
@@ -98,24 +100,39 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.ActionUtils;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.StreamResult;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
@@ -133,6 +150,8 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
     private StudyOverallStatusServiceLocal studyOverallStatusService;
     private StudyProtocolServiceLocal studyProtocolServiceLocal;
     private StudyCheckoutServiceLocal studyCheckoutService;
+    private AuditTrailServiceLocal auditTrailService;
+    
     private Long studyProtocolId;
     private Long statusId;
     private List<StudyOverallStatusWebDTO> overallStatusList;
@@ -155,6 +174,8 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
         studyOverallStatusService = PaRegistry.getStudyOverallStatusService();
         studyProtocolServiceLocal = PaRegistry.getStudyProtocolService();
         studyCheckoutService = PaRegistry.getStudyCheckoutService();
+        auditTrailService = PaRegistry.getAuditTrailService();
+        
         final HttpServletRequest request = ServletActionContext.getRequest();
         HttpSession session = request.getSession();
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) session
@@ -347,7 +368,91 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
             return execute();
         }        
     }
+
+    // CHECKSTYLE:OFF
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     * @throws JSONException JSONException
+     */
+    @SuppressWarnings("deprecation")
+    public StreamResult getAuditTrail() throws UnsupportedEncodingException, JSONException {
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+        if (statusId != null) {
+            List<AuditLogRecord> trail = auditTrailService
+                    .getAuditTrail(StudyOverallStatus.class,
+                            IiConverter.convertToIi(statusId));
+            fillWithAuditTrail(arr, trail);
+        }
+        return new StreamResult(new ByteArrayInputStream(root.toString()
+                .getBytes("UTF-8")));
+    }
+    // CHECKSTYLE:ON
     
+    private static final Map<String, String> TRANSLATE_MAP = new HashMap<>();
+    static {
+        TRANSLATE_MAP.put("commentText", "Why Study Stopped");
+        TRANSLATE_MAP.put("additionalComments", "Comments");
+        TRANSLATE_MAP.put("statusCode", "Status");
+        TRANSLATE_MAP.put("statusDate", "Status Date");
+        TRANSLATE_MAP.put("deleted", "Deleted");      
+        
+    }
+    
+    private void fillWithAuditTrail(JSONArray arr, List<AuditLogRecord> trail) {
+        for (AuditLogRecord r : trail) {
+            JSONArray data = new JSONArray();
+            data.put(DateFormatUtils.format(r.getCreatedDate(),
+                    "MM/dd/yyyy HH:mm"));
+            data.put(CsmUserUtil.getGridIdentityUsername(r.getUsername()));
+            data.put(capitalize(r.getType().name().toLowerCase()));
+
+            StringBuilder changes = new StringBuilder();
+            changes.append("<table><thead><tr><th>Attribute</th><th>Old Value</th><th>New Value</th>"
+                    + "</tr></thead>");
+            for (AuditLogDetail detail : r.getDetails()) {
+                final String attrName = TRANSLATE_MAP
+                        .get(detail.getAttribute());
+                if (attrName != null) {
+                    changes.append("<tr>");
+                    changes.append("<td>");
+                    changes.append(attrName);
+                    changes.append("</td>");
+                   
+                    changes.append("<td>");
+                    changes.append(StringEscapeUtils.escapeHtml(StringUtils
+                            .defaultString(adjustAttrValue(detail.getOldValue()))));
+                    changes.append("</td>");
+
+                    changes.append("<td>");
+                    changes.append(StringEscapeUtils.escapeHtml(StringUtils
+                            .defaultString(adjustAttrValue(detail.getNewValue()))));
+                    changes.append("</td></tr>");
+                }
+            }
+            changes.append("</table>");
+            data.put(changes);
+            arr.put(data);
+        }
+    }
+
+    private String adjustAttrValue(String val) {
+        try {
+            return StudyStatusCode.valueOf(val).getCode();
+        } catch (Exception e) {
+        }
+
+        try {
+            return DateFormatUtils.format(DateUtils.parseDate(val,
+                    new String[] {"yyyy-MM-dd HH:mm:ss.SSS" }), "MM/dd/yyyy");
+        } catch (Exception e) {
+        }
+
+        return val;
+    }
 
     private void validateStatusBeforeUpdate(StudyOverallStatusDTO dto)
             throws PAException {
@@ -569,6 +674,13 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
      */
     public boolean isDisplaySuAbstractorAutoCheckoutMessage() {
         return displaySuAbstractorAutoCheckoutMessage;
+    }
+
+    /**
+     * @param auditTrailService the auditTrailService to set
+     */
+    public void setAuditTrailService(AuditTrailServiceLocal auditTrailService) {
+        this.auditTrailService = auditTrailService;
     }
 
    

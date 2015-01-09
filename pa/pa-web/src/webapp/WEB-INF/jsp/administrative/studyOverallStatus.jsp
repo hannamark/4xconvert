@@ -34,7 +34,7 @@
             }
             
             function lookup() {
-                showPopup('${lookupUrl}', null, 'Status History');
+            	showWidePopup('${lookupUrl}', null, 'Status History');
             } 
             
             function statusChange() {

@@ -88,6 +88,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
@@ -100,6 +101,15 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public interface AuditTrailService {
+    
+    /**
+     * Retrieves a list of audit log records for the given class and object id.
+     * @param <T> the definition for acceptable classes
+     * @param clazz the class
+     * @param identifier the identifier of the class to retrieve the audit trail for
+     * @return the audit log records for the given parameters
+     */
+    <T extends Auditable> List<AuditLogRecord> getAuditTrail(Class<T> clazz, Ii identifier);
 
     /**
      * Retrieves a list of audit log details for the given class and object id.
