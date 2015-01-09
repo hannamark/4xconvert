@@ -295,6 +295,7 @@
 				<configuration>
 					<tagBase>https://ncisvn.nci.nih.gov/svn/coppa/tags/po-releases</tagBase>
 					<stagingRepository>releases::default::https://ncimvn.nci.nih.gov/nexus/service/local/staging/deploy/maven2</stagingRepository>
+					<preparationGoals>clean install</preparationGoals>
 				</configuration>
             </plugin>
 			<plugin>
