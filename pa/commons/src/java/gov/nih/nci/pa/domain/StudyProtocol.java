@@ -96,6 +96,7 @@ import gov.nih.nci.pa.util.StudySiteComparator;
 import gov.nih.nci.pa.util.ValidIi;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -1067,7 +1068,12 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
      * 
      */
     public static final class StudyOverallStatusComparator implements
-            Comparator<StudyOverallStatus> {
+            Comparator<StudyOverallStatus>, Serializable {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 5117406038792440978L;
+
         @Override
         public int compare(StudyOverallStatus sos1, StudyOverallStatus sos2) {
             String s1 = (sos1.getStatusDate() != null ? sos1.getStatusDate()

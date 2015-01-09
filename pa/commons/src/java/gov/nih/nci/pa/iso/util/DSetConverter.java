@@ -468,7 +468,7 @@ public class DSetConverter {
         DSet<Ii> dSet = null;
         if (identifierList != null) {
             dSet = new DSet<Ii>();
-            dSet.setItem(identifierList);
+            dSet.setItem(new LinkedHashSet<Ii>(identifierList));
 
         }
         return dSet;
