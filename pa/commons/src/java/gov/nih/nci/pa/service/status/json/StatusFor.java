@@ -14,7 +14,7 @@ public class StatusFor {
     /**
      * Indicates status rules are for TRIAL/SITE status transition
      */
-    private String type;
+    private TransitionFor type;
     /**
      * 
      */
@@ -23,13 +23,13 @@ public class StatusFor {
     /**
      * @return the type
      */
-    public String getType() {
+    public TransitionFor getType() {
         return type;
     }
     /**
      * @param type the type to set
      */
-    public void setType(String type) {
+    public void setType(TransitionFor type) {
         this.type = type;
     }
     /**

@@ -9,6 +9,7 @@ import gov.nih.nci.pa.service.status.json.SameDateValidation;
 import gov.nih.nci.pa.service.status.json.Status;
 import gov.nih.nci.pa.service.status.json.StatusFor;
 import gov.nih.nci.pa.service.status.json.StatusRules;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.Trial;
 import gov.nih.nci.pa.service.status.json.TrialType;
 
@@ -75,14 +76,14 @@ public class StatusTransitionConfigTest {
     private Trial createTrial(TrialType trialType) {
         Trial trial = new Trial();
         trial.setTrialType(trialType);
-        StatusFor trialStatus = createStatusFor("trialStatus"); 
-        trial.getStatusForList().put("trialStatus", trialStatus);
+        StatusFor trialStatus = createStatusFor(TransitionFor.TRIAL_STATUS); 
+        trial.getStatusForList().put(TransitionFor.TRIAL_STATUS, trialStatus);
         return trial;
     }
 
-    private StatusFor createStatusFor(String statusForString) {
+    private StatusFor createStatusFor(TransitionFor transitionFor) {
         StatusFor statusFor = new StatusFor();
-        statusFor.setType(statusForString);
+        statusFor.setType(transitionFor);
         
         Status zeroStatus = createStatus("STATUSZERO", 0, "Status Zero");
         NextStatus zeroToApprvd = createNextStatus("APPROVED", true, null, null); 

@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service.status;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.status.json.AppName;
@@ -18,14 +19,18 @@ public class StatusTransitionServiceTest extends AbstractEjbTestCase {
 
     private StatusTransitionServiceBean statusTransitionServiceBean;
 
+    
+    /**
+     * @throws java.lang.Exception
+     */
     @Before
-    public void init() throws Exception {
+    public void setUp() throws Exception {
         statusTransitionServiceBean = (StatusTransitionServiceBean) getEjbBean(StatusTransitionServiceBean.class);
     }
-
+    
     @Test
     public void testBeginTransition() throws PAException {
-        /*List<StatusDto> statusDtos = statusTransitionServiceBean
+        List<StatusDto> statusDtos = statusTransitionServiceBean
                 .validateStatusTransition(AppName.PA, TrialType.ABBREVIATED,
                         TransitionFor.TRIAL_STATUS, "IN_REVIEW", new Date(),
                         "APPROVED");
@@ -34,6 +39,6 @@ public class StatusTransitionServiceTest extends AbstractEjbTestCase {
         assertFalse(statusDtos.isEmpty());
 
         StatusDto sd = statusDtos.get(0);
-        assertFalse(sd.hasErrors()); */
+        assertTrue(sd.hasErrors()); 
     }
 }

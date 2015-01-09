@@ -67,7 +67,7 @@
       </xsl:template>
       
        <xsl:template match="trialStatus">
-		            "trialStatus" : { "type" : "trialStatus",
+		            "TRIAL_STATUS" : { "type" : "TRIAL_STATUS",
 		              "statuses" : {
 		                   <xsl:apply-templates select="transitions/status"/>
                            }
@@ -75,7 +75,7 @@
       </xsl:template>
       
       <xsl:template match="siteStatus">
-                    "siteStatus" : { "type" : "siteStatus",
+                    "SITE_STATUS" : { "type" : "SITE_STATUS",
                       "statuses" : {
                            <xsl:apply-templates select="transitions/status"/>
                            }

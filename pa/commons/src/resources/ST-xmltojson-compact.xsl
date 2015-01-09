@@ -34,9 +34,9 @@
       
       <xsl:template match="AbbreviatedTrial">"ABBREVIATED" : { "trialType" : "ABBREVIATED", "statusForList" : {<xsl:apply-templates select="trialStatus"/>,<xsl:apply-templates select="siteStatus"/>}}</xsl:template>
       
-       <xsl:template match="trialStatus">"trialStatus" : { "type" : "trialStatus", "statuses" : {<xsl:apply-templates select="transitions/status"/>}}</xsl:template>
+       <xsl:template match="trialStatus">"TRIAL_STATUS" : { "type" : "TRIAL_STATUS", "statuses" : {<xsl:apply-templates select="transitions/status"/>}}</xsl:template>
       
-      <xsl:template match="siteStatus">"siteStatus" : { "type" : "siteStatus", "statuses" : {<xsl:apply-templates select="transitions/status"/>}}</xsl:template>
+      <xsl:template match="siteStatus">"SITE_STATUS" : { "type" : "SITE_STATUS", "statuses" : {<xsl:apply-templates select="transitions/status"/>}}</xsl:template>
       
       <xsl:template match="status"><xsl:variable name="statusNm" select="@name"/>"<xsl:value-of select="$statusNm"/>" : {"order" : <xsl:value-of select="../../validValues/status[@code=$statusNm]/@order"/>, "code" : "<xsl:value-of select="$statusNm"/>", "displayName" : "<xsl:value-of select="../../validValues/status[@code=$statusNm]/@display"/>", "transitions" : {<xsl:apply-templates select="nextStatus"/>}}<xsl:if test="not(position() = last())">,</xsl:if></xsl:template>
        

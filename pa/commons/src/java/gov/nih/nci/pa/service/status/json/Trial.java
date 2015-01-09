@@ -18,7 +18,7 @@ public class Trial {
     /**
      * Status rules for TRIAL/SITE status
      */
-    private Map<String, StatusFor> statusForList = new LinkedHashMap<String, StatusFor>();
+    private Map<TransitionFor, StatusFor> statusForList = new LinkedHashMap<TransitionFor, StatusFor>();
     
     /**
      * @return the trialType
@@ -35,13 +35,13 @@ public class Trial {
     /**
      * @return the statusForList
      */
-    public Map<String, StatusFor> getStatusForList() {
+    public Map<TransitionFor, StatusFor> getStatusForList() {
         return statusForList;
     }
     /**
      * @param statusForList the statusForList to set
      */
-    public void setStatusForList(Map<String, StatusFor> statusForList) {
+    public void setStatusForList(Map<TransitionFor, StatusFor> statusForList) {
         this.statusForList = statusForList;
     }
 
