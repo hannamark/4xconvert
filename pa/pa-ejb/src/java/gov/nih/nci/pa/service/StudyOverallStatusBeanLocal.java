@@ -103,6 +103,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionServiceLocal;
+import gov.nih.nci.pa.service.status.ValidationError;
 import gov.nih.nci.pa.service.status.json.AppName;
 import gov.nih.nci.pa.service.status.json.ErrorType;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
@@ -128,6 +129,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateMidnight;
@@ -144,6 +146,9 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 public class StudyOverallStatusBeanLocal extends
         AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
         implements StudyOverallStatusServiceLocal {
+    
+    private static final Logger LOG = Logger
+            .getLogger(StudyOverallStatusBeanLocal.class);
 
     @EJB
     private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
@@ -205,13 +210,6 @@ public class StudyOverallStatusBeanLocal extends
         validateReasonText(dto);
 
         StudyOverallStatus bo = convertFromDtoToDomain(dto);
-
-        //Create intermediate status if we're transitioning directly from In-Review to Active or from Active to
-        //Closed to Accrual and Intervention or Active to Completed or Temporarily Closed to Accrual to
-        //Administratively Complete
-        createIntermediateStudyOverallStatus(oldStatus, dto);
-
-        // update
         session.saveOrUpdate(bo);
         StudyRecruitmentStatus srs = createStudyRecruitmentStatus(bo);
         if (srs != null) {
@@ -234,52 +232,6 @@ public class StudyOverallStatusBeanLocal extends
             oldStatusDTO.setAdditionalComments(additionalComments); 
         }
     }
-
-    /**
-     * Creates intermediate statuses if the transition from one status to the other skips one.
-     * Also handles creation of the proper study recruitment status as well.
-     * @param oldStatus The status being transitioned from
-     * @param newStatus The status being transitioned to
-     * @throws PAException on error
-     */
-    private void createIntermediateStudyOverallStatus(StudyOverallStatusDTO oldStatus,
-            StudyOverallStatusDTO newStatus) throws PAException {
-        if (oldStatus == null || newStatus == null) {
-            return;
-        }
-        StudyStatusCode oldStudyStatusCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
-        StudyStatusCode newStudyStatusCode = StudyStatusCode.getByCode(newStatus.getStatusCode().getCode());
-        List<StudyOverallStatus> intermediateStatuses = new ArrayList<StudyOverallStatus>();
-
-        if (oldStudyStatusCode == StudyStatusCode.IN_REVIEW && (newStudyStatusCode == StudyStatusCode.ACTIVE
-                        || newStudyStatusCode == StudyStatusCode.ENROLLING_BY_INVITATION)) {
-            intermediateStatuses.add(getSystemStudyOverallStatus(newStatus, StudyStatusCode.APPROVED));
-        } else if (oldStudyStatusCode ==  StudyStatusCode.ACTIVE
-                && newStudyStatusCode == StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION) {
-            intermediateStatuses.add(getSystemStudyOverallStatus(newStatus, StudyStatusCode.CLOSED_TO_ACCRUAL));
-        } else if ((oldStudyStatusCode == StudyStatusCode.ACTIVE
-                    || oldStudyStatusCode == StudyStatusCode.ENROLLING_BY_INVITATION)
-                && newStudyStatusCode == StudyStatusCode.COMPLETE) {
-            intermediateStatuses.add(getSystemStudyOverallStatus(newStatus, StudyStatusCode.CLOSED_TO_ACCRUAL));
-            intermediateStatuses.add(getSystemStudyOverallStatus(newStatus,
-                    StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
-        } else if (oldStudyStatusCode == StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL
-                && newStudyStatusCode == StudyStatusCode.ADMINISTRATIVELY_COMPLETE) {
-            intermediateStatuses.add(getSystemStudyOverallStatus(newStatus,
-                    StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
-        } else if (oldStudyStatusCode == StudyStatusCode.ENROLLING_BY_INVITATION
-                && newStudyStatusCode == StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION) {
-            intermediateStatuses.add(getSystemStudyOverallStatus(newStatus, StudyStatusCode.CLOSED_TO_ACCRUAL));
-        }
-        for (StudyOverallStatus status : intermediateStatuses) {
-            PaHibernateUtil.getCurrentSession().saveOrUpdate(status);
-            StudyRecruitmentStatus srs = createStudyRecruitmentStatus(status);
-            if (srs != null) {
-                PaHibernateUtil.getCurrentSession().saveOrUpdate(srs);
-            }
-        }
-    }
-   
 
     /**
      * Creates a recruitment status for the given StudyOverallStatus.
@@ -879,9 +831,21 @@ public class StudyOverallStatusBeanLocal extends
                 .getProprietaryTrialIndicator()) ? TrialType.ABBREVIATED
                 : TrialType.COMPLETE;
         List<StatusDto> statusList = convertStatusHistory(dto);
-        List<StatusDto> validatedList = statusTransitionService
-                .validateStatusHistory(AppName.PA, trialType, TransitionFor.TRIAL_STATUS,
-                        statusList);
+        List<StatusDto> validatedList;
+        try {
+            validatedList = statusTransitionService.validateStatusHistory(
+                    AppName.PA, trialType, TransitionFor.TRIAL_STATUS,
+                    statusList);
+        } catch (PAException e) {
+            LOG.error(e, e);
+            validatedList = statusList;
+            for (StatusDto status : validatedList) {
+                ValidationError err = new ValidationError();
+                err.setErrorType(ErrorType.ERROR);
+                err.setErrorMessage(e.getMessage());
+                status.getValidationErrors().add(err);
+            }
+        }
         return validatedList;
     }
 
@@ -896,7 +860,8 @@ public class StudyOverallStatusBeanLocal extends
     private StatusDto convert(StudyOverallStatusDTO dto) {
         StatusDto status = new StatusDto();
         status.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        status.setStatusCode(CdConverter.convertCdToString(dto.getStatusCode()));
+        status.setStatusCode(CdConverter.convertCdToEnum(StudyStatusCode.class,
+                dto.getStatusCode()).name());
         status.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
         status.setSystemCreated(BlConverter.convertToBool(dto
                 .getSystemCreated()));

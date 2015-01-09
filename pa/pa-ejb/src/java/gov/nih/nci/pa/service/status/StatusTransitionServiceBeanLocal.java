@@ -62,8 +62,6 @@ public class StatusTransitionServiceBeanLocal implements
                         try {
                             statusRules = statusTransitionsConfig
                                     .loadStatusRules(statusRulesStr);
-                            System.out.println(statusRules.getStatusRulesbyApp().get(AppName.PA).getStatusRules().get(TrialType.ABBREVIATED).getStatusForList().get("TRIAL_STATUS"));
-                            System.out.println(statusRules.getStatusRulesbyApp().get(AppName.REGISTRATION));
                         } catch (Exception e) {
                             throw new PAException(
                                     "Error loading status rules from config", e);
