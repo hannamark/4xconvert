@@ -134,7 +134,7 @@ public class StatusTransitionServiceBeanLocal implements
             fromStatus = statusDto.getStatusCode();
             statusDto.setStatusDate(fromStatusDt);
         }
-        return null;
+        return statusList;
     }
 
     private NextStatus getNextStatus(AppName appName, TrialType trialType,
