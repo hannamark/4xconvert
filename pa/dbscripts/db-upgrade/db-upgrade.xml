@@ -1693,5 +1693,9 @@
      <changeSet id="PO-8354" author="khandalkara">
         <comment>Improve performance of PO-8130</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8354.sql"/>
-     </changeSet>    
+     </changeSet>  
+     <changeSet id="PO-403" author="chandrasekaravr">
+        <comment>Insert struts rules json config into PA properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8403.sql"/>
+     </changeSet>     
 </databaseChangeLog>

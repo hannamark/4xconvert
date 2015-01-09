@@ -26,7 +26,7 @@
   "statusRulesbyApp" : {<xsl:apply-templates select="PA"/>,<xsl:apply-templates select="REGISTRATION"/>}}       
      </xsl:template>
      
-    <xsl:template match="PA">"PA" : { "appName" : "PA", "statusRules" : {<xsl:apply-templates select="completeTrial"/>,<xsl:apply-templates select="AbbreviatedTrial"/>}}\</xsl:template>
+    <xsl:template match="PA">"PA" : { "appName" : "PA", "statusRules" : {<xsl:apply-templates select="completeTrial"/>,<xsl:apply-templates select="AbbreviatedTrial"/>}}</xsl:template>
       
       <xsl:template match="REGISTRATION">"REGISTRATION" : { "appName" : "REGISTRATION", "statusRules" : {<xsl:apply-templates select="completeTrial"/>,<xsl:apply-templates select="AbbreviatedTrial"/>}}</xsl:template>
       
