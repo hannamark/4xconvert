@@ -100,6 +100,13 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
 	   else
 		  return value;
 	}
+	
+	/**
+     * {@inheritDoc}
+     */
+    public String getPropertyValueFromCache(String name) throws PAException {
+       return getPropertyValue(name);
+    }
 
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.LookUpTableServiceRemote#searchCountry(gov.nih.nci.pa.domain.Country)

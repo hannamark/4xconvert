@@ -118,6 +118,13 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             return value;
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getPropertyValueFromCache(String name) throws PAException {
+        return getPropertyValue(name);
+    }
 
     /**
      * {@inheritDoc}

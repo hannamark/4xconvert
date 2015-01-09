@@ -25,6 +25,8 @@ public final class CacheUtils {
     private static final String VIEW_PARTICIPATING_SITES_CACHE_KEY = "VIEW_PARTICIPATING_SITES_CACHE";
     private static final String CTEP_ORGANIZATIONS_CACHE_KEY = "CTEP_ORGANIZATIONS_CACHE";
     private static final String ORGANIZATIONS_FAMILY_CACHE_KEY = "ORGANIZATION_FAMILY_CACHE";
+    private static final String PA_PROPS_CACHE_KEY = "PA_PROPS_CACHE";
+    private static final String STATUS_RULES_CACHE_KEY = "STATUS_RULES_CACHE";
 
     /**
      * Cache used for storing criteria's referenced collections, usually Lead
@@ -93,6 +95,24 @@ public final class CacheUtils {
      */
     public static Cache getOrganizationFamilyCache() {
         return CACHE_MANAGER.getCache(ORGANIZATIONS_FAMILY_CACHE_KEY);
+    }
+    
+    /**
+     * Cache used for storing some of the PA properties
+     * 
+     * @return Cache
+     */
+    public static Cache getPAPropertiesCache() {
+        return CACHE_MANAGER.getCache(PA_PROPS_CACHE_KEY);
+    }
+    
+    /**
+     * Cache used for storing the status rules
+     * 
+     * @return Cache
+     */
+    public static Cache getStatusRulesCache() {
+        return CACHE_MANAGER.getCache(STATUS_RULES_CACHE_KEY);
     }
 
     /**

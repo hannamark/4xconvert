@@ -101,11 +101,12 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
-import gov.nih.nci.pa.service.status.ErrorType;
 import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionServiceLocal;
-import gov.nih.nci.pa.service.status.TransitionFor;
-import gov.nih.nci.pa.service.status.TrialType;
+import gov.nih.nci.pa.service.status.json.AppName;
+import gov.nih.nci.pa.service.status.json.ErrorType;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
@@ -879,7 +880,7 @@ public class StudyOverallStatusBeanLocal extends
                 : TrialType.COMPLETE;
         List<StatusDto> statusList = convertStatusHistory(dto);
         List<StatusDto> validatedList = statusTransitionService
-                .validateStatusHistory(trialType, TransitionFor.TRIAL_STATUS,
+                .validateStatusHistory(AppName.PA, trialType, TransitionFor.TRIAL_STATUS,
                         statusList);
         return validatedList;
     }

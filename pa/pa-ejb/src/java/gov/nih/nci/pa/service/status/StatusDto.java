@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.service.status;
 
+import gov.nih.nci.pa.service.status.json.ErrorType;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

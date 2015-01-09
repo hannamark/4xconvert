@@ -353,9 +353,23 @@
                 </fileset>
             </batchtest>
         </junit>
+    	<junitreport todir="${pa-web.test.reports}">
+	        <fileset dir="${pa-web.test.reports}">
+	            <include name="TEST-*.xml" />
+	        </fileset>
+	        <report todir="${pa-web.test.reports}" />
+	    </junitreport>
     	<fail if="junit.failure" message="Selenium test(s) failed.  See reports in ${pa-web.test.reports}/index.html."/>
     </target>
-
+	
+	<target name="run-selenium-testreport" description="Run integration tests report">
+    	<junitreport todir="${pa-web.test.reports}">
+	        <fileset dir="${pa-web.test.reports}">
+	            <include name="TEST-*.xml" />
+	        </fileset>
+	        <report todir="${pa-web.test.reports}" />
+	    </junitreport>
+    </target>
     <!-- ====================================================================== -->
     <!--   Recreates the database that tests will be run against                -->
     <!-- ====================================================================== -->

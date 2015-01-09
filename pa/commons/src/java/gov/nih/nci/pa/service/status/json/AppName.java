@@ -1,4 +1,4 @@
-package gov.nih.nci.pa.service.status;
+package gov.nih.nci.pa.service.status.json;
 
 /**
  * @author vinodh
@@ -6,9 +6,11 @@ package gov.nih.nci.pa.service.status;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum ErrorType {
-    /** Warning type */
-    WARNING,
-    /** Error type */
-    ERROR
+public enum AppName {
+    /** PA */
+    PA,
+    /** REGISTRATION */
+    REGISTRATION,
+    /** AACRUAL */
+    ACCRUAL
 }

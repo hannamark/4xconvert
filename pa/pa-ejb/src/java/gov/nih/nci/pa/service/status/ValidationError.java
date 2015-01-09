@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.service.status;
 
+import gov.nih.nci.pa.service.status.json.ErrorType;
+
 /**
  * @author vinodh
  * copyright NCI 2008.  All rights reserved.

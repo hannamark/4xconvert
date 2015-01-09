@@ -135,6 +135,13 @@ public interface LookUpTableServiceRemote {
      * @return value 
      * @throws PAException PAException
      */
+    String getPropertyValueFromCache(String name) throws PAException;
+    
+    /**
+     * @param name name
+     * @return value 
+     * @throws PAException PAException
+     */
     String getPropertyValue(String name) throws PAException;
     /**
      * 

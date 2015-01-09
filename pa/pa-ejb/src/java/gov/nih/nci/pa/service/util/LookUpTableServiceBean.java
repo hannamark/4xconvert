@@ -86,8 +86,10 @@ import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.CacheUtils.Closure;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -164,6 +166,32 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         return (Country) query.uniqueResult();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public String getPropertyValueFromCache(final String name) throws PAException {
+        return (String) CacheUtils.getFromCacheOrBackend(CacheUtils.getStatusRulesCache(),
+                name,
+                new Closure() {
+                 
+                 @Override
+                 public Object execute() throws PAException {
+                     Session session = PaHibernateUtil.getCurrentSession();
+                     Query query = session.createQuery(PAPROPERTY_BY_NAME_QUERY);
+                     query.setString("name", name);
+                     List<PAProperties> paProperties = query.list();
+                     if (CollectionUtils.isEmpty(paProperties)) {
+                         throw new PAException("PA_PROPERTIES does not have entry for  " + name);
+                     }
+                     return paProperties.get(0).getValue();
+                 }
+             });
+        
+        
+    }
+    
     /**
      * {@inheritDoc}
      */

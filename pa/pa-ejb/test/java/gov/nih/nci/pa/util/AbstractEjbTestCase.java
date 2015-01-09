@@ -131,8 +131,9 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
     /**
      * @throws HibernateException
+     * @throws IOException 
      */
-    private void populatePaProperties() throws HibernateException {
+    private void populatePaProperties() throws HibernateException, IOException {
         addPaProperty("ctgov.api.getByNct", "http://localhost:"
                 + CTGOV_API_MOCK_PORT + "/ctgov?${nctid}");
         addPaProperty("ctgov.sync.import_persons", "true");
@@ -149,6 +150,9 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("dcp.identifier.row", "");
         addPaProperty("ctep.identifier.row", "");
         addPaProperty("other.identifiers.row", "");
+        
+        String statusRulesStr = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("statusvalidations.json"));
+        addPaProperty("status.rules", statusRulesStr);
 
     }
 
