@@ -53,7 +53,7 @@ import com.sun.net.httpserver.HttpServer;
  */
 public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
-    public static final int CTGOV_API_MOCK_PORT = 51235;
+    public static final int CTGOV_API_MOCK_PORT = (int) (51235+Math.random()*1000);
 
     private EjbFactory ejbFactory;
 
