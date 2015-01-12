@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
         <artifactId>po</artifactId>
-        <version>1.0.1.0-SNAPSHOT</version>
+        <version>1.0.1.0</version>
     </parent>
 
     <artifactId>po-client</artifactId>
@@ -422,7 +422,7 @@ just JBoss AS 7! -->
     <profiles>
         <profile>
             <id>ci</id>
-            <activation></activation>
+            <activation />
             <build>
                 <plugins>
                     <plugin>
@@ -459,8 +459,8 @@ just JBoss AS 7! -->
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear"></property>
-                                        <delete file="${deployed.po.ear}" verbose="true"></delete>
+                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear" />
+                                        <delete file="${deployed.po.ear}" verbose="true" />
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
                                 </configuration>
@@ -473,8 +473,8 @@ just JBoss AS 7! -->
                                 <phase>post-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear"></property>
-                                        <delete file="${deployed.po.ear}" verbose="true"></delete>
+                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear" />
+                                        <delete file="${deployed.po.ear}" verbose="true" />
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
                                 </configuration>
@@ -509,7 +509,7 @@ just JBoss AS 7! -->
                                 </goals>
                             </execution>
                             <execution>
-                                <configuration></configuration>
+                                <configuration />
                                 <id>stop-container</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
@@ -580,7 +580,7 @@ just JBoss AS 7! -->
         </profile>
         <profile>
             <id>ci-nostart</id>
-            <activation></activation>
+            <activation />
             <build>
                 <plugins>
                     <plugin>
@@ -617,8 +617,8 @@ just JBoss AS 7! -->
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear"></property>
-                                        <delete file="${deployed.po.ear}" verbose="true"></delete>
+                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear" />
+                                        <delete file="${deployed.po.ear}" verbose="true" />
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
                                 </configuration>
@@ -631,8 +631,8 @@ just JBoss AS 7! -->
                                 <phase>post-integration-test</phase>
                                 <configuration>
                                     <tasks>
-                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear"></property>
-                                        <delete file="${deployed.po.ear}" verbose="true"></delete>
+                                        <property name="deployed.po.ear" value="${jboss.home}/standalone/deployments/po.ear" />
+                                        <delete file="${deployed.po.ear}" verbose="true" />
                                         <echo>${deployed.po.ear}</echo>
                                     </tasks>
                                 </configuration>
@@ -731,7 +731,7 @@ just JBoss AS 7! -->
         </profile>
         <profile>
             <id>ci-nostart-nodeploy</id>
-            <activation></activation>
+            <activation />
             <build>
                 <plugins>
                     <plugin>
