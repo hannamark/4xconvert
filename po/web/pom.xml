@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
         <artifactId>po</artifactId>
-        <version>1.0.1.0</version>
+        <version>1.0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>po-web</artifactId>
