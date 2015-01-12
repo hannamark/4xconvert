@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa.po</groupId>
     <artifactId>po</artifactId>
-    <version>1.0.1.0-SNAPSHOT</version>
+    <version>1.0.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>po</name>
     <url>https://wiki.nci.nih.gov/x/BAAuAQ</url>
@@ -67,9 +69,9 @@
         <jdbc.artifactId>postgresql</jdbc.artifactId>
         <jdbc.version>8.2-507.jdbc3</jdbc.version>
 
-        <ldap.host.url />
-        <ldap.searchable.base />
-        <ldap.user.id.label />
+        <ldap.host.url/>
+        <ldap.searchable.base/>
+        <ldap.user.id.label/>
 
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
         <web.auth.method>FORM</web.auth.method>
