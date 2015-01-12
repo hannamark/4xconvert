@@ -203,6 +203,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private static final String SELECT_TRIAL_DESCRIPTION = "Select Trial Description from Scientific Data menu.";
     private static final String SELECT_TRIAL_DETAILS = "Select General Trial Details from Administrative Data menu.";
     private static final String SELECT_TRIAL_STATUS = "Select Trial Status from Administrative Data menu.";
+    private static final String SELECT_TRIAL_STATUS_HISTORY = "Select Trial Status from Administrative Data menu,"
+            + " then click History.";
     private static final String YES = "Yes";
     private static final String NO = "No";
 
@@ -458,7 +460,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
         enforceIdentifierLength(studyProtocolDTO, messages);
-        enforceGeneralTrialDetails(studyProtocolDTO, messages);        
+        enforceGeneralTrialDetails(studyProtocolDTO, messages);    
+        enforceTrialStatusTransitionsValidation(studyProtocolDTO, messages);
         enforceInterventions(studyProtocolDTO, messages);
         enforceStudySiteNullification(studyProtocolIi, messages);
         enforceStudySiteContactNullification(studyProtocolIi, messages);
@@ -821,6 +824,22 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         }
     }
+    
+    private void enforceTrialStatusTransitionsValidation(
+            StudyProtocolDTO studyProtocolDTO,
+            AbstractionMessageCollection messages) throws PAException {
+        if (studyOverallStatusService.statusHistoryHasErrors(studyProtocolDTO
+                .getIdentifier())) {
+            messages.addError(SELECT_TRIAL_STATUS_HISTORY,
+                    "Trial status transition errors were found.",
+                    ErrorMessageTypeEnum.ADMIN, 6);
+        }
+        if (studyOverallStatusService.statusHistoryHasWarnings(studyProtocolDTO
+                .getIdentifier())) {
+            messages.addWarning(SELECT_TRIAL_STATUS_HISTORY,
+                    "Trial status transition warnings were found.", 6);
+        }
+    }
 
     private void enforceTrialStatus(StudyProtocolDTO studyProtocolDTO, AbstractionMessageCollection messages)
             throws PAException {
@@ -861,6 +880,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                         ErrorMessageTypeEnum.ADMIN, 6);
             }
         }
+        enforceTrialStatusTransitionsValidation(studyProtocolDTO, messages);
     }
 
     private void enforceTrialINDIDE(StudyProtocolDTO studyProtocolDto, AbstractionMessageCollection messages)
