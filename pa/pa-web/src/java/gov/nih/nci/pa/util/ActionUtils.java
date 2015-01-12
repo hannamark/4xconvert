@@ -237,6 +237,23 @@ public final class ActionUtils {
         session.setAttribute(Constants.STUDY_IDENTIFIERS, studyIdentifiers);
         
         prepareListOfIdentifiersGroupedByType(studyIdentifiers, session);
+        runTrialStatusTransitionValidations(studyProtocolQueryDTO, session);
+    }
+
+    private static void runTrialStatusTransitionValidations(
+            StudyProtocolQueryDTO spqDTO, HttpSession session) throws PAException {
+        final Ii spID = IiConverter.convertToStudyProtocolIi(spqDTO
+                .getStudyProtocolId());
+        // Only bother with transition validation if the trial is checked out.
+        if (spqDTO.getAdminCheckout().getCheckoutBy() != null
+                || spqDTO.getScientificCheckout().getCheckoutBy() != null) {
+            session.setAttribute(Constants.TRIAL_HAS_STATUS_ERRORS, PaRegistry
+                    .getStudyOverallStatusService()
+                    .statusHistoryHasErrors(spID));
+            session.setAttribute(Constants.TRIAL_HAS_STATUS_WARNINGS,
+                    PaRegistry.getStudyOverallStatusService()
+                            .statusHistoryHasWarnings(spID));
+        }
     }
 
     private static void prepareListOfIdentifiersGroupedByType(

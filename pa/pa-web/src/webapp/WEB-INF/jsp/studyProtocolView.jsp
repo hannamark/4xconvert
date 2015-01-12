@@ -21,13 +21,15 @@
             function handleAction(action) {
                 var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
                 var form = document.forms[0];
+                if (!allowAction(action)) {
+                	return;
+                }
                 if ((action == 'adminCheckIn') || (action == 'scientificCheckIn') || (action == 'adminAndScientificCheckIn')){
                     showCommentsBox(action);
                 } 
                 else {
-                form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
-                form.submit();
-                
+	                form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
+	                form.submit();                
                 }
             }
             
@@ -48,6 +50,29 @@
                 form.action="studyProtocol" + commandVal + ".action?studyProtocolId=" + studyProtocolId;
                 form.submit();
             }
+            
+            function allowAction(action) {
+                if ((action == 'adminCheckIn' || action == 'adminAndScientificCheckIn') 
+                		&& (trialHasStatusErrors || trialHasStatusWarnings) ){
+                	displayStatusTransitionMessages(action);
+                    return false;
+                } 
+                return true;
+            }
+            
+            function displayStatusTransitionMessages(action) {
+            	var dialogID = '';
+            	if (trialHasStatusErrors && !trialHasStatusWarnings) {
+            		dialogID = '#transitionErrors';
+            	} else if (!trialHasStatusErrors && trialHasStatusWarnings) {
+                    dialogID = '#transitionWarnings';
+                } else if (trialHasStatusErrors && trialHasStatusWarnings) {
+                    dialogID = '#transitionErrorsAndWarnings';
+                }
+            	jQuery(dialogID).dialog('open');  
+            	jQuery(dialogID).attr('act', action);            	
+            }
+            
             var eltDims = null;
             function showCommentsBox(action) {
                 document.getElementById('commentCommand').value=action;
@@ -103,18 +128,85 @@
                               $( this ).dialog("close");
                             }
                           }
-                     });            		
+                     });      
+            		
+            		 $( "#transitionErrors" ).dialog({
+                         modal: true,
+                         autoOpen : false,                         
+                         buttons: {
+                           "Trial Status History": function() {
+                                 $(this).dialog("close");
+                                 goToTrialStatusHistory();
+                           },
+                           Cancel: function() {
+                             $(this).dialog("close");
+                           }
+                         }
+                     });
+            		 
+                     $( "#transitionErrorsAndWarnings" ).dialog({
+                         modal: true,
+                         autoOpen : false,                         
+                         buttons: {
+                           "Trial Status History": function() {
+                                 $(this).dialog("close");
+                                 goToTrialStatusHistory();
+                           },
+                           Cancel: function() {
+                             $(this).dialog("close");
+                           }
+                         }
+                     });
+                     
+                     $( "#transitionWarnings" ).dialog({
+                         modal: true,
+                         autoOpen : false,         
+                         width : 450,
+                         buttons: {
+                           "Proceed with Check-in": function() {
+                                 $(this).dialog("close");
+                                 trialHasStatusErrors = false;
+                                 trialHasStatusWarnings = false;
+                                 handleAction($(this).attr('act'));
+                                 
+                           },
+                           "Trial Status History": function() {
+                                 $(this).dialog("close");
+                                 goToTrialStatusHistory();
+                           },
+                           Cancel: function() {
+                             $(this).dialog("close");
+                           }
+                         }
+                     });
             		
             		$('#removeNctIdIcon').click(function(e) {
             			$( "#confirmNctIdDialog" ).dialog( "open" );
                     });            		
             	});
             }(jQuery));
+            
             function resetValues(){
               var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
               document.forms[0].action="studyProtocolview.action?studyProtocolId=" + studyProtocolId;
               document.forms[0].submit();
             }
+            
+            var trialStatusHistoryURL = '<c:url value='/protected/studyOverallStatus.action'/>';
+            function goToTrialStatusHistory() {
+            	 var form = document.forms[0];
+            	 form.action=trialStatusHistoryURL;
+                 form.submit();
+            }
+            
+            var trialHasStatusErrors = ${sessionScope.trialHasStatusErrors==true};
+            var trialHasStatusWarnings = ${sessionScope.trialHasStatusWarnings==true};
+            
+            var adminAbs = ${sessionScope.isAdminAbstractor==true};
+            var sciAbs =	${sessionScope.isScientificAbstractor==true};
+            var suAbs =	${sessionScope.isSuAbstractor==true};
+           
+            
         </script>
         <style type="text/css">
             
@@ -350,6 +442,37 @@
             <div id="confirmNctIdDialog" title="Confirm ClinicalTrials.gov ID Removal">
                 <p>Please confirm you want to remove ClinicalTrials.gov Identifier from this trial</p>
             </div> 
+            <div id="transitionErrors"
+		        title="Trial Status Validation" style="display: none;">
+		        <p>
+		            <span class="ui-icon ui-icon-alert"
+		                style="float: left; margin: 0 7px 15px 0;"></span>
+		                Status Transition <b style="color: red;">Errors</b> were found. Trial record cannot be checked-in 
+		                until all Status Transition Errors have been resolved. Please use the
+		                Trial Status History button to review and make corrections. 
+		        </p>
+            </div>
+            <div id="transitionErrorsAndWarnings"
+                title="Trial Status Validation" style="display: none;">
+                <p>
+                    <span class="ui-icon ui-icon-alert"
+                        style="float: left; margin: 0 7px 15px 0;"></span>
+                        Status Transition <b style="color: red;">Errors</b> and <b style="color: blue;">Warnings</b> were found. Trial record cannot be checked-in 
+                        until all Status Transition Errors have been resolved. Please use the
+                        Trial Status History button to review and make corrections. 
+                </p>
+            </div>
+            <div id="transitionWarnings"
+                title="Trial Status Validation" style="display: none;">
+                <p>
+                    <span class="ui-icon ui-icon-alert"
+                        style="float: left; margin: 0 7px 15px 0;"></span>
+                        Status Transition <b style="color: blue;">Warnings</b> were found.  
+                        Use the
+                        Trial Status History button to review and make corrections, or select
+                        Proceed with Check-in. 
+                </p>
+            </div>      
             </s:form>
         </div>
     </body>

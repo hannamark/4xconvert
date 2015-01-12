@@ -167,4 +167,12 @@ public class Constants {
      * STUDY_IDENTIFIERS_GROUPED_BY_TYPE
      */
     public static final String STUDY_IDENTIFIERS_GROUPED_BY_TYPE = "studyIdentifiersByType";
+    /**
+     * TRIAL_HAS_STATUS_ERRORS
+     */
+    public static final String TRIAL_HAS_STATUS_ERRORS = "trialHasStatusErrors";
+    /**
+     * TRIAL_HAS_STATUS_WARNINGS
+     */
+    public static final String TRIAL_HAS_STATUS_WARNINGS = "trialHasStatusWarnings";
 }
