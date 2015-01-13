@@ -240,4 +240,9 @@ public class MockCSMUserService implements CSMUserUtil {
     public boolean isCurrentUserAutoCuration() throws PAException {       
         return false;
     }
+
+    @Override
+    public Map<Long, String> getSuperAbstractors() throws PAException {        
+        return getAbstractors();
+    }
 }

@@ -131,10 +131,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1097,20 +1097,33 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      */
     @Override
     public String getMarkerEmailAddress(PlannedMarkerDTO marker) throws PAException {
-        String emailId = "";
+        String emailId = StringUtils.EMPTY;
         try {
             String userId = StConverter.convertToString(marker.getUserLastCreated());
             User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
-            RegistryUser registryUser = registryUserService.getUser(csmUser.getLoginName());
-            if (StringUtils.isBlank(csmUser.getEmailId())) {
-                if (registryUser != null && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
-                    emailId = registryUser.getEmailAddress();                 
-                } 
-            } else {
-                emailId = csmUser.getEmailId();
-            }
+            emailId = determineRecipientEmail(csmUser);
         } catch (Exception e) {
             throw new PAException("An error occured while retrieving Submitter's email address", e);
+        }
+        return emailId;
+    }
+
+
+    /**
+     * @param emailId
+     * @param csmUser
+     * @return
+     * @throws PAException
+     */
+    private String determineRecipientEmail(User csmUser) throws PAException {
+        String emailId = StringUtils.EMPTY;
+        RegistryUser registryUser = registryUserService.getUser(csmUser
+                .getLoginName());
+        if (registryUser != null
+                && StringUtils.isNotBlank(registryUser.getEmailAddress())) {
+            emailId = registryUser.getEmailAddress();
+        } else if (StringUtils.isNotBlank(csmUser.getEmailId())) {
+            emailId = csmUser.getEmailId();
         }
         return emailId;
     }
@@ -1699,6 +1712,19 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             return fullName.trim();
         }
     }
+    
+    private String getFullUserName(User user) throws PAException {
+        if (user == null) {
+            return SIR_OR_MADAM;
+        }
+        RegistryUser registryUser = registryUserService.getUser(user
+                .getLoginName());
+        if (registryUser != null) {
+            return getFullUserName(registryUser);
+        } else {
+            return CsmUserUtil.getDisplayUsername(user);
+        }
+    }
 
     @Override
     public void sendTrialOwnershipRemoveEmail(Long userID, Long trialID)
@@ -2006,5 +2032,31 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
        } catch (Exception e) {
            throw new PAException("An error occured while sending a q email for a CDE", e);
        }
+    }
+
+
+    @Override
+    public void sendSuperAbstractorTransitionErrorsEmail(Long studyProtocolId,
+            User recipient) throws PAException {
+        StudyProtocolQueryDTO spDTO = protocolQueryService
+                .getTrialSummaryByStudyProtocolId(studyProtocolId);
+
+        String mailBody = lookUpTableService
+                .getPropertyValue("trial.status.transition.errors.body");
+        String mailSubject = lookUpTableService
+                .getPropertyValue("trial.status.transition.errors.subject");
+        mailSubject = commonMailSubjectReplacements(spDTO, mailSubject);
+        mailBody = commonMailBodyReplacements(spDTO, mailBody);
+        mailBody = mailBody.replace(USER_NAME, getFullUserName(recipient));
+        mailBody = mailBody.replace(
+                "${sciAbsName}",
+                getFullUserName(CSMUserService.getInstance().getCSMUser(
+                        UsernameHolder.getUser())));
+
+        String recipientEmail = determineRecipientEmail(recipient);
+        if (StringUtils.isNotBlank(recipientEmail)) {
+            sendMailWithHtmlBody(recipientEmail, mailSubject, mailBody);
+        }
+
     }
 }

@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import javax.ejb.Local;
 
@@ -115,4 +116,24 @@ public interface StudyCheckoutServiceLocal extends StudyPaService<StudyCheckoutD
      * @throws PAException PAException
      */
     void handleTrialAssigneeChange(Long studyProtocolId) throws PAException;
+
+    /**
+     * <ol>
+     * <li>Check the trial in for Scientific Abstraction,</li>
+     * <li>Check-out the trial to the selected Super Abstractor for Admin
+     * Abstraction,</li>
+     * <li>Send an email to the Super Abstractor to correct the errors found.</li>
+     * </ol>
+     * 
+     * @param studyProtocolId
+     *            studyProtocolId
+     * @param checkInReason
+     *            check-in comment
+     * @param user
+     *            super abstractor
+     * @throws PAException
+     *             PAException
+     */
+    void checkInSciAndCheckOutToSuperAbs(Long studyProtocolId,
+            String checkInReason, User user) throws PAException;
 }

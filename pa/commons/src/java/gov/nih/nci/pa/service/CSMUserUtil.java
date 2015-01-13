@@ -190,6 +190,17 @@ public interface CSMUserUtil {
     Map<Long, String> getAbstractors() throws PAException;
     
     /**
+     * Performance-oriented methods that quickly returns all PA Super Abstractors in
+     * the system. Map key is the user's ID; map value is of form 'Last Name,
+     * First Name'.
+     * 
+     * @return all PA Super Abstractors in the system
+     * @throws PAException
+     *             PAException
+     */
+    Map<Long, String> getSuperAbstractors() throws PAException;
+    
+    /**
      * Checks to see whether the currently logged in user (UsernameHolder) is an
      * abstractor.
      * 

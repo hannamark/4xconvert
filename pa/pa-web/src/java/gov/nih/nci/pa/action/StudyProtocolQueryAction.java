@@ -98,6 +98,7 @@ import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
@@ -160,6 +161,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
     
     private Long assignedTo;
+    private Long superAbstractorId;
     private String newProcessingPriority;
     private String processingComments;
     private String pageFrom;
@@ -384,6 +386,29 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
             }
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                     getText("dashboard.save.success"));            
+            return view();
+        } catch (PAException e) {
+            addActionError(e.getLocalizedMessage());
+        }
+        return SHOW_VIEW_REFRESH;
+    }
+    
+    /**
+     * @return String
+     * @throws PAException
+     *             PAException
+     */
+    @SuppressWarnings("deprecation")
+    public String checkInSciAndCheckOutToSuperAbs() throws PAException {
+        try {
+            getStudyCheckoutService().checkInSciAndCheckOutToSuperAbs(
+                    getStudyProtocolId(),
+                    getCheckInReason(),
+                    CSMUserService.getInstance().getCSMUserById(
+                            getSuperAbstractorId()));
+            String msg = getText("studyProtocol.trial.checkInSciAndCheckOutToSuperAbs");
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE, msg);
             return view();
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
@@ -657,5 +682,19 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     public void setDocumentWorkflowStatusService(
             DocumentWorkflowStatusService documentWorkflowStatusService) {
         this.documentWorkflowStatusService = documentWorkflowStatusService;
+    }
+
+    /**
+     * @return the superAbstractorId
+     */
+    public Long getSuperAbstractorId() {
+        return superAbstractorId;
+    }
+
+    /**
+     * @param superAbstractorId the superAbstractorId to set
+     */
+    public void setSuperAbstractorId(Long superAbstractorId) {
+        this.superAbstractorId = superAbstractorId;
     }
 }

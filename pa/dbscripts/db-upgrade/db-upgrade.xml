@@ -1697,5 +1697,9 @@
      <changeSet id="PO-403" author="chandrasekaravr" runOnChange="true">
         <comment>Insert struts rules json config into PA properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8403.sql"/>
-     </changeSet>     
+     </changeSet>  
+     <changeSet id="PO-8521" author="krylovd" runOnChange="true">
+        <comment>Added email message templates.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8521.sql"/>
+     </changeSet>   
 </databaseChangeLog>

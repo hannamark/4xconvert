@@ -24,7 +24,8 @@
                 if (!allowAction(action)) {
                 	return;
                 }
-                if ((action == 'adminCheckIn') || (action == 'scientificCheckIn') || (action == 'adminAndScientificCheckIn')){
+                if ((action == 'adminCheckIn') || (action == 'scientificCheckIn') || (action == 'adminAndScientificCheckIn')
+                		|| (action == 'checkInSciAndCheckOutToSuperAbs')){
                     showCommentsBox(action);
                 } 
                 else {
@@ -38,7 +39,8 @@
                 var form = document.forms[0];
                 var commandVal= document.getElementById('commentCommand').value;
                
-                if ((commandVal == 'adminCheckIn') || (commandVal == 'scientificCheckIn') || (commandVal == 'adminAndScientificCheckIn')){
+                if ((commandVal == 'adminCheckIn') || (commandVal == 'scientificCheckIn') || (commandVal == 'adminAndScientificCheckIn')
+                		|| (commandVal == 'checkInSciAndCheckOutToSuperAbs')){
                     comment = document.getElementById('comments').value;
                    
                     if (comment==null){
@@ -52,12 +54,23 @@
             }
             
             function allowAction(action) {
-                if ((action == 'adminCheckIn' || action == 'adminAndScientificCheckIn') 
-                		&& (trialHasStatusErrors || trialHasStatusWarnings) ){
+                if (((action == 'adminCheckIn' || action == 'adminAndScientificCheckIn') 
+                		&& (trialHasStatusErrors || trialHasStatusWarnings)) || 
+                		(action == 'scientificCheckIn' && suAbs && !checkedOutForAdmin && (trialHasStatusErrors || trialHasStatusWarnings)) ){
                 	displayStatusTransitionMessages(action);
                     return false;
                 } 
+                if (action == 'scientificCheckIn' && sciAbs && !checkedOutForAdmin && trialHasStatusErrors) {
+                	displayStatusTransitionMessageAndPickSuperAbstractor(action);
+                	return false;
+                }
                 return true;
+            }
+            
+            function displayStatusTransitionMessageAndPickSuperAbstractor(action) {
+                var dialogID = '#pickSuperAbstractor';                
+                jQuery(dialogID).dialog('open');  
+                jQuery(dialogID).attr('act', action);               
             }
             
             function displayStatusTransitionMessages(action) {
@@ -179,6 +192,25 @@
                            }
                          }
                      });
+                     
+                     $( "#pickSuperAbstractor" ).dialog({
+                         modal: true,
+                         autoOpen : false,         
+                         width : 450,
+                         buttons: {
+                           "Proceed with Check-in": function() {
+                        	   if ($.isNumeric($('#supAbsId').val())) {
+                        		   document.forms[0].elements["superAbstractorId"].value = $('#supAbsId').val();
+                        		   $(this).dialog("close");                                
+                                   handleAction('checkInSciAndCheckOutToSuperAbs'); 
+                        	   }                                                                 
+                           },                           
+                           "Cancel": function() {
+                             $(this).dialog("close");
+                           }
+                         }
+                     });
+
             		
             		$('#removeNctIdIcon').click(function(e) {
             			$( "#confirmNctIdDialog" ).dialog( "open" );
@@ -205,6 +237,9 @@
             var adminAbs = ${sessionScope.isAdminAbstractor==true};
             var sciAbs =	${sessionScope.isScientificAbstractor==true};
             var suAbs =	${sessionScope.isSuAbstractor==true};
+            
+            var checkedOutForAdmin = ${sessionScope.trialSummary.adminCheckout.checkoutBy != null};
+            var checkedOutForSci = ${sessionScope.trialSummary.scientificCheckout.checkoutBy != null};
            
             
         </script>
@@ -228,6 +263,7 @@
             <s:form>
                 <s:token/>
                 <s:hidden name="checkInReason"/>
+                <s:hidden name="superAbstractorId"/>
                 <s:actionerror/>
                 <h2>Trial Identification</h2>
                 <table class="form" cellspacing="10" cellpadding="10">
@@ -472,7 +508,35 @@
                         Trial Status History button to review and make corrections, or select
                         Proceed with Check-in. 
                 </p>
-            </div>      
+            </div>
+            <div id="pickSuperAbstractor"
+                title="Trial Status Validation" style="display: none;">
+                <div>
+                    <span class="ui-icon ui-icon-alert"
+                        style="float: left; margin: 0 7px 15px 0;"></span>
+                         Status Transition <b style="color: red;">Errors</b> were found.
+                         Please select a Super Abstractor from the list below, then click 
+                         Proceed with Check-in. 
+                         The system will:
+                         <ol>
+                            <li>Check the trial in for Scientific Abstraction,</li>
+                            <li>Check-out the trial to the selected Super Abstractor for Admin Abstraction,</li>
+                            <li>Send an email to the Super Abstractor to correct the errors found.</li>
+                         </ol> 
+                         <table class="form">
+	                         <tr>
+	                             <td scope="row" class="label" nowrap="nowrap"><label for="supAbsId">Super Abstractor:</label></td>
+	                             <td> 
+	                                 <s:set name="superAbstractorsList"
+	                                     value="@gov.nih.nci.pa.service.util.CSMUserService@getInstance().superAbstractors" />
+	                                 <s:select id="supAbsId" name="supAbsId"
+	                                     list="#superAbstractorsList" headerKey="" headerValue=""
+	                                     />                                        
+	                             </td>
+	                         </tr>
+                         </table>
+                </div>
+            </div>
             </s:form>
         </div>
     </body>

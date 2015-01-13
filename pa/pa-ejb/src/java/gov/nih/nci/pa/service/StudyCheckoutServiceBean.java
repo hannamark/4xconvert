@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -100,7 +101,10 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
@@ -117,8 +121,11 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class StudyCheckoutServiceBean
-extends AbstractStudyIsoService<StudyCheckoutDTO, StudyCheckout, StudyCheckoutConverter>
-implements StudyCheckoutServiceLocal {
+        extends
+        AbstractStudyIsoService<StudyCheckoutDTO, StudyCheckout, StudyCheckoutConverter>
+        implements StudyCheckoutServiceLocal {
+    
+    @EJB private MailManagerServiceLocal mailManagerSerivceLocal;
 
     /**
      * {@inheritDoc}
@@ -229,6 +236,28 @@ implements StudyCheckoutServiceLocal {
         checkOut(IiConverter.convertToIi(studyProtocolId),
                 CdConverter.convertToCd(type), StConverter.convertToSt(login));
 
+    }
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void checkInSciAndCheckOutToSuperAbs(Long studyProtocolId,
+            String checkInReason, User user) throws PAException {
+        checkIn(IiConverter.convertToStudyProtocolIi(studyProtocolId),
+                CdConverter.convertToCd(CheckOutType.SCIENTIFIC),
+                StConverter.convertToSt(UsernameHolder.getUser()),
+                StConverter.convertToSt(checkInReason));
+        checkOut(IiConverter.convertToStudyProtocolIi(studyProtocolId),
+                CdConverter.convertToCd(CheckOutType.ADMINISTRATIVE),
+                StConverter.convertToSt(user.getLoginName()));
+        mailManagerSerivceLocal.sendSuperAbstractorTransitionErrorsEmail(studyProtocolId, user);
+    }
+
+    /**
+     * @param mailManagerSerivceLocal the mailManagerSerivceLocal to set
+     */
+    public void setMailManagerSerivceLocal(
+            MailManagerServiceLocal mailManagerSerivceLocal) {
+        this.mailManagerSerivceLocal = mailManagerSerivceLocal;
     }
     
 }

@@ -122,14 +122,24 @@ public class CSMUserService implements CSMUserUtil {
      * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support.
      */
     private static final String PRINCIPAL_SEPARATOR = "\\|\\|";
-    private static final String GET_ABSTRACTORS_QUERY = "select cu.user_id, cu.first_name, cu.last_name, ru.first_name,"
+    
+    private static final String GET_USERS_BY_ROLES_TEMPLATE = "select cu.user_id, cu.first_name, "
+            + "cu.last_name, ru.first_name,"
             + " ru.last_name, cu.login_name from csm_user cu "
             + "inner join csm_user_group cug on cug.user_id=cu.user_id inner join csm_group cg on "
             + "cg.group_id=cug.group_id left join registry_user ru on ru.csm_user_id=cu.user_id "
-            + "where cg.group_name in ('Abstractor', 'AdminAbstractor', 'ScientificAbstractor', 'SuAbstractor') "
+            + "where cg.group_name in (%s) "
             + "order by CASE WHEN cu.last_name is null or cu.last_name='' "
             + "THEN upper(ru.last_name) ELSE upper(cu.last_name) END,"
             + "upper(substr(cu.login_name, position('CN=' in cu.login_name)+3))";
+
+    private static final String GET_ABSTRACTORS_QUERY = String
+            .format(GET_USERS_BY_ROLES_TEMPLATE,
+                    "'Abstractor', 'AdminAbstractor', 'ScientificAbstractor', 'SuAbstractor'");
+    
+    private static final String GET_SUPER_ABSTRACTORS_QUERY = String
+            .format(GET_USERS_BY_ROLES_TEMPLATE,
+                    "'SuAbstractor'");
 
     static {
         AbstractStudyProtocolConverter.setCsmUserUtil(instance);
@@ -377,13 +387,22 @@ public class CSMUserService implements CSMUserUtil {
         instance = service;
     }
 
-    // CHECKSTYLE:OFF
-    @SuppressWarnings("unchecked")
+    // CHECKSTYLE:OFF    
     @Override
     public Map<Long, String> getAbstractors() throws PAException {
+        return getUsersMap(GET_ABSTRACTORS_QUERY);
+    }
+    
+    @Override
+    public Map<Long, String> getSuperAbstractors() throws PAException {
+        return getUsersMap(GET_SUPER_ABSTRACTORS_QUERY);
+    }
+    
+    @SuppressWarnings("unchecked")   
+    private Map<Long, String> getUsersMap(String sql) throws PAException {
         Map<Long, String> map = new LinkedHashMap<Long, String>();
         Session session = PaHibernateUtil.getCurrentSession();
-        SQLQuery query = session.createSQLQuery(GET_ABSTRACTORS_QUERY);
+        SQLQuery query = session.createSQLQuery(sql);
         List<Object[]> list = query.list();
         for (Object[] row : list) {
             Long key = ((BigInteger) row[0]).longValue();

@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
 import java.util.Collection;
@@ -408,4 +409,12 @@ public interface MailManagerService {
      */
     void sendSyncEmail(String ncitIdentifier, String toAddress, String preferredName,
             String userName , String displayName) throws PAException;
+
+    /**
+     * @param studyProtocolId studyProtocolId
+     * @param recipient super abstractor
+     * @throws PAException exception
+     */
+    void sendSuperAbstractorTransitionErrorsEmail(Long studyProtocolId,
+            User recipient) throws PAException;
 }
