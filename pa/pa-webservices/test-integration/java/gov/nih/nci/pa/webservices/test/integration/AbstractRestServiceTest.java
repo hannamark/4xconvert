@@ -339,7 +339,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         selenium.type("id=identifier", conf.getNciTrialID());
         selenium.select("id=identifierType", "NCI");
         clickAndWait("link=Search");
-        waitForElementById("row", 60);
+        waitForElementById("row", 120);
         assertTrue(selenium.isTextPresent("One item found"));
 
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
