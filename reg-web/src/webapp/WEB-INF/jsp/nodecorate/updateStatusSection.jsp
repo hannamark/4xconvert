@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <div class="accordion">
-    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section8"><fmt:message key="update.trial.statusDates"/><span class="required">*</span></a></div>
-    <div id="section8" class="accordion-body in">
+    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section8_1">Trial Status<span class="required">*</span></a></div>
+    <div id="section8_1" class="accordion-body in">
         <div class="container">
             <div class="form-group">
                 <label for="trialDTO_statusCode" class="col-xs-4 control-label"><fmt:message key="update.trial.currentTrialStatus"/><span class="required">*</span></label>
@@ -55,6 +55,15 @@
                 </div>                                
                 <div class="col-xs-4"><i class="fa-question-circle help-text" id="popover" rel="popover" data-content="<fmt:message key="tooltip.current_trial_status_date" />"  data-placement="top" data-trigger="hover"></i></div>
              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="accordion">
+    <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section8_2">Trial Dates<span class="required">*</span></a></div>
+    <div id="section8_2" class="accordion-body in">
+        <div class="container">       
              <div class="form-group">
                 <label for="trialDTO_startDate" class="col-xs-4 control-label"><fmt:message key="update.trial.trialStartDate"/><span class="required">*</span></label>
                 <s:set name="dateTypeList" value="@gov.nih.nci.pa.enums.ActualAnticipatedTypeCode@getDisplayNames()" />
@@ -72,7 +81,7 @@
                 <div class="col-xs-5">
                   <s:radio cssClass="radio-inline" id="trialDTO_startDateType" name="trialDTO.startDateType" list="#dateTypeList" />                 
                   <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.trial_start_date"/>"  data-placement="top" data-trigger="hover"></i>
-            	  <span class="alert-danger">
+                  <span class="alert-danger">
                       <s:fielderror>
                           <s:param>trialDTO.startDateType</s:param>
                       </s:fielderror>
@@ -101,7 +110,7 @@
                <div class="col-xs-5">
                    <s:radio cssClass="radio-inline" id="trialDTO_primaryCompletionDateType" name="trialDTO.primaryCompletionDateType" list="#dateTypeList" />                   
                    <i class="fa-question-circle help-text inside" id="popover" rel="popover" data-content="<fmt:message key="tooltip.primary_completion_date"/>"  data-placement="top" data-trigger="hover"></i> 
-          	 		<span class="alert-danger">
+                    <span class="alert-danger">
                        <s:fielderror>
                            <s:param>trialDTO.primaryCompletionDateType</s:param>
                        </s:fielderror>
