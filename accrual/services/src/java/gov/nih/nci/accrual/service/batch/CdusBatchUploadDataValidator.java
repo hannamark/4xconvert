@@ -94,11 +94,14 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.AccrualChangeCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -772,8 +775,18 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 studySiteIi = listOfPoIds.get(poId);
             }
             patientsFromBatchFile.add(new SubjectAccrualKey(studySiteIi, getPatientId(values)));
+            boolean isSiteFamilySubmitter = false;
+            StudySiteDTO ssDto = PaServiceLocator.getInstance().getStudySiteService()
+                    .get(IiConverter.convertToIi(studySiteIi));
+            StudySite ss = new StudySiteConverter().convertFromDtoToDomain(ssDto);
+            if (ss.getHealthCareFacility() != null 
+                && new AccrualUtil().isUserAllowedSiteOrFamilyAccrualAccess(
+                     ss.getHealthCareFacility().getOrganization().getIdentifier())) {
+                    isSiteFamilySubmitter = true;
+            }
             if (!superAbstractor 
-                    && !AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToIi(studySiteIi), ru)) {
+                    && !AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToIi(studySiteIi), ru) 
+                    && !isSiteFamilySubmitter) {
                 addAccrualAccessBySiteError(regInstID, lineNumber);
             }
         } catch (PAException e) {

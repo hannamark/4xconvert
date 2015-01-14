@@ -113,6 +113,7 @@ import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.NonInterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.PatientStage;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -1568,7 +1569,10 @@ private List<PatientStage> getPatientStage(String nciId) {
     private BatchFile getBatchFile(File file) {
         BatchFile bf = new BatchFile();
         bf.setFileLocation(file.getAbsolutePath());
-        bf.setSubmitter(TestSchema.registryUsers.get(0));
+        RegistryUser ru = TestSchema.registryUsers.get(0);
+        ru.setFamilyAccrualSubmitter(false);
+        ru.setSiteAccrualSubmitter(true);
+        bf.setSubmitter(ru);
         bf.setUserLastCreated(TestSchema.registryUsers.get(0).getCsmUser());
         bf.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
         TestSchema.addUpdObject(bf);

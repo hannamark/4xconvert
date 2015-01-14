@@ -94,10 +94,12 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.accrual.util.AccrualUtilTest;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
@@ -105,15 +107,25 @@ import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.AccrualSubmissionTypeCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.pa.util.pomock.MockFamilyService;
+import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
+import gov.nih.nci.services.family.FamilyDTO;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
@@ -175,7 +187,34 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
 
     @Test
     public void testGetCounts() throws PAException {
+        setMockValues();
         List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(testStudyIi);
+        assertEquals(1, accrualCounts.size());
+        for (StudySiteSubjectAccrualCount accrualCount : accrualCounts) {
+            if (accrualCount.getStudySite().getId().equals(testSite.getId())) {
+                assertEquals((Integer) 10, accrualCount.getAccrualCount());
+            } else {
+                assertNull(accrualCount.getAccrualCount());
+            }
+        }
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(false);
+        ru.setFamilyAccrualSubmitter(true);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        when(registrySvr.getUser(any(String.class))).thenReturn(ru);
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        when(PoRegistry.getOrganizationEntityService()).thenReturn(new MockOrganizationEntityService());
+        FamilyServiceRemote fs = mock(FamilyServiceRemote.class);
+        when(PoRegistry.getFamilyService()).thenReturn(fs);
+        Map<Ii, FamilyDTO> familyMap = new HashMap<Ii, FamilyDTO>();
+        FamilyDTO family = new FamilyDTO();
+        family.setName(EnOnConverter.convertToEnOn("family name"));
+        familyMap.put(IiConverter.convertToPoFamilyIi("1"), family);
+        when(fs.getFamilies(any(Set.class))).thenReturn(familyMap);
+        when(fs.getActiveRelationships(any(Long.class))).thenReturn(AccrualUtilTest.getRelationships(new Long[] {1L}));
+        accrualCounts = bean.getCounts(testStudyIi);
         assertEquals(1, accrualCounts.size());
         for (StudySiteSubjectAccrualCount accrualCount : accrualCounts) {
             if (accrualCount.getStudySite().getId().equals(testSite.getId())) {
@@ -203,23 +242,27 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
 
     @Test
     public void testGetCountsNoCounts() throws PAException {
+        setMockValues();
         List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(IiConverter.convertToIi(TestSchema.studyProtocols.get(1).getId()));
         assertTrue(CollectionUtils.isEmpty(accrualCounts));
     }
 
     @Test
     public void testGetCountsNoSites() throws PAException {
+        setMockValues();
         long nonExistentStudyProtocolId = 99L;
         assertTrue(CollectionUtils.isEmpty(bean.getCounts(IiConverter.convertToIi(nonExistentStudyProtocolId))));
     }
 
     @Test
     public void testGetCountsNullIi() throws PAException {
+        setMockValues();
         assertTrue(CollectionUtils.isEmpty(bean.getCounts(null)));
     }
 
     @Test
     public void testSave() throws PAException {
+        setMockValues();
         List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(testStudyIi);
         assertEquals(1, accrualCounts.size());
         accrualCounts.get(0).setAccrualCount(1);
@@ -268,6 +311,20 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
 
         thrown.expect(PAException.class);
         thrown.expectMessage("User Joe Smith (User ID curator) does not have accrual access to site: orga name (PO ID = 1)");
+        PoServiceLocator poServiceLocator = mock(PoServiceLocator.class);
+        when(poServiceLocator.getOrganizationEntityService()).thenReturn(
+                new MockOrganizationEntityService());
+        when(poServiceLocator.getFamilyService())
+                .thenReturn(new MockFamilyService());
+        PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(false);
+        ru.setFamilyAccrualSubmitter(false);
+        when(registrySvr.getUser(any(String.class))).thenReturn(ru);
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
         bean.save(accrualCounts);
     }
 
@@ -301,7 +358,15 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         invalidCount.setStudySite(TestSchema.studySites.get(6));
         invalidCount.setStudyProtocol(TestSchema.studyProtocols.get(2));
         accrualCounts.add(invalidCount);
-
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(false);
+        ru.setFamilyAccrualSubmitter(false);
+        when(registrySvr.getUser(any(String.class))).thenReturn(ru);
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
+        
         try {
             bean.save(accrualCounts);
             fail();
@@ -331,5 +396,22 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         result.setAccrualCount(count);
         result.setSubmissionTypeCode(AccrualSubmissionTypeCode.BATCH);
         return result;
+    }
+    
+    private void setMockValues() throws PAException {
+    	PoServiceLocator poServiceLocator = mock(PoServiceLocator.class);
+        when(poServiceLocator.getOrganizationEntityService()).thenReturn(
+                new MockOrganizationEntityService());
+        when(poServiceLocator.getFamilyService())
+                .thenReturn(new MockFamilyService());
+        PoRegistry.getInstance().setPoServiceLocator(poServiceLocator);
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote registrySvr = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(1);
+        ru.setSiteAccrualSubmitter(true);
+        ru.setFamilyAccrualSubmitter(false);
+        when(registrySvr.getUser(any(String.class))).thenReturn(ru);
+        when(svcLocal.getRegistryUserService()).thenReturn(registrySvr);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
     }
 }

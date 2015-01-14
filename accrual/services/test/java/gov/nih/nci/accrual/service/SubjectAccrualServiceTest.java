@@ -134,6 +134,7 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
@@ -245,9 +246,33 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void manageSubjectAccrualsUserAuthFailure() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site 1"); 
+        StudySiteDTO ssDto = new StudySiteDTO();
+        ssDto.setIdentifier(IiConverter.convertToIi(1L));
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(ssDto);
         SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(participatingSite.getId()),
-                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
+                IiConverter.convertToIi(1L));
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(0);
+        ru.setFamilyAccrualSubmitter(false);
+        ru.setSiteAccrualSubmitter(false);
+        when(regSvc.getUser(any(String.class))).thenReturn(ru);
+        when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
         bean.manageSubjectAccruals(Arrays.asList(dto));
+    }
+    
+    @Test 
+    public void manageSubjectAccrualsSiteUserAuth() throws PAException {
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(participatingSite.getId()),
+                IiConverter.convertToIi(1L));
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(0);
+        ru.setAffiliatedOrganizationId(3L);
+        ru.setFamilyAccrualSubmitter(false);
+        ru.setSiteAccrualSubmitter(true);
+        when(regSvc.getUser(any(String.class))).thenReturn(ru);
+        when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(Arrays.asList(dto));
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -260,7 +285,6 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         StudySite ss = createAccessibleStudySite(); 
         SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
                 IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
-        
         results = bean.manageSubjectAccruals(Arrays.asList(dto));
         assertEquals(1, results.size());
         assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
@@ -558,7 +582,26 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void updateSubjectAccrualUserAuthFailure() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site.");
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(0);
+        ru.setFamilyAccrualSubmitter(false);
+        ru.setSiteAccrualSubmitter(false);
+        when(regSvc.getUser(any(String.class))).thenReturn(ru);
+        when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
         bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100), AccrualSubmissionTypeCode.UNKNOWN);
+    }
+    
+    @Test 
+    public void updateSubjectAccrualSiteUserAuth() throws PAException {
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(0);
+        ru.setAffiliatedOrganizationId(3L);
+        ru.setFamilyAccrualSubmitter(false);
+        ru.setSiteAccrualSubmitter(true);
+        when(regSvc.getUser(any(String.class))).thenReturn(ru);
+        when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(participatingSite.getId())
+           , IntConverter.convertToInt(100), AccrualSubmissionTypeCode.UNKNOWN);
     }
     
     @Test
@@ -572,7 +615,26 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void updateSubjectAccrualNullUserAuthFailure() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site.");
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(0);
+        ru.setFamilyAccrualSubmitter(false);
+        ru.setSiteAccrualSubmitter(false);
+        when(regSvc.getUser(any(String.class))).thenReturn(ru);
+        when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
         bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100), TestSchema.registryUsers.get(0),AccrualSubmissionTypeCode.UNKNOWN); 
+    }
+    
+    @Test 
+    public void updateSubjectAccrualsSiteUserAuth() throws PAException {
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        RegistryUser ru = TestSchema.registryUsers.get(0);
+        ru.setAffiliatedOrganizationId(3L);
+        ru.setFamilyAccrualSubmitter(false);
+        ru.setSiteAccrualSubmitter(true);
+        when(regSvc.getUser(any(String.class))).thenReturn(ru);
+        when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(participatingSite.getId())
+          , IntConverter.convertToInt(100), TestSchema.registryUsers.get(0),AccrualSubmissionTypeCode.UI);
     }
     
     @Test 

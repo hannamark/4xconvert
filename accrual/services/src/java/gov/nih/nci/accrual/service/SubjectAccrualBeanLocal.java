@@ -290,7 +290,8 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         List<SubjectAccrualDTO> results = new ArrayList<SubjectAccrualDTO>();
         if (subjects != null) {
             for (SubjectAccrualDTO subject : subjects) {
-                if (!AccrualUtil.isUserAllowedAccrualAccess(subject.getParticipatingSiteIdentifier())) {
+                if (!AccrualUtil.isUserAllowedAccrualAccess(subject.getParticipatingSiteIdentifier()) 
+                      && !isUserSiteFamilySubmitter(subject.getParticipatingSiteIdentifier())) {
                     throw new PAException("User does not have accrual access to site "
                             + subject.getParticipatingSiteIdentifier().getExtension());
                 }
@@ -325,7 +326,18 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         }
         return results;
     }
-
+    private boolean isUserSiteFamilySubmitter(Ii psID) throws PAException {
+        StudySiteDTO ssDto = PaServiceLocator.getInstance().getStudySiteService()
+                 .get(psID);
+        StudySite ss = new StudySiteConverter().convertFromDtoToDomain(ssDto);
+        boolean isSiteFamilySubmitter = false;
+        if (ss.getHealthCareFacility() != null 
+                  && new AccrualUtil().isUserAllowedSiteOrFamilyAccrualAccess(
+             ss.getHealthCareFacility().getOrganization().getIdentifier())) {
+             isSiteFamilySubmitter = true;
+        }
+        return isSiteFamilySubmitter;
+    }
     /**
      * {@inheritDoc}
      */
@@ -585,7 +597,8 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             throw new PAException(
                     "The treating site that is having an accrual count added to it does not exist.");
         }
-        if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi)) {
+        if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi) 
+            && !isUserSiteFamilySubmitter(participatingSiteIi)) {
             throw new PAException("User does not have accrual access to site.");
         }
         doUpdateToSubjectAccrual(participatingSiteIi, count, submissionType);
@@ -622,7 +635,9 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (ISOUtil.isIiNull(participatingSiteIi)) {
             throw new PAException("Study Site Ii cannot be null.");
         }
-        if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi, user)) {
+        
+        if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi, user) 
+             && !isUserSiteFamilySubmitter(participatingSiteIi)) {
             throw new PAException("User does not have accrual access to site.");
         }
         doUpdateToSubjectAccrual(participatingSiteIi, count, submissionType);

@@ -92,6 +92,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -146,6 +147,14 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
             query.setParameter("registerUserId", user.getId());
 
             List<StudySite> queryResults = query.list(); 
+            
+            List<StudySite> ssList = getSiteAndFamilySubmittersCount(studyProtocolIi, user);
+            for (StudySite site : ssList) {
+                if (!queryResults.contains(site)) {
+                   queryResults.add(site);
+                 }
+            }
+            
             return getCountsForSites(queryResults);
             
         } catch (HibernateException hbe) {
@@ -167,6 +176,40 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
         return resultList;
     }
     
+    private List<StudySite> getSiteAndFamilySubmittersCount(Ii studyProtocolIi, RegistryUser user)
+       throws PAException {
+         Long studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
+         List<StudySite> finalSiteList = new ArrayList<StudySite>();
+         List<StudySite> familyList = new ArrayList<StudySite>();
+         String hql = "select ss from StudySite ss join ss.studySiteAccrualStatuses ssas " 
+                 + "join ss.healthCareFacility hcf join hcf.organization org "
+                 + "where ss.studyProtocol.id = :studyProtocolId " 
+                 + "and ss.functionalCode = :functionalCode "
+                 + "and ssas.statusCode <> :statusCode "
+                 + "and org.identifier IN  (:orgIDS)";
+             Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
+             query.setParameter("studyProtocolId", studyProtocolId);
+             query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
+             query.setParameter("statusCode", RecruitmentStatusCode.IN_REVIEW);
+         if (user.getSiteAccrualSubmitter()) {
+            List<Long> values = new ArrayList<Long>();
+            values.add(user.getAffiliatedOrganizationId());
+            query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
+            List<StudySite> queryResults = query.list(); 
+            finalSiteList.addAll(queryResults);
+         } 
+         if (user.getFamilyAccrualSubmitter()) {
+             List<Long> values = new AccrualUtil().getAllFamilyOrgs(user.getAffiliatedOrganizationId());
+             query.setParameterList("orgIDS", AccrualUtil.convertPoOrgIdsToStrings(values));
+             familyList = query.list(); 
+         }
+         for (StudySite site : familyList) {
+             if (!finalSiteList.contains(site)) {
+                 finalSiteList.add(site);
+              }
+         }
+         return finalSiteList;
+    }
     /**
      * {@inheritDoc}
      */
@@ -210,8 +253,15 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
         if (accrualCount == null) {
             throw new PAException("Counts for the StudySite id " + siteIi.getExtension() + " does not exist.");
         }
+        boolean isSiteFamilySubmitter = false;
+        if (accrualCount.getStudySite().getHealthCareFacility() != null 
+            && new AccrualUtil().isUserAllowedSiteOrFamilyAccrualAccess(accrualCount.getStudySite()
+                .getHealthCareFacility().getOrganization().getIdentifier())) {
+                isSiteFamilySubmitter = true;
+        }
         if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter
-                    .convertToStudySiteIi(accrualCount.getStudySite().getId()))) {
+                    .convertToStudySiteIi(accrualCount.getStudySite().getId())) 
+                    && !isSiteFamilySubmitter) {
             throw new PAException("User does not have accrual access to site.");
         }
         PaHibernateUtil.getCurrentSession().delete(accrualCount);
@@ -237,7 +287,7 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
             }
         }
     }
-
+    @SuppressWarnings({ "PMD.NPathComplexity" })
     private void assertIndustrialAccrualAccess(StudySite site) throws PAException {
         SearchTrialResultDto trialSummary = searchTrialService.getTrialSummaryByStudyProtocolIi(IiConverter
                 .convertToStudyProtocolIi(site.getStudyProtocol().getId()));
@@ -246,7 +296,15 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
             throw new PAException("Action can not be performed as the participating site (" + site.getId() 
                     + ") does not belong to an Industrial trial.");
         }
-        if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToStudySiteIi(site.getId()))) {
+        boolean isSiteFamilySubmitter = false;
+        if (site.getHealthCareFacility() != null 
+            && new AccrualUtil().isUserAllowedSiteOrFamilyAccrualAccess(site
+                .getHealthCareFacility().getOrganization().getIdentifier())) {
+                isSiteFamilySubmitter = true;
+        }
+        
+        if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter.convertToStudySiteIi(site.getId()))
+             &&  !isSiteFamilySubmitter) {
             User user = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser());
             Organization org = getOrganizationByStudySiteId(site.getId());
             throw new PAException("User " + user.getFirstName() + " " +  user.getLastName() 
