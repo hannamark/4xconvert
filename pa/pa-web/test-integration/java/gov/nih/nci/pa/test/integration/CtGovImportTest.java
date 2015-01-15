@@ -83,10 +83,7 @@ public class CtGovImportTest extends AbstractPaSeleniumTest {
     private void importAndVerify(String nctID) throws SQLException {
         deactivateTrialByNctId(nctID);
         loginAsSuperAbstractor();
-        clickAndWait("id=importCtGovMenuOption");
-        selenium.type("id=nctID", nctID);
-        clickAndWait("link=Search Studies");
-        assertTrue(selenium.isTextPresent("One item found."));
+        findInCtGov(nctID);
         clickAndWait("link=Import Trial");
         assertTrue(selenium
                 .isTextPresent("Trial "
@@ -103,6 +100,22 @@ public class CtGovImportTest extends AbstractPaSeleniumTest {
                 "ClinicalTrials.gov Import"));
         assertTrue(selenium.getText("id=td_CTGOV_value").contains(nctID));
 
+    }
+
+    /**
+     * @param nctID
+     */
+    @SuppressWarnings("deprecation")
+    private void findInCtGov(String nctID) {
+        int counter = 0;
+        do {
+            counter++;
+            clickAndWait("id=importCtGovMenuOption");
+            selenium.type("id=nctID", nctID);
+            clickAndWait("link=Search Studies");
+            pause(2000);
+        } while (!selenium.isTextPresent("One item found.") && counter <= 3);
+        assertTrue(selenium.isTextPresent("One item found."));
     }
 
 }

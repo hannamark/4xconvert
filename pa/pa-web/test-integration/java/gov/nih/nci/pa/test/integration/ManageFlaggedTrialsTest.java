@@ -99,6 +99,7 @@ import java.util.List;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -110,6 +111,8 @@ import org.openqa.selenium.By;
  */
 public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
+    private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
+            : 3000;
     private static final String MM_DD_YYYY_HH_MM_AAA = "MM/dd/yyyy hh:mm aaa";
     private static final String[] REASONS = new String[] {
             "Do not enforce unique Subject ID across sites",
@@ -135,7 +138,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         addFlaggedTrial(trial);
         clickAndWait("link=Manage Flagged Trials");
         populateAddFlagDialogAndHitSave(trial);
-        pause(5000);
+        pause(OP_WAIT_TIME);
         assertTrue(selenium.isAlertPresent());
         assertFalse(selenium
                 .isTextPresent("Flagged trial has been added successfully."));
@@ -155,7 +158,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
         trial.nciID = "NCI-2014-238947238947";
         populateAddFlagDialogAndHitSave(trial);
-        pause(5000);
+        pause(OP_WAIT_TIME);
         assertTrue(selenium.isAlertPresent());
         assertFalse(selenium
                 .isTextPresent("Flagged trial has been added successfully."));
@@ -178,7 +181,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         selenium.select("reason", "label=Do not send to ClinicalTrials.gov");
         selenium.type("comments", "This is edited comment.");
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-        pause(5000);
+        pause(OP_WAIT_TIME);
         assertFalse(selenium.isTextPresent("Changes saved!"));
         assertTrue(selenium.isAlertPresent());
 
@@ -291,7 +294,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         // Finally, download CSV.
         if (!isPhantomJS()) {
             selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
-            pause(5000);
+            pause(OP_WAIT_TIME);
             File csv = new File(downloadDir, "flagged_trials_all.csv");
             assertTrue(csv.exists());
             csv.deleteOnExit();
@@ -425,7 +428,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         // Finally, download CSV.
         if (!isPhantomJS()) {
             selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
-            pause(5000);
+            pause(OP_WAIT_TIME);
             File csv = new File(downloadDir, "flagged_trials_all.csv");
             assertTrue(csv.exists());
             csv.deleteOnExit();
