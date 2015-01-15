@@ -43,7 +43,8 @@
               <label for="nctID" class="col-xs-4 control-label"><fmt:message key="studyProtocol.nctNumber" /></label>                    
               <div class="col-xs-3">
               	  <s:textfield id="nctID" name="nctID" required="true" maxlength="16" cssClass="form-control" />
-              	  <b>Note:</b> Any trials imported using this feature will be registered as Abbreviated in CTRP system.
+              	  <b>Note:</b> Any trials imported using this feature will be registered as Abbreviated in CTRP system. If the trial should be classified as "Other" then
+              	  please contact the Clinical Trials Reporting Office staff at <a href="mailto:ncictro@mail.nih.gov">ncictro@mail.nih.gov</a> after importing/registering this trial in the CTRP system.
               </div>
               <div class="col-xs-4">
                   <button type="button" href="javascript:void(0)" class="btn btn-icon btn-default" onclick="handleAction('searchByNct')"><i class="fa-search"></i>Search Studies</button>
