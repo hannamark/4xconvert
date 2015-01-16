@@ -31,7 +31,7 @@
             </tr>
             <tr>
               <td align="right"><strong>Industrial/Other:</strong></td>
-              <td>Design and implementation of the study is controlled by the pharmaceutical company or by another organization</td>
+              <td>Design and implementation of the study is controlled by the pharmaceutical company or by another organization that is not NCI supported</td>
             </tr>
           </tbody>
         </table>
