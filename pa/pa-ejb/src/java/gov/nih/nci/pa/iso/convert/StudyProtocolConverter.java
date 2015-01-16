@@ -216,6 +216,7 @@ public class StudyProtocolConverter {
                     .convertToIi((Long) null));
         }
         studyProtocolDTO.setNciGrant(BlConverter.convertToBl(studyProtocol.getNciGrant()));
+        studyProtocolDTO.setCtroOverideFlagComments(studyProtocol.getCtroOverRideFlagComments());
         convertStudyAlternateTitlesToDTO(studyProtocol, studyProtocolDTO);
         return studyProtocolDTO;
     }
@@ -310,7 +311,7 @@ public class StudyProtocolConverter {
            org.setId(IiConverter.convertToLong(studyProtocolDTO.getSubmitingOgranization()));
            studyProtocol.setSubmitingOrganization(org);
        }
-       
+       studyProtocol.setCtroOverRideFlagComments(studyProtocolDTO.getCtroOverideFlagComments());
        return studyProtocol;
    }
 

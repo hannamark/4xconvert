@@ -154,6 +154,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @author Naveen Amiruddin
  * @since 07/07/2007
  */
+
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "Study_Protocol_type", discriminatorType = DiscriminatorType.STRING)
@@ -214,7 +215,10 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
-
+    
+   
+    private String ctroOverRideFlagComments;
+  
     /**
      * @return accrualReportingMethodCode
      */
@@ -1045,6 +1049,25 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     public void setSubmitingOrganization(Organization submitingOrganization) {
         this.submitingOrganization = submitingOrganization;
     }
+    
+   
+    /**
+     * @return ctroOverRideFlagComments
+     */
+    @Column(name = "ctro_override_flag_comments")
+    public String getCtroOverRideFlagComments() {
+        return ctroOverRideFlagComments;
+    }
+    
+    
+    /**
+     * @param ctroOverRideFlagComments ctroOverRideFlagComments
+     */
+    public void setCtroOverRideFlagComments(String ctroOverRideFlagComments) {
+        this.ctroOverRideFlagComments = ctroOverRideFlagComments;
+    }
+
+   
 
     /**
      * @return NciID
@@ -1058,6 +1081,8 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
        }
        return StringUtils.EMPTY;
     }   
+    
+    
     
     /**
      * Sorts study overall statuses properly: by status dates in descending
@@ -1091,5 +1116,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
             return -s1.compareTo(s2);
         }
     }
+    
+   
     
 }

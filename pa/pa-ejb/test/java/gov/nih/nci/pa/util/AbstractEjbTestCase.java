@@ -26,6 +26,8 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Properties;
+import java.util.UUID;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -34,6 +36,7 @@ import javax.naming.NamingException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -68,7 +71,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
     public final void setupEjbEnvironment() throws ClassNotFoundException,
             InstantiationException, IllegalAccessException, IOException,
             IllegalStateException, NamingException, URISyntaxException,
-            CSConfigurationException {
+            CSConfigurationException, NoSuchFieldException, SecurityException {
         ejbFactory = new EjbFactory();
         configureJndi();
         configurePoMock();
@@ -78,8 +81,20 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         populateRegulatoryAuthorities();
         setCurrentUser();
         startNctApiMock();
+        setUpPaEarProperties();
+        
     }
-
+    
+    private void setUpPaEarProperties () throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        File tempDir;
+        tempDir = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
+                .toString());
+        tempDir.mkdirs();
+        Field field = PaEarPropertyReader.class.getDeclaredField("PROPS");
+        field.setAccessible(true);
+        Properties earProps = (Properties) field.get(null);
+        earProps.setProperty("doc.upload.path", tempDir.getAbsolutePath());
+    }
     private void startNctApiMock() throws IOException {
         server = HttpServer.create(new InetSocketAddress(CTGOV_API_MOCK_PORT),
                 0);
@@ -150,6 +165,8 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("dcp.identifier.row", "");
         addPaProperty("ctep.identifier.row", "");
         addPaProperty("other.identifiers.row", "");
+        addPaProperty("ctep.ccr.learOrgIds", "NCICCR");
+        
         
         String statusRulesStr = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("statusvalidations.json"));
         addPaProperty("status.rules", statusRulesStr);

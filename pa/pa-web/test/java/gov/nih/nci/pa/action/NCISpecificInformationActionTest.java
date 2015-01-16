@@ -65,6 +65,7 @@ public class NCISpecificInformationActionTest extends AbstractPaActionTest {
         nciSpecificInformationWebDTO.setConsortiaTrialCategoryCode("CTCC");
         nciSpecificInformationWebDTO.setSummaryFourFundingCategoryCode("SFFCC");  
         nciSpecificInformationWebDTO.setAccrualReportingMethodCode("ARMC");
+        nciSpecificInformationWebDTO.setCtroOverideFlagComments("This is a test comment");
         String result = nciSpecificInformationAction.update();
         assertEquals("success", result);
     }

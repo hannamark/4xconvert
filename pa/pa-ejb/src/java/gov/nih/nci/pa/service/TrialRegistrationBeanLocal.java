@@ -94,6 +94,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -149,6 +150,7 @@ import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceBean;
+import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -158,6 +160,7 @@ import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -235,6 +238,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @EJB private PlannedActivityServiceLocal plannedActivityService;
     @EJB private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService;
     @EJB private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
+    
+    
+    @EJB
+    private CTGovUploadServiceLocal ctGovUploadServiceLocal;
+    
+    
     
     private RegulatoryAuthorityServiceLocal regulatoryAuthorityService = new RegulatoryAuthorityBeanLocal();
 
@@ -410,6 +419,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             // This will get us current protocol records with amendment applied on top of it.
             studyProtocolDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
             
+            boolean isOrgCCR = isTrialCCR(leadOrganizationDTO.getIdentifier());
+            if (isOrgCCR) {
+               studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.TRUE));
+            } 
+                
+                
+            
+            
             Timestamp amendmentCreationDate = new Timestamp(System.currentTimeMillis());
             Timestamp previousProtocolRecordDate = TsConverter
                     .convertToTimestamp(studyProtocolDTO.getDateLastCreated());
@@ -462,6 +479,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
             documentService.markAsOriginalSubmission(savedDocs);
             saveAmenderInfo(studyProtocolDTO, amender, true);
+            
+           
+            
             
             // PO-5806: date_last_created fields get reversed for amendment and original.
             // Need to fix this here.
@@ -769,8 +789,16 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                                        studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
             
-            studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
-            studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
+           studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+           
+           boolean isOrgCCR = isTrialCCR(leadOrganizationDTO.getIdentifier());
+            if (isOrgCCR) {
+                studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.TRUE));
+            } else {
+                studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE)); 
+            }
+      
+           
             
             List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
             listOfDTOToCreateInPO.add(leadOrganizationDTO);
@@ -830,7 +858,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             studyProtocolService
                 .updatePendingTrialAssociationsToActive(IiConverter
                     .convertToLong(spIi));
-            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);            
+            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails, EMPTY_STR);     
+            
+            
             return spIi;
     }
     
@@ -1166,7 +1196,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<OrganizationDTO> collaborators, List<DocumentDTO> documentDTOs) throws PAException {
         
         prepareAbbreviatedProtocolForCreationOrUpdate(studyProtocolDTO);
-        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
+        
+        updateCtroOverrideIfCCR(leadOrgID.getIdentifier(), studyProtocolDTO);
+       
+         //studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
         
         TrialRegistrationValidator validator = createValidator();
         validator.validateProprietaryCreation(studyProtocolDTO, nctID,
@@ -1308,7 +1341,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         // CHECKSTYLE:ON
         // validate method needs to be here
         prepareAbbreviatedProtocolForCreationOrUpdate(studyProtocolDTO);
-        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
+        
+        updateCtroOverrideIfCCR(leadOrganizationDTO.getIdentifier(), studyProtocolDTO);
+        
+       
+        
+        //studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE));
         
         TrialRegistrationValidator validator = createValidator();
         validator.validateProprietaryCreation(studyProtocolDTO, studySiteAccrualStatusDTO, documentDTOs,
@@ -1330,6 +1368,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         try {
             Ii spIi = createStudyProtocol(studyProtocolDTO);
             getPAServiceUtils().createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
+            
 
             getPAServiceUtils().manageSummaryFour(spIi, summary4OrganizationDTO, summary4StudyResourcingDTO);
             updateLeadOrganizationID(spIi, leadOrganizationDTO, leadOrganizationStudySiteDTO);
@@ -1615,6 +1654,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 .getDataMonitoringCommitteeAppointedIndicator());
         createStudyProtocolDTO.setProprietaryTrialIndicator(studyProtocolDTO.getProprietaryTrialIndicator());
         createStudyProtocolDTO.setConsortiaTrialCategoryCode(studyProtocolDTO.getConsortiaTrialCategoryCode());
+        
+        
         createStudyProtocolDTO.setCtroOverride(studyProtocolDTO.getCtroOverride());
         createStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         createStudyProtocolDTO.setAccrualDiseaseCodeSystem(studyProtocolDTO.getAccrualDiseaseCodeSystem());
@@ -1982,8 +2023,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             String updatedNCT = getPAServiceUtils().getStudyIdentifier(studyProtocolDTO.getIdentifier(),
                     PAConstants.NCT_IDENTIFIER_TYPE);
             TrialUpdatesRecorder.isNctUpdated(existingNCT, updatedNCT);
-
             
+            
+           
+
+          
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
                         
             // do not send the mail when its batch mode
@@ -2192,6 +2236,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         TrialUpdatesRecorder.recordUpdate(spDTO.getAccrualDiseaseCodeSystem(), newAccrualDiseaseCodeSystem,
                 TrialUpdatesRecorder.ACCRUAL_DISEASE_TERMINOLOGY_UPDATED);
         spDTO.setAccrualDiseaseCodeSystem(newAccrualDiseaseCodeSystem);
+        
+       
+      
 
         updateStudyProtocol(spDTO);
         
@@ -2479,4 +2526,56 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         this.accrualDiseaseTerminologyService = accrualDiseaseTerminologyService;
     }
     
+   private void updateCtroOverrideIfCCR(Ii leadOrgIdentifier , StudyProtocolDTO studyProtocolDTO)
+           throws PAException {
+       
+       boolean isOrgCCR = isTrialCCR(leadOrgIdentifier);
+       if (isOrgCCR) {
+           studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.TRUE));
+       } else {
+           studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.FALSE)); 
+       }
+       
+   }
+    
+    private boolean isTrialCCR(Ii leadOrgIdentifier) throws PAException {
+        boolean result = false;
+        try {
+        String ccrTrialList = lookUpTableServiceRemote
+                .getPropertyValue("ctep.ccr.learOrgIds");
+        String orgCtepID = null;
+        List<String> ccrLeadIDs =  Arrays.asList(ccrTrialList.replaceAll("\\s+", "").split(","));
+         try {
+            Long orgPoId = new Long(IiConverter.convertToString(leadOrgIdentifier));
+                   
+            PaOrganizationDTO paOrganizationDTO =  PADomainUtils.getOrgDetailsPopup(orgPoId + "");
+             if (paOrganizationDTO != null) {
+                orgCtepID = paOrganizationDTO.getCtepId();
+                }
+             if (orgCtepID != null && ccrLeadIDs.contains(orgCtepID)) {
+             result = true;
+            }
+        } catch (NumberFormatException ne) {
+            
+        }
+       
+        } catch (Exception e) {
+            throw new PAException(e);
+        }
+        return result;
+    }
+    /**
+     * @return ctGovUploadServiceLocal
+     */
+    public CTGovUploadServiceLocal getCtGovUploadServiceLocal() {
+        return ctGovUploadServiceLocal;
+    }
+    /**
+     * @param ctGovUploadServiceLocal ctGovUploadServiceLocal
+     */
+    public void setCtGovUploadServiceLocal(
+            CTGovUploadServiceLocal ctGovUploadServiceLocal) {
+        this.ctGovUploadServiceLocal = ctGovUploadServiceLocal;
+    }
+        
 }

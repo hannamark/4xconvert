@@ -2,11 +2,14 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -33,11 +36,13 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 
 /**
  * @author Denis G. Krylov
  * 
  */
+
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -64,6 +69,13 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
 
     @EJB
     private LookUpTableServiceRemote lookUpTableService;
+    
+    @EJB
+    private CTGovSyncServiceLocal ctGovSyncService;
+    
+   
+    
+   
 
     private List<String> getAbstractedStatusCodes() {
         List<String> list = new ArrayList<String>();
@@ -76,22 +88,61 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
         return list;
     }
 
-    private List<Ii> getTrialIdsForUpload() throws PAException {
+    /**
+     * @return List<Ii>
+     * @throws PAException EXCEPTION
+     */
+  public List<Ii> getTrialIdsForUpload() throws PAException {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        List<Ii> ids = new ArrayList<Ii>();
+        try {
+        
         criteria.setNciSponsored(true);
         criteria.setDocumentWorkflowStatusCodes(getAbstractedStatusCodes());
         criteria.setTrialCategory("n");
         criteria.setCtroOverride(false);
         criteria.setStudyProtocolType("InterventionalStudyProtocol");
-
-        List<Ii> ids = new ArrayList<Ii>();
+    
+       
         List<String> ccrLeadIDs = getCCRTrialLeadOrgIds();
+        boolean isExcludeLeadCCR = false;
+        
         for (StudyProtocolQueryDTO dto : queryServiceLocal
                 .getStudyProtocolByCriteria(criteria)) {
-            if (!ccrLeadIDs.contains(dto.getLocalStudyProtocolIdentifier())) {
-                ids.add(IiConverter.convertToStudyProtocolIi(dto
-                        .getStudyProtocolId()));
-            }
+            
+                String nctIdentifier = dto.getNctIdentifier();
+                String trialStatus = dto.getStudyStatusCode().getCode();
+                
+                StudyProtocolQueryDTO studyProtocolQueryDTOSummary = queryServiceLocal
+                        .getTrialSummaryByStudyProtocolId(dto.getStudyProtocolId());
+                
+               String orgCtepID = PADomainUtils.getOrgDetailsPopup(
+                       studyProtocolQueryDTOSummary.getLeadOrganizationPOId() + "")
+                        .getCtepId();
+                
+                //check if lead or is one of ccr if yes then exclude this trial and update flag
+                List<String> exludeOrgIds = getExcludeLeadOrgIds();
+                
+                if (exludeOrgIds.contains(orgCtepID)) {
+                    isExcludeLeadCCR = true;
+                    updateCtroOverride(dto.getStudyProtocolId());
+                }
+                   
+                if (!ccrLeadIDs.contains(dto.getLocalStudyProtocolIdentifier()) && !isExcludeLeadCCR) {
+                     boolean isExcludeTrial = checkIfTrialExcludeAndUpdateCtroOverride(dto.getStudyProtocolId(), 
+                             trialStatus, nctIdentifier
+                       );
+               
+                       if (!isExcludeTrial) {
+                           ids.add(IiConverter.convertToStudyProtocolIi(dto
+                               .getStudyProtocolId()));
+                        }
+                }              
+            
+        }
+        
+        } catch (Exception e) {
+            throw new PAException(e);
         }
         return ids;
     }
@@ -99,6 +150,12 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
     private List<String> getCCRTrialLeadOrgIds() throws PAException {
         String ccrTrialList = lookUpTableService
                 .getPropertyValue("ctep.ccr.trials");
+        return Arrays.asList(ccrTrialList.replaceAll("\\s+", "").split(","));
+    }
+    
+    private List<String> getExcludeLeadOrgIds()  throws PAException {
+        String ccrTrialList = lookUpTableService
+                .getPropertyValue("ctep.ccr.learOrgIds");
         return Arrays.asList(ccrTrialList.replaceAll("\\s+", "").split(","));
     }
 
@@ -188,18 +245,89 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
                 if (CollectionUtils.isNotEmpty(trialIDs)) {
                     uploadToCTGov(trialIDs, ftpURL);
                 }
-                LOG.info("Done.");
+               LOG.info("Done.");
             } catch (Exception e) {
                 LOG.error("CT.Gov FTP Upload has failed due to " + e);
                 LOG.error(e, e);
             }
         }
     }
+    @Override
+    public boolean checkIfTrialExcludeAndUpdateCtroOverride(Long id, 
+            String trialStatus, String ncitIdentifier) throws PAException {
+        boolean result = false;
+        
+        //first check if trail is not from excluded study ccr organisation 
+       
+        
+       
+       
+            //if trial is sent to ct gov check trial status if terminal status
+            if (checkIfTerminalStats(trialStatus)) {
+                CTGovStudyAdapter ctGovStudyAdapter  = ctGovSyncService.getAdaptedCtGovStudyByNctId(ncitIdentifier); 
+                //if trial status is terminal status check if this matches with clinical trials gov
+                if (ctGovStudyAdapter != null) {
+                    String ctGovStatus = ctGovStudyAdapter.getStatus();
+                    if (checkIfStatusMatch(trialStatus , ctGovStatus)) {
+                        //if status match then set ctro override flag to false so that next time trial will be skipped
+                        updateCtroOverride(id);
+                        result = true;
+                    }
+                }
+             
+            } else {
+            result = false;
+            }
+       
+        return result;
+    }
+    
+     private boolean checkIfStatusMatch(String trialStatus, String ctGovStatus) {
+        boolean isStatusMatch = false;
+        if (trialStatus.equalsIgnoreCase(StudyStatusCode.COMPLETE.getCode())) {
+            if (ctGovStatus.equalsIgnoreCase("Completed")) {
+                isStatusMatch = true;
+            }
+        } else if (trialStatus.equalsIgnoreCase(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode())) {
+            if (ctGovStatus.equalsIgnoreCase("Terminated")) {
+                isStatusMatch = true;
+            }
+        } else if (trialStatus.equalsIgnoreCase(StudyStatusCode.WITHDRAWN.getCode())) {
+            if (ctGovStatus.equalsIgnoreCase("Withdrawn") || ctGovStatus.equalsIgnoreCase("Withheld")) {
+                isStatusMatch = true;
+            }
+        }
+        return isStatusMatch;
+    }
+     
+      
+     private void updateCtroOverride(Long id) {
+         Session session = PaHibernateUtil.getCurrentSession();
+         StudyProtocol studyProtocol = 
+                 (StudyProtocol) session.get(StudyProtocol.class, id);
+         studyProtocol.setCtroOverride(true);
+         session.update(studyProtocol);
+         session.flush();
+     }
+     
+     private boolean checkIfTerminalStats(String trialStatus) {
+         boolean result = false;
+         if (trialStatus.equalsIgnoreCase(StudyStatusCode.COMPLETE.getCode()) 
+            || trialStatus.equalsIgnoreCase(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode())
+          || trialStatus.equalsIgnoreCase(StudyStatusCode.WITHDRAWN.getCode())) {
+             result = true;
+         }
+         return result;
+     }
 
     private boolean isUploadEnabled() throws PAException {
         return Boolean.valueOf(lookUpTableService
                 .getPropertyValue("ctgov.ftp.enabled"));
     }
+    
+    
+    
+   
 
     private void uploadToCTGov(List<Ii> trialIDs, URL ftpURL)
             throws PAException {
@@ -210,6 +338,20 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
         } catch (PAException e) {
             LOG.error(ExceptionUtils.getFullStackTrace(e));
         }
+    }
+
+    /**
+     * @return ctGovSyncService
+     */
+    public CTGovSyncServiceLocal getCtGovSyncService() {
+        return ctGovSyncService;
+    }
+
+    /**
+     * @param ctGovSyncService ctGovSyncService
+     */
+    public void setCtGovSyncService(CTGovSyncServiceLocal ctGovSyncService) {
+        this.ctGovSyncService = ctGovSyncService;
     }
 
 }

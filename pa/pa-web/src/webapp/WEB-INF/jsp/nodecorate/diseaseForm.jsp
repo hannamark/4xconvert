@@ -24,6 +24,14 @@
 		
 		var pageName =jQuery("#pageName").val();
 		if(pageName=="newTerm"){
+			
+			selectAllListItems();
+	        if (checkForNullCodes('parentTerms') || checkForNullCodes('childTerms') ) {
+	            var r = confirm("WARNING: One or more of the selected parent or child terms do not have a NCIt identifier, continue to Save?");
+	            if (r == false) {
+	                return;
+	            }
+	        }
 			 document.forms[0].action = "manageTermssaveDisease.action";
 	         document.forms[0].submit();
 	         return;
@@ -38,13 +46,7 @@
 		 
 		
 		
-		selectAllListItems();
-		if (checkForNullCodes('parentTerms') || checkForNullCodes('childTerms') ) {
-			var r = confirm("WARNING: One or more of the selected parent or child terms do not have a NCIt identifier, continue to Save?");
-			if (r == false) {
-				return;
-			}
-		}
+		
 		var termValue = jQuery("#ntTermIdentifier").val();
 		var msg ="The CTRP system is synching the term "+termValue+" with the NCIt. "
 	    msg = msg + "Depending on the number of parents and children in the disease term hierarchy,";

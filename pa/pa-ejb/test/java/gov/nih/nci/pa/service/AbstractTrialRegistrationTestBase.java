@@ -2,9 +2,13 @@ package gov.nih.nci.pa.service;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -16,9 +20,13 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.ctgov.ClinicalStudy;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
+import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
@@ -33,6 +41,8 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
@@ -40,21 +50,40 @@ import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyDTO;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
+import org.apache.commons.lang.SystemUtils;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -98,7 +127,11 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected StudyMilestoneServiceBean studyMilestoneSvc;
     protected StudyInboxServiceLocal studyInboxSvc;
     protected MailManagerServiceLocal mailSvc;
-    
+    protected FamilyServiceRemote familySvc;
+    protected IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationServiceRemote;
+    protected HealthCareFacilityCorrelationServiceRemote poHcfSvc;
+    protected CTGovUploadServiceLocal ctGovUploadServiceLocal;
+
     public AbstractTrialRegistrationTestBase() {
         super();
     }
@@ -187,9 +220,65 @@ public abstract class AbstractTrialRegistrationTestBase extends
                 return "abc";
             }
         });
+        
+        when(ocsr.createResearchOrganizationCorrelations(any(String.class))).thenAnswer(new Answer<Long>() {
+            @Override
+            public Long answer(InvocationOnMock invocation) throws Throwable {
+                String id = (String) invocation.getArguments()[0];
+                 if(id.equals("1")) {
+                     return new Long(1l);
+                 }
+                 else  {
+                     return 0l;
+                 }
+            }
+        });
         when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(ocsr);
+        
+        File tempDir;
+        tempDir = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
+                .toString());
+        tempDir.mkdirs();
+        Field field = PaEarPropertyReader.class.getDeclaredField("PROPS");
+        field.setAccessible(true);
+        Properties earProps = (Properties) field.get(null);
+        earProps.setProperty("doc.upload.path", tempDir.getAbsolutePath());
+        
+        
+        ClinicalStudy clinicalStudy = new ClinicalStudy();
+        clinicalStudy.setOverallStatus("Completed");
+        CTGovStudyAdapter ctGovStudyAdapter = new CTGovStudyAdapter(clinicalStudy);
+      
+        
+     
     
         mailSvc = mock(MailManagerServiceLocal.class);
+        familySvc = mock(FamilyServiceRemote.class);
+        identifiedOrganizationCorrelationServiceRemote =mock(IdentifiedOrganizationCorrelationServiceRemote.class);
+        poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
+        ctGovUploadServiceLocal = mock(CTGovUploadServiceLocal.class);
+        
+        when(ctGovUploadServiceLocal.checkIfTrialExcludeAndUpdateCtroOverride(any(Long.class), any(String.class), any(String.class))).thenAnswer(new Answer<Boolean>() {
+            @Override
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                Long id= (Long) invocation.getArguments()[0];
+                String nctId = (String) invocation.getArguments()[2];
+                if(nctId.equals("test_NCT_update_terminal_status")) {
+                    Session session = PaHibernateUtil.getCurrentSession();
+                    StudyProtocol studyProtocol = 
+                            (StudyProtocol) session.get(StudyProtocol.class, id);
+                    studyProtocol.setCtroOverride(true);
+                    session.update(studyProtocol);
+                    session.flush();
+                    return true;
+                }
+                else {
+                    return false;    
+                }
+                
+            }
+        });
+
         studyInboxSvc = new StudyInboxServiceBean();
         studyMilestoneSvc = new StudyMilestoneServiceBean();
         AbstractionCompletionServiceLocal abstractionCompletionSvc = mock(AbstractionCompletionServiceLocal.class);
@@ -230,12 +319,16 @@ public abstract class AbstractTrialRegistrationTestBase extends
         when(paSvcLoc.getPlannedMarkerService()).thenReturn(new PlannedMarkerServiceBean());
         when(paSvcLoc.getAbstractionCompletionService()).thenReturn(abstractionCompletionSvc);
         when(paSvcLoc.getMailManagerService()).thenReturn(mailSvc);
+       
+        
+        
         bean.setOcsr(ocsr);
         bean.setMailManagerSerivceLocal(mailSvc);
         bean.setStudyMilestoneService(studyMilestoneSvc);
         bean.setStudyInboxServiceLocal(studyInboxSvc);
         bean.setTsrReportService(tsrReportSvc);
         bean.setStudyRelationshipService(studyRelationshipSvc);
+        bean.setCtGovUploadServiceLocal(ctGovUploadServiceLocal);
         setupPoSvc();
     }
 
@@ -273,6 +366,63 @@ public abstract class AbstractTrialRegistrationTestBase extends
                 person.setIdentifier(IiConverter.convertToPoPersonIi("1"));
             
                 when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(org);
+                when(poSvcLoc.getFamilyService()).thenReturn(familySvc);
+                when(poSvcLoc.getIdentifiedOrganizationEntityService()).thenReturn(identifiedOrganizationCorrelationServiceRemote);
+                when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
+                
+                when(
+                        poOrgSvc.search(any(OrganizationSearchCriteriaDTO.class), 
+                                any(LimitOffset.class)))
+                        .thenAnswer(new Answer<List<OrganizationDTO>>() {
+                            @Override
+                            public List<OrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                                Object[] arguments = invocation.getArguments();
+                                if (arguments != null && arguments.length > 0 && arguments[0] != null) {
+                                         List<OrganizationDTO> list = new ArrayList<OrganizationDTO>();
+                                        OrganizationDTO  ctePOrgDto = new OrganizationDTO();
+                                        ctePOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+                                        ctePOrgDto.setName(EnOnConverter.convertToEnOn("name"));
+                                        Ad adr = AddressConverterUtil.create("street", "deliv", "city", "MD", "20000", "USA");
+                                        ctePOrgDto.setPostalAddress(adr);
+                                        ctePOrgDto.setName(EnOnConverter.convertToEnOn("some org name"));
+                                        DSet<Ii> dset = new DSet<Ii>();
+                                        Set<Ii> familySet = new HashSet<Ii>();
+                                        familySet.add(IiConverter.convertToPoFamilyIi("1"));
+                                        dset.setItem(familySet);
+                                        ctePOrgDto.setFamilyOrganizationRelationships(dset);
+                                        list.add(ctePOrgDto);
+                                        
+                                        return list;
+                                    
+                                    
+                                }
+                                return null;
+                            }
+                        });
+                Map<Ii, FamilyDTO> results = new HashMap<Ii, FamilyDTO>();
+                FamilyDTO dto = new FamilyDTO();
+                dto.setIdentifier(IiConverter.convertToIi(1L));
+                dto.setName(EnOnConverter.convertToEnOn("value"));
+                results.put(IiConverter.convertToPoFamilyIi("1"), dto);
+                when(familySvc.getFamilies(any(Set.class))).thenReturn(results);
+                
+                List<IdentifiedOrganizationDTO> ctepList = new ArrayList<IdentifiedOrganizationDTO>();
+                IdentifiedOrganizationDTO ctpDto = new IdentifiedOrganizationDTO();
+                ctpDto.setPlayerIdentifier(IiConverter.convertToIi(1L));
+                Ii id = new Ii();
+                id.setExtension("NCICCR");
+                id.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+                id.setIdentifierName(IiConverter.CTEP_ORG_IDENTIFIER_NAME);
+                ctpDto.setAssignedId(id);
+                ctepList.add(ctpDto);
+                
+              
+                
+                when(identifiedOrganizationCorrelationServiceRemote.getCorrelationsByPlayerIds(any(Ii[].class))).thenReturn(ctepList);
+                
+                
+                
+                
                 when(poPersonSvc.getPerson(any(Ii.class))).thenReturn(person);
                 when(roCorrelationSvc.getCorrelation(any(Ii.class))).thenReturn(roDTO);
                 when(crsSvc.getCorrelation(any(Ii.class))).thenReturn(crsDTO);

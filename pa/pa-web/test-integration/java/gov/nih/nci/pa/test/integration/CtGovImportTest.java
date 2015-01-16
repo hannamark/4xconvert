@@ -75,7 +75,10 @@ public class CtGovImportTest extends AbstractPaSeleniumTest {
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
         acceptTrial();
         clickAndWait("link=NCI Specific Information");
-        assertTrue(selenium.isChecked("ctroOverride"));
+        //now non interventional and nci sponsored trials are not displayed check if this flag is not displayed
+        assertFalse(selenium.isTextPresent("Send XML to ClinicalTrials.gov?:"));
+      
+       
     }
 
 

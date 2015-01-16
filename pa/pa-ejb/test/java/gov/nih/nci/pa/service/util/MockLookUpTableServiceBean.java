@@ -114,6 +114,9 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             return CTGOV_SYNC_FIELDS_OF_INTEREST_LABEL_MAPPING;
         } else if (name.equals("ctgov.sync.fields_of_interest.key_to_sect_mapping")) {
             return CTGOV_SYNC_FIELDS_OF_INTEREST_SECTION_MAPPING;
+        }
+        else if (name.equals("ctep.ccr.learOrgIds")) {
+            return "NCICCR";
         } else {
             return value;
         }

@@ -89,14 +89,14 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         prepareTrialForAmendment(rConf);
         enableCtroOverride(rConf.getPaTrialID());
 
-        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete.xml");
+        CompleteTrialAmendment upd = readCompleteTrialAmendmentFromFile("/integration_amend_complete_ctro_visible.xml");
         HttpResponse response = amendTrialFromJAXBElement("pa",
                 rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
 
         logInFindAndAcceptTrial(uConf);
         clickAndWait("link=NCI Specific Information");
-        assertTrue(selenium.isChecked("ctroOverride"));
+        assertTrue(selenium.isChecked("id=ctroOverridefalse"));
 
     }
 

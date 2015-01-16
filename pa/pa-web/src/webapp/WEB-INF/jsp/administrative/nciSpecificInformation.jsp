@@ -196,19 +196,35 @@
                             </span>
                         </td>
                     </tr>
+                    
+                    <s:if test="%{#request.displayXmlFlag}"> 
                     <tr>
                         <td scope="row" class="label">
                             <label for="ctroOverride"><fmt:message key="studyProtocol.ctroOverride"/></label>
                         </td>
                         <td class="value">
-                            <s:checkbox id="ctroOverride" name="nciSpecificInformationWebDTO.ctroOverride" />
+                            <!--<s:checkbox id="ctroOverride" name="nciSpecificInformationWebDTO.ctroOverride" />-->
+                            <s:radio id="ctroOverride" name="nciSpecificInformationWebDTO.ctroOverride" list="#{'true':'Yes','false':'No'}"  />
                             <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>nciSpecificInformationWebDTO.ctroOverride</s:param>
                                 </s:fielderror>                            
                             </span>
                         </td>
-                    </tr>                    
+                    </tr>     
+                    <tr><td scope="row" class="label">
+                            <label for="ctroOverride">Comments</label>
+                        </td>
+                        <td class="value">
+                        <s:textarea id="ctroOverideFlagComments" name="nciSpecificInformationWebDTO.ctroOverideFlagComments" cols="40" rows="10"/>
+                        <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>nciSpecificInformationWebDTO.ctroOverideFlagComments</s:param>
+                                </s:fielderror>                            
+                            </span>
+                        </td>
+                    </tr>  
+                    </s:if>             
                 </table> 
                 <div class="actionsrow">
                     <del class="btnwrapper">

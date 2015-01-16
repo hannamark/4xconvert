@@ -92,6 +92,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -105,6 +107,7 @@ import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.ArmServiceBean;
@@ -142,6 +145,7 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.CorrelationUtils;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -151,27 +155,40 @@ import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyDTO;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -198,6 +215,11 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
     private final Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
     private final PersonDTO mockPerson = new PersonDTO();
     private OrganizationalContactCorrelationServiceRemote orgContactSvc;
+    protected LookUpTableServiceRemote lookupSvc;
+    protected FamilyServiceRemote familySvc;
+    protected IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationServiceRemote;
+    protected HealthCareFacilityCorrelationServiceRemote poHcfSvc;
+    
 
     @Before
     public void setUp() throws Exception {
@@ -251,13 +273,17 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
      * @throws PAException
      *
      */
-    private void setUpPaSvc() throws PAException, IOException {
+    private void setUpPaSvc() throws PAException, IOException , NoSuchFieldException, IllegalAccessException {
         CSMUserService.setInstance(new MockCSMUserService());
 
         paSvcLoc = mock (ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
 
         mailManagerSerivceLocal = mock(MailManagerServiceLocal.class);
+        
+        lookupSvc = mock(LookUpTableServiceRemote.class);
+        
+        when(lookupSvc.getPropertyValue("ctep.ccr.learOrgIds")).thenReturn("NCICCR");
 
         trialRegistrationSvc = new TrialRegistrationBeanLocal();
         trialRegistrationSvc.setStudyOverallStatusService(new StudyOverallStatusBeanLocal());
@@ -282,6 +308,9 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         trialRegistrationSvc.setStudyRelationshipService(new StudyRelationshipServiceBean());
         trialRegistrationSvc.setRegulatoryInfoBean(new RegulatoryInformationBean());
         trialRegistrationSvc.setStudyResourcingService(mock(StudyResourcingServiceLocal.class));
+        trialRegistrationSvc.setLookUpTableServiceRemote(lookupSvc);
+        
+        
         
         // cannot use Mockito because multiple other methods in PAServiceUtils are used
         // in the process of registering a trial.
@@ -341,6 +370,15 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
             .thenReturn(new ArrayList<StudyProtocolQueryDTO>()).thenReturn(queryResults);
         bean.setProtocolQueryService(protocolQuerySvc);
         bean.setPaServiceUtils(new MockPAServiceUtils());
+        
+       File tempDir;
+        tempDir = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
+                .toString());
+        tempDir.mkdirs();
+        Field field = PaEarPropertyReader.class.getDeclaredField("PROPS");
+        field.setAccessible(true);
+        Properties earProps = (Properties) field.get(null);
+        earProps.setProperty("doc.upload.path", tempDir.getAbsolutePath());
     }
 
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException, CurationException, EntityValidationException, NullifiedRoleException {
@@ -349,6 +387,9 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         poOrgSvc = mock(OrganizationEntityServiceRemote.class);
         poPersonSvc = mock(PersonEntityServiceRemote.class);
         orgContactSvc = mock(OrganizationalContactCorrelationServiceRemote.class);
+        familySvc = mock(FamilyServiceRemote.class);
+        identifiedOrganizationCorrelationServiceRemote =mock(IdentifiedOrganizationCorrelationServiceRemote.class);
+        poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
 
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
@@ -356,6 +397,9 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(new MockPoClinicalResearchStaffCorrelationService());
         when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(new MockPoHealthCareProviderCorrelationService());
         when(poSvcLoc.getOrganizationalContactCorrelationService()).thenReturn(orgContactSvc);
+        when(poSvcLoc.getFamilyService()).thenReturn(familySvc);
+        when(poSvcLoc.getIdentifiedOrganizationEntityService()).thenReturn(identifiedOrganizationCorrelationServiceRemote);
+        when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
         
         when(orgContactSvc.search(any(OrganizationalContactDTO.class))).thenReturn(new ArrayList<OrganizationalContactDTO>());
         
@@ -399,6 +443,61 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 mockPerson.setName(person.getName());
                 return Arrays.asList(person);
             }});
+        
+        when(
+                poOrgSvc.search(any(OrganizationSearchCriteriaDTO.class), 
+                        any(LimitOffset.class)))
+                .thenAnswer(new Answer<List<OrganizationDTO>>() {
+                    @Override
+                    public List<OrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                        Object[] arguments = invocation.getArguments();
+                        if (arguments != null && arguments.length > 0 && arguments[0] != null) {
+                                 List<OrganizationDTO> list = new ArrayList<OrganizationDTO>();
+                                OrganizationDTO  ctePOrgDto = new OrganizationDTO();
+                                ctePOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+                                ctePOrgDto.setName(EnOnConverter.convertToEnOn("name"));
+                                Ad adr = AddressConverterUtil.create("street", "deliv", "city", "MD", "20000", "USA");
+                                ctePOrgDto.setPostalAddress(adr);
+                                ctePOrgDto.setName(EnOnConverter.convertToEnOn("some org name"));
+                                DSet<Ii> dset = new DSet<Ii>();
+                                Set<Ii> familySet = new HashSet<Ii>();
+                                familySet.add(IiConverter.convertToPoFamilyIi("1"));
+                                dset.setItem(familySet);
+                                ctePOrgDto.setFamilyOrganizationRelationships(dset);
+                                list.add(ctePOrgDto);
+                                
+                                return list;
+                            
+                            
+                        }
+                        return null;
+                    }
+                });
+        
+        Map<Ii, FamilyDTO> results = new HashMap<Ii, FamilyDTO>();
+        FamilyDTO dto = new FamilyDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setName(EnOnConverter.convertToEnOn("value"));
+        results.put(IiConverter.convertToPoFamilyIi("1"), dto);
+        when(familySvc.getFamilies(any(Set.class))).thenReturn(results);
+        
+  
+        
+        List<IdentifiedOrganizationDTO> ctepList = new ArrayList<IdentifiedOrganizationDTO>();
+        IdentifiedOrganizationDTO ctpDto = new IdentifiedOrganizationDTO();
+        ctpDto.setPlayerIdentifier(IiConverter.convertToIi(1L));
+        Ii id = new Ii();
+        id.setExtension("4648");
+        id.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+        id.setIdentifierName(IiConverter.CTEP_ORG_IDENTIFIER_NAME);
+        ctpDto.setAssignedId(id);
+        ctepList.add(ctpDto);
+        
+       
+        
+        when(identifiedOrganizationCorrelationServiceRemote.getCorrelationsByPlayerIds(any(Ii[].class))).thenReturn(ctepList);
+        
+        
         mockPerson.setIdentifier(IiConverter.convertToPoPersonIi("1"));
         mockPerson.setPostalAddress(AddressConverterUtil.create("UNKNOWN", "UNKNOWN", "UNKNOWN", "MD", "00000",
         "USA"));
@@ -423,6 +522,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void testLoadPDQXml() throws PAException, IOException {
+      
         try {
             assertNull(bean.loadRegistrationElementFromPDQXml(null,null));
             fail("URL is not set, call setUrl first");

@@ -89,6 +89,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -190,7 +192,10 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.ctgov.ClinicalStudy;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
+import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorOptions;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
@@ -204,15 +209,19 @@ import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceR
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
+import gov.nih.nci.services.organization.OrganizationSearchCriteriaDTO;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -223,8 +232,10 @@ import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
@@ -284,6 +295,8 @@ public class AbstractMockitoTest {
     protected CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorServiceLocal;
     protected FamilyServiceRemote familySvc;
     protected AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyServiceRemote;
+    protected CTGovSyncServiceLocal ctGovSyncServiceLocal;
+    protected IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationServiceRemote;
 
     protected Ii spId;
     protected InterventionalStudyProtocolDTO spDto;
@@ -339,6 +352,7 @@ public class AbstractMockitoTest {
     protected List<IdentifiedPersonDTO> identifiedPersonDtoList;
     protected IdentifiedPersonDTO identifiedPersonDto;
     protected List<StudyProtocolQueryDTO> queryDTOList = new ArrayList<StudyProtocolQueryDTO>();
+    
 
     @Before
     public void setUp() throws Exception {
@@ -483,8 +497,8 @@ public class AbstractMockitoTest {
         interventionDto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
 
         interventionDto.setName(StConverter.convertToSt("This is to test if name is more than 160 characters hence"
-        		+ " adding very long name to check. Also this string should contains very long name full 200 length "
-        		+" string to check we are setting this string 123 "	));
+                + " adding very long name to check. Also this string should contains very long name full 200 length "
+                +" string to check we are setting this string 123 " ));
         
     }
 
@@ -854,7 +868,7 @@ public class AbstractMockitoTest {
         spDto.setSecondaryIdentifiers(secondaryIdentifiers);
     }
 
-    private void setupMocks() throws PAException, NullifiedRoleException, NullifiedEntityException, IOException {
+    private void setupMocks() throws PAException, NullifiedRoleException, NullifiedEntityException, IOException, TooManyResultsException {
         setupSpSvcMock();
         setupSsSvcMock();
         setupRegSvcMock();
@@ -910,7 +924,7 @@ public class AbstractMockitoTest {
                         "/CDR360805.xml")));        
     }
 
-    private void setupProtocolQueryServiceMock() throws PAException {
+    private void setupProtocolQueryServiceMock() throws PAException, NullifiedEntityException, NullifiedRoleException, TooManyResultsException {
         protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
         final StudyProtocolQueryDTO summaryDTO = new StudyProtocolQueryDTO();
         summaryDTO.setLeadOrganizationName("NCI");
@@ -922,18 +936,80 @@ public class AbstractMockitoTest {
                 protocolQueryServiceLocal
                         .getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
                 .thenReturn(queryDTOList);
+       
+        
+       
+        
+        when(
+                protocolQueryServiceLocal
+                        .getTrialSummaryByStudyProtocolId(anyLong()))
+                .thenAnswer(new Answer<StudyProtocolQueryDTO>() {
+                    @Override
+                    public StudyProtocolQueryDTO answer(InvocationOnMock invocation) throws Throwable {
+                        Object[] arguments = invocation.getArguments();
+                        if (arguments != null && arguments.length > 0 && arguments[0] != null) {
+                            Long id = (Long) arguments[0];
+                          
+                          
+                            if(id==1L) {
+                                StudyProtocolQueryDTO studyProtocolQueryDTOSummary = new StudyProtocolQueryDTO();
+                                studyProtocolQueryDTOSummary.setLeadOrganizationId(1L);
+                                studyProtocolQueryDTOSummary.setLeadOrganizationPOId(1L);
+                                return studyProtocolQueryDTOSummary;
+                            }
+                            else if(id==2L) {{
+                                StudyProtocolQueryDTO studyProtocolQueryDTOSummary = new StudyProtocolQueryDTO();
+                                studyProtocolQueryDTOSummary.setLeadOrganizationId(2L);
+                                studyProtocolQueryDTOSummary.setLeadOrganizationPOId(2L);
+                                return studyProtocolQueryDTOSummary;
+                            }
+                        }
+                            else {
+                                StudyProtocolQueryDTO studyProtocolQueryDTOSummary = new StudyProtocolQueryDTO();
+                                studyProtocolQueryDTOSummary.setLeadOrganizationId(3L);
+                                studyProtocolQueryDTOSummary.setLeadOrganizationPOId(3L);
+                                return studyProtocolQueryDTOSummary;
+                            }
+                        }
+                        return null;
+                    }
+                });
+        
+      
+      
+        
         
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
         dto.setNciIdentifier("NCI-2012-0001");
+        dto.setNctIdentifier("NCI20120001");
+       
+        dto.setStudyStatusCode(StudyStatusCode.COMPLETE);
         dto.setLocalStudyProtocolIdentifier("LEAD_ORG_ID_0001");
         dto.setStudyProtocolId(1L);
+        dto.setLeadOrganizationPOId(1L);
+        
         queryDTOList.add(dto);
         
         dto = new StudyProtocolQueryDTO();
         dto.setNciIdentifier("NCI-2012-0002");
-        dto.setLocalStudyProtocolIdentifier("LEAD_ORG_ID_0002");
+        dto.setNctIdentifier("NCI20120002");
+        dto.setStudyStatusCode(StudyStatusCode.IN_REVIEW);
+        dto.setLocalStudyProtocolIdentifier("LEAD_ORG_ID_0001");
         dto.setStudyProtocolId(2L);
+        dto.setLeadOrganizationPOId(2L);
+        
         queryDTOList.add(dto);
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setNciIdentifier("NCI-2012-0002");
+        dto.setNctIdentifier("NCI20120002");
+        dto.setStudyStatusCode(StudyStatusCode.IN_REVIEW);
+        dto.setLocalStudyProtocolIdentifier("LEAD_ORG_ID_0001");
+        dto.setStudyProtocolId(3L);
+        dto.setLeadOrganizationPOId(3L);
+        
+        queryDTOList.add(dto);
+        
         
 
     }
@@ -952,6 +1028,7 @@ public class AbstractMockitoTest {
         PAOrganizationServiceRemote paOrgSvc = mock(PAOrganizationServiceRemote.class);
 
         lookupSvc = mock(LookUpTableServiceRemote.class);
+        ctGovSyncServiceLocal = mock(CTGovSyncServiceLocal.class);
         List<Country> countryList = new ArrayList<Country>();
         Country cnt = new Country();
         cnt.setAlpha3("USA");
@@ -964,6 +1041,7 @@ public class AbstractMockitoTest {
         when(lookupSvc.getPropertyValue("rss.leadOrgs")).thenReturn("American College of Surgeons Oncology Trials Group");
         when(lookupSvc.getPropertyValue("ctep.ccr.trials")).thenReturn("LEAD_ORG_ID_0002");
         when(lookupSvc.getPropertyValue("ctgov.ftp.enabled")).thenReturn("true");
+        when(lookupSvc.getPropertyValue("ctep.ccr.learOrgIds")).thenReturn("NCICCR");
         PDQXmlGeneratorServiceRemote pdqXmlGeneratorSvc = mock(PDQXmlGeneratorServiceRemote.class);
         when(pdqXmlGeneratorSvc.generatePdqXml(any(Ii.class))).thenReturn("<pdq></pdq>");
 
@@ -979,6 +1057,16 @@ public class AbstractMockitoTest {
         when(paRegSvcLoc.getRegulatoryInformationService()).thenReturn(regulInfoSvc);
         when(paRegSvcLoc.getAccrualDiseaseTerminologyService()).thenReturn(accrualDiseaseTerminologyServiceRemote);
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        
+        ClinicalStudy clinicalStudy = new ClinicalStudy();
+        clinicalStudy.setOverallStatus("Completed");
+        CTGovStudyAdapter ctGovStudyAdapter = new CTGovStudyAdapter(clinicalStudy);
+      
+        
+        when(ctGovSyncServiceLocal.getAdaptedCtGovStudyByNctId(anyString())).thenReturn(ctGovStudyAdapter);
+        
+        
+       
     }
 
     private void setupDocSvc() throws PAException {
@@ -990,7 +1078,7 @@ public class AbstractMockitoTest {
         mailManagerSvc = mock(MailManagerServiceLocal.class);
     }
 
-    private void setupPoSvc() throws NullifiedEntityException, PAException, NullifiedRoleException {
+    private void setupPoSvc() throws NullifiedEntityException, PAException, NullifiedRoleException , TooManyResultsException {
         poSvcLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
         poOrgSvc = mock(OrganizationEntityServiceRemote.class);
@@ -1000,6 +1088,8 @@ public class AbstractMockitoTest {
         poIpSvc = mock(IdentifiedPersonCorrelationServiceRemote.class);
         poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
         familySvc = mock(FamilyServiceRemote.class);
+      
+        identifiedOrganizationCorrelationServiceRemote =mock(IdentifiedOrganizationCorrelationServiceRemote.class);
 
         when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);
         when(poRoSvc.getCorrelation(any(Ii.class))).thenReturn(researchOrgDto);
@@ -1015,6 +1105,116 @@ public class AbstractMockitoTest {
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPerSvc);
         when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
         when(poSvcLoc.getFamilyService()).thenReturn(familySvc);
+        when(poSvcLoc.getIdentifiedOrganizationEntityService()).thenReturn(identifiedOrganizationCorrelationServiceRemote);
+        
+        Map<Ii, FamilyDTO> results = new HashMap<Ii, FamilyDTO>();
+        FamilyDTO dto = new FamilyDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setName(EnOnConverter.convertToEnOn("value"));
+        results.put(IiConverter.convertToPoFamilyIi("1"), dto);
+        when(familySvc.getFamilies(any(Set.class))).thenReturn(results);
+        
+        List<IdentifiedOrganizationDTO> ctepList = new ArrayList<IdentifiedOrganizationDTO>();
+        IdentifiedOrganizationDTO ctpDto = new IdentifiedOrganizationDTO();
+        ctpDto.setPlayerIdentifier(IiConverter.convertToIi(1L));
+        Ii id = new Ii();
+        id.setExtension("4648");
+        id.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+        id.setIdentifierName(IiConverter.CTEP_ORG_IDENTIFIER_NAME);
+        ctpDto.setAssignedId(id);
+        ctepList.add(ctpDto);
+        
+        ctpDto = new IdentifiedOrganizationDTO();
+        ctpDto.setPlayerIdentifier(IiConverter.convertToIi(2L));
+        id = new Ii();
+       id.setExtension("4648");
+       id.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+       id.setIdentifierName(IiConverter.CTEP_ORG_IDENTIFIER_NAME);
+       ctpDto.setAssignedId(id);
+       ctepList.add(ctpDto);
+        
+       ctpDto = new IdentifiedOrganizationDTO();
+        ctpDto.setPlayerIdentifier(IiConverter.convertToIi(3L));
+         id = new Ii();
+        id.setExtension("NCICCR");
+        id.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+        id.setIdentifierName(IiConverter.CTEP_ORG_IDENTIFIER_NAME);
+        ctpDto.setAssignedId(id);
+        ctepList.add(ctpDto);
+        
+        when(identifiedOrganizationCorrelationServiceRemote.getCorrelationsByPlayerIds(any(Ii[].class))).thenReturn(ctepList);
+        
+           
+        
+        when(
+                poOrgSvc.search(any(OrganizationSearchCriteriaDTO.class), 
+                        any(LimitOffset.class)))
+                .thenAnswer(new Answer<List<OrganizationDTO>>() {
+                    @Override
+                    public List<OrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                        Object[] arguments = invocation.getArguments();
+                        if (arguments != null && arguments.length > 0 && arguments[0] != null) {
+                            Long id = new Long(((OrganizationSearchCriteriaDTO) arguments[0]).getIdentifier());
+                          
+                          
+                            if(id==1L) {
+                                List<OrganizationDTO> list = new ArrayList<OrganizationDTO>();
+                                OrganizationDTO  ctePOrgDto = new OrganizationDTO();
+                                ctePOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
+                                ctePOrgDto.setName(EnOnConverter.convertToEnOn("name"));
+                                Ad adr = AddressConverterUtil.create("street", "deliv", "city", "MD", "20000", "USA");
+                                ctePOrgDto.setPostalAddress(adr);
+                                ctePOrgDto.setName(EnOnConverter.convertToEnOn("some org name"));
+                                DSet<Ii> dset = new DSet<Ii>();
+                                Set<Ii> familySet = new HashSet<Ii>();
+                                familySet.add(IiConverter.convertToPoFamilyIi("1"));
+                                dset.setItem(familySet);
+                                ctePOrgDto.setFamilyOrganizationRelationships(dset);
+                                list.add(ctePOrgDto);
+                                
+                                return list;
+                            }
+                            else  if(id==2L) { {
+                                List<OrganizationDTO> list = new ArrayList<OrganizationDTO>();
+                                OrganizationDTO  ctePOrgDto = new OrganizationDTO();
+                                ctePOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi("2"));
+                                ctePOrgDto.setName(EnOnConverter.convertToEnOn("name"));
+                                Ad adr = AddressConverterUtil.create("street", "deliv", "city", "MD", "20000", "USA");
+                                ctePOrgDto.setPostalAddress(adr);
+                                ctePOrgDto.setName(EnOnConverter.convertToEnOn("some org name"));
+                                DSet<Ii> dset = new DSet<Ii>();
+                                Set<Ii> familySet = new HashSet<Ii>();
+                                familySet.add(IiConverter.convertToPoFamilyIi("1"));
+                                dset.setItem(familySet);
+                                ctePOrgDto.setFamilyOrganizationRelationships(dset);
+                                list.add(ctePOrgDto);
+                                
+                                return list;
+                            }
+                            
+                        }
+                            else   {
+                                List<OrganizationDTO> list = new ArrayList<OrganizationDTO>();
+                                OrganizationDTO  ctePOrgDto = new OrganizationDTO();
+                                ctePOrgDto.setIdentifier(IiConverter.convertToPoOrganizationIi("3"));
+                                ctePOrgDto.setName(EnOnConverter.convertToEnOn("name"));
+                                Ad adr = AddressConverterUtil.create("street", "deliv", "city", "MD", "20000", "USA");
+                                ctePOrgDto.setPostalAddress(adr);
+                                ctePOrgDto.setName(EnOnConverter.convertToEnOn("some org name"));
+                                DSet<Ii> dset = new DSet<Ii>();
+                                Set<Ii> familySet = new HashSet<Ii>();
+                                familySet.add(IiConverter.convertToPoFamilyIi("1"));
+                                dset.setItem(familySet);
+                                ctePOrgDto.setFamilyOrganizationRelationships(dset);
+                                list.add(ctePOrgDto);
+                                
+                                return list;
+                            }
+                            
+                        }
+                        return null;
+                    }
+                });
     }
 
     private void setupStudyResSvc() throws PAException {
@@ -1532,6 +1732,10 @@ public class AbstractMockitoTest {
     
     public CTGovXmlGeneratorServiceLocal getCtGovXmlGeneratorServiceLocal() {
         return ctGovXmlGeneratorServiceLocal;
+    }
+
+    public CTGovSyncServiceLocal getCtGovSyncServiceLocal() {
+        return ctGovSyncServiceLocal;
     }
 
 }

@@ -20,4 +20,15 @@ public interface CTGovUploadServiceLocal {
      * @throws IOException  IOException
      */
     void uploadToCTGov() throws PAException, IOException;
+    
+    
+    /**
+     * @param id id
+     * @param trialStatus trialStatus
+     * @param nctIdentifier nctIdentifier
+     * @return boolean localStudyProtocolIdentifier
+     * @throws PAException PAException
+     */
+    boolean checkIfTrialExcludeAndUpdateCtroOverride(Long id, 
+            String trialStatus, String nctIdentifier) throws PAException;
 }

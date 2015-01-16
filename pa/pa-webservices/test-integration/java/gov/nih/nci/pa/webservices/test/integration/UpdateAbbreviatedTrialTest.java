@@ -84,7 +84,7 @@ public class UpdateAbbreviatedTrialTest extends AbstractRestServiceTest {
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
 
         clickAndWait("link=NCI Specific Information");
-        assertTrue(selenium.isChecked("ctroOverride"));
+        assertFalse(selenium.isTextPresent("Send XML to ClinicalTrials.gov?:"));
     }
     
     @Test

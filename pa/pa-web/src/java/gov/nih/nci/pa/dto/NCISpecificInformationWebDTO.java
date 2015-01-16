@@ -97,6 +97,7 @@ public class NCISpecificInformationWebDTO implements Serializable {
     private Boolean ctroOverride;
     private String consortiaTrialCategoryCode;
     private List<SummaryFourSponsorsWebDTO> summary4Sponsors = new ArrayList<SummaryFourSponsorsWebDTO>();
+    private String ctroOverideFlagComments;
 
     /**
      * 
@@ -185,6 +186,20 @@ public class NCISpecificInformationWebDTO implements Serializable {
      */
     public void setSummary4Sponsors(List<SummaryFourSponsorsWebDTO> summary4Sponsors) {
         this.summary4Sponsors = summary4Sponsors;
+    }
+
+    /**
+     * @return ctroOverideFlagComments
+     */
+    public String getCtroOverideFlagComments() {
+        return ctroOverideFlagComments;
+    }
+
+    /**
+     * @param ctroOverideFlagComments ctroOverideFlagComments
+     */
+    public void setCtroOverideFlagComments(String ctroOverideFlagComments) {
+        this.ctroOverideFlagComments = ctroOverideFlagComments;
     }
 
 }

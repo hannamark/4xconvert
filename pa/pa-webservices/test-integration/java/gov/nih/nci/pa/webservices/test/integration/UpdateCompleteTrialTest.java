@@ -72,7 +72,7 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
                 rConf.getPaTrialID() + "", upd);
         TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
         clickAndWait("link=NCI Specific Information");
-        assertTrue(selenium.isChecked("ctroOverride"));
+        assertFalse(selenium.isTextPresent("Send XML to ClinicalTrials.gov?:"));
 
     }
 

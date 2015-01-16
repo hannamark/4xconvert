@@ -135,6 +135,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     private Set<StudyAlternateTitleDTO> studyAlternateTitles;
     private Cd studySource;
     private Ii submitingOgranization;
+    private String ctroOverideFlagComments;
 
     /**
      *
@@ -602,5 +603,19 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public void setSubmitingOgranization(Ii submitingOgranization) {
         this.submitingOgranization = submitingOgranization;
+    }
+
+    /**
+     * @return ctroOverideFlagComments
+     */
+    public String getCtroOverideFlagComments() {
+        return ctroOverideFlagComments;
+    }
+
+    /**
+     * @param ctroOverideFlagComments ctroOverideFlagComments
+     */
+    public void setCtroOverideFlagComments(String ctroOverideFlagComments) {
+        this.ctroOverideFlagComments = ctroOverideFlagComments;
     }
 }

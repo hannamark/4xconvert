@@ -83,6 +83,8 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.NCISpecificInformationWebDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.SummaryFourSponsorsWebDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
@@ -97,6 +99,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -118,6 +121,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
+
+
+
+
+
+
 import com.google.gson.Gson;
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -126,6 +135,8 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author gnaveh
  *
  */
+@SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.UseCollectionIsEmpty", "PMD.LongInstantiation",
+    "PMD.SingularField" })
 public class NCISpecificInformationAction extends ActionSupport {
     private static final long serialVersionUID = -5560377425534113809L;
     private static final String DISPLAY_ORG_FLD = "displayOrgFld";
@@ -133,6 +144,8 @@ public class NCISpecificInformationAction extends ActionSupport {
     private String chosenOrg;
     private TrialHelper trialHelper = new TrialHelper();
     private PAServiceUtils paServiceUtil = new PAServiceUtils();    
+    private static final int MAX_CTRO_OVERRIDE_COMMENTS_SIZE = 1000;
+    private ProtocolQueryServiceLocal queryServiceLocal;
 
     /**
      * @return result
@@ -147,14 +160,25 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     public String query() {
         try {
+           
             StudyProtocolDTO studyProtocolDTO = getStudyProtocol();
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
             List<StudyResourcingDTO> studyResourcingDTO = PaRegistry.getStudyResourcingService()
                 .getSummary4ReportedResourcing(studyProtocolIi);
             nciSpecificInformationWebDTO = setNCISpecificDTO(studyProtocolDTO, studyResourcingDTO);
+            
+            //keep existing database logic as it is this mean false value should be shown as true in UI
+            //and true value will be shown as false in UI
+            nciSpecificInformationWebDTO.setCtroOverride(!nciSpecificInformationWebDTO.getCtroOverride());
+           
             ServletActionContext.getRequest().getSession().setAttribute("summary4Sponsors", 
                     nciSpecificInformationWebDTO.getSummary4Sponsors());
+            
+         
+            
+            boolean displayXmlFlag = getDisplayXmlFlag(studyProtocolIi);
+            ServletActionContext.getRequest().setAttribute("displayXmlFlag", displayXmlFlag);
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -209,33 +233,58 @@ public class NCISpecificInformationAction extends ActionSupport {
             addFieldError("nciSpecificInformationWebDTO.accrualReportingMethodCode",
                     getText("error.studyProtocol.accrualReportingMethodCode"));
         }
+        try {
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
+                Constants.STUDY_PROTOCOL_II);
+        boolean displayXmlFlag = getDisplayXmlFlag(studyProtocolIi);
+        
+        if (nciSpecificInformationWebDTO.getCtroOverideFlagComments() == null && displayXmlFlag) {
+            addFieldError("nciSpecificInformationWebDTO.ctroOverideFlagComments",
+                    getText("error.studyProtocol.ctroOverideFlagComments.required"));
+        }
+        
+        if (nciSpecificInformationWebDTO.getCtroOverideFlagComments() != null 
+                && nciSpecificInformationWebDTO.getCtroOverideFlagComments().length()
+                > MAX_CTRO_OVERRIDE_COMMENTS_SIZE) {
+            addFieldError("nciSpecificInformationWebDTO.ctroOverideFlagComments",
+                    getText("error.studyProtocol.ctroOverideFlagComments.length"));
+        }
         if (hasFieldErrors()) {
+            ServletActionContext.getRequest().setAttribute("displayXmlFlag", displayXmlFlag);         
             return ERROR;
         }
         // Step2 : retrieve the studyprotocol
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
-        try {
+       
             // Step 0 : get the studyprotocol from database
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    Constants.STUDY_PROTOCOL_II);
+            
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             // Step1 : update values to StudyProtocol
             spDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode
                     .getByCode(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
             spDTO.setProgramCodeText(StConverter.convertToSt(nciSpecificInformationWebDTO.getProgramCodeText()));
-            spDTO.setCtroOverride(BlConverter.convertToBl(nciSpecificInformationWebDTO.getCtroOverride()));
+            
+            //keep existing database logic as it is this means false value shown in UI should be passed and true
+            //and true value should be passed as false
+            
+            spDTO.setCtroOverride(BlConverter.convertToBl(!nciSpecificInformationWebDTO.getCtroOverride()));
             spDTO.setConsortiaTrialCategoryCode(CdConverter
                     .convertStringToCd(nciSpecificInformationWebDTO
                             .getConsortiaTrialCategoryCode()));
+            spDTO.setCtroOverideFlagComments(nciSpecificInformationWebDTO.getCtroOverideFlagComments());
             // Step2 : update values to StudyResourcing
             srDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
             srDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            
             // Step3: update studyprotocol
             spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
             // Step 4: check if we have an organization for PO id            
             trialHelper.saveSummary4Information(studyProtocolIi, nciSpecificInformationWebDTO.getSummary4Sponsors(), 
                     nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode());
+            
+            ServletActionContext.getRequest().setAttribute("displayXmlFlag", displayXmlFlag);
+            
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -243,6 +292,40 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         return SUCCESS;
+    }
+    
+    //this method checks if trial is sponsored and not already sent to ctgov
+    //if trial is not sponsored or excluded from nightly build then hide flag and comments from ui
+    private boolean getDisplayXmlFlag(Ii studyProtocolIi) throws PAException {
+        boolean displayXmlFlag = false;
+        try {
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setNciSponsored(true);
+        criteria.setTrialCategory("n");
+        
+        criteria.setStudyProtocolId(new Long(studyProtocolIi.getExtension()));
+       
+        //check if trial is sponsored 
+        queryServiceLocal =  PaRegistry.getProtocolQueryService();
+        List<StudyProtocolQueryDTO> list = queryServiceLocal
+                .getStudyProtocolByCriteria(criteria);
+       
+        if (list != null && list.size() > 0) {
+            StudyProtocolQueryDTO studyProtocolQueryDTO = list.get(0);
+            
+            String nctIdentifier = studyProtocolQueryDTO.getNctIdentifier();
+            String trialStatus = studyProtocolQueryDTO.getStudyStatusCode().getCode();
+                
+            displayXmlFlag = PaRegistry.getCTGovUploadService().checkIfTrialExcludeAndUpdateCtroOverride(
+                    new Long(studyProtocolIi.getExtension()), trialStatus, nctIdentifier);
+            //this is flag value comes is exclude from this method
+            displayXmlFlag = !displayXmlFlag;
+         }
+        
+        } catch (Exception e) {
+            LOG.error("getDisplayXmlFlag in method ", e.getMessage());
+        }
+        return displayXmlFlag;
     }
 
     /**
@@ -309,6 +392,7 @@ public class NCISpecificInformationAction extends ActionSupport {
         if (srDTO != null) {
             convertStudyResourcingDto(srDTO, nciSpDTO);
         }
+        
         return nciSpDTO;
     }
 
@@ -342,6 +426,9 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
         nciSpDTO.setCtroOverride(BlConverter.convertToBoolean(spDTO.getCtroOverride()));
         nciSpDTO.setConsortiaTrialCategoryCode(CdConverter.convertCdToString(spDTO.getConsortiaTrialCategoryCode()));
+        nciSpDTO.setCtroOverideFlagComments(spDTO.getCtroOverideFlagComments());
+        
+        
     }
 
     /**

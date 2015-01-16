@@ -4,6 +4,8 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.*;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
@@ -13,7 +15,9 @@ import gov.nih.nci.pa.util.TestSchema;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
@@ -54,6 +58,7 @@ public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
         serviceBean.setQueryServiceLocal(mockitoTest.getProtocolQueryServiceLocal());
         serviceBean.setGeneratorServiceLocal(mockitoTest.getCtGovXmlGeneratorServiceLocal());
         serviceBean.setLookUpTableService(mockitoTest.getLookupSvc());
+        serviceBean.setCtGovSyncService(mockitoTest.getCtGovSyncServiceLocal());
 
         fakeFtpServer = new FakeFtpServer();
         fakeFtpServer.setServerControlPort(51239); // use any free port
@@ -110,6 +115,9 @@ public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
         query.setTimestamp("date", DateUtils.addDays(new Date(), -31));
         query.executeUpdate();
         s.flush();
+        
+     
+        
 
         serviceBean.uploadToCTGov();
         assertTrue(fileSystem.exists("/clinical.txt"));
@@ -120,5 +128,17 @@ public class CTGovUploadServiceBeanTest extends AbstractHibernateTestCase {
                         .uniqueResult());
 
     }
+    
+    @Test
+    public void checkTerminalStatusAndCCRExcluded() throws PAException {
+        List<Ii> idsList =serviceBean.getTrialIdsForUpload();
+        
+        assertTrue(idsList.size()==1);
+        
+        Ii ii = idsList.get(0);
+        assertTrue(ii.getExtension().equals("2"));
+    }
+    
+   
 
 }

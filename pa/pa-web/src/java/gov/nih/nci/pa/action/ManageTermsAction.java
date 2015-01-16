@@ -526,25 +526,28 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                     c.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
                     childDtos.add(c);
                 }
-
                  saveParentChilds(diseaseDto);
-                 
                  if (importTerm) {
-                  
                      String displayName = null;
-                     
                      if (disease.getMenuDisplayName() != null) {
                          displayName = disease.getMenuDisplayName();
                      }   
-                     
                       //send email for sync
                      sendSyncEmail(disease.getNtTermIdentifier(), disease.getPreferredName(), displayName);
-                     
-                     
+                 } else {
+                  // Save parents
+                     for (Iterator<PDQDiseaseParentDTO> iterator = parentDtos.iterator(); iterator.hasNext();) {
+                         PDQDiseaseParentDTO parentDto = iterator.next();
+                         parentDto.setDiseaseIdentifier(diseaseDto.getIdentifier());
+                         diseaseParentService.create(parentDto);
+                     }
+                      // Save Children
+                     for (Iterator<PDQDiseaseParentDTO> iterator = childDtos.iterator(); iterator.hasNext();) {
+                         PDQDiseaseParentDTO childDto = iterator.next();
+                         childDto.setParentDiseaseIdentifier(diseaseDto.getIdentifier());
+                         diseaseParentService.create(childDto);
+                     }
                  }
-                 
-                
-          
                 if (!missingTerms.isEmpty()) {
                     String errorMsg = createTermsMissingErrorMessage(missingTerms);
                     ServletActionContext.getRequest().setAttribute(
