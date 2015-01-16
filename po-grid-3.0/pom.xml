@@ -259,9 +259,16 @@
     </dependencies>
     <repositories>
         <repository>
-            <id>cbiit</id>
+		<releases>
+        		<enabled>true</enabled>
+		</releases>
+        	<snapshots>
+	        	<enabled>true</enabled>
+	        </snapshots>
+            <id>cbiit-repo</id>
             <name>CBIIT Nexus</name>
             <url>https://ncimvn.nci.nih.gov/nexus/content/groups/public</url>
         </repository>
+
     </repositories>
 </project>
