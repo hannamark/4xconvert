@@ -86,13 +86,14 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
-import java.util.Date;
 
 /**
  * Convert StudyProtocol domain to DTO.
@@ -113,7 +114,17 @@ public class StudySiteAccrualStatusConverter extends
         dto.setIdentifier(IiConverter.convertToStudySiteAccrualStatusIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
+        dto.setComments(StConverter.convertToSt(bo.getComments()));
+        dto.setDeleted(BlConverter.convertToBl(bo.getDeleted()));
         dto.setStudySiteIi(IiConverter.convertToIi(bo.getStudySite().getId()));
+        if (bo.getDateLastUpdated() != null) {
+            dto.setUpdatedOn(TsConverter.convertToTs(bo
+                    .getDateLastUpdated()));
+        }
+        if (bo.getUserLastUpdated() != null) {
+            dto.setUpdatedBy(StConverter.convertToSt(bo
+                    .getUserLastUpdated().getLoginName()));
+        }
         return dto;
     }
 
@@ -132,21 +143,25 @@ public class StudySiteAccrualStatusConverter extends
      */
     @Override
     public void convertFromDtoToDomain(StudySiteAccrualStatusDTO dto, StudySiteAccrualStatus bo) throws PAException {
-        StudySite spBo = new StudySite();
+        
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new PAException("convertFromDtoToDomain has been implemented for new domain objects only. "
-                    + "StudySiteAccrualStatusDTO.ii must be null.");
+             bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
+        
         if (ISOUtil.isIiNull(dto.getStudySiteIi())) {
             throw new PAException("StudySiteAccrualStatus.studySite cannot be null.");
         }
+        
+        if (bo.getStudySite() == null) {
+            StudySite spBo = new StudySite();
+            spBo.setId(IiConverter.convertToLong(dto.getStudySiteIi()));
+            bo.setStudySite(spBo);
+        }
 
-        spBo.setId(IiConverter.convertToLong(dto.getStudySiteIi()));
-
-        bo.setDateLastUpdated(new Date());
         bo.setStatusCode(RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
-        bo.setStudySite(spBo);
+        String comments = dto.getComments() == null ? "" : dto.getComments().getValue();
+        bo.setComments(comments);
     }
 
 }

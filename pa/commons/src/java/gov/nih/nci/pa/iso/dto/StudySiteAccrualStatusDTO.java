@@ -77,12 +77,15 @@
 
 package gov.nih.nci.pa.iso.dto;
 
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.iso.util.BlConverter;
 
 /**
- * StudyOverallStatusDTO for transferring StudyOverallStatus object .
+ * StudySiteAccrualStatusDTO for transferring StudySiteAccrualStatus object .
  * @author Hugh Reinhart
  * @since 08/26/2008
  *
@@ -94,7 +97,12 @@ public class StudySiteAccrualStatusDTO extends BaseDTO {
 
     private Cd statusCode;
     private Ts statusDate;
+    private St comments;
+    private Bl deleted = BlConverter.convertToBl(Boolean.FALSE);
     private Ii studySiteIi;
+    
+    private St updatedBy;
+    private Ts updatedOn;
 
     /**
      * @return the statusCode
@@ -138,4 +146,61 @@ public class StudySiteAccrualStatusDTO extends BaseDTO {
         this.studySiteIi = studySiteIi;
     }
 
+    /**
+     * @return the comments
+     */
+    public St getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(St comments) {
+        this.comments = comments;
+    }
+
+    /**
+     * @return the deleted
+     */
+    public Bl getDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(Bl deleted) {
+        this.deleted = deleted;
+    }
+
+    /**
+     * @return the updatedBy
+     */
+    public St getUpdatedBy() {
+        return updatedBy;
+    }
+
+    /**
+     * @param updatedBy the updatedBy to set
+     */
+    public void setUpdatedBy(St updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    /**
+     * @return the updatedOn
+     */
+    public Ts getUpdatedOn() {
+        return updatedOn;
+    }
+
+    /**
+     * @param updatedOn the updatedOn to set
+     */
+    public void setUpdatedOn(Ts updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
+    
 }

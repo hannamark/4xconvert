@@ -120,9 +120,22 @@ public interface StudySiteAccrualStatusService {
      */
     List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException;
     /**
-     * @param studySiteIi Primary key assigned to a StudyProtocl.
+     * @param studySiteIi Primary key assigned to a Site.
      * @return StudySiteAccrualStatusDTO Current status.
      * @throws PAException Exception.
      */
     StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException;
+    
+    /**
+     * @param dto StudySiteAccrualStatusDTO
+     * @throws PAException PAException
+     */
+    void softDelete(StudySiteAccrualStatusDTO dto) throws PAException;
+    
+    /**
+     * @param studySiteIi Primary key assigned to a Site.
+     * @return StudySiteAccrualStatusDTO deleted statuses.
+     * @throws PAException Exception.
+     */
+    List<StudySiteAccrualStatusDTO> getDeletedByStudySite(Ii studySiteIi) throws PAException;
 }

@@ -261,6 +261,49 @@ public class StudyOverallStatusWebDTO implements Serializable {
     public void setUndoable(boolean undoable) {
         this.undoable = undoable;
     }
+    
+
+    /**
+     * @param statusDateRaw the statusDateRaw to set
+     */
+    public void setStatusDateRaw(Date statusDateRaw) {
+        this.statusDateRaw = statusDateRaw;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    /**
+     * @param updatedBy the updatedBy to set
+     */
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    /**
+     * @param updatedOn the updatedOn to set
+     */
+    public void setUpdatedOn(Date updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
+    /**
+     * @param errors the errors to set
+     */
+    public void setErrors(String errors) {
+        this.errors = errors;
+    }
+
+    /**
+     * @param warnings the warnings to set
+     */
+    public void setWarnings(String warnings) {
+        this.warnings = warnings;
+    }
 
     /**
      * @return the comments

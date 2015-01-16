@@ -767,6 +767,6 @@ public class JndiServiceLocator implements ServiceLocator {
 
     @Override
     public StatusTransitionService getStatusTransitionService() {
-        return lookup("StatusTransitionServiceBean!gov.nih.nci.pa.service.status.StatusTransitionServiceLocal");
+        return lookup("StatusTransitionServiceBeanLocal!gov.nih.nci.pa.service.status.StatusTransitionServiceLocal");
     }
 }

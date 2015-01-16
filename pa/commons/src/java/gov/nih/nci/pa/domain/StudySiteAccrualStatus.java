@@ -91,6 +91,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Index;
+import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -104,12 +105,15 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "STUDY_SITE_ACCRUAL_STATUS")
-public class StudySiteAccrualStatus extends AbstractEntity implements Auditable {
+public class StudySiteAccrualStatus extends AbstractEntity implements Auditable, SoftDeletable {
 
     private static final long serialVersionUID = 1234567890L;
+    private static final int MAX_COMMENT_LENGTH = 2000;
 
     private RecruitmentStatusCode statusCode;
     private Timestamp statusDate;
+    private String comments;
+    private Boolean deleted = Boolean.FALSE;
     private StudySite studySite;
 
 
@@ -145,6 +149,40 @@ public class StudySiteAccrualStatus extends AbstractEntity implements Auditable 
     public void setStatusDate(Timestamp statusDate) {
         this.statusDate = statusDate;
     }
+    
+    /**
+     * @return the comments
+     */
+    @Column(name = "comments")
+    @Length(max = MAX_COMMENT_LENGTH)
+    public String getComments() {
+        return comments;
+    }
+
+    /**
+     * @param comments the comments to set
+     */
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    /**
+     * @return the deleted
+     */
+    @Column(name = "deleted")
+    @NotNull
+    @Searchable
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+    
     /**
      * @return the studySite
      */

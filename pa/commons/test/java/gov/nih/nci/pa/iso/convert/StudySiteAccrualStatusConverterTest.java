@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -161,11 +162,11 @@ public class StudySiteAccrualStatusConverterTest extends
         assertEquals("2.16.840.1.113883.3.26.4.5.4", dto.getIdentifier().getRoot());
     }
 
-    @Test(expected = PAException.class)
+    @Test
     public void testConvertDtoWithId() throws Exception {
         StudySiteAccrualStatusDTO dto = makeDto();
         dto.setIdentifier(IiConverter.convertToIi(ID));
-        new StudySiteAccrualStatusConverter().convertFromDtoToDomain(dto);
+        assertNotNull(new StudySiteAccrualStatusConverter().convertFromDtoToDomain(dto));
     }
 
     @Test(expected = PAException.class)

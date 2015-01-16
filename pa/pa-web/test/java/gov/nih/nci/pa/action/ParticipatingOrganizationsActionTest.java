@@ -123,7 +123,6 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
-import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.service.MockCorrelationUtils;
 import gov.nih.nci.service.MockOrganizationCorrelationService;
 import gov.nih.nci.service.MockStudySiteService;
@@ -155,7 +154,6 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         act = new ParticipatingOrganizationsAction();
         act.prepare();
         act.setCorrelationUtils(new MockCorrelationUtils());
-
     }
 
     @Test
@@ -319,6 +317,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         StudySiteAccrualStatusDTO sasdto = new StudySiteAccrualStatusDTO();
         sasdto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE));
         sasdto.setStatusDate(TsConverter.convertToTs(new Date()));
+        sasdto.setComments(StConverter.convertToSt("Some Comments"));
 		when(ssas.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(sasdto);
 		when(ssas.getStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(Arrays.asList(sasdto));
         when(paSvcLoc.getStudySiteAccrualStatusService()).thenReturn(ssas);

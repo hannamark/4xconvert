@@ -325,6 +325,16 @@
             <result type="stream"/>
         </action>
         
+        <action name="siteStatusHistorypopup*" class="gov.nih.nci.pa.action.SiteStatusHistoryAction" method="{1}">
+            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <result>/WEB-INF/jsp/nodecorate/siteStatusHistory.jsp</result>
+            <result name="error">/WEB-INF/jsp/nodecorate/siteStatusHistory.jsp</result>
+        </action>
+         <action name="ajaxSiteStatusHistorypopup*" class="gov.nih.nci.pa.action.SiteStatusHistoryAction" method="{1}">
+            <interceptor-ref name="paDefaultInterceptor" />
+            <result type="stream"/>
+        </action>
+        
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <result>/WEB-INF/jsp/administrative/studyOverallStatus.jsp</result>
@@ -344,7 +354,7 @@
             <result name="display_spContacts">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="input">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="error">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
-            <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
+            <result name="historypopup">/WEB-INF/jsp/nodecorate/siteStatusHistory.jsp</result>
         </action> 
         <action name="popupParticipatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <result>/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationsDeletePopup.jsp</result>

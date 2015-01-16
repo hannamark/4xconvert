@@ -122,6 +122,12 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.status.StatusDto;
+import gov.nih.nci.pa.service.status.StatusTransitionService;
+import gov.nih.nci.pa.service.status.json.AppName;
+import gov.nih.nci.pa.service.status.json.ErrorType;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
@@ -158,6 +164,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -205,14 +212,17 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     private StudySiteContactServiceLocal studySiteContactService;
     private StudySubjectServiceLocal studySubjectService;
+    private StatusTransitionService statusTransitionService;
     
     private Ii spIi;
+    private StudyProtocolQueryDTO spDTO;
     private List<PaOrganizationDTO> organizationList;
     private OrganizationDTO selectedOrgDTO;
     private Organization editOrg;
     private Long cbValue;
     private String recStatus;
     private String recStatusDate;
+    private String recStatusComments;
     private PersonDTO selectedPersTO = null;
     private List<StudySiteContactDTO> spContactDTO;
     private List<PaPersonDTO> personWebDTOList;
@@ -230,7 +240,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private Long studySiteIdentifier;
     private String programCode;
     private String statusCode;
-    private List<StudyOverallStatusWebDTO> overallStatusList;
+    private List<StudyOverallStatusWebDTO> siteStatusList;
     private List<StudySubjectWebDto> subjects;
 
     // Cache for org list
@@ -267,7 +277,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         studySiteAccrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
         studySiteContactService = PaRegistry.getStudySiteContactService();
         studySubjectService = PaRegistry.getStudySubjectService();
-        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
+        statusTransitionService = PaRegistry.getStatusTransitionService();
+        spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
         setProprietaryTrialIndicator(spDTO.isProprietaryTrial() ? "true" : "false");
@@ -310,7 +321,15 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         if (hasFieldErrors()) {
             return ERROR;
         }
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+        if (hasActionErrors()) {
+            StringBuffer sb = new StringBuffer();
+            for (String actionErr : getActionErrors()) {
+                sb.append(" - ").append(actionErr);
+            }
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
+        } else {
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+        }
         return ACT_FACILITY_SAVE;
     }
 
@@ -321,14 +340,25 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     public String facilityUpdate() throws PAException {
         setRecStatus(ServletActionContext.getRequest().getParameter("recStatus"));
         setRecStatusDate(ServletActionContext.getRequest().getParameter(REC_STATUS_DATE));
+        setRecStatusComments(ServletActionContext.getRequest().getParameter("recStatusComments"));
         setTargetAccrualNumber(ServletActionContext.getRequest().getParameter("targetAccrualNumber"));
         setProgramCode(ServletActionContext.getRequest().getParameter("programCode"));
+        setDateOpenedForAccrual(ServletActionContext.getRequest().getParameter("dateOpenedForAccrual"));
+        setDateClosedForAccrual(ServletActionContext.getRequest().getParameter("dateClosedForAccrual"));
         setSiteLocalTrialIdentifier(ServletActionContext.getRequest().getParameter("localProtocolIdenfier"));
         facilitySaveOrUpdate();
         if (hasFieldErrors()) {
             return "error_edit";
         }
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+        if (hasActionErrors()) {
+            StringBuffer sb = new StringBuffer();
+            for (String actionErr : getActionErrors()) {
+                sb.append(" - ").append(actionErr);
+            }
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
+        } else {
+            ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+        }
         return ACT_EDIT;
     }
 
@@ -360,6 +390,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         ssas.setIdentifier(IiConverter.convertToIi((Long) null));
         ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(recStatus)));
         ssas.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(recStatusDate)));
+        ssas.setComments(StConverter.convertToSt(recStatusComments));
         Ii ssIi = null;
         if (tab.getStudyParticipationId() != null) {
             sp = saveNonPropWithCurrentSite(ssas, tab, errorOrgName);
@@ -368,7 +399,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             sp = new StudySiteDTO();
             ssIi = saveNonPropWithNewSite(sp, ssas, tab, errorOrgName);
         }
-        if (hasFieldErrors()) {
+        if (hasFieldErrors() || hasActionErrors()) {
             return;
         }
         tab.setStudyParticipationId(IiConverter.convertToLong(ssIi));
@@ -389,8 +420,34 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(studySite.getIdentifier());
         boolean spUpdated = isSiteUpdated(studySite, studySiteAccrualStatus);
         if (spUpdated) {
+            List<StatusDto> statusDtos = null;
+            boolean isValidTransition = false;
             try {
-                participatingSiteService.updateStudySiteParticipant(studySite, ssas);
+                statusDtos = statusTransitionService.validateStatusTransition(
+                        AppName.PA, 
+                        spDTO.isProprietaryTrial()? TrialType.ABBREVIATED : TrialType.COMPLETE,
+                        TransitionFor.SITE_STATUS, 
+                        CdConverter.convertCdToEnum(RecruitmentStatusCode.class, 
+                                studySiteAccrualStatus.getStatusCode()).name(), 
+                        studySiteAccrualStatus.getStatusDate().getValue(), 
+                        CdConverter.convertCdToEnum(RecruitmentStatusCode.class, ssas.getStatusCode()).name());
+                StatusDto dto = statusDtos.get(0);
+                if (dto.hasErrorOfType(ErrorType.ERROR)) {
+                    addActionError("ERRORS:" + dto.getConsolidatedErrorMessage());
+                } 
+                if (dto.hasErrorOfType(ErrorType.WARNING)) {
+                    addActionError("WARNINGS:" + dto.getConsolidatedWarningMessage());
+                    isValidTransition = true;
+                } else {
+                    isValidTransition = true;
+                }
+            } catch (PAException e) {
+                addActionError(e.getMessage());
+            }
+            try {
+                if (isValidTransition) {
+                    participatingSiteService.updateStudySiteParticipant(studySite, ssas);
+                }
             } catch (PADuplicateException e) {
                 addFieldError(errorOrgName, e.getMessage());
             }
@@ -425,6 +482,13 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
                 && StringUtils.isEmpty(dateClosedForAccrual)) {
             studySite.setAccrualDateRange(IvlConverter.convertTs()
                     .convertToIvl(dateOpenedForAccrual, null));
+            updated = true;
+        }
+        
+        if (StringUtils.isEmpty(dateOpenedForAccrual)
+                && StringUtils.isEmpty(dateClosedForAccrual)
+                && studySite.getAccrualDateRange() != null) {
+            studySite.setAccrualDateRange(null);
             updated = true;
         }
         return updated;
@@ -469,11 +533,39 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private boolean isRecruitmentStatusUpdated(StudySiteAccrualStatusDTO ssas) {
         String statusDate = TsConverter.convertToString(ssas.getStatusDate());
         return !StringUtils.equalsIgnoreCase(ssas.getStatusCode().getCode(), recStatus)
-                || !StringUtils.equalsIgnoreCase(statusDate, recStatusDate);
+                || !StringUtils.equalsIgnoreCase(statusDate, recStatusDate)
+                || !StringUtils.equalsIgnoreCase(ssas.getComments().getValue(), recStatusComments);
     }
 
     private Ii saveNonPropWithNewSite(StudySiteDTO ss, StudySiteAccrualStatusDTO ssas,
             ParticipatingOrganizationsTabWebDTO tab, String errorOrgName) throws PAException {
+        
+        List<StatusDto> statusDtos = null;
+        boolean isValidTransition = false;
+        try {
+            statusDtos = statusTransitionService.validateStatusTransition(
+                    AppName.PA, 
+                    spDTO.isProprietaryTrial()? TrialType.ABBREVIATED : TrialType.COMPLETE,
+                    TransitionFor.SITE_STATUS, null, null, 
+                    CdConverter.convertCdToEnum(RecruitmentStatusCode.class, 
+                            ssas.getStatusCode()).name());
+            StatusDto dto = statusDtos.get(0);
+            if (dto.hasErrorOfType(ErrorType.ERROR)) {
+                addActionError("ERRORS:" + dto.getConsolidatedErrorMessage());
+            } 
+            if (dto.hasErrorOfType(ErrorType.WARNING)) {
+                addActionError("WARNINGS:" + dto.getConsolidatedWarningMessage());
+                isValidTransition = true;
+            } else {
+                isValidTransition = true;
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
+        if (!isValidTransition) {
+            return null;
+        }
+        
         String poOrgId = tab.getFacilityOrganization().getIdentifier();
         Ii poHcfIi = paServiceUtil.getPoHcfIi(poOrgId);
 
@@ -499,6 +591,9 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         if (status != null) {
             setRecStatus(status.getStatusCode().getCode());
             setRecStatusDate(TsConverter.convertToTimestamp(status.getStatusDate()).toString());
+            if (!ISOUtil.isStNull(status.getComments())) {
+                setRecStatusComments(status.getComments().getValue());
+            }
         }
         if (IntConverter.convertToInteger(spDto.getTargetAccrualNumber()) == null) {
             setTargetAccrualNumber(null);
@@ -632,6 +727,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
                     .getCode());
             orgWebDTO.setRecruitmentStatusDate(dto.getRecruitmentStatusDate() == null ? "unknown" : PAUtil
                     .normalizeDateString(dto.getRecruitmentStatusDate().toString()));
+            orgWebDTO.setRecruitmentStatusComments(dto.getRecruitmentStatusComments());
             orgWebDTO.setTargetAccrualNumber(dto.getTargetAccrualNumber() == null ? null : dto.getTargetAccrualNumber()
                     .toString());
             orgWebDTO.setStatus(dto.getStatusCode().getCode());
@@ -1224,6 +1320,20 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     }
 
     /**
+     * @return the recStatusComments
+     */
+    public String getRecStatusComments() {
+        return recStatusComments;
+    }
+
+    /**
+     * @param recStatusComments the recStatusComments to set
+     */
+    public void setRecStatusComments(String recStatusComments) {
+        this.recStatusComments = recStatusComments;
+    }
+
+    /**
      * @return the spContactDTO
      */
     public List<StudySiteContactDTO> getSpContactDTO() {
@@ -1477,17 +1587,20 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     
     private void addInvestigator(Ii ssIi, Ii investigatorIi, String role, String poOrgId) throws PAException {
         ClinicalResearchStaffDTO crsDTO = paServiceUtil.getCrsDTO(investigatorIi, poOrgId);
-        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(spIi);
-        HealthCareProviderDTO hcpDTO = paServiceUtil.getHcpDTO(spDTO.getStudyProtocolType().getValue(), investigatorIi,
-                                                               poOrgId);
-        participatingSiteService.addStudySiteInvestigator(ssIi, crsDTO, hcpDTO, null, role);
+        StudyProtocolDTO tmpSpDTO = studyProtocolService.getStudyProtocol(spIi);
+        HealthCareProviderDTO hcpDTO = paServiceUtil.getHcpDTO(
+                tmpSpDTO.getStudyProtocolType().getValue(), 
+                investigatorIi, poOrgId);
+        participatingSiteService.addStudySiteInvestigator(
+                ssIi, crsDTO, hcpDTO, null, role);
     }
 
     private void addPrimaryContact(Ii ssIi, Ii investigatorIi, String poOrgId, DSet<Tel> list) throws PAException {
         ClinicalResearchStaffDTO crsDTO = paServiceUtil.getCrsDTO(investigatorIi, poOrgId);
-        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(spIi);
-        HealthCareProviderDTO hcpDTO = paServiceUtil.getHcpDTO(spDTO.getStudyProtocolType().getValue(), investigatorIi,
-                                                               poOrgId);
+        StudyProtocolDTO tmpSpDTO = studyProtocolService.getStudyProtocol(spIi);
+        HealthCareProviderDTO hcpDTO = paServiceUtil.getHcpDTO(
+                tmpSpDTO.getStudyProtocolType().getValue(), 
+                investigatorIi, poOrgId);
         participatingSiteService.addStudySitePrimaryContact(ssIi, crsDTO, hcpDTO, null, list);
     }
 
@@ -1580,7 +1693,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         if (StringUtils.isEmpty(studySiteId)) {
             return "historypopup";
         }
-        overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
+        siteStatusList = new ArrayList<StudyOverallStatusWebDTO>();
         List<StudySiteAccrualStatusDTO> isoList;
         try {
             isoList = studySiteAccrualStatusService.getStudySiteAccrualStatusByStudySite(
@@ -1592,7 +1705,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
                     .getStatusCode().getCode()).getDisplayName());
                 studySiteStatus.setStatusDate(PAUtil.normalizeDateString(
                 TsConverter.convertToTimestamp(iso.getStatusDate()).toString()));
-                overallStatusList.add(studySiteStatus);
+                studySiteStatus.setComments(iso.getComments().getValue());
+                siteStatusList.add(studySiteStatus);
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
@@ -1607,18 +1721,18 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     }
 
     /**
-     * @return the overallStatusList
+     * @return the siteStatusList
      */
-    public List<StudyOverallStatusWebDTO> getOverallStatusList() {
-        return overallStatusList;
+    public List<StudyOverallStatusWebDTO> getSiteStatusList() {
+        return siteStatusList;
     }
 
     /**
-     * @param overallStatusList the overallStatusList to set
+     * @param siteStatusList the SiteStatusList to set
      */
-    public void setOverallStatusList(
-            List<StudyOverallStatusWebDTO> overallStatusList) {
-        this.overallStatusList = overallStatusList;
+    public void setSiteStatusList(
+            List<StudyOverallStatusWebDTO> siteStatusList) {
+        this.siteStatusList = siteStatusList;
     }
     /**
       * @return the programCode
@@ -1726,6 +1840,23 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     public void setStudySubjectService(StudySubjectServiceLocal studySubjectService) {
         this.studySubjectService = studySubjectService;
     }
+    
+    
+    /**
+     * @return the statusTransitionService
+     */
+    public StatusTransitionService getStatusTransitionService() {
+        return statusTransitionService;
+    }
+
+    /**
+     * @param statusTransitionService the statusTransitionService to set
+     */
+    public void setStatusTransitionService(
+            StatusTransitionService statusTransitionService) {
+        this.statusTransitionService = statusTransitionService;
+    }
+
     /**
      * 
      * @return subjects subjects

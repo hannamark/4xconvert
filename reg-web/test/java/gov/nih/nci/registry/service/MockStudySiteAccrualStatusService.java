@@ -102,4 +102,23 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#softDelete(gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO)
+     */
+    @Override
+    public void softDelete(StudySiteAccrualStatusDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudySiteAccrualStatusService#getDeletedByStudySite(gov.nih.nci.iso21090.Ii)
+     */
+    @Override
+    public List<StudySiteAccrualStatusDTO> getDeletedByStudySite(Ii studySiteIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

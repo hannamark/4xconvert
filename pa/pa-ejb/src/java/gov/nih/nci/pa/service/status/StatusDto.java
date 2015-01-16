@@ -20,11 +20,14 @@ public class StatusDto {
     private boolean systemCreated;
     private Long id;
     
+    private Date updatedOn;
+    private String updatedBy;
+    
     private boolean editable;
     private boolean deletable;
     private boolean undoable;
     
-    private List<String> comments = new ArrayList<String>();
+    private String comments;
     
     private List<ValidationError> validationErrors = new ArrayList<ValidationError>();
     
@@ -156,25 +159,49 @@ public class StatusDto {
         this.undoable = undoable;
     }
     
+    
     /**
-     * Returns list of comments or empty list
-     * @return List<String> - List of comments
+     * @return the comments
      */
-    public List<String> getComments() {
-        if (comments == null) {
-            comments = new ArrayList<String>();
-        }
+    public String getComments() {
         return comments;
     }
-    
+
     /**
-     * Sets list of comments
-     * @param comments - List<String>
+     * @param comments the comments to set
      */
-    public void setComments(List<String> comments) {
+    public void setComments(String comments) {
         this.comments = comments;
     }
-    
+
+    /**
+     * @return the updatedOn
+     */
+    public Date getUpdatedOn() {
+        return updatedOn;
+    }
+
+    /**
+     * @param updatedOn the updatedOn to set
+     */
+    public void setUpdatedOn(Date updatedOn) {
+        this.updatedOn = updatedOn;
+    }
+
+    /**
+     * @return the updatedBy
+     */
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    /**
+     * @param updatedBy the updatedBy to set
+     */
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
     /**
      * Returns list of status transition validation errors or empty list
      * @return List<ValidationError>

@@ -5,24 +5,23 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteAccrualStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.pa.service.search.StudySiteAccrualStatusSortCriterion;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
-import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +32,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author asharma
@@ -49,34 +49,107 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<StudySiteAccrualStatus>
     implements StudySiteAccrualStatusServiceLocal {
 
-    private static String errMsgMethodNotImplemented = "Method not yet implemented.";
-    
     @EJB
 //    @IgnoreDependency
     private StudySiteAccrualAccessServiceLocal studySiteAccrualAccessServiceLocal;
+    
+    
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    private StudySiteAccrualStatus get(Long id) throws PAException {
+        if (id == null) {
+            throw new PAException(
+                    "Study Site Accrual Status identifier is required");
+        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudySiteAccrualStatus ssas = (StudySiteAccrualStatus) session.load(
+                StudySiteAccrualStatus.class, id);
+        if (ssas != null) {
+            return ssas;
+        } else {
+            throw new PAException(
+                    "Study Site Accrual Status not found for identifer, " + id);
+        }
+    }
 
     /**
-     * @param ii index
-     * @return StudySiteAccrualStatusDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii) throws PAException {
-        throw new PAException(errMsgMethodNotImplemented);
+        if (ii == null) {
+            throw new PAException(
+                    "Study Site Accrual Status identifier is required");
+        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudySiteAccrualStatus ssas = (StudySiteAccrualStatus) session.load(
+                StudySiteAccrualStatus.class, 
+                IiConverter.convertToLong(ii));
+        if (ssas != null) {
+            StudySiteAccrualStatusConverter converter = new StudySiteAccrualStatusConverter();
+            return converter.convertFromDomainToDto(ssas);
+        } else {
+            throw new PAException(
+                    "Study Site Accrual Status not found for identifer, " 
+                            + IiConverter.convertToLong(ii));
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public void softDelete(StudySiteAccrualStatusDTO dto) throws PAException {
+        checkCondition(StringUtils.isBlank(StConverter.convertToString(dto.getComments())), 
+                "A comment is required when deleting a status");
+        Ii ii = dto.getIdentifier();
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudySiteAccrualStatus ssas = (StudySiteAccrualStatus) session.load(
+                StudySiteAccrualStatus.class, 
+                IiConverter.convertToLong(ii));
+        if (ssas != null) {
+            ssas.setDeleted(true);
+            ssas.setComments(StConverter.convertToString(dto.getComments()));
+            ssas.setDateLastUpdated(new Date());
+            ssas.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
+                    UsernameHolder.getUser()));
+            session.saveOrUpdate(ssas);
+            session.flush();
+        } else {
+            throw new PAException(
+                    "Study Site Accrual Status not found for identifer, " 
+                            + IiConverter.convertToLong(ii));
+        }
     }
 
     /**
-     * @param dto StudySiteAccrualStatusDTO
-     * @return StudySiteAccrualStatusDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
-    public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
+    public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) 
+            throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-            String errMsg = "Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead.";
+            String errMsg = "Existing StudySiteAccrualStatus objects cannot be modified."
+                    + " Append new object instead.";
             throw new PAException(errMsg);
         }
+        return update(dto);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
+            String errMsg = "StudySiteAccrualStatus identifier is required for update.";
+            throw new PAException(errMsg);
+        }
+        return update(dto);
+    }
+    
+    private StudySiteAccrualStatusDTO update(StudySiteAccrualStatusDTO dto) throws PAException {
         StudySiteAccrualStatusDTO resultDto = null;
         Session session = PaHibernateUtil.getCurrentSession();
         StudySiteAccrualStatusDTO current = getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIi());
@@ -89,19 +162,29 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
 
         RecruitmentStatusCode newCode = RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode());
         Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
-
+        dto.setUpdatedOn(TsConverter.convertToTs(new Date()));
         validateNewStatus(newCode, newDate);
         if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
-            final StudySiteAccrualStatusConverter converter = new StudySiteAccrualStatusConverter();
-            StudySiteAccrualStatus bo = converter.convertFromDtoToDomain(dto);
+            StudySiteAccrualStatus bo =  null;
+            if (ISOUtil.isIiNull(dto.getIdentifier())) {
+                bo = new StudySiteAccrualStatus();
+            } else {
+                bo = get(IiConverter.convertToLong(dto.getIdentifier()));
+            }
+            StudySiteAccrualStatusConverter converter = new StudySiteAccrualStatusConverter();
+            converter.convertFromDtoToDomain(dto, bo);
+            bo.setDateLastUpdated(TsConverter.convertToTimestamp(dto.getUpdatedOn()));
+            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()));
             session.saveOrUpdate(bo);
+            session.flush();
+            
             resultDto = converter.convertFromDomainToDto(bo);
             TrialUpdatesRecorder
                     .recordUpdate(TrialUpdatesRecorder.RECRUITMENT_STATUS_DATE_UPDATED);
         }
         return resultDto;
     }
-
+    
     private void validateNewStatus(RecruitmentStatusCode newCode, Timestamp newDate) throws PAException {
         if (newCode == null) {
             throw new PAException("Study site accrual status must be set.");
@@ -109,16 +192,6 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
         if (newDate == null) {
             throw new PAException("Study site accrual status date must be set.");
         }
-    }
-
-    /**
-     * @param dto StudySiteAccrualStatusDTO
-     * @return StudySiteAccrualStatusDTO
-     * @throws PAException PAException
-     */
-    @Override
-    public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
-        throw new PAException(errMsgMethodNotImplemented);
     }
 
     /**
@@ -131,20 +204,19 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
             throw new PAException("Cannot call getStudySiteAccrualStatusByStudySite with a null identifier.");
         }
 
-        StudySiteAccrualStatus criteria = new StudySiteAccrualStatus();
-        StudySite ss = new StudySite();
-        ss.setId(IiConverter.convertToLong(studySiteIi));
-        criteria.setStudySite(ss);
-
-        PageSortParams<StudySiteAccrualStatus> params =
-            new PageSortParams<StudySiteAccrualStatus>(PAConstants.MAX_SEARCH_RESULTS, 0,
-                    StudySiteAccrualStatusSortCriterion.STUDY_SITE_ACCRUAL_ID, false);
-        List<StudySiteAccrualStatus> results =
-            search(new AnnotatedBeanSearchCriteria<StudySiteAccrualStatus>(criteria), params);
-
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select alias from StudySiteAccrualStatus alias join fetch alias.studySite ss "
+                            + " where ss.id = :ssId"
+                            + " and alias.deleted=false " 
+                            + getQueryOrderClause();        
+        Query query = session.createQuery(hql);
+        query.setParameter("ssId", IiConverter.convertToLong(studySiteIi));
+        @SuppressWarnings("unchecked")
+        List<StudySiteAccrualStatus> queryList = query.list();
+        StudySiteAccrualStatusConverter converter = new StudySiteAccrualStatusConverter();
         List<StudySiteAccrualStatusDTO> returnList = new ArrayList<StudySiteAccrualStatusDTO>();
-        for (StudySiteAccrualStatus bo : results) {
-            returnList.add(new StudySiteAccrualStatusConverter().convertFromDomainToDto(bo));
+        for (StudySiteAccrualStatus bo : queryList) {
+            returnList.add(converter.convertFromDomainToDto(bo));
         }
         return returnList;
     }
@@ -173,8 +245,9 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
         Map<Long, StudySiteAccrualStatus> result = new HashMap<Long, StudySiteAccrualStatus>();
         try {
             Query qry = PaHibernateUtil.getCurrentSession().createQuery(
-                    "from StudySiteAccrualStatus ssas join fetch ssas.studySite ss "
-                            + " where ss.id in (:ids) order by ssas.id");
+                    "from StudySiteAccrualStatus alias join fetch alias.studySite ss "
+                            + " where ss.id in (:ids) and alias.deleted=false "
+                            + getQueryOrderClause());
             qry.setParameterList("ids", ids);
             @SuppressWarnings("unchecked")
             List<StudySiteAccrualStatus> queryList = qry.list();
@@ -185,6 +258,49 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
             throw new PAException(e);
         }
         return result;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<StudySiteAccrualStatusDTO> getDeletedByStudySite(Ii studySiteIi)
+            throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select alias from StudySiteAccrualStatus alias join fetch alias.studySite ss "
+                            + " where ss.id = :ssId"
+                            + " and alias.deleted=true " + getQueryOrderClause();        
+        Query query = session.createQuery(hql);
+        query.setParameter("ssId", IiConverter.convertToLong(studySiteIi));
+        @SuppressWarnings("unchecked")
+        List<StudySiteAccrualStatus> queryList = query.list();
+        StudySiteAccrualStatusConverter converter = new StudySiteAccrualStatusConverter();
+        List<StudySiteAccrualStatusDTO> returnList = new ArrayList<StudySiteAccrualStatusDTO>();
+        for (StudySiteAccrualStatus bo : queryList) {
+            returnList.add(converter.convertFromDomainToDto(bo));
+        }
+        return returnList;
+    }
+    
+    /**
+     * 
+     * @return query order clause string
+     */
+    protected String getQueryOrderClause() {
+        return " order by alias.statusDate, alias.id";
+    }
+    
+    /**
+     * Checks the given condition and generates a PAException accordingly.
+     * @param condition The condition that must cause a PAException
+     * @param msg The message in the exception
+     * @throws PAException thrown if the given condition is true.
+     */
+    private void checkCondition(boolean condition, String msg) throws PAException {
+        if (condition) {
+            throw new PAException(msg);
+        }
     }
 
     /**

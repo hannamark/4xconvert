@@ -24,6 +24,7 @@ public class ParticipatingOrgDTO implements Serializable {
     private FunctionalRoleStatusCode statusCode;
     private RecruitmentStatusCode recruitmentStatus;
     private Timestamp recruitmentStatusDate;
+    private String recruitmentStatusComments;
     private Integer targetAccrualNumber;
     private String programCodeText;
     private String localProtocolIdentifier;
@@ -116,6 +117,21 @@ public class ParticipatingOrgDTO implements Serializable {
      */
     public void setRecruitmentStatusDate(Timestamp recruitmentStatusDate) {
         this.recruitmentStatusDate = recruitmentStatusDate;
+    }
+    
+
+    /**
+     * @return the recruitmentStatusComments
+     */
+    public String getRecruitmentStatusComments() {
+        return recruitmentStatusComments;
+    }
+
+    /**
+     * @param recruitmentStatusComments the recruitmentStatusComments to set
+     */
+    public void setRecruitmentStatusComments(String recruitmentStatusComments) {
+        this.recruitmentStatusComments = recruitmentStatusComments;
     }
 
     /**

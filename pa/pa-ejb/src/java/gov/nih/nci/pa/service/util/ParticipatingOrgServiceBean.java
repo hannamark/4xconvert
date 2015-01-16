@@ -174,6 +174,7 @@ public class ParticipatingOrgServiceBean implements ParticipatingOrgServiceLocal
             if (ssas != null) {
                 org.setRecruitmentStatus(ssas.getStatusCode());
                 org.setRecruitmentStatusDate(ssas.getStatusDate());
+                org.setRecruitmentStatusComments(ssas.getComments());
             }
             org.setPrimaryContacts(getPeople(pcs.get(org.getStudySiteId())));
             org.setPrincipalInvestigators(getPeople(pis.get(org.getStudySiteId())));

@@ -1701,6 +1701,10 @@
      <changeSet id="PO-8521" author="krylovd" runOnChange="true">
         <comment>Added email message templates.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8521.sql"/>
+     </changeSet>  
+     <changeSet id="PO-8413" author="chandrasekaravr" runOnChange="false">
+        <comment>Add "comments" and "deleted" columns to Study Site Accrual Status</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8413.sql"/>
      </changeSet>   
      <changeSet id="PO-8394" author="khandalkara">
         <comment>Set of changes to the "CTRO Override" flag in PA</comment>

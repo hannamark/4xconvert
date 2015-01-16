@@ -104,6 +104,7 @@ public class PaOrganizationDTO implements Serializable {
     private String nciNumber;
     private String recruitmentStatus;
     private String recruitmentStatusDate;
+    private String recruitmentStatusComments;
     private String functionalRole;
     private String targetAccrualNumber;
     private String address1;
@@ -241,6 +242,20 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setRecruitmentStatusDate(String recruitmentStatusDate) {
         this.recruitmentStatusDate = recruitmentStatusDate;
+    }
+
+    /**
+     * @return the recruitmentStatusComments
+     */
+    public String getRecruitmentStatusComments() {
+        return recruitmentStatusComments;
+    }
+
+    /**
+     * @param recruitmentStatusComments the recruitmentStatusComments to set
+     */
+    public void setRecruitmentStatusComments(String recruitmentStatusComments) {
+        this.recruitmentStatusComments = recruitmentStatusComments;
     }
 
     /**

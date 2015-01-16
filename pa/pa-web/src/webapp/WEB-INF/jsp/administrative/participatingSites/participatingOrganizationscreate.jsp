@@ -19,7 +19,8 @@
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
         <c:url value="/protected/popuplookupcontactpersons.action" var="lookupContactPersonsUrl"/>
         <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
-        <c:url value="/protected/participatingOrganizationshistoryPopup.action" var="lookupUrlstatusHistory" scope="request" />
+        <%-- <c:url value="/protected/participatingOrganizationshistoryPopup.action" var="lookupUrlstatusHistory" scope="request" /> --%>
+        <c:url value="/protected/siteStatusHistorypopupexecute.action" var="lookupUrlstatusHistory" scope="request" />
 
         <script language="javascript" type="text/javascript">
 
@@ -45,6 +46,7 @@
                     programCode: form.programCode.value,
                     recStatus: form.recStatus.value,
                     recStatusDate: form.recStatusDate.value,
+                    recStatusComments: form.recStatusComments.value,
                     targetAccrualNumber: form.targetAccrualNumber.value,
                     dateOpenedForAccrual: form.dateOpenedForAccrual.value,
                     dateClosedForAccrual: form.dateClosedForAccrual.value
@@ -70,7 +72,7 @@
             }
             
             function lookupStatusHistory() {
-                showPopup('${lookupUrlstatusHistory}', null, 'Status History');
+                showPopup('${lookupUrlstatusHistory}?studySiteId=<s:property value="cbValue"/>', null, 'Status History');
             } 
 
             function loadDiv(orgid) {
@@ -201,10 +203,10 @@
             <pa:sucessMessage/>
             <pa:failureMessage/>
             <s:if test="hasActionErrors()">
-                <div class="error_msg"><s:actionerror/></div>
+                <div class="error_msg"><s:actionerror escape="false"/></div>
             </s:if>
             <h2><fmt:message key="participatingOrganizations.subtitle" /></h2>
-            <table class="form">
+            <table class="form" id="formTable">
                 <tr>
                     <td colspan="2"><!--Tabs -->
                         <ul id="maintabs" class="tabs">
