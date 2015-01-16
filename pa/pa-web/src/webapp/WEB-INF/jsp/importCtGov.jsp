@@ -59,9 +59,10 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td colspan="2" class="info"><b>Note:</b> Any trials imported
-						using this feature will be registered as Abbreviated in CTRP
-						system.</td>
+					<td colspan="2" class="info"><b>Note:</b> Any trials imported using this feature will be registered
+					    as Abbreviated in CTRP system. If the trial should be classified as "Other" then please contact 
+					    the Clinical Trials Reporting Office staff at <a href="mailto:ncictro@mail.nih.gov">ncictro@mail.nih.gov</a> 
+					    after importing/registering this trial in the CTRP system.</td>
 				</tr>
 			</table>
 			<c:if test="${searchPerformed}">
