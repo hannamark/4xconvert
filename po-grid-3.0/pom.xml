@@ -259,7 +259,7 @@
     </dependencies>
     <repositories>
         <repository>
-            <id>central</id>
+            <id>cbiit</id>
             <name>CBIIT Nexus</name>
             <url>https://ncimvn.nci.nih.gov/nexus/content/groups/public</url>
         </repository>
