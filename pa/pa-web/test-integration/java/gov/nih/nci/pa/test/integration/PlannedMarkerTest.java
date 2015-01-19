@@ -362,7 +362,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
                 "xpath=//form//table[@class='data']//tr[1]//td[1]")
                 .trim(), "alpha"));
         clickAndWait("link=Select");
-        pause(1000);
+        pause(3000);
         driver.switchTo().defaultContent();
         selenium.check("id=plannedMarker.evaluationType-1");
         selenium.check("id=plannedMarker.assayType-1");
@@ -410,7 +410,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         selenium.type("id=name", "TestPendingMarker");
         selenium.type("id=message", "TestPendingMarker message");
         clickAndWait("link=Send Email");
-        pause(1000);
+        pause(3000);
         driver.switchTo().defaultContent();
         selenium.click("id=plannedMarker.evaluationType-1");
         selenium.click("id=plannedMarker.assayType-1");
