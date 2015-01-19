@@ -343,6 +343,9 @@ public abstract class AbstractRegistrySeleniumTest extends
         driver.switchTo().defaultContent();
         selenium.select("trialDTO_statusCode", "label=In Review");
         selenium.type("trialDTO_statusDate", today);
+        clickAndWaitAjax("id=addStatusBtn");
+        waitForElementToBecomeVisible(By.id("trialStatusHistoryTable"), 10);
+        
         selenium.type("trialDTO_startDate", tommorrow);
         selenium.click("trialDTO_startDateTypeAnticipated");
         selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
@@ -489,6 +492,9 @@ public abstract class AbstractRegistrySeleniumTest extends
         driver.switchTo().defaultContent();
         selenium.select("trialDTO_statusCode", "label=In Review");
         selenium.type("trialDTO_statusDate", today);
+        clickAndWaitAjax("id=addStatusBtn");
+        waitForElementToBecomeVisible(By.id("trialStatusHistoryTable"), 10);
+        
         selenium.type("trialDTO_startDate", tommorrow);
         selenium.click("trialDTO_startDateTypeAnticipated");
         selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
