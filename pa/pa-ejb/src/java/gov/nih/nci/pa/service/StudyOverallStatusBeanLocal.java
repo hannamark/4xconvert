@@ -130,6 +130,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateMidnight;
@@ -164,52 +165,68 @@ public class StudyOverallStatusBeanLocal extends
         return " order by alias.statusDate, alias.id";
     }
 
+    
+    @Override
+    public void createStatusHistory(Ii spIi,
+            List<StudyOverallStatusDTO> statusHistory) throws PAException {
+        for (StudyOverallStatusDTO newStatus : statusHistory) {
+            StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(spIi);
+            newStatus.setStudyProtocolIdentifier(spIi);
+            runChecksAndCreate(newStatus, oldStatus);
+        }
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public StudyOverallStatusDTO create(StudyOverallStatusDTO dto)
+    public StudyOverallStatusDTO create(StudyOverallStatusDTO newStatus) // NOPMD
             throws PAException {
-        return create(dto, false);
-    }
-    
-    @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" })
-    private StudyOverallStatusDTO create(StudyOverallStatusDTO dto, boolean relaxed) throws PAException {
-        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(newStatus.getIdentifier())) {
             throw new PAException("Existing StudyOverallStatus objects cannot be modified. Append new object instead.");
-        }
-        Session session = PaHibernateUtil.getCurrentSession();
+        }      
         // enforce business rules
-        StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(dto.getStudyProtocolIdentifier());
+        StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(newStatus.getStudyProtocolIdentifier());
         String currentText = null;
         if (oldStatus != null && oldStatus.getReasonText() != null) {
             currentText = oldStatus.getReasonText().getValue();
         }
         String newText = null;
-        if (dto.getReasonText() != null) {
-            newText = dto.getReasonText().getValue();
+        if (newStatus.getReasonText() != null) {
+            newText = newStatus.getReasonText().getValue();
         }
         boolean statusTextChanged = 
                 (currentText == null) ? (newText != null) : !currentText.equals(newText);
-        if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier()) 
+        if (oldStatus != null && !isTrialStatusOrDateChanged(newStatus, newStatus.getStudyProtocolIdentifier()) 
                 && !statusTextChanged) {
             //this means no change in update
-            updateAdditionalCommentsIfNeeded(oldStatus, dto.getAdditionalComments());
+            updateAdditionalCommentsIfNeeded(oldStatus, newStatus.getAdditionalComments());
             return oldStatus;
-        }
-        StudyStatusCode oldCode = null;
-        DateMidnight oldDate = null;
+        }       
+        return runChecksAndCreate(newStatus, oldStatus);
+    }
 
-        if (oldStatus != null) {
-            oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
+
+    /**
+     * @param newStatus
+     * @param oldStatus
+     * @return
+     * @throws PAException  
+     */
+    private StudyOverallStatusDTO runChecksAndCreate(
+            StudyOverallStatusDTO newStatus, StudyOverallStatusDTO oldStatus)
+            throws PAException {
+        DateMidnight oldDate = null;
+        if (oldStatus != null) {            
             oldDate = TsConverter.convertToDateMidnight(oldStatus.getStatusDate());
         }
-        StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
-        DateMidnight newDate = TsConverter.convertToDateMidnight(dto.getStatusDate());
-        validateStatusCodeAndDate(oldCode, newCode, oldDate, newDate, relaxed);
-        validateReasonText(dto);
+        StudyStatusCode newCode = StudyStatusCode.getByCode(newStatus.getStatusCode().getCode());
+        DateMidnight newDate = TsConverter.convertToDateMidnight(newStatus.getStatusDate());
+        validateStatusCodeAndDate(newCode, oldDate, newDate);
+        validateReasonText(newStatus);
 
-        StudyOverallStatus bo = convertFromDtoToDomain(dto);
+        Session session = PaHibernateUtil.getCurrentSession();
+        StudyOverallStatus bo = convertFromDtoToDomain(newStatus);
         session.saveOrUpdate(bo);
         StudyRecruitmentStatus srs = createStudyRecruitmentStatus(bo);
         if (srs != null) {
@@ -268,14 +285,6 @@ public class StudyOverallStatusBeanLocal extends
 
     }
 
-    private StudyOverallStatus getSystemStudyOverallStatus(StudyOverallStatusDTO newStatus, StudyStatusCode statusCode)
-            throws PAException {
-        StudyOverallStatus status = convertFromDtoToDomain(newStatus);
-        status.setSystemCreated(true);
-        status.setStatusCode(statusCode);
-        return status;
-    }
-
     /**
      * Performs validation of status date and code.
      * @param oldCode the current status code
@@ -284,15 +293,10 @@ public class StudyOverallStatusBeanLocal extends
      * @param newDate the date of the new transition
      * @throws PAException on error
      */
-    private void validateStatusCodeAndDate(StudyStatusCode oldCode, StudyStatusCode newCode, DateMidnight oldDate,
-            DateMidnight newDate, boolean relaxed) throws PAException {
+    private void validateStatusCodeAndDate(StudyStatusCode newCode, DateMidnight oldDate,
+            DateMidnight newDate) throws PAException {
         checkCondition(newCode == null, "Study status must be set.");
-        checkCondition(newDate == null, "Study status date must be set.");
-        if (oldCode != null && !StringUtils.equalsIgnoreCase(oldCode.getCode(), newCode.getCode())) {
-            checkCondition(!oldCode.canTransitionTo(newCode) && !relaxed,
-                           "Invalid study status transition from " + oldCode.getCode() + " to " + newCode.getCode()
-                                   + ".");
-        }
+        checkCondition(newDate == null, "Study status date must be set.");    
         checkCondition(oldDate != null && newDate.isBefore(oldDate),
                        "New current status date should be bigger/same as old date.");
     }
@@ -431,19 +435,7 @@ public class StudyOverallStatusBeanLocal extends
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void validateRelaxed(StudyOverallStatusDTO statusDto,
-            StudyProtocolDTO studyProtocolDTO) throws PAException {
-        StringBuilder errorMsg = new StringBuilder();
-        validate(statusDto, studyProtocolDTO, errorMsg, true, true);
-        if (errorMsg.length() > 0) {
-            throw new PAValidationException("Validation Exception " + errorMsg);
-        }
-    }    
-
+   
     private void validateReasonText(StudyOverallStatusDTO statusDto) throws PAException {
         StringBuilder errorMsg = new StringBuilder();
         StudyStatusCode status = StudyStatusCode.getByCode(CdConverter.convertCdToString(statusDto.getStatusCode()));
@@ -485,7 +477,7 @@ public class StudyOverallStatusBeanLocal extends
      * @return
      */
     private StringBuffer enforceBusniessRuleForUpdate(StudyOverallStatusDTO statusDto, // NOPMD
-            StudyProtocolDTO studyProtocolDTO, boolean relaxed, boolean skipTransitionValidation) throws PAException {
+            StudyProtocolDTO studyProtocolDTO) throws PAException {
         StringBuffer errMsg = new StringBuffer();
         StudyStatusCode newCode = StudyStatusCode.getByCode(statusDto.getStatusCode().getCode());
         DateMidnight newStatusDate = TsConverter.convertToDateMidnight(statusDto.getStatusDate());
@@ -501,13 +493,8 @@ public class StudyOverallStatusBeanLocal extends
 
         if (newCode == null) {
             errMsg.append("Invalid new study status: '" + statusDto.getStatusCode().getCode() + "'. ");
-        } else if (oldStatusCode != null
-                && !oldStatusCode.canTransitionTo(newCode) && !relaxed
-                && !skipTransitionValidation) {
-            errMsg.append("Invalid study status transition from '"
-                    + oldStatusCode.getCode() + "' to '" + newCode.getCode()
-                    + "'.  ");
-        }
+        } 
+        
         if (!ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())
                 && ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
 
@@ -701,12 +688,6 @@ public class StudyOverallStatusBeanLocal extends
     @Override
     public void validate(StudyOverallStatusDTO statusDto,
             StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
-        validate(statusDto, studyProtocolDTO, errorMsg, false, false);
-    }
-    
-    private void validate(StudyOverallStatusDTO statusDto,
-            StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg,
-            boolean relaxed, boolean skipTransitionValidation) {
         try {
             if (statusDto == null) {
                 errorMsg.append("Study Overall Status cannot be null. ");
@@ -715,7 +696,7 @@ public class StudyOverallStatusBeanLocal extends
                         && this.isTrialStatusOrDateChanged(statusDto,
                                 studyProtocolDTO.getIdentifier())) {
                     errorMsg.append(enforceBusniessRuleForUpdate(statusDto,
-                            studyProtocolDTO, relaxed, skipTransitionValidation));
+                            studyProtocolDTO));
                 }
                 errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
                 validateReasonText(statusDto);
@@ -724,13 +705,8 @@ public class StudyOverallStatusBeanLocal extends
             errorMsg.append(e.getMessage());
         }
     }
-
-    @Override    
-    public StudyOverallStatusDTO createRelaxed(StudyOverallStatusDTO dto)
-            throws PAException {       
-        return create(dto, true);
-    }
-
+    
+  
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void undo(final Ii id) throws PAException {
@@ -830,7 +806,7 @@ public class StudyOverallStatusBeanLocal extends
         TrialType trialType = BlConverter.convertToBool(dto
                 .getProprietaryTrialIndicator()) ? TrialType.ABBREVIATED
                 : TrialType.COMPLETE;
-        List<StatusDto> statusList = convertStatusHistory(dto);
+        List<StatusDto> statusList = getStatusHistoryByProtocol(dto.getIdentifier());
         List<StatusDto> validatedList;
         try {
             validatedList = statusTransitionService.validateStatusHistory(
@@ -849,9 +825,10 @@ public class StudyOverallStatusBeanLocal extends
         return validatedList;
     }
 
-    private List<StatusDto> convertStatusHistory(StudyProtocolDTO sp) throws PAException {
+    @Override
+    public List<StatusDto> getStatusHistoryByProtocol(Ii spID) throws PAException {
         List<StatusDto> list = new ArrayList<StatusDto>();
-        for (StudyOverallStatusDTO dto: getByStudyProtocol(sp.getIdentifier())) {
+        for (StudyOverallStatusDTO dto: getByStudyProtocol(spID)) {
             list.add(convert(dto));
         }
         return list;
@@ -863,6 +840,9 @@ public class StudyOverallStatusBeanLocal extends
         status.setStatusCode(CdConverter.convertCdToEnum(StudyStatusCode.class,
                 dto.getStatusCode()).name());
         status.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
+        status.setReason(StConverter.convertToString(dto.getReasonText()));
+        status.setComments(StConverter.convertToString(dto
+                .getAdditionalComments()));
         status.setSystemCreated(BlConverter.convertToBool(dto
                 .getSystemCreated()));
         return status;

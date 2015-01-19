@@ -413,14 +413,8 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         dto.setReasonText(StConverter.convertToSt("Test"));
         final Ii studyID = IiConverter.convertToStudyProtocolIi(spNew.getId());
         dto.setStudyProtocolIdentifier(studyID);
-
-        try {
-            bean.create(dto);
-            fail();
-        } catch (PAException e) {
-        }
         
-        bean.createRelaxed(dto);
+        bean.create(dto);
         
     }
     

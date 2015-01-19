@@ -384,6 +384,7 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
 
     @Override
     public void prepare() {
+        super.prepare();
         currentUser = UsernameHolder.getUser();
     }    
     

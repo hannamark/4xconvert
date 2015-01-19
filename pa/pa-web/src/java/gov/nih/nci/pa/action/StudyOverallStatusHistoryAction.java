@@ -464,7 +464,7 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
                 .getCurrentByStudyProtocol(studyProtocolIdentifier);
         if (current.getIdentifier().getExtension().equals(dto.getIdentifier().getExtension())) {
             StudyProtocolDTO studyProtocolDTO = studyProtocolServiceLocal.getStudyProtocol(studyProtocolIdentifier);
-            studyOverallStatusService.validateRelaxed(dto, studyProtocolDTO);
+            studyOverallStatusService.validate(dto, studyProtocolDTO);
         }
     }
 

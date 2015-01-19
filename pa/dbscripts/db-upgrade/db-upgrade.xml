@@ -1710,4 +1710,8 @@
         <comment>Set of changes to the "CTRO Override" flag in PA</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8394.sql"/>
      </changeSet>
+     <changeSet id="PO-8418" author="krylovd">
+        <comment>Added status_history to study_protocol_stage.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8418.sql"/>
+     </changeSet>  
 </databaseChangeLog>

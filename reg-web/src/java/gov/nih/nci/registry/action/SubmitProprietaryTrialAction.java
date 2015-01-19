@@ -443,6 +443,7 @@ public class SubmitProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
 
     @Override
     public void prepare() {
+        super.prepare();
         currentUser = UsernameHolder.getUser();    
         ctGovSyncService = PaRegistry.getCTGovSyncService();
         studyProtocolService = PaRegistry.getStudyProtocolService();

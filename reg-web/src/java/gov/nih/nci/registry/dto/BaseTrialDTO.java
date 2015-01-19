@@ -56,6 +56,7 @@ public class BaseTrialDTO implements Serializable { // NOPMD
     private Boolean nciGrant;
     private String accrualDiseaseCodeSystem;
     private Set<StudyAlternateTitleDTO> studyAlternateTitles;
+   
 
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
 
@@ -512,5 +513,6 @@ public class BaseTrialDTO implements Serializable { // NOPMD
             Set<StudyAlternateTitleDTO> studyAlternateTitles) {
         this.studyAlternateTitles = studyAlternateTitles;
     }
+    
 
 }

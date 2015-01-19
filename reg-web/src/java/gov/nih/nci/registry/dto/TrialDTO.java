@@ -7,12 +7,16 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.service.status.StatusDto;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.hibernate.validator.NotEmpty;
 
 /**
@@ -52,9 +56,6 @@ public class TrialDTO extends BaseTrialDTO {
     private String contactPhone;
     private String contactEmail;
 
-    private String statusCode;
-    private String statusDate;
-    private String reason;
     private String startDate;
     private String primaryCompletionDate;
     private String completionDate;
@@ -91,6 +92,8 @@ public class TrialDTO extends BaseTrialDTO {
     private List<Ii> secondaryIdentifierList;
     private List<Ii> secondaryIdentifierAddList;
     private String assignedIdentifier;
+    
+    private Collection<StatusDto> statusHistory = new ArrayList<StatusDto>();
      
 
     /**
@@ -262,45 +265,50 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the statusCode
      */
-    @NotEmpty(message = "error.submit.statusCode")
     public String getStatusCode() {
-        return statusCode;
+        return getStatusHistory().size() == 0 ? null : StudyStatusCode.valueOf(
+                getLatestStatus().getStatusCode()).getCode();
     }
+
+   
 
     /**
      * @param statusCode the statusCode to set
      */
     public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
+        // NO-OP
     }
 
     /**
      * @return the statusDate
      */
-    @NotEmpty(message = "error.submit.statusDate")
     public String getStatusDate() {
-        return statusDate;
+        return getStatusHistory().size() == 0 ? null : DateFormatUtils.format(
+                getLatestStatus().getStatusDate(),
+                "MM/dd/yyyy");
     }
 
     /**
      * @param statusDate the statusDate to set
      */
     public void setStatusDate(String statusDate) {
-        this.statusDate = statusDate;
+        // NO-OP
     }
 
     /**
      * @return the reason
      */
     public String getReason() {
-        return reason;
+        return getStatusHistory().size() == 0 ? null : getLatestStatus()
+                .getReason();
     }
 
     /**
-     * @param reason the reason to set
+     * @param reason
+     *            the reason to set
      */
     public void setReason(String reason) {
-        this.reason = reason;
+        // NO-OP
     }
 
     /**
@@ -871,5 +879,25 @@ public class TrialDTO extends BaseTrialDTO {
         this.responsiblePersonAffiliationOrgId = responsiblePersonAffiliationOrgId;
     }
     
+    /**
+     * @return the statuses
+     */
+    @NotEmpty (message = "error.submit.statusHistory")
+    public Collection<StatusDto> getStatusHistory() {
+        return statusHistory;
+    }
+    /**
+     * @param statuses the statuses to set
+     */
+    public void setStatusHistory(Collection<StatusDto> statuses) {
+        this.statusHistory = statuses;
+    }
    
+    /**
+     * @return
+     */
+    private StatusDto getLatestStatus() {
+        return new ArrayList<StatusDto>(getStatusHistory())
+                .get(getStatusHistory().size() - 1);
+    }
 }

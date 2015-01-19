@@ -759,16 +759,69 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     }
     // CHECKSTYLE:ON
     
+    @Override
+    // CHECKSTYLE:OFF More than 7 Parameters
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Ii createCompleteInterventionalStudyProtocol( // NOPMD
+            StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<OrganizationDTO> summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException {
+        return createCompleteInterventionalStudyProtocol(studyProtocolDTO,
+                Arrays.asList(overallStatusDTO), studyIndldeDTOs,
+                studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, partyDTO,
+                leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
+                summary4OrganizationDTO, summary4StudyResourcingDTO,
+                studyRegAuthDTO, isBatchMode, owners);
+    }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Ii createCompleteInterventionalStudyProtocol( // NOPMD
+            StudyProtocolDTO studyProtocolDTO,
+            List<StudyOverallStatusDTO> statusHistory,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode)
+            throws PAException {
+        return createCompleteInterventionalStudyProtocol(studyProtocolDTO,
+                statusHistory, studyIndldeDTOs, studyResourcingDTOs,
+                documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, partyDTO,
+                leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
+                summary4organizationDTO, summary4studyResourcingDTO,
+                studyRegAuthDTO, isBatchMode, null);
+    }
+    
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings({ "PMD.ExcessiveParameterList",
-            "PMD.CyclomaticComplexity" })    
-    @Override
-    // CHECKSTYLE:OFF More than 7 Parameters
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
-            StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
+            "PMD.CyclomaticComplexity" })
+    // CHECKSTYLE:OFF More than 7 Parameters    
+    private Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO, // NOPMD
+            List<StudyOverallStatusDTO> statusHistory, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, ResponsiblePartyDTO partyDTO,  
@@ -781,6 +834,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             copyStudyResourcing(studyResourcingDTOs);
             TrialRegistrationValidator validator = createValidator();
             StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);
+            StudyOverallStatusDTO overallStatusDTO = statusHistory.isEmpty() ? null
+                : statusHistory.get(statusHistory.size() - 1);
             validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
                                        partyDTO,
                                        summary4OrganizationDTO,
@@ -825,8 +880,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
             Ii spIi = createStudyProtocol(studyProtocolDTO);
             paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
-            overallStatusDTO.setStudyProtocolIdentifier(spIi);
-            studyOverallStatusService.create(overallStatusDTO);
+            
+            studyOverallStatusService.createStatusHistory(spIi, statusHistory);
+            
             paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), spIi);
             paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
 
@@ -1046,7 +1102,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                         .convertCdToEnum(StudyStatusCode.class,
                                 currentStatus.getStatusCode()))) {
             overallStatusDTO.setStudyProtocolIdentifier(spIi);
-            studyOverallStatusService.createRelaxed(overallStatusDTO);
+            studyOverallStatusService.create(overallStatusDTO);
         }
     }
 
@@ -2546,7 +2602,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         String orgCtepID = null;
         List<String> ccrLeadIDs =  Arrays.asList(ccrTrialList.replaceAll("\\s+", "").split(","));
          try {
-            Long orgPoId = new Long(IiConverter.convertToString(leadOrgIdentifier));
+            Long orgPoId = Long.valueOf(IiConverter.convertToString(leadOrgIdentifier));
                    
             PaOrganizationDTO paOrganizationDTO =  PADomainUtils.getOrgDetailsPopup(orgPoId + "");
              if (paOrganizationDTO != null) {
@@ -2577,5 +2633,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             CTGovUploadServiceLocal ctGovUploadServiceLocal) {
         this.ctGovUploadServiceLocal = ctGovUploadServiceLocal;
     }
+
+   
         
 }

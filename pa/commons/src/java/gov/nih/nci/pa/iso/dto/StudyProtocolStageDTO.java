@@ -68,6 +68,8 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
     private St secondaryPurposes;
     private St secondaryPurposeOtherText;
     private Bl nciGrant;
+    
+    private String statusHistory;
 
     /**
      * @return the localProtocolIdentifier
@@ -578,6 +580,18 @@ public class StudyProtocolStageDTO extends AbstractStudyProtocolDTO {
      */
     public void setResponsibleAffilId(Ii responsibleAffilId) {
         this.responsibleAffilId = responsibleAffilId;
+    }
+    /**
+     * @return the statusHistory
+     */
+    public String getStatusHistory() {
+        return statusHistory;
+    }
+    /**
+     * @param statusHistory the statusHistory to set
+     */
+    public void setStatusHistory(String statusHistory) {
+        this.statusHistory = statusHistory;
     }
 
 }

@@ -19,6 +19,7 @@ import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -26,6 +27,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -48,8 +50,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -58,6 +62,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -150,7 +155,7 @@ public abstract class AbstractRegWebTest {
         ActionContext.setContext(null);
     }
 
-    protected TrialDTO getMockTrialDTO() {
+    protected TrialDTO getMockTrialDTO()  {
         TrialDTO trialDTO = new TrialDTO();
         trialDTO.setAmendmentDate("01/20/2009");
         trialDTO.setLocalAmendmentNumber("localAmendmentNumber");
@@ -170,8 +175,20 @@ public abstract class AbstractRegWebTest {
         trialDTO.setIdentifier("1");
         trialDTO.setContactEmail("contactEmail@mail.com");
         trialDTO.setContactPhone("contact Phone ");
-        trialDTO.setStatusDate("01/20/2008");
-        trialDTO.setStatusCode("Active");
+        
+        try {
+            StatusDto status = new StatusDto();
+            status.setReason("");
+            status.setStatusCode(StudyStatusCode.ACTIVE.name());
+            status.setStatusDate(DateUtils.parseDate("01/20/2008",
+                    new String[] { "MM/dd/yyyy" }));
+            trialDTO.setStatusHistory(Arrays.asList(status));
+            ServletActionContext.getRequest().getSession()
+                    .setAttribute("statusHistoryList", Arrays.asList(status));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
         trialDTO.setPrimaryCompletionDateType("Anticipated");
 
         Date date = new Date();
@@ -181,7 +198,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setPrimaryCompletionDate(futureDate);
         trialDTO.setStartDateType("Actual");
         trialDTO.setStartDate("01/20/2008");
-        trialDTO.setReason("");
+       
         SummaryFourSponsorsWebDTO summarySp = new SummaryFourSponsorsWebDTO();
         summarySp.setRowId(UUID.randomUUID().toString());
         summarySp.setOrgId("1");
@@ -563,20 +580,28 @@ public abstract class AbstractRegWebTest {
 
    protected String getTomorrowDate() {
 
-       // get a calendar instance, which defaults to "now"
-       Calendar calendar = Calendar.getInstance();
-
-       // get a date to represent "today"
-       Date today = calendar.getTime();
-       System.out.println("today:    " + today);
-
-       // add one day to the date/calendar
-       calendar.add(Calendar.DAY_OF_YEAR, 1);
-
-       // now get "tomorrow"
-       Date tomorrow = calendar.getTime();
+       Date tomorrow = getTomorrowAsDate();
        return PAUtil.normalizeDateString(tomorrow.toString());
    }
+
+    /**
+     * @return
+     */
+    protected Date getTomorrowAsDate() {
+        // get a calendar instance, which defaults to "now"
+        Calendar calendar = Calendar.getInstance();
+
+        // get a date to represent "today"
+        Date today = calendar.getTime();
+        System.out.println("today:    " + today);
+
+        // add one day to the date/calendar
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+        // now get "tomorrow"
+        Date tomorrow = calendar.getTime();
+        return tomorrow;
+    }
 
    protected StudyProtocolDTO setupSpDto() {
        Ii spId = new Ii();

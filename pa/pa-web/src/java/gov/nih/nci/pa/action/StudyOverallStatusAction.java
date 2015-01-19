@@ -365,7 +365,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         if (sb.length() > 0) {
             throw new PAException(sb.toString());
         }
-        studyOverallStatusService.validateRelaxed(statusDto, studyProtocolDTO);
+        studyOverallStatusService.validate(statusDto, studyProtocolDTO);
         
     }
 
@@ -401,7 +401,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
                 statusDto.setIdentifier(sosDto.getIdentifier());
                 studyOverallStatusService.update(statusDto);
             } else {
-                studyOverallStatusService.createRelaxed(statusDto);
+                studyOverallStatusService.create(statusDto);
             }
             // set the current date and status to the session
             spqDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));

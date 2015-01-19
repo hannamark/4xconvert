@@ -195,6 +195,7 @@ public class TrialValidator {
      * @param addFieldError
      *            Map<String, String>
      */
+    @SuppressWarnings("deprecation")
     public void validateNonInterventionalTrialDTO(BaseTrialDTO trialDto,
             Map<String, String> addFieldError) {
         if (PAConstants.NON_INTERVENTIONAL.equals(trialDto.getTrialType())) {
@@ -459,11 +460,7 @@ public class TrialValidator {
         StudyStatusCode newCode = StudyStatusCode.getByCode(trialDto.getStatusCode());
         Timestamp newStatusTimestamp = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
         StudyOverallStatusWebDTO dto = getStatusDTO(trialDto.getIdentifier());
-        StudyStatusCode oldStatusCode = StudyStatusCode.getByCode(dto.getStatusCode());
-        if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode)) {
-            addActionError.add("Invalid study status transition from '" + oldStatusCode.getCode() + "' to '"
-                    + newCode.getCode() + "'.  ");
-        }
+        StudyStatusCode oldStatusCode = StudyStatusCode.getByCode(dto.getStatusCode());        
         if (trialDto.getStartDateType() != null && trialDto.getPrimaryCompletionDateType() != null) {
             validateStudyStatusApprovedToActiveOrWithdrawn(trialDto, addActionError, newCode, newStatusTimestamp,
                                                            oldStatusCode);
@@ -485,10 +482,7 @@ public class TrialValidator {
     private void validateStudyStatusForCompleteOrAdminComplete(TrialDTO trialDto, Collection<String> addActionError,
             StudyStatusCode newCode) throws PAException {
         if (StudyStatusCode.COMPLETE == newCode || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newCode) {
-            Ii spIi = IiConverter.convertToStudyProtocolIi(Long.valueOf(trialDto.getIdentifier()));
-            StudyOverallStatusDTO oldStatusDto =
-                    PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(spIi);
-            if (ANTICIPATED_DATETYPE.equals(trialDto.getPrimaryCompletionDateType())) {
+            if (ANTICIPATED_DATETYPE.equals(trialDto.getPrimaryCompletionDateType())) { // NOPMD
                 addActionError.add("Primary Completion Date cannot be 'Anticipated' when "
                         + "Current Trial Status is '" + newCode.getCode() + "'.");
             }

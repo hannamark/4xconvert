@@ -149,6 +149,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
      */
     @Override
     public void prepare() {
+        super.prepare();
         currentUser = UsernameHolder.getUser();
         lookUpTableService = PaRegistry.getLookUpTableService();
         studyInboxService = PaRegistry.getStudyInboxService();

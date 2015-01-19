@@ -18,9 +18,13 @@ import gov.nih.nci.registry.util.Constants;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +44,9 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
     @Before
     public void init() {
         action.prepare();
+        action.setServletRequest(ServletActionContext.getRequest());
+        ServletActionContext.getRequest().getSession()
+                .setAttribute("statusHistoryList", new ArrayList<>());
     }
     
     @Test
@@ -381,18 +388,24 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
 
     @Test
     public void testValidateTrialDatesRule18Fail() {
-        TrialDTO dto = getMockTrialDTO();
-        dto.setStatusDate(getTomorrowDate());
+        TrialDTO dto = getMockTrialDTO();       
+        dto.getStatusHistory().iterator().next().setStatusDate(getTomorrowAsDate());
+        
         action.setTrialDTO(dto);
         assertEquals("error", action.review());
         assertTrue(action.getFieldErrors().containsKey("trialDTO.statusDate"));
-        assertEquals("Please enter a valid date", action.getFieldErrors().get("trialDTO.statusDate").get(0));
+        assertEquals("Date cannot be in the future", action.getFieldErrors().get("trialDTO.statusDate").get(0));
     }
     
     @Test
-    public void testValidateTrialDatesRule18Pass() {
+    public void testValidateTrialDatesRule18Pass() throws ParseException {
         TrialDTO dto = getMockTrialDTO();
-        dto.setStatusDate("02/22/2009");
+        dto.getStatusHistory()
+                .iterator()
+                .next()
+                .setStatusDate(
+                        DateUtils.parseDate("02/22/2009",
+                                new String[] { "MM/dd/yyyy" }));
         action.setTrialDTO(dto);
         action.setPageFrom("submitTrial");
         assertEquals("error", action.review());
@@ -483,11 +496,18 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
     }
     
     @Test
-    public void testValidateTrialDatesRule21PassStatusAndStartDatesAreSame() throws URISyntaxException {
+    public void testValidateTrialDatesRule21PassStatusAndStartDatesAreSame() throws URISyntaxException, ParseException {
         //Trial Start date is same Current Trial Status Date
         TrialDTO dto = getMockTrialDTO();
-        dto.setStatusCode("Active");
-        dto.setStatusDate("01/22/2009");
+        
+        dto.getStatusHistory()
+                .iterator()
+                .next()
+                .setStatusDate(
+                        DateUtils.parseDate("01/22/2009",
+                                new String[] { "MM/dd/yyyy" }));
+        dto.getStatusHistory().iterator().next().setStatusCode("ACTIVE");
+        
         dto.setStartDate("01/22/2009");
         action.setTrialDTO(dto);
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
@@ -500,11 +520,17 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
     }
     
     @Test
-    public void testValidateTrialDatesRule21PassStartSmallerThanStatusDates() throws URISyntaxException {
+    public void testValidateTrialDatesRule21PassStartSmallerThanStatusDates() throws URISyntaxException, ParseException {
         TrialDTO dto = getMockTrialDTO();
-        dto.setStatusCode("Active");
-        //Trial Start date is smaller Current Trial Status Date
-        dto.setStatusDate("01/22/2009");
+        
+        dto.getStatusHistory()
+                .iterator()
+                .next()
+                .setStatusDate(
+                        DateUtils.parseDate("01/22/2009",
+                                new String[] { "MM/dd/yyyy" }));
+        dto.getStatusHistory().iterator().next().setStatusCode("ACTIVE");
+        
         dto.setStartDate("01/22/2008");
         action.setTrialDTO(dto);
         URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
@@ -544,16 +570,19 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         assertEquals("error", action.partialSave());
 
         action = new SubmitTrialAction();
+        action.setServletRequest(ServletActionContext.getRequest());
         TrialDTO  trialDto = getMockTrialDTO();
         trialDto.setLeadOrganizationIdentifier("");
         action.setTrialDTO(trialDto);
         assertEquals("error", action.partialSave());
 
         action = new SubmitTrialAction();
+        action.setServletRequest(ServletActionContext.getRequest());
         action.setTrialDTO(getMockTrialDTO());
         assertEquals("review", action.partialSave());
 
         action = new SubmitTrialAction();
+        action.setServletRequest(ServletActionContext.getRequest());
         trialDto = getMockTrialDTO();
         trialDto.setStudyProtocolId("1");
         trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.NO);
@@ -564,6 +593,7 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         assertEquals("review", action.partialSave());
 
         action = new SubmitTrialAction();
+        action.setServletRequest(ServletActionContext.getRequest());
         trialDto = getMockTrialDTO();
         trialDto.setStudyProtocolId("1");
         trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.YES);
@@ -577,6 +607,7 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         session.removeAttribute(Constants.GRANT_LIST);
 
         action = new SubmitTrialAction();
+        action.setServletRequest(ServletActionContext.getRequest());
         trialDto = getMockTrialDTO();
         trialDto.setStudyProtocolId("1");
         trialDto.setFdaRegulatoryInformationIndicator(CommonsConstant.YES);
@@ -593,17 +624,20 @@ public class SubmitTrialActionTest extends AbstractHibernateTestCase{
         assertEquals("error", action.completePartialSubmission());
 
         action = new SubmitTrialAction();
+        action.setServletRequest(ServletActionContext.getRequest());
         action.prepare();
         MockHttpServletRequest request = (MockHttpServletRequest)ServletActionContext.getRequest();
         request.setupAddParameter("studyProtocolId", "1");
         assertEquals("success", action.completePartialSubmission());
         
         action = new SubmitTrialAction();
+        action.setServletRequest(ServletActionContext.getRequest());
         action.prepare();
         request.setupAddParameter("studyProtocolId", "2");
         assertEquals("success", action.completePartialSubmission());
         
         action = new SubmitTrialAction();
+        action.setServletRequest(ServletActionContext.getRequest());
         action.prepare();
         request.setupAddParameter("studyProtocolId", "3");
         assertEquals("success", action.completePartialSubmission());

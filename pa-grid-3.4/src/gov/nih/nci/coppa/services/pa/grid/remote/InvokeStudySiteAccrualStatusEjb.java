@@ -76,4 +76,17 @@ public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusSe
         throw new PAException("Not yet implemented");
     }
 
+   
+    public void softDelete(StudySiteAccrualStatusDTO dto) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
+   
+    public List<StudySiteAccrualStatusDTO> getDeletedByStudySite(Ii studySiteIi)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

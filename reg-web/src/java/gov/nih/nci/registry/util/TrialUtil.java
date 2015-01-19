@@ -17,7 +17,6 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyFundingStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndIdeStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
-import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolStageDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
@@ -389,14 +388,10 @@ public class TrialUtil extends TrialConvertUtils {
         if (!(isoList.isEmpty())) {
             copyGrantList(isoList, trialDTO);
         }
-        // copy the reason for trial
-        StudyOverallStatusDTO sosDto = null;
-        sosDto = PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(studyProtocolIi);
-        if (sosDto != null) {
-            trialDTO.setReason(StConverter.convertToString(sosDto.getReasonText()));
-        } else {
-            trialDTO.setReason(null);
-        }
+        
+        trialDTO.setStatusHistory(PaRegistry.getStudyOverallStatusService()
+                .getStatusHistoryByProtocol(studyProtocolIi));
+        
         copyRegulatoryInformation(studyProtocolIi, trialDTO);
         copyCollaborators(studyProtocolIi, trialDTO);
         copyParticipatingSites(studyProtocolIi, trialDTO);
@@ -597,6 +592,7 @@ public class TrialUtil extends TrialConvertUtils {
         copyTo.setCompletionDate(copyFrom.getCompletionDate());
         copyTo.setCompletionDateType(copyFrom.getCompletionDateType());
         copyTo.setReason(copyFrom.getReason());
+        copyTo.setStatusHistory(copyFrom.getStatusHistory());
     }
 
     /**
@@ -950,7 +946,6 @@ public class TrialUtil extends TrialConvertUtils {
         this.correlationUtils = correlationUtils;
     }
 
-      
     
     
 }

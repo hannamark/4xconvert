@@ -1,12 +1,11 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.lov.ConsortiaTrialCategoryCode;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -32,7 +31,7 @@ public class AbstractBaseProprietaryTrialAction extends ManageFileAction
     private ProprietaryTrialDTO trialDTO;
 
     // CHECKSTYLE:ON
-    private HttpServletResponse servletResponse;
+   
 
     private String trialAction;
 
@@ -55,21 +54,7 @@ public class AbstractBaseProprietaryTrialAction extends ManageFileAction
         this.trialDTO = trialDTO;
     }
 
-    /**
-     * @return the servletResponse
-     */
-    public final HttpServletResponse getServletResponse() {
-        return servletResponse;
-    }
-
-    /**
-     * @param servletResponse
-     *            the servletResponse to set
-     */
-    public final void setServletResponse(HttpServletResponse servletResponse) {
-        this.servletResponse = servletResponse;
-    }
-
+  
     /**
      * Gets the trial action.
      * 
@@ -115,6 +100,11 @@ public class AbstractBaseProprietaryTrialAction extends ManageFileAction
             map.put(code, "No - " + code);
         }
         return map;
+    }
+    
+    @Override
+    public final TrialType getTrialTypeHandledByThisClass() {     
+        return TrialType.ABBREVIATED;
     }
 
 }

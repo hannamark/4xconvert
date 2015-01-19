@@ -3,9 +3,8 @@
  */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.registry.dto.TrialDTO;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.interceptor.ServletResponseAware;
 
@@ -25,8 +24,6 @@ abstract class AbstractBaseTrialAction extends ManageFileAction implements
 
     private TrialDTO trialDTO;
 
-    private HttpServletResponse servletResponse;
-
     private String trialAction;
 
     /**
@@ -44,21 +41,7 @@ abstract class AbstractBaseTrialAction extends ManageFileAction implements
         this.trialDTO = trialDTO;
     }
 
-    /**
-     * @return the servletResponse
-     */
-    public final HttpServletResponse getServletResponse() {
-        return servletResponse;
-    }
-
-    /**
-     * @param servletResponse
-     *            the servletResponse to set
-     */
-    public final void setServletResponse(HttpServletResponse servletResponse) {
-        this.servletResponse = servletResponse;
-    }
-
+    
     /**
      * @return the trialAction
      */
@@ -74,4 +57,8 @@ abstract class AbstractBaseTrialAction extends ManageFileAction implements
         this.trialAction = trialAction;
     }
 
+    @Override
+    public final TrialType getTrialTypeHandledByThisClass() {
+        return TrialType.COMPLETE;
+    }
 }

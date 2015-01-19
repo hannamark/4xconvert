@@ -26,6 +26,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
@@ -137,6 +138,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     @Override
     public void prepare()  {
+        super.prepare();
         currentUser = UsernameHolder.getUser();
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyOverallStatusService = PaRegistry.getStudyOverallStatusService();
@@ -1031,4 +1033,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         return existingDocuments;
     }
 
+    @Override
+    public final TrialType getTrialTypeHandledByThisClass() {
+        return TrialType.COMPLETE;
+    }
 }

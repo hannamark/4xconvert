@@ -79,6 +79,7 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.DocumentDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
@@ -104,15 +105,13 @@ import org.apache.commons.collections.list.LazyList;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 /**
  * The Class ManageFileAction.
  *
  * @author Kalpana Guthikonda
  */
 @SuppressWarnings("PMD.TooManyMethods")
-public class ManageFileAction extends ActionSupport {
+public class ManageFileAction extends StatusHistoryManagementAction {
 
     private static final long serialVersionUID = 1L;
     private static final String SUBMIT_TRIAL_PAGE = "submitTrial";
@@ -665,6 +664,16 @@ public class ManageFileAction extends ActionSupport {
     public void setAccrualDiseaseTerminologyEditable(
             Boolean accrualDiseaseTerminologyEditable) {
         this.accrualDiseaseTerminologyEditable = accrualDiseaseTerminologyEditable;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.registry.action.StatusHistoryManagementAction#getTrialTypeHandledByThisClass()
+     */
+    @Override
+    protected TrialType getTrialTypeHandledByThisClass() {      
+        // Sub-classes MUST override!
+        // Can't make this class abstract because it is instantiated by Struts (see struts.xml).
+        return null;
     }
     
 }

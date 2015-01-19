@@ -119,6 +119,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -137,12 +138,18 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -348,6 +355,29 @@ public class TrialConvertUtils {
         isoDto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO
                 .getStatusDate())));
         return isoDto;
+    }
+    
+    /**
+     * @param trialDTO
+     *            TrialDTO
+     * @return List<StudyOverallStatusDTO>
+     */
+    @SuppressWarnings("deprecation")
+    public List<StudyOverallStatusDTO> convertStatusHistory(TrialDTO trialDTO) {
+        List<StudyOverallStatusDTO> list = new ArrayList<StudyOverallStatusDTO>();
+        for (StatusDto status : trialDTO.getStatusHistory()) {
+            StudyOverallStatusDTO isoDto = new StudyOverallStatusDTO();
+            isoDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode
+                    .valueOf(status.getStatusCode())));
+            isoDto.setReasonText(StConverter.convertToSt(status.getReason()));
+            isoDto.setStatusDate(TsConverter.convertToTs((status
+                    .getStatusDate())));
+            isoDto.setAdditionalComments(StConverter.convertToSt(status
+                    .getComments()));
+            isoDto.setIdentifier(IiConverter.convertToIi(status.getId()));
+            list.add(isoDto);
+        }
+        return list;
     }
 
     /**
@@ -957,7 +987,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
        trialDto.setPropritaryTrialIndicator(CommonsConstant.YES);
    }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation" })
     private void convertNonPropDtoToStage(TrialDTO trialDto, StudyProtocolStageDTO spStageDTO) {
         spStageDTO.setPiIdentifier(IiConverter.convertToIi(trialDto.getPiIdentifier()));
         spStageDTO.setSponsorIdentifier(IiConverter.convertToIi(trialDto.getSponsorIdentifier()));
@@ -1017,6 +1047,17 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         spStageDTO.setNciGrant(BlConverter.convertToBl(trialDto.getNciGrant()));
         spStageDTO.getSecondaryIdentifierList().addAll(trialDto.getSecondaryIdentifierList());
         spStageDTO.setAccrualDiseaseCodeSystem(StConverter.convertToSt(trialDto.getAccrualDiseaseCodeSystem()));
+        
+        // status history
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        XMLEncoder e = new XMLEncoder(bos);
+        e.writeObject(new ArrayList<StatusDto>(trialDto.getStatusHistory()));
+        e.flush();
+        e.close();
+        try {
+            spStageDTO.setStatusHistory(bos.toString("UTF-8"));
+        } catch (UnsupportedEncodingException e1) { //NOPMD
+        }
     }
     
     
@@ -1137,6 +1178,7 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
     * @param trialDto
     * @throws PAException
     */
+    @SuppressWarnings("unchecked")
     private TrialDTO convertToNonPropTrialDTO(StudyProtocolStageDTO spStageDTO) throws PAException {
         TrialDTO trialDto = new TrialDTO();
         trialDto.setPiIdentifier(IiConverter.convertToString(spStageDTO.getPiIdentifier()));
@@ -1245,6 +1287,19 @@ public StudyProtocolStageDTO convertToStudyProtocolStageDTO(BaseTrialDTO trialDt
         trialDto.setNciGrant(BlConverter.convertToBoolean(spStageDTO.getNciGrant()));
         trialDto.setSecondaryIdentifierList(spStageDTO.getSecondaryIdentifierList());
         trialDto.setAccrualDiseaseCodeSystem(StConverter.convertToString(spStageDTO.getAccrualDiseaseCodeSystem()));
+        
+        if (StringUtils.isNotBlank(spStageDTO.getStatusHistory())) {
+            try {
+                // status history
+                XMLDecoder d = new XMLDecoder(new ByteArrayInputStream(
+                        spStageDTO.getStatusHistory().getBytes("UTF-8")));
+                Collection<StatusDto> statusHistory = (Collection<StatusDto>) d
+                        .readObject();
+                trialDto.setStatusHistory(statusHistory);
+                d.close();
+            } catch (UnsupportedEncodingException e) { // NOPMD
+            }
+        }
         return trialDto;
     }
 

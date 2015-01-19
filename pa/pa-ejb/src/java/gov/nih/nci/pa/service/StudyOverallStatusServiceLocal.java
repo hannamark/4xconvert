@@ -83,6 +83,8 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
 
+import gov.nih.nci.pa.service.status.StatusDto;
+
 import java.util.List;
 
 import javax.ejb.Local;
@@ -104,23 +106,7 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      */
     void validate(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException;
     
-    /**
-    * Relaxed validation for super abstractors.
-    * https://tracker.nci.nih.gov/browse/PO-4916
-    * @param statusDto dto
-    * @param studyProtocolDTO pdto
-    * @throws PAException e
-    */
-    void validateRelaxed(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException;
     
-    /**
-     * Same as {@link #create(StudyOverallStatusDTO)}, but applies less strict validation rules.
-     * Specifically, does not validate status transitions.
-     * @param dto StudyOverallStatusDTO
-     * @return StudyOverallStatusDTO
-     * @throws PAException PAException
-     */
-    StudyOverallStatusDTO createRelaxed(StudyOverallStatusDTO dto) throws PAException;
 
     /**
      *
@@ -198,4 +184,22 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      */
     List<StudyOverallStatusDTO> getByStudyProtocolWithTransitionValidations(
             Ii spIi) throws PAException;
+
+    /**
+     * Creates a series of trial statuses.
+     * @param spIi protocol ID
+     * @param statusHistory List<StudyOverallStatusDTO>
+     * @throws PAException PAException
+     */
+    void createStatusHistory(Ii spIi, List<StudyOverallStatusDTO> statusHistory)
+            throws PAException;
+
+
+
+    /**
+     * @param spID protocol ID
+     * @return List<StatusDto>
+     * @throws PAException PAException
+     */
+    List<StatusDto> getStatusHistoryByProtocol(Ii spID) throws PAException;
 }

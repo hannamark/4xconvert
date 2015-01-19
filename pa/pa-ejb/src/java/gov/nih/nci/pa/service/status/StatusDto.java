@@ -2,9 +2,11 @@ package gov.nih.nci.pa.service.status;
 
 import gov.nih.nci.pa.service.status.json.ErrorType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author vinodh
@@ -12,7 +14,12 @@ import java.util.List;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class StatusDto {
+public class StatusDto implements Serializable, Comparable<StatusDto> {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7251022912127118526L;
     
     private String statusCode;
     private Date statusDate;
@@ -29,7 +36,10 @@ public class StatusDto {
     
     private String comments;
     
-    private List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+    private transient List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+    
+    private String uuid = UUID.randomUUID().toString();
+    private long tstamp = System.currentTimeMillis();
     
     /**
      * Returns status code
@@ -267,4 +277,58 @@ public class StatusDto {
         }
         return false;
     }
+   
+
+    /**
+     * @return the tstamp
+     */
+    public long getTstamp() {
+        return tstamp;
+    }
+
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    /**
+     * @param tstamp the tstamp to set
+     */
+    public void setTstamp(long tstamp) {
+        this.tstamp = tstamp;
+    }
+
+    @Override
+    public int compareTo(StatusDto other) {
+        int byDate = this.getStatusDate().compareTo(other.getStatusDate());
+        if (byDate != 0) {
+            return byDate;
+        }
+        // Statuses within the same date are compared by ID.
+        if (this.getId() != null && other.getId() != null) {
+            return this.getId().compareTo(other.getId());
+        }
+
+        // Status with a null ID (means, it was just added via the UI) comes
+        // later in the list
+        if (this.getId() == null && other.getId() != null) {
+            return +1;
+        }
+        if (this.getId() != null && other.getId() == null) {
+            return -1;
+        }
+        return (int) Math.signum(this.getTstamp() - other.getTstamp());
+    }
+
+   
+   
 }

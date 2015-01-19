@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.util.CommonsConstant;
@@ -160,6 +161,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
      */
     @Override
     public void prepare() {
+        super.prepare();
         currentUser = UsernameHolder.getUser();
         regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
         studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
@@ -197,6 +199,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         trialUtil.populateRegulatoryListStartWithUSA(trialDTO);
         trialDTO.setSummaryFourFundingCategoryCode(sum4FundingCatCode);
         setPageFrom("submitTrial");
+        setInitialStatusHistory(new ArrayList<StatusDto>());
         return SUCCESS;
     }
 
@@ -217,9 +220,10 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
             TrialUtil util = new TrialUtil();
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.YES);
             trialDTO.setStudySource(StudySourceCode.REGISTRY);
+            
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTO(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
-            StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
+            List<StudyOverallStatusDTO> statusHistory = util.convertStatusHistory(trialDTO);
 
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             clearDocumentIdentifiers(documentDTOs);
@@ -249,7 +253,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
 
             Ii studyProtocolIi = trialRegistrationService
                     .createCompleteInterventionalStudyProtocol(
-                            studyProtocolDTO, overallStatusDTO,
+                            studyProtocolDTO, statusHistory,
                             studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
                             leadOrgDTO, principalInvestigatorDTO,
                             sponsorOrgDTO, partyDTO, leadOrgSiteIdDTO,
@@ -312,6 +316,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         try {
             clearErrorsAndMessages();
             addFundingToTrialDto();
+            trialDTO.setStatusHistory(getStatusHistoryFromSession());
             validateForm();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute("failureMessage", getText("error.fieldErrors"));
@@ -375,6 +380,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
     public String cancel() {
         TrialSessionUtil.removeSessionAttributes();
         setTrialAction("");
+        setInitialStatusHistory(new ArrayList<StatusDto>());
         return REDIRECT_TO_SEARCH;
     }
     /**
@@ -427,6 +433,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
     public String partialSave() {
         final TrialDTO trialDTO = getTrialDTO();
         try {
+            trialDTO.setStatusHistory(getStatusHistoryFromSession());
             addSecondaryIdsToTrialDto();
             validateDocuments();          
             trialDTO.setDocDtos(getTrialDocuments());                      
@@ -457,6 +464,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
      */
     public String completePartialSubmission() {
         TrialSessionUtil.removeSessionAttributes();
+        setInitialStatusHistory(new ArrayList<StatusDto>());
         String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
         if (StringUtils.isEmpty(pId)) {
             addActionError("study protocol id cannot null.");
@@ -466,6 +474,7 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         try {
             setTrialDTO((TrialDTO) trialUtil.getTrialDTOForPartiallySumbissionById(pId));
             final TrialDTO trialDTO = getTrialDTO();
+            setInitialStatusHistory(trialDTO.getStatusHistory());
             ServletActionContext.getRequest().getSession().setAttribute(Constants.INDIDE_LIST,
                     trialDTO.getIndIdeDtos());
             ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST,

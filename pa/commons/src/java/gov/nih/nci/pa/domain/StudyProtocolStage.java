@@ -94,6 +94,7 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     private String secondaryPurposes;
     private String secondaryPurposeOtherText;
     private Set<String> summaryFourOrgIdentifiers = new HashSet<String>();
+    private String statusHistory;
     
     
     /**
@@ -708,5 +709,21 @@ public class StudyProtocolStage extends AbstractStudyProtocol {
     @Column(name = "ACCRUAL_DISEASE_CODE_SYSTEM", nullable = true)
     public String getAccrualDiseaseCodeSystem() {
         return super.getAccrualDiseaseCodeSystem();
+    }
+    
+    /**
+     * @return the statusHistory
+     */
+    @Column(name = "status_history")
+    public String getStatusHistory() {
+        return statusHistory;
+    }
+
+    /**
+     * @param statusHistory
+     *            the statusHistory to set
+     */
+    public void setStatusHistory(String statusHistory) {
+        this.statusHistory = statusHistory;
     }
 }

@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -223,17 +224,7 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         errorMsg.append("Invalid study status transition");        
     }
 
-    @Override
-    public void validateRelaxed(StudyOverallStatusDTO statusDto,
-            StudyProtocolDTO studyProtocolDTO) throws PAException {
-        
-    }
-
-    @Override
-    public StudyOverallStatusDTO createRelaxed(StudyOverallStatusDTO dto)
-            throws PAException {      
-        return create(dto);
-    }
+     
 
     @Override
     public void undo(Ii statusIi) throws PAException {
@@ -278,6 +269,17 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
             Ii spIi) throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void createStatusHistory(Ii spIi,
+            List<StudyOverallStatusDTO> statusHistory) throws PAException {               
+    }
+
+    @Override
+    public List<StatusDto> getStatusHistoryByProtocol(Ii spID)
+            throws PAException {        
+        return new ArrayList<>();
     }
 
 }

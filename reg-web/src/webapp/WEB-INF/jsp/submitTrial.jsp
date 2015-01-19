@@ -5,12 +5,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><fmt:message key="submit.trial.page.title"/></title>
+    
+    <link href="<c:url value='/styles/jquery-datatables/css/jquery.dataTables.min.css'/>" rel="stylesheet" type="text/css" media="all" />    
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>
+    
 <s:head/>
+  
+  <c:url value="/protected/submitTrial" var="backendUrlTemplate"/>  
+  
   <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
   <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
   <c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="submitProtocol"/>
   <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
   <c:url value="/protected/ajaxorganizationGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
+  
+  
   
   <script type="text/javascript" src="${scriptPath}/js/submitTrial.js"></script>
   <script type="text/javascript">
@@ -332,7 +341,7 @@
          </div>
           <div class="align-center button-row">
 		      <button type="button" class="btn btn-icon btn-primary" onclick="partialSave()"><i class="fa-floppy-o"></i>Save as Draft</button>
-		      <button type="button" class="btn btn-icon btn-primary" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
+		      <button type="button" class="btn btn-icon btn-primary review" onclick="reviewProtocol()"><i class="fa-file-text-o"></i>Review Trial</button>
 		      <button type="button" class="btn btn-icon btn-default" onclick="cancelProtocol()"><i class="fa-times-circle"></i>Cancel</button>
 		    </div>
           <s:hidden name="uuidhidden"/>

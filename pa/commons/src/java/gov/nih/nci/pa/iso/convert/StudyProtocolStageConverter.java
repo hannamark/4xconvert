@@ -146,6 +146,7 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         studyProtocolStageDTO.setTrialStatusCode(CdConverter.convertToCd(studyProtocolStage.getTrialStatusCode()));
         studyProtocolStageDTO.setTrialStatusDate(TsConverter.convertToTs(studyProtocolStage.getTrialStatusDate()));
         studyProtocolStageDTO.setStatusReason(StConverter.convertToSt(studyProtocolStage.getReason()));
+        studyProtocolStageDTO.setStatusHistory((studyProtocolStage.getStatusHistory()));
         studyProtocolStageDTO.setTrialType(StConverter.convertToSt(studyProtocolStage.getTrialType()));
         studyProtocolStageDTO.setOversightAuthorityCountryId(IiConverter.convertToIi(
                 studyProtocolStage.getOversightAuthorityCountryId()));
@@ -189,6 +190,7 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         return studyProtocolStageDTO;
     }
 
+    @SuppressWarnings("deprecation")
     private static void setSiteFields(StudyProtocolStage studyProtocolStage,
             StudyProtocolStageDTO studyProtocolStageDTO) {
         studyProtocolStageDTO.setSiteProtocolIdentifier(IiConverter.convertToIi(studyProtocolStage
@@ -264,6 +266,7 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         studyProtocolStage.setTrialStatusDate(TsConverter.convertToTimestamp(
                 studyProtocolStageDTO.getTrialStatusDate()));
         studyProtocolStage.setReason(StConverter.convertToString(studyProtocolStageDTO.getStatusReason()));
+        studyProtocolStage.setStatusHistory((studyProtocolStageDTO.getStatusHistory()));
         studyProtocolStage.setTrialType(StConverter.convertToString(studyProtocolStageDTO.getTrialType()));
         studyProtocolStage.setOversightAuthorityCountryId(IiConverter.convertToString(
                 studyProtocolStageDTO.getOversightAuthorityCountryId()));

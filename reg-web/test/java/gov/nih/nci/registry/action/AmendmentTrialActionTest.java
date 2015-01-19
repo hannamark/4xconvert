@@ -262,22 +262,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         assertEquals("error", trialAction.review());
     }
     
-    @Test
-    public void testReviewWithStatusCodeChangedToApproved() throws Exception{
-        TrialDTO dto = getMockTrialDTO();
-        dto.setStatusCode("Approved");
-        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
-        File f = new File(fileUrl.toURI());
-        trialAction.setProtocolDoc(f);
-        trialAction.setIrbApproval(f);
-        trialAction.setChangeMemoDoc(f);
-
-        trialAction.setProtocolDocFileName(FILE_NAME);
-        trialAction.setIrbApprovalFileName(FILE_NAME);
-        trialAction.setChangeMemoDocFileName(FILE_NAME);
-        trialAction.setTrialDTO(dto);
-        assertEquals("error", trialAction.review());
-    }
+    
     
     @Test
     public void testReviewWithStatusCodeChangedToAdComplete() throws Exception{
@@ -609,7 +594,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testValidateTrialDatesRule18Fail(){
         TrialDTO dto = getMockTrialDTO();
-        dto.setStatusDate(getTomorrowDate());
+        dto.getStatusHistory().iterator().next().setStatusDate(getTomorrowAsDate());
         trialAction.setTrialDTO(dto);
         assertEquals("error", trialAction.review());
         assertTrue(trialAction.getFieldErrors().containsKey("trialDTO.statusDate"));
@@ -648,23 +633,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         assertNotNull(trialAction.getActionErrors());
     }
     
-    @Test
-    public void testInReviewStatus() throws Exception{
-        TrialDTO dto = getMockTrialDTO();
-        dto.setStatusCode("In Review");
-        trialAction.setTrialDTO(dto);
-        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
-        File f = new File(fileUrl.toURI());
-
-        trialAction.setProtocolDoc(f);
-        trialAction.setIrbApproval(f);
-        trialAction.setChangeMemoDoc(f);
-
-        trialAction.setProtocolDocFileName(FILE_NAME);
-        trialAction.setIrbApprovalFileName(FILE_NAME);
-        trialAction.setChangeMemoDocFileName(FILE_NAME);
-        assertEquals("error", trialAction.review());
-    }
+   
     
     @Test
     public void testAmdendFutureDate() throws URISyntaxException {

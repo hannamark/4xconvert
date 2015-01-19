@@ -86,9 +86,15 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
+import java.text.ParseException;
+import java.util.Arrays;
+
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.TrialUtil;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.junit.After;
 import org.junit.Test;
@@ -156,9 +162,20 @@ public class UpdateTrialStatusActionTest extends AbstractRegWebTest {
         TrialDTO trialUpdatedWithStatInfo = new TrialDTO();
         trialUpdatedWithStatInfo.setStartDate("07/25/2011");
         trialUpdatedWithStatInfo.setStartDateType("Something else");
-        trialUpdatedWithStatInfo.setStatusCode("Inactive");
-        trialUpdatedWithStatInfo.setStatusDate("07/25/2011");
-        trialUpdatedWithStatInfo.setReason("A temp reason");
+        
+        try {
+            StatusDto status = new StatusDto();
+            status.setReason("A temp reason");
+            status.setStatusCode(StudyStatusCode.IN_REVIEW.name());
+            status.setStatusDate(DateUtils.parseDate("07/25/2011",
+                    new String[] { "MM/dd/yyyy" }));
+            trialUpdatedWithStatInfo.setStatusHistory(Arrays.asList(status));
+            ServletActionContext.getRequest().getSession()
+                    .setAttribute("statusHistoryList", Arrays.asList(status));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
         trialUpdatedWithStatInfo.setPrimaryCompletionDate("07/25/2011");
         trialUpdatedWithStatInfo.setPrimaryCompletionDateType("Something else");
         return trialUpdatedWithStatInfo;

@@ -113,6 +113,40 @@ import javax.ejb.Local;
 @Local
 @SuppressWarnings("PMD.ExcessiveParameterList")
 public interface TrialRegistrationServiceLocal {
+    
+    /**
+     * Creates a study protocol.
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param statusHistory List<StudyOverallStatusDTO>
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs list of documents
+     * @param leadOrganizationDTO Pead organization
+     * @param principalInvestigatorDTO Principal Investigator
+     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param studyIdentifierDTOs list of study Identifier    
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param studyRegAuthDTO studyRegAuthDTO
+     * @param isBatchMode to identify if batch is caller
+     * @return ii of Study Protocol
+     * @throws PAException on error
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+            List<StudyOverallStatusDTO> statusHistory, List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO, ResponsiblePartyDTO partyDTO, 
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, 
+            List<OrganizationDTO> summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO, 
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
+
+    // CHECKSTYLE:ON
 
     /**
      * Creates a study protocol.
