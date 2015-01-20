@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
@@ -175,6 +176,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
     public String view() {
         // clear the session
         TrialSessionUtil.removeSessionAttributes();
+        setInitialStatusHistory(new ArrayList<StatusDto>());
         try {
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(studyProtocolId);
             //Trials that have open updates cannot be amended.
@@ -189,6 +191,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             setTrialDTO(new TrialDTO());
             util.getTrialDTOFromDb(studyProtocolIi, getTrialDTO());
             TrialSessionUtil.addSessionAttributes(getTrialDTO());
+            setInitialStatusHistory(getTrialDTO().getStatusHistory());
             ServletActionContext
                     .getRequest()
                     .getSession()
@@ -212,6 +215,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
      */
     public String cancel() {
         TrialSessionUtil.removeSessionAttributes();
+        setInitialStatusHistory(new ArrayList<StatusDto>());
         return "redirect_to_search";
     }
 
@@ -225,6 +229,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
         try {
             clearErrorsAndMessages();
             populateGrantList();
+            trialDTO.setStatusHistory(getStatusHistoryFromSession());
             enforceBusinessRules();
             String errorReturn = handleErrors();
             if (errorReturn != null) {
@@ -307,6 +312,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
         //trialUtil.populateRegulatoryList(getTrialDTO());
         trialUtil.populateRegulatoryListStartWithUSA(getTrialDTO());
         TrialSessionUtil.addSessionAttributes(getTrialDTO());
+        setInitialStatusHistory(getTrialDTO().getStatusHistory());
         setDocumentsInSession(getTrialDTO());
         return "edit";
     }
@@ -333,7 +339,13 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             }
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
             studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
-            StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
+            
+            final List<StudyOverallStatusDTO> statusHistory = new ArrayList<StudyOverallStatusDTO>();
+            statusHistory.addAll(util.convertStatusHistory(trialDTO));
+            statusHistory
+                    .addAll(util
+                            .convertStatusHistory(getDeletedStatusHistoryFromSession()));
+            
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);
             PersonDTO principalInvestigatorDTO = util.convertToLeadPI(trialDTO);
@@ -366,7 +378,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
                 studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
             }
             amendId =
-                    trialRegistrationService.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                    trialRegistrationService.amend(studyProtocolDTO, statusHistory, studyIndldeDTOs,
                                                    studyResourcingDTOs, documentDTOs, leadOrgDTO,
                                                    principalInvestigatorDTO, sponsorOrgDTO, partyDTO, leadOrgSiteIdDTO,
                                                    studyIdentifierDTOs, 
@@ -382,6 +394,7 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
             }
             LOG.error("Exception occurred while amending trial", e);
             TrialSessionUtil.addSessionAttributes(trialDTO);
+            setInitialStatusHistory(getTrialDTO().getStatusHistory());
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
             trialDTO.setSecondaryIdentifierAddList(null);
             trialUtil.removeAssignedIdentifierFromSecondaryIds(trialDTO);

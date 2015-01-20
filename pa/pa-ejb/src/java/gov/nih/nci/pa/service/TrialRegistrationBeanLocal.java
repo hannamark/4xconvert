@@ -381,16 +381,45 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             List<OrganizationDTO> summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, 
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException {
-        return amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
-                principalInvestigatorDTO, sponsorOrganizationDTO,
-                partyDTO,
+        return amend(
+                studyProtocolDTO,
+                overallStatusDTO,
+                null, // NOPMD
+                studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, partyDTO,
                 leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
-                summary4OrganizationDTO,
-                summary4StudyResourcingDTO,
+                summary4OrganizationDTO, summary4StudyResourcingDTO,
                 studyRegAuthDTO, isBatchMode, null);
     }
-
+    
+    @Override
+    // CHECKSTYLE:OFF More than 7 Parameters
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Ii amend( // NOPMD
+            StudyProtocolDTO studyProtocolDTO,
+            List<StudyOverallStatusDTO> statusHistory, // NOPMD
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<OrganizationDTO> summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode)
+            throws PAException {
+        return amend(studyProtocolDTO, null, statusHistory, studyIndldeDTOs,
+                studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, partyDTO,
+                leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
+                summary4OrganizationDTO, summary4StudyResourcingDTO,
+                studyRegAuthDTO, isBatchMode, null);
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -409,6 +438,39 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, Bl handleDuplicateGrantAndINDsGracefully) 
                     throws PAException {
         // CHECKSTYLE:ON
+        return amend(
+                studyProtocolDTO,
+                overallStatusDTO,
+                null, // NOPMD
+                studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, partyDTO,
+                leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
+                summary4OrganizationDTO, summary4StudyResourcingDTO,
+                studyRegAuthDTO, isBatchMode,
+                handleDuplicateGrantAndINDsGracefully);
+    }
+
+
+    // CHECKSTYLE:OFF More than 7 Parameters
+    private Ii amend( // NOPMD
+            StudyProtocolDTO studyProtocolDTO, // NOPMD
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyOverallStatusDTO> statusHistory, // NOPMD
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            ResponsiblePartyDTO partyDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<OrganizationDTO> summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            Bl handleDuplicateGrantAndINDsGracefully) throws PAException {
+        // CHECKSTYLE:ON
 
         try {
             validateStudyExist(studyProtocolDTO, AMENDMENT);
@@ -423,9 +485,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             if (isOrgCCR) {
                studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(Boolean.TRUE));
             } 
-                
-                
-            
             
             Timestamp amendmentCreationDate = new Timestamp(System.currentTimeMillis());
             Timestamp previousProtocolRecordDate = TsConverter
@@ -452,7 +511,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             
             TrialRegistrationValidator validator = createValidator();
             StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);
-            validator.validateAmendment(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO,
+            validator.validateAmendment(studyProtocolDTO, overallStatusDTO, statusHistory, leadOrganizationDTO,
                                         sponsorOrganizationDTO, 
                                         summary4OrganizationDTO, summary4StudyResourcingDTO, principalInvestigatorDTO,
                                         partyDTO,
@@ -472,16 +531,22 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             updateLeadOrganizationID(spIi, leadOrganizationDTO, leadOrganizationSiteIdentifierDTO);
 
             paServiceUtils.managePrincipalInvestigator(spIi, leadOrganizationDTO, principalInvestigatorDTO);
-            overallStatusDTO.setStudyProtocolIdentifier(spIi);
+            
             createStudyRelationship(spIi, toStudyProtocolIi, studyProtocolDTO);
             paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
-            studyOverallStatusService.create(overallStatusDTO);
+             
+            // Study overall status & status date.
+            if (overallStatusDTO != null) {
+                overallStatusDTO.setStudyProtocolIdentifier(spIi);
+                studyOverallStatusService.create(overallStatusDTO);
+            } else {
+                studyOverallStatusService.updateStatusHistory(spIi,
+                        statusHistory);
+            }
+            
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
             documentService.markAsOriginalSubmission(savedDocs);
             saveAmenderInfo(studyProtocolDTO, amender, true);
-            
-           
-            
             
             // PO-5806: date_last_created fields get reversed for amendment and original.
             // Need to fix this here.

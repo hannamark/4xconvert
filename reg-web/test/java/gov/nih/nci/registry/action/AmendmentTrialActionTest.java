@@ -41,11 +41,13 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     @Before
     public void init() {
         trialAction.prepare();
+        trialAction.setServletRequest(ServletActionContext.getRequest());
     }
     
     private void setTrialDTOInSession(TrialDTO dto) {
         HttpSession session = ServletActionContext.getRequest().getSession();
         session.setAttribute("trialDTO", dto);
+        trialAction.setInitialStatusHistory(dto.getStatusHistory());
     }
 
     @Test

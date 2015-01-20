@@ -712,13 +712,13 @@ public class TrialRegistrationValidatorTest {
         StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
         final ResponsiblePartyDTO responsiblePartyDTO = getResponsiblePartyDTO(piPersonDTO, leadOrganizationDTO);
         doCallRealMethod().when(validator).validateAmendment(studyProtocolDTO,
-                overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
+                overallStatusDTO, null, leadOrganizationDTO, sponsorOrganizationDTO,
                 summary4organizationDTO, summary4StudyResourcingDTO,
                 piPersonDTO,
                 responsiblePartyDTO,
                 studyRegAuthDTO, studyResourcingDTOs, documentDTOs,
                 studyIndldeDTOs, nctIdentifierDTO);
-        validator.validateAmendment(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
+        validator.validateAmendment(studyProtocolDTO, overallStatusDTO, null, leadOrganizationDTO, sponsorOrganizationDTO,
                                     summary4organizationDTO,
                                     summary4StudyResourcingDTO, piPersonDTO,  responsiblePartyDTO,
                                     studyRegAuthDTO, studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);

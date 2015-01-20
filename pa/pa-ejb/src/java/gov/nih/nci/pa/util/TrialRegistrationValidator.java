@@ -598,8 +598,11 @@ public class TrialRegistrationValidator {
      * @throws PAException If any validation error happens
      */
     // CHECKSTYLE:OFF More than 7 Parameters
-    public void validateAmendment(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,            
+    public void validateAmendment(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyOverallStatusDTO> statusHistory,
+            OrganizationDTO leadOrganizationDTO,
+            OrganizationDTO sponsorOrganizationDTO,          
             List<OrganizationDTO> summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
             PersonDTO principalInvestigatorDTO, ResponsiblePartyDTO partyDTO,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudyResourcingDTO> studyResourcingDTOs,
@@ -609,7 +612,7 @@ public class TrialRegistrationValidator {
         Ii spIi = studyProtocolDTO.getIdentifier();
         StringBuilder errorMsg = new StringBuilder();
         validateUser(studyProtocolDTO, AMENDMENT, true, errorMsg);
-        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, statusHistory, errorMsg);
         validateNihGrants(studyProtocolDTO, leadOrganizationDTO, studyResourcingDTOs, errorMsg);
         validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
         validateDWFS(spIi, ERROR_DWFS_FOR_AMEND, ERROR_MESSAGE_DWFS_FOR_AMEND, errorMsg);
