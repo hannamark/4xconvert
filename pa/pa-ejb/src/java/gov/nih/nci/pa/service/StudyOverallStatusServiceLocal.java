@@ -194,7 +194,19 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
     void createStatusHistory(Ii spIi, List<StudyOverallStatusDTO> statusHistory)
             throws PAException;
 
-
+    /**
+     * Updates trial status history.
+     * 
+     * @param spIi
+     *            protocol ID
+     * @param statusHistory
+     *            List<StudyOverallStatusDTO>
+     * @throws PAException
+     *             PAException
+     */
+    void updateStatusHistory(Ii spIi, List<StudyOverallStatusDTO> statusHistory)
+            throws PAException;
+    
 
     /**
      * @param spID protocol ID
@@ -202,4 +214,8 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
      * @throws PAException PAException
      */
     List<StatusDto> getStatusHistoryByProtocol(Ii spID) throws PAException;
+
+
+
+    
 }

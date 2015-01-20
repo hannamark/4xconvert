@@ -282,4 +282,11 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
         return new ArrayList<>();
     }
 
+    @Override
+    public void updateStatusHistory(Ii spIi,
+            List<StudyOverallStatusDTO> statusHistory) throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

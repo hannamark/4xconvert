@@ -130,7 +130,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateMidnight;
@@ -144,9 +143,9 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyOverallStatusBeanLocal extends
+public class StudyOverallStatusBeanLocal extends // NOPMD
         AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
-        implements StudyOverallStatusServiceLocal {
+        implements StudyOverallStatusServiceLocal { // NOPMD
     
     private static final Logger LOG = Logger
             .getLogger(StudyOverallStatusBeanLocal.class);
@@ -173,6 +172,27 @@ public class StudyOverallStatusBeanLocal extends
             StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(spIi);
             newStatus.setStudyProtocolIdentifier(spIi);
             runChecksAndCreate(newStatus, oldStatus);
+        }
+    }
+    
+    @Override
+    public void updateStatusHistory(Ii spIi,
+            final List<StudyOverallStatusDTO> statusHistory) throws PAException {
+        for (StudyOverallStatusDTO dto : statusHistory) {
+            dto.setStudyProtocolIdentifier(spIi);
+            if (BlConverter.convertToBool(dto.getDeleted())
+                    && ISOUtil.isIiNull(dto.getIdentifier())) {
+                // this is a status that was added but then deleted via UI.
+                // Disregard.
+                continue;
+            } else if (BlConverter.convertToBool(dto.getDeleted())
+                    && !ISOUtil.isIiNull(dto.getIdentifier())) {
+                softDelete(dto);
+            } else if (!ISOUtil.isIiNull(dto.getIdentifier())) {
+                update(dto);
+            } else {
+                insert(dto);
+            }
         }
     }
     

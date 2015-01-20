@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +64,8 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     private static final long serialVersionUID = -4057619618686445613L;
 
     private static final String STATUS_HISTORY_LIST_KEY = "statusHistoryList";
+
+    private static final String DELETED_STATUS_HISTORY_LIST_KEY = "deletedStatusHistoryList";
 
     private StatusTransitionService statusTransitionService;
 
@@ -136,7 +139,7 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
             for (StatusDto status : hist) {
                 if (status.getUuid().equals(getUuid())) {
                     populateStatusFromRequest(status);
-                    setInitialStatusHistory(hist);
+                    reSortHistory();
                 }
             }
             return new StreamResult(new ByteArrayInputStream(new JSONObject()
@@ -155,12 +158,19 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     public StreamResult deleteStatus() throws JSONException, ParseException,
             IOException {
         try {
-            Collection<StatusDto> hist = getStatusHistoryFromSession();
+            final Collection<StatusDto> hist = getStatusHistoryFromSession();
+            final Collection<StatusDto> deleted = getDeletedStatusHistoryFromSession();
             CollectionUtils.filter(hist, new Predicate() {
                 @Override
                 public boolean evaluate(Object o) {
                     StatusDto stat = (StatusDto) o;
-                    return !stat.getUuid().equals(getUuid());
+                    final boolean keep = !stat.getUuid().equals(getUuid());
+                    if (!keep) {
+                        stat.setDeleted(true);
+                        stat.setComments(getComment());
+                        deleted.add(stat);
+                    }
+                    return keep;
                 }
             });
             return new StreamResult(new ByteArrayInputStream(new JSONObject()
@@ -247,7 +257,8 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
             data.put("statusDate",
                     DateFormatUtils.format(r.getStatusDate(), "MM/dd/yyyy"));
             data.put("statusCode", enumToCode(r.getStatusCode()));
-            data.put("comments", StringEscapeUtils.escapeHtml(r.getComments()));
+            data.put("comments", StringEscapeUtils.escapeHtml(StringUtils
+                    .defaultString(r.getComments())));
             data.put("whyStopped", StringEscapeUtils.escapeHtml(StringUtils
                     .defaultString(r.getReason())));
             data.put("validationErrors", renderValidationMessages(r));
@@ -292,6 +303,16 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     }
 
     /**
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    protected final Collection<StatusDto> getDeletedStatusHistoryFromSession() {
+        Collection<StatusDto> hist = (Collection<StatusDto>) request
+                .getSession().getAttribute(DELETED_STATUS_HISTORY_LIST_KEY);
+        return hist;
+    }
+
+    /**
      * Sub-classes MUST call this method in order to set the initial status
      * history.
      * 
@@ -299,7 +320,21 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
      *            Collection<StatusDto>
      */
     protected void setInitialStatusHistory(Collection<StatusDto> c) {
-        TreeSet<StatusDto> set = new TreeSet<StatusDto>(c);        
+        sortAndSetIntoSession(c);
+        request.getSession().setAttribute(DELETED_STATUS_HISTORY_LIST_KEY,
+                new HashSet<StatusDto>());
+    }
+
+    private void reSortHistory() {
+        final Collection<StatusDto> c = getStatusHistoryFromSession();
+        sortAndSetIntoSession(c);
+    }
+
+    /**
+     * @param c
+     */
+    private void sortAndSetIntoSession(final Collection<StatusDto> c) {
+        TreeSet<StatusDto> set = new TreeSet<StatusDto>(c);
         request.getSession().setAttribute(STATUS_HISTORY_LIST_KEY, set);
     }
 

@@ -238,18 +238,23 @@ public class TrialRegistrationValidator {
      * Validates the input for a trial update.
      * @param studyProtocolDTO The study protocol
      * @param overallStatusDTO The overall status
+     * @param statusHistory 
      * @param studyResourcingDTOs The list of nih grants
      * @param documentDTOs List of documents IRB and Participating doc
      * @param studySiteAccrualStatusDTOs The participating sites
      * @throws PAException If any validation error happens
      */
-    public void validateUpdate(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
-            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs) throws PAException {
+    public void validateUpdate(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyOverallStatusDTO> statusHistory,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs)
+            throws PAException {
         Ii spIi = studyProtocolDTO.getIdentifier();
         StringBuilder errorMsg = new StringBuilder();
         validateUser(studyProtocolDTO, UPDATE, true, errorMsg);
-        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, statusHistory, errorMsg);
         validateNihGrants(studyProtocolDTO, null, studyResourcingDTOs, errorMsg);
         validateDWFS(spIi, ERROR_DWFS_FOR_UPDATE, ERROR_MESSAGE_DWFS_FOR_UPDATE, errorMsg);
         validateExistingStatus(spIi, errorMsg);
@@ -298,13 +303,17 @@ public class TrialRegistrationValidator {
      *
      * @param studyProtocolDTO The study protocol
      * @param overallStatusDTO The overall status
+     * @param statusHistory 
      * @param errorMsg The StringBuilder collecting error messages
      * @throws PAException 
      */
-    void validateStatusAndDates(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            StringBuilder errorMsg) {
-        boolean datesValid = validateStudyProtocolDates(studyProtocolDTO, errorMsg);
-        boolean statusFieldsValid = validateOverallStatusFields(overallStatusDTO, errorMsg);
+    void validateStatusAndDates(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyOverallStatusDTO> statusHistory, StringBuilder errorMsg) {
+        boolean datesValid = validateStudyProtocolDates(studyProtocolDTO,
+                errorMsg);
+        boolean statusFieldsValid = validateOverallStatusFields(
+                overallStatusDTO, statusHistory, errorMsg);
         if (datesValid && statusFieldsValid) {
             validateOverallStatus(studyProtocolDTO, overallStatusDTO, errorMsg);
         }
@@ -365,10 +374,12 @@ public class TrialRegistrationValidator {
      * This method validates the mandatory code and date fields of the overall status.
      *
      * @param overallStatusDTO The overall status
+     * @param statusHistory 
      * @param errorMsg The StringBuilder collecting error messages
      * @return true if the overall status fields are valid
      */
-    boolean validateOverallStatusFields(StudyOverallStatusDTO overallStatusDTO, StringBuilder errorMsg) {
+    boolean validateOverallStatusFields(StudyOverallStatusDTO overallStatusDTO,
+            List<StudyOverallStatusDTO> statusHistory, StringBuilder errorMsg) {
         boolean valid = true;
         if (overallStatusDTO != null) {
             if (ISOUtil.isCdNull(overallStatusDTO.getStatusCode())) {
@@ -379,7 +390,7 @@ public class TrialRegistrationValidator {
                 errorMsg.append("Current Trial Status Date cannot be null. ");
                 valid = false;
             }
-        } else {
+        } else if (CollectionUtils.isEmpty(statusHistory)) {
             errorMsg.append("Overall Status cannot be null. ");
             valid = false;
         }
@@ -388,14 +399,22 @@ public class TrialRegistrationValidator {
 
     /**
      * Validates the overall status.
-     * @param studyProtocolDTO The study protocol
-     * @param overallStatusDTO The overall status
-     * @param errorMsg The StringBuilder collecting error messages
-     * @throws PAException 
+     * 
+     * @param studyProtocolDTO
+     *            The study protocol
+     * @param overallStatusDTO
+     *            The overall status
+     * @param statusHistory
+     * @param errorMsg
+     *            The StringBuilder collecting error messages
+     * @throws PAException
      */
-    void validateOverallStatus(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            StringBuilder errorMsg) {        
-        studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO, errorMsg);        
+    void validateOverallStatus(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO, StringBuilder errorMsg) {
+        if (overallStatusDTO != null) {
+            studyOverallStatusService.validate(overallStatusDTO,
+                    studyProtocolDTO, errorMsg);
+        }
     }
 
     /**
@@ -590,7 +609,7 @@ public class TrialRegistrationValidator {
         Ii spIi = studyProtocolDTO.getIdentifier();
         StringBuilder errorMsg = new StringBuilder();
         validateUser(studyProtocolDTO, AMENDMENT, true, errorMsg);
-        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
         validateNihGrants(studyProtocolDTO, leadOrganizationDTO, studyResourcingDTOs, errorMsg);
         validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
         validateDWFS(spIi, ERROR_DWFS_FOR_AMEND, ERROR_MESSAGE_DWFS_FOR_AMEND, errorMsg);
@@ -889,7 +908,7 @@ public class TrialRegistrationValidator {
         StringBuilder errorMsg = new StringBuilder();
         validateMandatoryFields(studyProtocolDTO, leadOrganizationSiteIdentifierDTO, documentDTOs, errorMsg);
         validateUser(studyProtocolDTO, CREATION, false, errorMsg);
-        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
         validateNihGrants(studyProtocolDTO, leadOrganizationDTO, studyResourcingDTOs, errorMsg);
         validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
         validateMandatoryDocuments(documentDTOs, errorMsg);

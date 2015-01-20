@@ -226,12 +226,12 @@ public class TrialRegistrationValidatorTest {
         List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
         List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
         List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs = new ArrayList<StudySiteAccrualStatusDTO>();
-        doCallRealMethod().when(validator).validateUpdate(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs,
+        doCallRealMethod().when(validator).validateUpdate(studyProtocolDTO, overallStatusDTO, null, studyResourcingDTOs,
                                                           documentDTOs, studySiteAccrualStatusDTOs);
-        validator.validateUpdate(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
+        validator.validateUpdate(studyProtocolDTO, overallStatusDTO, null, studyResourcingDTOs, documentDTOs,
                                  studySiteAccrualStatusDTOs);
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Update"), eq(true), (StringBuilder) any());
-        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), (StringBuilder) any());
+        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), eq((List)null), (StringBuilder) any());
         verify(validator).validateNihGrants(eq(studyProtocolDTO), eq((OrganizationDTO) null), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_UPDATE),
                                        eq(TrialRegistrationValidator.ERROR_MESSAGE_DWFS_FOR_UPDATE),
@@ -327,8 +327,8 @@ public class TrialRegistrationValidatorTest {
     public void testValidateStatusAndDatesInvalid() {
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
         validator = mock(TrialRegistrationValidator.class);
-        doCallRealMethod().when(validator).validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
-        validator.validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        doCallRealMethod().when(validator).validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
+        validator.validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
         verify(validator, never()).validateOverallStatus(studyProtocolDTO, overallStatusDTO, errorMsg);
     }
     
@@ -339,10 +339,10 @@ public class TrialRegistrationValidatorTest {
     public void testValidateStatusAndDatesValid() {
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
         validator = mock(TrialRegistrationValidator.class);
-        doCallRealMethod().when(validator).validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        doCallRealMethod().when(validator).validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
         when(validator.validateStudyProtocolDates(studyProtocolDTO, errorMsg)).thenReturn(true);
-        when(validator.validateOverallStatusFields(overallStatusDTO, errorMsg)).thenReturn(true);
-        validator.validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        when(validator.validateOverallStatusFields(overallStatusDTO, null, errorMsg)).thenReturn(true);
+        validator.validateStatusAndDates(studyProtocolDTO, overallStatusDTO, null, errorMsg);
         verify(validator).validateOverallStatus(studyProtocolDTO, overallStatusDTO, errorMsg);
     }
     
@@ -391,7 +391,7 @@ public class TrialRegistrationValidatorTest {
      */
     @Test
     public void testValidateOverallStatusFieldsNoStatus() {
-        boolean result = validator.validateOverallStatusFields(null, errorMsg);
+        boolean result = validator.validateOverallStatusFields(null, null, errorMsg);
         assertFalse("Validation should have failed", result);
         checkErrorMsg("Overall Status cannot be null. ");
     }
@@ -402,7 +402,7 @@ public class TrialRegistrationValidatorTest {
     @Test
     public void testValidateOverallStatusFieldsNoData() {
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
-        boolean result = validator.validateOverallStatusFields(overallStatusDTO, errorMsg);
+        boolean result = validator.validateOverallStatusFields(overallStatusDTO, null, errorMsg);
         assertFalse("Validation should have failed", result);
         checkErrorMsg("Current Trial Status cannot be null. Current Trial Status Date cannot be null. ");
     }
@@ -415,7 +415,7 @@ public class TrialRegistrationValidatorTest {
         StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
         overallStatusDTO.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
         overallStatusDTO.setStatusDate(TsConverter.convertToTs(new Date()));
-        boolean result = validator.validateOverallStatusFields(overallStatusDTO, errorMsg);
+        boolean result = validator.validateOverallStatusFields(overallStatusDTO, null, errorMsg);
         assertTrue("Validation should have scucceeded", result);
         checkErrorMsg("");
     }
@@ -723,7 +723,7 @@ public class TrialRegistrationValidatorTest {
                                     summary4StudyResourcingDTO, piPersonDTO,  responsiblePartyDTO,
                                     studyRegAuthDTO, studyResourcingDTOs, documentDTOs, studyIndldeDTOs, nctIdentifierDTO);
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Amendment"), eq(true), (StringBuilder) any());
-        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), (StringBuilder) any());
+        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), eq((List)null), (StringBuilder) any());
         verify(validator).validateNihGrants(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateIndlde(eq(studyProtocolDTO), eq(studyIndldeDTOs), (StringBuilder) any());
         verify(validator).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_AMEND),
@@ -1176,7 +1176,7 @@ public class TrialRegistrationValidatorTest {
         verify(validator).validateMandatoryFields(eq(studyProtocolDTO), eq(leadOrganizationSiteIdentifierDTO),
                                                   eq(documentDTOs), (StringBuilder) any());
         verify(validator).validateUser(eq(studyProtocolDTO), eq("Create"), eq(false), (StringBuilder) any());
-        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), (StringBuilder) any());
+        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), eq((List)null), (StringBuilder) any());
         verify(validator).validateNihGrants(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(studyResourcingDTOs), (StringBuilder) any());
         verify(validator).validateIndlde(eq(studyProtocolDTO), eq(studyIndldeDTOs), (StringBuilder) any());
         verify(validator).validateMandatoryDocuments(eq(documentDTOs), (StringBuilder) any());

@@ -25,6 +25,7 @@ public class StatusDto implements Serializable, Comparable<StatusDto> {
     private Date statusDate;
     private String reason;
     private boolean systemCreated;
+    private boolean deleted;
     private Long id;
     
     private Date updatedOn;
@@ -327,6 +328,20 @@ public class StatusDto implements Serializable, Comparable<StatusDto> {
             return -1;
         }
         return (int) Math.signum(this.getTstamp() - other.getTstamp());
+    }
+
+    /**
+     * @return the deleted
+     */
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
    

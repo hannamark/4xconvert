@@ -351,4 +351,24 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
         return IiConverter.convertToIi("3");
     }
 
+    @Override
+    public void update(StudyProtocolDTO studyProtocolDTO,
+            List<StudyOverallStatusDTO> overallStatusDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studyParticipationContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudySiteDTO> collaboratorDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
+            List<StudySiteDTO> studySiteDTOs, Bl isBatchMode)
+            throws PAException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

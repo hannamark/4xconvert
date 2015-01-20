@@ -52,6 +52,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
     @Before
     public void init() {
         action.prepare();
+        action.setServletRequest(ServletActionContext.getRequest());
     }
     @Test
     public void testTrialActionProperty(){
@@ -249,6 +250,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setIrbApproval(f);
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("review", action.reviewUpdate());
 
         request = new MockHttpServletRequest();
@@ -264,6 +267,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setIrbApproval(new File("ProtocolDoc.doc"));
         ServletActionContext.setRequest(request);
         action.setTrialDTO(getMockTrialDTO());
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("error", action.reviewUpdate());
     }
     @Test
@@ -272,6 +277,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         MockHttpSession session = new MockHttpSession();
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
         session.setAttribute(Constants.COUNTRY_LIST, new ArrayList<CountryRegAuthorityDTO>());
@@ -291,6 +297,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         action.setIrbApproval(f);
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("review", action.reviewUpdate());
 
         action.getTrialDTO().setAccrualDiseaseCodeSystem(null);
@@ -457,6 +465,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute("trialDTO", tDto);
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("redirect_to_search", action.update());
         request = new MockHttpServletRequest();
         session = new MockHttpSession();
@@ -472,6 +482,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute("trialDTO", tDto);
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("redirect_to_search", action.update());
     }
     @Test
@@ -492,6 +504,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute("trialDTO", tDto);
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("redirect_to_search", action.update());
     }
     @Test
@@ -534,6 +548,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute("trialDTO", tDto);
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("redirect_to_search", action.update());
     }
     @Test
@@ -551,6 +567,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute("trialDTO", tDto);
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("redirect_to_search", action.update());
     }
     @Test
@@ -569,6 +587,8 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         session.setAttribute("trialDTO", tDto);
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        action.setServletRequest(request);
+        action.setInitialStatusHistory(action.getTrialDTO().getStatusHistory());
         assertEquals("redirect_to_search", action.update());
     }
 

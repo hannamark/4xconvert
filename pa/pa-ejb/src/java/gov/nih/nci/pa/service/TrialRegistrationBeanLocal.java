@@ -2023,38 +2023,82 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         }
     }
 
-    /**
-     * An action plan and execution of a pre-clinical for Updating an existing protocols.
-     * @param studyProtocolDTO StudyProtocolDTO
-     * @param overallStatusDTO OverallStatusDTO
-     * @param studyIdentifierDTOs List of Study Identifier
-     * @param studyIndldeDTOs list of Study Ind/ides
-     * @param studyResourcingDTOs list of nih grants
-     * @param documentDTOs IRB document
-     * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studyParticipationContactDTO StudySiteContactDTO
-     * @param summary4organizationDTO summary 4 organization code
-     * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactIi id of the person when sponsor is responsible
-     * @param studyRegAuthDTO updated studyRegAuthDTO
-     * @param collaboratorDTOs list of updated collaborators
-     * @param studySiteAccrualStatusDTOs list of updated participating sites
-     * @param studySiteDTOs list of StudySite DTOs with updated program code
-     * @param isBatchMode to identify if batch is caller
-     * @throws PAException on error
-     */
     @Override
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength" })
-    public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            List<StudySiteDTO> studyIdentifierDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
-            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
-            StudyContactDTO studyContactDTO, StudySiteContactDTO studyParticipationContactDTO,
-            OrganizationDTO summary4organizationDTO, StudyResourcingDTO summary4studyResourcingDTO,
-            Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
-            List<StudySiteDTO> collaboratorDTOs, List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
-            List<StudySiteDTO> studySiteDTOs, Bl isBatchMode) throws PAException {
+    @SuppressWarnings({ "PMD.ExcessiveParameterList" })
+    public void update(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studyParticipationContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudySiteDTO> collaboratorDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
+            List<StudySiteDTO> studySiteDTOs, Bl isBatchMode)
+            throws PAException {
+        update(studyProtocolDTO, null, overallStatusDTO, studyIdentifierDTOs,
+                studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                studyContactDTO, studyParticipationContactDTO,
+                summary4organizationDTO, summary4studyResourcingDTO,
+                responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs,
+                studySiteAccrualStatusDTOs, studySiteDTOs, isBatchMode);
+    }
+    
+    @Override
+    // CHECKSTYLE:OFF More than 7 Parameters
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+            "PMD.ExcessiveMethodLength" })
+    public void update(StudyProtocolDTO studyProtocolDTO,
+            List<StudyOverallStatusDTO> statusHistory,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studyParticipationContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudySiteDTO> collaboratorDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
+            List<StudySiteDTO> studySiteDTOs, Bl isBatchMode)
+            throws PAException {
+        // CHECKSTYLE:ON
+        update(studyProtocolDTO, statusHistory, null, studyIdentifierDTOs,
+                studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                studyContactDTO, studyParticipationContactDTO,
+                summary4organizationDTO, summary4studyResourcingDTO,
+                responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs,
+                studySiteAccrualStatusDTOs, studySiteDTOs, isBatchMode);
+    }
+
+    
+    // CHECKSTYLE:OFF More than 7 Parameters
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+            "PMD.ExcessiveMethodLength" })
+    private void update(StudyProtocolDTO studyProtocolDTO,
+            List<StudyOverallStatusDTO> statusHistory,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studyParticipationContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudySiteDTO> collaboratorDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
+            List<StudySiteDTO> studySiteDTOs, Bl isBatchMode)
+            throws PAException {
         // CHECKSTYLE:ON
 
         StudySiteDTO nctIdentifierDTO = getPAServiceUtils().extractNCTDto(studyIdentifierDTOs);        
@@ -2069,8 +2113,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         try {
             TrialUpdatesRecorder.reset();
             
-            Ii spIi = updateStudy(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
-                        studySiteAccrualStatusDTOs, studySiteDTOs);  
+            Ii spIi = updateStudy(studyProtocolDTO, overallStatusDTO,
+                    statusHistory, studyResourcingDTOs, documentDTOs,
+                    studySiteAccrualStatusDTOs, studySiteDTOs);  
             
             String existingNCT = getPAServiceUtils().getStudyIdentifier(studyProtocolDTO.getIdentifier(),
                     PAConstants.NCT_IDENTIFIER_TYPE);
@@ -2080,10 +2125,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                     PAConstants.NCT_IDENTIFIER_TYPE);
             TrialUpdatesRecorder.isNctUpdated(existingNCT, updatedNCT);
             
-            
-           
-
-          
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
                         
             // do not send the mail when its batch mode
@@ -2217,8 +2258,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         try {
             TrialUpdatesRecorder.reset();
             
-            Ii spIi = updateStudy(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
-                        studySiteAccrualStatusDTOs, studySiteDTOs);            
+            Ii spIi = updateStudy(studyProtocolDTO, overallStatusDTO, null,
+                    studyResourcingDTOs, documentDTOs,
+                    studySiteAccrualStatusDTOs, studySiteDTOs);           
             
             List<DocumentDTO> savedDocs = saveDocuments(documentDTOs, spIi);
                         
@@ -2241,9 +2283,13 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         }
     }
 
-    @SuppressWarnings({"PMD.ExcessiveParameterList", "PMD.ExcessiveMethodLength" })
-    private Ii updateStudy(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+            "PMD.ExcessiveMethodLength" })
+    private Ii updateStudy(StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyOverallStatusDTO> statusHistory,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
             List<StudySiteDTO> studySiteDTOs) throws PAException {
         StudyProtocolDTO spDTO = validateStudyExist(studyProtocolDTO, UPDATE);
@@ -2282,7 +2328,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         // the userLogged in value.
         spDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
         TrialRegistrationValidator validator = createValidator();
-        validator.validateUpdate(spDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs, 
+        validator.validateUpdate(spDTO, overallStatusDTO, statusHistory, studyResourcingDTOs, documentDTOs, 
                 studySiteAccrualStatusDTOs);
         spDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
         St newAccrualDiseaseCodeSystem = ISOUtil.isStNull(studyProtocolDTO
@@ -2293,9 +2339,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 TrialUpdatesRecorder.ACCRUAL_DISEASE_TERMINOLOGY_UPDATED);
         spDTO.setAccrualDiseaseCodeSystem(newAccrualDiseaseCodeSystem);
         
-       
-      
-
         updateStudyProtocol(spDTO);
         
         // Grants
@@ -2312,8 +2355,17 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         paServiceUtils.createOrUpdate(studySiteDTOs, IiConverter.convertToStudySiteIi(null), spIi);
 
         // Study overall status & status date.
-        TrialUpdatesRecorder.recordUpdate(overallStatusDTO, TrialUpdatesRecorder.STATUS_DATES_UPDATED);
-        studyOverallStatusService.create(overallStatusDTO);
+        if (overallStatusDTO != null) {
+            TrialUpdatesRecorder.recordUpdate(overallStatusDTO,
+                    TrialUpdatesRecorder.STATUS_DATES_UPDATED);
+            studyOverallStatusService.create(overallStatusDTO);
+        } else {
+            StudyOverallStatusDTO currentStatus = studyOverallStatusService
+                    .getCurrentByStudyProtocol(spIi);
+            studyOverallStatusService.updateStatusHistory(spIi, statusHistory);
+            TrialUpdatesRecorder.recordUpdate(currentStatus,
+                    TrialUpdatesRecorder.STATUS_DATES_UPDATED);
+        }
         return spIi;
     }
 

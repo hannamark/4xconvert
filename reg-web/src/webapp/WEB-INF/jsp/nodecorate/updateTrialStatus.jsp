@@ -6,6 +6,11 @@
     <head>
         <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
         <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
+        
+        <link href="<c:url value='/styles/jquery-datatables/css/jquery.dataTables.min.css'/>" rel="stylesheet" type="text/css" media="all" />    
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/jquery.dataTables.min.js'/>"></script>        
+        <c:url value="/protected/updateTrialStatuspopup" var="backendUrlTemplate"/>   
+         
         <script type="text/javascript" language="javascript">
             
             function updateTrialStatus() {

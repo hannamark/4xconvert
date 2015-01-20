@@ -361,11 +361,23 @@ public class TrialConvertUtils {
      * @param trialDTO
      *            TrialDTO
      * @return List<StudyOverallStatusDTO>
+     */   
+    public List<StudyOverallStatusDTO> convertStatusHistory(TrialDTO trialDTO) {
+        final Collection<StatusDto> statusHistory = trialDTO.getStatusHistory();        
+        return convertStatusHistory(statusHistory);
+    }
+
+ 
+    /**
+     * @param statusHistory
+     *            Collection<StatusDto>
+     * @return List<StudyOverallStatusDTO>
      */
     @SuppressWarnings("deprecation")
-    public List<StudyOverallStatusDTO> convertStatusHistory(TrialDTO trialDTO) {
-        List<StudyOverallStatusDTO> list = new ArrayList<StudyOverallStatusDTO>();
-        for (StatusDto status : trialDTO.getStatusHistory()) {
+    public List<StudyOverallStatusDTO> convertStatusHistory(
+            final Collection<StatusDto> statusHistory) {
+        List<StudyOverallStatusDTO> list = new ArrayList<StudyOverallStatusDTO>();        
+        for (StatusDto status : statusHistory) {
             StudyOverallStatusDTO isoDto = new StudyOverallStatusDTO();
             isoDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode
                     .valueOf(status.getStatusCode())));
@@ -375,6 +387,7 @@ public class TrialConvertUtils {
             isoDto.setAdditionalComments(StConverter.convertToSt(status
                     .getComments()));
             isoDto.setIdentifier(IiConverter.convertToIi(status.getId()));
+            isoDto.setDeleted(BlConverter.convertToBl(status.isDeleted()));
             list.add(isoDto);
         }
         return list;

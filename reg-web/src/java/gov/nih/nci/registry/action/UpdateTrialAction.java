@@ -2,7 +2,6 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -15,7 +14,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -26,6 +24,7 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -183,6 +182,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
             synchActionWithDTO();
             TrialSessionUtil.addSessionAttributesForUpdate(trialDTO);
+            setInitialStatusHistory(trialDTO.getStatusHistory());
             setIndIdeUpdateDtosLen(trialDTO.getIndIdeUpdateDtos().size());
             ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             
@@ -202,6 +202,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private void clearSession() {
         TrialSessionUtil.removeSessionAttributes();
         clearGrantsAndIndsFromSession();
+        setInitialStatusHistory(new ArrayList<StatusDto>());
     }
 
     private void synchActionWithDTO() {
@@ -212,7 +213,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             setParticipatingSitesList(trialDTO.getParticipatingSites());
         }
         syncIndIdesToDTO();
-        syncFundingToDTO();
+        syncFundingToDTO();       
     }
 
     private void syncIndIdesToDTO() {
@@ -259,6 +260,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     public String reviewUpdate() {
         HttpSession session = ServletActionContext.getRequest().getSession();
         try {
+            trialDTO.setStatusHistory(getStatusHistoryFromSession());
             String failureMessage = validateTrial();
             if (failureMessage != null) {
                 ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
@@ -396,10 +398,13 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             util.addSecondaryIdentifiers(spDTO, trialDTO);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
             spDTO.setUserLastCreated(StConverter.convertToSt(currentUser));
-
-            // set the overall status
-            StudyOverallStatusDTO sosDto = getOverallStatusForUpdate(util);
-
+            
+            final List<StudyOverallStatusDTO> statusHistory = new ArrayList<StudyOverallStatusDTO>();
+            statusHistory.addAll(util.convertStatusHistory(trialDTO));
+            statusHistory
+                    .addAll(util
+                            .convertStatusHistory(getDeletedStatusHistoryFromSession()));
+            
             List<DocumentDTO> documentDTOs = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
 
             // indide updates and adds
@@ -441,13 +446,14 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, null));        
             
             // call the service to invoke the update method
-            trialRegistrationService.update(spDTO, sosDto, studyIdentifierDTOs, null, 
+            trialRegistrationService.update(spDTO, statusHistory, studyIdentifierDTOs, null, 
                     studyResourcingDTOs, documentDTOs, null, null, null, null, null, 
                     null, null, pssDTOList, prgCdUpdatedList, BlConverter.convertToBl(Boolean.FALSE));
             
             TrialSessionUtil.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", updateId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", updateId);
+            setInitialStatusHistory(new ArrayList<StatusDto>());
         } catch (PAException e) {
             if (!RegistryUtil.setFailureMessage(e)) {
                 addActionError("Error occurred. Please try again.");
@@ -484,7 +490,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     void enforceBusinessRules() throws PAException, IOException {
         trialDTO.setFundingAddDtos(getFundingAddDtos());
-        trialDTO.setFundingDtos(getFundingDtos());
+        trialDTO.setFundingDtos(getFundingDtos());       
         addErrors(new TrialValidator().validateTrial(trialDTO));
         validateStatusAndDate();
         validateCollaborators();
@@ -667,35 +673,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     }
 
-    /**
-     * Gets the overall status for update.
-     *
-     * @param util the util
-     *
-     * @return the overall status for update
-     *
-     * @throws PAException the PA exception
-     */
-    private StudyOverallStatusDTO getOverallStatusForUpdate(TrialUtil util) throws PAException {
-        StudyOverallStatusDTO sosDto = null;
-        Long spId = Long.parseLong(trialDTO.getIdentifier());
-        Ii spIi = IiConverter.convertToIi(trialDTO.getIdentifier());
-        StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(spId);
-
-        // original submission
-        if (spqDTO.getDocumentWorkflowStatusCode() != null
-                && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED")
-                && IntConverter.convertToInteger(IntConverter.convertToInt(trialDTO.getSubmissionNumber())) == 1) {
-            sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
-        } else {
-            sosDto = new StudyOverallStatusDTO();
-            sosDto.setIdentifier(IiConverter.convertToIi((Long) null));
-            sosDto.setStudyProtocolIdentifier(spIi);
-        }
-        util.convertToStudyOverallStatusDTO(trialDTO, sosDto);
-        return sosDto;
-    }
-
+   
 
     /**
      * Validates the summary four info.

@@ -623,6 +623,37 @@ public interface TrialRegistrationServiceLocal {
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, Bl handleDuplicateGrantAndINDsGracefully) 
                     throws PAException;
 
+    /**
+     * Updates a study protocol.
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyIdentifierDTOs List of Study Identifier
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs List of documents IRB and Participating doc
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studyParticipationContactDTO StudySiteContactDTO
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactIi id of the person when sponsor is responsible
+     * @param studyRegAuthDTO updated studyRegAuthDTO
+     * @param collaboratorDTOs list of updated collaborators
+     * @param studySiteAccrualStatusDTOs list of updated participating sites
+     * @param studySiteDTOs list of StudySite DTOs with updated program code
+     * @param isBatchMode to identify if batch is caller
+     * @throws PAException on error
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    void update(StudyProtocolDTO studyProtocolDTO, List<StudyOverallStatusDTO> overallStatusDTO,
+            List<StudySiteDTO> studyIdentifierDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studyParticipationContactDTO,
+            OrganizationDTO summary4organizationDTO, StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudySiteDTO> collaboratorDTOs, List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs,
+            List<StudySiteDTO> studySiteDTOs, Bl isBatchMode) throws PAException;
+
     // CHECKSTYLE:ON
 
 }

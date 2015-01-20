@@ -114,6 +114,7 @@ public class UpdateTrialStatusAction extends UpdateTrialAction {
         try {
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(getStudyProtocolId()));
             new TrialUtil().getTrialDTOFromDb(studyProtocolIi, getTrialDTO());
+            setInitialStatusHistory(getTrialDTO().getStatusHistory());
             ServletActionContext.getRequest().getSession()
                     .setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, getTrialDTO());
             return SUCCESS;
@@ -133,16 +134,17 @@ public class UpdateTrialStatusAction extends UpdateTrialAction {
     public String update() {
         try {
             clearErrorsAndMessages();
+            getTrialDTO().setStatusHistory(getStatusHistoryFromSession());
             validateStatusAndDate();
             if (hasActionErrors()) {
                 return ERROR;
             }
-            TrialDTO savedDTO = loadTrialFromDB();
-            loadStatusValuesToSession(savedDTO);
+            TrialDTO savedDTO = loadTrialFromDB();            
+            loadStatusValuesToSession(savedDTO);            
             String result = super.update();
             if (!result.equals(ERROR)) {
                 addActionMessage("Trial status successfully updated.");
-                return SUCCESS;
+                return view();
             }
         } catch (Exception e) {
             if (!RegistryUtil.setFailureMessage(e)) {
