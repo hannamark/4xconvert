@@ -345,8 +345,14 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         // Trial Status Information
         driver.switchTo().defaultContent();
-        selenium.select("trialDTO_statusCode", "label=Approved");
-        selenium.type("trialDTO_statusDate", today);
+        clickAndWaitAjax("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr/td[5]/i[@class='fa fa-edit']");
+        pause(1000);
+        selenium.type("statusDate", today);
+        selenium.select("statusCode", "label=Approved");
+        selenium.type("editComment", "Trial approved!");
+        clickAndWaitAjax("xpath=//button/span[text()='Save']");
+        pause(5000);
+        
         selenium.type("trialDTO_startDate", today);
         selenium.click("trialDTO_startDateTypeActual");
         selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
@@ -401,9 +407,15 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("National Cancer Institute",
                 getTrialConfValue("Summary 4 Funding Sponsor:"));
         assertEquals("PG" + rand, getTrialConfValue("Program code:"));
-        assertEquals("In Review", selenium.getValue("trialDTO_statusCode"));
+        
+        assertEquals("", selenium.getValue("trialDTO_statusCode"));
         assertEquals("", selenium.getValue("trialDTO_reason"));
-        assertEquals(today, selenium.getValue("trialDTO_statusDate"));
+        assertEquals("", selenium.getValue("trialDTO_statusDate"));
+        assertEquals(today, selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[1]"));
+        assertEquals("In Review", selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[2]"));
+        assertEquals("", selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[3]"));
+        
+        
         assertEquals(tommorrow, selenium.getValue("trialDTO_startDate"));
         assertTrue(selenium.isChecked("trialDTO_startDateTypeAnticipated"));
         assertEquals(oneYearFromToday,
