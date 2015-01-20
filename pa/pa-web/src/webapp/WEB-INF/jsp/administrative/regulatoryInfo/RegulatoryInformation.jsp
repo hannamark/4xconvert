@@ -193,7 +193,7 @@
                         <td style="padding: 1px 5px 5px 0 ">
                             <s:select id="delpostindid" name="webDTO.delayedPostingIndicator" list="#{'':'', 'false':'No', 'true':'Yes'}" />
                             &nbsp;&nbsp;&nbsp;
-                            <span class="info">When this is set to "Yes" the trial will not be included in the nightly export to Cancer.gov</span>
+                            <span class="info">When this is set to "Yes" the trial will not be included in the nightly export to Cancer.gov or to ClinicalTrials.gov</span>
                             <span class="formErrorMsg">
                                 <s:fielderror><s:param>webDTO.delayedPostingIndicator</s:param></s:fielderror>
                             </span>
