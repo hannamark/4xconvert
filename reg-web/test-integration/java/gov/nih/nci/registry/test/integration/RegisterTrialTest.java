@@ -942,6 +942,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
         hideTopMenu();
         clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementToBecomeVisible(By.className("alert-danger"), 10);
         assertTrue(selenium
                 .isTextPresent("The form has errors and could not be submitted. Please check the fields highlighted below"));
         assertTrue(selenium
