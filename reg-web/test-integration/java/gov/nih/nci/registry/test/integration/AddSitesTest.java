@@ -12,10 +12,12 @@ import org.openqa.selenium.By;
 /**
  * @author Denis G. Krylov
  */
+@SuppressWarnings("deprecation")
 public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
     private static final int WAIT_FOR_ELEMENT_TIMEOUT = 30;
 
+   
     @Test
     public void testEmptyCriteriaError() throws SQLException {
         goToAddSitesScreen();
@@ -140,9 +142,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
         selenium.select("id=trial_" + trial.id + "_site_0_status",
                 "Closed to Accrual");
         selenium.type("id=trial_" + trial.id + "_site_0_statusDate", today);
-        selenium.type("id=trial_" + trial.id + "_site_0_dateOpen", today);
-        selenium.type("id=trial_" + trial.id + "_site_0_dateClosed", today);
-
+        
         clickAndWait("id=saveBtn");
         waitForElementById("summaryTable", WAIT_FOR_ELEMENT_TIMEOUT);
 

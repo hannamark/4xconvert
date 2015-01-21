@@ -529,7 +529,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         waitForElementById("nctID", 30);
         deactivateTrialByNctId("NCT00038610");
         selenium.type("nctID", "NCT00038610");
-        clickAndWait("xpath=//button[normalize-space(text())='Search Studies']");
+        clickAndWait("xpath=//button/i[@class='fa-search']");
 
         assertEquals("NCT00038610",
                 selenium.getText("//table[@id='row']/tbody/tr/td[1]"));

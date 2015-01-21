@@ -162,8 +162,6 @@
 		$('trial_'+spID+'_site_'+index+'_pgcode').setValue($('trial_'+spID+'_site_'+(index-1)+'_pgcode').getValue());
 		$('trial_'+spID+'_site_'+index+'_status').setValue($('trial_'+spID+'_site_'+(index-1)+'_status').getValue());
 		$('trial_'+spID+'_site_'+index+'_statusDate').setValue($('trial_'+spID+'_site_'+(index-1)+'_statusDate').getValue());
-		$('trial_'+spID+'_site_'+index+'_dateOpen').setValue($('trial_'+spID+'_site_'+(index-1)+'_dateOpen').getValue());
-		$('trial_'+spID+'_site_'+index+'_dateClosed').setValue($('trial_'+spID+'_site_'+(index-1)+'_dateClosed').getValue());
 	}
 	
 	function save() {
@@ -392,9 +390,7 @@
 								<td><b>Current Site Recruitment Status<span
 										class="required">*</span></b></td>
 								<td><b>Current Site Recruitment Status Date<span
-										class="required">*</span></b></td>
-								<td><b>Date Opened for Accrual</b></td>
-								<td><b>Date Closed for Accrual</b></td>
+										class="required">*</span></b></td>								
 								<td></td>
 							</tr>
 							<c:forEach items="${trial.orgsThatCanBeAddedAsSite}" var="org"
@@ -467,30 +463,6 @@
 											<input type="text"
 												id="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate"
 												name="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate"
-												style="min-width: 80px;"
-												placeholder="mm/dd/yyyy" maxlength="10" size="10"
-												data-format="MM/dd/yyyy" class="form-control" /> <span
-												class="add-on btn-default"><i
-												class="fa-calendar icon-calendar"></i></span>
-										</div>
-									</td>
-									<td nowrap="nowrap">
-										<div class="datetimepicker input-append" id="datetimepicker">
-											<input type="text"
-												id="trial_${trial.studyProtocolId}_site_${stat.index}_dateOpen"
-												name="trial_${trial.studyProtocolId}_site_${stat.index}_dateOpen"
-												style="min-width: 80px;"
-												placeholder="mm/dd/yyyy" maxlength="10" size="10"
-												data-format="MM/dd/yyyy" class="form-control" /> <span
-												class="add-on btn-default"><i
-												class="fa-calendar icon-calendar"></i></span>
-										</div>
-									</td>
-									<td nowrap="nowrap">
-										<div class="datetimepicker input-append" id="datetimepicker">
-											<input type="text"
-												id="trial_${trial.studyProtocolId}_site_${stat.index}_dateClosed"
-												name="trial_${trial.studyProtocolId}_site_${stat.index}_dateClosed"
 												style="min-width: 80px;"
 												placeholder="mm/dd/yyyy" maxlength="10" size="10"
 												data-format="MM/dd/yyyy" class="form-control" /> <span

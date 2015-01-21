@@ -121,29 +121,13 @@ public abstract class AbstractBaseParticipatingSiteBean extends AbstractBasePart
     private void enforceBusinessRecruitmentRules1ForProprietary(boolean openDateAvail,
             StudySiteAccrualStatusDTO currentStatus) throws PAException {
         RecruitmentStatusCode status = RecruitmentStatusCode.getByCode(currentStatus.getStatusCode().getCode());
-        if (status.isNonRecruiting()) {
-            if (openDateAvail) {
-                throw new PAException("Date Opened for Accrual must be null for "
-                        + currentStatus.getStatusCode().getCode());
-            }
-        } else if (!openDateAvail) {
-            throw new PAException("Date Opened for Accrual must be not null for "
+        if (status.isNonRecruiting() && openDateAvail) {
+            throw new PAException("Date Opened for Accrual must be null for "
                     + currentStatus.getStatusCode().getCode());
+
         }
     }
-
-    private void enforceBusinessRecruitmentRules2ForProprietary(boolean closedDateAvail,
-            StudySiteAccrualStatusDTO currentStatus) throws PAException {
-
-        if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode()
-                .equalsIgnoreCase(currentStatus.getStatusCode().getCode())
-                || RecruitmentStatusCode.COMPLETED.getCode()
-                .equalsIgnoreCase(currentStatus.getStatusCode().getCode()))
-                && !closedDateAvail) {
-            throw new PAException("Date Closed for Accrual must not be null for "
-                    + currentStatus.getStatusCode().getCode());
-        }
-    }
+  
 
     private void enforceBusinessDateRules1ForProprietary(boolean openDateAvail,
             boolean closedDateAvail, StudySiteDTO studySiteDTO,
@@ -192,9 +176,7 @@ public abstract class AbstractBaseParticipatingSiteBean extends AbstractBasePart
         boolean closedDateAvail = isAccrualRangeHighAvailable(studySiteDTO.getAccrualDateRange());
 
         enforceBusinessDateRulesForProprietary(openDateAvail, closedDateAvail, studySiteDTO, currentTime);
-
-        enforceBusinessRecruitmentRules1ForProprietary(openDateAvail, currentStatus);
-        enforceBusinessRecruitmentRules2ForProprietary(closedDateAvail, currentStatus);
+        enforceBusinessRecruitmentRules1ForProprietary(openDateAvail, currentStatus);        
     }
 
     private boolean isAccrualRangeLowAvailable(Ivl<Ts> accrualDateRange) {

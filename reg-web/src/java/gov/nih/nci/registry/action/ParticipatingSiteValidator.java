@@ -4,13 +4,10 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
-
-import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -69,17 +66,8 @@ public final class ParticipatingSiteValidator implements Validateable {
     // the validation
     // into common functionality and stay DRY. TO DO. Sorry.
     private void enforceBusinessRulesForProprietary() {
-        String err = "error.submit.invalidDate"; // validate date and its format
         checkInvestigatorStatus();
         enforcePartialRulesForProp1();
-        String strDateOpenedForAccrual = "accrualOpenedDate";
-        String strDateClosedForAccrual = "accrualClosedDate";
-        enforcePartialRulesForProp2(err, strDateOpenedForAccrual,
-                strDateClosedForAccrual);
-        enforcePartialRulesForProp3(strDateOpenedForAccrual,
-                strDateClosedForAccrual);
-        enforcePartialRulesForProp4(strDateOpenedForAccrual,
-                strDateClosedForAccrual);
     }
 
     private void checkInvestigatorStatus() {
@@ -112,81 +100,7 @@ public final class ParticipatingSiteValidator implements Validateable {
                     textProvider.getText("error.submit.invalidStatusDate"));
         }
     }
-
-    private void enforcePartialRulesForProp2(String err,
-            String strDateOpenedForAccrual, String strDateClosedForAccrual) {
-        if (StringUtils.isNotEmpty(siteDTO.getDateOpenedforAccrual())) {
-            if (!PAUtil.isValidDate(siteDTO.getDateOpenedforAccrual())) {
-                errorReporter.addFieldError(strDateOpenedForAccrual,
-                        textProvider.getText(err));
-            } else {
-                checkFieldError(PAUtil.isDateCurrentOrPast(siteDTO
-                        .getDateOpenedforAccrual()), strDateOpenedForAccrual,
-                        "error.submit.invalidStatusDate");
-            }
-        }
-        if (StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())) {
-            if (!PAUtil.isValidDate(siteDTO.getDateClosedforAccrual())) {
-                errorReporter.addFieldError(strDateClosedForAccrual,
-                        textProvider.getText(err));
-            } else {
-                checkFieldError(PAUtil.isDateCurrentOrPast(siteDTO
-                        .getDateClosedforAccrual()), strDateClosedForAccrual,
-                        "error.submit.invalidStatusDate");
-
-            }
-        }
-    }
-
-    private void enforcePartialRulesForProp3(String strDateOpenedForAccrual,
-            String strDateClosedForAccrual) {
-        checkFieldError(
-                StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())
-                        && StringUtils.isEmpty(siteDTO
-                                .getDateOpenedforAccrual()),
-                strDateOpenedForAccrual, "error.proprietary.dateOpenReq");
-        if (StringUtils.isNotEmpty(siteDTO.getDateOpenedforAccrual())
-                && StringUtils.isNotEmpty(siteDTO.getDateClosedforAccrual())) {
-            Timestamp dateOpenedDateStamp = PAUtil
-                    .dateStringToTimestamp(siteDTO.getDateOpenedforAccrual());
-            Timestamp dateClosedDateStamp = PAUtil
-                    .dateStringToTimestamp(siteDTO.getDateClosedforAccrual());
-            checkFieldError(dateClosedDateStamp.before(dateOpenedDateStamp),
-                    strDateClosedForAccrual,
-                    "error.proprietary.dateClosedAccrualBigger");
-        }
-
-    }
-
-    private void enforcePartialRulesForProp4(String strDateOpenedForAccrual,
-            String strDateClosedForAccrual) {
-        if (StringUtils.isNotEmpty(siteDTO.getRecruitmentStatus())) {
-            RecruitmentStatusCode recruitmentStatus = RecruitmentStatusCode
-                    .getByCode(siteDTO.getRecruitmentStatus());
-            if (recruitmentStatus.isNonRecruiting()) {
-                if (StringUtils.isNotEmpty(siteDTO.getDateOpenedforAccrual())) {
-                    errorReporter.addFieldError(strDateOpenedForAccrual,
-                            "Date Opened for Acrual must be empty for "
-                                    + siteDTO.getRecruitmentStatus()
-                                    + " recruitment status");
-                }
-            } else if (StringUtils.isEmpty(siteDTO.getDateOpenedforAccrual())) {
-                errorReporter.addFieldError(strDateOpenedForAccrual,
-                        "Date Opened for Acrual must not be empty for "
-                                + siteDTO.getRecruitmentStatus()
-                                + " recruitment status");
-            }
-            if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode()
-                    .equalsIgnoreCase(siteDTO.getRecruitmentStatus()) || RecruitmentStatusCode.COMPLETED
-                    .getCode().equalsIgnoreCase(siteDTO.getRecruitmentStatus()))
-                    && StringUtils.isEmpty(siteDTO.getDateClosedforAccrual())) {
-                errorReporter.addFieldError(strDateClosedForAccrual,
-                        "Date Closed for Acrual must not be empty for "
-                                + siteDTO.getRecruitmentStatus()
-                                + " recruitment status");
-            }
-        }
-    }
+   
 
     // NOPMD
     private void checkFieldError(boolean condition, String fieldName,
