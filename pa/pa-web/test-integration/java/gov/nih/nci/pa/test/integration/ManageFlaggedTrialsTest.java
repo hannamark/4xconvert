@@ -124,7 +124,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     public void testAddFlaggedTrial() throws SQLException, ParseException {
         TrialInfo trial = createTrialAndAccessManageFlags();
         verifyAddErrorMessageAndCancel();
-        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial);
         verifySingleFlaggedTrial(trial);
     }
@@ -134,7 +134,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     public void testAddDuplicateFlagValidation() throws SQLException,
             ParseException {
         TrialInfo trial = createTrialAndAccessManageFlags();
-        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial);
         clickAndWait("link=Manage Flagged Trials");
         populateAddFlagDialogAndHitSave(trial);
@@ -149,7 +149,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     @Test
     public void testInvalidNciId() throws SQLException, ParseException {
         TrialInfo trial = createTrialAndAccessManageFlags();
-        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         trial.nciID = "NCI-2014-";
         populateAddFlagDialogAndHitSave(trial);
         assertTrue(selenium.isVisible("err"));
@@ -170,7 +170,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     public void testEditDuplicateFlagValidation() throws SQLException,
             ParseException {
         TrialInfo trial = createTrialAndAccessManageFlags();
-        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial);
         trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial);
@@ -178,7 +178,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Manage Flagged Trials");
         selenium.click("xpath=//table[@id='flaggedTrials']/thead/tr[1]/th[2]");
         selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[6]");
-        selenium.select("reason", "label=Do not send to ClinicalTrials.gov");
+        selenium.select("reason", "label=Do not enforce unique Subject ID across sites");
         selenium.type("comments", "This is edited comment.");
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
         pause(OP_WAIT_TIME);
@@ -192,7 +192,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     public void testNavigateToTrialHistory() throws SQLException,
             ParseException {
         TrialInfo trial = createTrialAndAccessManageFlags();
-        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial);
         selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[1]");
         waitForPageToLoad();
@@ -203,24 +203,24 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     @Test
     public void testEditFlaggedTrial() throws SQLException, ParseException {
         TrialInfo trial = createTrialAndAccessManageFlags();
-        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial);
         selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[6]");
         assertTrue(selenium.isVisible("flag-form"));
         assertEquals("true",
                 driver.findElement(By.id("nciID")).getAttribute("disabled"));
-        assertEquals("Do not send to ClinicalTrials.gov",
+        assertEquals("Do not enforce unique Subject ID across sites",
                 selenium.getValue("reason"));
         assertEquals("This is a comment", selenium.getValue("comments"));
 
-        selenium.select("reason", "label=Do not process CDUS accrual files");
+        selenium.select("reason", "label=Do not enforce unique Subject ID across sites");
         selenium.type("comments", "This is edited comment.");
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
         waitForElementToBecomeVisible(By.id("msg"), 15);
         assertTrue(selenium.isTextPresent("Changes saved!"));
 
         assertEquals(
-                "Do not process CDUS accrual files",
+                "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[2]"));
 
         assertEquals(
@@ -257,7 +257,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     @Test
     public void testSelectDeselectAll() throws SQLException, ParseException {
         TrialInfo trial = createTrialAndAccessManageFlags();
-        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial);
 
         selenium.click("link=Select All");
@@ -277,11 +277,11 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     public void testEnsureDeletedTrialsIncludedInExport() throws SQLException,
             ParseException, IOException {
         TrialInfo trial1 = createTrialAndAccessManageFlags();
-        trial1.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial1.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial1);
 
         TrialInfo trial2 = createAcceptedTrial();
-        trial2.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial2.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial2);
 
         selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[7]//input[@type='checkbox']");
@@ -313,7 +313,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     @Test
     public void testDeleteFlaggedTrial() throws SQLException, ParseException {
         TrialInfo trial = createTrialAndAccessManageFlags();
-        trial.flaggedReason = "Do not send to ClinicalTrials.gov";
+        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
         addFlaggedTrial(trial);
 
         selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[7]//input[@type='checkbox']");
@@ -339,7 +339,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 trial.nciID,
                 selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[1]"));
         assertEquals(
-                "Do not send to ClinicalTrials.gov",
+                "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[2]"));
         assertEquals(
                 "CI, ctrpsubstractor "
@@ -397,7 +397,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[2]"));
         assertEquals(
-                "Do not send to ClinicalTrials.gov",
+                "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[11]/td[2]"));
 
         // Searching
@@ -490,7 +490,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[2]"));
         assertEquals(
-                "Do not send to ClinicalTrials.gov",
+                "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[11]/td[2]"));
 
         // Searching
@@ -537,7 +537,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Manage Flagged Trials");
 
         for (TrialInfo trialInfo : trials) {
-            trialInfo.flaggedReason = REASONS[trials.indexOf(trialInfo) % 3];
+            trialInfo.flaggedReason = REASONS[0];
             addFlaggedTrial(trialInfo);
         }
         return trials;
@@ -556,7 +556,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 trial.nciID,
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[1]"));
         assertEquals(
-                "Do not send to ClinicalTrials.gov",
+                "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[2]"));
         assertEquals(
                 "CI, ctrpsubstractor",
@@ -595,6 +595,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         selenium.type("nciID", trial.nciID);
         selenium.select("reason", "label=" + trial.flaggedReason);
         selenium.type("comments", "This is a comment");
+        pause(1500);
         assertEquals("3983 characters left", selenium.getText("limitlbl_0"));
         selenium.click("xpath=//button/span[normalize-space(text())='Save']");
     }
