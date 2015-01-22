@@ -119,6 +119,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 .click();
         driver.switchTo().defaultContent();
         waitForPageToLoad();
+        pause(2000);
         assertTrue(selenium
                 .isTextPresent("Your site information has been updated."));
 
