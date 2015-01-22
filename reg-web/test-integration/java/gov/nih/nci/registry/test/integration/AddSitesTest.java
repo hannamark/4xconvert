@@ -140,8 +140,12 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
         selenium.type("id=trial_" + trial.id + "_site_0_localID", "XYZ0001");
         selenium.type("id=trial_" + trial.id + "_site_0_pgcode", "PG0001");
         selenium.select("id=trial_" + trial.id + "_site_0_status",
-                "Closed to Accrual");
+                "Active");
         selenium.type("id=trial_" + trial.id + "_site_0_statusDate", today);
+        clickAndWaitAjax("id=trial_" + trial.id + "_site_0_addStatusBtn");
+        waitForElementToBecomeVisible(
+                By.id("trial_" + trial.id + "_site_0_trialStatusHistoryTable"),
+                WAIT_FOR_ELEMENT_TIMEOUT);
         
         clickAndWait("id=saveBtn");
         waitForElementById("summaryTable", WAIT_FOR_ELEMENT_TIMEOUT);
@@ -196,7 +200,7 @@ public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
         assertNotNull(driver.findElement(By.className("popover-content")));
         assertTrue(selenium
-                .isTextPresent("If you change your mind about entering a particular site, simply leave the row empty and it will be ignored"));
+                .isTextPresent("If you change your mind about entering a particular site, simply leave all the fields empty and it will be ignored on save."));
         assertEquals("3",
                 selenium.getValue("id=trial_" + trial.id + "_site_0_org_poid"));
 
