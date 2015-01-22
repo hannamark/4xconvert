@@ -3,17 +3,23 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
@@ -42,7 +48,7 @@ import org.json.JSONObject;
  * 
  */
 @SuppressWarnings({ "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
-public class AddSitesAction extends BaseSearchTrialAction { 
+public class AddSitesAction extends StatusHistoryManagementAction { 
 
     private static final String CONFIRMATION = "confirmation";
     static final String NO_AFFILIATION_ERR_MSG = "We are unable to determine your organization affiliation."
@@ -66,16 +72,46 @@ public class AddSitesAction extends BaseSearchTrialAction {
     private StudyProtocolServiceLocal studyProtocolService;
 
     private StudySiteContactServiceLocal studySiteContactService;
+    
+    private ProtocolQueryServiceLocal protocolQueryService;
 
     private PAServiceUtils paServiceUtils;
 
     private final List<AddSiteResult> summary = new ArrayList<AddSiteResult>();
+    
+    private List<StudyProtocolQueryDTO> records;
+    
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected final Class getStatusEnumClass() {       
+        return RecruitmentStatusCode.class;
+    }
+    
+    @Override
+    protected final CodedEnum<String> getStatusEnumByCode(String code) {
+        return RecruitmentStatusCode.getByCode(code);
+    }
+    
+    @Override
+    protected final boolean requiresReasonText(CodedEnum<String> statEnum) {
+        return false;
+    }
+    
+    @Override
+    protected final TransitionFor getStatusTypeHandledByThisClass() {
+        return TransitionFor.SITE_STATUS;
+    }
+    
+    @Override
+    protected TrialType getTrialTypeHandledByThisClass() {       
+        return TrialType.ABBREVIATED;
+    }
 
     @Override
     public String execute() throws PAException {
         reset();
         if (getUserAffiliation() == null) {
-            getServletRequest().setAttribute(FAILURE_MESSAGE,
+            getRequest().setAttribute(FAILURE_MESSAGE,
                     NO_AFFILIATION_ERR_MSG);
         }
         return SUCCESS;
@@ -83,7 +119,8 @@ public class AddSitesAction extends BaseSearchTrialAction {
 
     private void reset() {
         setRecords(new ArrayList<StudyProtocolQueryDTO>());
-        getServletRequest().getSession().removeAttribute(RESULTS_SESSION_KEY);
+        getRequest().getSession().removeAttribute(RESULTS_SESSION_KEY);
+        clearSessionLeftOvers();
     }
 
     /**
@@ -95,7 +132,7 @@ public class AddSitesAction extends BaseSearchTrialAction {
      */
     @SuppressWarnings("unchecked")
     public String validateSiteData() throws PAException, IOException {
-        List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getServletRequest()
+        List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getRequest()
                 .getSession().getAttribute(RESULTS_SESSION_KEY);
         if (CollectionUtils.isEmpty(trials)) {
             throw new PAException("No trials found.");
@@ -124,7 +161,7 @@ public class AddSitesAction extends BaseSearchTrialAction {
     @SuppressWarnings("unchecked")
     public String save() throws PAException {
 
-        List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getServletRequest()
+        List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getRequest()
                 .getSession().getAttribute(RESULTS_SESSION_KEY);
         if (CollectionUtils.isEmpty(trials)) {
             addActionError("Unexpected error: no trials found.");
@@ -191,7 +228,7 @@ public class AddSitesAction extends BaseSearchTrialAction {
                 }
             }
 
-            new ParticipatingSiteValidator(siteDTO, this, this, paServiceUtils)
+            new ParticipatingSiteValidator(siteDTO, this, this, paServiceUtils, getStatusTransitionService())
                     .validate();
             if (hasFieldErrors()) {
                 sb.append(collectFieldErrors());
@@ -234,7 +271,7 @@ public class AddSitesAction extends BaseSearchTrialAction {
 
     private SubmittedOrganizationDTO buildSiteFromRequestParameters(Long spID,
             int index) {
-        HttpServletRequest r = getServletRequest();
+        HttpServletRequest r = getRequest();
         SubmittedOrganizationDTO site = new SubmittedOrganizationDTO();
         site.setIndex(index);
         site.setSitePoId(StringUtils.defaultString(r.getParameter(String
@@ -252,18 +289,9 @@ public class AddSitesAction extends BaseSearchTrialAction {
         site.setProgramCode(StringUtils.defaultString(
                 r.getParameter(String.format("trial_%s_site_%s_pgcode", spID,
                         index))).trim());
-        site.setRecruitmentStatus(StringUtils.defaultString(
-                r.getParameter(String.format("trial_%s_site_%s_status", spID,
-                        index))).trim());
-        site.setRecruitmentStatusDate(StringUtils.defaultString(
-                r.getParameter(String.format("trial_%s_site_%s_statusDate",
-                        spID, index))).trim());
-        site.setDateOpenedforAccrual(StringUtils.defaultString(
-                r.getParameter(String.format("trial_%s_site_%s_dateOpen", spID,
-                        index))).trim());
-        site.setDateClosedforAccrual(StringUtils.defaultString(
-                r.getParameter(String.format("trial_%s_site_%s_dateClosed",
-                        spID, index))).trim());
+        
+        super.setDiscriminator(String.format("trial_%s_site_%s.statusHistory.", spID, index));
+        site.setStatusHistory(getStatusHistoryFromSession());
         return site;
     }
 
@@ -280,16 +308,49 @@ public class AddSitesAction extends BaseSearchTrialAction {
             applyAdditionalFiltersToSearchResults();
             checkForExcessiveNumberOfResults();
             checkForNoResults();
-            getServletRequest().getSession().setAttribute(RESULTS_SESSION_KEY,
+            getRequest().getSession().setAttribute(RESULTS_SESSION_KEY,
                     getRecords());
+            clearSessionLeftOvers();
             return SUCCESS;
         } catch (PAException e) {
             LOG.error(e, e);
-            getServletRequest().setAttribute(FAILURE_MESSAGE, e.getMessage());
+            getRequest().setAttribute(FAILURE_MESSAGE, e.getMessage());
             reset();
             return ERROR;
         }
 
+    }
+    
+    /**
+     * @param spQueryCriteria StudyProtocolQueryCriteria
+     * @throws PAException PAException
+     */
+    private void searchAndSort(final StudyProtocolQueryCriteria spQueryCriteria)
+            throws PAException {
+        // The way Search Trials screen works today is that POST means a user is executing a new search,
+        // while GET means the user is paginating through results. So for POST we always hit the back-end,
+        // while for GET we also look in cache for previously retrieved query results.
+        // Based on Search Trials usage pattern, if more than 10 results are retrieved by initial search,
+        // the user is likely to go through pages. It makes sense to cache the search results just for a little
+        // while and avoid hitting the database on each page change.
+        // We are not using HttpSession as cache, because it is long-lived, is specific to each user, and does not
+        // handle multiple browser tabs very well. Using HttpSession would increase risk of significant memory 
+        // consumption, a memory that we don't really have.
+        // We are using an EhCache instance instead, which is strictly limited by a max. number of elements in memory
+        // and TTL. Enough to improve pagination performance.
+        if (!"GET".equalsIgnoreCase(getRequest().getMethod())) {
+            CacheUtils.removeItemFromCache(CacheUtils.getSearchResultsCache(), spQueryCriteria.getUniqueCriteriaKey());
+        }        
+        records = protocolQueryService
+                .getStudyProtocolByCriteria(spQueryCriteria);
+        if (CollectionUtils.isNotEmpty(records)) {            
+            Collections.sort(records, new Comparator<StudyProtocolQueryDTO>() {
+                public int compare(StudyProtocolQueryDTO o1, StudyProtocolQueryDTO o2) {
+                    return StringUtils.defaultString(o2.getNciIdentifier()).compareTo(
+                            StringUtils.defaultString(o1.getNciIdentifier()));
+                }
+            });
+        }
     }
 
     private void checkForNoResults() throws PAException {
@@ -442,7 +503,7 @@ public class AddSitesAction extends BaseSearchTrialAction {
     }
 
     private RegistryUser getRegistryUser() throws PAException {
-        String loginName = getServletRequest().getRemoteUser();
+        String loginName = getRequest().getRemoteUser();
         return registryUserService.getUser(loginName);
     }
 
@@ -483,6 +544,7 @@ public class AddSitesAction extends BaseSearchTrialAction {
         this.participatingSiteService = PaRegistry
                 .getParticipatingSiteService();
         this.studySiteContactService = PaRegistry.getStudySiteContactService();
+        this.protocolQueryService = PaRegistry.getCachingProtocolQueryService();
         this.paServiceUtils = new PAServiceUtils();
     }
 
@@ -603,5 +665,29 @@ public class AddSitesAction extends BaseSearchTrialAction {
             ParticipatingOrgServiceLocal participatingOrgService) {
         this.participatingOrgService = participatingOrgService;
     }
+    /**
+     * 
+     * @return records
+     */
+    public List<StudyProtocolQueryDTO> getRecords() {
+        return records;
+    }
+    
+    /**
+     * @param records records
+     */
+    public void setRecords(List<StudyProtocolQueryDTO> records) {
+        this.records = records;
+    }
+    
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(
+            ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+  
 
 }

@@ -121,6 +121,7 @@ public abstract class AbstractParticipatingSitesBean
      * @param newStatus status
      * @throws PAException when error
      */
+    @SuppressWarnings("deprecation")
     protected void createStudySiteAccrualStatus(Ii studySiteIi,
             StudySiteAccrualStatusDTO newStatus) throws PAException {
         StudySiteAccrualStatusDTO currentStatus = getStudySiteAccrualStatusService()

@@ -97,6 +97,7 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.ParticipatingSiteConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
@@ -112,7 +113,9 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -134,6 +137,7 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -477,6 +481,42 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         } catch (Exception e) {
             throw new PAException(e);
         }
+    }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public ParticipatingSiteDTO createStudySiteParticipant(
+            StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO,
+            Collection<StatusDto> statusHistory, Ii poHcfIi) throws PAException {
+        if (CollectionUtils.isEmpty(statusHistory)) {
+            return createStudySiteParticipant(studySiteDTO, currentStatusDTO,
+                    poHcfIi);
+        }
+        // create the site with the first item in the status history being the
+        // current status, and then
+        // completely the status history by persisting the rest of it.
+        StatusDto initialStatus = statusHistory.iterator().next();
+        statusHistory.remove(initialStatus);
+        StudySiteAccrualStatusDTO initialStatusDTO = convert(initialStatus);
+        ParticipatingSiteDTO site = createStudySiteParticipant(studySiteDTO, initialStatusDTO,
+                poHcfIi);
+        for (StatusDto stat : statusHistory) {
+            StudySiteAccrualStatusDTO statDTO = convert(stat);          
+            createStudySiteAccrualStatus(site.getIdentifier(), statDTO);
+        }
+        return site;
+    }
+
+    @SuppressWarnings("deprecation")
+    private StudySiteAccrualStatusDTO convert(StatusDto stat) {
+        StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
+        ssas.setIdentifier(IiConverter.convertToIi((Long) null));
+        ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode
+                .valueOf(stat.getStatusCode())));
+        ssas.setStatusDate(TsConverter.convertToTs(stat.getStatusDate()));
+        ssas.setComments(StConverter.convertToSt(stat.getComments()));        
+        return ssas;
     }
 
     /**

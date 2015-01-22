@@ -3,7 +3,7 @@
  */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionService;
@@ -20,11 +20,13 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -47,7 +49,6 @@ import com.opensymphony.xwork2.Preparable;
  * Encapsulates generic status history management methods.
  * 
  * @author dkrylov
- * 
  */
 public abstract class StatusHistoryManagementAction extends ActionSupport
         implements // NOPMD
@@ -72,6 +73,7 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     private HttpServletRequest request;
     private HttpServletResponse response;
 
+    private String discriminator;
     private String statusDate;
     private String statusCode;
     private String reason;
@@ -107,22 +109,48 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     }
 
     /**
+     * @return StreamResult
+     * @throws JSONException
+     *             JSONException
+     * @throws ParseException
+     *             ParseException
+     * @throws IOException
+     */
+    public StreamResult clearStatusHistory() throws JSONException,
+            ParseException, IOException {
+        try {
+            setInitialStatusHistory(new ArrayList<StatusDto>());
+            return new StreamResult(new ByteArrayInputStream(new JSONObject()
+                    .toString().getBytes(UTF_8)));
+        } catch (Exception e) {
+            return handleExceptionDuringAjax(e);
+        }
+    }
+
+    /**
      * @param status
      * @throws ParseException
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void populateStatusFromRequest(StatusDto status)
             throws ParseException {
-        final StudyStatusCode statEnum = StudyStatusCode
-                .getByCode(getStatusCode());
-        status.setStatusCode(statEnum.name());
+        final CodedEnum statEnum = getStatusEnumByCode(getStatusCode());
+        status.setStatusCode(((Enum) statEnum).name());
         status.setStatusDate(DateUtils.parseDate(getStatusDate(),
                 new String[] { "MM/dd/yyyy" }));
-        if (statEnum.requiresReasonText()) {
+        if (requiresReasonText(statEnum)) {
             status.setReason(StringUtils.left(getReason(), 1000));
         }
         status.setComments(StringUtils.left(
                 StringUtils.defaultString(getComment()), 1000));
     }
+
+    protected abstract boolean requiresReasonText(CodedEnum<String> statEnum);
+
+    protected abstract CodedEnum<String> getStatusEnumByCode(String code);
+
+    @SuppressWarnings("rawtypes")
+    protected abstract Class<Enum> getStatusEnumClass();
 
     /**
      * @return StreamResult
@@ -242,9 +270,14 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
         if (runValidations) {
             statusTransitionService.validateStatusHistory(AppName.REGISTRATION,
                     getTrialTypeHandledByThisClass(),
-                    TransitionFor.TRIAL_STATUS, new ArrayList<>(hist));
+                    getStatusTypeHandledByThisClass(), new ArrayList<>(hist));
         }
     }
+
+    /**
+     * @return
+     */
+    protected abstract TransitionFor getStatusTypeHandledByThisClass();
 
     /**
      * @return TrialType
@@ -283,8 +316,10 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
         return errors.append(warnings).toString();
     }
 
+    @SuppressWarnings({ "unchecked" })
     private String enumToCode(String enumName) {
-        return StudyStatusCode.valueOf(enumName).getCode();
+        return ((CodedEnum<String>) (Enum.valueOf(getStatusEnumClass(),
+                enumName))).getCode();
     }
 
     /**
@@ -293,11 +328,11 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     @SuppressWarnings("unchecked")
     protected Collection<StatusDto> getStatusHistoryFromSession() {
         Collection<StatusDto> hist = (Collection<StatusDto>) request
-                .getSession().getAttribute(STATUS_HISTORY_LIST_KEY);
+                .getSession().getAttribute(getStatusHistorySessionKey());
         if (hist == null) {
             setInitialStatusHistory(new ArrayList<StatusDto>());
             hist = (Collection<StatusDto>) request.getSession().getAttribute(
-                    STATUS_HISTORY_LIST_KEY);
+                    getStatusHistorySessionKey());
         }
         return hist;
     }
@@ -310,6 +345,17 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
         Collection<StatusDto> hist = (Collection<StatusDto>) request
                 .getSession().getAttribute(DELETED_STATUS_HISTORY_LIST_KEY);
         return hist;
+    }
+
+    protected final void clearSessionLeftOvers() {
+        HttpSession s = request.getSession();
+        Enumeration<String> en = s.getAttributeNames();
+        while (en.hasMoreElements()) {
+            String attr = en.nextElement();
+            if (attr.startsWith(STATUS_HISTORY_LIST_KEY)) {
+                s.removeAttribute(attr);
+            }
+        }
     }
 
     /**
@@ -334,8 +380,17 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
      * @param c
      */
     private void sortAndSetIntoSession(final Collection<StatusDto> c) {
-        TreeSet<StatusDto> set = new TreeSet<StatusDto>(c);
-        request.getSession().setAttribute(STATUS_HISTORY_LIST_KEY, set);
+        TreeSet<StatusDto> set = new TreeSet<StatusDto>(
+                new ArrayList<StatusDto>(c));
+        request.getSession().setAttribute(getStatusHistorySessionKey(), set);
+    }
+
+    /**
+     * @return
+     */
+    private String getStatusHistorySessionKey() {
+        return STATUS_HISTORY_LIST_KEY
+                + StringUtils.defaultString(getDiscriminator());
     }
 
     // CHECKSTYLE:ON
@@ -450,5 +505,50 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     @Override
     public void prepare() {
         this.statusTransitionService = PaRegistry.getStatusTransitionService();
+    }
+
+    /**
+     * @return the request
+     */
+    public HttpServletRequest getRequest() {
+        return request;
+    }
+
+    /**
+     * @return the response
+     */
+    public HttpServletResponse getResponse() {
+        return response;
+    }
+
+    /**
+     * @return the discriminator
+     */
+    public String getDiscriminator() {
+        return discriminator;
+    }
+
+    /**
+     * @param discriminator
+     *            the discriminator to set
+     */
+    public void setDiscriminator(String discriminator) {
+        this.discriminator = discriminator;
+    }
+
+    /**
+     * @return the statusTransitionService
+     */
+    public StatusTransitionService getStatusTransitionService() {
+        return statusTransitionService;
+    }
+
+    /**
+     * @param statusTransitionService
+     *            the statusTransitionService to set
+     */
+    public void setStatusTransitionService(
+            StatusTransitionService statusTransitionService) {
+        this.statusTransitionService = statusTransitionService;
     }
 }

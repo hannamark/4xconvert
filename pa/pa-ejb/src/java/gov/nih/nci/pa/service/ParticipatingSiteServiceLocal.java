@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.pa.service;
 
-import java.util.List;
-
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -93,6 +91,7 @@ import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -100,6 +99,9 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
+
+import java.util.Collection;
+import java.util.List;
 
 import javax.ejb.Local;
 
@@ -193,6 +195,26 @@ public interface ParticipatingSiteServiceLocal {
      */
     ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi) throws PAException;
+    
+    /**
+     * Save a study site and its status where the PO org already exists and will
+     * be found using the po hcf ii or the ctep hcf ii. StudySiteDTO is expected
+     * to have the studyProtocol id set.
+     * 
+     * @param studySiteDTO
+     *            dto
+     * @param currentStatusDTO
+     *            dto
+     * @param poHcfIi
+     *            po hcf ii
+     * @param statusHistory statusHistory
+     * @return the participating site dto
+     * @throws PAException
+     *             when error
+     */
+    ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO,
+            Collection<StatusDto> statusHistory, Ii poHcfIi) throws PAException;
 
     /**
      * Update the study site and its status. Expect id set on studySiteDTO.
@@ -298,4 +320,6 @@ public interface ParticipatingSiteServiceLocal {
      */
     List<Organization> getListOfSitesUserCanUpdate(RegistryUser user,
             Ii studyProtocolID) throws PAException, NullifiedRoleException;
+
+   
 }

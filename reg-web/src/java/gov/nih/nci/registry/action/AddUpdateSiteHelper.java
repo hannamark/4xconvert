@@ -110,7 +110,7 @@ public final class AddUpdateSiteHelper {
 
         try {
             studySiteID = participatingSiteService.createStudySiteParticipant(
-                    studySiteDTO, accrualStatusDTO, poHealthFacilID)
+                    studySiteDTO, accrualStatusDTO, siteDTO.getStatusHistory(), poHealthFacilID)
                     .getIdentifier();
         } catch (DuplicateParticipatingSiteException e) {
             validationAware.addFieldError("organizationName", e.getMessage());

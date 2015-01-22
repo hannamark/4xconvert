@@ -6,11 +6,35 @@
 <head>
 <title><fmt:message key="addSites.title" /></title>
 <s:head />
+<c:url value="/protected/addSites" var="backendUrlTemplate"/>  
 <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl" />
 <c:url value="/protected/addSitesvalidateSiteData.action"
 	var="validateUrl" />
 
 <style type="text/css">
+
+.fa-trash-o,.fa-edit {
+    font-size: 150%;
+    cursor: pointer;
+    padding-right: 3px;
+}
+
+div.warning,b.warning {
+    color: blue;
+}
+
+div.warning:before {
+    content: "WARNING: ";
+}
+
+div.error:before {
+    content: "ERROR: ";
+}
+
+div.error,b.error {
+    color: red;
+}
+
 .no-border {
 	border: 0px solid #DDDDDD !important;
 }
@@ -29,6 +53,14 @@
     z-index: auto;
 }
 
+.status-history td {
+    border: 1px solid #DDDDDD !important;
+}
+
+#dialog-edit .row {
+    padding-top: 5px;
+}
+
 </style>
 
 <script type="text/javascript" language="javascript"
@@ -38,6 +70,8 @@
 	src="<c:url value='/scripts/js/jquery.dataTables.min.js?534785924'/>"></script>
 
 <script type="text/javascript" language="javascript">
+	var backendUrlTemplate = '${backendUrlTemplate}';
+	var deleteImg = '${pageContext.request.contextPath}/images/ico_delete.gif';
 
 	function resetSearch() {
 		$('identifier').value = '';
@@ -122,7 +156,8 @@
 		index++;
 		
 		jQuery('#trial_'+spID+'_site_'+index+'_row').show('highlight');
-		
+		$('trial_'+spID+'_site_'+index+'_stathistrow').show();
+		$('trial_'+spID+'_site_'+index+'_header').show();
 		if ($('trial_'+spID+'_site_'+index+'_btnrow')!=null) {
 			$('trial_'+spID+'_site_'+index+'_btnrow').show();
 		}
@@ -162,6 +197,257 @@
 		$('trial_'+spID+'_site_'+index+'_pgcode').setValue($('trial_'+spID+'_site_'+(index-1)+'_pgcode').getValue());
 		$('trial_'+spID+'_site_'+index+'_status').setValue($('trial_'+spID+'_site_'+(index-1)+'_status').getValue());
 		$('trial_'+spID+'_site_'+index+'_statusDate').setValue($('trial_'+spID+'_site_'+(index-1)+'_statusDate').getValue());
+		
+		(function($) {
+			 if ($.fn.DataTable.isDataTable( '#trial_'+spID+'_site_'+(index-1)+'_trialStatusHistoryTable' ) ) {
+				 var copyFromTable = $('#trial_'+spID+'_site_'+(index-1)+'_trialStatusHistoryTable').DataTable();
+				 var queue = copyFromTable.data().toArray().clone();
+				 if (queue.length > 0) {
+			            $
+			            .ajax(
+			                    {
+			                        type : "POST",
+			                        url : backendUrlTemplate
+			                                + "clearStatusHistory.action",
+			                        data : {			                           
+			                            discriminator : 'trial_'+spID+'_site_'+index+'.statusHistory.'
+			                        },
+			                        timeout : 30000
+			                    })
+			            .done(function() {
+		                     var currentStatus = queue[0];
+		                     $('#trial_'+spID+'_site_'+index+'_status').val(currentStatus.statusCode);
+		                     $('#trial_'+spID+'_site_'+index+'_statusDate').val(currentStatus.statusDate);
+		                     $( document ).ajaxStop(function() {
+		                         queue.shift();
+		                         if (queue.length > 0) {
+		                             currentStatus = queue[0];
+		                             $('#trial_'+spID+'_site_'+index+'_status').val(currentStatus.statusCode);
+		                             $('#trial_'+spID+'_site_'+index+'_statusDate').val(currentStatus.statusDate);
+		                             addSiteStatus(spID, index);
+		                         }
+		                     });
+		                     addSiteStatus(spID, index);
+			            });
+				 }
+			 }
+		})(jQuery);   
+	}
+	
+	function addSiteStatus(spID, index) {
+		(function($) {
+	        var statusCode = $('#trial_'+spID+'_site_'+index+'_status').val();
+            var statusDate = $('#trial_'+spID+'_site_'+index+'_statusDate').val();
+            if (statusDate == '') {
+                alert('Please provide a valid status date.');
+                return;
+            } else if (statusCode == '') {
+                alert('Please provide a status code.');
+                return;
+            }
+            
+            $('#trial_'+spID+'_site_'+index+'_statusHistoryDiv').show(); 
+            if (!$.fn.DataTable.isDataTable( '#trial_'+spID+'_site_'+index+'_trialStatusHistoryTable' ) ) {
+                   $('#trial_'+spID+'_site_'+index+'_trialStatusHistoryTable').DataTable({
+                       "bPaginate" : false,
+                       "bLengthChange" : false,
+                       "bFilter" : false,
+                       "bSort" : false,
+                       "bInfo" : false,
+                       "columns" : [ {
+                           "data" : "statusDate"
+                       }, {
+                           "data" : "statusCode"
+                       }, {
+                           "data" : "comments"
+                       }, {
+                           "data" : "validationErrors"
+                       }, {
+                           "data" : "actions"
+                       } ],
+                       "columnDefs" : [ {
+                           "targets" : 4,
+                           "render" : function(data, type, r, meta) {
+                               var content = '<i class="fa fa-edit" title="Edit '+r.statusCode+' recruitment status" data-toggle="tooltip" ></i><i title="Delete '+r.statusCode+' recruitment status" data-toggle="tooltip" class="fa fa-trash-o"></i>';                               
+                               return content;
+                           }
+                       } ],
+                       "ajax" : {
+                           "url" : backendUrlTemplate
+                                   + "getStatusHistory.action",
+                           "type" : "POST",
+                           "data": function (d) {
+                               d.discriminator = 'trial_'+spID+'_site_'+index+'.statusHistory.';
+                               return d;
+                           }
+                       }
+                   }).on('draw', function() {
+                       $('#runValidations').val('');
+                       $('[data-toggle="tooltip"]').tooltip({
+                           'placement' : 'top'
+                       });
+                   }).on('preXhr', function(e, settings, data) {
+                	   $('#trial_'+spID+'_site_'+index+'_indicator').show();
+                       data.runValidations = $('#runValidations').val();
+                   }).on('xhr', function() {
+                	   $('#trial_'+spID+'_site_'+index+'_indicator').hide();
+                   });
+                   
+
+                   $('#trial_'+spID+'_site_'+index+'_trialStatusHistoryTable tbody')
+                           .on(
+                                   'click',
+                                   '.fa-edit',
+                                   function() {
+                                       var uuid = table.row($(this).parents('tr'))
+                                               .data().DT_RowId;
+                                       var statusDate = table.row(
+                                               $(this).parents('tr')).data().statusDate;
+                                       var statusCode = table.row(
+                                               $(this).parents('tr')).data().statusCode;   
+                                       
+                                       if ($("#dialog-edit").dialog("instance")) {
+                                    	   $("#dialog-edit").dialog("destroy");
+                                       }
+                                       $("#dialog-edit")
+                                        .dialog(
+                                               {
+                                                   modal : true,
+                                                   autoOpen : false,
+                                                   width : 460,
+                                                   buttons : {
+                                                       "Save" : function() {
+                                                           if ($('#statusDate').val() == '') {
+                                                               alert('Please provide a valid status date.');
+                                                               return;
+                                                           }                                                                                  
+                                                           $(this).dialog("close");
+                                                           $('#trial_'+spID+'_site_'+index+'_indicator').show();
+                                                           $
+                                                                   .ajax(
+                                                                           {
+                                                                               type : "POST",
+                                                                               url : backendUrlTemplate
+                                                                                       + "editStatus.action",
+                                                                               data : {
+                                                                                   statusDate : $(
+                                                                                           '#statusDate')
+                                                                                           .val(),                                                                               
+                                                                                   statusCode : $(
+                                                                                           '#statusCode')
+                                                                                           .val(),
+                                                                                   comment : $(
+                                                                                           '#editComment')
+                                                                                           .val(),
+                                                                                   uuid : uuid,
+                                                                                   discriminator : 'trial_'+spID+'_site_'+index+'.statusHistory.'
+                                                                               },
+                                                                               timeout : 30000
+                                                                           })
+                                                                   .always(function() {
+                                                                	   $('#trial_'+spID+'_site_'+index+'_indicator').hide();
+                                                                   })
+                                                                   .done(
+                                                                           function() {
+                                                                               $('#runValidations')
+                                                                                       .val('true');
+                                                                               table.ajax.reload();
+                                                                           })
+                                                                   .fail(
+                                                                           function(jqXHR,
+                                                                                   textStatus,
+                                                                                   errorThrown) {
+                                                                               alert(jqXHR
+                                                                                       .getResponseHeader('msg'));
+                                                                           });
+
+                                                       },
+                                                       "Cancel" : function() {
+                                                           $(this).dialog("close");
+                                                       }
+                                                   }
+                                               });
+                                       
+                                       $("#dialog-edit").dialog('open');
+                                       $('#uuid').val(uuid);
+                                       $('#statusDate').val(statusDate);
+                                       $('#statusCode').val(statusCode);                                       
+                                       $('#editComment').val('');
+                                   });
+                   
+                   $('#trial_'+spID+'_site_'+index+'_trialStatusHistoryTable tbody')
+                   .on(
+                           'click',
+                           '.fa-trash-o',
+                           function() {
+                               var uuid = table.row($(this).parents('tr'))
+                                       .data().DT_RowId;
+                               $('#trial_'+spID+'_site_'+index+'_indicator').show();
+                               $
+                               .ajax(
+                                       {
+                                           type : "POST",
+                                           url : backendUrlTemplate
+                                                   + "deleteStatus.action",
+                                           data : {
+                                               comment : '',
+                                               uuid : uuid,
+                                               discriminator : 'trial_'+spID+'_site_'+index+'.statusHistory.'
+                                           },
+                                           timeout : 30000
+                                       })
+                               .always(function() {
+                            	   $('#trial_'+spID+'_site_'+index+'_indicator').hide();
+                               })
+                               .done(
+                                       function() {
+                                    	   $('#runValidations').val('true');
+                                           table.ajax.reload();
+                                       })
+                               .fail(
+                                       function(jqXHR,
+                                               textStatus,
+                                               errorThrown) {
+                                           alert(jqXHR
+                                                   .getResponseHeader('msg'));
+                                       });
+                           });
+
+            }
+            var table = $('#trial_'+spID+'_site_'+index+'_trialStatusHistoryTable').DataTable();
+			
+            $('#trial_'+spID+'_site_'+index+'_indicator').show();
+            $
+            .ajax(
+                    {
+                        type : "POST",
+                        url : backendUrlTemplate
+                                + "addStatus.action",
+                        data : {
+                            statusDate : statusDate,
+                            statusCode : statusCode,
+                            discriminator : 'trial_'+spID+'_site_'+index+'.statusHistory.'
+                        },
+                        timeout : 30000
+                    })
+            .always(function() {
+            	 $('#trial_'+spID+'_site_'+index+'_indicator').hide();
+            })
+            .done(function() {
+            	$('#trial_'+spID+'_site_'+index+'_status').val('');
+            	$('#trial_'+spID+'_site_'+index+'_statusDate').val('');                
+                $('#runValidations').val('true');
+                table.ajax.reload();
+            })
+            .fail(
+                    function(jqXHR, textStatus,
+                            errorThrown) {
+                        alert(jqXHR
+                                .getResponseHeader('msg'));
+                    });            
+	        
+		})(jQuery);		
+				
 	}
 	
 	function save() {
@@ -209,7 +495,16 @@
 		
 		if (!firstError) {
 			firstError = true;
-			$('trial_'+spID+'_site_'+index+'_errorRow').scrollTo();
+			var offset = jQuery('#trial_'+spID+'_site_'+index+'_errorRow')
+		            .offset();
+		    offset.left -= 80;
+		    offset.top -= 80;
+		    jQuery('html, body')
+	            .animate(
+	                    {
+	                        scrollTop : offset.top,
+	                        scrollLeft : offset.left
+	                    });
 		}
 		
 		jQuery('#trial_'+spID+'_site_'+index+'_errorMainDiv').show('blind');
@@ -242,6 +537,9 @@
 					'aTargets' : [ 0 ]
 				} ]
 			});
+			
+
+			
 		});
 	}(jQuery));
 	
@@ -257,7 +555,8 @@
 		<s:form name="addSites" action="addSites.action" id="addSitesForm"
 			cssClass="form-horizontal" role="form">
 			<s:token />
-
+		    <s:hidden name="uuid" id="uuid" />
+		    <s:hidden name="runValidations" id="runValidations" />
 			<h3 class="heading">
 				<span>Search Trials</span>
 			</h3>
@@ -381,25 +680,22 @@
 						data-content="<fmt:message key="tooltip.empty_site" />"
 						class="container-fluid" id="trial_${trial.studyProtocolId}_info">
 						<table class="table no-border">
-							<tr class="bottom-border-only">
-								<td><b>Site<span class="required">*</span></b></td>
-								<td><b>Principal Investigator<span class="required">*</span></b></td>
-								<td></td>
-								<td><b>Local Trial Identifier<span class="required">*</span></b></td>
-								<td><b>Program Code</b></td>
-								<td><b>Current Site Recruitment Status<span
-										class="required">*</span></b></td>
-								<td><b>Current Site Recruitment Status Date<span
-										class="required">*</span></b></td>								
-								<td></td>
-							</tr>
 							<c:forEach items="${trial.orgsThatCanBeAddedAsSite}" var="org"
 								varStatus="stat">
-
+								<c:set var="rowVisibility" value="${stat.first?'':'none'}" />
+	                            <tr class="bottom-border-only" style="display: ${rowVisibility};" 
+	                               id="trial_${trial.studyProtocolId}_site_${stat.index}_header">
+	                                <td><b>Site<span class="required">*</span></b></td>
+	                                <td><b>Principal Investigator<span class="required">*</span></b></td>
+	                                <td></td>
+	                                <td><b>Local Trial Identifier<span class="required">*</span></b></td>
+	                                <td><b>Program Code</b></td>                                                                
+	                                <td></td>
+	                            </tr>
 								<tr
 									id="trial_${trial.studyProtocolId}_site_${stat.index}_errorRow"
 									style="display: none;" class="errors">
-									<td colspan="10">
+									<td colspan="8">
 										<div class="container-fluid errors" style="display: none;"
 											id="trial_${trial.studyProtocolId}_site_${stat.index}_errorMainDiv">
 											<div class="row alert alert-danger">
@@ -415,7 +711,7 @@
 									</td>
 								</tr>
 
-								<c:set var="rowVisibility" value="${stat.first?'':'none'}" />
+								
 								<tr id="trial_${trial.studyProtocolId}_site_${stat.index}_row"
 									style="display: ${rowVisibility};">
 									<td><select class="form-control" style="min-width: 200px;"
@@ -454,22 +750,6 @@
 										name="trial_${trial.studyProtocolId}_site_${stat.index}_pgcode"
 										placeholder="Enter Program Code" maxlength="50"
 										class="form-control" /></td>
-									<td><s:select headerKey="" headerValue="--Select--"
-											id="trial_%{#attr.trial.studyProtocolId}_site_%{#attr.stat.index}_status"
-											name="trial_%{#attr.trial.studyProtocolId}_site_%{#attr.stat.index}_status"
-											list="#statusCodeValues" cssClass="form-control" /></td>
-									<td nowrap="nowrap">
-										<div class="datetimepicker input-append" id="datetimepicker">
-											<input type="text"
-												id="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate"
-												name="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate"
-												style="min-width: 80px;"
-												placeholder="mm/dd/yyyy" maxlength="10" size="10"
-												data-format="MM/dd/yyyy" class="form-control" /> <span
-												class="add-on btn-default"><i
-												class="fa-calendar icon-calendar"></i></span>
-										</div>
-									</td>
 									<c:if test="${not stat.first}">
 										<td><div class="input-append" style="padding-left: 10px;"
 												onclick="copySiteDataFromRowAbove(${trial.studyProtocolId},${stat.index});"
@@ -479,11 +759,98 @@
 											</div></td>
 									</c:if>
 								</tr>
+                                <tr
+                                    id="trial_${trial.studyProtocolId}_site_${stat.index}_stathistrow"
+                                    style="display: ${rowVisibility};">
+                                    <td colspan="8">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-xs-10">
+										            <div class="table-header-wrap">
+										                <table class="table no-border">										                    
+										                        <tr>
+										                            <td nowrap="nowrap"><label
+                                                                        for="trial_%{#attr.trial.studyProtocolId}_site_%{#attr.stat.index}_status">Site Recruitment Status<span
+                                                                        class="required">*</span></label></td>
+										                            <td nowrap="nowrap"><label
+										                                for="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate">Site Recruitment Status Date<span
+                                                                        class="required">*</span></label></td>		
+                                                                    <td>&nbsp;</td>   								                           
+										                        </tr>
+										                        <tr>
+										                           <td><s:select headerKey="" headerValue="--Select--"
+                                                                            id="trial_%{#attr.trial.studyProtocolId}_site_%{#attr.stat.index}_status"
+                                                                            name="trial_%{#attr.trial.studyProtocolId}_site_%{#attr.stat.index}_status"
+                                                                            list="#statusCodeValues" cssClass="form-control" /></td>
+										                            <td><div class="datetimepicker input-append" id="datetimepicker">
+								                                            <input type="text"
+								                                                id="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate"
+								                                                name="trial_${trial.studyProtocolId}_site_${stat.index}_statusDate"
+								                                                style="min-width: 80px;"
+								                                                placeholder="mm/dd/yyyy" maxlength="10" size="10"
+								                                                data-format="MM/dd/yyyy" class="form-control" /> <span
+								                                                class="add-on btn-default"><i
+								                                                class="fa-calendar icon-calendar"></i></span>
+								                                        </div></td>
+										                            <td><button type="button" id="trial_${trial.studyProtocolId}_site_${stat.index}_addStatusBtn"
+										                                    onclick="addSiteStatus(${trial.studyProtocolId},${stat.index});"
+										                                    class="btn btn-icon btn-default">
+										                                    <i class="fa-plus"></i>Add Status
+										                                </button></td>
+										                        </tr>
+										                        <tr>
+										                          <td colspan="3" align="left">
+										                          <span class="info">Please refer to the <a
+														                href="https://wiki.nci.nih.gov/x/zYLpDw" target="newPage">Site
+														                    Status Transition Rules</a>.
+														            </span>
+										                          </td>
+										                        </tr>										                   
+										                </table>
+										            </div>                                                    
+                                                </div>                                                 
+                                            </div>
+                                            <div class="row">
+                                                 <div class="col-xs-10">
+                                                    <div style="height: 16px;" align="center">
+										                <img id="trial_${trial.studyProtocolId}_site_${stat.index}_indicator" style="display: none;"
+										                    src="${pageContext.request.contextPath}/images/loading.gif"
+										                    alt="Progress Indicator." width="16" height="16" />
+										            </div>
+                                                 </div>
+                                            </div>
+                                            <div class="row" id="trial_${trial.studyProtocolId}_site_${stat.index}_statusHistoryDiv" style="display:none;">
+                                                 <div class="col-xs-4">
+                                                    <h5>Site Recruitment Status History</h5>
+                                                 </div>
+                                                 <div class="col-xs-offset-8"></div>
+                                                 <div class="col-xs-11">
+                                                     <div class="table-header-wrap">
+									                    <table class="table table-bordered status-history" id="trial_${trial.studyProtocolId}_site_${stat.index}_trialStatusHistoryTable">
+									                        <thead>
+									                            <tr>
+									                                <th nowrap="nowrap">Status Date</th>
+									                                <th nowrap="nowrap">Status</th>
+									                                <th nowrap="nowrap">Comments</th>
+									                                <th nowrap="nowrap">Validation Messages</th>
+									                                <th nowrap="nowrap">Actions</th>
+									                            </tr>
+									                        </thead>
+									                        <tbody>
+									                        </tbody>
+									                    </table>
+									                </div>                                                   
+                                                 </div>
+                                                  <div class="col-xs-offset-1"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>								
 								<c:if test="${not stat.last}">
 									<tr
 										id="trial_${trial.studyProtocolId}_site_${stat.index}_btnrow"
 										style="display: ${rowVisibility};">
-										<td colspan="10">
+										<td colspan="8">
 											<button type="button" class="btn btn-icon btn-primary"
 												onclick="addAnotherSiteRow(${trial.studyProtocolId},${stat.index});">
 												<i class="fa-plus-square"></i> Add Another Site
@@ -498,6 +865,42 @@
 			</div>
 		</div>
 	</c:forEach>
-
+	
+<div id="dialog-edit" title="Edit Site Recruitment Status" style="display: none;">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4" align="right">
+                <label for="statusDate">Status Date:<span class="required">*</span></label>
+            </div>
+            <div class="col-xs-8">
+                <div id="datetimepicker" class="datetimepicker input-append">
+                    <s:textfield id="statusDate" name="statusDate"
+                        data-format="MM/dd/yyyy" type="text" cssClass="form-control"
+                        placeholder="mm/dd/yyyy" />
+                    <span class="add-on btn-default"><i class="fa-calendar"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-4" align="right">
+                <label for="statusCode">Status:<span class="required">*</span></label>
+            </div>
+            <div class="col-xs-8">
+                <s:select id="statusCode" name="statusCode" list="#statusCodeValues"
+                    cssClass="form-control" />
+            </div>
+        </div>   
+        <div class="row">
+            <div class="col-xs-4" align="right">
+                <label for="editComment">Comment:</label>
+            </div>
+            <div class="col-xs-8">
+                <s:textarea id="editComment" name="editComment" rows="2"
+                    maxlength="1000" cssClass="form-control charcounter"
+                    cssStyle="width: 100%;" />
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

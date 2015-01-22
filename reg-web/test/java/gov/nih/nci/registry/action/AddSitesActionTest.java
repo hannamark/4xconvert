@@ -15,8 +15,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -31,11 +31,12 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.status.StatusDto;
+import gov.nih.nci.pa.service.status.StatusTransitionService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.action.AddSitesAction.AddSiteResult;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -43,12 +44,14 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,6 +81,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
     private StudySiteContactServiceLocal studySiteContactServiceLocal;
     private StudyProtocolServiceLocal studyProtocolServiceLocal;
     private ProtocolQueryServiceLocal protocolQueryServiceLocal;
+    private StatusTransitionService statusTransitionService;
 
     private ClinicalResearchStaffDTO researchStaffDTO;
     private HealthCareProviderDTO healthCareProviderDTO;
@@ -95,6 +99,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         studySiteContactServiceLocal = mock(StudySiteContactServiceLocal.class);
         studyProtocolServiceLocal = mock(StudyProtocolServiceLocal.class);
         protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
+        statusTransitionService = mock(StatusTransitionService.class);
 
         StudySiteDTO studySiteDTO = new StudySiteDTO();
         studySiteDTO.setIdentifier(IiConverter.convertToStudySiteIi(1L));
@@ -136,8 +141,9 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         when(
                 participatingSiteServiceLocal.createStudySiteParticipant(
                         any(StudySiteDTO.class),
-                        any(StudySiteAccrualStatusDTO.class), any(Ii.class)))
-                .thenReturn(participatingSiteDTO);
+                        any(StudySiteAccrualStatusDTO.class),
+                        any(Collection.class), any(Ii.class))).thenReturn(
+                participatingSiteDTO);
         when(
                 participatingSiteServiceLocal.getParticipatingSite(
                         any(Ii.class), any(String.class))).thenReturn(
@@ -237,6 +243,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         action.setServletRequest(ServletActionContext.getRequest());
         action.setServletResponse(ServletActionContext.getResponse());
         action.setParticipatingOrgService(participatingOrgServiceLocal);
+        action.setStatusTransitionService(statusTransitionService);
 
         setTextProvider(action);
 
@@ -447,12 +454,12 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         MockHttpServletRequest r = (MockHttpServletRequest) ServletActionContext
                 .getRequest();
         r.setupAddParameter("trial_1_site_0_org_poid", "");
-        r.setupAddParameter("trial_1_site_0_localID", "");
+        r.setupAddParameter("trial_1_site_0_localID", "ID");
         r.setupAddParameter("trial_1_site_0_pi_poid", "");
-        r.setupAddParameter("trial_1_site_0_status", "");
-        r.setupAddParameter("trial_1_site_0_statusDate", "");
-        r.setupAddParameter("trial_1_site_0_dateOpen", "01/01/2014");
-
+        
+        action.setDiscriminator(String.format("trial_%s_site_%s.statusHistory.", 1, 0));
+        action.setInitialStatusHistory(new ArrayList<StatusDto>());
+       
         action.validateSiteData();
 
         MockHttpServletResponse response = (MockHttpServletResponse) ServletActionContext
@@ -467,9 +474,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
 
         JSONObject err = arr.getJSONObject(0);
         assertEquals(0, err.getInt("index"));
-        assertEquals(1, err.getInt("spID"));
-        assertTrue(err.getString("errors").contains(
-                "Local Trial Identifier is required"));
+        assertEquals(1, err.getInt("spID"));       
         assertTrue(err.getString("errors").contains(
                 "Please choose a Site Principal Investigator using the lookup"));
         assertTrue(err.getString("errors").contains(
@@ -494,7 +499,7 @@ public class AddSitesActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void testSave() throws PAException, IOException {
+    public void testSave() throws PAException, IOException, ParseException {
         prepareAction();
 
         List<StudyProtocolQueryDTO> list = new ArrayList<StudyProtocolQueryDTO>();
@@ -510,8 +515,14 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         r.setupAddParameter("trial_1_site_0_localID", "MN001");
         r.setupAddParameter("trial_1_site_0_pgcode", "PCODE");
         r.setupAddParameter("trial_1_site_0_pi_poid", "1");
-        r.setupAddParameter("trial_1_site_0_status", "Active");
-        r.setupAddParameter("trial_1_site_0_statusDate", "01/01/2014");
+        
+        final ArrayList<StatusDto> statHistoryList = new ArrayList<StatusDto>();
+        StatusDto stat = new StatusDto();
+        stat.setStatusCode("ACTIVE");
+        stat.setStatusDate(DateUtils.parseDate("01/01/2014", new String[] {"MM/dd/yyyy"}));
+        statHistoryList.add(stat);
+        action.setDiscriminator(String.format("trial_%s_site_%s.statusHistory.", 1, 0));       
+        action.setInitialStatusHistory(statHistoryList);
 
         assertEquals("confirmation", action.save());
         assertFalse(action.hasActionErrors());
@@ -522,9 +533,10 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         ArgumentCaptor<StudySiteAccrualStatusDTO> accDTO = ArgumentCaptor
                 .forClass(StudySiteAccrualStatusDTO.class);
         ArgumentCaptor<Ii> ii = ArgumentCaptor.forClass(Ii.class);
+        ArgumentCaptor<Collection> statusHistory = ArgumentCaptor.forClass(Collection.class);
 
         verify(participatingSiteServiceLocal, times(1))
-                .createStudySiteParticipant(ssDTO.capture(), accDTO.capture(),
+                .createStudySiteParticipant(ssDTO.capture(), accDTO.capture(), statusHistory.capture(),
                         ii.capture());
         verify(participatingSiteServiceLocal, times(1))
                 .addStudySiteInvestigator(
@@ -542,11 +554,11 @@ public class AddSitesActionTest extends AbstractRegWebTest {
         assertEquals(StConverter.convertToSt("PCODE"), ssDTO.getValue()
                 .getProgramCodeText());
 
-        assertEquals(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE),
+        assertEquals(CdConverter.convertToCd((CodedEnum)null),
                 accDTO.getValue().getStatusCode());
-        assertEquals(TsConverter.convertToTs(PAUtil
-                .dateStringToTimestamp("01/01/2014")), accDTO.getValue()
+        assertEquals(TsConverter.convertToTs(null), accDTO.getValue()
                 .getStatusDate());
+        assertEquals(stat, statusHistory.getValue().iterator().next());
 
         assertEquals(1, action.getSummary().size());
         AddSiteResult result = action.getSummary().get(0);

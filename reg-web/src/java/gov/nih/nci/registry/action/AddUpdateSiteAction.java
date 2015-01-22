@@ -95,6 +95,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.status.StatusTransitionService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -150,6 +151,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     private StudySiteContactServiceLocal studySiteContactService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private OrganizationEntityServiceRemote organizationService;
+    private StatusTransitionService statusTransitionService;
     
 
     private boolean redirectToSummary;
@@ -331,7 +333,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
                 .getSession();
         try {
             clearErrorsAndMessages();
-            new ParticipatingSiteValidator(siteDTO, this, this, paServiceUtil)
+            new ParticipatingSiteValidator(siteDTO, this, this, paServiceUtil, statusTransitionService)
                     .validate();
             if (!(hasActionErrors() || hasFieldErrors())) {
                 final AddUpdateSiteHelper helper = new AddUpdateSiteHelper(
@@ -410,6 +412,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
         participatingSiteService = PaRegistry.getParticipatingSiteService();
         studySiteContactService = PaRegistry.getStudySiteContactService();
         organizationService = PoRegistry.getOrganizationEntityService();
+        statusTransitionService = PaRegistry.getStatusTransitionService();
     }
 
     /**
@@ -500,5 +503,13 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     public void setOrganizationService(
             OrganizationEntityServiceRemote organizationService) {
         this.organizationService = organizationService;
+    }
+
+    /**
+     * @param statusTransitionService the statusTransitionService to set
+     */
+    public void setStatusTransitionService(
+            StatusTransitionService statusTransitionService) {
+        this.statusTransitionService = statusTransitionService;
     }
 }

@@ -78,7 +78,10 @@
  */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.DocumentDTO;
@@ -674,6 +677,27 @@ public class ManageFileAction extends StatusHistoryManagementAction {
         // Sub-classes MUST override!
         // Can't make this class abstract because it is instantiated by Struts (see struts.xml).
         return null;
+    }
+    
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected final Class getStatusEnumClass() {       
+        return StudyStatusCode.class;
+    }
+    
+    @Override
+    protected final CodedEnum<String> getStatusEnumByCode(String code) {
+        return StudyStatusCode.getByCode(code);
+    }
+    
+    @Override
+    protected final boolean requiresReasonText(CodedEnum<String> statEnum) {
+        return ((StudyStatusCode) statEnum).requiresReasonText();
+    }
+    
+    @Override
+    protected final TransitionFor getStatusTypeHandledByThisClass() {
+        return TransitionFor.TRIAL_STATUS;
     }
     
 }

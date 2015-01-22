@@ -5,11 +5,23 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.status.StatusDto;
+import gov.nih.nci.pa.service.status.StatusTransitionService;
+import gov.nih.nci.pa.service.status.json.AppName;
+import gov.nih.nci.pa.service.status.json.ErrorType;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 
+import java.util.ArrayList;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.opensymphony.xwork2.TextProvider;
 import com.opensymphony.xwork2.Validateable;
@@ -31,6 +43,11 @@ public final class ParticipatingSiteValidator implements Validateable {
 
     private final PAServiceUtils paServiceUtil;
 
+    private final StatusTransitionService statusTransitionService;
+
+    private static final Logger LOG = Logger
+            .getLogger(ParticipatingSiteValidator.class);
+
     /**
      * @param siteDTO
      *            siteDTO
@@ -40,14 +57,18 @@ public final class ParticipatingSiteValidator implements Validateable {
      *            textProvider
      * @param paServiceUtil
      *            paServiceUtil
+     * @param statusTransitionService
+     *            statusTransitionService
      */
     public ParticipatingSiteValidator(SubmittedOrganizationDTO siteDTO,
             ValidationAware errorReporter, TextProvider textProvider,
-            PAServiceUtils paServiceUtil) {
+            PAServiceUtils paServiceUtil,
+            StatusTransitionService statusTransitionService) {
         this.siteDTO = siteDTO;
         this.errorReporter = errorReporter;
         this.textProvider = textProvider;
         this.paServiceUtil = paServiceUtil;
+        this.statusTransitionService = statusTransitionService;
     }
 
     @Override
@@ -88,19 +109,46 @@ public final class ParticipatingSiteValidator implements Validateable {
                 "localIdentifier", "error.siteLocalTrialIdentifier.required");
         checkFieldError(siteDTO.getInvestigatorId() == null, "investigator",
                 "error.selectedPersId.required");
-        checkFieldError(StringUtils.isEmpty(siteDTO.getRecruitmentStatus()),
-                "statusCode",
-                "error.participatingOrganizations.recruitmentStatus");
-        if (!PAUtil.isValidDate(siteDTO.getRecruitmentStatusDate())) {
-            errorReporter
-                    .addFieldError("statusDate", "A valid Recruitment Status Date is required");
-        } else if (PAUtil.isDateCurrentOrPast(siteDTO
-                .getRecruitmentStatusDate())) {
-            errorReporter.addFieldError("statusDate",
-                    textProvider.getText("error.submit.invalidStatusDate"));
+
+        if (CollectionUtils.isEmpty(siteDTO.getStatusHistory())) {
+            checkFieldError(
+                    StringUtils.isEmpty(siteDTO.getRecruitmentStatus()),
+                    "statusCode",
+                    "error.participatingOrganizations.recruitmentStatus");
+            if (!PAUtil.isValidDate(siteDTO.getRecruitmentStatusDate())) {
+                errorReporter.addFieldError("statusDate",
+                        "A valid Recruitment Status Date is required");
+            } else if (PAUtil.isDateCurrentOrPast(siteDTO
+                    .getRecruitmentStatusDate())) {
+                errorReporter.addFieldError("statusDate",
+                        textProvider.getText("error.submit.invalidStatusDate"));
+            }
+        } else {
+            try {
+                final ArrayList<StatusDto> validatedList = new ArrayList<StatusDto>(
+                        siteDTO.getStatusHistory());
+                statusTransitionService.validateStatusHistory(
+                        AppName.REGISTRATION, TrialType.ABBREVIATED,
+                        TransitionFor.SITE_STATUS, validatedList);
+                if (CollectionUtils.exists(validatedList, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object arg0) {
+                        StatusDto s = (StatusDto) arg0;
+                        return s.hasErrorOfType(ErrorType.ERROR);
+                    }
+                })) {
+                    errorReporter
+                            .addFieldError("statusDate",
+                                    "Recruitment status history for this site has errors; please see below");
+                }
+            } catch (PAException e) {
+                LOG.error(e, e);
+                errorReporter.addFieldError("statusDate",
+                        "Unable to validate recruitment status history for this site: "
+                                + e.getMessage());
+            }
         }
     }
-   
 
     // NOPMD
     private void checkFieldError(boolean condition, String fieldName,

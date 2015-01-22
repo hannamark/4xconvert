@@ -87,11 +87,15 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -115,6 +119,7 @@ public class SubmittedOrganizationDTO implements Serializable {
     private String dateOpenedforAccrual;
     private String dateClosedforAccrual;
     private String nameInvestigator;
+    private Collection<StatusDto> statusHistory = new ArrayList<>();
     
     private int index;
 
@@ -383,6 +388,21 @@ public class SubmittedOrganizationDTO implements Serializable {
                 && StringUtils.isBlank(recruitmentStatus)
                 && StringUtils.isBlank(recruitmentStatusDate)
                 && StringUtils.isBlank(dateOpenedforAccrual)
-                && StringUtils.isBlank(dateClosedforAccrual);
+                && StringUtils.isBlank(dateClosedforAccrual)
+                && CollectionUtils.isEmpty(statusHistory);
+    }
+
+    /**
+     * @return the statusHistory
+     */
+    public Collection<StatusDto> getStatusHistory() {
+        return statusHistory;
+    }
+
+    /**
+     * @param statusHistory the statusHistory to set
+     */
+    public void setStatusHistory(Collection<StatusDto> statusHistory) {
+        this.statusHistory = statusHistory;
     }
 }
