@@ -119,9 +119,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 .click();
         driver.switchTo().defaultContent();
         waitForPageToLoad();
-        pause(2000);
-        assertTrue(selenium
-                .isTextPresent("Your site information has been updated."));
+        waitForTextToAppear(By.className("alert-success"), "Message: Your site information has been updated.", 10);  
 
     }
 
@@ -217,8 +215,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 .click();
         driver.switchTo().defaultContent();
         waitForPageToLoad();
-        assertTrue(selenium
-                .isTextPresent("Your site information has been updated."));
+        waitForTextToAppear(By.className("alert-success"), "Message: Your site information has been updated.", 10);        
         // Make sure the right site got updated.
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
