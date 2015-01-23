@@ -1714,4 +1714,8 @@
         <comment>Added status_history to study_protocol_stage.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8418.sql"/>
      </changeSet>  
+     <changeSet id="PO-8485" author="Reshma">
+        <comment>Add a new property to pa_properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8485.sql"/>
+     </changeSet>
 </databaseChangeLog>

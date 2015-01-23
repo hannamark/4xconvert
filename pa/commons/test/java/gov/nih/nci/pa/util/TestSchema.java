@@ -1417,6 +1417,11 @@ public class TestSchema {
         prop.setName("CDE_version_eval");
         prop.setValue("1.0");
         TestSchema.addUpdObject(prop);
+        
+        prop = new PAProperties();
+        prop.setName("CADSR_URL");
+        prop.setValue("url");
+        TestSchema.addUpdObject(prop);
     }
 
     public static EvaluationType createEvaluationType() {

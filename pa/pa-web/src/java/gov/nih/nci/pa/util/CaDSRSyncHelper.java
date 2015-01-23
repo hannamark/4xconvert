@@ -62,9 +62,8 @@ public class CaDSRSyncHelper {
     private LookUpTableServiceRemote lookUpTableService;
     /**
      * updates Marker Tables.
-     * 
-     * @throws PAException
-     *             exception
+     * @throws PAException PAException 
+     *  
      */
     public void updateMarkerTables() throws PAException {
         markerAttributesService = PaRegistry.getMarkerAttributesService();
@@ -113,12 +112,12 @@ public class CaDSRSyncHelper {
      * @param publicId publicId
      * @param version version
      * @return map<Stirng, String> map
+     * @throws PAException PAException 
      */
     @SuppressWarnings("unchecked")
-    public Map<Long, Map<String, String>> getCaDSRValues(Long publicId, Float version) {
+    public Map<Long, Map<String, String>> getCaDSRValues(Long publicId, Float version) throws PAException {
         Map<Long, Map<String, String>> values = new HashMap<Long, Map<String, String>>();
-        try {
-            appService = ApplicationServiceProvider.getApplicationService();
+        appService = getApplicationService();
             try {
                 DetachedCriteria detachedCrit = DetachedCriteria.forClass(DataElement.class).add(Property
                         .forName("publicID").eq(publicId)).add(Property.forName("version").eq(version));
@@ -141,15 +140,32 @@ public class CaDSRSyncHelper {
             } catch (Exception e) {
                 LOG.error("Error while querying caDSR" + publicId, e);
             }
+        return values;
+    }
+    
+    /**
+     * 
+     * @return ApplicationService appService
+     * @throws PAException PAException
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public ApplicationService getApplicationService() throws PAException {
+        try {
+            appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
             LOG.error(
                     "Error attempting to instantiate caDSR Application Service.",
                     e);
+            throw new PAException(e);
         }
-        return values;
+        return appService;
     }
-
-    private Map<Long, Map<String, String>> getSearchResults(
+    /**
+     * 
+     * @param permissibleValues permissibleValues
+     * @return map map
+     */
+    protected Map<Long, Map<String, String>> getSearchResults(
             List<Object> permissibleValues) {
         Map<Long, Map<String, String>> results = new HashMap<Long, Map<String, String>>();
         for (Object obj : permissibleValues) {
@@ -165,7 +181,8 @@ public class CaDSRSyncHelper {
 
     /**
      * sync planned Marker tables values.
-     * @throws PAException exception
+     * @throws PAException PAException
+     *  
      *
      */
     public void syncPlannedMarkerAttributes() throws PAException {
