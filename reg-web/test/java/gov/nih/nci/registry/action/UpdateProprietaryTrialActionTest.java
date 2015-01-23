@@ -8,12 +8,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.stubVoid;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
+import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
@@ -28,6 +28,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.struts2.ServletActionContext;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -41,6 +42,14 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class UpdateProprietaryTrialActionTest extends AbstractRegWebTest {
     private UpdateProprietaryTrialAction action = new UpdateProprietaryTrialAction();
+    
+    /**
+     * Initialization method.
+     */
+    @Before
+    public void init() {
+        action.prepare();
+    }
     
     @Test
     public void testServletResponseProperty(){
@@ -136,6 +145,7 @@ public class UpdateProprietaryTrialActionTest extends AbstractRegWebTest {
         action.setOtherDocumentFileName(new String[] {"ProtocolDoc.doc"});
         request.setSession(session);
         ServletActionContext.setRequest(request);
+        session.setAttribute(Constants.PARTICIPATING_SITES_LIST, action.getTrialDTO().getParticipatingSitesList());
         addTrialUtilMock();
         assertEquals("review", action.review());
     }

@@ -85,6 +85,13 @@
             }
             
         </script>
+        
+<style type="text/css">
+/*Wrap error message text*/
+ul.errorMessage > li > span {
+    white-space:pre-wrap;
+}
+</style>
     </head>
     <body>
     <!-- main content begins-->
@@ -259,6 +266,11 @@
                                 </td>
                                 <td>
                                     <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].siteLocalTrialIdentifier" value="%{siteLocalTrialIdentifier}" cssClass="form-control" /></label>
+                                    <span class="alert-danger">
+                                        <s:fielderror escape="false">
+                                            <s:param>participatingsite.localTrialId<s:property value="%{#psstats.index}"/></s:param>
+                                        </s:fielderror>
+                                    </span>
                                 </td>
                                 <td>
                                     <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].programCode" value="%{programCode}" cssClass="form-control" /></label>
@@ -269,12 +281,22 @@
                                     <label><s:select headerKey="" headerValue="--Select--"
                                               name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
                                               list="#recruitmentStatusValues" cssClass="form-control" /></label>
+                                    <span class="alert-danger">
+                                        <s:fielderror escape="false">
+                                            <s:param>participatingsite.recStatus<s:property value="%{#psstats.index}"/></s:param>
+                                        </s:fielderror>
+                                    </span>
                                 </td>
                                 <td nowrap="nowrap">
                                     <label><s:textfield name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" size="12" cssClass="form-control" /></label>
                                     <a href="javascript:showCal('Cal1-<s:property value="%{#psstats.index}"/>')"> 
                                         <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
                                     </a>
+                                    <span class="alert-danger">
+                                        <s:fielderror>
+                                            <s:param>participatingsite.recStatusDate<s:property value="%{#psstats.index}"/></s:param>
+                                        </s:fielderror>
+                                    </span>     
                                 </td>
                                 <td nowrap="nowrap">
                                     <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" value="%{dateOpenedforAccrual}" size="12" cssClass="form-control" /></label>

@@ -348,6 +348,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         paOrgDto.setRecruitmentStatusDate("recruitmentStatusDate");
         paOrgList.add(paOrgDto);
         action.setParticipatingSitesList(paOrgList);
+        session.setAttribute(Constants.PARTICIPATING_SITES_LIST, paOrgList);
         assertEquals("error", action.reviewUpdate());
 
         paOrgList = new ArrayList<PaOrganizationDTO>();
@@ -357,6 +358,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         paOrgDto.setRecruitmentStatusDate(null);
         paOrgList.add(paOrgDto);
         action.setParticipatingSitesList(paOrgList);
+        session.setAttribute(Constants.PARTICIPATING_SITES_LIST, paOrgList);
         assertEquals("error", action.reviewUpdate());
     }
     @Test

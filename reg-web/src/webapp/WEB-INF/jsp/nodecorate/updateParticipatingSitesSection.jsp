@@ -1,4 +1,10 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<style type="text/css">
+/*Wrap error message text*/
+ul.errorMessage > li > span {
+    white-space:pre-wrap;
+}
+</style>
 <s:if test="participatingSitesList.size > 0" >
 <div class="accordion">
 <div class="accordion-heading"><a class="accordion-toggle" data-toggle="collapse" data-parent="#parent" href="#section11">Participating Sites<span class="required">*</span></a></div>
@@ -8,7 +14,7 @@
 	<table class="table table-striped table-bordered">
         <tr> 
             <td class="space">
-                <table class="table table-striped table-bordered">
+                <table id="participating-sites-table"  class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th>Site</th>
@@ -30,7 +36,7 @@
                                         name="participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
                                         list="#recruitmentStatusValues" cssClass="form-control"/></label>
                                     <span class="alert-danger">
-                                        <s:fielderror>
+                                        <s:fielderror escape="false">
                                             <s:param>participatingsite.recStatus<s:property value="%{#psstats.index}"/></s:param>
                                         </s:fielderror>
                                     </span>

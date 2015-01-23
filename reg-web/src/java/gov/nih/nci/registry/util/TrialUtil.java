@@ -77,6 +77,7 @@ public class TrialUtil extends TrialConvertUtils {
      * Session Attribute of Trial DTO.
      */
     public static final String SESSION_TRIAL_ATTRIBUTE = "trialDTO";
+    
     /**
      * Session Attribute of Site DTO.
      */

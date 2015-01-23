@@ -2,6 +2,7 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
+import gov.nih.nci.pa.enums.CodedEnumHelper;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -25,6 +26,10 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.status.StatusDto;
+import gov.nih.nci.pa.service.status.StatusTransitionService;
+import gov.nih.nci.pa.service.status.json.AppName;
+import gov.nih.nci.pa.service.status.json.ErrorType;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -41,8 +46,11 @@ import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +77,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private static final long serialVersionUID = -1295113563440080699L;
 
     private static final Logger LOG = Logger.getLogger(UpdateTrialAction.class);
+    
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy");
+    
+    private static final String STATUS_CHANGE_ERR_MSG = "You are attempting to change this status from: "
+            + "<br>Old Status: %1s <br>Old Status Date: %2s <br><strong>Error</strong>: %3s";
 
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyOverallStatusServiceLocal studyOverallStatusService;
@@ -77,6 +90,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     private StudySiteServiceLocal studySiteService;
     private TrialRegistrationServiceLocal trialRegistrationService;
+    private StatusTransitionService statusTransitionService;
     private final TrialUtil trialUtil = new TrialUtil();
 
     private TrialDTO trialDTO = new TrialDTO();
@@ -146,6 +160,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         studySiteAccrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
         studySiteService = PaRegistry.getStudySiteService();
         trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        statusTransitionService = PaRegistry.getStatusTransitionService();
         AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService = 
                 PaRegistry.getAccrualDiseaseTerminologyService();
         setAccrualDiseaseTerminologyList(accrualDiseaseTerminologyService.getValidCodeSystems());
@@ -589,15 +604,64 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         }
     }
 
-    private void validateParticipatingSite() {
-        int ind = 0;
-        if (CollectionUtils.isNotEmpty(getParticipatingSitesList())) {
-            for (PaOrganizationDTO ps : getParticipatingSitesList()) {
-                addFieldErrorIfEmptyValue(ps.getRecruitmentStatus(), "participatingsite.recStatus" + ind,
-                        "Recruitment Status should not be null");
-                addFieldErrorIfEmptyValue(ps.getRecruitmentStatusDate(), "participatingsite.recStatusDate" + ind,
-                        "Recruitment Status date should not be null");
-                ind++;
+    @SuppressWarnings("unchecked")
+    private void validateParticipatingSite() throws PAException {
+        List<PaOrganizationDTO> sessionPartList = (List<PaOrganizationDTO>) ServletActionContext
+                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_SITES_LIST);
+        List<PaOrganizationDTO> currPartList = getParticipatingSitesList();
+        if (CollectionUtils.isEmpty(currPartList)) {
+            return;
+        }
+        for (int i = 0; i < currPartList.size(); i++)  {
+            PaOrganizationDTO currps = currPartList.get(i);
+            PaOrganizationDTO prevps = sessionPartList.get(i);
+            
+            addFieldErrorIfEmptyValue(currps.getRecruitmentStatus(), "participatingsite.recStatus" + i,
+                    "Recruitment Status should not be null");
+            addFieldErrorIfEmptyValue(currps.getRecruitmentStatusDate(), "participatingsite.recStatusDate" + i,
+                    "Recruitment Status date should not be null");
+            if (StringUtils.isEmpty(currps.getRecruitmentStatus()) 
+                    || StringUtils.isEmpty(currps.getRecruitmentStatusDate())) {
+                continue;
+            }
+            
+            if (StringUtils.equals(currps.getRecruitmentStatus(), prevps.getRecruitmentStatus())
+                    && StringUtils.equals(currps.getRecruitmentStatusDate(), prevps.getRecruitmentStatusDate())) {
+                continue;
+            }
+            
+            Date prevDt, currDt = null;
+            
+            try {
+                prevDt = SDF.parse(prevps.getRecruitmentStatusDate());
+                currDt = SDF.parse(currps.getRecruitmentStatusDate());
+            } catch (ParseException e) {
+                addFieldError("participatingsite.recStatusDate" + i, 
+                        "Error parsing the participating site recruitment status dates, " + e.getMessage());
+                continue;
+            }
+            
+            if (currDt.before(prevDt)) {
+                String errMsg = String.format(STATUS_CHANGE_ERR_MSG, 
+                        new Object[] {prevps .getRecruitmentStatus(), prevps.getRecruitmentStatusDate(),
+                        " New status date must be greater or equal to the most recent status date"});
+                addFieldError("participatingsite.recStatus" + i, errMsg);
+                continue;
+            } else {
+                List<StatusDto> statusDtos = statusTransitionService.validateStatusTransition(
+                        AppName.REGISTRATION, TrialType.COMPLETE, TransitionFor.SITE_STATUS, 
+                        CodedEnumHelper.getByClassAndCode(RecruitmentStatusCode.class, 
+                                prevps.getRecruitmentStatus()).name(),
+                        prevDt, 
+                        CodedEnumHelper.getByClassAndCode(RecruitmentStatusCode.class, 
+                                currps.getRecruitmentStatus()).name());
+                if (statusDtos.get(0).hasErrorOfType(ErrorType.ERROR)) {
+                    
+                    String errMsg = String.format(STATUS_CHANGE_ERR_MSG, 
+                            new Object[] {prevps .getRecruitmentStatus(), prevps.getRecruitmentStatusDate(), 
+                            statusDtos.get(0).getConsolidatedErrorMessage()});
+                    addFieldError("participatingsite.recStatus" + i, errMsg);
+                }
             }
         }
     }

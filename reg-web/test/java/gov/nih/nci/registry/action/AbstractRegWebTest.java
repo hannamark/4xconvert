@@ -18,6 +18,7 @@ import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -350,14 +351,14 @@ public abstract class AbstractRegWebTest {
         List<SubmittedOrganizationDTO> paOrgList = new ArrayList<SubmittedOrganizationDTO>();
         SubmittedOrganizationDTO paOrgDto = new SubmittedOrganizationDTO();
         paOrgDto.setName("SITE01");
-        paOrgDto.setRecruitmentStatus("ACTIVE");
+        paOrgDto.setRecruitmentStatus(RecruitmentStatusCode.ACTIVE.getCode());
         paOrgDto.setRecruitmentStatusDate("01/01/2012");
         paOrgDto.setSiteLocalTrialIdentifier("SITE01");
         paOrgList.add(paOrgDto);
         
         paOrgDto = new SubmittedOrganizationDTO();
         paOrgDto.setName("SITE02");
-        paOrgDto.setRecruitmentStatus("ACTIVE");
+        paOrgDto.setRecruitmentStatus(RecruitmentStatusCode.ACTIVE.getCode());
         paOrgDto.setSiteLocalTrialIdentifier("SITE02");
         Date now = new Date();  
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy");  

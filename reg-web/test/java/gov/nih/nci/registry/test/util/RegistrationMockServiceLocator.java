@@ -1,6 +1,7 @@
 package gov.nih.nci.registry.test.util;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.DSet;
@@ -76,7 +77,11 @@ import gov.nih.nci.pa.service.TrialDataVerificationServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionService;
+import gov.nih.nci.pa.service.status.json.AppName;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.AccrualUtilityService;
@@ -127,6 +132,8 @@ import gov.nih.nci.registry.service.MockTrialRegistrationService;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -912,6 +919,27 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
 
     @Override
     public StatusTransitionService getStatusTransitionService() {
-        return mock(StatusTransitionService.class);
+        StatusTransitionService statusTransitionService = mock(StatusTransitionService.class);
+        try {
+            when(statusTransitionService.validateStatusTransition(
+                    any(AppName.class), any(TrialType.class), any(TransitionFor.class),
+                    anyString() , any(Date.class), anyString())).thenAnswer(new Answer<List<StatusDto>>() {
+
+                        @Override
+                        public List<StatusDto> answer(InvocationOnMock invocation)
+                                throws Throwable {
+                            Object[] args = invocation.getArguments();
+                            List<StatusDto> statusDtos = new ArrayList<StatusDto>();
+                            StatusDto dto = new StatusDto();
+                            dto.setStatusCode((String)args[5]);
+                            dto.setStatusDate(Calendar.getInstance().getTime());
+                            statusDtos.add(dto);
+                            return statusDtos;
+                        }
+                    });
+        } catch (PAException e) {
+            //Nothing to do
+        }
+        return statusTransitionService;
     }
 }

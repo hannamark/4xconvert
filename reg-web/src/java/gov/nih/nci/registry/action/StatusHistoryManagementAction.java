@@ -502,6 +502,21 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
         this.runValidations = runValidations;
     }
 
+    /**
+     * @return the statusTransitionService
+     */
+    public StatusTransitionService getStatusTransitionService() {
+        return statusTransitionService;
+    }
+
+    /**
+     * @param statusTransitionService the statusTransitionService to set
+     */
+    public void setStatusTransitionService(
+            StatusTransitionService statusTransitionService) {
+        this.statusTransitionService = statusTransitionService;
+    }
+
     @Override
     public void prepare() {
         this.statusTransitionService = PaRegistry.getStatusTransitionService();
@@ -530,19 +545,5 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
         this.discriminator = discriminator;
     }
 
-    /**
-     * @return the statusTransitionService
-     */
-    public StatusTransitionService getStatusTransitionService() {
-        return statusTransitionService;
-    }
-
-    /**
-     * @param statusTransitionService
-     *            the statusTransitionService to set
-     */
-    public void setStatusTransitionService(
-            StatusTransitionService statusTransitionService) {
-        this.statusTransitionService = statusTransitionService;
-    }
+    
 }
