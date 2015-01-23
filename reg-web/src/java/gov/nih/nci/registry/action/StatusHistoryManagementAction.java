@@ -396,7 +396,7 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     // CHECKSTYLE:ON
 
     @Override
-    public void setServletRequest(HttpServletRequest r) {
+    public final void setServletRequest(HttpServletRequest r) {
         this.request = r;
     }
 
@@ -510,16 +510,10 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     /**
      * @return the request
      */
-    public HttpServletRequest getRequest() {
+    public final HttpServletRequest getServletRequest() {
         return request;
     }
 
-    /**
-     * @return the response
-     */
-    public HttpServletResponse getResponse() {
-        return response;
-    }
 
     /**
      * @return the discriminator

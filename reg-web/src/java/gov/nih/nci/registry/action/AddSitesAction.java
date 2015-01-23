@@ -111,7 +111,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     public String execute() throws PAException {
         reset();
         if (getUserAffiliation() == null) {
-            getRequest().setAttribute(FAILURE_MESSAGE,
+            getServletRequest().setAttribute(FAILURE_MESSAGE,
                     NO_AFFILIATION_ERR_MSG);
         }
         return SUCCESS;
@@ -119,7 +119,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
 
     private void reset() {
         setRecords(new ArrayList<StudyProtocolQueryDTO>());
-        getRequest().getSession().removeAttribute(RESULTS_SESSION_KEY);
+        getServletRequest().getSession().removeAttribute(RESULTS_SESSION_KEY);
         clearSessionLeftOvers();
     }
 
@@ -132,7 +132,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
      */
     @SuppressWarnings("unchecked")
     public String validateSiteData() throws PAException, IOException {
-        List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getRequest()
+        List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getServletRequest()
                 .getSession().getAttribute(RESULTS_SESSION_KEY);
         if (CollectionUtils.isEmpty(trials)) {
             throw new PAException("No trials found.");
@@ -146,8 +146,8 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             validateSitesData(trial, errors);
         }
 
-        getResponse().setContentType("application/json");
-        Writer writer = getResponse().getWriter();
+        getServletResponse().setContentType("application/json");
+        Writer writer = getServletResponse().getWriter();
         writer.write(root.toString());
         writer.flush();
         return null;
@@ -161,7 +161,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     @SuppressWarnings("unchecked")
     public String save() throws PAException {
 
-        List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getRequest()
+        List<StudyProtocolQueryDTO> trials = (List<StudyProtocolQueryDTO>) getServletRequest()
                 .getSession().getAttribute(RESULTS_SESSION_KEY);
         if (CollectionUtils.isEmpty(trials)) {
             addActionError("Unexpected error: no trials found.");
@@ -271,7 +271,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
 
     private SubmittedOrganizationDTO buildSiteFromRequestParameters(Long spID,
             int index) {
-        HttpServletRequest r = getRequest();
+        HttpServletRequest r = getServletRequest();
         SubmittedOrganizationDTO site = new SubmittedOrganizationDTO();
         site.setIndex(index);
         site.setSitePoId(StringUtils.defaultString(r.getParameter(String
@@ -308,13 +308,13 @@ public class AddSitesAction extends StatusHistoryManagementAction {
             applyAdditionalFiltersToSearchResults();
             checkForExcessiveNumberOfResults();
             checkForNoResults();
-            getRequest().getSession().setAttribute(RESULTS_SESSION_KEY,
+            getServletRequest().getSession().setAttribute(RESULTS_SESSION_KEY,
                     getRecords());
             clearSessionLeftOvers();
             return SUCCESS;
         } catch (PAException e) {
             LOG.error(e, e);
-            getRequest().setAttribute(FAILURE_MESSAGE, e.getMessage());
+            getServletRequest().setAttribute(FAILURE_MESSAGE, e.getMessage());
             reset();
             return ERROR;
         }
@@ -338,7 +338,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
         // consumption, a memory that we don't really have.
         // We are using an EhCache instance instead, which is strictly limited by a max. number of elements in memory
         // and TTL. Enough to improve pagination performance.
-        if (!"GET".equalsIgnoreCase(getRequest().getMethod())) {
+        if (!"GET".equalsIgnoreCase(getServletRequest().getMethod())) {
             CacheUtils.removeItemFromCache(CacheUtils.getSearchResultsCache(), spQueryCriteria.getUniqueCriteriaKey());
         }        
         records = protocolQueryService
@@ -503,7 +503,7 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     }
 
     private RegistryUser getRegistryUser() throws PAException {
-        String loginName = getRequest().getRemoteUser();
+        String loginName = getServletRequest().getRemoteUser();
         return registryUserService.getUser(loginName);
     }
 
