@@ -120,6 +120,13 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                         any(StudySiteAccrualStatusDTO.class))).thenReturn(
                 participatingSiteDTO);
         when(
+                participatingSiteServiceLocal
+                        .updateStudySiteParticipantWithStatusHistory(
+                                any(StudySiteDTO.class),
+                                any(StudySiteAccrualStatusDTO.class),
+                                any(Collection.class))).thenReturn(
+                participatingSiteDTO);
+        when(
                 participatingSiteServiceLocal.createStudySiteParticipant(
                         any(StudySiteDTO.class),
                         any(StudySiteAccrualStatusDTO.class), any(Ii.class)))
@@ -197,6 +204,7 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
         action.setOrganizationService(organizationEntityServiceRemote);
         action.setStudyProtocolId("1");
         action.setStatusTransitionService(statusTransitionService);
+        action.setServletRequest(ServletActionContext.getRequest());
     }
 
     /**
@@ -241,9 +249,11 @@ public class AddUpdateSiteActionTest extends AbstractRegWebTest {
                 .forClass(StudySiteDTO.class);
         ArgumentCaptor<StudySiteAccrualStatusDTO> accDTO = ArgumentCaptor
                 .forClass(StudySiteAccrualStatusDTO.class);
+        ArgumentCaptor<Collection> hist = ArgumentCaptor
+                .forClass(Collection.class);
 
         verify(participatingSiteServiceLocal, times(1))
-                .updateStudySiteParticipant(ssDTO.capture(), accDTO.capture());
+                .updateStudySiteParticipantWithStatusHistory(ssDTO.capture(), accDTO.capture(), hist.capture());
         verify(participatingSiteServiceLocal, times(1))
                 .addStudySiteInvestigator(
                         IiConverter.convertToStudySiteIi(1L),

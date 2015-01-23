@@ -5,7 +5,9 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
+import gov.nih.nci.pa.service.status.StatusDto;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -88,6 +90,15 @@ public class InvokeStudySiteAccrualStatusEjb implements StudySiteAccrualStatusSe
      * {@inheritDoc}
      */
     public List<StudySiteAccrualStatusDTO> getDeletedByStudySite(Ii studySiteIi)
+            throws PAException {
+        throw new PAException("Not yet implemented");
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public Collection<StatusDto> getStatusHistory(Ii identifier)
             throws PAException {
         throw new PAException("Not yet implemented");
     }

@@ -226,6 +226,22 @@ public interface ParticipatingSiteServiceLocal {
      */
     ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO) throws PAException;
+    
+    /**
+     * Update the study site and its status. Expect id set on studySiteDTO.
+     * 
+     * @param studySiteDTO
+     *            dto.
+     * @param currentStatusDTO
+     *            dto.
+     * @param  statusHistory statusHistory
+     * @return the participating site dto
+     * @throws PAException
+     *             when error.
+     */
+    ParticipatingSiteDTO updateStudySiteParticipantWithStatusHistory(StudySiteDTO studySiteDTO,
+            StudySiteAccrualStatusDTO currentStatusDTO,
+            Collection<StatusDto> statusHistory) throws PAException;
 
     /**
      * Lookup study site id given a trial id and a hcf id.

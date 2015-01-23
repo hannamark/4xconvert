@@ -511,7 +511,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
     @SuppressWarnings("deprecation")
     private StudySiteAccrualStatusDTO convert(StatusDto stat) {
         StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
-        ssas.setIdentifier(IiConverter.convertToIi((Long) null));
+        ssas.setIdentifier(IiConverter.convertToIi(stat.getId()));
         ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode
                 .valueOf(stat.getStatusCode())));
         ssas.setStatusDate(TsConverter.convertToTs(stat.getStatusDate()));
@@ -587,6 +587,38 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         } catch (Exception e) {
             throw new PAException(e);
         }
+    }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public ParticipatingSiteDTO updateStudySiteParticipantWithStatusHistory(
+            StudySiteDTO studySiteDTO, StudySiteAccrualStatusDTO newStatus,
+            Collection<StatusDto> statusHistory) throws PAException {
+        if (CollectionUtils.isEmpty(statusHistory)) {
+            return updateStudySiteParticipant(studySiteDTO, newStatus);
+        }
+        StudySiteAccrualStatusDTO currentStatus = getStudySiteAccrualStatusService()
+                .getCurrentStudySiteAccrualStatusByStudySite(
+                        studySiteDTO.getIdentifier());
+        // This will take care of site updates, leaving the status unchanged.
+        ParticipatingSiteDTO updated = updateStudySiteParticipant(studySiteDTO,
+                currentStatus);
+        
+        // now handle the history: sort out deletes, updates, additions.
+        for (StatusDto stat : statusHistory) {
+            StudySiteAccrualStatusDTO statDTO = convert(stat);
+            statDTO.setStudySiteIi(studySiteDTO.getIdentifier());
+            if (stat.isDeleted() && stat.getId() != null) {
+                getStudySiteAccrualStatusService().softDelete(statDTO);
+            } else if (!stat.isDeleted() && stat.getId() == null) {
+                getStudySiteAccrualStatusService()
+                        .createStudySiteAccrualStatus(statDTO);
+            } else if (!stat.isDeleted() && stat.getId() != null) {
+                getStudySiteAccrualStatusService()
+                        .updateStudySiteAccrualStatus(statDTO);
+            }
+        }
+        return updated;
     }
 
     private void validateStudySite(StudySiteDTO studySiteDTO, StudySiteDTO currentSite) throws PAException {

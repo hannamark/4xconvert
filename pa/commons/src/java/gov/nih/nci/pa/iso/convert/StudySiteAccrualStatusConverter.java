@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
+import org.apache.commons.lang.StringUtils;
+
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -159,9 +161,8 @@ public class StudySiteAccrualStatusConverter extends
         }
 
         bo.setStatusCode(RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode()));
-        bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
-        String comments = dto.getComments() == null ? "" : dto.getComments().getValue();
-        bo.setComments(comments);
+        bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));     
+        bo.setComments(StringUtils.defaultString(StConverter.convertToString(dto.getComments())));
     }
 
 }

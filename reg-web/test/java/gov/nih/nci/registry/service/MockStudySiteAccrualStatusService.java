@@ -11,10 +11,12 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -119,6 +121,12 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
             throws PAException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public Collection<StatusDto> getStatusHistory(Ii identifier)
+            throws PAException {      
+        return new ArrayList<>();
     }
 
 }

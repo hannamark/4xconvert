@@ -125,8 +125,9 @@ public final class AddUpdateSiteHelper {
         StudySiteDTO studySiteDTO = getStudySite();
         StudySiteAccrualStatusDTO accrualStatusDTO = getStudySiteAccrualStatus();
 
-        Ii studySiteID = participatingSiteService.updateStudySiteParticipant(
-                studySiteDTO, accrualStatusDTO).getIdentifier();
+        Ii studySiteID = participatingSiteService.updateStudySiteParticipantWithStatusHistory(
+                studySiteDTO, accrualStatusDTO, siteDTO.getStatusHistory())
+                .getIdentifier();
         clearInvestigatorsForPropTrialSite(studySiteID);
         addInvestigator(studySiteID);
     }

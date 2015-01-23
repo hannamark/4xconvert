@@ -87,6 +87,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -95,7 +97,10 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionService;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -109,6 +114,8 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -119,7 +126,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
-import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
 
 /**
@@ -128,7 +134,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Denis G. Krylov
  */
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
-public class AddUpdateSiteAction extends ActionSupport implements Preparable {
+public class AddUpdateSiteAction extends StatusHistoryManagementAction implements Preparable {
 
     static final String SUCCESS_MESSAGE_KEY = "successMessage";
     private static final String WAIT = "wait";
@@ -157,6 +163,33 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
     private boolean redirectToSummary;
     private String studyProtocolId;    
     private String pickedSiteOrgPoId;
+    
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected final Class getStatusEnumClass() {       
+        return RecruitmentStatusCode.class;
+    }
+    
+    @Override
+    protected final CodedEnum<String> getStatusEnumByCode(String code) {
+        return RecruitmentStatusCode.getByCode(code);
+    }
+    
+    @Override
+    protected final boolean requiresReasonText(CodedEnum<String> statEnum) {
+        return false;
+    }
+    
+    @Override
+    protected final TransitionFor getStatusTypeHandledByThisClass() {
+        return TransitionFor.SITE_STATUS;
+    }
+    
+    @Override
+    protected TrialType getTrialTypeHandledByThisClass() {       
+        return TrialType.ABBREVIATED;
+    }
+
 
     /**
      * Prepare and display the site add/update pop-up.
@@ -165,6 +198,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
      */
     public String view() {
         try {
+            setInitialStatusHistory(new ArrayList<StatusDto>());
             prepareProtocolData();            
             populateSiteDTO();
             setSiteDtoInSession();
@@ -247,6 +281,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
                 .getSession()
                 .setAttribute(TrialUtil.SESSION_TRIAL_SITE_ATTRIBUTE,
                         getSiteDTO());
+        setInitialStatusHistory(getSiteDTO().getStatusHistory());
     }
 
     private boolean canUpdateMultipleSites() throws PAException,
@@ -294,7 +329,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
                 .getName()));
         if (studySiteDTO != null) {
             // Participating site already exists. Preparing for 'update' mode.
-            siteDTO = trialUtil.getSubmittedOrganizationDTO(studySiteDTO);
+            siteDTO = trialUtil.getSubmittedOrganizationDTO(studySiteDTO);           
         }
     }
 
@@ -333,6 +368,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
                 .getSession();
         try {
             clearErrorsAndMessages();
+            siteDTO.setStatusHistory(getStatusHistoryFromSession());
             new ParticipatingSiteValidator(siteDTO, this, this, paServiceUtil, statusTransitionService)
                     .validate();
             if (!(hasActionErrors() || hasFieldErrors())) {
@@ -343,6 +379,14 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
                         getStudyProtocolId(), getRegistryUser()
                                 .getAffiliatedOrganizationId().toString());
                 if (StringUtils.isNotBlank(siteDTO.getId())) {
+                    // User might have deleted some of the existing site status
+                    // records.
+                    // For an update, this does matter. So we need to merge the
+                    // deleted and non-deleted into one collection.
+                    final Collection<StatusDto> merged = new ArrayList<StatusDto>();
+                    merged.addAll(siteDTO.getStatusHistory());
+                    merged.addAll(getDeletedStatusHistoryFromSession());
+                    siteDTO.setStatusHistory(merged);
                     helper.updateSite();
                     session.setAttribute(SUCCESS_MESSAGE_KEY,
                             getText("add.site.updateSuccess"));
@@ -406,6 +450,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
      */
     @Override
     public void prepare() {
+        super.prepare();
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
         registryUserService = PaRegistry.getRegistryUserService();

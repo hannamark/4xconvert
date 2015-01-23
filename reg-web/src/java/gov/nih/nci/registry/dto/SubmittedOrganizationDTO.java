@@ -135,10 +135,14 @@ public class SubmittedOrganizationDTO implements Serializable {
      * @param sp the sp
      * @param ssas the ssas
      * @param orgBo the org bo
+     * @param statusHistory statusHistory
      */
-    public SubmittedOrganizationDTO(StudySiteDTO sp, StudySiteAccrualStatusDTO ssas, Organization orgBo) {
+    public SubmittedOrganizationDTO(StudySiteDTO sp,
+            StudySiteAccrualStatusDTO ssas,
+            Collection<StatusDto> statusHistory, Organization orgBo) {
         id = IiConverter.convertToString(sp.getIdentifier());
         name = orgBo.getName();
+        this.statusHistory = statusHistory;
         if (ssas == null || ssas.getStatusCode() == null || ssas.getStatusDate() == null) {
             recruitmentStatus = "";
             recruitmentStatusDate = "";

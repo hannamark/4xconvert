@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -21,6 +22,7 @@ import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -164,7 +166,8 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
         Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
         dto.setUpdatedOn(TsConverter.convertToTs(new Date()));
         validateNewStatus(newCode, newDate);
-        if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
+        if (!newCode.equals(oldCode) || !newDate.equals(oldDate)
+                || !ISOUtil.isIiNull(dto.getIdentifier())) {
             StudySiteAccrualStatus bo =  null;
             if (ISOUtil.isIiNull(dto.getIdentifier())) {
                 bo = new StudySiteAccrualStatus();
@@ -200,6 +203,24 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
+        List<StudySiteAccrualStatus> queryList = getStudySiteAccrualStatusBOs(studySiteIi);
+        StudySiteAccrualStatusConverter converter = new StudySiteAccrualStatusConverter();
+        List<StudySiteAccrualStatusDTO> returnList = new ArrayList<StudySiteAccrualStatusDTO>();
+        for (StudySiteAccrualStatus bo : queryList) {
+            returnList.add(converter.convertFromDomainToDto(bo));
+        }
+        return returnList;
+    }
+
+    /**
+     * @param studySiteIi
+     * @return
+     * @throws PAException
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    private List<StudySiteAccrualStatus> getStudySiteAccrualStatusBOs(
+            Ii studySiteIi) throws PAException {
         if (ISOUtil.isIiNull(studySiteIi)) {
             throw new PAException("Cannot call getStudySiteAccrualStatusByStudySite with a null identifier.");
         }
@@ -211,14 +232,32 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
                             + getQueryOrderClause();        
         Query query = session.createQuery(hql);
         query.setParameter("ssId", IiConverter.convertToLong(studySiteIi));
-        @SuppressWarnings("unchecked")
-        List<StudySiteAccrualStatus> queryList = query.list();
-        StudySiteAccrualStatusConverter converter = new StudySiteAccrualStatusConverter();
-        List<StudySiteAccrualStatusDTO> returnList = new ArrayList<StudySiteAccrualStatusDTO>();
+        return query.list();
+    }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public Collection<StatusDto> getStatusHistory(Ii studySiteIi)
+            throws PAException {
+        List<StudySiteAccrualStatus> queryList = getStudySiteAccrualStatusBOs(studySiteIi);
+        List<StatusDto> returnList = new ArrayList<StatusDto>();        
         for (StudySiteAccrualStatus bo : queryList) {
-            returnList.add(converter.convertFromDomainToDto(bo));
+            returnList.add(convertFromDomainToStatusDto(bo));
         }
         return returnList;
+    }
+    
+    /**
+     * @param bo StudySiteAccrualStatus
+     * @return StatusDto
+     */
+    private StatusDto convertFromDomainToStatusDto(StudySiteAccrualStatus bo) {
+        StatusDto dto = new StatusDto();
+        dto.setId(bo.getId());
+        dto.setStatusCode(bo.getStatusCode().name());
+        dto.setStatusDate(bo.getStatusDate());
+        dto.setComments(bo.getComments());        
+        return dto;
     }
 
     /**

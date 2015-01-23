@@ -504,7 +504,9 @@ public class TrialUtil extends TrialConvertUtils {
         Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(
                 sp.getHealthcareFacilityIi());
         SubmittedOrganizationDTO orgWebDTO = new SubmittedOrganizationDTO(sp,
-                ssas, orgBo);
+                ssas, PaRegistry.getStudySiteAccrualStatusService()
+                        .getStatusHistory(
+                                sp.getIdentifier()), orgBo);
         List<PaPersonDTO> principalInvresults = PaRegistry
                 .getPAHealthCareProviderService().getPersonsByStudySiteId(
                         Long.valueOf(sp.getIdentifier().getExtension()

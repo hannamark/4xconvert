@@ -81,7 +81,9 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.service.status.StatusDto;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -138,4 +140,11 @@ public interface StudySiteAccrualStatusService {
      * @throws PAException Exception.
      */
     List<StudySiteAccrualStatusDTO> getDeletedByStudySite(Ii studySiteIi) throws PAException;
+    
+    /**
+     * @param identifier Primary key assigned to a Site.
+     * @return   Collection<StatusDto> 
+     * @throws PAException PAException
+     */
+    Collection<StatusDto> getStatusHistory(Ii identifier) throws PAException;
 }
