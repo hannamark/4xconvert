@@ -234,6 +234,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     public void testMultiDelete() throws SQLException, ParseException,
             IOException {
         List<TrialInfo> trials = addMultipleFlaggedTrials();
+        pause(1000);
         selenium.select("name=flaggedTrials_length", "label=25");
         pause(1000);
         selenium.click("link=Select All");
