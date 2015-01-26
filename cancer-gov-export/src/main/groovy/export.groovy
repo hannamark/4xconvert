@@ -335,11 +335,11 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 
 		if (spRow.brief_summary)
 			xml.brief_summary {
-				xml.textblock(spRow.brief_summary)
+				xml.textblock(formatBlock(spRow.brief_summary))
 			}
 		if (spRow.detailed_description)
 			xml.detailed_description {
-				xml.textblock(spRow.detailed_description)
+				xml.textblock(formatBlock(spRow.detailed_description))
 			}
 
 		xml.overall_status(spRow.current_trial_status)
@@ -461,7 +461,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 				xml.biospec_retention(spRow.biospec_retention)
 			if (spRow.biospec_descr)
 				xml.biospec_descr {
-					xml.textblock(spRow.biospec_descr)
+					xml.textblock(formatBlock(spRow.biospec_descr))
 				}
 		}
 
@@ -498,7 +498,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 				if (spRow.study_type=='Observational') {
 					if (spRow.study_pop)
 						xml.study_pop {
-							xml.textblock(spRow.study_pop)
+							xml.textblock(formatBlock(spRow.study_pop))
 						}
 					if (spRow.sampling_method)
 						xml.sampling_method(spRow.sampling_method)
@@ -511,7 +511,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 						criteria << "Inclusion Criteria: \n\n" << inCriteria << "\n"
 					if (exCriteria)
 						criteria << "Exclusion Criteria: \n\n" << exCriteria << "\n"
-					xml.criteria { xml.textblock(criteria) }
+					xml.criteria { xml.textblock(formatBlock(criteria)) }
 				}
 				xml.gender(gender)
 				xml.minimum_age(minAge)
@@ -769,6 +769,15 @@ String buildStudyDesign(spRow)	{
 
 	return design.size()>0?design:'N/A'
 }
+
+
+String formatBlock(text) {
+	if (text) {
+		text = '\n' + text.toString().trim().replaceAll("(\\r\\n|\\n)(\\r|\\n)*", "\n\n")
+	}
+	return text
+}
+
 println ""
 println "************PDQ EXPORT SUMMARY******************"
 println ""
