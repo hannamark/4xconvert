@@ -36,7 +36,15 @@ create table if not exists pdq_export_log (
 	CONSTRAINT study_protocol_id FOREIGN KEY (study_protocol_id) REFERENCES study_protocol(identifier) ON DELETE SET NULL	
 )
 """
-)
+		)
+
+try {
+	paConn.executeUpdate("""
+alter table pdq_export_log add column lastchanged_date timestamp
+"""
+			)
+} catch (e) {
+}
 
 
 // Cache some PO data...
@@ -211,7 +219,8 @@ def getTrialsSQL = """
             WHEN sp.sampling_method_code = 'PROBABILITY_SAMPLE' then 'Probability Sample'            
         END as sampling_method,
 	 sp.record_verification_date as verification_date,
-	 sp.keyword_text as keywords		
+	 sp.keyword_text as keywords,
+     sp.date_last_created as date_last_created		
      from study_protocol sp
      inner join rv_trial_id_nct on rv_trial_id_nct.study_protocol_identifier = sp.identifier
      left join rv_sponsor_organization sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier 
@@ -270,6 +279,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 	xml.setDoubleQuotes(true)
 
 	def studyProtocolID = spRow.identifier
+	def lastChangedDate = spRow.date_last_created
 
 	xml.clinical_study {
 		xml.required_header {
@@ -579,11 +589,16 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 			xml.description("Clinical trial summary from the National Library of Medicine (NLM)'s database")
 		}
 
-		if (spRow.verification_date)
+		if (spRow.verification_date) {
 			xml.verification_date(spRow.verification_date.format("MMMM yyyy"))
+			lastChangedDate = spRow.verification_date
+		}
+
+		xml.lastchanged_date(lastChangedDate.format("MMMM d, yyyy"))
 
 		def firstSubmitDate = paConn.firstRow(Queries.firstSubmissionSQL, [spRow.nciId])?.milestone_date
 		xml.firstreceived_date(firstSubmitDate?firstSubmitDate.format("MMMM d, yyyy"):'N/A')
+
 
 		// Responsible Party
 		def partyRow = paConn.firstRow(Queries.respPartySQL, [studyProtocolID])
@@ -617,33 +632,57 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 	writer.flush();
 	writer.close();
 
+	// PO-8570 kicks in here. If there is a history of Cancer.gov exports of this trial in pdq_export_log table, then we need
+	// to compare this export with a previous one to properly determine lastchanged_date. See JIRA for details.
+	def previousExport = paConn.firstRow(Queries.prevExportXml, [spRow.nctId.toUpperCase()])
+	def previousExportXml = previousExport?.xml
+	if (previousExportXml) {
+		if (!twoExportsAreTheSame(previousExportXml, trialFile.getText("UTF-8"))) {
+			// Things have changed since the last export!
+			lastChangedDate = new Date()
+		} else {
+			lastChangedDate = previousExport.lastchanged_date?:lastChangedDate
+		}
+		trialFile.setText(trialFile.getText("UTF-8").replaceFirst("<lastchanged_date>.*?</lastchanged_date>", "<lastchanged_date>"+
+				lastChangedDate.format("MMMM d, yyyy")+"</lastchanged_date>"), "UTF-8")
+	}
+
 	// We need to validate the file we just produced against the NLM's XSD to make sure we didn't produce something odd due to a bug or something.
 	def factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
 	def schema = factory.newSchema(new StreamSource(new File("${outputDir}/../src/main/resources/public.xsd")))
 	def validator = schema.newValidator()
 	validator.validate(new StreamSource(trialFile))
-	
+
 	// All looks normal; store in the log table.
-	paConn.executeInsert("INSERT INTO pdq_export_log (study_protocol_id,nci_id,nct_id,xml) VALUES (?,?,?,?)", [
+	paConn.executeInsert("INSERT INTO pdq_export_log (study_protocol_id,nci_id,nct_id,xml,lastchanged_date) VALUES (?,?,?,?,?)", [
 		studyProtocolID,
 		spRow.nciId,
 		spRow.nctId.toUpperCase(),
-		trialFile.getText()
+		trialFile.getText("UTF-8"),
+		new java.sql.Timestamp(lastChangedDate.getTime())
 	])
-	
+
 	nbOfTrials++
+	
+	
 
 }
 
 // Now handle PO-8440: amendments that have not been abstracted yet must include the previous XML file from the log.
-paConn.eachRow(getAmendedSQL) { spRow ->		
-		// see if we have a log entry for this trial.
-		def xml = paConn.firstRow("select xml from pdq_export_log where study_protocol_id=? order by datetime desc LIMIT 1", [spRow.identifier])?.xml
-		if (xml) {
-			def trialFile = new File(outputDir, "${spRow.nctId.toUpperCase()}.xml")
-			trialFile.setText(xml, "UTF-8")
-		}
+paConn.eachRow(getAmendedSQL) { spRow ->
+	// see if we have a log entry for this trial.
+	def xml = paConn.firstRow("select xml from pdq_export_log where study_protocol_id=? order by datetime desc LIMIT 1", [spRow.identifier])?.xml
+	if (xml) {
+		def trialFile = new File(outputDir, "${spRow.nctId.toUpperCase()}.xml")
+		trialFile.setText(xml, "UTF-8")
+	}
 }
+
+boolean twoExportsAreTheSame(String xml1, String xml2) {
+	return xml1.replaceFirst("<download_date>.*?</download_date>", "").replaceFirst("<lastchanged_date>.*?</lastchanged_date>", "") == 
+		xml2.replaceFirst("<download_date>.*?</download_date>", "").replaceFirst("<lastchanged_date>.*?</lastchanged_date>", "")
+}
+
 
 String determineAgencyClass(org, poConn) {
 	def agencyClass

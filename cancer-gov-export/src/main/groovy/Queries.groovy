@@ -248,4 +248,7 @@ class Queries {
 			and o.name=?
     """
     
+	public static def prevExportXml = """
+        SELECT xml, lastchanged_date from pdq_export_log where nct_id=? order by datetime desc LIMIT 1
+    """
 }
