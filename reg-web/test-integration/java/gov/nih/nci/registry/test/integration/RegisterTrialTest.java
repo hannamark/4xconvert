@@ -577,7 +577,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.selectFrame("popupFrame");
         selenium.type("localIdentifier", "XYZ0000001");
 
-        clickAndWaitAjax("xpath=//button[text()='Look Up']");
+        clickAndWaitAjax("xpath=//button/i[@class='fa-search']");
         waitForElementById("popupFrame", 10);
         selenium.selectFrame("popupFrame");
         waitForElementById("search_person_btn", 30);
@@ -593,10 +593,11 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.selectFrame("popupFrame");
 
         selenium.type("programCode", "PGCODE");
-        selenium.select("statusCode", "label=Completed");
-        selenium.type("statusDate", "09/25/2014");
-        selenium.type("accrualOpenedDate", "09/23/2014");
-        selenium.type("accrualClosedDate", "09/24/2014");
+        selenium.select("siteDTO_recruitmentStatus", "label=In Review");
+        selenium.type("siteDTO_recruitmentStatusDate", "09/25/2014");
+        clickAndWaitAjax("id=addStatusBtn");
+        waitForElementById("siteStatusHistoryTable", 15);
+        
         selenium.click("xpath=//button/i[@class='fa-floppy-o']");
         pause(5000);
 
@@ -611,13 +612,13 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("//table[@id='row']/tbody/tr/td[3]"));
         assertEquals("PGCODE",
                 selenium.getText("//table[@id='row']/tbody/tr/td[4]"));
-        assertEquals("Completed",
+        assertEquals("In Review",
                 selenium.getText("//table[@id='row']/tbody/tr/td[5]"));
         assertEquals("09/25/2014",
                 selenium.getText("//table[@id='row']/tbody/tr/td[6]"));
-        assertEquals("09/23/2014",
+        assertEquals("",
                 selenium.getText("//table[@id='row']/tbody/tr/td[7]"));
-        assertEquals("09/24/2014",
+        assertEquals("",
                 selenium.getText("//table[@id='row']/tbody/tr/td[8]"));
 
     }

@@ -119,7 +119,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 .click();
         driver.switchTo().defaultContent();
         waitForPageToLoad();
-        waitForTextToAppear(By.className("alert-success"), "Message: Your site information has been updated.", 10);  
+        waitForTextToAppear(By.className("alert-success"), "Message: Your site information has been updated.", 20);  
 
     }
 
@@ -215,7 +215,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 .click();
         driver.switchTo().defaultContent();
         waitForPageToLoad();
-        waitForTextToAppear(By.className("alert-success"), "Message: Your site information has been updated.", 10);        
+        waitForTextToAppear(By.className("alert-success"), "Message: Your site information has been updated.", 20);        
         // Make sure the right site got updated.
         assertEquals("Cancer Therapy Evaluation Program",
                 selenium.getText("//table[@id='row']/tbody/tr[2]/td[1]"));
@@ -242,7 +242,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         accessTrialSearchScreen();
         selenium.click("runSearchBtn");
         clickAndWait("link=My Trials");
-        waitForElementById("row", 10);
+        waitForElementById("row", 20);
     }
 
     /**
