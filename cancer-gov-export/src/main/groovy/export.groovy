@@ -238,7 +238,7 @@ def getTrialsSQL = """
      left outer join document_workflow_status as processing_status on processing_status.study_protocol_identifier = sp.identifier
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
 	 left outer join rv_organization_responsible_party rp_sponsor on rp_sponsor.study_protocol_identifier=sp.identifier
-     where sp.status_code = 'ACTIVE'  and rv_trial_id_nct.local_sp_indentifier is not null
+     where sp.status_code = 'ACTIVE' and (sp.delayed_posting_indicator is null or sp.delayed_posting_indicator!= true) and rv_trial_id_nct.local_sp_indentifier is not null
 """
 
 def getAmendedSQL = """

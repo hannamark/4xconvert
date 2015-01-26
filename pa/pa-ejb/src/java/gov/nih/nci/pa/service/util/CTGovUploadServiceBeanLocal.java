@@ -3,6 +3,7 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -46,7 +47,7 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "PMD.CyclomaticComplexity" })
 public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
 
     private static final int DAYS_TO_KEEP_HISTORY = -30;
@@ -102,31 +103,35 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
         criteria.setTrialCategory("n");
         criteria.setCtroOverride(false);
         criteria.setStudyProtocolType("InterventionalStudyProtocol");
-    
        
         List<String> ccrLeadIDs = getCCRTrialLeadOrgIds();
         boolean isExcludeLeadCCR = false;
         
         for (StudyProtocolQueryDTO dto : queryServiceLocal
                 .getStudyProtocolByCriteria(criteria)) {
-            
                 String nctIdentifier = dto.getNctIdentifier();
                 String trialStatus = dto.getStudyStatusCode().getCode();
                 
                 StudyProtocolQueryDTO studyProtocolQueryDTOSummary = queryServiceLocal
                         .getTrialSummaryByStudyProtocolId(dto.getStudyProtocolId());
                 
-               String orgCtepID = PADomainUtils.getOrgDetailsPopup(
-                       studyProtocolQueryDTOSummary.getLeadOrganizationPOId() + "")
-                        .getCtepId();
+                String orgCtepID = null;
                 
+                PaOrganizationDTO paOrganizationDTO = PADomainUtils.getOrgDetailsPopup(
+                        studyProtocolQueryDTOSummary.getLeadOrganizationPOId() + "");
+                
+                if (paOrganizationDTO != null && paOrganizationDTO.getCtepId() != null) {
+                    orgCtepID = paOrganizationDTO.getCtepId();
+                }
                 //check if lead or is one of ccr if yes then exclude this trial and update flag
                 List<String> exludeOrgIds = getExcludeLeadOrgIds();
                 
-                if (exludeOrgIds.contains(orgCtepID)) {
+                if (orgCtepID != null && exludeOrgIds.contains(orgCtepID)) {
                     isExcludeLeadCCR = true;
                     updateCtroOverride(dto.getStudyProtocolId());
                 }
+                
+               
                    
                 if (!ccrLeadIDs.contains(dto.getLocalStudyProtocolIdentifier()) && !isExcludeLeadCCR) {
                      boolean isExcludeTrial = checkIfTrialExcludeAndUpdateCtroOverride(dto.getStudyProtocolId(), 
@@ -134,12 +139,12 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
                        );
                
                        if (!isExcludeTrial) {
-                           ids.add(IiConverter.convertToStudyProtocolIi(dto
-                               .getStudyProtocolId()));
+                                  ids.add(IiConverter.convertToStudyProtocolIi(dto
+                                       .getStudyProtocolId()));
+                            
                         }
                 }              
-            
-        }
+          }
         
         } catch (Exception e) {
             throw new PAException(e);
@@ -319,7 +324,7 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
          }
          return result;
      }
-
+    
     private boolean isUploadEnabled() throws PAException {
         return Boolean.valueOf(lookUpTableService
                 .getPropertyValue("ctgov.ftp.enabled"));
