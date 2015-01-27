@@ -136,7 +136,7 @@ import com.opensymphony.xwork2.ActionSupport;
  *
  */
 @SuppressWarnings({ "PMD.ExcessiveMethodLength", "PMD.UseCollectionIsEmpty", "PMD.LongInstantiation",
-    "PMD.SingularField" })
+    "PMD.SingularField" , "PMD.CyclomaticComplexity" })
 public class NCISpecificInformationAction extends ActionSupport {
     private static final long serialVersionUID = -5560377425534113809L;
     private static final String DISPLAY_ORG_FLD = "displayOrgFld";
@@ -266,8 +266,11 @@ public class NCISpecificInformationAction extends ActionSupport {
             
             //keep existing database logic as it is this means false value shown in UI should be passed and true
             //and true value should be passed as false
+            if (nciSpecificInformationWebDTO.getCtroOverride() != null) {
+                
+                spDTO.setCtroOverride(BlConverter.convertToBl(!nciSpecificInformationWebDTO.getCtroOverride()));
+            }
             
-            spDTO.setCtroOverride(BlConverter.convertToBl(!nciSpecificInformationWebDTO.getCtroOverride()));
             spDTO.setConsortiaTrialCategoryCode(CdConverter
                     .convertStringToCd(nciSpecificInformationWebDTO
                             .getConsortiaTrialCategoryCode()));
