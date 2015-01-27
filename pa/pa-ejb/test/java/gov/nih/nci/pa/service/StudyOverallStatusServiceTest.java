@@ -77,7 +77,12 @@
 
 package gov.nih.nci.pa.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -94,51 +99,53 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.AbstractEjbTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
-import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author hreinhart
  *
  */
-public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
-    private final DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = new DocumentWorkflowStatusBeanLocal();
-    private final StudyProtocolServiceLocal studyProtocolService =  new StudyProtocolServiceBean();
-    private final StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
-    private final StudyRecruitmentStatusBeanLocal studyRecruitmentStatusBeanLocal = new StudyRecruitmentStatusBeanLocal();
+public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
+    private StudyOverallStatusServiceBean bean;
     private Ii spIi;
+    private StudyProtocolServiceLocal studyProtocolService;
+    private StudyRecruitmentStatusBeanLocal studyRecruitmentStatusBeanLocal;
+    
 
     /**
      * Initialization method.
      */
     @Before
     public void setUp() {
-        CSMUserService.setInstance(new MockCSMUserService());
-
-        bean.setDocumentWorkFlowStatusService(documentWorkflowStatusService);
-        bean.setStudyProtocolService(studyProtocolService);
-        bean.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusBeanLocal);
-
+        bean = (StudyOverallStatusServiceBean) getEjbBean(StudyOverallStatusServiceBean.class);
+        studyProtocolService = (StudyProtocolServiceLocal) getEjbBean(StudyProtocolBeanLocal.class);
+        studyRecruitmentStatusBeanLocal = (StudyRecruitmentStatusBeanLocal) getEjbBean(StudyRecruitmentStatusBeanLocal.class);
         TestSchema.primeData();
-        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds
+                .get(0));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void create() throws Exception {
         TestSchema.addAbstractedWorkflowStatus(IiConverter.convertToLong(spIi));
@@ -182,16 +189,24 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertEquals(TsConverter.convertToTimestamp(currentStatus.getStatusDate()),
                 TsConverter.convertToTimestamp(updatedStatus.getStatusDate()));
     }
-    
-        
-
-   
-   
-    
 
   
 
     private InterventionalStudyProtocol createStudyProtocol() throws PAException {
+        InterventionalStudyProtocol sp = createInterventionalProtocol();
+        Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
+        StudyOverallStatus inReview = createStudyOverallStatusobj(sp);
+        inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
+        bean.create(Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(inReview));
+        assertEquals(bean.getByStudyProtocol(spId).size(), 1);
+
+        return sp;
+    }
+
+    /**
+     * @return
+     */
+    private InterventionalStudyProtocol createInterventionalProtocol() {
         InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
         sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
         sp = TestSchema.createInterventionalStudyProtocolObj(sp);
@@ -199,13 +214,6 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
 
         DocumentWorkflowStatus docWorkflow = TestSchema.createDocumentWorkflowStatus(sp);
         TestSchema.addUpdObject(docWorkflow);
-
-        Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
-        StudyOverallStatus inReview = createStudyOverallStatusobj(sp);
-        inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
-        bean.create(Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(inReview));
-        assertEquals(bean.getByStudyProtocol(spId).size(), 1);
-
         return sp;
     }
 
@@ -219,6 +227,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
                      (IiConverter.convertToLong(dto.getIdentifier())));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void createTest() throws Exception {
         // simulate creating new protocol using registry
@@ -239,6 +248,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void nullInDateTest() throws Exception {
         StudyProtocol spNew = TestSchema.createStudyProtocolObj();
@@ -278,6 +288,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
+    @SuppressWarnings("deprecation")
     @Test
     public void createWithReasonTextTest() throws Exception {
         // simulate creating new protocol using registry
@@ -389,6 +400,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
      * test the createStudyRecruitmentStatus method.
      * @throws PAException 
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testRelaxedValidation() throws PAException {
         // simulate creating new protocol using registry
@@ -418,8 +430,110 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         
     }
     
-   
-    
+    @Test
+    public void testGetStatusHistoryByProtocol() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
+        sos.setStatusDate(new Timestamp(date.getTime()));
+        sos.setAdditionalComments("Additional comment 1");
+        sos.setCommentText("Why stopped 1");
+        sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+        sos.setDateLastUpdated(new Date());
+        s.saveOrUpdate(sos);
+        
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        sos.setStatusDate(new Timestamp(date.getTime()));
+        sos.setAdditionalComments("Additional comment 2");
+        sos.setCommentText("Why stopped 2");
+        sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+        sos.setDateLastUpdated(new Date());
+        s.saveOrUpdate(sos);
+        
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
+        sos.setAdditionalComments("Additional comment 3");       
+        sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+        sos.setDateLastUpdated(new Date());
+        s.saveOrUpdate(sos);
+        
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.IN_REVIEW);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -2).getTime()));
+        sos.setAdditionalComments("Additional comment 4");       
+        sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+        sos.setDateLastUpdated(new Date());
+        sos.setDeleted(true);
+        s.saveOrUpdate(sos);
+        
+        s.flush();
+       
+        List<StatusDto> hist = bean.getStatusHistoryByProtocol(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(3, hist.size());
+
+        assertEquals(StudyStatusCode.ACTIVE.name(), hist.get(0).getStatusCode());
+        assertEquals(new Timestamp(DateUtils.addDays(date, -1).getTime()), hist
+                .get(0).getStatusDate());
+        assertEquals("Additional comment 3", hist.get(0).getComments());
+        assertTrue(StringUtils.isBlank(hist.get(0).getReason()));
+        assertNotNull(hist.get(0).getId());
+
+        assertEquals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.name(), hist
+                .get(1).getStatusCode());
+        assertEquals(new Timestamp(date.getTime()), hist.get(1).getStatusDate());
+        assertEquals("Additional comment 1", hist.get(1).getComments());
+        assertEquals("Why stopped 1", hist.get(1).getReason());
+        assertNotNull(hist.get(1).getId());
+        
+        assertEquals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.name(), hist
+                .get(2).getStatusCode());
+        assertEquals(new Timestamp(date.getTime()), hist.get(2).getStatusDate());
+        assertEquals("Additional comment 2", hist.get(2).getComments());
+        assertEquals("Why stopped 2", hist.get(2).getReason());
+        assertNotNull(hist.get(2).getId());
+
+        // Additionally, ensure the current status is properly determined as
+        // well by other bean methods.
+        StudyOverallStatusDTO current = bean
+                .getCurrentByStudyProtocol(IiConverter
+                        .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(
+                StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                CdConverter.convertCdToEnum(StudyStatusCode.class,
+                        current.getStatusCode()));
+        
+        // Additionally, ensure getByProtocol methods sorts in the same order as
+        // history.
+        List<StudyOverallStatusDTO> list = bean.getByStudyProtocol(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(3, list.size());
+        assertEquals(StudyStatusCode.ACTIVE, CdConverter.convertCdToEnum(
+                StudyStatusCode.class, list.get(0).getStatusCode()));
+        assertEquals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL,
+                CdConverter.convertCdToEnum(StudyStatusCode.class, list.get(1)
+                        .getStatusCode()));
+        assertEquals(
+                StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                CdConverter.convertCdToEnum(StudyStatusCode.class, list.get(2)
+                        .getStatusCode()));
+       
+    }
     
     
 }

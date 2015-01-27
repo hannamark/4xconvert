@@ -319,9 +319,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
                 .getClass());
         String jndiURL = "java:global/pa/pa-ejb/"
                 + ejb.getClass().getSimpleName() + "!"
-                + localOrRemoteInterface.getName();
-        System.out.println("Binding " + ejb.getClass().getSimpleName() + " as "
-                + jndiURL);
+                + localOrRemoteInterface.getName();        
         contextBuilder.bind(jndiURL, ejb);
     }
 
