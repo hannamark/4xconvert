@@ -244,6 +244,7 @@
                                     <div class="actionsrow">
                                         <del class="btnwrapper">
                                             <ul class="btnrow">
+                                            <pa:adminAbstractorDisplayWhenCheckedOut>
                                                 <li>
                                                     <s:if test="%{currentAction == 'edit'}">
                                                         <s:a href="javascript:void(0)" cssClass="btn" onclick="facilityUpdate();">
@@ -257,6 +258,7 @@
                                                     </s:else>
                                                    <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                                 </li>
+                                             </pa:adminAbstractorDisplayWhenCheckedOut>
                                             </ul>
                                         </del>
                                     </div>
@@ -272,11 +274,13 @@
                                 <div class="actionsrow">
                                     <del class="btnwrapper">
                                         <ul class="btnrow">
+                                        <pa:adminAbstractorDisplayWhenCheckedOut>
                                             <li>
                                                 <a href="javascript:void(0)" class="btn" onclick="lookupperson();">
                                                     <span class="btn_img"><span class="add">Add</span></span>
                                                 </a>
                                             </li>
+                                            </pa:adminAbstractorDisplayWhenCheckedOut>
                                         </ul>
                                     </del>
                                 </div>
@@ -291,12 +295,14 @@
                                 <div class="actionsrow">
                                     <del class="btnwrapper">
                                         <ul class="btnrow">
+                                        <pa:adminAbstractorDisplayWhenCheckedOut>
                                             <li>
                                                  <s:a href="javascript:void(0)" cssClass="btn" onclick="savePrimaryContact();">
                                                     <span class="btn_img"><span class="save">Save</span></span>
                                                 </s:a>
                                                 <pa:cancelBtn cancelUrl="${cancelUrl}"/>
-                                            </li>    
+                                            </li>   
+                                        </pa:adminAbstractorDisplayWhenCheckedOut> 
                                         </ul>
                                     </del>
                                 </div>

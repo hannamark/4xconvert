@@ -200,4 +200,36 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Record Updated"));
     }
 
+    
+    @Test
+    public void testStandardTrialStatusTransitionsForScientificAbs() throws SQLException {
+        TrialInfo trial = createSubmittedTrial();
+        
+        loginAsScientificAbstractor();
+        searchSelectAndAcceptTrial(trial.title, false, true);
+        clickAndWait("link=Trial Status");
+        changeStatus("Approved", false, false, null);
+        changeStatus("Active", true, false, null);
+        changeStatus("Closed to Accrual", false, false, null);
+        changeStatus("Closed to Accrual and Intervention", false, false, null);
+        changeStatus("Complete", false, true, null);
+    }
+    
+    
+    @Test
+    public void testTrialHistoryForScientificAbs() throws SQLException {
+        TrialInfo trial = createSubmittedTrial();
+        
+        loginAsScientificAbstractor();
+        searchSelectAndAcceptTrial(trial.title, false, true);
+        clickAndWait("link=Trial Status");
+        clickAndWait("link=History");
+        assertTrue(selenium.isTextPresent("Status History"));
+        
+        assertEquals(selenium.getText("xpath=//table[@id='row']//th[1]"), "Status Date");
+        assertEquals(selenium.getText("xpath=//table[@id='row']//th[2]"), "Status");
+        assertEquals(selenium.getText("xpath=//table[@id='row']//th[3]"), "Comments");
+        assertEquals(selenium.getText("xpath=//table[@id='row']//th[4]"), "Validation Messages");
+        assertEquals(selenium.getText("xpath=//table[@id='row']//th[5]"), "Actions");
+    }
 }

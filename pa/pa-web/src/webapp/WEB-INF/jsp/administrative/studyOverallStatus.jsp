@@ -206,12 +206,12 @@
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                            <pa:adminAbstractorDisplayWhenCheckedOut>
+                            <pa:displayWhenCheckedOut>
                                 <li>
                                     <s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
                                     <pa:cancelBtn cancelUrl="${cancelUrl}"/>
                                 </li>
-                            </pa:adminAbstractorDisplayWhenCheckedOut>
+                            </pa:displayWhenCheckedOut>
                         </ul>   
                     </del>
                 </div>
