@@ -100,7 +100,7 @@
                 }    
                 return false;
             }
-            function cancel(){ 
+            function cancel(url){ 
                 var element2 = document.getElementById("countries");
                 element2.value='';
                 loadDiv();
@@ -108,6 +108,8 @@
                 $('sec801id').value ='';
                 $('delpostindid').value ='';
                 $('datamonid').value ='';
+                document.forms[0].setAttribute("action", url);
+                document.forms[0].submit();
             }
         </script>
     </head>
@@ -123,6 +125,7 @@
         </c:if>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
          <c:set var="asterisk" value="${!sessionScope.trialSummary.proprietaryTrial?'*':''}" scope="request"/>
+          <s:url id="cancelUrl" namespace="/protected" action="regulatoryInfoquery"/>
         <div class="box">
             <pa:sucessMessage/>
             <pa:failureMessage/>
@@ -219,7 +222,7 @@
                         <ul class="btnrow">
                             <pa:adminAbstractorDisplayWhenCheckedOut>
                                 <li><s:a href="javascript:void(0)" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-                               <s:a onclick="javascript:cancel();" href="javascript:void(0)" cssClass="btn">
+                               <s:a onclick="javascript:cancel('%{cancelUrl}');" href="javascript:void(0)" cssClass="btn">
                                     <span class="btn_img"><span class="cancel">Cancel</span></span>
                                 </s:a>
                                 </li>
