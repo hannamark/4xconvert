@@ -49,6 +49,11 @@ public class CtGovImportTest extends AbstractPaSeleniumTest {
         importAndVerify("NCT00038610");
     }
     
+    @Test
+    public void testImportNCT02158936() throws Exception {
+        importAndVerify("NCT02158936");
+    }
+    
     @SuppressWarnings("deprecation")
     @Test
     public void testImportDoesNotResetCtroOverride() throws Exception {

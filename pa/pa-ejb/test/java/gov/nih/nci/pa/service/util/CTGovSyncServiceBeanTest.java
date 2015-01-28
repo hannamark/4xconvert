@@ -89,6 +89,7 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
 
     private User ctgovimportUser;
     private User notCtgovimportUser;
+    private static final String NCT02158936 = "NCT02158936";
 
     /**
      * @throws java.lang.Exception
@@ -550,7 +551,7 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
 
-            checkNCT01861054PersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
+            checkTrialPersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.", nctID);
             checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, false);
 
@@ -619,7 +620,7 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
 
             // The update should have altered all fields except the Lead Org (by
             // design).
-            checkNCT01861054PersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
+            checkTrialPersonOrgData(sp, "Sponsor Inc.", "Sponsor Inc.", nctID);
             checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, true);
             checkAdminScientificMarkedInLogEntry(nctID, nciID, session);
@@ -822,10 +823,10 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
 
             // The update should have altered all fields except the Lead Org (by
             // design).
-            checkNCT01861054OrgData(sp, "Sponsor Inc.",
-                    "Threshold Pharmaceuticals");
+            checkTrialOrgData(sp, "Sponsor Inc.",
+                    "Threshold Pharmaceuticals", nctID);
 
-            // respossible party should have remained the same: Sponsor
+            // responsible party should have remained the same: Sponsor
             StudySite rp = getStudySite(sp,
                     StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR);
             assertNotNull(rp);
@@ -938,8 +939,8 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
             InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
                     .get(InterventionalStudyProtocol.class, id);
 
-            checkNCT01861054OrgData(sp, "Sponsor Inc.", "Sponsor Inc.");
-            checkNCT01861054EmptyPersonData(sp);
+            checkTrialOrgData(sp, "Sponsor Inc.", "Sponsor Inc.", nctID);
+            checkTrialEmptyPersonData(sp);
             checkNCT01861054OtherData(session, sp);
             checkSuccessfulImportLogEntry(nctID, nciID, session, false);
 
@@ -1062,16 +1063,16 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
         assertEquals("REP0210",
                 getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
                         .getLocalStudyProtocolIdentifier());
-        assertTrue(sp.getProprietaryTrialIndicator());
         assertEquals(
                 "Pilot Study to Evaluate the Safety and Biological Effects of Orally Administered Reparixin in Early Breast Cancer Patients",
                 sp.getPublicTitle());
+        assertTrue(sp.getProprietaryTrialIndicator());
         assertEquals(
                 "A Single Arm, Preoperative, Pilot Study to Evaluate the Safety and Biological Effects of Orally Administered Reparixin in Early Breast Cancer Patients Who Are Candidates for Surgery",
                 sp.getOfficialTitle());
         assertTrue(sp.getDataMonitoringCommitteeAppointedIndicator());
 
-        checkRegulatoryInformation(ii);
+        checkRegulatoryInformation(ii, "NCT01861054");
 
         assertEquals(
                 "cancer investigating use of reparixin as single agent in the time period between clinical",
@@ -1164,6 +1165,133 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
         assertTrue(sp.getFdaRegulatedIndicator());
         assertTrue(sp.getExpandedAccessIndicator());
     }
+    
+    
+    /**
+     * @param session
+     * @param spID
+     * @param sp
+     * @throws PAException
+     * @throws NumberFormatException
+     * @throws ParseException
+     * @throws HibernateException
+     */
+    @SuppressWarnings("unchecked")
+    private void checkNCT02158936OtherData(final Session session,
+            InterventionalStudyProtocol sp) throws PAException,
+            NumberFormatException, ParseException, HibernateException {
+        final long id = sp.getId();
+        Ii ii = IiConverter.convertToStudyProtocolIi(id);
+        assertEquals("112121",
+                getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
+                        .getLocalStudyProtocolIdentifier());
+        assertEquals(
+                "A Study of Eltrombopag or Placebo in Combination With Azacitidine in Subjects With International Prognostic Scoring System (IPSS) Intermediate-1, Intermediate-2 or High-risk Myelodysplastic Syndromes (MDS)",
+                sp.getPublicTitle());
+        assertTrue(sp.getProprietaryTrialIndicator());
+        assertEquals(
+                "A Randomized, Double-blind, Placebo-controlled, Phase III, Multi-centre Study of Eltrombopag or Placebo in Combination With Azacitidine in Subjects With IPSS Intermediate-1, Intermediate 2 and High-risk Myelodysplastic Syndromes (MDS) SUPPORT: A StUdy of eltromboPag in myelodysPlastic SyndrOmes Receiving azaciTidine",
+                sp.getOfficialTitle());
+        assertTrue(sp.getDataMonitoringCommitteeAppointedIndicator());
+
+        checkRegulatoryInformation(ii, NCT02158936);
+
+        assertTrue(sp.getPublicDescription().contains("Eltrombopag olamine (SB-497115-GR) is an orally bioavailable, "
+                + "small molecule thrombopoietin"));
+        assertEquals(StudyStatusCode.IN_REVIEW, sp.getStudyOverallStatuses()
+                .iterator().next().getStatusCode());
+        assertEquals(DateUtils.parseDate("06/01/2014",
+                new String[] { "MM/dd/yyyy" }), sp.getDates().getStartDate());
+        assertEquals(DateUtils.parseDate("12/01/2017",
+                new String[] { "MM/dd/yyyy" }), sp.getDates()
+                .getPrimaryCompletionDate());
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED, sp.getDates()
+                .getPrimaryCompletionDateTypeCode());
+        assertEquals(PhaseCode.III, sp.getPhaseCode());
+        assertEquals(StudyClassificationCode.SAFETY_OR_EFFICACY,
+                sp.getStudyClassificationCode());
+        assertEquals(DesignConfigurationCode.PARALLEL,
+                sp.getDesignConfigurationCode());
+
+        assertEquals(BlindingSchemaCode.DOUBLE_BLIND,
+                sp.getBlindingSchemaCode());
+        assertNull(sp.getBlindingRoleCodeCaregiver());
+        assertEquals(BlindingRoleCode.SUBJECT, sp.getBlindingRoleCodeSubject());
+        assertEquals(BlindingRoleCode.INVESTIGATOR,sp.getBlindingRoleCodeInvestigator());
+        assertNull(sp.getBlindingRoleCodeOutcome());
+
+        assertEquals("TREATMENT", sp.getPrimaryPurposeCode().getName());
+
+        List<StudyOutcomeMeasure> outcomes = session.createQuery(
+                "from StudyOutcomeMeasure so where so.studyProtocol.id=" + id
+                        + " order by so.id").list();
+        assertEquals(21, outcomes.size());
+        assertEquals(
+                "Cycle 1-4 platelet transfusion independence (The proportion of subjects who are platelet transfusion free during Cycles 1-4 of azacitidine therapy)",
+                outcomes.get(0).getName());
+        assertEquals("4 cycles (Cycle = 28 days)",
+                outcomes.get(0).getTimeFrame());
+        assertEquals(false, outcomes.get(0).getSafetyIndicator());
+        assertEquals(
+                "A subject is defined as being platelet transfusion independent if they receive no platelet transfusions within the first 4 cycles of treatment with azacitidine",
+                outcomes.get(0).getDescription());
+        assertEquals(true, outcomes.get(0).getPrimaryIndicator());
+
+        assertEquals(2, sp.getNumberOfInterventionGroups().intValue());
+        assertEquals(350, sp.getMinimumTargetAccrualNumber().intValue());
+
+        assertEquals(2, sp.getArms().size());
+        assertEquals("Eltrombopag", sp.getArms().get(0).getName());
+        assertEquals(ArmTypeCode.EXPERIMENTAL, sp.getArms().get(0)
+                .getTypeCode());
+        assertEquals(
+                "Eligible subject will receive a starting dose of eltrombopag of 200 milligrams (mg) (100 mg for "
+                + "subjects of East Asian heritage).  Dose modifications of eltrombopag will be permitted by 100 mg "
+                + "increments (50 mg increments for East Asians) to a lowest dose of 100 mg (50 mg for East Asian "
+                + "heritage) or a maximum dose of 300 mg (150 mg for East Asian heritage) in order to maintain "
+                + "platelet counts at a safe and effective level (i.e. a level sufficient to avoid platelet "
+                + "transfusions and bleeding events). Subjects will receive azacitidine 75 mg/meter^2 subcutaneously "
+                + "once daily for 7 days (+/- 3 day treatment window permitted) every 28 days, for at least 6 cycles "
+                + "if tolerated and until they are no longer receiving benefit (defined as at least stable disease"
+                + " per the investigator's assessment) or until disease progression, death, or unacceptable "
+                + "toxicity/adverse event. The subject may receive eltrombopag daily for the full 28 days each "
+                + "cycle for as long as the subject is receiving azacitidine",
+                sp.getArms().get(0).getDescriptionText());
+        assertTrue(sp.getArms().get(0).getInterventions().isEmpty());
+
+        PlannedEligibilityCriterion gender = (PlannedEligibilityCriterion) session
+                .createQuery(
+                        "from PlannedEligibilityCriterion so where so.criterionName='GENDER' and so.studyProtocol.id="
+                                + id).uniqueResult();
+        assertEquals(EligibleGenderCode.BOTH, gender.getEligibleGenderCode());
+
+        PlannedEligibilityCriterion age = (PlannedEligibilityCriterion) session
+                .createQuery(
+                        "from PlannedEligibilityCriterion so where so.criterionName='AGE' and so.studyProtocol.id="
+                                + id).uniqueResult();
+        assertEquals(18, age.getMinValue().intValue());
+        assertEquals(999, age.getMaxValue().intValue());
+        assertFalse(sp.getAcceptHealthyVolunteersIndicator());
+
+        List<PlannedEligibilityCriterion> exclList = getExclusionCriteriaList(
+                session, id);
+        assertEquals(11, exclList.size());
+        assertEquals("Previous treatment with hypomethylating agent or induction chemotherapy for MDS", exclList.get(0).getTextDescription());
+        verifyDisplayOrder(exclList);
+
+        List<PlannedEligibilityCriterion> inclList = getInclusionCriteriaList(
+                session, id);
+        assertEquals(12, inclList.size());
+        assertEquals("Age >=18 years", inclList.get(0)
+                .getTextDescription());
+        verifyDisplayOrder(inclList);
+
+        assertEquals(
+                "Eltrombopag, azacitidine, thrombocytopenia, myelodysplastic syndromes (MDS), thrombopoietin",
+                sp.getKeywordText());
+        assertFalse(sp.getFdaRegulatedIndicator());
+        assertFalse(sp.getExpandedAccessIndicator());
+    }
 
     // PO-6570
     private void verifyDisplayOrder(final List<PlannedEligibilityCriterion> list) {
@@ -1181,16 +1309,30 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
      * @throws PAException
      * @throws NumberFormatException
      */
-    private void checkRegulatoryInformation(Ii spID) throws PAException,
+    private void checkRegulatoryInformation(Ii spID, String nctID) throws PAException,
             NumberFormatException {
-        assertEquals(
-                "Food and Drug Administration",
-                ((RegulatoryInformationBean) getEjbBean(RegulatoryInformationBean.class))
-                        .get(Long
-                                .parseLong(((StudyRegulatoryAuthorityBeanLocal) getEjbBean(StudyRegulatoryAuthorityBeanLocal.class))
-                                        .getCurrentByStudyProtocol(spID)
-                                        .getRegulatoryAuthorityIdentifier()
-                                        .getExtension())).getAuthorityName());
+    	
+    	if (nctID.equals(NCT02158936)) {
+    		 assertEquals(
+    	                "IDMC",
+    	                ((RegulatoryInformationBean) getEjbBean(RegulatoryInformationBean.class))
+    	                        .get(Long
+    	                                .parseLong(((StudyRegulatoryAuthorityBeanLocal) getEjbBean(StudyRegulatoryAuthorityBeanLocal.class))
+    	                                        .getCurrentByStudyProtocol(spID)
+    	                                        .getRegulatoryAuthorityIdentifier()
+    	                                        .getExtension())).getAuthorityName());
+    	} else {
+    		 assertEquals(
+    	                "Food and Drug Administration",
+    	                ((RegulatoryInformationBean) getEjbBean(RegulatoryInformationBean.class))
+    	                        .get(Long
+    	                                .parseLong(((StudyRegulatoryAuthorityBeanLocal) getEjbBean(StudyRegulatoryAuthorityBeanLocal.class))
+    	                                        .getCurrentByStudyProtocol(spID)
+    	                                        .getRegulatoryAuthorityIdentifier()
+    	                                        .getExtension())).getAuthorityName());
+    		
+    	}
+       
         // Check only one record in study_regulatory_authority table.
         assertEquals(
                 1,
@@ -1201,9 +1343,9 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
     /**
      * @param sp
      */
-    private void checkNCT01861054PersonOrgData(InterventionalStudyProtocol sp,
-            String leadOrgName, String sponsorName) {
-        checkNCT01861054OrgData(sp, leadOrgName, sponsorName);
+    private void checkTrialPersonOrgData(InterventionalStudyProtocol sp,
+            String leadOrgName, String sponsorName, String nctID) {
+        checkTrialOrgData(sp, leadOrgName, sponsorName, nctID);
         checkNCT01861054PersonData(sp);
         checkNCT01861054RespPartyData(sp);
     }
@@ -1248,16 +1390,27 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
     /**
      * @param sp
      */
-    private void checkNCT01861054OrgData(InterventionalStudyProtocol sp,
-            String leadOrgName, String sponsorName) {
-        assertEquals(leadOrgName,
-                getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
-                        .getResearchOrganization().getOrganization().getName());
+    private void checkTrialOrgData(InterventionalStudyProtocol sp,
+            String leadOrgName, String sponsorName, String nctID) {
+        if ( nctID.equals(NCT02158936)) {
+            assertEquals(leadOrgName,
+                    getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
+                             .getResearchOrganization().getOrganization().getName());
+            
+            assertNull(getStudySite(sp, StudySiteFunctionalCode.LABORATORY));
+            
+            
+        } else {
+            assertEquals(leadOrgName,
+                    getStudySite(sp, StudySiteFunctionalCode.LEAD_ORGANIZATION)
+                            .getResearchOrganization().getOrganization().getName());
+            assertEquals("National Institutes of Health (NIH)",
+                    getStudySite(sp, StudySiteFunctionalCode.LABORATORY)
+                            .getResearchOrganization().getOrganization().getName());
+        }
+       
         assertEquals(sponsorName,
                 getStudySite(sp, StudySiteFunctionalCode.SPONSOR)
-                        .getResearchOrganization().getOrganization().getName());
-        assertEquals("National Institutes of Health (NIH)",
-                getStudySite(sp, StudySiteFunctionalCode.LABORATORY)
                         .getResearchOrganization().getOrganization().getName());
 
         StudyResourcing summary4 = sp.getStudyResourcings().get(0);
@@ -1342,13 +1495,13 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
     private void checkNCT01861054EmptyPersonOrgData(
             InterventionalStudyProtocol sp) {
         checkNCT01861054EmptyOrgData(sp);
-        checkNCT01861054EmptyPersonData(sp);
+        checkTrialEmptyPersonData(sp);
     }
 
     /**
      * @param sp
      */
-    private void checkNCT01861054EmptyPersonData(InterventionalStudyProtocol sp) {
+    private void checkTrialEmptyPersonData(InterventionalStudyProtocol sp) {
         StudyContact pi = getStudyContact(sp,
                 StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         assertNull(pi);
@@ -1795,6 +1948,43 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
         assertEquals(false, serviceBean.isNctIdValid("1NCT12344444"));
         assertEquals(false, serviceBean.isNctIdValid("N12344444"));
         assertEquals(false, serviceBean.isNctIdValid("NCT"));
+    }
+    
+    @Test
+    public final void testImportTrialNoCountryPresentInRegulatoryAuthority() throws PAException,
+            ParseException {
+
+        final Session session = PaHibernateUtil.getCurrentSession();
+        session.createSQLQuery(
+                "update pa_properties set value='true' where name='ctgov.sync.import_orgs'")
+                .executeUpdate();
+        session.createSQLQuery(
+                "update pa_properties set value='false' where name='ctgov.sync.import_persons'")
+                .executeUpdate();
+        session.flush();
+        session.clear();
+
+        final String nctID = NCT02158936;
+        String nciID = serviceBean.importTrial(nctID);
+        assertTrue(StringUtils.isNotEmpty(nciID));
+
+        session.flush();
+        session.clear();
+
+        final long id = getProtocolIdByNciId(nciID, session);
+        try {
+            InterventionalStudyProtocol sp = (InterventionalStudyProtocol) session
+                    .get(InterventionalStudyProtocol.class, id);
+            checkTrialOrgData(sp, "GlaxoSmithKline", "GlaxoSmithKline", nctID);
+            
+            checkTrialEmptyPersonData(sp);
+            checkNCT02158936OtherData(session, sp);
+            checkSuccessfulImportLogEntry(nctID, nciID, session, false);
+
+        } finally {
+            restoreImportOrgsPersonFlags(session);
+            deactivateTrial(session, id);
+        }
     }
 
     private StudyInbox createStudyInbox(StudyProtocol sp) {

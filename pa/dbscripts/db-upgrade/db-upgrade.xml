@@ -1730,4 +1730,8 @@
         <comment>Added email message template for study site status change to ctro</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8273-2.sql"/>
      </changeSet>
+     <changeSet id="PO-8079" author="gundalar">
+        <comment>Add a new property to pa_properties, add IDMC to regulatory authorities</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8079.sql"/>
+     </changeSet>
 </databaseChangeLog>

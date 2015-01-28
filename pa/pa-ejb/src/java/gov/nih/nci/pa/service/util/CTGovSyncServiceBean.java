@@ -244,6 +244,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private static final int L_800 = 800;
 
     private static final int L_200 = 200;
+    
+    private static final String UNITED_STATES = "United States";
 
     @EJB
     private LookUpTableServiceRemote lookUpTableService;
@@ -1073,9 +1075,15 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
                 authorityName = regulatoryAuthority.substring(index + 1).trim();
                 countryName = regulatoryAuthority.substring(0, index).trim();
             } else {
-                throw new PAException(
-                        "Unrecognizable regulatory authority information: "
-                                + regulatoryAuthority);
+                if (isPresentInTheAllowedRegulatoryAuthorities(regulatoryAuthority)) {
+                    authorityName = regulatoryAuthority.trim();
+                    countryName = UNITED_STATES;
+                } else {
+                    throw new PAException(
+                            "Unrecognizable regulatory authority information: "
+                                    + regulatoryAuthority);
+                }
+
             }
         }
 
@@ -1089,6 +1097,25 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * @param regulatoryAuthority
+     * @throws PAException
+     */
+    private boolean isPresentInTheAllowedRegulatoryAuthorities(
+        String regulatoryAuthority) throws PAException {
+        String allowedRegulatoryAuthoritiesDefaultedToUnitedStates = lookUpTableService
+                .getPropertyValue("allowed.regulatory.authorities.no.country.name");
+        String[] allowedRegulatoryAuthoriries = allowedRegulatoryAuthoritiesDefaultedToUnitedStates
+                .split(",");
+        for (String regulatoryAuthorityElement : allowedRegulatoryAuthoriries) {
+            if (StringUtils.equalsIgnoreCase(
+                    regulatoryAuthorityElement.trim(), regulatoryAuthority)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Long findRegulatoryAuthorityId(String countryName,

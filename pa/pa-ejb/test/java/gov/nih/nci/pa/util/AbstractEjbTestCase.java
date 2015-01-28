@@ -141,6 +141,12 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         ra.setAuthorityName("Food and Drug Administration");
         ra.setCountry(c);
         s.save(ra);
+        
+        RegulatoryAuthority iIDMC= new RegulatoryAuthority();
+        iIDMC.setAuthorityName("IDMC");
+        iIDMC.setCountry(c);
+        s.save(iIDMC);
+        
         s.flush();
     }
 
@@ -166,6 +172,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("ctep.identifier.row", "");
         addPaProperty("other.identifiers.row", "");
         addPaProperty("ctep.ccr.learOrgIds", "NCICCR");
+        addPaProperty("allowed.regulatory.authorities.no.country.name", "IDMC");
         
         addPaProperty("closed_industrial_trial_statuses", "CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE, COMPLETE");
         
