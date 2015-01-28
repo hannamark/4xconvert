@@ -11,6 +11,15 @@
 <!--Date: 1/9/2015 (Charles Yaghmour)-->
 <!--Changes: Added APPROVED transitions to all sections-->
 <!--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!--Date: 01/28/2014-->
+<!--Author: Charles Yaghmour-->
+<!--Changes: Modified all [PA]-[Transitions] sections to change Erros to Warnings per the requirements spreadsheet-->
+<!--.        dated 1/29/2015. This allows the CTRO to continue with work uniterrupted until the data is clean     -->
+<!--.        Updated the error message for the interim status [IN REVIEW] for transition from [STATUSZERO] to [ACTIVE]-->
+<!--.        for all sections. It was referencing [APPROVED] in stead of [IN REVIEW]-->
+<!--.        Deleted [ADMINISTRATIVELY_COMPLETE] from all sections. Duplicate entry-->
+<!--.        Changed [COMPLETE] to {COMPLETED] for participating sites-->
+<!--- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 <!---->
 <!---->
 <statusRules>
@@ -50,7 +59,7 @@
             <nextStatus name="ACTIVE" validTransition="true" exceptionType="" exceptionMessage="">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses>
-                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
+                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -66,7 +75,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
@@ -74,8 +83,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
@@ -83,8 +92,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="5" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -93,7 +102,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
@@ -101,7 +110,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="4" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -110,8 +119,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="5" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -142,50 +151,50 @@
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="WARNING" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [COMPLETE] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="4" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="3" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="4" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -212,44 +221,44 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="WARNING" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="3" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="3" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="3" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -322,34 +331,34 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -376,34 +385,34 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -546,52 +555,6 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [COMPLETE] to [ADMINISTRATIVELY COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-          </status>
-          <status name="ADMINISTRATIVELY_COMPLETE">
-            <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [IN REVIEW]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="APPROVED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [APPROVED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="WITHDRAWN" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [WITHDRAWN]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ACTIVE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ACTIVE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ENROLLING_BY_INVITATION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ENROLLING BY INVITATION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Duplicate Status [ADMINISTRATIVELY COMPLETE] is not allowed">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses></interimStatuses>
             </nextStatus>
@@ -776,7 +739,7 @@
             <nextStatus name="ACTIVE" validTransition="true" exceptionType="" exceptionMessage="">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses>
-                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
+                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -792,7 +755,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
@@ -800,8 +763,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
@@ -809,8 +772,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="5" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -819,7 +782,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
@@ -827,7 +790,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="4" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -836,8 +799,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="5" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -868,50 +831,50 @@
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="WARNING" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [COMPLETED] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [COMPLETED] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="4" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="3" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="4" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -938,44 +901,44 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="WARNING" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [COMPLETED] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [COMPLETED] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="3" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="3" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="3" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1048,34 +1011,34 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [COMPLETED] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [COMPLETED] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1102,34 +1065,34 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [COMPLETED] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [COMPLETED] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1272,52 +1235,6 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [COMPLETED] to [ADMINISTRATIVELY COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-          </status>
-          <status name="ADMINISTRATIVELY_COMPLETE">
-            <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [IN REVIEW]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="APPROVED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [APPROVED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="WITHDRAWN" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [WITHDRAWN]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ACTIVE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ACTIVE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ENROLLING_BY_INVITATION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ENROLLING BY INVITATION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="COMPLETED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [COMPLETED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Duplicate Status [ADMINISTRATIVELY COMPLETE] is not allowed">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses></interimStatuses>
             </nextStatus>
@@ -1504,7 +1421,7 @@
             <nextStatus name="ACTIVE" validTransition="true" exceptionType="" exceptionMessage="">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses>
-                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
+                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1520,7 +1437,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
@@ -1528,8 +1445,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
@@ -1537,8 +1454,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="5" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1547,7 +1464,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
@@ -1555,7 +1472,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="4" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1564,8 +1481,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="5" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1596,50 +1513,50 @@
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="WARNING" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [COMPLETE] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="4" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="3" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="4" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1666,44 +1583,44 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="WARNING" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="3" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="3" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="3" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1776,34 +1693,34 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -1830,34 +1747,34 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2000,52 +1917,6 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [COMPLETE] to [ADMINISTRATIVELY COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-          </status>
-          <status name="ADMINISTRATIVELY_COMPLETE">
-            <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [IN REVIEW]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="APPROVED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [APPROVED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="WITHDRAWN" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [WITHDRAWN]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ACTIVE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ACTIVE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ENROLLING_BY_INVITATION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ENROLLING BY INVITATION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Duplicate Status [ADMINISTRATIVELY COMPLETE] is not allowed">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses></interimStatuses>
             </nextStatus>
@@ -2230,7 +2101,7 @@
             <nextStatus name="ACTIVE" validTransition="true" exceptionType="" exceptionMessage="">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses>
-                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
+                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2246,7 +2117,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
@@ -2254,8 +2125,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
@@ -2263,8 +2134,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="5" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2273,7 +2144,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
@@ -2281,7 +2152,7 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="4" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2290,8 +2161,8 @@
               <interimStatuses>
                 <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="3" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="3" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="4" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="5" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2322,50 +2193,50 @@
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="WARNING" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [COMPLETED] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [COMPLETED] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="4" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="3" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [IN REVIEW] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [IN REVIEW] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
                 <interimStatus order="1" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
-                <interimStatus order="2" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="2" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="3" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="4" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2392,44 +2263,44 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="WARNING" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [COMPLETED] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [COMPLETED] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="3" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
                 <interimStatus order="3" name="TEMPORARILY_CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [APPROVED] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [APPROVED] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="ACTIVE" exceptionType="ERROR" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
-                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="ACTIVE" exceptionType="WARNING" exceptionMessage="Interim status [ACTIVE] is missing"></interimStatus>
+                <interimStatus order="2" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="3" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2502,34 +2373,34 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [COMPLETED] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [COMPLETED] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ACTIVE] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ACTIVE] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2556,34 +2427,34 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="COMPLETED" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [COMPLETED] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [COMPLETED] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date" />
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="true" exceptionType="" exceptionMessage="">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="ERROR" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
+              <sameDateValidation canOccurOnSameDayAsPreviousStatus="false" exceptionType="WARNING" exceptionMessage="Statuses [ENROLLING BY INVITATION] and [ADMINISTRATIVELY COMPLETE] can not have the same date" />
               <interimStatuses>
-                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="ERROR" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
+                <interimStatus order="1" name="CLOSED_TO_ACCRUAL" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL] is missing"></interimStatus>
                 <interimStatus order="2" name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" exceptionType="WARNING" exceptionMessage="Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -2726,52 +2597,6 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [COMPLETED] to [ADMINISTRATIVELY COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-          </status>
-          <status name="ADMINISTRATIVELY_COMPLETE">
-            <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [IN REVIEW]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="APPROVED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [APPROVED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="WITHDRAWN" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [WITHDRAWN]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ACTIVE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ACTIVE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ENROLLING_BY_INVITATION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ENROLLING BY INVITATION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="COMPLETED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [COMPLETED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Duplicate Status [ADMINISTRATIVELY COMPLETE] is not allowed">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses></interimStatuses>
             </nextStatus>
@@ -2960,7 +2785,7 @@
             <nextStatus name="ACTIVE" validTransition="true" exceptionType="" exceptionMessage="">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses>
-                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
+                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -3460,52 +3285,6 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
           </status>
-          <status name="ADMINISTRATIVELY_COMPLETE">
-            <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [IN REVIEW]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="APPROVED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [APPROVED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="WITHDRAWN" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [WITHDRAWN]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ACTIVE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ACTIVE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ENROLLING_BY_INVITATION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ENROLLING BY INVITATION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Duplicate Status [ADMINISTRATIVELY COMPLETE] is not allowed">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-          </status>
           <status name="TEMPORARILY_CLOSED_TO_ACCRUAL">
             <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [TEMPORARILY CLOSED TO ACCRUAL] to [IN REVIEW]">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
@@ -3686,7 +3465,7 @@
             <nextStatus name="ACTIVE" validTransition="true" exceptionType="" exceptionMessage="">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses>
-                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
+                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -4182,52 +3961,6 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [COMPLETED] to [ADMINISTRATIVELY COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-          </status>
-          <status name="ADMINISTRATIVELY_COMPLETE">
-            <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [IN REVIEW]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="APPROVED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [APPROVED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="WITHDRAWN" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [WITHDRAWN]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ACTIVE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ACTIVE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ENROLLING_BY_INVITATION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ENROLLING BY INVITATION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="COMPLETED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [COMPLETED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Duplicate Status [ADMINISTRATIVELY COMPLETE] is not allowed">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses></interimStatuses>
             </nextStatus>
@@ -4414,7 +4147,7 @@
             <nextStatus name="ACTIVE" validTransition="true" exceptionType="" exceptionMessage="">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses>
-                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
+                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -4914,52 +4647,6 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
           </status>
-          <status name="ADMINISTRATIVELY_COMPLETE">
-            <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [IN REVIEW]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="APPROVED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [APPROVED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="WITHDRAWN" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [WITHDRAWN]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ACTIVE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ACTIVE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ENROLLING_BY_INVITATION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ENROLLING BY INVITATION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Duplicate Status [ADMINISTRATIVELY COMPLETE] is not allowed">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-          </status>
           <status name="TEMPORARILY_CLOSED_TO_ACCRUAL">
             <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [TEMPORARILY CLOSED TO ACCRUAL] to [IN REVIEW]">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
@@ -5140,7 +4827,7 @@
             <nextStatus name="ACTIVE" validTransition="true" exceptionType="" exceptionMessage="">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses>
-                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
+                <interimStatus order="1" name="IN_REVIEW" exceptionType="WARNING" exceptionMessage="Interim status [IN REVIEW] is missing"></interimStatus>
                 <interimStatus order="2" name="APPROVED" exceptionType="WARNING" exceptionMessage="Interim status [APPROVED] is missing"></interimStatus>
               </interimStatuses>
             </nextStatus>
@@ -5636,52 +5323,6 @@
               <interimStatuses></interimStatuses>
             </nextStatus>
             <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [COMPLETED] to [ADMINISTRATIVELY COMPLETE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-          </status>
-          <status name="ADMINISTRATIVELY_COMPLETE">
-            <nextStatus name="IN_REVIEW" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [IN REVIEW]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="APPROVED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [APPROVED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="WITHDRAWN" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [WITHDRAWN]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ACTIVE" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ACTIVE]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ENROLLING_BY_INVITATION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [ENROLLING BY INVITATION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="COMPLETED" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [COMPLETED]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION" validTransition="false" exceptionType="ERROR" exceptionMessage="Invalid status transition from [ADMINISTRATIVELY COMPLETE] to [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION]">
-              <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
-              <interimStatuses></interimStatuses>
-            </nextStatus>
-            <nextStatus name="ADMINISTRATIVELY_COMPLETE" validTransition="false" exceptionType="ERROR" exceptionMessage="Duplicate Status [ADMINISTRATIVELY COMPLETE] is not allowed">
               <sameDateValidation canOccurOnSameDayAsPreviousStatus="true" exceptionType="" exceptionMessage="" />
               <interimStatuses></interimStatuses>
             </nextStatus>

@@ -19,8 +19,22 @@
  * Date: 12/22/2014 
  * Author: Charles Yaghmour 
  * Changes: Initial Version 
- *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  
- * 
+ *- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * Date: 12/22/2014
+ * Author: Charles Yaghmour
+ * Date: 1/9/2015 (Charles Yaghmour)
+ * Changes: Added APPROVED transitions to all sections
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ * Date: 01/28/2014
+ * Author: Charles Yaghmour
+ * Changes: Modified all [PA]-[Transitions] sections to change Erros to Warnings per the requirements spreadsheet
+ *         dated 1/29/2015. This allows the CTRO to continue with work uniterrupted until the data is clean     
+ *         Updated the error message for the interim status [IN REVIEW] for transition from [STATUSZERO] to [ACTIVE]
+ *         for all sections. It was referencing [APPROVED] in stead of [IN REVIEW]
+ *         Deleted [ADMINISTRATIVELY_COMPLETE] from all sections. Duplicate entry
+ *         Changed [COMPLETE] to {COMPLETED] for participating sites
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ *
  */
  
   "statusRulesbyApp" : {<xsl:apply-templates select="PA"/>,<xsl:apply-templates select="REGISTRATION"/>}}       
