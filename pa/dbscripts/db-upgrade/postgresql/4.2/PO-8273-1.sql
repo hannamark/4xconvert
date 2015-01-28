@@ -1,0 +1,40 @@
+DELETE FROM pa_properties where name='studysite.statuschange.email.subject';
+DELETE FROM pa_properties where name='studysite.statuschange.email.body';
+/*
+ * 1 - <participating_site_org_name>
+ * 2 - <nci_id>
+ */
+INSERT INTO pa_properties VALUES ((select max(identifier) + 1 from pa_properties), 'studysite.statuschange.email.subject',
+'Participating Site Status was changed for %1s, on trial: %2s');
+/*
+ * 1 - <trial_title>
+ * 2 - <nci_id>
+ * 3 - <lead_org>
+ * 4 - <participating_site_org_name>
+ * 5 - <current_date>
+ * 
+ * 6 - <first_name>
+ * 7 - <last_name>
+ * 8 - <current_date>
+ * 
+ * 9 - <participating_site>
+ * 10 - <old_site_status>
+ * 11 - <new_site_status>
+ */
+INSERT INTO pa_properties VALUES ((select max(identifier) + 1 from pa_properties), 'studysite.statuschange.email.body',
+'Title:  %1s
+NCI Trial ID:   %2s
+Lead Organization   %3s
+Participating Site:     %4s
+Date:   %5s
+
+Dear %6s %7s,
+The ClinincalTrials.gov record shows that the trial listed above was closed as of %8s. For consistency, the CTRP system has changed the trials status at your participating site:
+Participating Site:     %9s
+Old Site Status:    %10s
+New Site Status:    %11s
+
+If you believe this is an error, or if you have additional questions about this or other CTRP topics, please contact the CTRO at ncictro@mail.nih.gov.
+
+Thank you for participating in the NCI Clinical Trials Reporting Program.
+');

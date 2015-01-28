@@ -3,14 +3,19 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.OrgFamilyDTO;
+import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
 import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.family.FamilyP30DTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -145,5 +150,83 @@ public final class FamilyHelper {
             }
         }
         return result; 
+    }
+    
+    /**
+     * Get site admins for Po Org
+     * @param poOrgId Po Org Id
+     * @return Set<RegistryUser> List of site admins
+     * @throws PAException exception
+     */
+    public static Set<RegistryUser> getSiteAdmins(Long poOrgId) throws PAException {
+        Set<RegistryUser> siteAdmins = new HashSet<RegistryUser>();
+        List<RegistryUser> users =  PaRegistry.getRegistryUserService().findByAffiliatedOrg(poOrgId);
+           for (RegistryUser registryUser : users) {
+               if (UserOrgType.ADMIN == registryUser.getAffiliatedOrgUserType()) {
+                   siteAdmins.add(registryUser);
+               }
+           }
+        return siteAdmins;
+    }
+    
+    /**
+     * Get the cancer centers for an poOrg
+     * @param orgPoId PoId for the organization
+     * @return List<ResearchOrganizationDTO> List of cancer center orgs
+     * @throws NullifiedRoleException exception thrown if any
+     * @throws PAException exception thrown if any
+     */
+    public static List<ResearchOrganizationDTO> getCancerCenters(Long orgPoId) 
+            throws NullifiedRoleException, PAException {
+        List<ResearchOrganizationDTO> result = new ArrayList<ResearchOrganizationDTO>();
+        
+        if (orgPoId == null) {
+            return result;
+        }
+        List<Long> allFamilyMembersPoIds = FamilyHelper.getAllRelatedOrgs(orgPoId);
+        if (allFamilyMembersPoIds == null || allFamilyMembersPoIds.isEmpty()) {
+            return result;
+        }
+        
+        Ii[] iis = new Ii[allFamilyMembersPoIds.size()];
+        for (int i = 0; i < allFamilyMembersPoIds.size(); i++) {
+            iis[i] = IiConverter.convertToPoOrganizationIi(allFamilyMembersPoIds.get(i).toString());
+        }
+        
+        List<ResearchOrganizationDTO> roList = PoRegistry
+                .getResearchOrganizationCorrelationService()
+                .getCorrelationsByPlayerIds(iis);
+        for (ResearchOrganizationDTO ro : roList) {
+            if (StringUtils.equalsIgnoreCase(
+                    CdConverter.convertCdToString(ro.getTypeCode()), "CCR")) {
+                result.add(ro);
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Get the cancer center admins for a poOrgId
+     * @param poOrgId poOrg Id
+     * @return Set<RegistryUser> List of cancer center admins for a poOrgId
+     * @throws NullifiedRoleException exception thrown if any
+     * @throws PAException exception thrown if any
+     */
+    public static Set<RegistryUser> getCancerCenterAdmins(Long poOrgId) 
+            throws NullifiedRoleException, PAException {
+        List<ResearchOrganizationDTO> roList = getCancerCenters(poOrgId);
+        Set<RegistryUser> admins = new HashSet<RegistryUser>();
+        if (!roList.isEmpty()) {
+            for (ResearchOrganizationDTO roDTO : roList) {
+                List<RegistryUser> users =  
+                        PaRegistry.getRegistryUserService().findByAffiliatedOrg(
+                        IiConverter.convertToLong(roDTO.getPlayerIdentifier()));
+                if (!users.isEmpty()) {
+                    admins.addAll(users);
+                }
+            }
+        }
+        return admins;
+        
     }
 }

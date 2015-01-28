@@ -2,7 +2,6 @@ package gov.nih.nci.pa.service;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -25,7 +24,6 @@ import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovStudyAdapter;
-import gov.nih.nci.pa.service.util.CTGovSyncServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -33,6 +31,7 @@ import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationBean;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
@@ -78,7 +77,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
@@ -110,6 +108,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
     protected final StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
     protected final StudyOverallStatusBeanLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
     protected final StudyProtocolBeanLocal studyProtocolService = new StudyProtocolBeanLocal();
+    protected final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
     protected final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
     protected final StudyResourcingBeanLocal studyResourcingService = new StudyResourcingBeanLocal();
     protected final StudySiteAccrualStatusBeanLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
@@ -152,7 +151,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(sp));
         StudyProtocol spInActive = TestSchema.creatOriginalStudyProtocolObj(ActStatusCode.INACTIVE,"NCI-2009-00003", "7");
         TestSchema.addUpdObject(TestSchema.createSubmittedDocumentWorkflowStatus(spInActive));
-        studyProtocolService.setProtocolQueryService(new MockProtocolQueryService());
+        studyProtocolService.setProtocolQueryService(protocolQueryService);
         StudyProtocol sp1 = TestSchema.createAmendStudyProtocolObj("NCI-2009-00003");
         RegistryUser ru = TestSchema.getRegistryUser();
         sp1.setUserLastCreated(ru.getUserLastCreated());
@@ -170,6 +169,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
     
         bean.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         bean.setStudyProtocolService(studyProtocolService);
+        bean.setProtocolQueryService(protocolQueryService);
         bean.setStudyOverallStatusService(studyOverallStatusService);
         bean.setStudyIndldeService(studyIndldeService);
         bean.setStudyResourcingService(studyResourcingService);
@@ -329,6 +329,7 @@ public abstract class AbstractTrialRegistrationTestBase extends
         bean.setTsrReportService(tsrReportSvc);
         bean.setStudyRelationshipService(studyRelationshipSvc);
         bean.setCtGovUploadServiceLocal(ctGovUploadServiceLocal);
+        
         setupPoSvc();
     }
 

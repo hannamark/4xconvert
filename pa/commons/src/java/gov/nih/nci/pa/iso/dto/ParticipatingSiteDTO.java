@@ -114,6 +114,11 @@ public class ParticipatingSiteDTO extends StudyDTO {
     private Ivl<Ts> accrualDateRange;
     private St programCodeText;
     private String siteOrgPoId;
+    
+    private St createdUser;
+    private Ts createdDt;
+    private St lastUpdatedUser;
+    private Ts lastUpdatedDt;
 
     /**
      * @return the organization role identifiers
@@ -282,4 +287,61 @@ public class ParticipatingSiteDTO extends StudyDTO {
     public void setSiteOrgPoId(String siteOrgPoId) {
         this.siteOrgPoId = siteOrgPoId;
     }
+
+    /**
+     * @return the createdUser
+     */
+    public St getCreatedUser() {
+        return createdUser;
+    }
+
+    /**
+     * @param createdUser the createdUser to set
+     */
+    public void setCreatedUser(St createdUser) {
+        this.createdUser = createdUser;
+    }
+
+    /**
+     * @return the createdDt
+     */
+    public Ts getCreatedDt() {
+        return createdDt;
+    }
+
+    /**
+     * @param createdDt the createdDt to set
+     */
+    public void setCreatedDt(Ts createdDt) {
+        this.createdDt = createdDt;
+    }
+
+    /**
+     * @return the lastUpdatedUser
+     */
+    public St getLastUpdatedUser() {
+        return lastUpdatedUser;
+    }
+
+    /**
+     * @param lastUpdatedUser the lastUpdatedUser to set
+     */
+    public void setLastUpdatedUser(St lastUpdatedUser) {
+        this.lastUpdatedUser = lastUpdatedUser;
+    }
+
+    /**
+     * @return the lastUpdatedDt
+     */
+    public Ts getLastUpdatedDt() {
+        return lastUpdatedDt;
+    }
+
+    /**
+     * @param lastUpdatedDt the lastUpdatedDt to set
+     */
+    public void setLastUpdatedDt(Ts lastUpdatedDt) {
+        this.lastUpdatedDt = lastUpdatedDt;
+    }
+
 }

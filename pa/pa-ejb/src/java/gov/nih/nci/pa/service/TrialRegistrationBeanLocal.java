@@ -97,12 +97,14 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO;
 import gov.nih.nci.pa.dto.ResponsiblePartyDTO.ResponsiblePartyType;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyInboxTypeCode;
@@ -119,6 +121,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
@@ -151,10 +154,12 @@ import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovSyncServiceBean;
 import gov.nih.nci.pa.service.util.CTGovUploadServiceLocal;
+import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.POServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
@@ -169,12 +174,15 @@ import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.pa.util.TrialUpdatesRecorder;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -184,6 +192,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -226,6 +235,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @EJB private StudyMilestoneServicelocal studyMilestoneService;
     @EJB private StudyOverallStatusServiceLocal studyOverallStatusService;
     @EJB private StudyProtocolServiceLocal studyProtocolService;
+    @EJB private ProtocolQueryServiceLocal protocolQueryService;
     @EJB private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
     @EJB private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
     @EJB private StudyRelationshipServiceLocal studyRelationshipService;
@@ -233,17 +243,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @EJB private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB private StudySiteContactServiceLocal studySiteContactService;
     @EJB private StudySiteServiceLocal studySiteService;
+    @EJB private ParticipatingSiteServiceLocal participatingSiteService;
     @EJB private TSRReportGeneratorServiceLocal tsrReportService;
     @EJB private ArmServiceLocal armService;
     @EJB private PlannedActivityServiceLocal plannedActivityService;
     @EJB private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService;
     @EJB private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
     
-    
-    @EJB
-    private CTGovUploadServiceLocal ctGovUploadServiceLocal;
-    
-    
+    @EJB private CTGovUploadServiceLocal ctGovUploadServiceLocal;
     
     private RegulatoryAuthorityServiceLocal regulatoryAuthorityService = new RegulatoryAuthorityBeanLocal();
 
@@ -255,7 +262,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
     private static final String MILESTONE = "study_milestone";
     private static final String DOCUMENT = "document";
+    private static final  DateFormat SDF = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+    
     private static final Logger LOG = Logger.getLogger(TrialRegistrationBeanLocal.class);
+    
     private void addNciOrgAsCollaborator(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi)
             throws PAException {
         StudySiteDTO nCiCollaborator = new StudySiteDTO();
@@ -1168,7 +1178,143 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                                 currentStatus.getStatusCode()))) {
             overallStatusDTO.setStudyProtocolIdentifier(spIi);
             studyOverallStatusService.create(overallStatusDTO);
+            
+            updateParticipatingSiteStatusByTrialStatus(overallStatusDTO, spIi);
         }
+    }
+
+    private void updateParticipatingSiteStatusByTrialStatus(
+            StudyOverallStatusDTO overallStatusDTO, Ii spIi) throws PAException {
+        StudyStatusCode newTrialStatus = CdConverter
+                .convertCdToEnum(StudyStatusCode.class,
+                        overallStatusDTO.getStatusCode());
+        StudyProtocolQueryDTO spDTO = 
+                protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIi));
+        String closeIndustrialTrialStatuses = lookUpTableServiceRemote.getPropertyValue("closed_industrial_trial_statuses");
+        
+//            if (StudyStatusCode.CLOSED_TO_ACCRUAL == newStatus 
+//                  || StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION == newStatus
+//                  || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newStatus 
+//                  || StudyStatusCode.COMPLETE == newStatus) {
+        if (!closeIndustrialTrialStatuses.contains(newTrialStatus.getCode())) return;
+        
+        List<ParticipatingSiteDTO> participatingSites = 
+                participatingSiteService.getParticipatingSitesByStudyProtocol(spIi);
+        if (participatingSites == null || participatingSites.isEmpty()) return;
+        
+        StudySiteAccrualStatusDTO newSSStatusDto = null;
+        
+        for (ParticipatingSiteDTO participatingSiteDTO : participatingSites) {
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO 
+                = participatingSiteDTO.getStudySiteAccrualStatus();
+            
+            if (studySiteAccrualStatusDTO == null) continue;
+            RecruitmentStatusCode currSSStatus = CdConverter.convertCdToEnum(RecruitmentStatusCode.class,
+                    studySiteAccrualStatusDTO.getStatusCode());
+            
+            if (RecruitmentStatusCode.COMPLETED == currSSStatus
+                    || RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE == currSSStatus) {
+                continue;
+            }
+            //create new recruitment status
+            newSSStatusDto = new StudySiteAccrualStatusDTO();
+            newSSStatusDto.setStatusDate(overallStatusDTO.getStatusDate());
+            newSSStatusDto.setStudySiteIi(participatingSiteDTO.getIdentifier());
+            
+            if (StudyStatusCode.CLOSED_TO_ACCRUAL == newTrialStatus 
+                    || StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION == newTrialStatus) {
+                    if(RecruitmentStatusCode.CLOSED_TO_ACCRUAL == currSSStatus 
+                            || RecruitmentStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION == currSSStatus) {
+                        continue;
+                    } else {
+                        //update pp status
+                        newSSStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
+                    }
+            } else if (StudyStatusCode.COMPLETE == newTrialStatus) {
+              //update pp status
+                newSSStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.COMPLETED));
+            } else if (StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newTrialStatus) {
+              //update pp status
+                newSSStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE));
+            }
+            
+            studySiteAccrualStatusService.createStudySiteAccrualStatus(studySiteAccrualStatusDTO);
+            
+            //send notification for study site status change
+           try {
+               sendStatusChangeNotification(spDTO, participatingSiteDTO, currSSStatus.getCode(), newSSStatusDto.getStatusCode().getCode());
+            } catch (NumberFormatException | NullifiedRoleException e) {
+                throw new PAException(e.getMessage(), e);
+            }
+            
+        }//end of for
+    }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void sendStatusChangeNotification(StudyProtocolQueryDTO spDTO, ParticipatingSiteDTO dto, 
+            String currStatus, String newStatus) throws PAException, NumberFormatException, NullifiedRoleException {
+        
+        StudySiteDTO ssDto = studySiteService.get(dto.getIdentifier());
+        Organization ssOrg = getPAServiceUtils().getOrCreatePAOrganizationByIi(ssDto.getHealthcareFacilityIi());
+        
+        ArrayList bodyParamsLst = new ArrayList();
+        bodyParamsLst.add(spDTO.getOfficialTitle()); 
+        bodyParamsLst.add(spDTO.getNciIdentifier()); 
+        if (spDTO.getLeadOrganizationPOId() != null) {
+            bodyParamsLst.add(spDTO.getLeadOrganizationPOId().toString());
+        } else {
+            bodyParamsLst.add(" ");
+        }
+        bodyParamsLst.add(ssOrg.getName());
+        String currDt = getFormatedDate(null);
+        bodyParamsLst.add(currDt);
+        
+        Set<RegistryUser> users = null;
+        if (dto.getCreatedUser() != null) {
+            users = new HashSet<RegistryUser>();
+            users.add(registryUserServiceLocal.getUser(StConverter.convertToString(dto.getCreatedUser())));
+        } else if(!(users = FamilyHelper.getSiteAdmins(Long.valueOf(dto.getSiteOrgPoId()))).isEmpty()) {
+            //do nothing for now, users are siteadmins
+        } else if(!(users = FamilyHelper.getCancerCenterAdmins(Long.valueOf(dto.getSiteOrgPoId()))).isEmpty()) {
+            //do nothing for now, users are cancer center admins
+        } 
+        
+        //if no created user or site admins or cancer center admins found, email ctro
+        if (users.isEmpty()) {
+            bodyParamsLst.add(currStatus);
+            bodyParamsLst.add(newStatus);
+            
+            Object[] subjParams = {spDTO.getNciIdentifier() };
+        
+            mailManagerSerivceLocal.sendNotificationMail("cictro@mail.nih.gov", 
+                    "studysite.statuschange.ctro.email.subject", "studysite.statuschange.ctro.email.body", 
+                    subjParams, bodyParamsLst.toArray());
+            return;
+        }
+        
+        for (RegistryUser registryUser : users) {
+            ArrayList tmpBodyParamsLst = new ArrayList(bodyParamsLst);
+            tmpBodyParamsLst.add(registryUser.getFirstName());
+            tmpBodyParamsLst.add(registryUser.getLastName());
+            bodyParamsLst.add(currDt);
+            bodyParamsLst.add(ssOrg.getName());
+            bodyParamsLst.add(currStatus);
+            bodyParamsLst.add(newStatus);
+            
+            Object[] subjParams = {ssOrg.getName(), spDTO.getNciIdentifier() };
+        
+            mailManagerSerivceLocal.sendNotificationMail(registryUser.getEmailAddress(), 
+                    "studysite.statuschange.email.subject", "studysite.statuschange.email.body", 
+                    subjParams, bodyParamsLst.toArray());
+        }
+    }
+    
+    private String getFormatedDate(Date date) {
+        if (date ==  null) {
+            return SDF.format(new Date());
+        }
+        
+        return SDF.format(date);
     }
 
     /**
@@ -1564,7 +1710,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
      */
     private void assignOwnership(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi) throws PAException {
         // assign ownership
-        RegistryUser usr = registryUserServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
+       RegistryUser  usr = registryUserServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
                 .getUserLastCreated()));
         if (usr != null) {
             registryUserServiceLocal.assignOwnership(usr.getId(),
@@ -2689,6 +2835,14 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     public void setStudyOutcomeMeasureService(
             StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService) {
         this.studyOutcomeMeasureService = studyOutcomeMeasureService;
+    }
+    
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(
+            ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
     }
 
     /**

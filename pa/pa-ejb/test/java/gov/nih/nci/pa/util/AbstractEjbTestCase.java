@@ -167,6 +167,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("other.identifiers.row", "");
         addPaProperty("ctep.ccr.learOrgIds", "NCICCR");
         
+        addPaProperty("closed_industrial_trial_statuses", "CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE, COMPLETE");
         
         String statusRulesStr = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("statusvalidations.json"));
         addPaProperty("status.rules", statusRulesStr);

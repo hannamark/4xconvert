@@ -2059,4 +2059,30 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         }
 
     }
+    
+    /**
+     * Sends notification email to recipient
+     * @param emailRecipient Email address of the recipient
+     * @param emailSubjKey PA props key to get email subject template
+     * @param emailBodyKey PA props key to get email body template
+     * @param subjParams parameters to replace placeholders in email subject
+     * @param bodyParams parameters to replace placeholders in email body
+     * @throws PAException exception
+     */
+    @Override
+    public void sendNotificationMail(String emailRecipient, String emailSubjKey, 
+            String emailBodyKey, Object[] subjParams, Object[] bodyParams) throws PAException {
+        String mailBody = lookUpTableService.getPropertyValue(emailBodyKey);
+        String mailSubject = lookUpTableService.getPropertyValue(emailSubjKey);
+        try {
+            mailSubject = String.format(mailSubject, subjParams);
+            mailBody = String.format(mailBody, bodyParams);
+        } catch (Exception e) {
+            throw new PAException(
+                    "Error building email subject and body from message templates and supplied parameters, " 
+                            + e.getMessage());
+        }
+        
+        sendMailWithHtmlBody(emailRecipient, mailSubject, mailBody);
+    }
 }

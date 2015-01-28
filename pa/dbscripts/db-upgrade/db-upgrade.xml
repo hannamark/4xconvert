@@ -1713,9 +1713,21 @@
      <changeSet id="PO-8418" author="krylovd">
         <comment>Added status_history to study_protocol_stage.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8418.sql"/>
-     </changeSet>  
+     </changeSet>
      <changeSet id="PO-8485" author="Reshma">
         <comment>Add a new property to pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8485.sql"/>
+     </changeSet>
+     <changeSet id="PO-8273-0" author="chandrasekaravr">
+        <comment>Added closing trial statuses to PA properties</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8273-0.sql"/>
+     </changeSet>
+     <changeSet id="PO-8273-1" author="chandrasekaravr">
+        <comment>Added email message templates for study site status change</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8273-1.sql"/>
+     </changeSet> 
+     <changeSet id="PO-8273-2" author="chandrasekaravr">
+        <comment>Added email message template for study site status change to ctro</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8273-2.sql"/>
      </changeSet>
 </databaseChangeLog>

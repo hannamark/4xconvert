@@ -166,6 +166,24 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
             StudySiteAccrualStatus latestStatus = accrualStatuses.iterator().next();
             dto.setStudySiteAccrualStatus(new StudySiteAccrualStatusConverter().convertFromDomainToDto(latestStatus));
         }
+        
+        //only domain to dto convertion for these attributes
+        if (bo.getUserLastCreated() != null) {
+            dto.setCreatedUser(StConverter.convertToSt(bo.getUserLastCreated().getLoginName()));
+        }
+        
+        if (bo.getUserLastUpdated() != null) {
+            dto.setLastUpdatedUser(StConverter.convertToSt(bo.getUserLastUpdated().getLoginName()));
+        }
+        
+        if (bo.getDateLastCreated() != null) {
+            dto.setCreatedDt(TsConverter.convertToTs(bo.getDateLastCreated()));
+        }
+        
+        if (bo.getDateLastUpdated() != null) {
+            dto.setLastUpdatedDt(TsConverter.convertToTs(bo.getDateLastUpdated()));
+        }
+        
         return dto;
     }
 

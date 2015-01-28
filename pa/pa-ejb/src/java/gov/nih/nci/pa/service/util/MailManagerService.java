@@ -417,4 +417,16 @@ public interface MailManagerService {
      */
     void sendSuperAbstractorTransitionErrorsEmail(Long studyProtocolId,
             User recipient) throws PAException;
+    
+    /**
+     * Sends notification email to recipient
+     * @param emailRecipient Email address of the recipient
+     * @param emailSubjKey PA props key to get email subject template
+     * @param emailBodyKey PA props key to get email body template
+     * @param subjParams parameters to replace placeholders in email subject
+     * @param bodyParams parameters to replace placeholders in email body
+     * @throws PAException exception
+     */
+    void sendNotificationMail(String emailRecipient, String emailSubjKey, String emailBodyKey, 
+            Object[] subjParams, Object[] bodyParams) throws PAException;
 }
