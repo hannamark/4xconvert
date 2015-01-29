@@ -259,7 +259,7 @@ public class StatusDto implements Serializable, Comparable<StatusDto> {
         for (ValidationError err : getValidationErrors()) {
             if (err.getErrorType() == type) {
                 sb.append(err.getErrorMessage());
-                sb.append(". ");
+                sb.append("\n");
             }
         }
         return sb.toString();
