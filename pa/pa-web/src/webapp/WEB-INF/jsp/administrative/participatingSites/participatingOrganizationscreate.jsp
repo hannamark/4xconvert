@@ -192,16 +192,6 @@
                 $('personContactWebDTO.selectedPersId').value =  persid;
             }
         </script>
-        
-        <style type="text/css">
-            ul.errorMessage li span {
-                white-space: pre-wrap;
-            }
-            div.error_msg {
-			    white-space: pre-wrap;
-			}
-        </style>
-        
     </head>
     <body>
         <h1><fmt:message key="participatingOrganizations.subtitle" /></h1>

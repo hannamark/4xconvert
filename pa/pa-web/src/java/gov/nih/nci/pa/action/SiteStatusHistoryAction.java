@@ -209,7 +209,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
-                sb.append("\n").append(actionErr);
+                sb.append(" - ").append(actionErr);
             }
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
         }
@@ -417,10 +417,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
     private void handle(PAException e) {
         LOG.warn(e, e);
         ServletActionContext.getRequest().setAttribute(
-                Constants.FAILURE_MESSAGE, 
-                e.getMessage().replaceFirst("\\.\\s*$", "")
-                .replaceAll("\\.\\s*", ".\n")
-                .replaceAll("Validation Exception ", "").trim());
+                Constants.FAILURE_MESSAGE, e.getMessage());
     }
     
     

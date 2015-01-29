@@ -324,7 +324,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
-                sb.append("\n").append(actionErr);
+                sb.append(" - ").append(actionErr);
             }
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
         } else {
@@ -353,7 +353,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
-                sb.append("\n").append(actionErr);
+                sb.append(" - ").append(actionErr);
             }
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
         } else {

@@ -18,9 +18,6 @@
                 text-align: right;
                 padding-right: 30px;
             }
-            ul.errorMessage li span {
-                white-space: pre-wrap;
-            }
         </style>
         
         <script type="text/javascript">

@@ -214,9 +214,7 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
         when(studyOverallStatusService.get(spIi)).thenReturn(statuses.get(0));
         String result = sut.save();
         assertEquals("success", result);
-        assertEquals("studyOverallStatus.\nedit.\ninvalidDate",
-                ServletActionContext.getRequest()
-                        .getAttribute("failureMessage"));
+        assertEquals("studyOverallStatus.edit.invalidDate", ServletActionContext.getRequest().getAttribute("failureMessage"));
         
         sut.setStatusDate("12/10/2012");
         sut.setReason("reasonUpdate");
