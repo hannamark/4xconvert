@@ -228,7 +228,11 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
                 runTransitionValidationAndInvokeSuAbstractorLogic(studyProtocolDTO);
             }            
         } catch (PAException e) {
-            addActionError(e.getMessage());
+            addActionError(e
+                    .getMessage()
+                    .replaceFirst(
+                            "^Validation Exception ",
+                            ""));
         }
         return Action.SUCCESS;
     }

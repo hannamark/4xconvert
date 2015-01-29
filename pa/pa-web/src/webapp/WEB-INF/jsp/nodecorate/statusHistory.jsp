@@ -55,6 +55,12 @@ th {
     text-align: left !important;    
 }
 
+div.error_msg {
+    white-space: pre-wrap;
+}
+
+
+
 </style>
 
 <script type="text/javascript"

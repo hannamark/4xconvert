@@ -311,7 +311,10 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
     private void handle(PAException e) {
         LOG.warn(e, e);
         ServletActionContext.getRequest().setAttribute(
-                Constants.FAILURE_MESSAGE, e.getMessage());
+                Constants.FAILURE_MESSAGE,
+                e.getMessage().replaceFirst("\\.\\s*$", "")
+                        .replaceAll("\\.\\s*", ".\n")
+                        .replaceAll("Validation Exception ", "").trim());
     }
     
     
