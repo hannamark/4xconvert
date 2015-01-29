@@ -225,7 +225,7 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Trial Status");
         clickAndWait("link=History");
         assertTrue(selenium.isTextPresent("Status History"));
-        
+        waitForElementById("row", 10);
         assertEquals(selenium.getText("xpath=//table[@id='row']//th[1]"), "Status Date");
         assertEquals(selenium.getText("xpath=//table[@id='row']//th[2]"), "Status");
         assertEquals(selenium.getText("xpath=//table[@id='row']//th[3]"), "Comments");
