@@ -380,7 +380,7 @@
              userid="${db.username}"
              password="${db.password}"
              expandproperties="true"
-             onerror="continue"
+             onerror="abort"
              autocommit="true"
              classpathref="build.classpath">
             <transaction>drop database if exists ${db.name};</transaction>
@@ -392,7 +392,7 @@
              url="${jdbc.url}"
              userid="${db.username}"
              password="${db.password}"
-             onerror="continue"
+             onerror="abort"
              autocommit="true"
              classpathref="build.classpath"
  			 delimiter="/" 
