@@ -597,9 +597,10 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
     
     private void searchAndAddDisease(String searchName) {
         selenium.type("id=disease", searchName);
-       // clickAndWaitAjax("alt=Search");
+        // clickAndWaitAjax("alt=Search");
         driver.findElement(By.cssSelector("input.search_inner_button")).click();
         pause(2000);
-        selenium.click("class=breadcrumbFeaturedElement");
+        selenium.click("xpath=//div[@class='breadcrumbFeaturedElement']/div[@class='breadcrumbFeaturedElementText']");
+
     }
 }
