@@ -206,6 +206,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     @Override
     @After
     public void tearDown() throws Exception {
+        DbUtils.closeQuietly(connection);
         takeScreenShot();
         logoutUser();
         closeBrowser();
