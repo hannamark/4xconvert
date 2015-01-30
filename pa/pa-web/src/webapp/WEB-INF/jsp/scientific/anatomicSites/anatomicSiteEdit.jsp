@@ -7,8 +7,6 @@
 <head>
 <title><fmt:message key="anatomicSite.details.title" /></title>
 <s:head />
-<%@ include file="/WEB-INF/jsp/common/includejs.jsp"%>
-<c:url value="/protected/popupDis.action" var="lookupUrl" />
 
 <script type="text/javascript">
     // this function is called from body onload in main.jsp (decorator)
