@@ -27,6 +27,8 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +41,7 @@ import org.apache.commons.lang.StringUtils;
 @Stateless
 @Interceptors({ RemoteAuthorizationInterceptor.class,
         PaHibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class StatusTransitionServiceBeanLocal implements
         StatusTransitionServiceLocal {
 

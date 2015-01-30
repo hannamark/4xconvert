@@ -3,7 +3,9 @@
  */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.pa.dto.ParticipatingOrgDTO;
 import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionService;
@@ -12,7 +14,10 @@ import gov.nih.nci.pa.service.status.json.AppName;
 import gov.nih.nci.pa.service.status.json.ErrorType;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
+import gov.nih.nci.pa.service.util.ParticipatingOrgServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.registry.dto.TrialDTO;
+import gov.nih.nci.registry.util.TrialUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,6 +75,8 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     private static final String DELETED_STATUS_HISTORY_LIST_KEY = "deletedStatusHistoryList";
 
     private StatusTransitionService statusTransitionService;
+
+    private ParticipatingOrgServiceLocal participatingOrgService;
 
     private HttpServletRequest request;
     private HttpServletResponse response;
@@ -151,6 +159,11 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
 
     @SuppressWarnings("rawtypes")
     protected abstract Class<Enum> getStatusEnumClass();
+
+    /**
+     * @return OpenSitesWarningRequired
+     */
+    public abstract boolean isOpenSitesWarningRequired();
 
     /**
      * @return StreamResult
@@ -258,6 +271,81 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
         JSONObject root = new JSONObject();
         root.put("errors", errors);
         root.put("warnings", warnings);
+        return new StreamResult(new ByteArrayInputStream(root.toString()
+                .getBytes(UTF_8)));
+    }
+
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     * @throws JSONException
+     *             JSONException
+     * @throws PAException
+     */
+    public StreamResult mustDisplayOpenSitesWarning()
+            throws UnsupportedEncodingException, JSONException, PAException {
+        boolean mustDisplay = false;
+        Collection<StatusDto> hist = getStatusHistoryFromSession();
+        if (!hist.isEmpty() && isOpenSitesWarningRequired()) {
+            StatusDto latest = (StatusDto) CollectionUtils.get(hist,
+                    hist.size() - 1);
+            StudyStatusCode statusCode = StudyStatusCode.valueOf(latest
+                    .getStatusCode());
+            if (statusCode.isClosed()) {
+                // Trial is transitioning into a closed status. May need to
+                // display a warning as per PO-8323.
+                mustDisplay = trialHasOpenSites();
+            }
+        }
+        JSONObject root = new JSONObject();
+        root.put("answer", mustDisplay);
+        return new StreamResult(new ByteArrayInputStream(root.toString()
+                .getBytes(UTF_8)));
+    }
+
+    private boolean trialHasOpenSites() throws PAException {
+        return !getOpenSiteList().isEmpty();
+    }
+
+    private List<ParticipatingOrgDTO> getOpenSiteList() throws PAException {
+        List<ParticipatingOrgDTO> list = new ArrayList<>();
+        TrialDTO trial = (TrialDTO) request.getSession().getAttribute(
+                TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+        long spID = Long.valueOf(trial.getIdentifier());
+        for (ParticipatingOrgDTO site : participatingOrgService
+                .getTreatingSites(spID)) {
+            if (site.getRecruitmentStatus() != null
+                    && !site.getRecruitmentStatus().isClosed()) {
+                list.add(site);
+            }
+        }
+        return list;
+
+    }
+
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     * @throws JSONException
+     *             JSONException
+     * @throws PAException
+     */
+    public StreamResult getOpenSites() throws UnsupportedEncodingException,
+            JSONException, PAException {
+        JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("data", arr);
+        for (ParticipatingOrgDTO site : getOpenSiteList()) {
+            JSONObject data = new JSONObject();
+            data.put("poID", site.getPoId());
+            data.put("name", site.getName());
+            data.put("statusCode", site.getRecruitmentStatus().getCode());
+            data.put("statusDate", DateFormatUtils.format(
+                    site.getRecruitmentStatusDate(), "MM/dd/yyyy"));
+            arr.put(data);
+        }
         return new StreamResult(new ByteArrayInputStream(root.toString()
                 .getBytes(UTF_8)));
     }
@@ -510,7 +598,8 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     }
 
     /**
-     * @param statusTransitionService the statusTransitionService to set
+     * @param statusTransitionService
+     *            the statusTransitionService to set
      */
     public void setStatusTransitionService(
             StatusTransitionService statusTransitionService) {
@@ -520,6 +609,7 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     @Override
     public void prepare() {
         this.statusTransitionService = PaRegistry.getStatusTransitionService();
+        this.participatingOrgService = PaRegistry.getParticipatingOrgService();
     }
 
     /**
@@ -528,7 +618,6 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
     public final HttpServletRequest getServletRequest() {
         return request;
     }
-
 
     /**
      * @return the discriminator
@@ -545,5 +634,13 @@ public abstract class StatusHistoryManagementAction extends ActionSupport
         this.discriminator = discriminator;
     }
 
-    
+    /**
+     * @param participatingOrgService
+     *            the participatingOrgService to set
+     */
+    public void setParticipatingOrgService(
+            ParticipatingOrgServiceLocal participatingOrgService) {
+        this.participatingOrgService = participatingOrgService;
+    }
+
 }

@@ -429,4 +429,9 @@ public interface MailManagerService {
      */
     void sendNotificationMail(String emailRecipient, String emailSubjKey, String emailBodyKey, 
             Object[] subjParams, Object[] bodyParams) throws PAException;
+    
+    /**
+     * @param dataForEmail SiteStatusChangeNotificationData
+     */
+    void sendSiteCloseNotification(SiteStatusChangeNotificationData dataForEmail);
 }

@@ -106,6 +106,11 @@ public class AddSitesAction extends StatusHistoryManagementAction {
     protected TrialType getTrialTypeHandledByThisClass() {       
         return TrialType.ABBREVIATED;
     }
+    
+    @Override
+    public boolean isOpenSitesWarningRequired() {       
+        return false;
+    }
 
     @Override
     public String execute() throws PAException {

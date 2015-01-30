@@ -499,4 +499,9 @@ public class AmendmentTrialAction extends AbstractBaseTrialAction implements Pre
         this.trialRegistrationService = trialRegistrationService;
     }
 
+    
+    @Override
+    public boolean isOpenSitesWarningRequired() {     
+        return true;
+    }
 }

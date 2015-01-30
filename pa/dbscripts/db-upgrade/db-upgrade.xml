@@ -1734,4 +1734,8 @@
         <comment>Add a new property to pa_properties, add IDMC to regulatory authorities</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8079.sql"/>
      </changeSet>
+     <changeSet id="PO-8323" author="krylovd" runOnChange="true">
+        <comment>Site Status Change Notification email template.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8323.sql"/>
+     </changeSet>     
 </databaseChangeLog>

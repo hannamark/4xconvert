@@ -130,11 +130,13 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
     public ParticipatingSiteDTO convertFromDomainToDto(StudySite bo) throws PAException {
         ParticipatingSiteDTO dto = new ParticipatingSiteDTO();
 
-        if (bo.getHealthCareFacility() != null) {
-            Ii id = IiConverter.convertToPoHealthCareFacilityIi(bo.getHealthCareFacility().getIdentifier());
+        final HealthCareFacility hcf = bo.getHealthCareFacility();
+        if (hcf != null) {
+            Ii id = IiConverter.convertToPoHealthCareFacilityIi(hcf.getIdentifier());
             dto.setOrganizationRoleIdentifiers(DSetConverter.convertIiToDset(id));
-            dto.setSiteOrgPoId(bo.getHealthCareFacility().getOrganization() != null ? bo
-                    .getHealthCareFacility().getOrganization().getIdentifier()
+            dto.setSiteOrgPoId(hcf.getOrganization() != null ? hcf.getOrganization().getIdentifier()
+                    : null);
+            dto.setSiteOrgName(hcf.getOrganization() != null ? hcf.getOrganization().getName()
                     : null);
         }
 
@@ -154,13 +156,20 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
         StudySiteContactConverter sscConverter = new StudySiteContactConverter();
         dto.setStudySiteContacts(sscConverter.convertFromDomainToDtos(bo.getStudySiteContacts()));
 
-        List<StudySiteAccrualStatus> accrualStatuses = bo.getStudySiteAccrualStatuses();
-        // Sort in reverse status date order to move the most recent status to the front of the list.
-        Collections.sort(accrualStatuses, new Comparator<StudySiteAccrualStatus>() {
-            public int compare(StudySiteAccrualStatus s1, StudySiteAccrualStatus s2) {
-               return s2.getStatusDate().compareTo(s1.getStatusDate());
-            }
-        });
+        List<StudySiteAccrualStatus> accrualStatuses = bo
+                .getStudySiteAccrualStatuses();
+        // Sort in reverse status date order to move the most recent status to
+        // the front of the list.
+        Collections.sort(accrualStatuses,
+                new Comparator<StudySiteAccrualStatus>() {
+                    public int compare(StudySiteAccrualStatus s1,
+                            StudySiteAccrualStatus s2) {
+                        final int byDate = s2.getStatusDate().compareTo(
+                                s1.getStatusDate());
+                        final int byId = s2.getId().compareTo(s1.getId());
+                        return byDate != 0 ? byDate : byId;
+                    }
+                });
 
         if (CollectionUtils.isNotEmpty(accrualStatuses)) {
             StudySiteAccrualStatus latestStatus = accrualStatuses.iterator().next();

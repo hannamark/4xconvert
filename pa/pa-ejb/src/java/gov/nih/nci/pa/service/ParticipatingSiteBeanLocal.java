@@ -99,10 +99,12 @@ import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.ParticipatingSiteConverter;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
@@ -116,7 +118,13 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.status.StatusDto;
+import gov.nih.nci.pa.service.status.ValidationError;
+import gov.nih.nci.pa.service.status.json.AppName;
+import gov.nih.nci.pa.service.status.json.TransitionFor;
+import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.FamilyHelper;
+import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData;
+import gov.nih.nci.pa.service.util.SiteStatusChangeNotificationData.SiteData;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -144,6 +152,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
@@ -168,6 +177,7 @@ import org.hibernate.exception.ConstraintViolationException;
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean // NOPMD
     implements ParticipatingSiteServiceLocal { // NOPMD
     
@@ -192,6 +202,71 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         } catch (TooManyResultsException e) {
             throw new PAException(e.getMessage(), e);
         }
+    }
+    
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void closeOpenSites(Ii spID, StudyOverallStatusDTO oldStatus,
+            StudyOverallStatusDTO trialStatus, boolean notifyTrialOwners)
+            throws PAException {        
+        StudyStatusCode trialStatusCode = CdConverter.convertCdToEnum(
+                StudyStatusCode.class, trialStatus.getStatusCode());
+        Date trialStatusDate = TsConverter.convertToTimestamp(trialStatus
+                .getStatusDate());
+        
+        SiteStatusChangeNotificationData dataForEmail = new SiteStatusChangeNotificationData(
+                spID, oldStatus, trialStatus);
+
+        List<ParticipatingSiteDTO> sites = getParticipatingSitesByStudyProtocol(spID);
+        for (ParticipatingSiteDTO site : sites) {
+            StudySiteAccrualStatusDTO siteStatus = site
+                    .getStudySiteAccrualStatus();
+            RecruitmentStatusCode siteStatusCode = CdConverter.convertCdToEnum(
+                    RecruitmentStatusCode.class, siteStatus.getStatusCode());
+            Date siteStatusDate = TsConverter.convertToTimestamp(siteStatus
+                    .getStatusDate());
+            if (siteStatusCode != null && !siteStatusCode.isClosed()
+                    && siteStatusDate != null) {
+                StudySiteAccrualStatusDTO newStatus = new StudySiteAccrualStatusDTO();                
+                newStatus.setStatusDate(TsConverter.convertToTs(trialStatusDate
+                        .after(siteStatusDate) ? trialStatusDate
+                        : siteStatusDate));
+                final RecruitmentStatusCode newStatusCode = RecruitmentStatusCode
+                        .getByStatusCode(trialStatusCode);
+                newStatus.setStatusCode(CdConverter
+                        .convertToCd(newStatusCode));
+                createStudySiteAccrualStatus(site.getIdentifier(), newStatus);
+                if (notifyTrialOwners) {
+                    SiteData siteData = new SiteData(site.getSiteOrgName(),
+                            siteStatusCode, newStatusCode,
+                            getStatusHistoryErrors(site));
+                    dataForEmail.getSiteData().add(siteData);
+                }
+            }
+        }
+        
+        if (!dataForEmail.getSiteData().isEmpty()) {
+            getMailManagerService().sendSiteCloseNotification(dataForEmail);
+        }
+    }
+
+    private String getStatusHistoryErrors(ParticipatingSiteDTO site)
+            throws PAException {
+        Collection<StatusDto> hist = getStudySiteAccrualStatusService()
+                .getStatusHistory(site.getIdentifier());
+        if (CollectionUtils.isNotEmpty(hist)) {
+            getStatusTransitionService().validateStatusHistory(
+                    AppName.REGISTRATION, TrialType.COMPLETE,
+                    TransitionFor.SITE_STATUS, new ArrayList<StatusDto>(hist));
+            Collection<String> issues = new TreeSet<String>();
+            for (StatusDto status : hist) {
+                for (ValidationError err : status.getValidationErrors()) {
+                    issues.add(err.getErrorMessage());
+                }
+            }
+            return StringUtils.join(issues, ". ");
+        }
+        return StringUtils.EMPTY;
     }
 
     /**

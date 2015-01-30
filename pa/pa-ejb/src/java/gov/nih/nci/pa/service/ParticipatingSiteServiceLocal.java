@@ -89,6 +89,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.status.StatusDto;
@@ -336,6 +337,23 @@ public interface ParticipatingSiteServiceLocal {
      */
     List<Organization> getListOfSitesUserCanUpdate(RegistryUser user,
             Ii studyProtocolID) throws PAException, NullifiedRoleException;
+
+    /**
+     * Close open sites using the same status code as the trial's.
+     * 
+     * @param spID
+     *            spID
+     * @param  oldStatus oldStatus
+     * @param currentStatus
+     *            trial status to use
+     * @param mustNotifyTrialOwners
+     *            mustNotifyTrialOwners
+     * @throws PAException
+     *             PAException
+     */
+    void closeOpenSites(Ii spID, StudyOverallStatusDTO oldStatus,
+            StudyOverallStatusDTO currentStatus, boolean mustNotifyTrialOwners)
+            throws PAException;
 
    
 }

@@ -99,47 +99,47 @@ public enum StudyStatusCode implements CodedEnum<String> {
     /**
      * In Review.
      */
-    IN_REVIEW("In Review", true),
+    IN_REVIEW("In Review", true, false),
     /**
      * Approved.
      */
-    APPROVED("Approved", true),
+    APPROVED("Approved", true, false),
     /**
      * Active.
      */
-    ACTIVE("Active", true),
+    ACTIVE("Active", true, false),
     /**
      * Enrolling by Invitation.
      */
-    ENROLLING_BY_INVITATION("Enrolling by Invitation", true),
+    ENROLLING_BY_INVITATION("Enrolling by Invitation", true, false),
     /**
      * Closed to Accrual.
      */
-    CLOSED_TO_ACCRUAL("Closed to Accrual", false),
+    CLOSED_TO_ACCRUAL("Closed to Accrual", false, true),
     /**
      * Closed To Accrual And Intervention.
      */
-    CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention", false),
+    CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention", false, true),
     /**
      * Temporarily Closed To Accrual.
      */
-    TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual", false),
+    TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual", false, false),
     /**
      * Temporarily Closed To Accrual and Intervention.
      */
-    TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention", false),
+    TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention", false, false),
     /**
      * Withdrawn.
      */
-    WITHDRAWN("Withdrawn", false),
+    WITHDRAWN("Withdrawn", false, false),
     /**
      * Administratively Complete.
      */
-    ADMINISTRATIVELY_COMPLETE("Administratively Complete", false),
+    ADMINISTRATIVELY_COMPLETE("Administratively Complete", false, true),
     /**
      * Complete.
      */
-    COMPLETE("Complete", true);
+    COMPLETE("Complete", true, true);
 
     private static final Set<StudyStatusCode> REASON_REQUIRED = EnumSet
         .of(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL,
@@ -199,16 +199,20 @@ public enum StudyStatusCode implements CodedEnum<String> {
     }
 
     private String code;
-    private boolean eligibleForSiteSelfRegistration;
+    private final boolean eligibleForSiteSelfRegistration;
+    private final boolean closed;
 
     /**
      * Constructor for TrialStatusCode.
+     * 
      * @param code
      */
 
-    private StudyStatusCode(String code, boolean eligibleForSiteSelfRegistration) {
+    private StudyStatusCode(String code,
+            boolean eligibleForSiteSelfRegistration, boolean closed) {
         this.code = code;
         this.eligibleForSiteSelfRegistration = eligibleForSiteSelfRegistration;
+        this.closed = closed;
         register(this);
     }
 
@@ -291,6 +295,14 @@ public enum StudyStatusCode implements CodedEnum<String> {
      */
     public boolean isEligibleForSiteSelfRegistration() {
         return eligibleForSiteSelfRegistration;
+    }
+    
+    /**
+     * Indicator whether a status means trial is closed.
+     * @return closed
+     */
+    public boolean isClosed() {
+        return closed;
     }
 
 }

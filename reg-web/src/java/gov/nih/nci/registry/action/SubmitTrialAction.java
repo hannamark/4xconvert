@@ -591,5 +591,9 @@ public class SubmitTrialAction extends AbstractBaseTrialAction implements Prepar
         this.trialRegistrationService = trialRegistrationService;
     }
 
+    @Override
+    public boolean isOpenSitesWarningRequired() {
+        return false;
+    }
 
 }

@@ -700,4 +700,11 @@ public class ManageFileAction extends StatusHistoryManagementAction {
         return TransitionFor.TRIAL_STATUS;
     }
     
+    @Override
+    public boolean isOpenSitesWarningRequired() {     
+        // Sub-classes MUST override!
+        // Can't make this class abstract because it is instantiated by Struts (see struts.xml).
+        throw new UnsupportedOperationException("Must override.");
+    }
+    
 }

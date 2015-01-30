@@ -11,7 +11,7 @@
     <property file="${basedir}/../../build-pa/version.properties"/>
     <property name="commons.coverage.line" value="63"/>
     <property name="commons.coverage.branch" value="49"/>
-    <property name="commons.pmd.maxerrors" value="31"/>
+    <property name="commons.pmd.maxerrors" value="36"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>

@@ -19,7 +19,6 @@ import gov.nih.nci.pa.iso.util.RealConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
@@ -32,7 +31,6 @@ import gov.nih.nci.pa.service.status.json.ErrorType;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -53,6 +51,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -78,13 +77,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     private static final Logger LOG = Logger.getLogger(UpdateTrialAction.class);
     
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy");
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
     
     private static final String STATUS_CHANGE_ERR_MSG = "You are attempting to change this status from: "
             + "<br>Old Status: %1s <br>Old Status Date: %2s <br><strong>Error</strong>: %3s";
 
-    private ProtocolQueryServiceLocal protocolQueryService;
-    private StudyOverallStatusServiceLocal studyOverallStatusService;
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyResourcingServiceLocal studyResourcingService;
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
@@ -152,9 +149,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     @Override
     public void prepare()  {
         super.prepare();
-        currentUser = UsernameHolder.getUser();
-        protocolQueryService = PaRegistry.getProtocolQueryService();
-        studyOverallStatusService = PaRegistry.getStudyOverallStatusService();
+        currentUser = UsernameHolder.getUser();        
         studyProtocolService = PaRegistry.getStudyProtocolService();
         studyResourcingService = PaRegistry.getStudyResourcingService();
         studySiteAccrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
@@ -1019,20 +1014,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         this.indIdeUpdateDtosLen = indIdeUpdateDtosLen;
     }
 
-    /**
-     * @param protocolQueryService the protocolQueryService to set
-     */
-    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
-        this.protocolQueryService = protocolQueryService;
-    }
-
-    /**
-     * @param studyOverallStatusService the studyOverallStatusService to set
-     */
-    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
-        this.studyOverallStatusService = studyOverallStatusService;
-    }
-
+    
     /**
      * @param studyProtocolService the studyProtocolService to set
      */
@@ -1078,5 +1060,10 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     @Override
     public final TrialType getTrialTypeHandledByThisClass() {
         return TrialType.COMPLETE;
+    }
+    
+    @Override
+    public boolean isOpenSitesWarningRequired() {     
+        return true;
     }
 }

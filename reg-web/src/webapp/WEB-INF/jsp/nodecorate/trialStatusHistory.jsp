@@ -43,11 +43,17 @@ div.error:before {
 div.error,b.error {
 	color: red;
 }
+
+#openSitesTable {
+    font-size: 85%;
+}
 </style>
 <script type="text/javascript">
 	var backendUrlTemplate = '${backendUrlTemplate}';
 	var calloutImg = '${pageContext.request.contextPath}/images/ico_callout.png';
 	var deleteImg = '${pageContext.request.contextPath}/images/ico_delete.gif';
+	var openSitesWarningRequired = new Boolean(
+			'${openSitesWarningRequired == true}').valueOf();
 
 	(function($) {
 		$(function() {
@@ -363,7 +369,9 @@ div.error,b.error {
 																.val('true');
 														table.ajax.reload();
 													} else {
-														reviewBtnClickHandler(e);
+														displayOpenSitesWarning(
+																e,
+																reviewBtnClickHandler);
 													}
 												})
 										.fail(
@@ -377,6 +385,93 @@ div.error,b.error {
 
 		});
 	})(jQuery);
+
+	function displayOpenSitesWarning(e, reviewBtnClickHandler) {
+		(function($) {
+			if (!openSitesWarningRequired) {
+				reviewBtnClickHandler(e);
+			} else {
+				var ind = $('button.review')
+						.after(
+								"<img class='progress_ind' src='${pageContext.request.contextPath}/images/loading.gif' width=18 height=18 />");
+				$
+						.ajax(
+								{
+									type : "POST",
+									dataType : "json",
+									url : backendUrlTemplate
+											+ "mustDisplayOpenSitesWarning.action",
+									timeout : 30000
+								})
+						.always(function() {
+							$('button.review + img').remove();
+						})
+						.done(
+								function(data, textStatus, jqXHR) {
+									if (data.answer == true) {
+										// OK, the trial has open sites. Display a warning and proceed with submission once acknowledged.
+										if ($("#dialog-opensites").dialog(
+												"instance")) {
+											$("#dialog-opensites").dialog(
+													"destroy");
+										}
+										$("#dialog-opensites").dialog({
+											modal : true,
+											autoOpen : false,
+											width : $(window).width() * 0.7,
+											buttons : {
+												"Proceed" : function() {
+													$(this).dialog("close");
+													reviewBtnClickHandler(e);
+												},
+												"Cancel" : function() {
+													$(this).dialog("close");
+												}
+											}
+										});
+										$("#dialog-opensites").dialog('open');
+										if ($.fn.DataTable
+												.isDataTable('#openSitesTable')) {
+											$('#openSitesTable').DataTable().ajax
+													.reload();
+										} else {
+											var table = $('#openSitesTable')
+													.DataTable(
+															{
+
+																bFilter : false,
+																"bSort" : true,
+																"columns" : [
+																		{
+																			"data" : "poID"
+																		},
+																		{
+																			"data" : "name"
+																		},
+																		{
+																			"data" : "statusCode"
+																		},
+																		{
+																			"data" : "statusDate"
+																		} ],
+																"ajax" : {
+																	"url" : backendUrlTemplate
+																			+ "getOpenSites.action",
+																	"type" : "POST"
+																}
+															});
+										}
+									} else {
+										reviewBtnClickHandler(e);
+									}
+								}).fail(
+								function(jqXHR, textStatus, errorThrown) {
+									reviewBtnClickHandler(e);
+								});
+
+			}
+		})(jQuery);
+	}
 </script>
 
 <s:set name="statusCodeValues"
@@ -579,6 +674,33 @@ div.error,b.error {
 					maxlength="1000" cssClass="form-control charcounter"
 					cssStyle="width: 100%;" />
 			</div>
+		</div>
+	</div>
+</div>
+<div id="dialog-opensites" title="The trial has open sites"
+	style="display: none;">
+	<p>
+		<span class="ui-icon ui-icon-alert"
+			style="float: left; margin: 0 7px 20px 0;"></span> Since you are
+		closing the trial, all open sites will be closed as well as a result.
+		For your information, below is a list of currently open sites that
+		will be affected by this operation.
+
+	</p>
+	<div>
+		<div class="table-header-wrap">
+			<table class="table table-bordered" id="openSitesTable">
+				<thead>
+					<tr>
+						<th width="20%" nowrap="nowrap">PO ID</th>
+						<th width="30%" nowrap="nowrap">Name</th>
+						<th width="40%" nowrap="nowrap">Status</th>
+						<th>Status Date</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>

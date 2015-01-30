@@ -106,6 +106,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
+import org.hibernate.annotations.Where;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -306,6 +307,7 @@ public class StudySite extends OrganizationFunctionalRole {
      */
     @OneToMany(mappedBy = MAPPED_BY_SS)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Where(clause = "deleted='false'")
     public List<StudySiteAccrualStatus> getStudySiteAccrualStatuses() {
         return studySiteAccrualStatuses;
     }

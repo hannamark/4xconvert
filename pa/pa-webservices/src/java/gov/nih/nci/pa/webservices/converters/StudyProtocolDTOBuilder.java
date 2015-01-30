@@ -113,6 +113,8 @@ public final class StudyProtocolDTOBuilder {
         }
         convertTrialDates(upd, spDTO);
         setUser(spDTO);
+        spDTO.setStudySource(CdConverter
+                .convertToCd(StudySourceCode.REST_SERVICE));
     }
 
     /**

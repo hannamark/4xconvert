@@ -148,18 +148,21 @@ public class ParticipatingSiteConverterTest extends
         ssaStatus.setStatusCode(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
         ssaStatus.setStatusDate(new Timestamp(today.getTime()));
         ssaStatus.setStudySite(studySite);
+        ssaStatus.setId(1L);
         studySite.getStudySiteAccrualStatuses().add(ssaStatus);
 
         StudySiteAccrualStatus ssaStatus2 = new StudySiteAccrualStatus();
         ssaStatus2.setStatusCode(RecruitmentStatusCode.ACTIVE);
         ssaStatus2.setStatusDate(new Timestamp(yesterday.getTime()));
         ssaStatus2.setStudySite(studySite);
+        ssaStatus2.setId(2L);
         studySite.getStudySiteAccrualStatuses().add(ssaStatus2);
 
         StudySiteAccrualStatus ssaStatus3 = new StudySiteAccrualStatus();
         ssaStatus3.setStatusCode(RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
         ssaStatus3.setStatusDate(new Timestamp(twoDaysAgo.getTime()));
         ssaStatus3.setStudySite(studySite);
+        ssaStatus3.setId(3L);
         studySite.getStudySiteAccrualStatuses().add(ssaStatus3);
 
         return studySite;

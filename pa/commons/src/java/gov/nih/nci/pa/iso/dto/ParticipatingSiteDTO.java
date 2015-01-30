@@ -114,6 +114,7 @@ public class ParticipatingSiteDTO extends StudyDTO {
     private Ivl<Ts> accrualDateRange;
     private St programCodeText;
     private String siteOrgPoId;
+    private String siteOrgName;
     
     private St createdUser;
     private Ts createdDt;
@@ -342,6 +343,20 @@ public class ParticipatingSiteDTO extends StudyDTO {
      */
     public void setLastUpdatedDt(Ts lastUpdatedDt) {
         this.lastUpdatedDt = lastUpdatedDt;
+    }
+
+    /**
+     * @return the siteOrgName
+     */
+    public String getSiteOrgName() {
+        return siteOrgName;
+    }
+
+    /**
+     * @param siteOrgName the siteOrgName to set
+     */
+    public void setSiteOrgName(String siteOrgName) {
+        this.siteOrgName = siteOrgName;
     }
 
 }

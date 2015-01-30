@@ -189,6 +189,11 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
     protected TrialType getTrialTypeHandledByThisClass() {       
         return TrialType.ABBREVIATED;
     }
+    
+    @Override
+    public boolean isOpenSitesWarningRequired() {     
+        return false;
+    }
 
 
     /**

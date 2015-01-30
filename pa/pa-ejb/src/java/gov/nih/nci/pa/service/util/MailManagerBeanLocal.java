@@ -83,6 +83,11 @@
 
 package gov.nih.nci.pa.service.util;
 
+import freemarker.cache.TemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.CTGovImportLog;
@@ -116,6 +121,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -127,6 +133,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -187,14 +194,12 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
-public class MailManagerBeanLocal implements MailManagerServiceLocal {
+public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLoader {
 
     private static final String LEAD_ORG_NAME = "${leadOrgName}";
     private static final String LEAD_ORG_ID = "${leadOrgID}";
     private static final String FROMADDRESS = "fromaddress";
-    private static final String PLACEHOLDER_2 = "{2}";
     private static final String PLACEHOLDER_0 = "{0}";
-    private static final String PLACEHOLDER_1 = "{1}";
     private static final String NONE = "NONE";
     private static final String USER_NAME = "${name}";
     private static final String SEND_MAIL_ERROR = "Send Mail error";
@@ -221,11 +226,9 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String ERRORS = "${errors}";
     private static final int SMTP_TIMEOUT = 120000;
     private static final String CDE_REQUEST_TO_EMAIL = "CDE_REQUEST_TO_EMAIL";
-    private static final int ERROR_MSG_LENGTH = 12;
     private static final String SIR_OR_MADAM = "Sir or Madam";
     private static final String OTHER_TRIAL_IDENTIFIER = "${otherTrialIdentifiers}";
     private static final String SUBMISSION_DATE = "${submissionDate}";
-    private static final String NOT_AVAILABLE = "";
     private static final String CTEP_TRIAL_IDENTIFIER = "${ctepTrialIdentifier}";
     private static final String DCP_TRIAL_IDENTIFIER = "${dcpTrialIdentifier}";
     private static final String NCT_IDENTIFIER = "${nctIdentifier}";
@@ -257,6 +260,15 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             .newSingleThreadExecutor();
     
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    
+    private final Configuration cfg;
+    { //NOPMD
+        cfg = new Configuration();
+        cfg.setDefaultEncoding("UTF-8");
+        cfg.setWhitespaceStripping(false);
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        cfg.setTemplateLoader(this);
+    }
     
     /**
      * {@inheritDoc}
@@ -752,13 +764,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private List<String> sendEmailToAllTrialOwners(StudyProtocolQueryDTO sp, 
             String subject, String body, boolean includeSubmitter) throws PAException {
         Set<String> emails = new HashSet<String>();
-        Collection<RegistryUser> recipients = new HashSet<RegistryUser>(getStudyOwners(sp));
-        if (includeSubmitter) {
-            RegistryUser submitter = registryUserService.getUser(sp.getLastCreated().getUserLastCreated());
-            if (submitter != null) {
-                recipients.add(submitter);
-            }
-        }
+        Collection<RegistryUser> recipients = buildTrialOwnerAndSubmitterList(
+                sp, includeSubmitter);
         String emailAddress = null;
         for (RegistryUser recipient : recipients) {
             emailAddress = recipient.getEmailAddress();
@@ -768,6 +775,26 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             emails.add(emailAddress);
         }
         return new ArrayList<String>(emails);
+    }
+
+
+    /**
+     * @param sp
+     * @param includeSubmitter
+     * @return
+     * @throws PAException
+     */
+    private Collection<RegistryUser> buildTrialOwnerAndSubmitterList(
+            StudyProtocolQueryDTO sp, boolean includeSubmitter)
+            throws PAException {
+        Collection<RegistryUser> recipients = new HashSet<RegistryUser>(getStudyOwners(sp));
+        if (includeSubmitter) {
+            RegistryUser submitter = registryUserService.getUser(sp.getLastCreated().getUserLastCreated());
+            if (submitter != null) {
+                recipients.add(submitter);
+            }
+        }
+        return recipients;
     }    
     
     
@@ -1244,15 +1271,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String emailAddress = null;
         String mailFrom = lookUpTableService.getPropertyValue(FROMADDRESS);
         try {
-            Collection<RegistryUser> recipients = new HashSet<RegistryUser>(
-                    getStudyOwners(spDTO));
-            if (includeSubmitter) {
-                RegistryUser submitter = registryUserService.getUser(spDTO
-                        .getLastCreated().getUserLastCreated());
-                if (submitter != null) {
-                    recipients.add(submitter);
-                }
-            }
+            Collection<RegistryUser> recipients = buildTrialOwnerAndSubmitterList(
+                    spDTO, includeSubmitter);
             for (RegistryUser recipient : recipients) {
                 emailAddress = recipient.getEmailAddress();
                 String regUserName = recipient.getFirstName() + " "
@@ -2084,5 +2104,70 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         }
         
         sendMailWithHtmlBody(emailRecipient, mailSubject, mailBody);
+    }
+
+
+    @Override
+    public void sendSiteCloseNotification(SiteStatusChangeNotificationData data) {
+        try {
+            Template subjectFtl = cfg
+                    .getTemplate("site.status.change.notification.subject");
+            Template bodyFtl = cfg
+                    .getTemplate("site.status.change.notification.body");
+
+            StudyProtocolQueryDTO trial = protocolQueryService
+                    .getTrialSummaryByStudyProtocolId(IiConverter
+                            .convertToLong(data.getStudyProtocolID()));
+            String date = getFormatedDate(new Date());
+            Collection<RegistryUser> recipients = buildTrialOwnerAndSubmitterList(
+                    trial, true);
+            for (RegistryUser recipient : recipients) {
+                String emailAddress = recipient.getEmailAddress();
+                Map<String, Object> root = new HashMap<String, Object>();
+                root.put("trial", trial);
+                root.put("date", date);
+                root.put("data", data);
+                root.put("recipient", recipient);
+
+                StringWriter subject = new StringWriter();
+                StringWriter body = new StringWriter();
+                subjectFtl.process(root, subject);
+                bodyFtl.process(root, body);
+
+                sendMailWithHtmlBody(emailAddress, subject.toString(),
+                        body.toString());
+            }
+        } catch (PAException | IOException | TemplateException e) {
+            LOG.error(e, e);
+        }
+    }
+
+    @Override
+    public void closeTemplateSource(Object arg0) throws IOException {
+        // NO-OP
+    }
+
+
+    @Override
+    public Object findTemplateSource(String arg0) throws IOException {
+        try {
+            return lookUpTableService.getPropertyValue(arg0);
+        } catch (PAException e) {
+            LOG.error(e, e);
+            return null;
+        }
+    }
+
+
+    @Override
+    public long getLastModified(Object arg0) {        
+        return -1;
+    }
+
+
+    @Override
+    public Reader getReader(Object templateSource,
+            String encoding) throws IOException {        
+        return new StringReader((String) templateSource);
     }
 }

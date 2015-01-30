@@ -104,6 +104,7 @@
     <dependency conf="ear->master" org="commons-logging" name="commons-logging" rev="1.0.4"/>
     <dependency conf="ear->master" org="de.jollyday" name="jollyday" rev="0.4.5"/>
     <dependency conf="ear->master" org="dom4j" name="dom4j" rev="1.6.1"/>
+    <dependency conf="ear->master" org="org.freemarker" name="freemarker" rev="2.3.19"/>
     <dependency conf="ear->master" org="gov.nih.nci.coppa" name="coppa-commons" rev="1.3.10.3"/>
     <dependency conf="ear->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-core" rev="1.4.10.1"/>
     <dependency conf="ear->master" org="gov.nih.nci.coppa.po" name="po-services" rev="1.0.1-SNAPSHOT" changing="true">
@@ -155,7 +156,6 @@
     <dependency conf="pa-web->master" org="org.apache.struts" name="struts2-json-plugin" rev="2.3.16.3"/>
     <dependency conf="pa-web->master" org="org.apache.struts" name="struts2-spring-plugin" rev="2.3.16.3"/>
     <dependency conf="pa-web->master" org="org.apache.struts.xwork" name="xwork-core" rev="2.3.16.3"/>
-    <dependency conf="pa-web->master" org="org.freemarker" name="freemarker" rev="2.3.19"/>
     <dependency conf="pa-web->master" org="org.springframework" name="spring-aop" rev="3.2.2.RELEASE"/>
     <dependency conf="pa-web->master" org="org.springframework" name="spring-context" rev="3.2.2.RELEASE"/>
     <dependency conf="pa-web->master" org="org.springframework" name="spring-expression" rev="3.2.2.RELEASE"/>
@@ -177,8 +177,7 @@
     <dependency conf="reg-web->master" org="org.apache.poi" name="poi" rev="3.2-FINAL"/>
     <dependency conf="reg-web->master" org="org.apache.struts" name="struts2-core" rev="2.3.16.3"/>
     <dependency conf="reg-web->master" org="org.apache.struts" name="struts2-json-plugin" rev="2.3.16.3"/>
-    <dependency conf="reg-web->master" org="org.apache.struts.xwork" name="xwork-core" rev="2.3.16.3"/>
-    <dependency conf="reg-web->master" org="org.freemarker" name="freemarker" rev="2.3.19"/>
+    <dependency conf="reg-web->master" org="org.apache.struts.xwork" name="xwork-core" rev="2.3.16.3"/>    
     <dependency conf="reg-web->master" org="org.json" name="json" rev="20140107"/>
     <dependency conf="reg-web->master" org="taglibs" name="standard" rev="1.1.2"/>
     

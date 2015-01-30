@@ -97,34 +97,35 @@ import java.util.Set;
  */
 public enum RecruitmentStatusCode implements CodedEnum<String> {
     /** In Review. */
-    IN_REVIEW("In Review", false),
+    IN_REVIEW("In Review", false, false),
     /** Approved. */
-    APPROVED("Approved", true),
+    APPROVED("Approved", true, false),
     /** Active. */
-    ACTIVE("Active", true),
+    ACTIVE("Active", true, false),
     /** Enrolling by invitation. */
-    ENROLLING_BY_INVITATION("Enrolling by Invitation", true),
+    ENROLLING_BY_INVITATION("Enrolling by Invitation", true, false),
     /** Closed to Accrual. */
-    CLOSED_TO_ACCRUAL("Closed to Accrual", true),
+    CLOSED_TO_ACCRUAL("Closed to Accrual", true, true),
     /** Closed to Accrual and Intervention. */
-    CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention", true),
+    CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention", true, true),
     /** Temporarily Closed to Accrual. */
-    TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual", true),
+    TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual", true, false),
     /** Temporarily Closed to Accrual and Intervention. */
-    TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention", true),
+    TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention", true, false),
     /** Withdrawn. */
-    WITHDRAWN("Withdrawn", true),
+    WITHDRAWN("Withdrawn", true, true),
     /** Administratively Complete. */
-    ADMINISTRATIVELY_COMPLETE("Administratively Complete", true),
+    ADMINISTRATIVELY_COMPLETE("Administratively Complete", true, true),
     /** Completed. */
-    COMPLETED("Completed", true);
+    COMPLETED("Completed", true, true);
 
     /** List of all statuses which are not eligible for accrual. */
     public static final Set<RecruitmentStatusCode> NOT_ELIGIBLE_FOR_ACCRUAL_STATUSES =
             EnumSet.of(RecruitmentStatusCode.IN_REVIEW);
 
-    private String code;
-    private boolean eligibleForAccrual;
+    private final String code;
+    private final boolean eligibleForAccrual;
+    private final boolean closed;
 
     private static final Set<RecruitmentStatusCode> RECRUITING_STATUSES = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION);
     private static final Set<RecruitmentStatusCode> NON_RECRUITING_STATUSES = EnumSet.of(
@@ -134,9 +135,10 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
      * 
      * @param code
      */
-    private RecruitmentStatusCode(String code, boolean eligibleForAccrual) {
+    private RecruitmentStatusCode(String code, boolean eligibleForAccrual, boolean closed) {
         this.code = code;
         this.eligibleForAccrual = eligibleForAccrual;
+        this.closed = closed;
         register(this);
     }
 
@@ -218,5 +220,12 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
             return COMPLETED;
         }
         return getByCode(statusCode.getCode());
+    }
+
+    /**
+     * @return the closed
+     */
+    public boolean isClosed() {
+        return closed;
     }
 }

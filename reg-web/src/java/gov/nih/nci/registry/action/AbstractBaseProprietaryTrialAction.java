@@ -106,5 +106,10 @@ public class AbstractBaseProprietaryTrialAction extends ManageFileAction
     public final TrialType getTrialTypeHandledByThisClass() {     
         return TrialType.ABBREVIATED;
     }
+    
+    @Override
+    public boolean isOpenSitesWarningRequired() {     
+        return false;
+    }
 
 }

@@ -88,6 +88,8 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.status.StatusTransitionServiceLocal;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -133,6 +135,10 @@ public class AbstractBaseParticipatingSiteEjbBean {
     private StudySiteContactServiceLocal studySiteContactService;
     @EJB
     private StudySiteAccrualAccessServiceLocal accrualAccessServiceLocal;
+    @EJB
+    private StatusTransitionServiceLocal statusTransitionService;
+    @EJB
+    private MailManagerServiceLocal mailManagerService;
 
     /**
      * generateCrsAndHcpFromCtepIdOrNewPerson.
@@ -462,5 +468,34 @@ public class AbstractBaseParticipatingSiteEjbBean {
     public void setAccrualAccessServiceLocal(
             StudySiteAccrualAccessServiceLocal accrualAccessServiceLocal) {
         this.accrualAccessServiceLocal = accrualAccessServiceLocal;
+    }
+
+    /**
+     * @return the statusTransitionService
+     */
+    public StatusTransitionServiceLocal getStatusTransitionService() {
+        return statusTransitionService;
+    }
+
+    /**
+     * @param statusTransitionService the statusTransitionService to set
+     */
+    public void setStatusTransitionService(
+            StatusTransitionServiceLocal statusTransitionService) {
+        this.statusTransitionService = statusTransitionService;
+    }
+
+    /**
+     * @return the mailManagerService
+     */
+    public MailManagerServiceLocal getMailManagerService() {
+        return mailManagerService;
+    }
+
+    /**
+     * @param mailManagerService the mailManagerService to set
+     */
+    public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
+        this.mailManagerService = mailManagerService;
     }
 }
