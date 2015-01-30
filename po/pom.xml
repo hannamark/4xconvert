@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa.po</groupId>
     <artifactId>po</artifactId>
-    <version>1.0.1.IR6-SNAPSHOT</version>
+    <version>1.0.1.IR6</version>
     <packaging>pom</packaging>
     <name>po</name>
     <url>https://wiki.nci.nih.gov/x/BAAuAQ</url>
@@ -79,9 +79,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/po</connection>
-        <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/po</developerConnection>
-        <url>https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/po</url>
+        <connection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/tags/po-releases/1.0.1.IR6</connection>
+        <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/tags/po-releases/1.0.1.IR6</developerConnection>
+        <url>https://ncisvn.nci.nih.gov/svn/coppa/tags/po-releases/1.0.1.IR6</url>
     </scm>
 
     <issueManagement>
