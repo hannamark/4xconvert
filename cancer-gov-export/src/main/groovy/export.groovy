@@ -236,7 +236,8 @@ def getTrialsSQL = """
      left outer join regulatory_authority ra on ra.identifier = sra.regulatory_authority_identifier
      left outer join country ra_country on ra_country.identifier = ra.country_identifier
      join study_overall_status sos on sos.study_protocol_identifier = sp.identifier
-         and (sos.identifier = (select max(identifier) from study_overall_status where study_protocol_identifier = sp.identifier))
+          and sos.identifier = (SELECT sos2.identifier FROM study_overall_status sos2 WHERE sos2.study_protocol_identifier = sp.identifier
+                                AND sos2.deleted = false ORDER BY sos2.status_date DESC, sos2.identifier DESC LIMIT 1)
      left outer join study_contact ov_off on ov_off.study_protocol_identifier = sp.identifier and ov_off.role_code = 'STUDY_PRINCIPAL_INVESTIGATOR'
      left outer join clinical_research_staff ov_off_crs on ov_off_crs.identifier = ov_off.clinical_research_staff_identifier
      left outer join person pi on pi.identifier = ov_off_crs.person_identifier
