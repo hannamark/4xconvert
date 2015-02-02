@@ -88,6 +88,7 @@ import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.commons.dbutils.QueryRunner;
@@ -616,6 +617,15 @@ public abstract class AbstractRegistrySeleniumTest extends
                 new ArrayHandler());
         Number siteID = results != null ? (Number) results[0] : null;
         return siteID;
+    }
+   
+    protected void addToSiteStatusHistory(Number siteID, String statusCode,
+            Timestamp date) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_site_accrual_status (identifier,status_code,status_date,study_site_identifier) "
+                + "VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '"
+                + statusCode + "', '" + date.toString() + "'," + siteID + " )";
+        runner.update(connection, sql);
     }
 
 }

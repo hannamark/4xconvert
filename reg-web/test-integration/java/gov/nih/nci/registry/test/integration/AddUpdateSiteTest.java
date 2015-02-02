@@ -82,8 +82,11 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.lang3.ArrayUtils;
@@ -122,6 +125,39 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         waitForTextToAppear(By.className("alert-success"), "Message: Your site information has been updated.", 20);  
 
     }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testPO_8615_StatusHistoryIsValidatedUponEntrance() throws URISyntaxException,
+            SQLException {
+        TrialInfo info = createAndSelectTrial();
+
+        String siteCtepId = "DCP";
+        addSiteToTrial(info, siteCtepId);
+        
+        addToSiteStatusHistory(
+                findParticipatingSite(
+                        info,
+                        "National Cancer Institute Division of Cancer Prevention",
+                        info.uuid.substring(0, 20)), "ENROLLING_BY_INVITATION",
+                new Timestamp(System.currentTimeMillis()));
+
+        findInMyTrials();
+        invokeUpdateMySite();
+        
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getValue("organizationName"));
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='siteStatusHistoryTable']/tbody/tr[2]/td[4]"),
+                15);
+        pause(5000);
+        assertEquals(
+                "Interim status [APPROVED] is missing",
+                selenium.getText("//table[@id='siteStatusHistoryTable']/tbody/tr[2]/td[4]"));
+
+    }
+
+   
 
     @SuppressWarnings("deprecation")
     @Test

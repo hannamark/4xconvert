@@ -87,6 +87,7 @@ div.error,b.error {
 
     var backendUrlTemplate = '${backendUrlTemplate}';
     var deleteImg = '${pageContext.request.contextPath}/images/ico_delete.gif';
+    var updatingSite = new Boolean('${not empty ssID}').valueOf();
 	
 	function addSite() {
 		$('addSiteForm').submit();
@@ -110,7 +111,7 @@ div.error,b.error {
     }
     
     (function($) {
-        $(function() {
+        $(function() {        	
             var table = $('#siteStatusHistoryTable')
                     .DataTable(
                             {
@@ -406,6 +407,11 @@ div.error,b.error {
                                                 });
 
                             });
+            if (updatingSite) {
+            	 $('#runValidations')
+                 .val('true');
+            	   table.ajax.reload();
+            }
 
         });
     })(jQuery);
