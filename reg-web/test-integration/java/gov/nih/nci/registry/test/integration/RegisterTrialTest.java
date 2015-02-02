@@ -955,7 +955,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         waitForElementById("trialDTO.leadOrgTrialIdentifier", 30);
         hideTopMenu();
         clickAndWait("xpath=//button[text()='Review Trial']");
-        waitForElementToBecomeVisible(By.className("alert-danger"), 10);
+        waitForElementToBecomeVisible(By.className("alert-danger"), 30);
+        pause(1000);
         assertTrue(selenium
                 .isTextPresent("The form has errors and could not be submitted. Please check the fields highlighted below"));
         assertTrue(selenium
@@ -973,6 +974,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium.isTextPresent("Responsible Party is required"));
         assertTrue(selenium
                 .isTextPresent("Select the Summary 4 Funding Sponsor"));
+        assertTrue(selenium.isTextPresent("Trial status history is required"));
         assertTrue(selenium.isTextPresent("Please enter a valid status"));
         assertTrue(selenium.isTextPresent("Please enter a valid date"));
         assertTrue(selenium.isTextPresent("Please enter a valid date type"));
