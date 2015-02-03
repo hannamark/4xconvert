@@ -365,6 +365,7 @@ public class StudyMilestoneBeanLocal
     }
 
     private void checkAbstractionsRules(StudyMilestoneDTO dto, MilestoneCode newCode) throws PAException {
+      if (dto != null) {
         if (validateAbstractions && newCode.isValidationTrigger()) {
             if (abstractionCompletionService == null) {
                 throw new PAException("Error injecting reference to AbstractionCompletionService.");
@@ -378,6 +379,7 @@ public class StudyMilestoneBeanLocal
                 throw new PAException(MessageFormat.format(msg, newCode.getCode()));
             }
         }
+      }
     }
 
     private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {
@@ -390,7 +392,7 @@ public class StudyMilestoneBeanLocal
     }
 
     private void checkReadyForTSRMilestone(List<MilestoneCode> milestones) throws PAException {
-            if (!canCreateReadyForTSRMilestone(milestones)) {
+            if (!canCreateReadyForTSRMilestone(milestones, null)) {
                 String msg = "\"{0}\" can not be created at this stage.";
                 throw new PAException(MessageFormat.format(msg, MilestoneCode.READY_FOR_TSR.getCode()));
         }
@@ -652,7 +654,7 @@ public class StudyMilestoneBeanLocal
     private void createReadyForTSRMilestone(StudyMilestoneDTO dto) throws PAException {
         List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
         List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
-        if (canCreateReadyForTSRMilestone(mileStones)) {
+        if (canCreateReadyForTSRMilestone(mileStones, dto)) {
             StudyMilestoneDTO readyForTSR = new StudyMilestoneDTO();
             readyForTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_TSR));
             readyForTSR.setMilestoneDate(TsConverter.convertToTs(new Date()));
@@ -673,9 +675,9 @@ public class StudyMilestoneBeanLocal
         }
     }
 
-    private boolean canCreateReadyForTSRMilestone(List<MilestoneCode> mileStones) {
+    private boolean canCreateReadyForTSRMilestone(List<MilestoneCode> mileStones, StudyMilestoneDTO dto) {
         boolean admin = false;
-        boolean scientific = false;        
+        boolean scientific = false;
         for (int i = mileStones.size() - 1; i >= 0; i--) {
             switch (mileStones.get(i)) {
             case ADMINISTRATIVE_QC_COMPLETE:
@@ -697,8 +699,14 @@ public class StudyMilestoneBeanLocal
                 return false;
             }
             if (admin && scientific) {
+                try {
+                   checkAbstractionsRules(dto, MilestoneCode.READY_FOR_TSR);
+                } catch (PAException e) {
+                   LOG.error(e.getMessage());
+                   return false;
+               } 
                 return true;
-            }
+              }
         }
         return false;
     }

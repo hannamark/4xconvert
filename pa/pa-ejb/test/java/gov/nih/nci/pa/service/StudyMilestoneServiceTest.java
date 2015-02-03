@@ -342,6 +342,62 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         PaHibernateUtil.getCurrentSession().flush();
     }
     
+    
+    @Test
+    public void createTestScientificQCComplete() throws Exception {
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_TERMINATED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REACTIVATED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
+        
+        bean.setValidateAbstractions(true);
+        bean.setAbstractionCompletionService(null);
+        StudyMilestoneDTO dto =  bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        assertEquals("Scientific QC Completed Date", dto.getMilestoneCode().getCode());
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
+        dtoList.size();
+        assertTrue(dtoList.size() > 0);
+        assertEquals(CdConverter.convertCdToEnum(MilestoneCode.class,
+               dtoList.get(dtoList.size() - 1).getMilestoneCode()), MilestoneCode.SCIENTIFIC_QC_COMPLETE);
+        PaHibernateUtil.getCurrentSession().flush();
+    }
+    
+    
+    @Test
+    public void createTestScientificReady() throws Exception {
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_TERMINATED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REACTIVATED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_START));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
+        StudyMilestoneDTO dto =  bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
+        assertEquals("Scientific QC Completed Date", dto.getMilestoneCode().getCode());
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
+        dtoList.size();
+        assertTrue(dtoList.size() > 0);
+        assertEquals(CdConverter.convertCdToEnum(MilestoneCode.class,
+               dtoList.get(dtoList.size() - 1).getMilestoneCode()), MilestoneCode.READY_FOR_TSR);
+        PaHibernateUtil.getCurrentSession().flush();
+    }
+    
+    
     @Test
     public void createTestIndustrialTrial() throws Exception {
         bean.create(getMilestoneDTOIndustrial(MilestoneCode.SUBMISSION_RECEIVED));
