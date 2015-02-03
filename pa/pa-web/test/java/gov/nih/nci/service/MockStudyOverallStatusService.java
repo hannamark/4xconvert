@@ -226,10 +226,6 @@ public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<St
 
      
 
-    @Override
-    public void undo(Ii statusIi) throws PAException {
-        
-    }
 
   
     public List<String> validateTrialStatusAndDates(StudyProtocolDTO dto,

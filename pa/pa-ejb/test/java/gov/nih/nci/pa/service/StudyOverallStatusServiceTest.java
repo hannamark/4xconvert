@@ -89,12 +89,15 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -108,6 +111,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -123,14 +127,13 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author hreinhart
- *
+ * 
  */
 public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
-    private StudyOverallStatusServiceBean bean;
+    private StudyOverallStatusBeanLocal bean;
     private Ii spIi;
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyRecruitmentStatusBeanLocal studyRecruitmentStatusBeanLocal;
-    
 
     /**
      * Initialization method.
@@ -143,6 +146,7 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds
                 .get(0));
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT.remove();
     }
 
     @SuppressWarnings("deprecation")
@@ -159,45 +163,55 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         }
 
         // Following tests assume current status is ACTIVE.
-        assertTrue(StudyStatusCode.ACTIVE.getCode().equals(dto.getStatusCode().getCode()));
+        assertTrue(StudyStatusCode.ACTIVE.getCode().equals(
+                dto.getStatusCode().getCode()));
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
+        dto.setStatusCode(CdConverter
+                .convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
         dto.setStatusDate(TsConverter.convertToTs(TestSchema.TOMMORROW));
         dto.setStudyProtocolIdentifier(spIi);
         bean.create(dto);
 
         StudyOverallStatusDTO result = bean.getCurrentByStudyProtocol(spIi);
         assertNotNull(IiConverter.convertToLong(result.getIdentifier()));
-        assertEquals(result.getStatusCode().getCode(), dto.getStatusCode().getCode());
+        assertEquals(result.getStatusCode().getCode(), dto.getStatusCode()
+                .getCode());
         assertEquals(TsConverter.convertToTimestamp(result.getStatusDate()),
-                     TsConverter.convertToTimestamp(dto.getStatusDate()));
-        assertEquals(IiConverter.convertToLong(spIi), IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
+                TsConverter.convertToTimestamp(dto.getStatusDate()));
+        assertEquals(IiConverter.convertToLong(spIi),
+                IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
     }
 
     @Test
     public void update() throws Exception {
-        StudyOverallStatusDTO currentStatus = bean.getCurrentByStudyProtocol(spIi);
-        currentStatus.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
-        currentStatus.setReasonText(StConverter.convertToSt("Trial submitted with incorrect overall status."));
+        StudyOverallStatusDTO currentStatus = bean
+                .getCurrentByStudyProtocol(spIi);
+        currentStatus.setStatusCode(CdConverter
+                .convertToCd(StudyStatusCode.IN_REVIEW));
+        currentStatus.setReasonText(StConverter
+                .convertToSt("Trial submitted with incorrect overall status."));
         currentStatus.setStatusDate(TsConverter.convertToTs(TestSchema.TODAY));
 
         StudyOverallStatusDTO updatedStatus = bean.update(currentStatus);
-        assertEquals(CdConverter.convertCdToString(currentStatus.getStatusCode()),
+        assertEquals(
+                CdConverter.convertCdToString(currentStatus.getStatusCode()),
                 CdConverter.convertCdToString(updatedStatus.getStatusCode()));
-        assertEquals(StConverter.convertToString(currentStatus.getReasonText()),
+        assertEquals(
+                StConverter.convertToString(currentStatus.getReasonText()),
                 StConverter.convertToString(updatedStatus.getReasonText()));
-        assertEquals(TsConverter.convertToTimestamp(currentStatus.getStatusDate()),
+        assertEquals(
+                TsConverter.convertToTimestamp(currentStatus.getStatusDate()),
                 TsConverter.convertToTimestamp(updatedStatus.getStatusDate()));
     }
 
-  
-
-    private InterventionalStudyProtocol createStudyProtocol() throws PAException {
+    private InterventionalStudyProtocol createStudyProtocol()
+            throws PAException {
         InterventionalStudyProtocol sp = createInterventionalProtocol();
         Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
         StudyOverallStatus inReview = createStudyOverallStatusobj(sp);
         inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
-        bean.create(Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(inReview));
+        bean.create(Converters.get(StudyOverallStatusConverter.class)
+                .convertFromDomainToDto(inReview));
         assertEquals(bean.getByStudyProtocol(spId).size(), 1);
 
         return sp;
@@ -208,11 +222,13 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
      */
     private InterventionalStudyProtocol createInterventionalProtocol() {
         InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
-        sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
+        sp = (InterventionalStudyProtocol) TestSchema
+                .createStudyProtocolObj(sp);
         sp = TestSchema.createInterventionalStudyProtocolObj(sp);
         TestSchema.addUpdObject(sp);
 
-        DocumentWorkflowStatus docWorkflow = TestSchema.createDocumentWorkflowStatus(sp);
+        DocumentWorkflowStatus docWorkflow = TestSchema
+                .createDocumentWorkflowStatus(sp);
         TestSchema.addUpdObject(docWorkflow);
         return sp;
     }
@@ -223,8 +239,9 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         assertEquals(2, statusList.size());
 
         StudyOverallStatusDTO dto = bean.getCurrentByStudyProtocol(spIi);
-        assertEquals(IiConverter.convertToLong(statusList.get(1).getIdentifier()),
-                     (IiConverter.convertToLong(dto.getIdentifier())));
+        assertEquals(
+                IiConverter.convertToLong(statusList.get(1).getIdentifier()),
+                (IiConverter.convertToLong(dto.getIdentifier())));
     }
 
     @SuppressWarnings("deprecation")
@@ -237,13 +254,14 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
 
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp("1/1/1999")));
         dto.setReasonText(StConverter.convertToSt("Test"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
         Ii initialIi = null;
         dto.setIdentifier(initialIi);
         assertTrue(ISOUtil.isIiNull(dto.getIdentifier()));
-      
+
         StudyOverallStatusDTO resultDto = bean.create(dto);
         assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
     }
@@ -274,7 +292,8 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         } catch (PAException e) {
             // expected behavior
         }
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2000")));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp("1/1/2000")));
         dto = bean.create(dto);
         assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
     }
@@ -284,10 +303,14 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         List<StudyOverallStatusDTO> dtoList = bean.getByStudyProtocol(spIi);
         assertTrue(dtoList.size() > 0);
         StudyOverallStatusDTO dto = dtoList.get(0);
-        assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_OVERALL_STATUS_ROOT);
-        assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
-        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+        assertEquals(dto.getIdentifier().getRoot(),
+                IiConverter.STUDY_OVERALL_STATUS_ROOT);
+        assertTrue(StringUtils.isNotEmpty(dto.getIdentifier()
+                .getIdentifierName()));
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(),
+                IiConverter.STUDY_PROTOCOL_ROOT);
     }
+
     @SuppressWarnings("deprecation")
     @Test
     public void createWithReasonTextTest() throws Exception {
@@ -297,23 +320,31 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         TestSchema.addUpdObject(spNew);
 
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
+        dto.setStatusCode(CdConverter
+                .convertToCd(StudyStatusCode.ADMINISTRATIVELY_COMPLETE));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp("1/1/1999")));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
         Ii initialIi = null;
         dto.setIdentifier(initialIi);
         try {
-             bean.create(dto);
-        } catch(PAException e) {
-            assertTrue(StringUtils.startsWith(e.getMessage(), "Validation Exception A reason must be entered when the study status "));
+            bean.create(dto);
+        } catch (PAException e) {
+            assertTrue(StringUtils
+                    .startsWith(e.getMessage(),
+                            "Validation Exception A reason must be entered when the study status "));
         }
-        dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2001)));
+        dto.setReasonText(StConverter.convertToSt(RandomStringUtils
+                .random(2001)));
         try {
             bean.create(dto);
-        } catch(PAException e) {
-           assertTrue(StringUtils.startsWith(e.getMessage(), "Validation Exception Reason must be less than 2000 characters."));
+        } catch (PAException e) {
+            assertTrue(StringUtils
+                    .startsWith(e.getMessage(),
+                            "Validation Exception Reason must be less than 2000 characters."));
         }
-        dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2000)));
+        dto.setReasonText(StConverter.convertToSt(RandomStringUtils
+                .random(2000)));
         bean.create(dto);
     }
 
@@ -323,20 +354,26 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIi);
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertStringToCd("bad status code"));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
-        dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2001)));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil
+                .dateStringToTimestamp("1/1/1999")));
+        dto.setReasonText(StConverter.convertToSt(RandomStringUtils
+                .random(2001)));
         dto.setStudyProtocolIdentifier(spIi);
         dto.setIdentifier(null);
         try {
             bean.validate(dto, spDto);
         } catch (PAException e) {
-            assertTrue(e.getMessage().startsWith("Validation Exception Invalid new study status: 'bad status code'."));
+            assertTrue(e
+                    .getMessage()
+                    .startsWith(
+                            "Validation Exception Invalid new study status: 'bad status code'."));
         }
     }
 
     private StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {
         StudyOverallStatus create = new StudyOverallStatus();
-        Timestamp now = new Timestamp(DateUtils.addDays(new Date(), -1).getTime());
+        Timestamp now = new Timestamp(DateUtils.addDays(new Date(), -1)
+                .getTime());
         create.setStudyProtocol(sp);
         create.setStatusCode(StudyStatusCode.ACTIVE);
         create.setStatusDate(now);
@@ -359,12 +396,13 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         bo.setCommentText(null);
         StudyRecruitmentStatus srs = bean.createStudyRecruitmentStatus(bo);
         assertNotNull("No result returned", srs);
-        assertEquals("Wrong status code", RecruitmentStatusCode.ACTIVE, srs.getStatusCode());
-        assertEquals("Wrong status date", PAUtil.dateStringToTimestamp("1/1/2001"),bo.getStatusDate());
-        assertEquals("Wrong strudy protocol", sp,bo.getStudyProtocol());
+        assertEquals("Wrong status code", RecruitmentStatusCode.ACTIVE,
+                srs.getStatusCode());
+        assertEquals("Wrong status date",
+                PAUtil.dateStringToTimestamp("1/1/2001"), bo.getStatusDate());
+        assertEquals("Wrong strudy protocol", sp, bo.getStudyProtocol());
     }
-    
-    
+
     @Test
     public void delete() throws Exception {
         // simulate creating new protocol using registry
@@ -378,27 +416,28 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         dto.setReasonText(StConverter.convertToSt("Test"));
         dto.setStudyProtocolIdentifier(studyID);
         StudyOverallStatusDTO active = bean.create(dto);
-        
+
         // Current recrutiment status is also ACTIVE
         assertEquals(
                 StudyStatusCode.ACTIVE.getCode(),
                 studyRecruitmentStatusBeanLocal
                         .getCurrentByStudyProtocol(studyID).getStatusCode()
-                        .getCode());        
+                        .getCode());
 
         bean.delete(active.getIdentifier());
         assertNull(bean.get(active.getIdentifier()));
-        
+
         assertEquals(
                 StudyStatusCode.IN_REVIEW.getCode(),
                 studyRecruitmentStatusBeanLocal
                         .getCurrentByStudyProtocol(studyID).getStatusCode()
-                        .getCode());        
+                        .getCode());
     }
-    
+
     /**
      * test the createStudyRecruitmentStatus method.
-     * @throws PAException 
+     * 
+     * @throws PAException
      */
     @SuppressWarnings("deprecation")
     @Test
@@ -408,14 +447,14 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         StudyProtocol spNew = createStudyProtocol();
 
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.WITHDRAWN));       
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.WITHDRAWN));
         dto.setStatusDate(TsConverter.convertToTs(date));
         dto.setReasonText(StConverter.convertToSt("Test"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
 
         StudyOverallStatusDTO resultDto = bean.create(dto);
         assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
-        
+
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
 
@@ -425,11 +464,11 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         dto.setReasonText(StConverter.convertToSt("Test"));
         final Ii studyID = IiConverter.convertToStudyProtocolIi(spNew.getId());
         dto.setStudyProtocolIdentifier(studyID);
-        
+
         bean.create(dto);
-        
+
     }
-    
+
     @Test
     public void testGetStatusHistoryByProtocol() throws PAException {
         // new protocol with no statuses initially.
@@ -448,7 +487,7 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                 UsernameHolder.getUser()));
         sos.setDateLastUpdated(new Date());
         s.saveOrUpdate(sos);
-        
+
         sos = new StudyOverallStatus();
         sos.setStudyProtocol(spNew);
         sos.setStatusCode(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
@@ -459,30 +498,30 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                 UsernameHolder.getUser()));
         sos.setDateLastUpdated(new Date());
         s.saveOrUpdate(sos);
-        
+
         sos = new StudyOverallStatus();
         sos.setStudyProtocol(spNew);
         sos.setStatusCode(StudyStatusCode.ACTIVE);
         sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
-        sos.setAdditionalComments("Additional comment 3");       
+        sos.setAdditionalComments("Additional comment 3");
         sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
                 UsernameHolder.getUser()));
         sos.setDateLastUpdated(new Date());
         s.saveOrUpdate(sos);
-        
+
         sos = new StudyOverallStatus();
         sos.setStudyProtocol(spNew);
         sos.setStatusCode(StudyStatusCode.IN_REVIEW);
         sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -2).getTime()));
-        sos.setAdditionalComments("Additional comment 4");       
+        sos.setAdditionalComments("Additional comment 4");
         sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
                 UsernameHolder.getUser()));
         sos.setDateLastUpdated(new Date());
         sos.setDeleted(true);
         s.saveOrUpdate(sos);
-        
+
         s.flush();
-       
+
         List<StatusDto> hist = bean.getStatusHistoryByProtocol(IiConverter
                 .convertToStudyProtocolIi(spNew.getId()));
         assertEquals(3, hist.size());
@@ -500,9 +539,11 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         assertEquals("Additional comment 1", hist.get(1).getComments());
         assertEquals("Why stopped 1", hist.get(1).getReason());
         assertNotNull(hist.get(1).getId());
-        
-        assertEquals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.name(), hist
-                .get(2).getStatusCode());
+
+        assertEquals(
+                StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION
+                        .name(),
+                hist.get(2).getStatusCode());
         assertEquals(new Timestamp(date.getTime()), hist.get(2).getStatusDate());
         assertEquals("Additional comment 2", hist.get(2).getComments());
         assertEquals("Why stopped 2", hist.get(2).getReason());
@@ -517,7 +558,7 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                 StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
                 CdConverter.convertCdToEnum(StudyStatusCode.class,
                         current.getStatusCode()));
-        
+
         // Additionally, ensure getByProtocol methods sorts in the same order as
         // history.
         List<StudyOverallStatusDTO> list = bean.getByStudyProtocol(IiConverter
@@ -532,8 +573,497 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                 StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
                 CdConverter.convertCdToEnum(StudyStatusCode.class, list.get(2)
                         .getStatusCode()));
-       
+
     }
-    
-    
+
+    @Test
+    public void testStatusHistoryHasWarningsErrors() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.IN_REVIEW);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -3).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        assertFalse(bean.statusHistoryHasWarnings(IiConverter
+                .convertToStudyProtocolIi(spNew.getId())));
+        assertFalse(bean.statusHistoryHasErrors(IiConverter
+                .convertToStudyProtocolIi(spNew.getId())));
+
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -2).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        // In Review to Active should produce a missing status warning.
+        assertTrue(bean.statusHistoryHasWarnings(IiConverter
+                .convertToStudyProtocolIi(spNew.getId())));
+        assertFalse(bean.statusHistoryHasErrors(IiConverter
+                .convertToStudyProtocolIi(spNew.getId())));
+
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.COMPLETE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        // Active to Complete should produce an error due to invalid status
+        // transition.
+        assertTrue(bean.statusHistoryHasWarnings(IiConverter
+                .convertToStudyProtocolIi(spNew.getId())));
+        assertTrue(bean.statusHistoryHasErrors(IiConverter
+                .convertToStudyProtocolIi(spNew.getId())));
+
+    }
+
+    @Test
+    public void getByStudyProtocolWithTransitionValidations()
+            throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.IN_REVIEW);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -3).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        List<StudyOverallStatusDTO> hist = bean
+                .getByStudyProtocolWithTransitionValidations(IiConverter
+                        .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(1, hist.size());
+        assertTrue(StringUtils.isBlank(hist.get(0).getErrors().getValue()));
+        assertTrue(StringUtils.isBlank(hist.get(0).getWarnings().getValue()));
+
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -2).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        // In Review to Active should produce a missing status warning.
+        hist = bean.getByStudyProtocolWithTransitionValidations(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(2, hist.size());
+        assertTrue(StringUtils.isBlank(hist.get(0).getErrors().getValue()));
+        assertTrue(StringUtils.isBlank(hist.get(0).getWarnings().getValue()));
+        assertTrue(StringUtils.isBlank(hist.get(1).getErrors().getValue()));
+        assertEquals("Interim status [APPROVED] is missing. ", hist.get(1)
+                .getWarnings().getValue());
+
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.COMPLETE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        // Active to Complete should produce an error due to invalid status
+        // transition.
+        hist = bean.getByStudyProtocolWithTransitionValidations(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(3, hist.size());
+        assertTrue(StringUtils.isBlank(hist.get(0).getErrors().getValue()));
+        assertTrue(StringUtils.isBlank(hist.get(0).getWarnings().getValue()));
+        assertTrue(StringUtils.isBlank(hist.get(1).getErrors().getValue()));
+        assertEquals("Interim status [APPROVED] is missing. ", hist.get(1)
+                .getWarnings().getValue());
+        assertEquals(
+                "Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing. ",
+                hist.get(2).getWarnings().getValue());
+        assertEquals("Interim status [CLOSED TO ACCRUAL] is missing. ", hist
+                .get(2).getErrors().getValue());
+
+    }
+
+    @Test
+    public void softDelete() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.IN_REVIEW);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -3).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        List<StudyOverallStatusDTO> hist = bean
+                .getByStudyProtocolWithTransitionValidations(IiConverter
+                        .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(1, hist.size());
+
+        StudyOverallStatusDTO dto = hist.get(0);
+        try {
+            bean.softDelete(dto);
+            fail();
+        } catch (PAException e) {
+            assertEquals("A comment is required when deleting a status",
+                    e.getMessage());
+        }
+
+        dto.setAdditionalComments(StConverter.convertToSt("I am deleted"));
+        bean.softDelete(dto);
+        s.flush();
+        s.refresh(sos);
+        assertTrue(sos.getDeleted());
+        assertEquals("I am deleted", sos.getAdditionalComments());
+        assertTrue(DateUtils.isSameDay(new Date(), sos.getDateLastUpdated()));
+        assertEquals(
+                CSMUserService.getInstance().getCSMUser(
+                        UsernameHolder.getUser()), sos.getUserLastUpdated());
+        assertEquals(
+                0,
+                bean.getByStudyProtocolWithTransitionValidations(
+                        IiConverter.convertToStudyProtocolIi(spNew.getId()))
+                        .size());
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void getDeletedByStudyProtocol() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.IN_REVIEW);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -3).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        List<StudyOverallStatusDTO> hist = bean
+                .getDeletedByStudyProtocol(IiConverter
+                        .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(0, hist.size());
+
+        StudyOverallStatusDTO dto = bean.get(IiConverter.convertToIi(sos
+                .getId()));
+        dto.setAdditionalComments(StConverter.convertToSt("I am deleted"));
+        bean.softDelete(dto);
+        s.flush();
+        s.refresh(sos);
+
+        hist = bean.getDeletedByStudyProtocol(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(1, hist.size());
+        assertEquals(sos.getId().toString(), hist.get(0).getIdentifier()
+                .getExtension());
+        assertTrue(BlConverter.convertToBool(hist.get(0).getDeleted()));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void createStatusHistory() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        List<StudyOverallStatusDTO> hist = new ArrayList<>();
+
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusDate(TsConverter.convertToTs(date));
+        hist.add(dto);
+
+        dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter
+                .convertToCd(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
+        dto.setStatusDate(TsConverter.convertToTs(date));
+        dto.setReasonText(StConverter.convertToSt("Test2"));
+        hist.add(dto);
+
+        bean.createStatusHistory(IiConverter.convertToIi(spNew.getId()), hist);
+
+        hist = bean.getByStudyProtocolWithTransitionValidations(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(2, hist.size());
+
+        assertEquals(StudyStatusCode.IN_REVIEW.getCode(), hist.get(0)
+                .getStatusCode().getCode());
+        assertEquals(date, hist.get(0).getStatusDate().getValue());
+        assertEquals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode(),
+                hist.get(1).getStatusCode().getCode());
+        assertEquals(date, hist.get(1).getStatusDate().getValue());
+        assertEquals(
+                StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode(),
+                bean.getCurrentByStudyProtocol(
+                        IiConverter.convertToStudyProtocolIi(spNew.getId()))
+                        .getStatusCode().getCode());
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void updateStatusHistory() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.IN_REVIEW);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -5).getTime()));
+        sos.setAdditionalComments("Additional comment 4");
+        sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+        sos.setDateLastUpdated(new Date());
+        s.saveOrUpdate(sos);
+
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -2).getTime()));
+        sos.setAdditionalComments("Additional comment 3");
+        sos.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(
+                UsernameHolder.getUser()));
+        sos.setDateLastUpdated(new Date());
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        List<StudyOverallStatusDTO> hist = bean.getByStudyProtocol(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+
+        StudyOverallStatusDTO inReview = hist.get(0);
+        StudyOverallStatusDTO active = hist.get(1);
+
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.APPROVED));
+        dto.setStatusDate(TsConverter.convertToTs(DateUtils.addDays(date, -3)));
+        dto.setDeleted(BlConverter.convertToBl(true));
+        hist.add(1, dto);
+
+        active.setDeleted(BlConverter.convertToBl(true));
+        active.setAdditionalComments(StConverter.convertToSt("Deleted"));
+
+        inReview.setStatusDate(TsConverter.convertToTs(DateUtils.addDays(date,
+                -30)));
+        inReview.setAdditionalComments(StConverter.convertToSt("Updated"));
+
+        StudyOverallStatusDTO closed = new StudyOverallStatusDTO();
+        closed.setStatusCode(CdConverter
+                .convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
+        closed.setStatusDate(TsConverter.convertToTs(date));
+        hist.add(closed);
+
+        bean.updateStatusHistory(
+                IiConverter.convertToStudyProtocolIi(spNew.getId()), hist);
+
+        hist = bean.getByStudyProtocolWithTransitionValidations(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(2, hist.size());
+
+        assertEquals(StudyStatusCode.IN_REVIEW.getCode(), hist.get(0)
+                .getStatusCode().getCode());
+        assertEquals(DateUtils.addDays(date, -30), hist.get(0).getStatusDate()
+                .getValue());
+        assertEquals("Updated", hist.get(0).getAdditionalComments().getValue());
+
+        assertEquals(StudyStatusCode.CLOSED_TO_ACCRUAL.getCode(), hist.get(1)
+                .getStatusCode().getCode());
+        assertEquals(date, hist.get(1).getStatusDate().getValue());
+
+        hist = bean.getDeletedByStudyProtocol(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        assertEquals(1, hist.size());
+        assertEquals(active.getIdentifier().getExtension(), hist.get(0)
+                .getIdentifier().getExtension());
+        assertTrue(BlConverter.convertToBool(hist.get(0).getDeleted()));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void closeOpenSitesIfNeeded() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
+        s.saveOrUpdate(sos);
+
+        StudySite site = TestSchema.createParticipatingSite(spNew);
+        s.flush();
+        assertEquals(1, site.getStudySiteAccrualStatuses().size());
+
+        StudyOverallStatusDTO closed = new StudyOverallStatusDTO();
+        closed.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
+        closed.setStatusDate(TsConverter.convertToTs(date));
+        closed.setStudyProtocolIdentifier(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT
+                .set(StudySourceCode.GRID_SERVICE);
+        bean.create(closed);
+        s.flush();
+
+        s.refresh(site);
+        assertEquals(2, site.getStudySiteAccrualStatuses().size());
+        assertEquals(RecruitmentStatusCode.COMPLETED, site
+                .getStudySiteAccrualStatuses().get(1).getStatusCode());
+        assertTrue(DateUtils.isSameDay(date, site.getStudySiteAccrualStatuses()
+                .get(1).getStatusDate()));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void closeOpenSitesIfNeededProprietaryProtocol() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
+        s.saveOrUpdate(sos);
+
+        StudySite site = TestSchema.createParticipatingSite(spNew);
+        s.flush();
+        assertEquals(1, site.getStudySiteAccrualStatuses().size());
+
+        StudyOverallStatusDTO closed = new StudyOverallStatusDTO();
+        closed.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
+        closed.setStatusDate(TsConverter.convertToTs(date));
+        closed.setStudyProtocolIdentifier(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT
+                .set(StudySourceCode.GRID_SERVICE);
+
+        spNew.setProprietaryTrialIndicator(true);
+        s.saveOrUpdate(spNew);
+        s.flush();
+
+        bean.create(closed);
+        s.flush();
+
+        s.refresh(site);
+        assertEquals(1, site.getStudySiteAccrualStatuses().size());
+        assertEquals(RecruitmentStatusCode.ACTIVE, site
+                .getStudySiteAccrualStatuses().get(0).getStatusCode());
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void closeOpenSitesIfNeededNewStatusIsNotClosed() throws PAException {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
+        s.saveOrUpdate(sos);
+
+        StudySite site = TestSchema.createParticipatingSite(spNew);
+        s.flush();
+        assertEquals(1, site.getStudySiteAccrualStatuses().size());
+
+        StudyOverallStatusDTO closed = new StudyOverallStatusDTO();
+        closed.setStatusCode(CdConverter
+                .convertToCd(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
+        closed.setStatusDate(TsConverter.convertToTs(date));
+        closed.setStudyProtocolIdentifier(IiConverter
+                .convertToStudyProtocolIi(spNew.getId()));
+        closed.setReasonText(StConverter.convertToSt("test"));
+
+        StudySourceInterceptor.STUDY_SOURCE_CONTEXT
+                .set(StudySourceCode.GRID_SERVICE);
+
+        bean.create(closed);
+        s.flush();
+
+        s.refresh(site);
+        assertEquals(1, site.getStudySiteAccrualStatuses().size());
+        assertEquals(RecruitmentStatusCode.ACTIVE, site
+                .getStudySiteAccrualStatuses().get(0).getStatusCode());
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void createStatusHistoryValidations() throws PAException {
+        // new protocol with no statuses initially.
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        List<StudyOverallStatusDTO> hist = new ArrayList<>();
+
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter
+                .convertToCd(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
+        dto.setStatusDate(TsConverter.convertToTs(date));
+        hist.add(dto);
+        try {
+            bean.createStatusHistory(IiConverter.convertToIi(spNew.getId()),
+                    hist);
+            fail();
+        } catch (PAException e) {
+            assertEquals(
+                    "Validation Exception A reason must be entered when the study status is set to Temporarily Closed to Accrual and Intervention.",
+                    e.getMessage());
+        }
+        hist.clear();
+
+        dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusDate(TsConverter.convertToTs(date));
+        hist.add(dto);
+
+        dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.APPROVED));
+        dto.setStatusDate(TsConverter.convertToTs(DateUtils.addDays(date, -1)));
+        hist.add(dto);
+
+        try {
+            bean.createStatusHistory(IiConverter.convertToIi(spNew.getId()),
+                    hist);
+            fail();
+        } catch (PAException e) {
+            assertEquals(
+                    "New current status date should be bigger/same as old date.",
+                    e.getMessage());
+        }
+        hist.clear();
+
+    }
+
 }

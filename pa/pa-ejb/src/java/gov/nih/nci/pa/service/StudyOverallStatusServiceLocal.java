@@ -137,13 +137,6 @@ public interface StudyOverallStatusServiceLocal extends StudyCurrentPaService<St
     List<String> validateTrialStatusAndDates(StudyProtocolDTO dto, StudyOverallStatusDTO statusDto);
 
     /**
-     * Rolls back the transition to this status.
-     * @param statusIi statusIi
-     * @throws PAException PAException
-     */
-    void undo(Ii statusIi) throws PAException;
-
-    /**
      * @param ii  StudyProtocolDTO
      * @return statusHistoryHasWarnings
      * @throws PAException  PAException

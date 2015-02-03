@@ -782,51 +782,7 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
             errorMsg.append(e.getMessage());
         }
     }
-    
   
-    @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void undo(final Ii id) throws PAException {
-        final StudyOverallStatusDTO dto = get(id);
-        final Ii studyProtocolIdentifier = dto
-                .getStudyProtocolIdentifier();
-        List<StudyOverallStatusDTO> list = getByStudyProtocol(studyProtocolIdentifier);
-        // The list is known to be sorted by ID. We delete this status and all
-        // immediately preceding
-        // system-created statues.
-        int index = list.indexOf(CollectionUtils.find(list, new Predicate() {
-            public boolean evaluate(Object arg0) {
-                StudyOverallStatusDTO obj = (StudyOverallStatusDTO) arg0;
-                return obj.getIdentifier().getExtension()
-                        .equals(id.getExtension());
-            }
-        }));
-        
-        if (index != list.size() - 1) {
-            throw new PAException("Only very last trial status can be undone.");
-        }
-        if (list.size() == 1) {
-            throw new PAException(
-                    "Undoing the status transition has resulted in a study without a status.");
-        }        
-        
-        delete(id);
-        
-        for (int i = index - 1; i >= 0; i--) {
-            StudyOverallStatusDTO preceding = list.get(i);
-            if (BlConverter.convertToBool(preceding.getSystemCreated())) {
-                delete(preceding.getIdentifier());
-            } else {
-                break;
-            }
-        }
-        List<StudyOverallStatusDTO> newList = getByStudyProtocol(studyProtocolIdentifier);
-        if (newList.isEmpty()) {
-            throw new PAException(
-                    "Undoing the status transition has resulted in a study without a status.");
-        }
-        
-    }
 
     /**
      * @param studyRecruitmentStatusServiceLocal the studyRecruitmentStatusServiceLocal to set
