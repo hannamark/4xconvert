@@ -320,20 +320,32 @@ var diseases = [];
                 $(value).unwrap();
             });
             
+           
+            
             if( typeof(id) != 'undefined' ) {
-            	
             	jstreeNodeIdsToOpen = [];
+            	
+            	if(!$("#loading").length) {
+            	
+            	  var loadingImg = paApp.imagePath + "/loading.gif";	
+            	 $('#pdq_tree_dialog').prev().append($('<img id="loading" style="z-index: 10000;position: fixed;top: 25%;left: 25%;overflow: auto;"'
+            	            +' src="'+loadingImg+'"/>'));
+            	}
+            	else {
+            		$("#loading").show();
+            	}
             	
             	$( "#waitDialog" ).dialog( "open" );
             	$.ajax(getBranchesURL, {            		
             		data: {
             			nodeID : id
             		},
-            		dataType : 'json',
-            		timeout : 30000
+            		dataType : 'json'
+            		//timeout : 30000
             	}).always(function() {
             		$( "#waitDialog" ).dialog( "close" );
-            	}).done(function( jsonStr ) {            		
+            	}).done(function( jsonStr ) {   
+            		$("#loading").hide();
             		$('#pdq_tree').jstree("close_all");
             		var branches = jsonStr;
             		var idsOfNodesToHighlight = [];
@@ -349,6 +361,8 @@ var diseases = [];
                         thisNodeParentIds = thisNodeParentIds.slice(0, thisNodeParentIds.length-1);
                         jstreeNodeIdsToOpen = jstreeNodeIdsToOpen.concat(thisNodeParentIds.slice(0));                        
                     }); 
+            		
+            		
             		
                     setJstreeOperationReady(true);
                     var interval = setInterval( function() {  
@@ -638,7 +652,7 @@ var diseases = [];
                 .dialog({
                     autoOpen: false,
                     modal: false, 
-                    title: 'CTRP Disease Hierarchy',
+                    title: 'NCIt/CTRP Tree',
                     position: [30,5],
                     width: 570,
                     height: 300
