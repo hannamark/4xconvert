@@ -244,6 +244,52 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                 (IiConverter.convertToLong(dto.getIdentifier())));
     }
 
+    @Test
+    public void getCurrentByStudyProtocol() throws Exception {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatus sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.APPROVED);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
+        s.saveOrUpdate(sos);
+
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.ACTIVE);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -1).getTime()));
+        s.saveOrUpdate(sos);
+
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
+        sos.setStatusDate(new Timestamp(date.getTime()));
+        sos.setDeleted(true);
+        s.saveOrUpdate(sos);
+
+        sos = new StudyOverallStatus();
+        sos.setStudyProtocol(spNew);
+        sos.setStatusCode(StudyStatusCode.IN_REVIEW);
+        sos.setStatusDate(new Timestamp(DateUtils.addDays(date, -2).getTime()));
+        s.saveOrUpdate(sos);
+        s.flush();
+
+        assertEquals(
+                StudyStatusCode.ACTIVE.getCode(),
+                bean.getCurrentByStudyProtocol(
+                        IiConverter.convertToStudyProtocolIi(spNew.getId()))
+                        .getStatusCode().getCode());
+        assertEquals(
+                DateUtils.addDays(date, -1),
+                bean.getCurrentByStudyProtocol(
+                        IiConverter.convertToStudyProtocolIi(spNew.getId()))
+                        .getStatusDate().getValue());
+    }
+
     @SuppressWarnings("deprecation")
     @Test
     public void createTest() throws Exception {
@@ -264,6 +310,41 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
 
         StudyOverallStatusDTO resultDto = bean.create(dto);
         assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void createDoesNotCreateNewRecord() throws Exception {
+        // new protocol with no statuses initially.
+        final Session s = PaHibernateUtil.getCurrentSession();
+        final Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusDate(TsConverter.convertToTs(date));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+
+        StudyOverallStatusDTO current = bean.create(dto);
+        s.flush();
+
+        // merely updating a comment should not lead to creation of a new status
+        // record because status code & date stay the same
+        StudyOverallStatusDTO newStatus = new StudyOverallStatusDTO();
+        newStatus.setStatusCode(CdConverter
+                .convertToCd(StudyStatusCode.IN_REVIEW));
+        newStatus.setStatusDate(TsConverter.convertToTs(date));
+        newStatus.setAdditionalComments(StConverter.convertToSt("An update"));
+        newStatus.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+        StudyOverallStatusDTO afterCreate = bean.create(newStatus);
+
+        assertEquals(current.getIdentifier(), afterCreate.getIdentifier());
+        assertEquals(
+                "An update",
+                bean.getCurrentByStudyProtocol(
+                        IiConverter.convertToIi(spNew.getId()))
+                        .getAdditionalComments().getValue());
+
     }
 
     @SuppressWarnings("deprecation")

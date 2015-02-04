@@ -81,43 +81,46 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
 import org.joda.time.DateTime;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+
+import com.mockrunner.mock.web.MockHttpServletRequest;
 /**
  * @author hreinhart
  *
@@ -126,6 +129,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
     private ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
     private StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
     private StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
+    private StudyCheckoutServiceLocal studyCheckoutService = mock(StudyCheckoutServiceLocal.class);
     private StudyOverallStatusAction sut;
 
     /**
@@ -160,6 +164,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         action.setProtocolQueryService(protocolQueryService);
         action.setStudyOverallStatusService(studyOverallStatusService);
         action.setStudyProtocolService(studyProtocolService);
+        action.setStudyCheckoutService(studyCheckoutService);
         action.setServletRequest(ServletActionContext.getRequest());
     }
 
@@ -598,4 +603,41 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         sut.updateStudyProtocol();
 
     }
+    
+    /**
+     * Test the loadForm method with no data.
+     * 
+     * @throws PAException
+     *             if an error occurs
+     * @throws TooManyResultsException 
+     */
+    @Test
+    public void runTransitionValidationAndInvokeSuAbstractorLogic()
+            throws PAException, TooManyResultsException {
+        sut = createStudyOverallStatusAction();
+        sut.prepareData();
+        reset(studyCheckoutService);
+        
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(
+                super.getSpDto());
+        when(studyOverallStatusService.getCurrentByStudyProtocol(spIi))
+                .thenReturn(super.getStudyOverallStatusDto());
+        when(studyOverallStatusService.statusHistoryHasErrors(eq(getSpDto().getIdentifier()))).thenReturn(true);
+        when(studyOverallStatusService.statusHistoryHasWarnings(eq(getSpDto().getIdentifier()))).thenReturn(true);
+        
+        final MockHttpServletRequest r = (MockHttpServletRequest) ServletActionContext.getRequest();
+        r.setUserInRole(Constants.SUABSTRACTOR, true);
+        sut.setPaServiceUtils(mock(PAServiceUtils.class));
+        
+        sut.runTransitionValidationAndInvokeSuAbstractorLogic(getSpDto());
+        
+        assertTrue(sut.getActionErrors().contains("trialStatus.warningsAndErrors"));
+        assertTrue(sut.isDisplaySuAbstractorAutoCheckoutMessage());
+        verify(studyCheckoutService).checkOut(eq(spIi),
+                eq(CdConverter.convertToCd(CheckOutType.ADMINISTRATIVE)),
+                eq(StConverter.convertToSt(r.getRemoteUser())));
+
+    }
+    
 }

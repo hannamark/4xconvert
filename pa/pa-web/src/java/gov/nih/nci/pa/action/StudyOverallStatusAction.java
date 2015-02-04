@@ -128,6 +128,7 @@ import com.opensymphony.xwork2.Preparable;
  */
 public class StudyOverallStatusAction extends ActionSupport implements Preparable, ServletRequestAware {
 
+    
     private static final Logger LOG = Logger.getLogger(StudyOverallStatusAction.class);
     private static final long serialVersionUID = -3647758169522163514L;
 
@@ -137,7 +138,8 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     private StudyProtocolServiceLocal studyProtocolService;
     private StudyCheckoutServiceLocal studyCheckoutService;
    
-
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    
     private Ii spIdIi;
     private String currentTrialStatus;
     private String statusDate;
@@ -233,7 +235,11 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         return Action.SUCCESS;
     }
 
-    private void runTransitionValidationAndInvokeSuAbstractorLogic(
+    /**
+     * @param spDTO StudyProtocolDTO
+     * @throws PAException PAException
+     */
+    void runTransitionValidationAndInvokeSuAbstractorLogic(
             StudyProtocolDTO spDTO) throws PAException {
         boolean errors = studyOverallStatusService.statusHistoryHasErrors(spDTO
                 .getIdentifier());
@@ -267,7 +273,7 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
                     .getTrialSummaryByStudyProtocolId(
                             IiConverter.convertToLong(spIdIi));
             ActionUtils.loadProtocolDataInSession(queryDTO,
-                    new CorrelationUtils(), new PAServiceUtils());
+                    new CorrelationUtils(), paServiceUtils);
             displaySuAbstractorAutoCheckoutMessage = true;
         }
         
@@ -616,5 +622,20 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      */
     public boolean isDisplaySuAbstractorAutoCheckoutMessage() {
         return displaySuAbstractorAutoCheckoutMessage;
+    }
+
+    /**
+     * @param studyCheckoutService the studyCheckoutService to set
+     */
+    public void setStudyCheckoutService(
+            StudyCheckoutServiceLocal studyCheckoutService) {
+        this.studyCheckoutService = studyCheckoutService;
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
     }
 }
