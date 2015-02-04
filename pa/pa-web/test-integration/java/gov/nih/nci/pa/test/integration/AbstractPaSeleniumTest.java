@@ -93,7 +93,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -108,11 +112,15 @@ import java.util.logging.Logger;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
+import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.After;
 import org.junit.Ignore;
@@ -177,6 +185,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     /**
      * @throws Exception
      */
+    @SuppressWarnings("deprecation")
     private void setUpSelenium() throws Exception {
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
@@ -809,7 +818,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "user_last_updated_id,system_created) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),null,'"
                 + code
                 + "',"
-                + today()
+                + today_midnight()
                 + " ,"
                 + info.id
                 + ","
@@ -820,6 +829,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     private String today() {
         return String.format("{ts '%s'}",
                 new Timestamp(System.currentTimeMillis()).toString());
+    }
+    
+    private String today_midnight() {
+        return String.format("{ts '%s'}",
+                new Timestamp(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH)
+                        .getTime()).toString());
     }
 
     private String millenium() {
@@ -949,6 +964,32 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             paID = (Number) runner.query(connection, sql, new ArrayHandler())[0];
         }
         return paID;
+    }
+    
+    protected List<TrialStatus> getTrialStatusHistory(TrialInfo trial)
+            throws SQLException {
+        List<TrialStatus> list = new ArrayList<>();
+        QueryRunner runner = new QueryRunner();
+        final String sql = "select status_code, status_date, addl_comments, comment_text from study_overall_status "
+                + "where deleted=false and study_protocol_identifier="
+                + trial.id + " ORDER BY status_date ASC, identifier ASC";
+        final List<Object[]> results = runner.query(connection, sql,
+                new ArrayListHandler());
+        for (Object[] row : results) {
+            TrialStatus status = new TrialStatus();
+            status.statusCode = (String) row[0];
+            status.statusDate = (Date) row[1];
+            status.comments = (String) row[2];
+            status.whyStopped = (String) row[3];
+            list.add(status);
+        }
+        return list;
+    }
+
+    protected TrialStatus getCurrentTrialStatus(TrialInfo trial)
+            throws SQLException {
+        final List<TrialStatus> trialStatusHistory = getTrialStatusHistory(trial);
+        return trialStatusHistory.get(trialStatusHistory.size() - 1);
     }
 
     private void createPerson(String poPersonID, String firstName,
@@ -1179,6 +1220,30 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             return this.uuid.compareTo(o.uuid);
         }
 
+    }
+    
+    public static final class TrialStatus {
+        public String statusCode;
+        public Date statusDate;
+        public String comments;
+        public String whyStopped;
+        public boolean deleted;
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {         
+            return EqualsBuilder.reflectionEquals(this, obj);
+        }
+        
+        @Override
+        public int hashCode() {         
+            return HashCodeBuilder.reflectionHashCode(this);
+        }
+        
     }
 
 }
