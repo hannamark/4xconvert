@@ -26,7 +26,9 @@ class Queries {
         FROM Study_Site ss
         join healthcare_facility hcf on hcf.identifier = ss.healthcare_facility_identifier
         join organization org on org.identifier = hcf.organization_identifier
-        left outer join study_site_accrual_status ssas on ssas.study_site_identifier = ss.identifier and ssas.identifier = (select max(identifier) from study_site_accrual_status ssas2 where ssas2.study_site_identifier = ss.identifier)
+        left outer join study_site_accrual_status ssas on ssas.study_site_identifier = ss.identifier 
+            and ssas.identifier = (SELECT sos2.identifier FROM study_site_accrual_status sos2 WHERE sos2.study_site_identifier = ss.identifier
+                                AND sos2.deleted = false ORDER BY sos2.status_date DESC, sos2.identifier DESC LIMIT 1)
         where ss.functional_code = 'TREATING_SITE'
         and ss.study_protocol_identifier = ?
     """
