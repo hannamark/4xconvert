@@ -249,6 +249,7 @@ def getTrialsSQL = """
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
 	 left outer join rv_organization_responsible_party rp_sponsor on rp_sponsor.study_protocol_identifier=sp.identifier
      where sp.status_code = 'ACTIVE' and (sp.delayed_posting_indicator is null or sp.delayed_posting_indicator!= true) and rv_trial_id_nct.local_sp_indentifier is not null
+     
 """
 
 def getAmendedSQL = """
@@ -664,8 +665,8 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 	])
 
 	nbOfTrials++
-	
-	
+
+
 
 }
 
@@ -680,8 +681,8 @@ paConn.eachRow(getAmendedSQL) { spRow ->
 }
 
 boolean twoExportsAreTheSame(String xml1, String xml2) {
-	return xml1.replaceFirst("<download_date>.*?</download_date>", "").replaceFirst("<lastchanged_date>.*?</lastchanged_date>", "") == 
-		xml2.replaceFirst("<download_date>.*?</download_date>", "").replaceFirst("<lastchanged_date>.*?</lastchanged_date>", "")
+	return xml1.replaceFirst("<download_date>.*?</download_date>", "").replaceFirst("<lastchanged_date>.*?</lastchanged_date>", "") ==
+	xml2.replaceFirst("<download_date>.*?</download_date>", "").replaceFirst("<lastchanged_date>.*?</lastchanged_date>", "")
 }
 
 
@@ -774,7 +775,11 @@ String buildStudyDesign(spRow)	{
 
 String formatBlock(text) {
 	if (text) {
+		// PO-8550, item 1.
 		text = '\n' + text.toString().trim().replaceAll("(\\r\\n|\\n)(\\r|\\n)*", "\n\n")
+		// PO-8550, item 2.
+		text = text.toString().trim().replaceAll("(?m)^( |\\t)+\\-\\s+", "    ").replaceAll("(?m)^( |\\t)+\\*\\s+", "    ").
+			replaceAll("(?m)^( |\\t)+\\*\\*\\s+", "    - ").replaceAll("(?m)^( |\\t)+\\*(\\w)", '    $2')
 	}
 	return text
 }
