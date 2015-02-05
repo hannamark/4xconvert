@@ -250,7 +250,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             return updateCtepOrgAndRole(ctepOrg, identifiedOrg, assignedId, ctepHcf, ctepRo);
 
         } catch (CTEPEntException e) {
-            LOG.info(e);
+            LOG.error(e);
             // ID not found in ctep, therefore we can safely inactivate the entity if it exists locally.
             IdentifiedOrganization identifiedOrg = searchForPreviousRecord(ctepOrgId);
             if (identifiedOrg != null) {
@@ -985,7 +985,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             printHcf(hcfDto);
             return (HealthCareFacility) PoXsnapshotHelper.createModel(hcfDto);
         } catch (CTEPEntException e) {
-            LOG.info(e);
+            LOG.error(e);
             return null;
         } finally {
             ctepOrgId.setReliability(IdentifierReliability.VRF);
@@ -1007,7 +1007,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
             print(roDto);
             return (ResearchOrganization) PoXsnapshotHelper.createModel(roDto);
         } catch (CTEPEntException e) {
-            LOG.info(e);
+            LOG.error(e);
             return null;
         } finally {
             ctepOrgId.setReliability(IdentifierReliability.VRF);
