@@ -419,9 +419,15 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         clickAndWait("link=Trial Identification");
         assertFalse(selenium.isElementPresent("link=Admin Check Out"));
         assertTrue(selenium.isElementPresent("link=Admin Check In"));
-        clickAndWait("link=Check In");
+        clickAndWait("link=Admin Check In");
+        assertTrue(selenium.isElementPresent("id=comments"));
+        assertTrue(selenium.isElementPresent("class=btn btn-icon btn-primary"));
+        assertTrue(selenium.isElementPresent("class=btn btn-icon btn-default"));
+        assertEquals(selenium.getText("class=btn btn-icon btn-primary"), "Ok");
+        assertEquals(selenium.getText("class=btn btn-icon btn-default"), "Cancel");
+        selenium.type("id=comments", "Test admin check in comments");
+        clickAndWait("class=btn btn-icon btn-primary");
         assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-        assertFalse(selenium.isElementPresent("link=Admin Check In"));
     }
 
     /**

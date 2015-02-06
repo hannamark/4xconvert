@@ -270,6 +270,7 @@ th {
 				</display:column>
 				<display:column titleKey="studyOverallStatus.actions"
 					sortable="false">
+				  <pa:displayWhenCheckedOut>
 					<s:if test="%{#attr.row.editable}">
 						<a href="javascript:void(0);"
 							onclick="editStatus(<s:property value="%{#attr.row.id}"/>,
@@ -292,6 +293,7 @@ th {
 							width="16" height="16" />
 						</a>
 					</s:if>
+			      </pa:displayWhenCheckedOut>
 					<a href="javascript:void(0);"
 						onclick="auditTrail(<s:property value="%{#attr.row.id}"/>,
                                '<s:property value="%{#attr.row.statusCode}"/>');">
@@ -365,6 +367,7 @@ th {
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
+				<pa:displayWhenCheckedOut>
 					<li><s:a href="javascript:void(0)" cssClass="btn"
 							onclick="addNewStatus();">
 							<span class="btn_img"><span class="add">Add New
@@ -375,6 +378,7 @@ th {
 							<span class="btn_img"><span class="confirm">Validate
 									Status Transitions</span></span>
 						</s:a></li>
+				</pa:displayWhenCheckedOut>
 					<li><s:a href="javascript:void(0)" cssClass="btn"
 							onclick="closepopupAndRefreshParentIfNeeded();">
 							<span class="btn_img"><span class="cancel">Cancel</span></span>

@@ -126,6 +126,23 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         clickAndWait("link=History");
         assertTrue(selenium.isTextPresent("Status History"));
     }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testTrialStatusHistoryBeforeCheckOut() throws SQLException {
+        TrialInfo trial = createSubmittedTrial();
+
+        loginAsAdminAbstractor();
+        searchSelectAndAcceptTrial(trial.title, true, false);
+        checkInTrialAsAdminAbstractor();
+        clickAndWait("link=Trial Status");
+        assertFalse(selenium.isTextPresent("Save"));
+        
+        clickAndWait("link=History");
+        assertTrue(selenium.isTextPresent("Status History"));
+        assertFalse(selenium.isTextPresent("Add New Status"));
+        assertFalse(selenium.isTextPresent("Validate Status Transactions")); 
+    }
 
     @SuppressWarnings("deprecation")
     @Test
