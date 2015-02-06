@@ -217,7 +217,7 @@ th {
 			<s:hidden name="statusId" value="" id="statusId"></s:hidden>
 			<s:hidden name="changesMadeFlag" id="changesMadeFlag"></s:hidden>
 			<h2>
-				<fmt:message key="statusHistory.title" />
+				<fmt:message key="sitestatusHistory.title" />
 			</h2>
 			<br />
 			<pa:sucessMessage />

@@ -240,12 +240,12 @@
 				<td>
 				<s:if test="%{!importTerm}">
 				    <s:textfield id="preferredName"
-						name="disease.preferredName" maxlength="200" size="100"
+						name="disease.preferredName" maxlength="1000" size="100"
 						cssStyle="width:400px" />
 				</s:if>
 				<s:else>
 				    <s:textfield id="preferredName"
-                        name="disease.preferredName" maxlength="200" size="100"
+                        name="disease.preferredName" maxlength="1000" size="100"
                         cssStyle="width:400px" readonly="true" cssClass="readonly"/>
 				</s:else> <span
 					class="formErrorMsg"> <s:fielderror>
