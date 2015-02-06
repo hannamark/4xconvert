@@ -95,6 +95,7 @@ th {
             	$('statusDate').setValue(statusDate);
             	$('reason').setValue(reason);
             	$('comment').setValue(comment);
+            	$('edit-dialog-header').innerHTML = 'Edit Trial Status';
             	showEditBox();
             }   
             
@@ -105,6 +106,7 @@ th {
                 $('statusDate').setValue('');
                 $('reason').setValue('');
                 $('comment').setValue('');
+                $('edit-dialog-header').innerHTML = 'Add Trial Status';
                 showEditBox();
             }   
             
@@ -323,7 +325,7 @@ th {
 			</div>
 
 			<div id="edit-dialog" style="display: none;">
-				<div class="header">
+				<div class="header" id="edit-dialog-header">
 					<fmt:message key="studyOverallStatus.edit.header" />
 				</div>
 				<div class="body">

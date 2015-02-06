@@ -62,18 +62,9 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         verifyStatusRow(1, today, "Approved", "", "");
 
         // Edit it back to In Review.
-        selenium.click("xpath=//table[@id='row']/tbody/tr/td[5]/a[1]");
-        waitForElementToBecomeVisible(By.id("edit-dialog"), 2);
-        selenium.select("id=statusCode", "label=In Review");
-        selenium.type("statusDate", yesterday);
-        selenium.type("reason", "This must be ignored");
-        selenium.type("comment", "Back to In Review");
-        selenium.click("xpath=//div[@id='edit-dialog']//input[@value='Save']");
-        waitForPageToLoad();
-        waitForElementToBecomeVisible(By.xpath("//div[@class='confirm_msg']"),
-                15);
-        assertEquals("Message. Trial status record has been updated.", selenium
-                .getText("xpath=//div[@class='confirm_msg']").trim());
+        editStatus(1, "In Review", yesterday, "This must be ignored",
+                "Back to In Review");
+        confirmSuccess("Message. Trial status record has been updated.");
 
         // Verify update
         verifyStatusRow(1, yesterday, "In Review", "Back to In Review", "");
@@ -81,6 +72,98 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         verifyCurrentStatusInDB(trial, DateUtils.addDays(new Date(), -1),
                 "IN_REVIEW", "Back to In Review", "");
 
+        // Should be unable to set status date in future.
+        editStatus(1, "In Review", tomorrow, "",
+                "Should be unable to set status date in future.");
+        confirmFailure("Message. Validation Exception Current Trial Status Date cannot be in the future.");
+
+        // Editing status history should still enforce validation between trial
+        // start/end dates and status
+        editStatus(1, "Active", "04/15/2013", "", "");
+        confirmFailure("If Current Trial Status is Active, Trial Start Date must be Actual and same as or smaller than Current Trial Status Date.");
+        editStatus(1, "Complete", today, "", "");
+        confirmFailure("If Current Trial Status is Completed, Primary Completion Date must be Actual.");
+        editStatus(1, "Temporarily Closed to Accrual", today, "", "");
+        confirmFailure("A reason must be entered when the study status is set to Temporarily Closed to Accrual.");
+        verifyCurrentStatusInDB(trial, DateUtils.addDays(new Date(), -1),
+                "IN_REVIEW", "Back to In Review", "");
+
+        // Check for HTML injection
+        editStatus(1, "In Review", yesterday, "", "<script>alert(1)</script>");
+        confirmSuccess("Message. Trial status record has been updated.");
+        verifyStatusRow(1, yesterday, "In Review", "script>alert(1)script>", "");
+        editStatus(1, "In Review", yesterday, "", "<BR>");
+        confirmSuccess("Message. Trial status record has been updated.");
+        verifyStatusRow(1, yesterday, "In Review", "<BR>", "");
+
+        // Put In Review back to a known state and insert Active.
+        editStatus(1, "In Review", yesterday, "", "");
+        insertStatus("Active", today, "", "New status");
+        confirmSuccess("Message. Trial status record has been added.");
+        verifyStatusRow(2, today, "Active", "New status",
+                "WARNING: Interim status [APPROVED] is missing.");
+        verifyCurrentStatusInDB(trial, new Date(), "ACTIVE", "New status", "");
+
+        // Should be unable to set status date in future.
+        insertStatus("Temporarily Closed to Accrual", tomorrow, "Test", "");
+        confirmFailure("Study status date cannot be in future.");
+        
+        // Other validations
+        insertStatus("Temporarily Closed to Accrual", "", "Test", "");
+        confirmFailure("Invalid trial status date format");
+        insertStatus("Temporarily Closed to Accrual", today, "", "");
+        confirmFailure("A reason must be entered when the study status is set to Temporarily Closed to Accrual");
+
+
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private void editStatus(int row, String newCode, String newDate,
+            String reason, String comment) {
+        selenium.click("xpath=//table[@id='row']/tbody/tr[" + row
+                + "]/td[5]/a[1]");
+        waitForElementToBecomeVisible(By.id("edit-dialog"), 2);
+        assertEquals("Edit Trial Status",
+                selenium.getText("edit-dialog-header"));
+        selenium.select("id=statusCode", "label=" + newCode);
+        selenium.type("statusDate", newDate);
+        selenium.type("reason", reason);
+        selenium.type("comment", comment);
+        selenium.click("xpath=//div[@id='edit-dialog']//input[@value='Save']");
+        waitForPageToLoad();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private void insertStatus(String newCode, String newDate, String reason,
+            String comment) {
+        selenium.click("xpath=//div[@class='actionsrow']//span[normalize-space(text())='Add New Status']");
+        waitForElementToBecomeVisible(By.id("edit-dialog"), 2);
+        assertEquals("Add Trial Status", selenium.getText("edit-dialog-header"));
+        selenium.select("id=statusCode", "label=" + newCode);
+        selenium.type("statusDate", newDate);
+        selenium.type("reason", reason);
+        selenium.type("comment", comment);
+        selenium.click("xpath=//div[@id='edit-dialog']//input[@value='Save']");
+        waitForPageToLoad();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private void confirmFailure(String msg) {
+        waitForElementToBecomeVisible(By.xpath("//div[@class='error_msg']"), 15);
+        assertTrue(selenium.getText("xpath=//div[@class='error_msg']").trim()
+                .contains(msg));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private void confirmSuccess(String msg) {
+        waitForElementToBecomeVisible(By.xpath("//div[@class='confirm_msg']"),
+                15);
+        assertTrue(selenium.getText("xpath=//div[@class='confirm_msg']").trim()
+                .contains(msg));
     }
 
     @SuppressWarnings("deprecation")

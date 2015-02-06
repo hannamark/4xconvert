@@ -335,7 +335,8 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                 .convertToCd(StudyStatusCode.IN_REVIEW));
         newStatus.setStatusDate(TsConverter.convertToTs(date));
         newStatus.setAdditionalComments(StConverter.convertToSt("An update"));
-        newStatus.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+        newStatus.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew
+                .getId()));
         StudyOverallStatusDTO afterCreate = bean.create(newStatus);
 
         assertEquals(current.getIdentifier(), afterCreate.getIdentifier());
@@ -1144,6 +1145,44 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
                     e.getMessage());
         }
         hist.clear();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void insert() throws PAException {
+        // new protocol with no statuses initially.
+        final Date today = DateUtils
+                .truncate(new Date(), Calendar.DAY_OF_MONTH);
+        final Date tomorrow = DateUtils.addDays(today, 1);
+
+        InterventionalStudyProtocol spNew = createInterventionalProtocol();
+
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
+        dto.setStatusDate(TsConverter.convertToTs(tomorrow));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
+        try {
+            bean.insert(dto);
+            fail();
+        } catch (PAException e) {
+            assertEquals("Study status date cannot be in future.",
+                    e.getMessage());
+        }
+
+        dto.setStatusDate(TsConverter.convertToTs(today));
+        bean.insert(dto);
+
+        assertEquals(
+                StudyStatusCode.ACTIVE.getCode(),
+                bean.getCurrentByStudyProtocol(
+                        IiConverter.convertToStudyProtocolIi(spNew.getId()))
+                        .getStatusCode().getCode());
+        assertEquals(
+                today,
+                bean.getCurrentByStudyProtocol(
+                        IiConverter.convertToStudyProtocolIi(spNew.getId()))
+                        .getStatusDate().getValue());
 
     }
 

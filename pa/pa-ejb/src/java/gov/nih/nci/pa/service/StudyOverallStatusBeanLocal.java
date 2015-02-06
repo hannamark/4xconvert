@@ -116,6 +116,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -130,6 +131,7 @@ import javax.interceptor.Interceptors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -397,6 +399,11 @@ public class StudyOverallStatusBeanLocal extends // NOPMD
                 "Study status date must be set.");
         checkCondition(ISOUtil.isIiNull(dto.getStudyProtocolIdentifier()),
                 "Study protocol must be set.");
+        checkCondition(
+                DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH).before(
+                        DateUtils.truncate(TsConverter.convertToTimestamp(dto
+                                .getStatusDate()), Calendar.DAY_OF_MONTH)),
+                "Study status date cannot be in future.");
         validateReasonText(dto);
     }
 
