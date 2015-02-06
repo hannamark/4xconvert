@@ -55,6 +55,12 @@ th {
     text-align: left !important;    
 }
 
+.ui-datepicker-trigger {
+    left: 3px;
+    position: relative;
+    top: 3px;
+}
+
 </style>
 
 <script type="text/javascript"
@@ -161,6 +167,14 @@ th {
             (function ($) {
             	 $(function() {
                      $( document ).tooltip();
+                     
+                     $( "#statusDate" ).datepicker({
+                    	 showOn: "button",
+                    	 buttonImage: "<c:url value='/images/ico_calendar.gif'/>",
+                    	 buttonImageOnly: true,
+                    	 buttonText: "Select a status date",
+                    	 maxDate: 0
+                     });
                      
                      var table = $('#row').DataTable({
                     	 "paging":   false,

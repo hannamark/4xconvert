@@ -130,6 +130,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * Abstract base class for selenium tests.
@@ -974,11 +975,29 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     
     protected List<TrialStatus> getTrialStatusHistory(TrialInfo trial)
             throws SQLException {
-        List<TrialStatus> list = new ArrayList<>();
-        QueryRunner runner = new QueryRunner();
         final String sql = "select status_code, status_date, addl_comments, comment_text from study_overall_status "
                 + "where deleted=false and study_protocol_identifier="
                 + trial.id + " ORDER BY status_date ASC, identifier ASC";
+        return loadTrialStatuses(sql);
+    }
+    
+    protected List<TrialStatus> getDeletedTrialStatuses(TrialInfo trial)
+            throws SQLException {
+        final String sql = "select status_code, status_date, addl_comments, comment_text from study_overall_status "
+                + "where deleted=true and study_protocol_identifier="
+                + trial.id + " ORDER BY status_date ASC, identifier ASC";
+        return loadTrialStatuses(sql);
+    }
+
+    /**
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    private List<TrialStatus> loadTrialStatuses(final String sql)
+            throws SQLException {
+        List<TrialStatus> list = new ArrayList<>();
+        QueryRunner runner = new QueryRunner();
         final List<Object[]> results = runner.query(connection, sql,
                 new ArrayListHandler());
         for (Object[] row : results) {
@@ -1202,6 +1221,18 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         ((JavascriptExecutor) driver).executeScript("window.scroll(" + p.getX()
                 + "," + (p.getY() - 150) + ");");
         pause(200);
+    }
+    
+    protected void hoverLink(String linkText) {
+        By by = By.linkText(linkText);
+        hover(by);
+    }
+
+    protected void hover(By by) {
+        Actions action = new Actions(driver);
+        WebElement elem = driver.findElement(by);
+        action.moveToElement(elem);
+        action.perform();
     }
 
     public static final class TrialInfo implements Comparable<TrialInfo> {

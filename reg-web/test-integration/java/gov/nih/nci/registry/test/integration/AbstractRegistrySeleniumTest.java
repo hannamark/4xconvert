@@ -530,17 +530,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         firstRun = false;
     }
 
-    protected void hoverLink(String linkText) {
-        By by = By.linkText(linkText);
-        hover(by);
-    }
-
-    protected void hover(By by) {
-        Actions action = new Actions(driver);
-        WebElement elem = driver.findElement(by);
-        action.moveToElement(elem);
-        action.perform();
-    }
+   
     
     protected String getTrialConfValue(String labeltxt) {
         try {
