@@ -232,7 +232,9 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                     updatesList);
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolIi);
-            sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);
+            if (StringUtils.isNotEmpty(updatesList)) {
+               sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);
+            }
         } catch (Exception e) {
             throw new PAException(e.getMessage(), e);
         }

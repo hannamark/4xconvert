@@ -971,9 +971,65 @@ public class TrialRegistrationServiceTest extends AbstractTrialRegistrationTestB
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
         assertTrue(studyProtocolDTO.getCtroOverride().getValue().booleanValue());
     }
-    
-   
 
+    
+    @Test
+    public void noUpdateTest() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        studyProtocolDTO.setIdentifier(null);
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        
+        List<StudyResourcingDTO> summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+
+        List<OrganizationDTO> summary4OrganizationDTO = new ArrayList<OrganizationDTO>();
+        summary4OrganizationDTO.add(new OrganizationDTO());
+		Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                                                               studyResourcingDTOs, documents, leadOrganizationDTO,
+                                                               principalInvestigatorDTO, sponsorOrganizationDTO,
+                                                               leadOrganizationSiteIdentifierDTO, siteIdentifiers,
+                                                               studyContactDTO, null, summary4OrganizationDTO,
+                                                               summary4StudyResourcing.get(0), null, regAuthority, BlConverter
+                                                                   .convertToBl(Boolean.FALSE));
+        assertFalse(ISOUtil.isIiNull(ii));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        new PAServiceUtils()
+            .createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"), null);
+
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        studyProtocolDTO.setCtroOverride(BlConverter.convertToBl(true));
+        studyProtocolService.updateStudyProtocol(studyProtocolDTO);
+        PaHibernateUtil.getCurrentSession().flush();
+        
+        overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        studyResourcingDTOs = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+        
+        bean.update(studyProtocolDTO, overallStatusDTO, siteIdentifiers, null, studyResourcingDTOs, 
+        		documentDTOs, null, null, null, null, null, null, null, 
+        		null, null, BlConverter.convertToBl(Boolean.FALSE));
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        assertTrue(studyProtocolDTO.getCtroOverride().getValue().booleanValue());
+        StudyMilestoneDTO smDto = studyMilestoneSvc.getCurrentByStudyProtocol(ii);
+        assertTrue(CdConverter.convertCdToEnum(MilestoneCode.class,smDto.getMilestoneCode()).equals(MilestoneCode.SUBMISSION_ACCEPTED));
+    }
     @Test
     public void amendTrialTestWithChangeMemoDoc() throws Exception {
         Ii ii = registerTrial();

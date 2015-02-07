@@ -2347,7 +2347,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
 
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(spIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(spIi);
-            sendTSRXML(spIi, smDto.getMilestoneCode(), inbox);
+            if (StringUtils.isNotEmpty(updatesList)) {
+               sendTSRXML(spIi, smDto.getMilestoneCode(), inbox);
+            }
         } catch (PAValidationException e) {
             LOG.error(e, e);
             throw e;

@@ -103,7 +103,6 @@ import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.NonInterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -516,7 +515,8 @@ public class ProprietaryTrialManagementBeanTest extends
         assertEquals("Updated_Other.doc", updatedDocs.get(0).getFileName());
         assertEquals("Updated_Protocol.doc", updatedDocs.get(1).getFileName());
     }
-
+    
+    
     @Test(expected = PAException.class)
     public void testUpdateFailure_ValidationBlanks() throws Exception {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
