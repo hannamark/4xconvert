@@ -443,7 +443,11 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
         }
     }
 
-    private Collection<AuditLogDetail> sort(Set<AuditLogDetail> details) {
+    /**
+     * @param details Set<AuditLogDetail>
+     * @return Collection<AuditLogDetail>
+     */
+    Collection<AuditLogDetail> sort(Set<AuditLogDetail> details) {
         TreeSet<AuditLogDetail> sorted = new TreeSet<>(
                 new Comparator<AuditLogDetail>() {
                     @Override

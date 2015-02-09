@@ -83,12 +83,12 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.any;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -106,11 +106,17 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
 /**
  * @author Michael Visee
  */
@@ -138,6 +144,26 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
     private void setDependencies(StudyOverallStatusHistoryAction action) {
         action.setStudyOverallStatusService(studyOverallStatusService);
         action.setStudyProtocolServiceLocal(studyProtocolServiceLocal);
+        
+    }
+    
+    @Test
+    public void testSort() throws PAException {
+        sut = createStudyOverallStatusHistoryAction();
+        Set<AuditLogDetail> details = new LinkedHashSet<>();
+        
+        AuditLogDetail d1 = new AuditLogDetail(null, "deleted", "true", "false");
+        details.add(d1);
+        AuditLogDetail d2 = new AuditLogDetail(null, "additionalComments", "", "");
+        details.add(d2);
+        AuditLogDetail d3 = new AuditLogDetail(null, "reason", "", "");
+        details.add(d3);
+        
+        Collection<AuditLogDetail> sorted = sut.sort(details);
+        Iterator<AuditLogDetail> it = sorted.iterator();
+        assertEquals(d2, it.next());
+        assertEquals(d1, it.next());
+        assertEquals(d3, it.next());
         
     }
 
