@@ -23,6 +23,7 @@ public class SyncDiseasesFromNCIt{
           isValid = true;
      }
      catch(Exception e){
+        println "Exception in checkifTermExistsInNcit "+e.getMessage();
          isValid = false;
          
      }
@@ -61,8 +62,8 @@ public class SyncDiseasesFromNCIt{
     fileContents.append(" DELETE FROM pdq_disease_altername where disease_identifier =("+idQuery+");")
     synonyms.each{ syn ->
         fileContents.append(" INSERT INTO pdq_disease_altername ( ");
-         fileContents.append("disease_identifier, alternate_name,status_code, status_date_range_low, date_last_created)");
-          fileContents.append(" values (("+idQuery+"),'${syn}','ACTIVE',now(),now() );")  }
+         fileContents.append("identifier,disease_identifier, alternate_name,status_code, status_date_range_low, date_last_created)");
+          fileContents.append(" values ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')) , ("+idQuery+"),'${syn}','ACTIVE',now(),now() );")  }
     
   }
 
@@ -116,8 +117,8 @@ public class SyncDiseasesFromNCIt{
      "disease_identifier=("+query+") and parent_disease_identifier=("+parentQuery+")";
   
     
-      def insertParentSql = "INSERT INTO pdq_disease_parent(disease_identifier, parent_disease_identifier, parent_disease_code, status_code, status_date_range_low)"+
-          " VALUES (("+query+"),("+parentQuery+"), 'ISA', 'ACTIVE',now());"
+      def insertParentSql = "INSERT INTO pdq_disease_parent(identifier,disease_identifier, parent_disease_identifier, parent_disease_code, status_code, status_date_range_low)"+
+          " VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')) , ("+query+"),("+parentQuery+"), 'ISA', 'ACTIVE',now());"
       fileContents.append(insertParentSql+";");
   
   }
@@ -136,8 +137,8 @@ public class SyncDiseasesFromNCIt{
         String selectExistingTerm =" select 1 from pdq_disease where nt_term_identifier = '"+term+"' ";
         
         if (sql.rows("select identifier from pdq_disease where nt_term_identifier = '"+term+"'").size() == 0) { // If term does not exist, insert it, else update
-         sqlInsertUpdate = "INSERT INTO pdq_disease(nt_term_identifier, preferred_name, menu_display_name, status_code, status_date_range_low)"+
-          " select '"+term+"','"+prefName+"','"+ prefName+"', 'ACTIVE', now()"+
+         sqlInsertUpdate = "INSERT INTO pdq_disease(identifier,nt_term_identifier, preferred_name, menu_display_name, status_code, status_date_range_low)"+
+          " select (SELECT NEXTVAL('HIBERNATE_SEQUENCE')) , '"+term+"','"+prefName+"','"+ prefName+"', 'ACTIVE', now()"+
           " WHERE NOT EXISTS("+selectExistingTerm+");"
         }else {
         sqlInsertUpdate = " UPDATE pdq_disease set preferred_name='"+prefName+"',menu_display_name='"+prefName+"', date_last_updated=now() where nt_term_identifier='"+term+"';"
@@ -195,6 +196,25 @@ public class SyncDiseasesFromNCIt{
       }
     }
   }
+  
+  def performSync(ncitTerm, url) {
+      
+      boolean isExists = checkifTermExistsInNcit(ncitTerm, url);
+      
+      if(isExists) {
+         
+          println "-- SYNCING disease term "+ncitTerm
+          insertOrUpdateTerm(ncitTerm, url)
+          println "-- Syncing parents of CTRP term "+ncitTerm
+           // Retrieve parent and children tree for the term
+          extractParentTree(ncitTerm , url)
+          println "-- Syncing children of CTRP term "+ncitTerm
+          extractChildTree(ncitTerm , url)
+      }
+      else {
+          println "The term "+ncitTerm+" does not exists in ncit hence not synced"
+      }
+  }
 
   /**
    * Retrieve parent tree and child tree for all CTRP disease terms indexed on trials
@@ -212,34 +232,13 @@ public class SyncDiseasesFromNCIt{
     
    
     ctrpTerms.each (){
-        
-        
+    
     ncitTerm= it.nt_term_identifier;
-   
-    
-    
-     boolean isExists = checkifTermExistsInNcit(ncitTerm, url);
-     
-     if(isExists) {
-        
-         println "-- SYNCING disease term "+ncitTerm
-         insertOrUpdateTerm(ncitTerm, url)
-         println "-- Syncing parents of CTRP term "+ncitTerm
-          // Retrieve parent and children tree for the term
-         extractParentTree(ncitTerm , url)
-         println "-- Syncing children of CTRP term "+ncitTerm
-         extractChildTree(ncitTerm , url)
-     }
-     else {
-         println "The term "+ncitTerm+" does not exists in ncit hence not synced"
-     }
-    
-      
-    
+    performSync(ncitTerm, url);
       
     }
     
-
+    
     
     def outputFile = new File(outputDir)
     File sqlFile = new File(outputFile, "queries.sql")
@@ -252,6 +251,29 @@ public class SyncDiseasesFromNCIt{
     writer.write fileContents.toString()
     writer.flush();
     writer.close();
+   sql.executeUpdate(fileContents.toString());
+   
+   fileContents = new StringBuffer("BEGIN;");
+   
+   ctrpTerms = null
+   
+   //sync terms that does not have parent and childs and at the rool level as a result of sync
+   ctrpTerms = sql.rows("select nt_term_identifier from pdq_disease where nt_term_identifier in ("
+   +" select distinct(nt_term_identifier) from pdq_disease where nt_term_identifier not in "
+   +" (select distinct nt_term_identifier from pdq_disease, study_disease "
+   +" where study_disease.disease_identifier = pdq_disease.identifier and nt_term_identifier is not null order by nt_term_identifier) "
+   +" ) and identifier not in (select parent_disease_identifier from pdq_disease_parent) "
+   +" and identifier not in(select disease_identifier from pdq_disease_parent)");
+
+  println "-- Syncing additional ${ctrpTerms.size()} CTRP Disease terms from NCIt..."
+
+   ctrpTerms.each (){
+       ncitTerm= it.nt_term_identifier;
+       performSync(ncitTerm, url);
+       
+   }
+   
+   fileContents.append(";COMMIT;")
    sql.executeUpdate(fileContents.toString());
     
   }
