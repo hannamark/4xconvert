@@ -376,7 +376,8 @@ public class UpdateProprietaryTrialAction extends AbstractBaseProprietaryTrialAc
                                     prevps.getRecruitmentStatus()).name(),
                             prevDt, 
                             CodedEnumHelper.getByClassAndCode(RecruitmentStatusCode.class, 
-                                    currps.getRecruitmentStatus()).name());
+                                    currps.getRecruitmentStatus()).name(),
+                            currDt);
                 } catch (PAException e) {
                     addFieldError("participatingsite.recStatus" + i, 
                             "Error validating participating site recruitment status transition, " + e.getMessage());

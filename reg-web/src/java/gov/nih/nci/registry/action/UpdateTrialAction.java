@@ -649,7 +649,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                                 prevps.getRecruitmentStatus()).name(),
                         prevDt, 
                         CodedEnumHelper.getByClassAndCode(RecruitmentStatusCode.class, 
-                                currps.getRecruitmentStatus()).name());
+                                currps.getRecruitmentStatus()).name(),
+                        currDt);
                 if (statusDtos.get(0).hasErrorOfType(ErrorType.ERROR)) {
                     
                     String errMsg = String.format(STATUS_CHANGE_ERR_MSG, 

@@ -1065,7 +1065,8 @@ public class MockServiceLocator implements ServiceLocator {
         try {
             when(statusTransitionService.validateStatusTransition(
                     any(AppName.class), any(TrialType.class), any(TransitionFor.class),
-                    anyString() , any(Date.class), anyString())).thenAnswer(new Answer<List<StatusDto>>() {
+                    anyString() , any(Date.class), anyString(), any(Date.class)
+                    )).thenAnswer(new Answer<List<StatusDto>>() {
 
                         @Override
                         public List<StatusDto> answer(InvocationOnMock invocation)

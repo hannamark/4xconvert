@@ -1197,7 +1197,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
 //                  || StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION == newStatus
 //                  || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newStatus 
 //                  || StudyStatusCode.COMPLETE == newStatus) {
-        if (!closeIndustrialTrialStatuses.contains(newTrialStatus.getCode())) return;
+        if (!closeIndustrialTrialStatuses.contains(newTrialStatus.name())) return;
         
         List<ParticipatingSiteDTO> participatingSites = 
                 participatingSiteService.getParticipatingSitesByStudyProtocol(spIi);
@@ -1229,7 +1229,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                         continue;
                     } else {
                         //update pp status
-                        newSSStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
+                        newSSStatusDto.setStatusCode(CdConverter.convertToCd(newTrialStatus));
                     }
             } else if (StudyStatusCode.COMPLETE == newTrialStatus) {
               //update pp status
@@ -1239,7 +1239,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 newSSStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE));
             }
             
-            studySiteAccrualStatusService.createStudySiteAccrualStatus(studySiteAccrualStatusDTO);
+            studySiteAccrualStatusService.createStudySiteAccrualStatus(newSSStatusDto);
             
             //send notification for study site status change
            try {
@@ -1297,16 +1297,16 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             ArrayList tmpBodyParamsLst = new ArrayList(bodyParamsLst);
             tmpBodyParamsLst.add(registryUser.getFirstName());
             tmpBodyParamsLst.add(registryUser.getLastName());
-            bodyParamsLst.add(currDt);
-            bodyParamsLst.add(ssOrg.getName());
-            bodyParamsLst.add(currStatus);
-            bodyParamsLst.add(newStatus);
+            tmpBodyParamsLst.add(currDt);
+            tmpBodyParamsLst.add(ssOrg.getName());
+            tmpBodyParamsLst.add(currStatus);
+            tmpBodyParamsLst.add(newStatus);
             
             Object[] subjParams = {ssOrg.getName(), spDTO.getNciIdentifier() };
         
             mailManagerSerivceLocal.sendNotificationMail(registryUser.getEmailAddress(), 
                     "studysite.statuschange.email.subject", "studysite.statuschange.email.body", 
-                    subjParams, bodyParamsLst.toArray());
+                    subjParams, tmpBodyParamsLst.toArray());
         }
     }
     

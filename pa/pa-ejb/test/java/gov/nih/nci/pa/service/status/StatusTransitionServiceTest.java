@@ -35,7 +35,7 @@ public class StatusTransitionServiceTest extends AbstractEjbTestCase {
         List<StatusDto> statusDtos = statusTransitionServiceBean
                 .validateStatusTransition(AppName.PA, TrialType.ABBREVIATED,
                         TransitionFor.TRIAL_STATUS, "IN_REVIEW", new Date(),
-                        "APPROVED");
+                        "APPROVED", new Date());
 
         assertNotNull(statusDtos);
         assertFalse(statusDtos.isEmpty());
@@ -60,19 +60,19 @@ public class StatusTransitionServiceTest extends AbstractEjbTestCase {
                 statusTransitionServiceBean.validateStatusTransition(
                         AppName.PA, TrialType.COMPLETE,
                         TransitionFor.TRIAL_STATUS, from.name(), yday,
-                        to.name());
+                        to.name(), yday);
                 statusTransitionServiceBean.validateStatusTransition(
                         AppName.PA, TrialType.ABBREVIATED,
                         TransitionFor.TRIAL_STATUS, from.name(), yday,
-                        to.name());
+                        to.name(), yday);
                 statusTransitionServiceBean.validateStatusTransition(
                         AppName.REGISTRATION, TrialType.COMPLETE,
                         TransitionFor.TRIAL_STATUS, from.name(), yday,
-                        to.name());
+                        to.name(), yday);
                 statusTransitionServiceBean.validateStatusTransition(
                         AppName.REGISTRATION, TrialType.ABBREVIATED,
                         TransitionFor.TRIAL_STATUS, from.name(), yday,
-                        to.name());
+                        to.name(), yday);
 
             }
         }
@@ -82,21 +82,21 @@ public class StatusTransitionServiceTest extends AbstractEjbTestCase {
                 statusTransitionServiceBean
                         .validateStatusTransition(AppName.PA,
                                 TrialType.COMPLETE, TransitionFor.SITE_STATUS,
-                                from.name(), yday, to.name());
+                                from.name(), yday, to.name(), yday);
                 statusTransitionServiceBean
                         .validateStatusTransition(AppName.PA,
                                 TrialType.ABBREVIATED,
                                 TransitionFor.SITE_STATUS, from.name(), yday,
-                                to.name());
+                                to.name(), yday);
                 statusTransitionServiceBean
                         .validateStatusTransition(AppName.REGISTRATION,
                                 TrialType.COMPLETE, TransitionFor.SITE_STATUS,
-                                from.name(), yday, to.name());
+                                from.name(), yday, to.name(), yday);
                 statusTransitionServiceBean
                         .validateStatusTransition(AppName.REGISTRATION,
                                 TrialType.ABBREVIATED,
                                 TransitionFor.SITE_STATUS, from.name(), yday,
-                                to.name());
+                                to.name(), yday);
 
             }
         }

@@ -32,11 +32,14 @@ public interface StatusTransitionService {
      *            - from status date
      * @param toStatus
      *            - to status string
+     * @param toStatusDt
+     *            - to status date
      * @return validation results as list of statuses
      * @throws PAException  - Any error
      */
     List<StatusDto> validateStatusTransition(AppName appName, TrialType trialType,
-            TransitionFor transitionFor, String fromStatus, Date fromStatusDt, String toStatus) throws PAException;
+            TransitionFor transitionFor, String fromStatus, Date fromStatusDt, String toStatus, 
+            Date toStatusDt) throws PAException;
 
     /**
      * Validates the list of status history as per the rules in

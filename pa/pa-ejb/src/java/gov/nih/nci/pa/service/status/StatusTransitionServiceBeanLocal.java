@@ -20,7 +20,6 @@ import gov.nih.nci.pa.util.CacheUtils.Closure;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -81,35 +80,69 @@ public class StatusTransitionServiceBeanLocal implements
     @Override
     public List<StatusDto> validateStatusTransition(AppName appName,
             TrialType trialType, TransitionFor transitionFor,
-            String fromStatus, Date fromStatusDt, String toStatus)
+            String fromStatus, Date fromStatusDt, String toStatus, Date toStatusDt)
             throws PAException { //NOPMD
-        if (StringUtils.isBlank(toStatus)) {
-            throw new PAException("Next transition to status is missing");
-        }
+        List<StatusDto> statusDtoList = new ArrayList<StatusDto>();
+        StatusDto statusDto = new StatusDto();
+        statusDto.setStatusCode(toStatus);
+        statusDto.setStatusDate(toStatusDt);
+        statusDtoList.add(statusDto);
+        
         String tmpFromStatus = fromStatus;
         if (StringUtils.isBlank(tmpFromStatus)) {
             tmpFromStatus = STATUSZERO;
         }
-        // if the from status data is null, setting it to today's date
+        // if the from status date is null, setting it to today's date
         Date tmpFromStatusDt = fromStatusDt;
         if (tmpFromStatusDt == null) {
-            tmpFromStatusDt = Calendar.getInstance().getTime();
+            tmpFromStatusDt = statusDto.getStatusDate();
         }
-
         StatusRules statusRules = getStatusRules();
         StatusFor statusFor = getStatusRulesFor(appName, trialType,
                 transitionFor, statusRules);
-        NextStatus nextStatus = getNextStatus(appName, trialType,
-                transitionFor, tmpFromStatus, toStatus, statusFor);
-
-        List<StatusDto> statusDtoList = new ArrayList<StatusDto>();
-        StatusDto statusDto = new StatusDto();
-        statusDto.setStatusCode(toStatus);
-        statusDto.setStatusDate(Calendar.getInstance().getTime());
-        statusDtoList.add(statusDto);
-
-        validateNextStatus(nextStatus, statusDto, tmpFromStatusDt);
+        validateTransition(appName, trialType, transitionFor, statusFor,
+                tmpFromStatus, tmpFromStatusDt, statusDto);
+        
         return statusDtoList;
+    }
+
+    /**
+     * @param appName
+     *            - AppName enum
+     * @param trialType
+     *            - Trial Type enum
+     * @param transitionFor
+     *            - Transition for enum
+     * @param statusFor
+     *            - statusFor instance
+     * @param fromStatus
+     *            - from status string
+     * @param fromStatusDt
+     *            - from status date
+     * @param statusDto
+     *            - StatusDto object representing to status
+     * @throws PAException  - Any error
+     */
+    private void validateTransition(AppName appName,
+            TrialType trialType, TransitionFor transitionFor,
+            StatusFor statusFor,
+            String fromStatus, Date fromStatusDt,
+            StatusDto statusDto)
+            throws PAException {
+        if (StringUtils.isBlank(statusDto.getStatusCode()) || statusDto.getStatusDate() == null) {
+            createValidationError(statusDto, ErrorType.ERROR, 
+                    "Next transition status and/or status date is missing");
+        }
+        
+        if (fromStatusDt.compareTo(statusDto.getStatusDate()) > 0) {
+            createValidationError(statusDto, ErrorType.ERROR, 
+                    "Invalid transition, to status date is before from status date");
+        }
+        
+        NextStatus nextStatus = getNextStatus(appName, trialType,
+                transitionFor, fromStatus, statusDto.getStatusCode(), statusFor);
+
+        validateNextStatus(nextStatus, statusDto, fromStatusDt);
     }
 
     /**
@@ -126,16 +159,13 @@ public class StatusTransitionServiceBeanLocal implements
         StatusFor statusFor = getStatusRulesFor(appName, trialType,
                 transitionFor, statusRules);
         String fromStatus = STATUSZERO;
-        Date fromStatusDt = null;
+        //setting statuszero date to first status date in the list
+        Date fromStatusDt = statusList.get(0).getStatusDate();
         for (StatusDto statusDto : statusList) {
-            fromStatusDt = statusDto.getStatusDate();
-            statusDto.setStatusDate(Calendar.getInstance().getTime());
-            NextStatus nextStatus = getNextStatus(appName, trialType,
-                    transitionFor, fromStatus, statusDto.getStatusCode(),
-                    statusFor);
-            validateNextStatus(nextStatus, statusDto, fromStatusDt);
+            validateTransition(appName, trialType, 
+                    transitionFor, statusFor, fromStatus, fromStatusDt, statusDto);
             fromStatus = statusDto.getStatusCode();
-            statusDto.setStatusDate(fromStatusDt);
+            fromStatusDt = statusDto.getStatusDate();
         }
         return statusList;
     }
@@ -158,7 +188,7 @@ public class StatusTransitionServiceBeanLocal implements
             throw new PAException(
                     String.format(
                             "Unable to find status rules for the transitions from status, %1s, "
-                                    + "to status, %2s, for %3s for the trial type, %4s, in the app, %5s",
+                             + "to status, %2s, for %3s for the trial type, %4s, in the app, %5s",
                             new Object[] {fromStatus, toStatus, transitionFor,
                                     trialType, appName}));
         }
