@@ -322,11 +322,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             return ERROR;
         }
         if (hasActionErrors()) {
-            StringBuffer sb = new StringBuffer();
-            for (String actionErr : getActionErrors()) {
-                sb.append(" - ").append(actionErr);
-            }
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
+            consolidateAndClearActionErrors();
+            return ERROR;
         } else {
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         }
@@ -351,15 +348,24 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             return "error_edit";
         }
         if (hasActionErrors()) {
-            StringBuffer sb = new StringBuffer();
-            for (String actionErr : getActionErrors()) {
-                sb.append(" - ").append(actionErr);
-            }
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
+            consolidateAndClearActionErrors();
+            return "error_edit";
         } else {
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         }
         return ACT_EDIT;
+    }
+
+    /**
+     * Consolidates all action error messages into a single string and sets it as failure message
+     */
+    private void consolidateAndClearActionErrors() {
+        StringBuffer sb = new StringBuffer();
+        for (String actionErr : getActionErrors()) {
+            sb.append(" - ").append(actionErr);
+        }
+        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
+        clearActionErrors();
     }
 
     /**
@@ -421,7 +427,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         boolean spUpdated = isSiteUpdated(studySite, studySiteAccrualStatus);
         if (spUpdated) {
             List<StatusDto> statusDtos = null;
-            boolean isValidTransition = false;
+            boolean isValidTransition = true;
             try {
                 statusDtos = statusTransitionService.validateStatusTransition(
                         AppName.PA, 
@@ -430,19 +436,19 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
                         CdConverter.convertCdToEnum(RecruitmentStatusCode.class, 
                                 studySiteAccrualStatus.getStatusCode()).name(), 
                         studySiteAccrualStatus.getStatusDate().getValue(), 
-                        CdConverter.convertCdToEnum(RecruitmentStatusCode.class, ssas.getStatusCode()).name());
+                        CdConverter.convertCdToEnum(RecruitmentStatusCode.class, ssas.getStatusCode()).name(),
+                        TsConverter.convertToTimestamp(ssas.getStatusDate()));
                 StatusDto dto = statusDtos.get(0);
                 if (dto.hasErrorOfType(ErrorType.ERROR)) {
-                    addActionError("ERRORS:" + dto.getConsolidatedErrorMessage());
+                    addActionError("ERRORS: " + dto.getConsolidatedErrorMessage());
+                    isValidTransition = false;
                 } 
                 if (dto.hasErrorOfType(ErrorType.WARNING)) {
-                    addActionError("WARNINGS:" + dto.getConsolidatedWarningMessage());
-                    isValidTransition = true;
-                } else {
-                    isValidTransition = true;
-                }
+                    addActionError("WARNINGS: " + dto.getConsolidatedWarningMessage());
+                } 
             } catch (PAException e) {
                 addActionError(e.getMessage());
+                isValidTransition = false;
             }
             try {
                 if (isValidTransition) {
@@ -541,26 +547,26 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             ParticipatingOrganizationsTabWebDTO tab, String errorOrgName) throws PAException {
         
         List<StatusDto> statusDtos = null;
-        boolean isValidTransition = false;
+        boolean isValidTransition = true;
         try {
             statusDtos = statusTransitionService.validateStatusTransition(
                     AppName.PA, 
                     spDTO.isProprietaryTrial()? TrialType.ABBREVIATED : TrialType.COMPLETE,
                     TransitionFor.SITE_STATUS, null, null, 
                     CdConverter.convertCdToEnum(RecruitmentStatusCode.class, 
-                            ssas.getStatusCode()).name());
+                            ssas.getStatusCode()).name(),
+                    TsConverter.convertToTimestamp(ssas.getStatusDate()));
             StatusDto dto = statusDtos.get(0);
             if (dto.hasErrorOfType(ErrorType.ERROR)) {
-                addActionError("ERRORS:" + dto.getConsolidatedErrorMessage());
+                addActionError("ERRORS: " + dto.getConsolidatedErrorMessage());
+                isValidTransition = false;
             } 
             if (dto.hasErrorOfType(ErrorType.WARNING)) {
-                addActionError("WARNINGS:" + dto.getConsolidatedWarningMessage());
-                isValidTransition = true;
-            } else {
-                isValidTransition = true;
-            }
+                addActionError("WARNINGS: " + dto.getConsolidatedWarningMessage());
+            } 
         } catch (PAException e) {
             addActionError(e.getMessage());
+            isValidTransition = false;
         }
         if (!isValidTransition) {
             return null;
@@ -888,7 +894,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             try {
                 selectedPersTO = personEntityService.getPerson(EnOnConverter.convertToOrgIi(Long.valueOf(persId)));
             } catch (NullifiedEntityException ne) {
-                addActionError(Constants.FAILURE_MESSAGE + "This person is longer available");
+                addActionError(Constants.FAILURE_MESSAGE + "This person is no longer available");
                 return ERROR_PRIMARY_CONTACTS;
             } catch (NumberFormatException e) {
                 addActionError(Constants.FAILURE_MESSAGE + e.getMessage());

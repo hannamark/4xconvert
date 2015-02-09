@@ -582,7 +582,9 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
                     CdConverter.convertCdToEnum(RecruitmentStatusCode.class, 
                             studySiteAccrualStatus.getStatusCode()).name(), 
                     studySiteAccrualStatus.getStatusDate().getValue(), 
-                    CdConverter.convertCdToEnum(RecruitmentStatusCode.class, ssasDto.getStatusCode()).name());
+                    CdConverter.convertCdToEnum(RecruitmentStatusCode.class, 
+                            ssasDto.getStatusCode()).name(),
+                    TsConverter.convertToTimestamp(ssasDto.getStatusDate()));
             StatusDto dto = statusDtos.get(0);
             if (dto.hasErrorOfType(ErrorType.ERROR)) {
                 addActionError("ERRORS:" + dto.getConsolidatedErrorMessage());
