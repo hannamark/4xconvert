@@ -228,21 +228,6 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         assertEquals(
                 "Status",
                 selenium.getText(
-                        "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[2]/td[1]")
-                        .trim());
-        assertEquals(
-                "",
-                selenium.getText(
-                        "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[2]/td[2]")
-                        .trim());
-        assertEquals(
-                "Temporarily Closed to Accrual",
-                selenium.getText(
-                        "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[2]/td[3]")
-                        .trim());
-        assertEquals(
-                "Status Date",
-                selenium.getText(
                         "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[3]/td[1]")
                         .trim());
         assertEquals(
@@ -251,12 +236,12 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
                         "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[3]/td[2]")
                         .trim());
         assertEquals(
-                today,
+                "Temporarily Closed to Accrual",
                 selenium.getText(
                         "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[3]/td[3]")
                         .trim());
         assertEquals(
-                "Deleted",
+                "Status Date",
                 selenium.getText(
                         "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[4]/td[1]")
                         .trim());
@@ -266,9 +251,24 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
                         "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[4]/td[2]")
                         .trim());
         assertEquals(
-                "false",
+                today,
                 selenium.getText(
                         "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[4]/td[3]")
+                        .trim());
+        assertEquals(
+                "Deleted",
+                selenium.getText(
+                        "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[2]/td[1]")
+                        .trim());
+        assertEquals(
+                "",
+                selenium.getText(
+                        "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[2]/td[2]")
+                        .trim());
+        assertEquals(
+                "false",
+                selenium.getText(
+                        "xpath=//table[@id='audit-trail-table']/tbody/tr[1]/td[4]/table/tbody/tr[2]/td[3]")
                         .trim());
         assertTrue(selenium
                 .isTextPresent("Status: Temporarily Closed to Accrual"));

@@ -112,10 +112,14 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -413,7 +417,7 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
             StringBuilder changes = new StringBuilder();
             changes.append("<table><thead><tr><th>Attribute</th><th>Old Value</th><th>New Value</th>"
                     + "</tr></thead>");
-            for (AuditLogDetail detail : r.getDetails()) {
+            for (AuditLogDetail detail : sort(r.getDetails())) {
                 final String attrName = TRANSLATE_MAP
                         .get(detail.getAttribute());
                 if (attrName != null) {
@@ -437,6 +441,18 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
             data.put(changes);
             arr.put(data);
         }
+    }
+
+    private Collection<AuditLogDetail> sort(Set<AuditLogDetail> details) {
+        TreeSet<AuditLogDetail> sorted = new TreeSet<>(
+                new Comparator<AuditLogDetail>() {
+                    @Override
+                    public int compare(AuditLogDetail o1, AuditLogDetail o2) {                        
+                        return o1.getAttribute().compareTo(o2.getAttribute());
+                    }
+                });
+        sorted.addAll(details);
+        return sorted;
     }
 
     private String adjustAttrValue(String val) {
