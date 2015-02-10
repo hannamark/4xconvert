@@ -220,7 +220,7 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium
-                .isTextPresent("Status Transition Errors were found. Please use the History button to review and make corrections. Trial record cannot be checked-in until all Status Transition Errors have been resolved."));
+                .isTextPresent("Status Transition Errors and Warnings were found. Please use the History button to review and make corrections. Trial record cannot be checked-in until all Status Transition Errors have been resolved."));
         
         // Verify pop-up (Slide 24).
         assertFalse(selenium
