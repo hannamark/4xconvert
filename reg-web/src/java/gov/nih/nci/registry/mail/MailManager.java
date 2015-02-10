@@ -112,6 +112,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class MailManager {
+    private static final int SMTP_TIMEOUT = 120000;
     private static final Logger LOG = Logger.getLogger(MailManager.class);
     private static final Properties REG_PROPERTIES = PaEarPropertyReader.getProperties();
 
@@ -192,6 +193,10 @@ public class MailManager {
     MimeMessage prepareMessage(String mailTo, String subject) throws PAException, MessagingException {
         Properties props = System.getProperties();
         props.put("mail.smtp.host", PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
+        props.put("mail.smtp.port", PaRegistry.getLookUpTableService().getPropertyValue("smtp.port"));
+        props.put("mail.smtp.timeout", SMTP_TIMEOUT);
+        props.put("mail.smtp.connectiontimeout", SMTP_TIMEOUT);
+
         Session session = Session.getDefaultInstance(props, null);
 
         // Define Message

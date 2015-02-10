@@ -96,6 +96,7 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -111,6 +112,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -137,7 +139,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -147,6 +151,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -256,7 +261,7 @@ public class BatchCreateProtocols {
 
     private Ii submitUpdate(StudyProtocolBatchDTO dto, String folderPath, String userName) throws PAException,
             NullifiedRoleException, NullifiedEntityException, URISyntaxException, EntityValidationException,
-            CurationException, IOException {
+            CurationException, IOException, ParseException {
         TrialUtil util = new TrialUtil();
         TrialDTO trialDTO = new TrialDTO();
 
@@ -332,7 +337,7 @@ public class BatchCreateProtocols {
 
     private TrialDTO getTrialDTOForUpdate(StudyProtocolBatchDTO batchDto, String folderPath, Ii studyProtocolIi)
             throws PAException, NullifiedRoleException, NullifiedEntityException, URISyntaxException,
-            EntityValidationException, CurationException, IOException { 
+            EntityValidationException, CurationException, IOException, ParseException { 
 
         TrialDTO trialDTO = new TrialDTO();
         TrialUtil util = new TrialUtil();
@@ -341,8 +346,16 @@ public class BatchCreateProtocols {
         trialDTO.setReason(batchDto.getReasonForStudyStopped());
         trialDTO.setStartDate(batchDto.getStudyStartDate());
         trialDTO.setStartDateType(batchDto.getStudyStartDateType());
-        trialDTO.setStatusCode(batchDto.getCurrentTrialStatus());
-        trialDTO.setStatusDate(batchDto.getCurrentTrialStatusDate());
+       
+        StatusDto status = new StatusDto();
+        status.setStatusDate(DateUtils.parseDate(
+                batchDto.getCurrentTrialStatusDate(), new String[] {
+                        "MM/dd/yyyy", "MM/dd/yy" }));
+        status.setStatusCode(StudyStatusCode.getByCode(batchDto
+                .getCurrentTrialStatus()) != null ? StudyStatusCode.getByCode(
+                batchDto.getCurrentTrialStatus()).name() : null);
+        trialDTO.setStatusHistory(Arrays.asList(status));
+        
         trialDTO.setPrimaryCompletionDate(batchDto.getPrimaryCompletionDate());
         trialDTO.setPrimaryCompletionDateType(batchDto.getPrimaryCompletionDateType());
         
@@ -475,7 +488,7 @@ public class BatchCreateProtocols {
     @SuppressWarnings("deprecation")
     private Ii submitOriginalOrAmendment(StudyProtocolBatchDTO dto, String folderPath, String userName)
             throws NullifiedEntityException, PAException, URISyntaxException, EntityValidationException,
-            CurationException, IOException {
+            CurationException, IOException, ParseException {
         Ii studyProtocolIi = null;
 
         TrialUtil util = new TrialUtil();
@@ -663,8 +676,10 @@ public class BatchCreateProtocols {
         return false;
     }
 
-    private TrialDTO convertToTrialDTO(StudyProtocolBatchDTO batchDTO, String folderPath) throws IOException,
-            NullifiedEntityException, PAException, URISyntaxException, EntityValidationException, CurationException {
+    private TrialDTO convertToTrialDTO(StudyProtocolBatchDTO batchDTO,
+            String folderPath) throws IOException, NullifiedEntityException,
+            PAException, URISyntaxException, EntityValidationException,
+            CurationException, ParseException {
 
         TrialDTO trialDTO = new TrialDTO();
         trialDTO.setPrimaryCompletionDate(batchDTO.getPrimaryCompletionDate());
@@ -680,8 +695,16 @@ public class BatchCreateProtocols {
         trialDTO.setReason(batchDTO.getReasonForStudyStopped());
         trialDTO.setStartDate(batchDTO.getStudyStartDate());
         trialDTO.setStartDateType(batchDTO.getStudyStartDateType());
-        trialDTO.setStatusCode(batchDTO.getCurrentTrialStatus());
-        trialDTO.setStatusDate(batchDTO.getCurrentTrialStatusDate());
+        
+        StatusDto status = new StatusDto();
+        status.setStatusDate(DateUtils.parseDate(
+                batchDTO.getCurrentTrialStatusDate(), new String[] {
+                        "MM/dd/yyyy", "MM/dd/yy" }));
+        status.setStatusCode(StudyStatusCode.getByCode(batchDTO
+                .getCurrentTrialStatus()) != null ? StudyStatusCode.getByCode(
+                batchDTO.getCurrentTrialStatus()).name() : null);
+        trialDTO.setStatusHistory(Arrays.asList(status));
+        
         trialDTO.setSummaryFourFundingCategoryCode(batchDTO.getSumm4FundingCat());
 
         trialDTO.setTrialType(batchDTO.getTrialType());

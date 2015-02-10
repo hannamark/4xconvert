@@ -28,6 +28,7 @@ public class MockLookUpTableService implements LookUpTableServiceRemote {
     static {
         map = new HashMap<String, String>();
         map.put("smtp", "mailfwd.nih.gov");
+        map.put("smtp.port", "25");
         map.put("fromaddress", FROM_ADDRESS);
         map.put("allowed.uploadfile.types", "doc");
         map.put("user.account.subject", "Junit user account subject");

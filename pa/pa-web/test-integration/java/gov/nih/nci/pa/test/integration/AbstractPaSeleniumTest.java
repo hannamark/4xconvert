@@ -699,6 +699,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
 
     }
+    
+    protected void deleteTrialDocuments(TrialInfo info) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        runner.update(connection,
+                "delete from document where study_protocol_identifier="
+                        + info.id);
+    }
 
     /**
      * @param info
@@ -1086,6 +1093,23 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + loID + "'", new ArrayHandler())[0];
     }
     
+    protected Number waitForTrialToRegister(String loID, int seconds)
+            throws SQLException {
+        long stamp = System.currentTimeMillis();
+        do {
+            try {
+                return getTrialIdByLeadOrgID(loID);
+            } catch (Exception e) {
+            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+            }
+        } while (System.currentTimeMillis() - stamp < seconds * 1000);
+        return null;
+    }
+    
+    
     protected TrialInfo acceptTrialByNciId(String nciID, String leadOrgID)
             throws SQLException {
         TrialInfo info = new TrialInfo();
@@ -1135,6 +1159,16 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + " and identifier_name='NCI study protocol entity identifier'"
                                 + " order by study_protocol_id desc LIMIT 1",
                         new ArrayHandler())[0];
+    }
+    
+    protected void changeNciId(String from, String to) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        runner.update(
+                connection,
+                "update study_otheridentifiers set extension='"
+                        + to
+                        + "' where root='2.16.840.1.113883.3.26.4.3' and extension='"
+                        + from + "'");
     }
 
     protected void deactivateTrialByNctId(String nctID) throws SQLException {

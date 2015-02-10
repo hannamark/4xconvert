@@ -15,7 +15,7 @@ import org.openqa.selenium.By;
 @SuppressWarnings("deprecation")
 public class AddSitesTest extends AbstractRegistrySeleniumTest {
 
-    private static final int WAIT_FOR_ELEMENT_TIMEOUT = 30;
+    private static final int WAIT_FOR_ELEMENT_TIMEOUT = 60;
 
    
     @Test

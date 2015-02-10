@@ -95,6 +95,7 @@
 	<classpathentry kind="var" path="PA_LIB/test/slf4j-api-1.6.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/slf4j-log4j12-1.6.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-junit/junit-4.8.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/test/dumbster-1.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/jboss-jaxrs-api_1.1_spec-1.0.1.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxrs-2.3.7.Final.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/resteasy-jaxb-provider-2.3.7.Final.jar"/>
