@@ -143,6 +143,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -347,7 +348,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             ScopedRole sr = (ScopedRole) correlation;
             sr.setScoper(dup);
             activateRoleStatusByDupStatus(dup, correlation);
-            if (isChangeConflicting(correlation)) {
+            if (hasValidationErrors(correlation)) {
                 changes.addAll(mergeOrganizationHelper.handleConflictingScopedRoleCorrelation(org,
                         correlation));
             } else {
@@ -370,7 +371,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
                 activateRoleStatusByDupStatus(dup, correlation);
             }
 
-            if (isChangeConflicting(correlation)) {
+            if (hasValidationErrors(correlation)) {
                 changes.addAll(mergeOrganizationHelper.handleConflictingPlayedRoleCorrelation(org,
                         correlation));
             } else {
@@ -434,7 +435,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
      * @param correlation
      * @return
      */
-    private boolean isChangeConflicting(Correlation correlation) {
+    private boolean hasValidationErrors(Correlation correlation) {
         GenericStructrualRoleServiceLocal serviceForRole = getServiceForRole(correlation.getClass());
         // validate()'s behavior ensures that all keys are unique
         Map<String, String[]> correlationErrorMsgs = serviceForRole.validate(correlation);
@@ -444,7 +445,12 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
             for (String key : correlationErrorMsgs.keySet()) {
                 for (String error : correlationErrorMsgs.get(key)) {
                     if (UsOrCanadaPhoneHelper.getPhoneFormatErrorMessage().equals(error)) {
-                        throw new CurateEntityValidationException(correlationErrorMsgs);
+                        LOG.error("Validation errors found in "
+                                + ToStringBuilder
+                                        .reflectionToString(correlation));
+                        LOG.error(correlationErrorMsgs);
+                        throw new CurateEntityValidationException(
+                                correlationErrorMsgs);
                     }
                 }
             }
@@ -464,6 +470,12 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         if (dup.getStatusCode() == EntityStatus.ACTIVE && correlation.getStatus() == RoleStatus.PENDING
                 && isCtepRole(correlation)) {
             correlation.setStatus(RoleStatus.ACTIVE);
+            // PO-8540: if activation of this role leads to a role validation
+            // problem, we can't proceed with
+            // the activation and must keep the role in Pending state.
+            if (hasValidationErrors(correlation)) {
+                correlation.setStatus(RoleStatus.PENDING);
+            }
         }
         // PO-5432: When an Organization is being nullified and merged into a
         // different Organization that is

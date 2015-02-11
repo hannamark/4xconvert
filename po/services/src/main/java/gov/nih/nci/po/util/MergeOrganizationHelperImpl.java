@@ -259,10 +259,14 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
         } else if (correlation instanceof ResearchOrganization) {
             ResearchOrganization survivingRole = uniqueResearchOrganizationValidator
                     .getConflictingRole((ResearchOrganization) correlation);
-            copyOverResearchOrgRoleData(survivingRole, (ResearchOrganization) correlation);
-            ((ResearchOrganization) correlation).setDuplicateOf(survivingRole);
-            changes.add(survivingRole);
-            nullifyAndSetPlayer(org, correlation);
+            if (survivingRole != null) {
+                copyOverResearchOrgRoleData(survivingRole,
+                        (ResearchOrganization) correlation);
+                ((ResearchOrganization) correlation)
+                        .setDuplicateOf(survivingRole);
+                changes.add(survivingRole);
+                nullifyAndSetPlayer(org, correlation);
+            }
         } else {
             throw new IllegalArgumentException("Invalid correlation: " + correlation);
         }
