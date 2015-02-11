@@ -208,6 +208,8 @@ th {
                        	    	d.statusId = auditedStatusId;
                        	    }
                          }
+                     }).on('draw', function() {
+                    	 $("td.dataTables_empty").removeClass( "dataTables_empty" );
                      });
                      
                      $( "#audit-trail" ).dialog({

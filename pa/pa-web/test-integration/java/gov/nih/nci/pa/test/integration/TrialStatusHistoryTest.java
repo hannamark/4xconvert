@@ -22,18 +22,28 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testHistory() throws SQLException {
-        TrialInfo trial = createAcceptedTrial();
-        loginAsAdminAbstractor();
-        searchAndSelectTrial(trial.title);
-        checkOutTrialAsAdminAbstractor();
-        clickAndWait("link=Trial Status");
+    public void testEmptyAuditLogHandledProperly_PO8663() throws SQLException {
+        createTrialAndAccessStatusPage();
 
-        // Verify History button
-        selenium.click("xpath=//span[normalize-space(text())='History']");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("row_info", 15);
+        // This trial was created via direct DB calls. Trial Status record has
+        // no audit log info.
+        // Verify never ending spinner fixed.
+        selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[5]/a/img[@alt='Audit trail icon']");
+        waitForElementById("audit-trail", 5);
+        waitForElementToBecomeAvailable(
+                By.xpath("//td[normalize-space(text())='No data available in table']"),
+                10);
+        pause(5000);
+        assertTrue(selenium.isTextPresent("No data available in table"));
+        assertFalse(selenium
+                .isElementPresent("xpath=//td[@class='dataTables_empty']"));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testHistory() throws SQLException {
+        TrialInfo trial = createTrialAndAccessStatusPage();
 
         // Validation should have run upon entry
         assertTrue(selenium
@@ -168,6 +178,25 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         verifyDeletedStatusRow(1, today, "Temporarily Closed to Accrual",
                 "Delete Test", "Trial on hold");
 
+    }
+
+    /**
+     * @return
+     * @throws SQLException
+     */
+    private TrialInfo createTrialAndAccessStatusPage() throws SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsAdminAbstractor();
+        searchAndSelectTrial(trial.title);
+        checkOutTrialAsAdminAbstractor();
+        clickAndWait("link=Trial Status");
+
+        // Verify History button
+        selenium.click("xpath=//span[normalize-space(text())='History']");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("row_info", 15);
+        return trial;
     }
 
     /**
@@ -376,7 +405,7 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
                     By.xpath("//div[@class='ui-tooltip-content' and normalize-space(text())='Why study stopped: "
                             + whyStopped + "']"), 5);
         }
-        
+
         // Audit Log
         selenium.click("xpath=//table[@id='del']/tbody/tr[" + row
                 + "]/td[6]/a/img[@alt='Audit trail icon']");
