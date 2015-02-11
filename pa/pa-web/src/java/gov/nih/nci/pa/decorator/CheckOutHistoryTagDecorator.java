@@ -18,7 +18,8 @@ public class CheckOutHistoryTagDecorator extends TableDecorator {
      */
     public String getCheckOutDate() {
         StudyCheckout row = (StudyCheckout) getCurrentRowObject();
-        return fdf.format(row.getCheckOutDate());
+        return String.format("<!--%s-->", row.getCheckOutDate().toString())
+                + fdf.format(row.getCheckOutDate());
     }
 
     /**
@@ -45,7 +46,8 @@ public class CheckOutHistoryTagDecorator extends TableDecorator {
         if (row.getCheckInDate() == null) {
             return null;
         }
-        return fdf.format(row.getCheckInDate());
+        return String.format("<!--%s-->", row.getCheckInDate().toString())
+                + fdf.format(row.getCheckInDate());
     }
 
     /**

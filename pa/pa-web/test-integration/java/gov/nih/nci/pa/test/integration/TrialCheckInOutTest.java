@@ -1,12 +1,38 @@
 package gov.nih.nci.pa.test.integration;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 /**
  *
  * @author Reshma Koganti
  */
 public class TrialCheckInOutTest extends AbstractPaSeleniumTest {
+    
+    @Test
+    public void testSorting() throws Exception {        
+        TrialInfo trial = createSubmittedTrial();
+        createStudyCheckout(trial, DateUtils.parseDate("02/02/2013", new String[] {"MM/dd/yyyy"}));
+        createStudyCheckout(trial, DateUtils.parseDate("01/01/2014", new String[] {"MM/dd/yyyy"}));
+        createStudyCheckout(trial, DateUtils.parseDate("03/03/2015", new String[] {"MM/dd/yyyy"}));
+        
+        loginAsAdminAbstractor();
+        searchAndSelectTrial(trial.title);
+        clickAndWait("link=Check-Out History");
+        
+        clickAndWait("link=Check-In Time");        
+        assertEquals("02/02/2013 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
+        assertEquals("01/01/2014 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[4]"));
+        assertEquals("03/03/2015 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[4]"));
+        
+        clickAndWait("link=Check-Out Time");        
+        assertEquals("02/02/2013 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
+        assertEquals("01/01/2014 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[2]"));
+        assertEquals("03/03/2015 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[2]"));
+
+        
+    }
+    
     @Test
     public void testAdminCheckIn() throws Exception {
         logoutUser();

@@ -742,6 +742,25 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         "select identifier from study_inbox order by identifier desc limit 1",
                         new ArrayHandler())[0];
     }
+    
+    protected Number createStudyCheckout(TrialInfo trial, Date date)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "INSERT INTO study_checkout(identifier, study_protocol_identifier, user_identifier, checkout_type, checkout_date, checkin_date)"
+                + " VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), "
+                + trial.id
+                + ",'"
+                + trial.csmUserID
+                + "', 'ADMINISTRATIVE', '"
+                + new Timestamp(date.getTime())
+                + "', '"
+                + new Timestamp(date.getTime()) + "')";
+        runner.update(connection, sql);
+        return (Number) runner
+                .query(connection,
+                        "select identifier from study_checkout order by identifier desc limit 1",
+                        new ArrayHandler())[0];
+    }
 
     protected void makeAdminPerformed(Number studyInboxID, Number csmUserID)
             throws SQLException {

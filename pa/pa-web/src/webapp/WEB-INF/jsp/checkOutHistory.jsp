@@ -22,11 +22,11 @@
                                     decorator="gov.nih.nci.pa.decorator.CheckOutHistoryTagDecorator">
                                 <display:column escapeXml="true" property="checkOutType" sortable="true"
                                                 titleKey="checkOutHistory.checkOutType" headerClass="sortable" />
-                                <display:column escapeXml="true" property="checkOutDate" sortable="true"
+                                <display:column escapeXml="false" property="checkOutDate" sortable="true"
                                                 titleKey="checkOutHistory.checkOutDate" headerClass="sortable" />
                                 <display:column escapeXml="true" property="userIdentifier" sortable="true"
                                                 titleKey="checkOutHistory.userIdentifier" headerClass="sortable" />
-                                <display:column escapeXml="true" property="checkInDate" sortable="true"
+                                <display:column escapeXml="false" property="checkInDate" sortable="true"
                                                 titleKey="checkOutHistory.checkInDate" headerClass="sortable" />
                                 <display:column escapeXml="true" property="checkInUserIdentifier" sortable="true"
                                                 titleKey="checkOutHistory.checkInUserIdentifier" headerClass="sortable" />

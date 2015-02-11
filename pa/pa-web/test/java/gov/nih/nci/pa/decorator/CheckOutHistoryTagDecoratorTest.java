@@ -27,7 +27,7 @@ public class CheckOutHistoryTagDecoratorTest extends AbstractPaActionTest {
         StudyCheckout row = new StudyCheckout();
         row.setCheckOutDate(new Timestamp(112, 0, 31, 13, 59, 30, 0));
         td.initRow(row, 1, 1);
-        assertEquals("01/31/2012 13:59", td.getCheckOutDate());
+        assertEquals("<!--2012-01-31 13:59:30.0-->01/31/2012 13:59", td.getCheckOutDate());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class CheckOutHistoryTagDecoratorTest extends AbstractPaActionTest {
         td.initRow(row, 1, 1);
         assertNull(td.getCheckInDate());
         row.setCheckInDate(new Timestamp(112, 0, 31, 13, 59, 30, 0));
-        assertEquals("01/31/2012 13:59", td.getCheckInDate());
+        assertEquals("<!--2012-01-31 13:59:30.0-->01/31/2012 13:59", td.getCheckInDate());
     }
 
     @Test
