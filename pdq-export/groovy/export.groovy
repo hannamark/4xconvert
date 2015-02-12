@@ -165,7 +165,7 @@ def collabTrialsSQL = """
             WHEN sp.study_classification_code = 'SAFETY' then 'Safety Study'
         END as classification_code
      from study_protocol sp
-     join study_site sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier and sponsorSs.functional_code = 'SPONSOR'
+     left join study_site sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier and sponsorSs.functional_code = 'SPONSOR'
      inner join document_workflow_status dws on dws.study_protocol_identifier = sp.identifier
         and dws.status_code in ('ABSTRACTED','VERIFICATION_PENDING','ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')
         and dws.identifier=(select max(identifier) from document_workflow_status where document_workflow_status.study_protocol_identifier=sp.identifier)
@@ -178,11 +178,11 @@ def collabTrialsSQL = """
      left outer join study_site dcpSs on dcpSs.study_protocol_identifier = sp.identifier and dcpSs.functional_code = 'IDENTIFIER_ASSIGNER'
         and dcpSs.research_organization_identifier = $dcpRoId
      left outer join study_site leadOrgSs on leadOrgSs.study_protocol_identifier = sp.identifier and leadOrgSs.functional_code = 'LEAD_ORGANIZATION'
-     join research_organization leadOrgRo on leadOrgRo.identifier = leadOrgSs.research_organization_identifier
+     left join research_organization leadOrgRo on leadOrgRo.identifier = leadOrgSs.research_organization_identifier
      left outer join study_resourcing as summary4 on summary4.study_protocol_identifier = sp.identifier and summary4.summ_4_rept_indicator is true
         and summary4.identifier = (select max(identifier) from study_resourcing where study_protocol_identifier = sp.identifier and summ_4_rept_indicator is true)
      left outer join organization as sum4Org on cast(summary4.organization_identifier as integer) = sum4Org.identifier
-     join research_organization sponsorRo on sponsorRo.identifier = sponsorSs.research_organization_identifier
+     left join research_organization sponsorRo on sponsorRo.identifier = sponsorSs.research_organization_identifier
      left outer join study_contact as respPartySc on respPartySc.study_protocol_identifier = sp.identifier and respPartySc.role_code = 'RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR'
      left outer join study_site_contact respPartySponsorContact on
         respPartySponsorContact.study_site_identifier in (select identifier from study_site where study_site.functional_code='RESPONSIBLE_PARTY_SPONSOR' and study_site.study_protocol_identifier=sp.identifier)
@@ -191,7 +191,7 @@ def collabTrialsSQL = """
      left outer join study_regulatory_authority sra on sra.study_protocol_identifier = sp.identifier
      left outer join regulatory_authority ra on ra.identifier = sra.regulatory_authority_identifier
      left outer join country ra_country on ra_country.identifier = ra.country_identifier
-     join study_overall_status sos on sos.study_protocol_identifier = sp.identifier
+     inner join study_overall_status sos on sos.study_protocol_identifier = sp.identifier
                    and sos.identifier = (SELECT sos2.identifier FROM study_overall_status sos2 WHERE sos2.study_protocol_identifier = sp.identifier
                                 AND sos2.deleted = false ORDER BY sos2.status_date DESC, sos2.identifier DESC LIMIT 1)
      left outer join study_contact ov_off on ov_off.study_protocol_identifier = sp.identifier and ov_off.role_code = 'STUDY_PRINCIPAL_INVESTIGATOR'
