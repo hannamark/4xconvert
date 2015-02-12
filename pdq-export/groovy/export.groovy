@@ -592,7 +592,7 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
         writer.close();
 		
 		// All looks normal; store in the log table.
-		paConn.executeInsert("INSERT INTO pdq_exports_log (study_protocol_id,nci_id,xml) VALUES (?,?,?)", [
+		sourceConnection.executeInsert("INSERT INTO pdq_exports_log (study_protocol_id,nci_id,xml) VALUES (?,?,?)", [
 			studyProtocolID,
 			spRow.nciId,			
 			trialFile.getText("UTF-8")
