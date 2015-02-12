@@ -180,6 +180,86 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
 
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testSuperAbstractorLogicNoAutoCheckOutIfAlreadyCheckedOut()
+            throws SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsAdminAbstractor();
+        searchAndSelectTrial(trial.title);
+        checkOutTrialAsAdminAbstractor();
+        logoutUser();
+
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
+        clickAndWait("link=Trial Status");
+        openHistory();
+
+        // Adding In Review next to Approved is an error.
+        insertStatus("In Review", today, "", "New status");
+
+        // Verify pop-up (Slide 24).
+        assertFalse(selenium
+                .isVisible("id=displaySuAbstractorAutoCheckoutMessage"));
+        // Close History
+        clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
+        driver.switchTo().defaultContent();
+        
+        clickAndWait("link=Check-Out History");
+        assertEquals("Administrative",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]")
+                        .trim());
+        assertEquals("admin-ci",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[3]")
+                        .trim());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testSuperAbstractorLogic() throws SQLException {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
+        clickAndWait("link=Trial Status");
+        openHistory();
+
+        // Adding In Review next to Approved is an error.
+        // Check-out the trial for Admin abstraction under the SuperAbstractor’s
+        // name, and,
+        insertStatus("In Review", today, "", "New status");
+
+        // Verify pop-up (Slide 24).
+        waitForElementById("displaySuAbstractorAutoCheckoutMessage", 5);
+        assertTrue(selenium
+                .isVisible("id=displaySuAbstractorAutoCheckoutMessage"));
+        assertEquals(
+                "The system has checked-out this trial under your name because Trial Status Transition errors were found. Trial record cannot be checked-in until all Status Transition Errors have been resolved. Please use the Trial Status History button to review and make corrections, or Cancel to dismiss this message.",
+                selenium.getText("id=displaySuAbstractorAutoCheckoutMessage")
+                        .trim());
+        assertEquals(
+                "Trial Status Validation",
+                selenium.getText(
+                        "xpath=//div[@aria-describedby='displaySuAbstractorAutoCheckoutMessage']//span[@class='ui-dialog-title']")
+                        .trim());
+        selenium.click("xpath=//div[@aria-describedby='displaySuAbstractorAutoCheckoutMessage']//button[@title='Close']");
+
+        // Close History
+        clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
+        driver.switchTo().defaultContent();
+
+        // Verify check out
+        clickAndWait("link=Check-Out History");
+        assertEquals("Administrative",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]")
+                        .trim());
+        assertEquals("ctrpsubstractor",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[3]")
+                        .trim());
+        assertTrue(StringUtils.isBlank(selenium
+                .getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]")));
+
+    }
+
     /**
      * @return
      * @throws SQLException
@@ -192,11 +272,18 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Trial Status");
 
         // Verify History button
+        openHistory();
+        return trial;
+    }
+
+    /**
+     * 
+     */
+    private void openHistory() {
         selenium.click("xpath=//span[normalize-space(text())='History']");
         waitForElementById("popupFrame", 15);
         selenium.selectFrame("popupFrame");
         waitForElementById("row_info", 15);
-        return trial;
     }
 
     /**
