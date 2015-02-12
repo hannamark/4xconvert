@@ -14,6 +14,22 @@ println "Using " + props['po.jdbc.url'] + " to connect to PO database"
 def sourceConnection = Sql.newInstance(props['pa.jdbc.url'], props['pa.db.username'],
     props['pa.db.password'], props['pa.jdbc.driver'])
 
+// First, create log table if needed
+sourceConnection.executeUpdate("""
+DROP TABLE IF EXISTS pdq_export_log
+""")
+
+sourceConnection.executeUpdate("""
+create table if not exists pdq_exports_log (
+	study_protocol_id int8,
+	nci_id varchar(32) NOT NULL,	
+	datetime timestamp NOT NULL DEFAULT current_timestamp,
+	xml text NOT NULL,
+    lastchanged_date timestamp,
+	CONSTRAINT study_protocol_id FOREIGN KEY (study_protocol_id) REFERENCES study_protocol(identifier) ON DELETE SET NULL	
+)
+""")
+
 def preLoader = new PoPreLoad();
 
 def crsMap = preLoader.getCrsMap()
@@ -150,8 +166,8 @@ def collabTrialsSQL = """
         END as classification_code
      from study_protocol sp
      join study_site sponsorSs on sponsorSs.study_protocol_identifier = sp.identifier and sponsorSs.functional_code = 'SPONSOR'
-     join document_workflow_status dws on dws.study_protocol_identifier = sp.identifier
-        and dws.status_code in ('ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')
+     inner join document_workflow_status dws on dws.study_protocol_identifier = sp.identifier
+        and dws.status_code in ('ABSTRACTED','VERIFICATION_PENDING','ABSTRACTION_VERIFIED_NORESPONSE', 'ABSTRACTION_VERIFIED_RESPONSE')
         and dws.identifier=(select max(identifier) from document_workflow_status where document_workflow_status.study_protocol_identifier=sp.identifier)
      inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sp.identifier
         and nci_id.root = '2.16.840.1.113883.3.26.4.3'
@@ -187,11 +203,19 @@ def collabTrialsSQL = """
      left outer join primary_purpose pp on sp.primary_purpose_code = pp.name        
      left outer join document_workflow_status as processing_status on processing_status.study_protocol_identifier = sp.identifier
         and processing_status.identifier = (select max(identifier) from document_workflow_status where study_protocol_identifier = sp.identifier)
-     where sp.status_code = 'ACTIVE'  and
-        ((select local_sp_indentifier from study_site where study_site.study_protocol_identifier=sp.identifier and study_site.functional_code = 'IDENTIFIER_ASSIGNER'
-            and study_site.research_organization_identifier = $ctepRoId) is not null OR
-        (select local_sp_indentifier from study_site where study_site.study_protocol_identifier=sp.identifier and study_site.functional_code = 'IDENTIFIER_ASSIGNER'
-            and study_site.research_organization_identifier = $dcpRoId) is not null)
+     where sp.status_code = 'ACTIVE' and (sp.delayed_posting_indicator is null or sp.delayed_posting_indicator != true)
+  
+"""
+
+def getAmendedSQL = """
+  select sp.identifier,
+         nci_id.extension as nciId         
+        from study_protocol sp	     	    
+	     inner join rv_trial_id_nci as nci_id on nci_id.study_protocol_id = sp.identifier    
+	     inner join rv_dwf_current dws on dws.study_protocol_identifier = sp.identifier
+	        and dws.status_code in ('AMENDMENT_SUBMITTED','ACCEPTED','ON_HOLD')        
+	     where sp.status_code = 'ACTIVE'   
+	     and amendment_date is not null and submission_number>=2
 """
 
 def nbOfTrials = 0
@@ -199,7 +223,9 @@ def failedTrials = []
 
 sourceConnection.eachRow(collabTrialsSQL) { spRow ->
     try{
-        def out = new FileOutputStream("temp/" + spRow.nciId +  ".xml")
+		
+		def trialFile = new File("temp/" + spRow.nciId +  ".xml")
+        def out = new FileOutputStream(trialFile)
         def writer = new OutputStreamWriter( out , "UTF-8")
         writer.write """<?xml version="1.0" encoding="UTF-8"?>\n"""
         
@@ -564,12 +590,31 @@ sourceConnection.eachRow(collabTrialsSQL) { spRow ->
         }
         writer.flush();
         writer.close();
+		
+		// All looks normal; store in the log table.
+		paConn.executeInsert("INSERT INTO pdq_exports_log (study_protocol_id,nci_id,xml) VALUES (?,?,?)", [
+			studyProtocolID,
+			spRow.nciId,			
+			trialFile.getText("UTF-8")
+		])
+		
         nbOfTrials++
     }catch(Exception e){
         e.printStackTrace();
         new File("temp/" + spRow.nciId +  ".xml").delete();
         failedTrials.add(spRow.nciId);
     }
+}
+
+
+// Now handle PO-8440: amendments that have not been abstracted yet must include the previous XML file from the log.
+sourceConnection.eachRow(getAmendedSQL) { spRow ->
+	// see if we have a log entry for this trial.
+	def xml = sourceConnection.firstRow("select xml from pdq_exports_log where study_protocol_id=? order by datetime desc LIMIT 1", [spRow.identifier])?.xml
+	if (xml) {
+		def trialFile = new File("temp/" + spRow.nciId +  ".xml")
+		trialFile.setText(xml, "UTF-8")
+	}
 }
 
 void crsDetail(MarkupBuilder xml, Object crsRow) {
