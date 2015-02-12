@@ -27,24 +27,17 @@ def paConn = Sql.newInstance(paJdbcUrl, , resolvedProperties['db.username'],
 
 // First, create log table if needed
 paConn.executeUpdate("""
-create table if not exists pdq_export_log (
+create table if not exists cancer_gov_export_log (
 	study_protocol_id int8,
 	nci_id varchar(32) NOT NULL,
 	nct_id varchar(32) NOT NULL,
 	datetime timestamp NOT NULL DEFAULT current_timestamp,
 	xml text NOT NULL,
+    lastchanged_date timestamp,
 	CONSTRAINT study_protocol_id FOREIGN KEY (study_protocol_id) REFERENCES study_protocol(identifier) ON DELETE SET NULL	
 )
 """
 		)
-
-try {
-	paConn.executeUpdate("""
-alter table pdq_export_log add column lastchanged_date timestamp
-"""
-			)
-} catch (e) {
-}
 
 
 // Cache some PO data...
@@ -634,7 +627,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 	writer.flush();
 	writer.close();
 
-	// PO-8570 kicks in here. If there is a history of Cancer.gov exports of this trial in pdq_export_log table, then we need
+	// PO-8570 kicks in here. If there is a history of Cancer.gov exports of this trial in cancer_gov_export_log table, then we need
 	// to compare this export with a previous one to properly determine lastchanged_date. See JIRA for details.
 	def previousExport = paConn.firstRow(Queries.prevExportXml, [spRow.nctId.toUpperCase()])
 	def previousExportXml = previousExport?.xml
@@ -656,7 +649,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 	validator.validate(new StreamSource(trialFile))
 
 	// All looks normal; store in the log table.
-	paConn.executeInsert("INSERT INTO pdq_export_log (study_protocol_id,nci_id,nct_id,xml,lastchanged_date) VALUES (?,?,?,?,?)", [
+	paConn.executeInsert("INSERT INTO cancer_gov_export_log (study_protocol_id,nci_id,nct_id,xml,lastchanged_date) VALUES (?,?,?,?,?)", [
 		studyProtocolID,
 		spRow.nciId,
 		spRow.nctId.toUpperCase(),
@@ -673,7 +666,7 @@ paConn.eachRow(getTrialsSQL) { spRow ->
 // Now handle PO-8440: amendments that have not been abstracted yet must include the previous XML file from the log.
 paConn.eachRow(getAmendedSQL) { spRow ->
 	// see if we have a log entry for this trial.
-	def xml = paConn.firstRow("select xml from pdq_export_log where study_protocol_id=? order by datetime desc LIMIT 1", [spRow.identifier])?.xml
+	def xml = paConn.firstRow("select xml from cancer_gov_export_log where study_protocol_id=? order by datetime desc LIMIT 1", [spRow.identifier])?.xml
 	if (xml) {
 		def trialFile = new File(outputDir, "${spRow.nctId.toUpperCase()}.xml")
 		trialFile.setText(xml, "UTF-8")

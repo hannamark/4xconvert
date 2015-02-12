@@ -251,6 +251,6 @@ class Queries {
     """
     
 	public static def prevExportXml = """
-        SELECT xml, lastchanged_date from pdq_export_log where nct_id=? order by datetime desc LIMIT 1
+        SELECT xml, lastchanged_date from cancer_gov_export_log where nct_id=? order by datetime desc LIMIT 1
     """
 }
