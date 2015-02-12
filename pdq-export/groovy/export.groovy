@@ -614,6 +614,7 @@ sourceConnection.eachRow(getAmendedSQL) { spRow ->
 	if (xml) {
 		def trialFile = new File("temp/" + spRow.nciId +  ".xml")
 		trialFile.setText(xml, "UTF-8")
+		nbOfTrials++
 	}
 }
 
