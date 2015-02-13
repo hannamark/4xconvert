@@ -438,7 +438,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         grantAccrualAccess("submitter-ci", siteID);
 
         StudySubjects subjects = new ObjectFactory().createStudySubjects();
-        StudySubject subject = createSubject("SU001");
+        StudySubject subject = createSubject("su001");
         subjects.getStudySubject().add(subject);
 
         submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
@@ -459,7 +459,7 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         logoutUser();
 
         StudySubjects subjects = new ObjectFactory().createStudySubjects();
-        StudySubject subject = createSubject("SU001");
+        StudySubject subject = createSubject("Su001");
         subject.setZipCode("99999");
         subjects.getStudySubject().add(subject);
         submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
@@ -802,10 +802,10 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
 
     private void verifySubject(StudySubject ss, long siteID)
             throws SQLException {
-        moveElementIntoView(By.xpath("//a[text()='"+ss.getIdentifier()+"']"));
-        clickAndWait("link=" + ss.getIdentifier());
+        moveElementIntoView(By.xpath("//a[text()='"+ss.getIdentifier().toUpperCase()+"']"));
+        clickAndWait("link=" + ss.getIdentifier().toUpperCase());
         clickAndWait("xpath=//i[@class='fa-pencil']");
-        assertEquals(ss.getIdentifier(), selenium.getValue("id=identifier"));
+        assertEquals(ss.getIdentifier().toUpperCase(), selenium.getValue("id=identifier"));
         assertEquals(DateFormatUtils.format(ss.getBirthDate()
                 .toGregorianCalendar(), "MM/yyyy"),
                 selenium.getValue("id=birthDate"));

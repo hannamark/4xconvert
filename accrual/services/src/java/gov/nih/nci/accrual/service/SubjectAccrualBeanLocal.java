@@ -108,6 +108,7 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.BatchFile;
@@ -164,6 +165,7 @@ import net.sf.ehcache.Status;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -496,17 +498,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         return result;
     }
     
-//    private synchronized Long getNextId(Session session) {
-//        long seq = 0;
-//        if (useTestSeq) {
-//            Random rand = new Random();
-//            seq = rand.nextLong();
-//        } else {
-//            SQLQuery queryObject = session.createSQLQuery("select nextval('hibernate_sequence')");
-//            seq = Long.valueOf(queryObject.uniqueResult().toString());
-//        }
-//        return seq;
-//    }
 
     private Long updateStudySubjectTable(SubjectAccrualDTO dto, Long userId, Long[] ids, Long spId, Long newPatientId) 
             throws PAException {
@@ -526,7 +517,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
        sdto.setPaymentMethodCode(dto.getPaymentMethod());
        sdto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
        sdto.setDateLastUpdated(TsConverter.convertToTs(new Date()));
-       sdto.setAssignedIdentifier(dto.getAssignedIdentifier());
+       sdto.setAssignedIdentifier(upperCase(dto.getAssignedIdentifier()));
        sdto.setUserLastUpdated(StConverter.convertToSt(userId.toString()));
        sdto.setDiseaseIdentifier(dto.getDiseaseIdentifier());
        sdto.setSiteDiseaseIdentifier(dto.getSiteDiseaseIdentifier());
@@ -560,6 +551,12 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
        }
        return result;
     }
+    
+    private St upperCase(St st) {
+        return ISOUtil.isStNull(st) ? st : StConverter.convertToSt(StringUtils
+                .upperCase(StConverter.convertToString(st)));
+    }
+    
     /**
      * {@inheritDoc}
      */

@@ -597,7 +597,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private SubjectAccrualDTO parserSubjectAccrual(String[] line, AccrualSubmissionTypeCode submissionType, 
             List<String> races, Ii studySiteIi, RegistryUser ru, Ii spId, String diseaseCodeSystem) throws PAException {
         SubjectAccrualDTO saDTO = new SubjectAccrualDTO();
-        saDTO.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
+        saDTO.setAssignedIdentifier(StConverter.convertToSt(StringUtils
+                .upperCase(StringUtils
+                        .trim(line[BatchFileIndex.PATIENT_ID_INDEX]))));
         saDTO.setRegistrationDate(
                 TsConverter.convertToTs(BatchUploadUtils.getDate(line[BatchFileIndex.PATIENT_REG_DATE_INDEX])));
         saDTO.setZipCode(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ZIP_INDEX]));

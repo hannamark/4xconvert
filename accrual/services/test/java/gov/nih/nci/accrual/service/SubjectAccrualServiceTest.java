@@ -806,7 +806,11 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     }
     
     private void validateSubjectAccrualDTO(SubjectAccrualDTO expected, SubjectAccrualDTO given) {
-        assertEquals(StConverter.convertToString(expected.getAssignedIdentifier()), StConverter.convertToString(given.getAssignedIdentifier()));
+        assertEquals(
+                StConverter.convertToString(expected.getAssignedIdentifier())
+                        .toUpperCase(),
+                StConverter.convertToString(given.getAssignedIdentifier())
+                        .toUpperCase());
         assertEquals(AccrualUtil.tsToYearMonthString(expected.getBirthDate()), AccrualUtil.tsToYearMonthString(given.getBirthDate()));
         assertEquals(CdConverter.convertCdToString(expected.getGender()), CdConverter.convertCdToString(given.getGender()));
         assertEquals(CdConverter.convertCdToString(expected.getEthnicity()), CdConverter.convertCdToString(given.getEthnicity()));

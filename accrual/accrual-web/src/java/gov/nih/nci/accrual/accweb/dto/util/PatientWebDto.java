@@ -437,7 +437,8 @@ public class PatientWebDto implements Serializable {
      * @param assignedIdentifier the assignedIdentifier to set
      */
     public void setAssignedIdentifier(String assignedIdentifier) {
-        this.assignedIdentifier = assignedIdentifier;
+        this.assignedIdentifier = StringUtils.upperCase(StringUtils
+                .trim(assignedIdentifier));
     }
     /**
      * @return the organizationName
