@@ -130,6 +130,26 @@
                     $('trialDTO.responsiblePersonName').value=chosenname;
                 }
             }
+            
+            function loadLeadOrgDiv() {
+                $("trialDTO.leadOrganizationIdentifier").value = orgid;
+                $('trialDTO.leadOrganizationNameField').innerHTML = chosenname;
+                $('trialDTO.leadOrganizationName').value = chosenname;
+                deleteP30Grants();
+                if( p30GrantSerialNumber){
+                    var  url = '/registry/protected/ajaxManageGrantsActionaddGrant.action';
+                    var params = {
+                        fundingMechanismCode: 'P30',
+                        nciDivisionProgramCode: 'OD',
+                        nihInstitutionCode: 'CA',
+                        serialNumber: p30GrantSerialNumber
+                    };
+                    var div = $('grantdiv');
+                    div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Adding...</div>';
+                    var aj = callAjaxPost(div, url, params);
+                    resetGrantRow();
+                } 
+            }
 
             function loadSponsorDiv() {
                 $("trialDTO.sponsorIdentifier").value = orgid;
