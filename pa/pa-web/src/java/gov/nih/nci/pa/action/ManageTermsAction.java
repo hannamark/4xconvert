@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,10 +59,12 @@ import com.opensymphony.xwork2.Preparable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
+
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity",
         "PMD.ExcessiveMethodLength", "PMD.ExcessiveClassLength" , "PMD.TooManyMethods" ,
         "PMD.SignatureDeclareThrowsException" , "PMD.PreserveStackTrace",
-         "PMD.InefficientEmptyStringCheck", "PMD.AvoidDuplicateLiterals", "PMD.TooManyFields" })
+         "PMD.InefficientEmptyStringCheck", "PMD.AvoidDuplicateLiterals", "PMD.TooManyFields" , 
+         "PMD.NcssMethodCount" })
 public class ManageTermsAction extends ActionSupport implements Preparable {
 
     private static final String ALTNAME_TYPECODE_SYNONYM = "Synonym";
@@ -94,6 +97,9 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
 
     private boolean importTerm = false;
     private String pageDiscriminator;
+    
+    private List<String> newAltnames  = new ArrayList<String>();
+    private List<String> currentAltnames = new ArrayList<String>();
 
     private InputStream ajaxResponseStream;
     
@@ -190,9 +196,26 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 dto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                 dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
                 dto = interventionService.create(dto);
-
-                if (intervention.getAlterNames() != null) {
-                    for (String altName : intervention.getAlterNames()) {
+               
+                if (importTerm) {
+                InterventionWebDTO  interventionWebDTO = 
+                     (InterventionWebDTO) ServletActionContext.getRequest().getSession().getAttribute("intervention");
+               
+                if (interventionWebDTO != null && interventionWebDTO.getAlterNames() != null) {
+                    for (String altName : interventionWebDTO.getAlterNames().keySet()) {
+                        InterventionAlternateNameDTO altDto = new InterventionAlternateNameDTO();
+                        altDto.setName(StConverter.convertToSt(altName));
+                        altDto.setNameTypeCode(StConverter.convertToSt(
+                                interventionWebDTO.getAlterNames().get(altName)));
+                        altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
+                        altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil
+                                .today())));
+                        altDto.setInterventionIdentifier(dto.getIdentifier());
+                        interventionAltNameService.create(altDto);
+                    }
+                }
+                } else {
+                    for (String altName : intervention.getAlterNamesList()) {
                         InterventionAlternateNameDTO altDto = new InterventionAlternateNameDTO();
                         altDto.setName(StConverter.convertToSt(altName));
                         altDto.setNameTypeCode(StConverter.convertToSt(ALTNAME_TYPECODE_SYNONYM));
@@ -203,7 +226,6 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                         interventionAltNameService.create(altDto);
                     }
                 }
-
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
                         "New intervention " + intervention.getNtTermIdentifier() + " added successfully");
             } else {
@@ -243,6 +265,7 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 // Check if the term already exists
                 InterventionDTO existingIntrvDto = getExistingIntervention(intervention.getNtTermIdentifier());
                 if (existingIntrvDto != null) {
+                  
                     currentIntervention = new InterventionWebDTO();
                     currentIntervention.setIdentifier(existingIntrvDto.getPdqTermIdentifier().getValue());
                     currentIntervention.setNtTermIdentifier(existingIntrvDto.getNtTermIdentifier().getValue());
@@ -257,13 +280,35 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                         for (Iterator<InterventionAlternateNameDTO> iterator = altNames.iterator();
                                             iterator.hasNext();) {
                             InterventionAlternateNameDTO interventionAlternateNameDTO = iterator.next();
-                            if (ALTNAME_TYPECODE_SYNONYM.equals(interventionAlternateNameDTO.getNameTypeCode()
-                                    .getValue())) {
-                                currentIntervention.getAlterNames().add(
-                                        interventionAlternateNameDTO.getName().getValue());
-                            }
+                            
+                                currentIntervention.getAlterNames().put(
+                                       interventionAlternateNameDTO.getName().getValue(),
+                                        interventionAlternateNameDTO.getNameTypeCode().getValue());
+                            
 
                         }
+                    }
+                    Map<String, String> newAltNamesMap = intervention.getAlterNames();
+                    newAltnames = new ArrayList<String>();
+                    for (String newAltNameVal :newAltNamesMap.keySet()) {
+                        if (newAltNamesMap.get(newAltNameVal) != null 
+                                && (newAltNamesMap.get(newAltNameVal).equals("CAS Registry name")
+                                 || newAltNamesMap.get(newAltNameVal).equals("NSC number"))) {
+                           continue;
+                        }
+                        newAltnames.add(newAltNameVal);
+                    }
+                    
+                    Map<String, String> currentMap = currentIntervention.getAlterNames();
+                    currentAltnames = new ArrayList<String>();
+                    
+                    for (String currentAltNameVal : currentMap.keySet()) {
+                        if (currentMap.get(currentAltNameVal) != null 
+                                && (currentMap.get(currentAltNameVal).equals("CAS Registry name")
+                                 || currentMap.get(currentAltNameVal).equals("NSC number"))) {
+                            continue;
+                        }
+                        currentAltnames.add(currentAltNameVal);
                     }
                     ServletActionContext.getRequest().getSession().setAttribute("intervention", intervention);
                     ServletActionContext.getRequest().setAttribute(
@@ -321,18 +366,17 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
                 for (Iterator<InterventionAlternateNameDTO> iterator = altNames.iterator(); iterator.hasNext();) {
                     InterventionAlternateNameDTO interventionAlternateNameDTO = (InterventionAlternateNameDTO) iterator
                             .next();
-                    if (ALTNAME_TYPECODE_SYNONYM.equals(interventionAlternateNameDTO.getNameTypeCode().getValue())) {
-                        interventionAltNameService.delete(interventionAlternateNameDTO.getIdentifier());
-                    }
+                       interventionAltNameService.delete(interventionAlternateNameDTO.getIdentifier());
+                    
                 }
             }
 
             // Save new synonyms
             if (intervention.getAlterNames() != null) {
-                for (String altName : intervention.getAlterNames()) {
+                for (String altName : intervention.getAlterNames().keySet()) {
                     InterventionAlternateNameDTO altDto = new InterventionAlternateNameDTO();
                     altDto.setName(StConverter.convertToSt(altName));
-                    altDto.setNameTypeCode(StConverter.convertToSt(ALTNAME_TYPECODE_SYNONYM));
+                    altDto.setNameTypeCode(StConverter.convertToSt(intervention.getAlterNames().get(altName)));
                     altDto.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.ACTIVE));
                     altDto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(PAUtil.today())));
                     altDto.setInterventionIdentifier(currentIntrv.getIdentifier());
@@ -1166,6 +1210,34 @@ public class ManageTermsAction extends ActionSupport implements Preparable {
      */
     public void setPageDiscriminator(String pageDiscriminator) {
         this.pageDiscriminator = pageDiscriminator;
+    }
+
+    /**
+     * @return newAltnames
+     */
+    public List<String> getNewAltnames() {
+        return newAltnames;
+    }
+
+    /**
+     * @param newAltnames newAltnames
+     */
+    public void setNewAltnames(List<String> newAltnames) {
+        this.newAltnames = newAltnames;
+    }
+
+    /**
+     * @return currentAltnames
+     */
+    public List<String> getCurrentAltnames() {
+        return currentAltnames;
+    }
+
+    /**
+     * @param currentAltnames currentAltnames
+     */
+    public void setCurrentAltnames(List<String> currentAltnames) {
+        this.currentAltnames = currentAltnames;
     }
     
     

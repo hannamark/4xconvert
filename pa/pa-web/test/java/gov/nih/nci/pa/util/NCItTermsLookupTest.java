@@ -65,7 +65,7 @@ public class NCItTermsLookupTest {
         assertNotNull(intervention);
         assertEquals("C2810", intervention.getNtTermIdentifier());
         assertEquals("SB-AS02B Adjuvant", intervention.getName());
-        assertTrue(intervention.getAlterNames().isEmpty());
+        assertTrue(!intervention.getAlterNames().values().contains("SY"));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class NCItTermsLookupTest {
         assertEquals("C26446", intervention.getNtTermIdentifier());
         assertEquals("Dendritic Cell-Autologous Lung Tumor Vaccine", intervention.getName());
         assertFalse(intervention.getAlterNames().isEmpty());
-        assertTrue(intervention.getAlterNames().contains("DCVax-Lung"));
+        assertTrue(intervention.getAlterNames().keySet().contains("DCVax-Lung"));
     }
 
     @Test

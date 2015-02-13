@@ -71,10 +71,11 @@ public class NCItTermsLookup {
             aMap.put("AB", "Abbreviation");
             aMap.put("BR", "US brand name");
             aMap.put("FB", "Foreign brand name");
-            aMap.put("NY", "Chemical structure name");
+            aMap.put("SN", "Chemical structure name");
             aMap.put("CN", "Code name");
             aMap.put("NSC_Code", "NSC number");
             aMap.put("CAS_Registry", "CAS Registry name");
+            aMap.put("PT", "Synonym");
             ALTNAMECODEMAP = Collections.unmodifiableMap(aMap);
         }
         
@@ -111,14 +112,20 @@ public class NCItTermsLookup {
     public InterventionWebDTO lookupIntervention(String ncitCode) throws LEXEVSLookupException {
         InterventionWebDTO intrv = null;
         NCItTerm term = retrieveNCItTermViaLexEVS(ncitCode);
+      
+         
         if (term != null) {
+            NCItTerm preferedNameTerm = retrieveNCItDiseaseTermViaLexEVSCTS(ncitCode, false);
+            if (preferedNameTerm != null) {
+                term.preferredName = preferedNameTerm.preferredName;
+            }
             intrv = new InterventionWebDTO();
             intrv.setName(term.preferredName);
             intrv.setNtTermIdentifier(term.ncitCode);
-            List<String> altNames = new ArrayList<String>();
+            Map<String, String> altNames = new HashMap<String, String>();
             for (Iterator<NCItTermAlterName> iterator = term.alterNames.iterator(); iterator.hasNext();) {
                 NCItTermAlterName altName = iterator.next();
-                altNames.add(altName.alterName);
+                altNames.put(altName.alterName, altName.code);
 
             }
             intrv.setAlterNames(altNames);
@@ -298,12 +305,14 @@ public class NCItTermsLookup {
                 ELEMENT_NAME_CLASS);
         Element entity = null;
         for (int i = 0; i < classList.size(); i++) {
-            entity = (Element) classList.get(i);
-            if (entity.getAttribute(ATTR_NAME_NAME).equals("org.LexGrid.concepts.Entity")) {
-                break;
+            
+            Element tempEntity = (Element) classList.get(i);
+          
+            if (tempEntity.getAttribute(ATTR_NAME_NAME).equals("org.LexGrid.concepts.Entity")) {
+                entity = (Element) classList.get(i);
             }
         }
-
+       
         // Parse presentations
         List<Element> fieldList = getChildElementsByName(entity, ELEMENT_NAME_FIELD);
         List<Element> presentations = null;
@@ -318,7 +327,7 @@ public class NCItTermsLookup {
             Element presentation = (Element) presentations.get(j);
             boolean isPrefrred = false;
             List<Element> fields = getChildElementsByName(presentation, ELEMENT_NAME_FIELD);
-            String value = null, type = null;
+            String value = null, type = null, source = null;
             for (int k = 0; k < fields.size(); k++) {
                 if (((Element) fields.get(k)).getAttribute(ATTR_NAME_NAME).equals("_isPreferred")) {
                     if (fields.get(k).getChildNodes().getLength() > 0
@@ -326,6 +335,19 @@ public class NCItTermsLookup {
                             && fields.get(k).getChildNodes().item(0).getNodeValue().equals("true")) {
                         isPrefrred = true;
                     }
+                } else if (((Element) fields.get(k)).getAttribute(ATTR_NAME_NAME).equals("_sourceList")) {
+                    List<Element> elementList = getChildElementsByName(fields.get(k), ELEMENT_NAME_CLASS);
+                    if (elementList != null && elementList.size() > 0) {
+                    List<Element> values = getChildElementsByName(
+                            elementList.get(0), ELEMENT_NAME_FIELD);
+                    for (int l = 0; l < values.size(); l++) {
+                        if (((Element) values.get(l)).getAttribute(ATTR_NAME_NAME).equals("_content") 
+                                && values.get(l).getChildNodes().getLength() > 0
+                                && values.get(l).getChildNodes().item(0).getNodeValue() != null) {
+                            source = values.get(l).getChildNodes().item(0).getNodeValue().trim();
+                        }
+                    }
+                  }  
                 } else if (((Element) fields.get(k)).getAttribute(ATTR_NAME_NAME).equals("_value")) {
                     List<Element> values = getChildElementsByName(
                             getChildElementsByName(fields.get(k), ELEMENT_NAME_CLASS).get(0), ELEMENT_NAME_FIELD);
@@ -346,14 +368,22 @@ public class NCItTermsLookup {
             }
             if (isPrefrred) {
                 term.preferredName = value;
-            } else if (NCItTermAlterName.ALTNAMECODEMAP.containsKey(type)) {
-                term.alterNames.add(new NCItTermAlterName(value, type));
+            } else if (NCItTermAlterName.ALTNAMECODEMAP.containsKey(type) || type == null) {
+                //if code is PT and source is not NCI then only we need to add this as synonym
+               if (type != null && type.equals("PT")) {
+                   if (source != null && !source.equals("NCI")) {
+                       term.alterNames.add(new NCItTermAlterName(value, type)); 
+                   }
+               } else {
+                   term.alterNames.add(new NCItTermAlterName(value, type)); 
+               }
+                
             }
         }
 
         // Parse properties
         List<Element> properties = null;
-        fieldList = getChildElementsByName(termEl, ELEMENT_NAME_FIELD);
+        fieldList = getChildElementsByName(entity, ELEMENT_NAME_FIELD);
         for (int i = 0; i < fieldList.size(); i++) {
             if (((Element) fieldList.get(i)).getAttribute(ATTR_NAME_NAME).equals("_propertyList")) {
                 properties = getChildElementsByName(fieldList.get(i), ELEMENT_NAME_CLASS);
@@ -373,14 +403,16 @@ public class NCItTermsLookup {
                                 .getElementsByTagName(ELEMENT_NAME_FIELD);
                         for (int l = 0; l < values.getLength(); l++) {
                             if (((Element) values.item(l)).getAttribute(ATTR_NAME_NAME).equals("_content") 
-                                    && values.item(l).getNodeValue() != null) {
-                                value = values.item(l).getNodeValue().trim();
+                                    && values.item(l).getChildNodes().getLength() > 0
+                                    && values.item(l).getChildNodes().item(0).getNodeValue() != null) {
+                                value = values.item(l).getChildNodes().item(0).getNodeValue().trim();
                             }
                         }
 
                     } else if (((Element) fields.item(k)).getAttribute(ATTR_NAME_NAME).equals("_propertyName")
-                            && fields.item(k).getNodeValue() != null) {
-                            type = fields.item(k).getNodeValue().trim();
+                            && fields.item(k).getChildNodes().getLength() > 0
+                            && fields.item(k).getChildNodes().item(0).getNodeValue() != null) {
+                            type = fields.item(k).getChildNodes().item(0).getNodeValue().trim();
                     }
 
                 }

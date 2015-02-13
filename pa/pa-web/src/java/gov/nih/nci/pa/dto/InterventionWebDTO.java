@@ -80,7 +80,9 @@ package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -99,7 +101,8 @@ public class InterventionWebDTO implements Serializable {
     private Boolean armAssignment;
     private String ctGovType;
     private String ntTermIdentifier;
-    private List<String> alterNames = new ArrayList<String>();
+    private Map<String, String> alterNames = new HashMap<String, String>();
+    private List<String> alterNamesList = new ArrayList<>();
     
     //DRUG & RADIATION Attributes
 
@@ -455,13 +458,28 @@ public class InterventionWebDTO implements Serializable {
      /**
       * @return the alterNames
       */
-      public List<String> getAlterNames() {
+      public Map<String, String> getAlterNames() {
         return alterNames;
       }
      /**
       * @param alterNames the alterNames to set
       */
-      public void setAlterNames(List<String> alterNames) {
+      public void setAlterNames(Map<String, String> alterNames) {
         this.alterNames = alterNames;
       }
+      
+
+      /**
+       * @return the alterNamesList
+       */  
+    public List<String> getAlterNamesList() {
+        return alterNamesList;
+    }
+    
+    /**
+     * @param alterNamesList the alterNamesList to set
+     */
+    public void setAlterNamesList(List<String> alterNamesList) {
+        this.alterNamesList = alterNamesList;
+    }
 }

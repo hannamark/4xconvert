@@ -1,8 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page import="java.util.ArrayList"%>
 <%@page import="gov.nih.nci.pa.util.ActionUtils"%>
 <%@page import="com.opensymphony.xwork2.ActionContext"%>
 <%@page import="java.util.List"%>
 <%@page import="org.apache.commons.collections.CollectionUtils"%>
+<%@page import="java.util.Map"%>
 <%@page import="gov.nih.nci.pa.action.ManageTermsAction"%>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <c:set var="pagePrefix" value="disclaimer." />
@@ -46,9 +48,17 @@
             <td><s:if test="%{currentIntervention.name != intervention.name}"><font color="red"><strong></s:if><s:property value="currentIntervention.name" /><s:if test="%{currentIntervention.name != intervention.name}"></strong></font></s:if></td>
 			<td><s:property value="intervention.name" /></td>
 		</tr>
-		 <% List<String> newAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("intervention.alterNames");
-            List<String> currentAltnames = (List<String>) ActionContext.getContext().getValueStack().findValue("currentIntervention.alterNames"); 
+		  <% 
+		  List<String> newAltnames  = new ArrayList<String> ();
+		  newAltnames =(List<String>) request.getAttribute("newAltnames");
+		
+		  List<String> currentAltnames = new ArrayList<String> ();
+		  currentAltnames =(List<String>) request.getAttribute("currentAltnames");
+		  
+		 
+             
          %>
+         
 		<tr>
 			<td scope="row" ><label>Synonyms:</label></td>
             <td><%= ActionUtils.generateListDiffStringForManageTerms(currentAltnames, newAltnames ) %></td>

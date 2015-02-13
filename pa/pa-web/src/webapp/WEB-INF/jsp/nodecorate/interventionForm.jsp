@@ -3,6 +3,13 @@
 <html>
 <head>
 <script type="text/javascript">
+    
+      jQuery(function() {
+    	  jQuery("#intervAltNames option[value='CAS Registry name']").remove();
+    	  jQuery("#intervAltNames option[value='NSC number']").remove();
+      });
+
+
 	function saveIntrv() {
 		jQuery('#intervAltNames option').prop('selected', true);
 		document.forms[0].action = "manageTermssaveIntervention.action";
@@ -12,7 +19,7 @@
 	function importIntrv() {
         jQuery('#intervAltNames option').prop('selected', true);
 		document.forms[0].action = "manageTermssaveIntervention.action";
-		document.forms[0].submit();
+	    document.forms[0].submit();
 	}
 
 	/**
@@ -123,10 +130,21 @@
 			<tr>
 			    <td scope="row"><s:if test="%{importTerm}"><label for="intervAltNames">Synonyms
                 </label></td></s:if></td>
-				<td><s:select id="intervAltNames" size="4"
-						name="intervention.alterNames" cssStyle="width:400px"
-						list="intervention.alterNames" multiple="true"
-						readonly="%{importTerm}" /></td>
+				<td>
+				<s:if test="%{importTerm}">
+				<s:select id="intervAltNames" size="4"
+						 cssStyle="width:400px"
+						list="%{intervention.alterNames}" listKey="value" listValue="key"  multiple="true"
+						readonly="%{importTerm}" />
+				</s:if>	
+				<s:if test="%{!importTerm}">
+				        <s:select id="intervAltNames" size="4"
+                         cssStyle="width:400px"
+                      name="intervention.alterNamesList" multiple="true"
+                      list ="intervention.alterNamesList"
+                        readonly="%{importTerm}" />
+				</s:if>	
+						<s:set name="intervention" value="%{intervention}" scope="session" /> </td>
 				<td><s:if test="%{!importTerm}"><s:a href="javascript:void(0)" cssClass="btn"
 						onclick="removeSyn()">
 						<span class="btn_img"><span class="delete">Remove</span></span>

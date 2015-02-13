@@ -284,13 +284,22 @@ public final class ActionUtils {
         Collections.sort(list2);
         for (Iterator<String> iterator = list1.iterator(); iterator.hasNext();) {
             String item = iterator.next();
-            if (!list2.contains(item)) {
-                result.append("<font color='red'><strong>").append(item).append("</strong></font>");                
-            } else {
+            if (list2.contains(item)) {
                 result.append(item);
+                result.append("<br>");
             }
+           
+           
+        }
+        
+        for (Iterator<String> iterator = list1.iterator(); iterator.hasNext();) {
+            String item = iterator.next();
             
-            result.append("<br>");
+            if (!list2.contains(item)) {
+                result.append("<font color='red'><strong>").append(item).append("</strong></font>");   
+                result.append("<br>");
+            } 
+           
         }
         return result.toString();
     }

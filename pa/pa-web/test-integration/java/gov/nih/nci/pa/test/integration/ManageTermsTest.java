@@ -218,7 +218,18 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         assertEquals("C800",selenium.getValue("id=ntTermIdentifier"));
         assertEquals("Radon",selenium.getValue("id=name"));
         assertEquals("",selenium.getValue("id=pdqTermIdentifier"));
-        assertEquals("Rn",selenium.getValue("id=intervAltNames"));
+        
+        boolean flag = false;
+        WebElement dropdown = driver.findElement(By.id("intervAltNames"));
+        Select select = new Select(dropdown);
+        List<WebElement> options = select.getOptions();
+        for (WebElement we : options) {
+            if(we.getText().equals("Rn")){
+                flag = true;
+            }
+        }    
+        assertTrue(flag);
+       // assertTrue(selenium.getValue("id=intervAltNames").contains("Rn"));
         assertEquals("",selenium.getValue("id=typeCode"));
         assertEquals("",selenium.getValue("id=ctTypeCode"));
         

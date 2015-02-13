@@ -8,24 +8,39 @@ public class PDQNCItInterventionMapper{
   def lexEVSRestClient = new RESTClient()
   
   StringBuffer fileContents = new StringBuffer("BEGIN;");
+  
+  def checkItTermsExists(String ncitCode , url) {
+      boolean termExists = false;
+      
+      try{
+       
+      String inverVentionSyncUrl = url+"?query=Entity[@_entityCode=${ncitCode}]";
+      def response =null
+      response = lexEVSRestClient.get(uri: inverVentionSyncUrl)
+      
+      def doc = response.data;
+      def entity = doc.queryResponse.'class'.findAll{ it.@name.text() == "org.LexGrid.concepts.Entity" }.last();
+      termExists = true;
+      }
+      catch(e) {
+          println "Error in checkItTermsExists --->"+e
+      }
+     return termExists; 
+      
+  }
 
   def getInvSynonyms(String ncitCode , url) {
       String inverVentionSyncUrl = url+"?query=Entity[@_entityCode=${ncitCode}]";
       def response =null
-      try{
       response = lexEVSRestClient.get(uri: inverVentionSyncUrl)
-      }
-      catch(Exception e) {
-          return
-      } 
-    if (! response.success || response.status != 200) {
+      if (! response.success || response.status != 200) {
       
       throw new RuntimeException("Failure from LexEVS: " + response.data.text)
     }
 
     def doc = response.data;
-    def entity = doc.queryResponse.'class'.find{ it.@name.text() == "org.LexGrid.concepts.Entity" };
-
+    def entity = doc.queryResponse.'class'.findAll{ it.@name.text() == "org.LexGrid.concepts.Entity" }.last();
+   
     // get name
     String prefName;
     def synonyms = ["Chemical structure name":[],"Lexical variant":[],"IND code":[],"Subtype":[],"Broader":[],"Code name":[],"Foreign brand name":[],"Common usage":[],"Spanish":[],"Obsolete name":[],"Abbreviation":[],"US brand name":[],"Acronym":[],"NSC number":[],"Synonym" :[],"CAS Registry name":[]]
@@ -35,11 +50,21 @@ public class PDQNCItInterventionMapper{
     for (def presentation : presentations) {
       boolean isPreferred = presentation.field.find{ it.@name.text() == "_isPreferred" }.text() == "true";
       def name =  presentation.field.find{ it.@name.text() == "_value" }.'class'.field.find{ it.@name.text() == "_content" && it.text() }.text();
+      def source =  presentation.field.find{ it.@name.text() == "_sourceList" }.'class'.field.find{ it.@name.text() == "_content" && it.text() }.text();
       if (isPreferred){
         prefName = name
       }else {
         def repForm = presentation.field.find{ it.@name.text() == "_representationalForm" }.text()
-        
+       
+        if(repForm=="") {
+            synonyms[" "] = [name];
+        }
+        else if (repForm!=null && repForm.equals("PT")) {
+            if(source !=null && !source.equals("NCI")) {
+                synonyms["Synonym"]+=name
+            }
+        }
+        else {
         switch (repForm){
            
           case 'SY' :   synonyms["Synonym"] += name; break;
@@ -49,11 +74,14 @@ public class PDQNCItInterventionMapper{
           case 'NY' :   synonyms["Chemical structure name"] += name; break;
           case 'CN' :   synonyms["Code name"] += name; break;
         }
+        } 
       }
+        
     }
 
     def properties = entity.field.find{ it.@name.text() == "_propertyList" }.'class';
 
+    
     for (def property : properties) {
       def value =  property.field.find{ it.@name.text() == "_value" }.'class'.field.find{ it.@name.text() == "_content" && it.text() }.text();
       def propName = property.field.find{ it.@name.text() == "_propertyName" }.text()
@@ -62,6 +90,7 @@ public class PDQNCItInterventionMapper{
         case 'CAS_Registry' : synonyms["CAS Registry name"] += value; break
       }
     }
+    
     return [prefName, synonyms]
   }
 
@@ -89,12 +118,13 @@ public class PDQNCItInterventionMapper{
   }
 
   def generateInvSynUpdateSQL(def ncitCode, def synonyms){
+      fileContents.append(" delete from intervention_alternate_name where intervention_identifier = (select min(identifier) from intervention where nt_term_identifier='${ncitCode}');");
     synonyms.each (){ code, vals ->
        
       if(vals){
-        fileContents.append(" delete from intervention_alternate_name where intervention_identifier = (select min(identifier) from intervention where nt_term_identifier='${ncitCode}') and name_type_code='${code}';");
-        vals.each { val -> fileContents.append(" insert into intervention_alternate_name (intervention_identifier, name,status_code, status_date_range_low, ");
-          fileContents.append(" date_last_created, name_type_code) values ((select min(identifier) from intervention where nt_term_identifier='${ncitCode}'), ");
+       
+        vals.each { val -> fileContents.append(" insert into intervention_alternate_name (identifier, intervention_identifier, name,status_code, status_date_range_low, ");
+          fileContents.append(" date_last_created, name_type_code) values ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), (select min(identifier) from intervention where nt_term_identifier='${ncitCode}'), ");
           fileContents.append(" '${val.replaceAll('\'','\'\'')}','ACTIVE',now(),now(),'${code}' );")
           }
       }
@@ -114,25 +144,23 @@ public class PDQNCItInterventionMapper{
          String ncitCode =null;
          def  sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          def ctrpTerms = sql.rows("select distinct(nt_term_identifier) from intervention");
-        
-        ctrpTerms.each (){
-             
+         ctrpTerms.each (){
          ncitCode= it.nt_term_identifier;
-        
          
          if(ncitCode!=null) {
-             
             println "Syncing intervention term "+ncitCode
             String  prefName = getPreferredName(ncitCode,preferredNameUrl)
             if(prefName!=null) {
                 generateInvUpdateSQL(ncitCode,prefName)
             }
-           
             // Get Intervention synonyms
-            def syns
-            syns  = getInvSynonyms(ncitCode ,interventionUrl)
-            generateInvSynUpdateSQL(ncitCode,syns[1])
-             }
+            def termExists = checkItTermsExists(ncitCode ,interventionUrl)
+            if (termExists) {
+                def syns
+                syns  = getInvSynonyms(ncitCode ,interventionUrl)
+                generateInvSynUpdateSQL(ncitCode,syns[1])
+            }
+          }
          }
          def outputFile = new File(outputDir)
          File sqlFile = new File(outputFile, "interventionQueries.sql")
