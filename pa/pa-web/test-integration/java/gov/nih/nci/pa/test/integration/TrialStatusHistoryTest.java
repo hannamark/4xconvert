@@ -224,7 +224,7 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         openHistory();
 
         // Adding In Review next to Approved is an error.
-        // Check-out the trial for Admin abstraction under the SuperAbstractor’s
+        // Check-out the trial for Admin abstraction under the SuperAbstractor's
         // name, and,
         insertStatus("In Review", today, "", "New status");
 
