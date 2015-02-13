@@ -1141,6 +1141,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return info;
 
     }
+    
+    protected TrialInfo acceptTrialByNciIdWithGivenDWS(String nciID, String leadOrgID, String status)
+            throws SQLException {
+        TrialInfo info = new TrialInfo();
+        info.nciID = nciID;
+        info.id = (Long) getTrialIdByLeadOrgID(leadOrgID);
+        info.leadOrgID = leadOrgID;
+        pickUsers(info);
+        addDWS(info, status);
+        addMilestone(info, "SUBMISSION_ACCEPTED");
+        return info;
+
+    }
 
     protected void addDWS(TrialInfo info, String status) throws SQLException {
         QueryRunner runner = new QueryRunner();

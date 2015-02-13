@@ -110,7 +110,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         
         final String nciID = getLastNciId();
         TrialInfo info = createAcceptedTrial(false);
-        acceptTrialByNciId(nciID, info.leadOrgID,  DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.toString());
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,  DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.toString());
         assignTrialOwner("abstractor-ci", info.id);
         
         loginAndAcceptDisclaimer();
