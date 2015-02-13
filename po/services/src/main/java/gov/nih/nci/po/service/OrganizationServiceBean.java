@@ -163,7 +163,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
         "PMD.TooManyMethods" })
 public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<Organization> implements
         OrganizationServiceLocal {
-    private static final String ORDER_BY = " ORDER BY ";
+    private static final String ORDER_BY = " ORDER BY "; 
     private static final String UNCHECKED = "unchecked";
     private MergeOrganizationHelper mergeOrganizationHelper;
     private static final Logger LOG = Logger.getLogger(OrganizationServiceBean.class);
@@ -358,6 +358,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         return changes;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private List<Correlation> mergePlayedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
         List<Correlation> changes = new ArrayList<Correlation>();
         if (correlation instanceof PlayedRole && ((PlayedRole) correlation).getPlayer() instanceof Organization

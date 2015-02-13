@@ -44,6 +44,22 @@ public class UniqueOrganizationalContactPlayerScoperTypeValidator implements
         return isValid(apr, other);
         
     }
+    
+    /**
+     * Returns conflicting {@link AbstractOrganizationalContact} if validation
+     * fails. Otherwise returns null.
+     * 
+     * @param aoc
+     *            role to check for conflicting role
+     * @return AbstractOrganizationalContact if a conflict exists
+     */
+    public AbstractPersonRole getConflictingRole(AbstractPersonRole aoc) {
+        AbstractPersonRole other = findMatches(aoc);
+        if (!isValid(aoc, other)) {
+            return other;
+        }
+        return null;
+    }
 
     private boolean isValid(AbstractPersonRole input, AbstractPersonRole match) {
         return (match == null || match.getId().equals(input.getId()) || match.getPlayer() == null);

@@ -149,6 +149,10 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
     private UniqueOrganizationalContactTitleScoperTypeValidator
        uniqueOrganizationalContactTitleScoperTypeValidator
            = new UniqueOrganizationalContactTitleScoperTypeValidator();
+    
+    private UniqueOrganizationalContactPlayerScoperTypeValidator 
+        uniqueOrganizationalContactPlayerScoperTypeValidator 
+            = new UniqueOrganizationalContactPlayerScoperTypeValidator();
 
     private HibernateHelper hibernateHelper = PoHibernateUtil.getHibernateHelper();
 
@@ -249,13 +253,17 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
         } else if (correlation instanceof IdentifiedOrganization) {
             IdentifiedOrganization survivingRole = (IdentifiedOrganization) uniquePlayerScoperIdentifierValidator
                     .getConflictingRole((AbstractIdentifiedEntity<?>) correlation);
-            ((IdentifiedOrganization) correlation).setDuplicateOf(survivingRole);
-            nullifyAndSetPlayer(org, correlation);
+            if (survivingRole != null) {
+                ((IdentifiedOrganization) correlation).setDuplicateOf(survivingRole);
+                nullifyAndSetPlayer(org, correlation);
+            }
         } else if (correlation instanceof OversightCommittee) {
             OversightCommittee oc = uniqueOversightCommitteeValidator
                     .getConflictingRole((OversightCommittee) correlation);
-            ((OversightCommittee) correlation).setDuplicateOf(oc);
-            nullifyAndSetPlayer(org, correlation);
+            if (oc != null) {
+                ((OversightCommittee) correlation).setDuplicateOf(oc);
+                nullifyAndSetPlayer(org, correlation);
+            }
         } else if (correlation instanceof ResearchOrganization) {
             ResearchOrganization survivingRole = uniqueResearchOrganizationValidator
                     .getConflictingRole((ResearchOrganization) correlation);
@@ -313,25 +321,41 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
         } else if (correlation instanceof HealthCareProvider) {
             HealthCareProvider survivingRole = (HealthCareProvider) uniquePlayerScoperValidator
                     .getConflictingRole((AbstractPersonRole) correlation);
-            copyOverSurvivingPersonRoleData(survivingRole, (AbstractPersonRole) correlation);
-            ((HealthCareProvider) correlation).setDuplicateOf(survivingRole);
-            changes.add(survivingRole);
-            nullifyAndSetScoper(org, correlation);
+            if (survivingRole != null) {
+                copyOverSurvivingPersonRoleData(survivingRole,
+                        (AbstractPersonRole) correlation);
+                ((HealthCareProvider) correlation)
+                        .setDuplicateOf(survivingRole);
+                changes.add(survivingRole);
+                nullifyAndSetScoper(org, correlation);
+            }
         } else if (correlation instanceof OrganizationalContact) {
-            OrganizationalContact survivingRole =
-                (OrganizationalContact) uniqueOrganizationalContactTitleScoperTypeValidator
+            OrganizationalContact survivingRole = (OrganizationalContact) 
+                    uniqueOrganizationalContactTitleScoperTypeValidator 
                     .getConflictingRole((AbstractOrganizationalContact) correlation);
-            copyOverSurvivingPersonRoleData(survivingRole, (AbstractPersonRole) correlation);
-            ((OrganizationalContact) correlation).setDuplicateOf(survivingRole);
-            changes.add(survivingRole);
-            nullifyAndSetScoper(org, correlation);
+            if (survivingRole == null) {
+                survivingRole = (OrganizationalContact) uniqueOrganizationalContactPlayerScoperTypeValidator
+                        .getConflictingRole((AbstractOrganizationalContact) correlation);
+            }
+            if (survivingRole != null) {
+                copyOverSurvivingPersonRoleData(survivingRole,
+                        (AbstractPersonRole) correlation);
+                ((OrganizationalContact) correlation)
+                        .setDuplicateOf(survivingRole);
+                changes.add(survivingRole);
+                nullifyAndSetScoper(org, correlation);
+            }
         } else if (correlation instanceof ClinicalResearchStaff) {
             ClinicalResearchStaff survivingRole = (ClinicalResearchStaff) uniquePlayerScoperValidator
                     .getConflictingRole((AbstractPersonRole) correlation);
-            copyOverSurvivingPersonRoleData(survivingRole, (AbstractPersonRole) correlation);
-            ((ClinicalResearchStaff) correlation).setDuplicateOf(survivingRole);
-            changes.add(survivingRole);
-            nullifyAndSetScoper(org, correlation);
+            if (survivingRole != null) {
+                copyOverSurvivingPersonRoleData(survivingRole,
+                        (AbstractPersonRole) correlation);
+                ((ClinicalResearchStaff) correlation)
+                        .setDuplicateOf(survivingRole);
+                changes.add(survivingRole);
+                nullifyAndSetScoper(org, correlation);
+            }
         } else {
             throw new IllegalArgumentException("Invalid correlation: " + correlation);
         }
