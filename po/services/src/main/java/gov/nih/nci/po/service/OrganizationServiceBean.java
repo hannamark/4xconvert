@@ -358,7 +358,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         return changes;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", UNCHECKED })
     private List<Correlation> mergePlayedRoleCorrelation(Organization org, Organization dup, Correlation correlation) {
         List<Correlation> changes = new ArrayList<Correlation>();
         if (correlation instanceof PlayedRole && ((PlayedRole) correlation).getPlayer() instanceof Organization
@@ -527,7 +527,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public List<OrganizationSearchDTO> search(
             OrganizationSearchCriteria criteria,
@@ -948,7 +948,7 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         return ((Number) query.uniqueResult()).longValue();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings(UNCHECKED)
     @Override
     public List<OrganizationSearchDTO> getInboxOrgs(
             PageSortParams<OrganizationSearchDTO> pageSortParams) {

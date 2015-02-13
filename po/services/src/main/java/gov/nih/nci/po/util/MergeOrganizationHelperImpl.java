@@ -132,7 +132,7 @@ import java.util.Set;
  * @author moweis
  *
  */
-public final class MergeOrganizationHelperImpl implements MergeOrganizationHelper {
+public final class MergeOrganizationHelperImpl implements MergeOrganizationHelper { // NOPMD
 
     private UniquePlayerScoperIdentifierValidator uniquePlayerScoperIdentifierValidator
         = new UniquePlayerScoperIdentifierValidator();
@@ -150,7 +150,7 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
        uniqueOrganizationalContactTitleScoperTypeValidator
            = new UniqueOrganizationalContactTitleScoperTypeValidator();
     
-    private UniqueOrganizationalContactPlayerScoperTypeValidator 
+    private final UniqueOrganizationalContactPlayerScoperTypeValidator 
         uniqueOrganizationalContactPlayerScoperTypeValidator 
             = new UniqueOrganizationalContactPlayerScoperTypeValidator();
 
@@ -240,7 +240,7 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
      * @return returns a list of {@link Correlation} (Structural Roles) that will require curation.
      */
     @SuppressWarnings("serial")
-    public List<Correlation> handleConflictingPlayedRoleCorrelation(Organization org, Correlation correlation) {
+    public List<Correlation> handleConflictingPlayedRoleCorrelation(Organization org, Correlation correlation) { //NOPMD
         List<Correlation> changes = new ArrayList<Correlation>();
         if (correlation instanceof HealthCareFacility) {
             final String errMsg = "Conflict found for Health Care Facility "
@@ -309,7 +309,7 @@ public final class MergeOrganizationHelperImpl implements MergeOrganizationHelpe
      * @param correlation The potentially Going-away Structural Role.
      * @return returns a list of {@link Correlation} (Structural Roles) that will require curation.
      */
-    public List<Correlation> handleConflictingScopedRoleCorrelation(Organization org, Correlation correlation) {
+    public List<Correlation> handleConflictingScopedRoleCorrelation(Organization org, Correlation correlation) { //NOPMD
         List<Correlation> changes = new ArrayList<Correlation>();
         if (correlation instanceof Patient) {
             throw new IllegalArgumentException("Conflict found for Patient " + correlation.getId());
