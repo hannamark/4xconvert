@@ -1,38 +1,231 @@
 package gov.nih.nci.pa.test.integration;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
+import java.sql.SQLException;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
+
 /**
- *
+ * 
  * @author Reshma Koganti
  */
-public class TrialCheckInOutTest extends AbstractPaSeleniumTest {
-    
+public class TrialCheckInOutTest extends AbstractTrialStatusTest {
+
+    @SuppressWarnings("deprecation")
     @Test
-    public void testSorting() throws Exception {        
+    public void testCheckInPreventedIfStatusErrorsForAdminAbstractor()
+            throws Exception {
+        final String user = "admin-ci";
+        testCheckInPreventedIfStatusErrors(user);
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testCheckInPreventedIfStatusErrorsForSuperAbstractor()
+            throws Exception {
+        final String user = "ctrpsubstractor";
+        testCheckInPreventedIfStatusErrors(user);
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testScientificCheckInWhenStatusErrors() throws Exception {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsScientificAbstractor();
+        searchAndSelectTrial(trial.title);
+        checkOutTrialAsScientificAbstractor();
+        addSOS(trial, "IN_REVIEW");
+        clickAndWait("link=Trial Identification");
+
+        // Checking In should be prevented
+        selenium.click("link=Scientific Check In");
+        // Verify pop-up (Slide 52).
+        waitForElementById("pickSuperAbstractor", 5);
+        assertTrue(selenium.isVisible("pickSuperAbstractor"));
+        assertTrue(selenium
+                .getText("pickSuperAbstractor")
+                .replaceAll("\\s+", " ")
+                .trim()
+                .contains(
+                        "Status Transition Errors were found. Please select a Super Abstractor from the list below, then click Proceed with Check-in. The system will: Check the trial in for Scientific Abstraction, Check-out the trial to the selected Super Abstractor for Admin Abstraction, Send an email to the Super Abstractor to correct the errors found. Super Abstractor:"));
+
+        assertEquals("Trial Status Validation",
+                selenium.getText("ui-dialog-title-pickSuperAbstractor").trim());
+
+        // Close the dialog and make sure it's gone.
+        selenium.click("xpath=//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Cancel']");
+        assertFalse(selenium.isVisible("pickSuperAbstractor"));
+
+        // Bring the dialog back again
+        selenium.click("link=Scientific Check In");
+        clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Proceed with Check-in']");
+
+    }
+
+    /**
+     * @param user
+     * @throws SQLException
+     */
+    private void testCheckInPreventedIfStatusErrors(final String user)
+            throws SQLException {
+        TrialInfo trial = createTrialAndAccessStatusPage(user);
+
+        // Adding In Review next to Approved is an error.
+        // Check-out the trial for Admin abstraction under the SuperAbstractor's
+        // name, and,
+        insertStatus("In Review", today, "", "New status");
+        // Close History
+        clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
+        driver.switchTo().defaultContent();
+        clickAndWait("id=trialSearchMenuOption");
+        searchAndSelectTrial(trial.title);
+
+        // Checking In should be prevented
+        selenium.click("link=Admin Check In");
+        verifyTransitionErrorsPopUp();
+
+        // Bring the dialog back again
+        selenium.click("link=Admin Check In");
+        clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-transitionErrors']//button//span[text()='Trial Status History']");
+        assertEquals("Trial Status", driver.getTitle());
+    }
+
+    /**
+     * 
+     */
+    private void verifyTransitionErrorsPopUp() {
+        // Verify pop-up (Slide 27).
+        waitForElementById("transitionErrors", 5);
+        assertTrue(selenium.isVisible("id=transitionErrors"));
+        assertEquals(
+                "Status Transition Errors were found. Trial record cannot be checked-in until all Status Transition Errors have been resolved. Please use the Trial Status History button to review and make corrections.",
+                selenium.getText("transitionErrors").trim());
+        assertEquals("Trial Status Validation",
+                selenium.getText("ui-dialog-title-transitionErrors").trim());
+
+        // Close the dialog and make sure it's gone.
+        selenium.click("xpath=//div[@aria-labelledby='ui-dialog-title-transitionErrors']//button//span[text()='Cancel']");
+        assertFalse(selenium.isVisible("id=transitionErrors"));
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testCheckInWarningFunctionalityForAdminAbstractor()
+            throws Exception {
+        final String user = "admin-ci";
+        testCheckInWarningFunctionalityAsUser(user);
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testCheckInWarningFunctionalityForSuperAbstractor()
+            throws Exception {
+        final String user = "ctrpsubstractor";
+        testCheckInWarningFunctionalityAsUser(user);
+
+    }
+
+    /**
+     * @param user
+     * @throws SQLException
+     */
+    private void testCheckInWarningFunctionalityAsUser(final String user)
+            throws SQLException {
+        TrialInfo trial = createTrialAndAccessStatusPage(user);
+
+        // Adding In Review next to Approved is an error.
+        // Check-out the trial for Admin abstraction under the SuperAbstractor's
+        // name, and,
+        insertStatus("Temporarily Closed to Accrual", today,
+                "Temporarily Closed to Accrual", "New status");
+        // Close History
+        clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
+        driver.switchTo().defaultContent();
+        clickAndWait("id=trialSearchMenuOption");
+        searchAndSelectTrial(trial.title);
+
+        // Checking In should be prevented
+        final String checkInOption = "Admin Check In";
+        verifyCheckInWarningDialog(checkInOption);
+
+        // proceed with check in
+        selenium.click("link=Admin Check In");
+        selenium.click("xpath=//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Proceed with Check-in']");
+        assertFalse(selenium.isVisible("id=transitionWarnings"));
+        assertTrue(selenium.isElementPresent("comment-dialog"));
+        selenium.type("comments", "Test admin check in comments");
+        clickAndWait("xpath=//div[@id='comment-dialog']//button[text()='Ok']");
+
+        // Verify check out
+        clickAndWait("link=Check-Out History");
+        assertEquals("Administrative",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]")
+                        .trim());
+        assertEquals(user,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[5]")
+                        .trim());
+    }
+
+    /**
+     * @param checkInOption
+     */
+    private void verifyCheckInWarningDialog(final String checkInOption) {
+        selenium.click("link=" + checkInOption);
+        // Verify pop-up (Slide 29).
+        waitForElementById("transitionWarnings", 5);
+        assertTrue(selenium.isVisible("id=transitionWarnings"));
+        assertEquals(
+                "Status Transition Warnings were found. Use the Trial Status History button to review and make corrections, or select Proceed with Check-in.",
+                selenium.getText("transitionWarnings").trim());
+        assertEquals("Trial Status Validation",
+                selenium.getText("ui-dialog-title-transitionWarnings").trim());
+
+        // Close the dialog and make sure it's gone.
+        selenium.click("xpath=//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Cancel']");
+        assertFalse(selenium.isVisible("id=transitionWarnings"));
+
+        // Bring the dialog back again
+        selenium.click("link=" + checkInOption);
+        clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Trial Status History']");
+        assertEquals("Trial Status", driver.getTitle());
+        clickAndWait("link=Trial Identification");
+    }
+
+    @Test
+    public void testSorting() throws Exception {
         TrialInfo trial = createSubmittedTrial();
-        createStudyCheckout(trial, DateUtils.parseDate("02/02/2013", new String[] {"MM/dd/yyyy"}));
-        createStudyCheckout(trial, DateUtils.parseDate("01/01/2014", new String[] {"MM/dd/yyyy"}));
-        createStudyCheckout(trial, DateUtils.parseDate("03/03/2015", new String[] {"MM/dd/yyyy"}));
-        
+        createStudyCheckout(trial, DateUtils.parseDate("02/02/2013",
+                new String[] { "MM/dd/yyyy" }));
+        createStudyCheckout(trial, DateUtils.parseDate("01/01/2014",
+                new String[] { "MM/dd/yyyy" }));
+        createStudyCheckout(trial, DateUtils.parseDate("03/03/2015",
+                new String[] { "MM/dd/yyyy" }));
+
         loginAsAdminAbstractor();
         searchAndSelectTrial(trial.title);
         clickAndWait("link=Check-Out History");
-        
-        clickAndWait("link=Check-In Time");        
-        assertEquals("02/02/2013 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
-        assertEquals("01/01/2014 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[4]"));
-        assertEquals("03/03/2015 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[4]"));
-        
-        clickAndWait("link=Check-Out Time");        
-        assertEquals("02/02/2013 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
-        assertEquals("01/01/2014 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[2]"));
-        assertEquals("03/03/2015 24:00", selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[2]"));
 
-        
+        clickAndWait("link=Check-In Time");
+        assertEquals("02/02/2013 24:00",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
+        assertEquals("01/01/2014 24:00",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[4]"));
+        assertEquals("03/03/2015 24:00",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[4]"));
+
+        clickAndWait("link=Check-Out Time");
+        assertEquals("02/02/2013 24:00",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
+        assertEquals("01/01/2014 24:00",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[2]"));
+        assertEquals("03/03/2015 24:00",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[3]/td[2]"));
+
     }
-    
+
     @Test
     public void testAdminCheckIn() throws Exception {
         logoutUser();
@@ -50,12 +243,13 @@ public class TrialCheckInOutTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isElementPresent("class=btn btn-icon btn-primary"));
         assertTrue(selenium.isElementPresent("class=btn btn-icon btn-default"));
         assertEquals(selenium.getText("class=btn btn-icon btn-primary"), "Ok");
-        assertEquals(selenium.getText("class=btn btn-icon btn-default"), "Cancel");
+        assertEquals(selenium.getText("class=btn btn-icon btn-default"),
+                "Cancel");
         selenium.type("id=comments", "Test admin check in comments");
         clickAndWait("class=btn btn-icon btn-primary");
         assertTrue(selenium.isElementPresent("link=Admin Check Out"));
     }
-    
+
     @Test
     public void testScientificCheckIn() throws Exception {
         logoutUser();
@@ -73,13 +267,13 @@ public class TrialCheckInOutTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isElementPresent("class=btn btn-icon btn-primary"));
         assertTrue(selenium.isElementPresent("class=btn btn-icon btn-default"));
         assertEquals(selenium.getText("class=btn btn-icon btn-primary"), "Ok");
-        assertEquals(selenium.getText("class=btn btn-icon btn-default"), "Cancel");
+        assertEquals(selenium.getText("class=btn btn-icon btn-default"),
+                "Cancel");
         selenium.type("id=comments", "Test Scientific check in comments");
         clickAndWait("class=btn btn-icon btn-primary");
         assertTrue(selenium.isElementPresent("link=Scientific Check Out"));
     }
-    
-    
+
     @Test
     public void testAdminScientificCheckIn() throws Exception {
         logoutUser();
@@ -96,38 +290,42 @@ public class TrialCheckInOutTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isElementPresent("link=Scientific Check In"));
         assertFalse(selenium.isElementPresent("link=Admin Check Out"));
         assertTrue(selenium.isElementPresent("link=Admin Check In"));
-        assertFalse(selenium.isElementPresent("link=Admin/Scientific Check Out"));
+        assertFalse(selenium
+                .isElementPresent("link=Admin/Scientific Check Out"));
         assertTrue(selenium.isElementPresent("link=Admin/Scientific Check In"));
         clickAndWait("link=Admin/Scientific Check In");
         assertTrue(selenium.isElementPresent("id=comments"));
         assertTrue(selenium.isElementPresent("class=btn btn-icon btn-primary"));
         assertTrue(selenium.isElementPresent("class=btn btn-icon btn-default"));
         assertEquals(selenium.getText("class=btn btn-icon btn-primary"), "Ok");
-        assertEquals(selenium.getText("class=btn btn-icon btn-default"), "Cancel");
-        selenium.type("id=comments", "Test both Admin and Scientific check in comments");
+        assertEquals(selenium.getText("class=btn btn-icon btn-default"),
+                "Cancel");
+        selenium.type("id=comments",
+                "Test both Admin and Scientific check in comments");
         clickAndWait("class=btn btn-icon btn-primary");
         assertTrue(selenium.isElementPresent("link=Admin Check Out"));
         assertTrue(selenium.isElementPresent("link=Scientific Check Out"));
         assertTrue(selenium.isElementPresent("link=Admin/Scientific Check Out"));
-        
+
         clickAndWait("link=Admin/Scientific Check Out");
         assertTrue(selenium.isElementPresent("link=Scientific Check In"));
         assertTrue(selenium.isElementPresent("link=Admin Check In"));
         assertTrue(selenium.isElementPresent("link=Admin/Scientific Check In"));
-        
+
         clickAndWait("link=Scientific Check In");
         selenium.type("id=comments", "Test Scientific check in comments only");
         clickAndWait("class=btn btn-icon btn-primary");
         assertFalse(selenium.isElementPresent("link=Admin Check Out"));
         assertTrue(selenium.isElementPresent("link=Scientific Check Out"));
-        assertFalse(selenium.isElementPresent("link=Admin/Scientific Check Out"));
-        
-        
+        assertFalse(selenium
+                .isElementPresent("link=Admin/Scientific Check Out"));
+
         clickAndWait("link=Admin Check In");
         selenium.type("id=comments", "Test Admin check in comments only");
         clickAndWait("class=btn btn-icon btn-default");
         assertFalse(selenium.isElementPresent("link=Admin Check Out"));
         assertTrue(selenium.isElementPresent("link=Scientific Check Out"));
-        assertFalse(selenium.isElementPresent("link=Admin/Scientific Check Out"));
+        assertFalse(selenium
+                .isElementPresent("link=Admin/Scientific Check Out"));
     }
 }

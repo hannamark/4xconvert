@@ -13,12 +13,7 @@ import org.openqa.selenium.By;
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
-    private String tomorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(
-            new Date(), 1));
-    private String today = MONTH_DAY_YEAR_FMT.format(new Date());
-    private String yesterday = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(
-            new Date(), -1));
+public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
 
     @SuppressWarnings("deprecation")
     @Test
@@ -204,7 +199,7 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         // Close History
         clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
         driver.switchTo().defaultContent();
-        
+
         clickAndWait("link=Check-Out History");
         assertEquals("Administrative",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]")
@@ -258,32 +253,6 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         assertTrue(StringUtils.isBlank(selenium
                 .getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]")));
 
-    }
-
-    /**
-     * @return
-     * @throws SQLException
-     */
-    private TrialInfo createTrialAndAccessStatusPage() throws SQLException {
-        TrialInfo trial = createAcceptedTrial();
-        loginAsAdminAbstractor();
-        searchAndSelectTrial(trial.title);
-        checkOutTrialAsAdminAbstractor();
-        clickAndWait("link=Trial Status");
-
-        // Verify History button
-        openHistory();
-        return trial;
-    }
-
-    /**
-     * 
-     */
-    private void openHistory() {
-        selenium.click("xpath=//span[normalize-space(text())='History']");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("row_info", 15);
     }
 
     /**
@@ -400,21 +369,6 @@ public class TrialStatusHistoryTest extends AbstractPaSeleniumTest {
         waitForElementToBecomeVisible(By.id("edit-dialog"), 2);
         assertEquals("Edit Trial Status",
                 selenium.getText("edit-dialog-header"));
-        selenium.select("id=statusCode", "label=" + newCode);
-        selenium.type("statusDate", newDate);
-        selenium.type("reason", reason);
-        selenium.type("comment", comment);
-        selenium.click("xpath=//div[@id='edit-dialog']//input[@value='Save']");
-        waitForPageToLoad();
-
-    }
-
-    @SuppressWarnings("deprecation")
-    private void insertStatus(String newCode, String newDate, String reason,
-            String comment) {
-        selenium.click("xpath=//div[@class='actionsrow']//span[normalize-space(text())='Add New Status']");
-        waitForElementToBecomeVisible(By.id("edit-dialog"), 2);
-        assertEquals("Add Trial Status", selenium.getText("edit-dialog-header"));
         selenium.select("id=statusCode", "label=" + newCode);
         selenium.type("statusDate", newDate);
         selenium.type("reason", reason);
