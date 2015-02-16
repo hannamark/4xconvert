@@ -596,6 +596,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
         waitForElementById("comments", 5);
         selenium.type("nciID", trial.nciID);
         selenium.select("reason", "label=" + trial.flaggedReason);
+        pause(1000);
         selenium.type("comments", "This is a comment");
         pause(1500);
         if (!(isPhantomJS() && SystemUtils.IS_OS_LINUX)) {

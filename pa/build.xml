@@ -11,8 +11,7 @@
     <property name="build.dir" value="${basedir}/../build-pa"/>
     <property name="lib.dir" value="${basedir}/../target/pa/lib"/>
     <property name="local.repo.dir" location="${basedir}/../local-ivy-repo" />
-    <property name="commons.target" value="${basedir}/commons/target"/>
-	<property name="pa-wsclient.target" value="${basedir}/pa-wsclient/target"/>
+    <property name="commons.target" value="${basedir}/commons/target"/>	
     <property name="ejb.target" value="${basedir}/pa-ejb/target"/>
     <property name="pa-web.target" value="${basedir}/pa-web/target"/>
 	<property name="pa-webservices.target" value="${basedir}/pa-webservices/target"/>
@@ -40,10 +39,7 @@
     <target name="clean" depends="storage-init" description="Clean the output directory">
         <ant target="clean" dir="commons" inheritAll="false">
             <property name="tier" value="${tier}"/>
-        </ant>
-    	<ant target="clean" dir="pa-wsclient" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
+        </ant>    	
     	<ant target="clean" dir="pa-ejb" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
@@ -72,10 +68,7 @@
     <target name="test-static-analysis" description="Runs PMD / Checkstyle">
         <ant target="test-static-analysis" dir="commons" inheritAll="false">
             <property name="tier" value="${tier}"/>
-        </ant>
-    	<ant target="test-static-analysis" dir="pa-wsclient" inheritAll="false">
-	        <property name="tier" value="${tier}"/>
-	    </ant>
+        </ant>    	
         <ant target="test-static-analysis" dir="pa-ejb" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
@@ -94,10 +87,7 @@
     <target name="test" description="Run all tests">
         <ant target="test-all" dir="commons" inheritAll="false">
             <property name="tier" value="${tier}"/>
-        </ant>
-    	<ant target="test-static-analysis" dir="pa-wsclient" inheritAll="false">
-	        <property name="tier" value="${tier}"/>
-	    </ant>
+        </ant>    	
         <ant target="test-all" dir="pa-ejb" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
@@ -128,10 +118,7 @@
    <target name="package-subs" depends="clean" description="Package the sub-projects">
         <ant target="package-notest" dir="commons" inheritAll="false">
             <property name="tier" value="${tier}"/>
-        </ant>
-   		<ant target="package-notest" dir="pa-wsclient" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
+        </ant>   		
 	    <ant target="package-notest" dir="pa-ejb" inheritAll="false">
 	        <property name="tier" value="${tier}"/>
 	    </ant>
@@ -159,8 +146,7 @@
         <copy todir="${ear.dir}/lib">
             <fileset dir="${lib.dir}/ear"/>
         </copy>
-        <copy file="${commons.target}/pa-commons.jar" todir="${ear.dir}/lib"/>
-    	<copy file="${pa-wsclient.target}/pa-wsclient.jar" todir="${ear.dir}/lib"/>
+        <copy file="${commons.target}/pa-commons.jar" todir="${ear.dir}/lib"/>    	
         <copy file="${ejb.target}/pa-ejb.jar" todir="${ear.dir}"/>
         <copy file="${pa-web.target}/pa-web.war" todir="${ear.dir}"/>
     	<copy file="${pa-webservices.target}/pa-webservices.war" todir="${ear.dir}"/>
@@ -189,10 +175,7 @@
 
         <ant target="package" dir="commons" inheritAll="false">
             <property name="tier" value="${tier}"/>
-        </ant>
-    	<ant target="package" dir="pa-wsclient" inheritAll="false">
-            <property name="tier" value="${tier}"/>
-        </ant>
+        </ant>    	
         <ant target="package" dir="pa-ejb" inheritAll="false">
             <property name="tier" value="${tier}"/>
         </ant>
@@ -439,11 +422,6 @@
               <fileset dir="pa-ejb/target/javadoc/"/>
         </copy>
     	
-    	<ant target="generate-javadoc" dir="pa-wsclient" inheritAll="false" />
-        <copy todir="javadoc/pa-wsclient">
-              <fileset dir="pa-wsclient/target/javadoc/"/>
-        </copy>
-
         <ant target="generate-javadoc" dir="pa-web" inheritAll="false" />
         <copy todir="javadoc/pa-web">
               <fileset dir="pa-web/target/javadoc/"/>

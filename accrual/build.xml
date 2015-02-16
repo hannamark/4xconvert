@@ -122,11 +122,8 @@
         <property name="pa.ejb.client.jar" value="${software.dir}/pa/pa-ejb/target/pa-ejb-client.jar"/>
         <available file="${pa.ejb.client.jar}" property="pa.ejb.client.jar.present"/>
         <fail unless="pa.ejb.client.jar.present" message="File pa-ejb-client.jar not found. Please build PA."/>
-        <copy file="${pa.ejb.client.jar}" todir="${lib.dir}/ear"/>
-    	<property name="pa.ws.client.jar" value="${software.dir}/pa/pa-wsclient/target/pa-wsclient.jar"/>
-        <available file="${pa.ws.client.jar}" property="pa.ws.client.jar.present"/>
-        <fail unless="pa.ws.client.jar.present" message="File pa-wsclient.jar not found. Please build PA."/>
-        <copy file="${pa.ws.client.jar}" todir="${lib.dir}/ear"/>
+        <copy file="${pa.ejb.client.jar}" todir="${lib.dir}/ear"/>   	
+        
     </target>
  
     <target name="ivy-web" depends="ivy-init">

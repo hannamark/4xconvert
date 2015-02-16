@@ -21,11 +21,6 @@
 	<classpathentry kind="src" path="pa-web/test/java"/>
 	<classpathentry kind="src" path="pa-web/test/resources"/>
 	<classpathentry kind="src" path="pa-web/test-integration/java"/>
-	<classpathentry kind="src" path="pa-wsclient/src/java"/>
-	<classpathentry kind="src" path="pa-wsclient/src/resources"/>
-	<classpathentry kind="src" path="pa-wsclient/test/java"/>
-	<classpathentry kind="src" path="pa-wsclient/test/resources"/>
-	<classpathentry kind="src" path="pa-wsclient/target/generated-src"/>
 	<classpathentry kind="src" path="commons/target/generated-src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<accessrules>

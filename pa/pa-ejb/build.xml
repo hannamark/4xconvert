@@ -61,9 +61,6 @@
         <fileset dir="${pa.dir}/commons/target">
             <include name="*.jar"/>
         </fileset>
-		<fileset dir="${pa.dir}/pa-wsclient/target">
-            <include name="*.jar"/>
-        </fileset>
     </path>
 
     <path id="compile.classpath">
