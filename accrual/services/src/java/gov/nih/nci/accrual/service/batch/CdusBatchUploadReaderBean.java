@@ -507,7 +507,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (studyProtocol != null) {
             long startTime = System.currentTimeMillis();
             Map<SubjectAccrualKey, Long[]> listOfStudySubjects = getStudySubjectService().getSubjectAndPatientKeys(
-                    IiConverter.convertToLong(studyProtocol.getIdentifier()), false);
+                    IiConverter.convertToLong(studyProtocol.getIdentifier()), true);
             for (String[] p : patientLines) {
                 List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
                 Ii studySiteOrgIi = results.getListOfOrgIds().get(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);

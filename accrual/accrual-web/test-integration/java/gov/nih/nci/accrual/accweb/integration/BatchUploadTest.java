@@ -157,7 +157,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         assertTrue(error.contains("Number of Subjects Registered: </b> 1"));
         verifyErrorMessageContainsDupePatientInfo(error);
 
-        verifySu002IsOnTrial(rConf);
+        verifySubject(rConf, "SU002");
 
     }
 
@@ -191,9 +191,112 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         assertTrue(error.contains("Number of Subjects Registered: </b> 1"));
         verifySubjectOnOtherSiteError(error);
 
-        verifySu002IsOnTrial(rConf);
+        verifySubject(rConf, "SU002");
         String entityName = getAuditDetails();
         assertTrue(entityName.equals("BATCH_FILE"));
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testExistingSubjectAvoidsDuplicates() throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        TrialRegistrationConfirmation rConf = prepareTrialForAccrualSubmission();
+        login();
+        accessTrialScreen(rConf);
+
+        // Add subject with lower case and ensure it is converted to upper case.
+        final String subjectID = "su001";
+        addSubject(subjectID);
+        verifySubject(rConf, subjectID.toUpperCase());
+        logoutUser();
+
+        File batchFile = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
+                .toString() + ".txt");
+        writeValidBatchFileWithNoDuplicates(rConf, batchFile);
+
+        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        submitBatchFile(batchFile);
+        pause(BATCH_PROCESSING_WAIT_TIME);
+        server.stop();
+
+        assertEquals(1, server.getReceivedEmailSize());
+        Iterator emailIter = server.getReceivedEmail();
+        SmtpMessage email = (SmtpMessage) emailIter.next();
+        String error = email.getBody();
+        assertTrue(error.contains("CTRP processed your file successfully"));
+        assertTrue(error.contains("Number of Subjects Registered: </b> 1"));
+
+        assertEquals(
+                "1",
+                new QueryRunner()
+                        .query(connection,
+                                "select count(*) from study_subject where study_protocol_identifier="
+                                        + rConf.getPaTrialID()
+                                        + " and status_code='ACTIVE' and upper(assigned_identifier)='SU001'",
+                                new ArrayHandler())[0]
+                        + "");
+
+    }
+
+    @Override
+    protected void logoutUser() {
+        super.logoutUser();
+        openAndWait("/accrual/logout.action");
+    }
+
+    /**
+     * @param rConf
+     */
+    private void accessTrialScreen(TrialRegistrationConfirmation rConf) {
+        clickAndWait("link=Trial Search");
+        clickAndWait("link=" + rConf.getNciTrialID());
+
+    }
+
+    /**
+     * @param subjectID
+     */
+    @SuppressWarnings("deprecation")
+    private void addSubject(final String subjectID) {
+        clickAndWait("xpath=//i[@class='fa-plus']");
+        selenium.type("identifier", subjectID);
+        selenium.type("birthDate", "01/1990");
+        selenium.select("genderCode", "Male");
+        selenium.select("raceCode", "White");
+        selenium.select("ethnicCode", "Unknown");
+        selenium.type("zip", "20171");
+        selenium.type("registrationDate", "01/01/2015");
+        selenium.type("xpath=//input[@name='patient.diseaseIdentifier']",
+                "29491");
+        selenium.select("organizationName",
+                "label=National Cancer Institute Division of Cancer Prevention");
+        clickAndWait("mainActionBtn");
+    }
+
+    /**
+     * @param rConf
+     * @param batchFile
+     * @throws IOException
+     */
+    private void writeValidBatchFileWithNoDuplicates(
+            TrialRegistrationConfirmation rConf, File batchFile)
+            throws IOException {
+        FileUtils
+                .writeLines(
+                        batchFile,
+                        "UTF-8",
+                        Arrays.asList(new String[] {
+                                "COLLECTIONS," + rConf.getNciTrialID()
+                                        + ",,,,,,,,,",
+                                "PATIENTS,"
+                                        + rConf.getNciTrialID()
+                                        + ",sU001,77058,,193106,Female,Not Hispanic or Latino,,20110513,, 3 ,,,,,,,,,,B46.9,,",
+                                "PATIENT_RACES," + rConf.getNciTrialID()
+                                        + ",sU001,White" }));
     }
 
     /**
@@ -446,7 +549,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         assertTrue(error
                 .contains("Patient race code is not valid for patient ID SU002 at line 7"));
         verifyErrorMessageContainsDupePatientInfo(error);
-        verifySu002IsOnTrial(rConf);
+        verifySubject(rConf, "SU002");
 
     }
 
@@ -625,16 +728,15 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                                         + ",SU002,Black" }));
     }
 
-    /**
-     * @param rConf
-     */
-    private void verifySu002IsOnTrial(TrialRegistrationConfirmation rConf) {
+    @SuppressWarnings("deprecation")
+    private void verifySubject(TrialRegistrationConfirmation rConf,
+            String subjectID) {
         clickAndWait("link=Trial Search");
         clickAndWait("link=" + rConf.getNciTrialID());
-        moveElementIntoView(By.xpath("//a[text()='SU002']"));
-        clickAndWait("link=SU002");
+        moveElementIntoView(By.xpath("//a[text()='" + subjectID + "']"));
+        clickAndWait("link=" + subjectID);
         clickAndWait("xpath=//i[@class='fa-pencil']");
-        assertEquals("SU002", selenium.getValue("id=identifier"));
+        assertEquals(subjectID, selenium.getValue("id=identifier"));
     }
 
     @SuppressWarnings("rawtypes")
@@ -713,13 +815,12 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         zos.closeEntry();
         fis.close();
     }
-    
-    
+
     private String getAuditDetails() throws SQLException {
         QueryRunner runner = new QueryRunner();
         return (String) runner.query(connection,
                 "select entityname from auditlogrecord  "
-                + "where id = (select max(id) from auditlogrecord )",
+                        + "where id = (select max(id) from auditlogrecord )",
                 new ArrayHandler())[0];
     }
 

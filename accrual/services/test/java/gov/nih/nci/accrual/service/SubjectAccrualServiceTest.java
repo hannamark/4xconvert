@@ -86,6 +86,7 @@ package gov.nih.nci.accrual.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -785,6 +786,15 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         session.flush();
         cnts = bean.getAccrualCounts(false, protocol.getId());
     	assertEquals(Long.valueOf(0), cnts);
+    }
+    
+    @Test
+    public void testUpperCase() {
+        assertNull(bean.upperCase(null));
+        assertEquals(StConverter.convertToSt(null),
+                bean.upperCase(StConverter.convertToSt(null)));
+        assertEquals(StConverter.convertToSt("TEST"),
+                bean.upperCase(StConverter.convertToSt("test")));
     }
     
     @Test

@@ -463,6 +463,16 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         subject.setZipCode("99999");
         subjects.getStudySubject().add(subject);
         submitAndVerify(rConf, siteID, subjects, "/sites/" + siteID);
+        
+        assertEquals(
+                "1",
+                new QueryRunner()
+                        .query(connection,
+                                "select count(*) from study_subject where study_protocol_identifier="
+                                        + rConf.getPaTrialID()
+                                        + " and status_code='ACTIVE' and upper(assigned_identifier)='SU001'",
+                                new ArrayHandler())[0]
+                        + "");
 
     }
 

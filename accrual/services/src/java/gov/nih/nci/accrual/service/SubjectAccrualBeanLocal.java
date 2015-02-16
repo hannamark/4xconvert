@@ -552,7 +552,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
        return result;
     }
     
-    private St upperCase(St st) {
+    /**
+     * @param st St
+     * @return St
+     */
+    St upperCase(St st) {
         return ISOUtil.isStNull(st) ? st : StConverter.convertToSt(StringUtils
                 .upperCase(StConverter.convertToString(st)));
     }
