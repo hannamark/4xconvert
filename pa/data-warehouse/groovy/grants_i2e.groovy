@@ -3,7 +3,7 @@ import groovy.sql.Sql
 def sql = """SELECT *
              FROM ctrp_grants_r_vw 
           """
-def i2eConnection = Sql.newInstance('jdbc:oracle:thin:ctrp_ru/IN3WDAUI7@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=nci-oraclecm-prod.nci.nih.gov)(PORT=1610))(CONNECT_DATA=(SERVICE_NAME=NDMP.NCI.NIH.GOV)))'
+def i2eConnection = Sql.newInstance('jdbc:oracle:thin:ctrp_ru/IN3WDAUI7@(DESCRIPTION =     (ADDRESS = (PROTOCOL = TCP)(HOST = ncias-p1287-v.nci.nih.gov)(PORT = 1610))     (CONNECT_DATA =       (SERVER = DEDICATED)       (SERVICE_NAME = NDMSGP.nci.nih.gov)))'
     , 'oracle.jdbc.driver.OracleDriver')
 
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
