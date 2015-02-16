@@ -71,7 +71,7 @@ public class PDQNCItInterventionMapper{
           case 'AB' :   synonyms["Abbreviation"] += name; break;
           case 'BR' :   synonyms["US brand name"] += name; break;
           case 'FB' :   synonyms["Foreign brand name"] += name; break;
-          case 'NY' :   synonyms["Chemical structure name"] += name; break;
+          case 'SN' :   synonyms["Chemical structure name"] += name; break;
           case 'CN' :   synonyms["Code name"] += name; break;
         }
         } 
