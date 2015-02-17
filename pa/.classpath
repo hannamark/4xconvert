@@ -139,6 +139,7 @@
 	<classpathentry kind="var" path="PA_LIB/test/slf4j-api-1.6.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test/slf4j-log4j12-1.6.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-junit/junit-4.8.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/test/dumbster-1.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/postgresql-9.2-1003-jdbc4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/phantomjsdriver-1.1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/test-selenium/bcpkix-jdk15on-1.48.jar"/>

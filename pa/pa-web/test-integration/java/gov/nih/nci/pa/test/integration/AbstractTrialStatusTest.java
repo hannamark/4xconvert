@@ -4,10 +4,12 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.util.TestProperties;
 
 import java.sql.SQLException;
 import java.util.Date;
 
+import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.lang.time.DateUtils;
 import org.openqa.selenium.By;
 
@@ -21,6 +23,18 @@ public abstract class AbstractTrialStatusTest extends AbstractPaSeleniumTest {
     protected String today = MONTH_DAY_YEAR_FMT.format(new Date());
     protected String yesterday = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(
             new Date(), -1));
+
+    public static final int PORT = 51234;
+
+    /**
+     * @throws java.lang.Exception
+     */
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        new QueryRunner().update(connection, "update pa_properties set value='"
+                + PORT + "' where name='smtp.port'");
+    }
 
     @SuppressWarnings("deprecation")
     protected void insertStatus(String newCode, String newDate, String reason,
@@ -51,7 +65,7 @@ public abstract class AbstractTrialStatusTest extends AbstractPaSeleniumTest {
         login(username, "Coppa#12345");
         disclaimer(true);
         searchAndSelectTrial(trial.title);
-        checkOutTrialAsAdminAbstractor();   
+        checkOutTrialAsAdminAbstractor();
         if (selenium.isElementPresent("link=Scientific Check Out")) {
             checkOutTrialAsScientificAbstractor();
         }

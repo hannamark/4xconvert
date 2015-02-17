@@ -1,15 +1,37 @@
 package gov.nih.nci.pa.test.integration;
 
 import java.sql.SQLException;
+import java.util.Iterator;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
+
+import com.dumbster.smtp.SimpleSmtpServer;
+import com.dumbster.smtp.SmtpMessage;
 
 /**
  * 
  * @author Reshma Koganti
  */
 public class TrialCheckInOutTest extends AbstractTrialStatusTest {
+
+    private SimpleSmtpServer server;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        server = SimpleSmtpServer.start(PORT);
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        try {
+            server.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.tearDown();
+    }
 
     @SuppressWarnings("deprecation")
     @Test
@@ -29,7 +51,7 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
 
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testScientificCheckInWhenStatusErrors() throws Exception {
         TrialInfo trial = createAcceptedTrial();
@@ -60,7 +82,52 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
 
         // Bring the dialog back again
         selenium.click("link=Scientific Check In");
+        selenium.select("supAbsId", "label=CI, ctrpsubstractor");
         clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Proceed with Check-in']");
+        assertFalse(selenium.isVisible("id=pickSuperAbstractor"));
+        assertTrue(selenium.isElementPresent("comment-dialog"));
+        selenium.type("comments", "Test sci check in comments");
+
+        clickAndWait("xpath=//div[@id='comment-dialog']//button[text()='Ok']");
+        pause(5000);
+        assertTrue(selenium
+                .isTextPresent("Message. Trial checked in for Scientific Abstraction and checked out to the selected"
+                        + " Super Abstractor for Admin Abstration. The Super Abstractor has been notified by email as well."));
+
+        // Verify check out
+        clickAndWait("link=Check-Out History");
+        assertEquals("Scientific",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]")
+                        .trim());
+        assertEquals("scientific-ci",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[5]")
+                        .trim());
+        assertEquals("Administrative",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[1]")
+                        .trim());
+        assertEquals("ctrpsubstractor",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[3]")
+                        .trim());
+        assertEquals("",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr[2]/td[5]")
+                        .trim());
+
+        // Verify email went out to Super Abstractor.
+        assertEquals(1, server.getReceivedEmailSize());
+        Iterator emailIter = server.getReceivedEmail();
+        SmtpMessage email = (SmtpMessage) emailIter.next();
+        String subject = email.getHeaderValues("Subject")[0];
+        String to = email.getHeaderValues("To")[0];
+        String body = email.getBody().replaceAll("<br/>", " ")
+                .replaceAll("\\s+", " ");
+        assertEquals("ctrpsubstractor-ci@example.com", to);
+        assertTrue(subject.startsWith("Trial " + trial.nciID
+                + " was checked out for Administrative"));
+        assertEquals(
+                "Dear ctrpsubstractor CI, The system found trial status transition errors for trial "
+                        + trial.nciID
+                        + " when the Scientific Abstractor scientific-ci checked the trial in for Scientific Abstraction. The system has automatically checked out this trial for Administrative Abstraction under your name. Please log in, correct the status transition error(s), and check the trial in. Thank you. This is an automated message sent by the CTRP system. Please do not reply.",
+                body);
 
     }
 
