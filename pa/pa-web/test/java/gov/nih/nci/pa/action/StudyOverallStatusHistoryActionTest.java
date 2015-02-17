@@ -87,9 +87,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -101,11 +103,15 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -113,10 +119,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.StreamResult;
+import org.json.JSONException;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
+import com.fiveamsolutions.nci.commons.audit.AuditType;
 /**
  * @author Michael Visee
  */
@@ -124,6 +135,8 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
 
     private StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
     private StudyProtocolServiceLocal studyProtocolServiceLocal = mock(StudyProtocolServiceLocal.class);
+    private AuditTrailServiceLocal auditTrailService = mock(AuditTrailServiceLocal.class);
+    
     private StudyOverallStatusHistoryAction sut;
 
 
@@ -144,6 +157,7 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
     private void setDependencies(StudyOverallStatusHistoryAction action) {
         action.setStudyOverallStatusService(studyOverallStatusService);
         action.setStudyProtocolServiceLocal(studyProtocolServiceLocal);
+        action.setAuditTrailService(auditTrailService);
         
     }
     
@@ -165,6 +179,46 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
         assertEquals(d1, it.next());
         assertEquals(d3, it.next());
         
+    }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testGetAuditTrail() throws PAException,
+            UnsupportedEncodingException, JSONException {
+        sut = createStudyOverallStatusHistoryAction();
+        sut.setStatusId(1L);
+
+        final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        final Date yday = DateUtils.truncate(DateUtils.addDays(new Date(), -1),
+                Calendar.DATE);
+        AuditLogRecord r = new AuditLogRecord(AuditType.INSERT,
+                "StudyOverallStatus", 1L, "username", today);
+
+        AuditLogDetail commentText = new AuditLogDetail(r, "commentText",
+                "Comment Before", "Comment After");
+        AuditLogDetail additionalComments = new AuditLogDetail(r,
+                "additionalComments", "Comment Before", "Comment After");
+        AuditLogDetail statusCode = new AuditLogDetail(r, "statusCode",
+                "IN_REVIEW", "APPROVED");
+        AuditLogDetail statusDate = new AuditLogDetail(r, "statusDate",
+                yday.toString(), today.toString());
+        AuditLogDetail deleted = new AuditLogDetail(r, "deleted", "false",
+                "true");
+
+        r.getDetails().add(commentText);
+        r.getDetails().add(additionalComments);
+        r.getDetails().add(statusCode);
+        r.getDetails().add(statusDate);
+        r.getDetails().add(deleted);
+
+        when(
+                auditTrailService.getAuditTrail(eq(StudyOverallStatus.class),
+                        eq(IiConverter.convertToIi(1L)))).thenReturn(
+                Arrays.asList(r));
+
+        StreamResult result = sut.getAuditTrail();
+        assertNotNull(result);        
+
     }
 
     /**

@@ -94,7 +94,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.service.StudySiteServiceBean;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.AbstractEjbTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -109,20 +109,23 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  *
  */
-public class AuditTrailServiceTest extends AbstractHibernateTestCase {
-    private AuditTrailService auditHistoryService = new AuditTrailServiceBean();
-    private StudySiteServiceLocal studySiteService = new StudySiteServiceBean();
+public class AuditTrailServiceTest extends AbstractEjbTestCase {
+    private AuditTrailService auditHistoryService; 
+    private StudySiteServiceLocal studySiteService; 
     private Date startDate;
     private Date endDate;
 
     @Before
     public void init() throws Exception {
+        auditHistoryService = (AuditTrailService) getEjbBean(AuditTrailServiceBean.class);
+        studySiteService = (StudySiteServiceLocal) getEjbBean(StudySiteServiceBean.class);
         TestSchema.primeData();
         startDate = DateUtils.truncate(new Date(), Calendar.DATE);
         endDate = new Date(startDate.getTime());
@@ -133,16 +136,24 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
     public void getAuditTrail() throws Exception {
         List<AuditLogDetail> auditTrail = auditHistoryService.getAuditTrail(StudySite.class,
                 IiConverter.convertToIi(0L), startDate, endDate);
+        List<AuditLogRecord> auditLogRecords = auditHistoryService.getAuditTrail(StudySite.class,
+                IiConverter.convertToIi(0L));
         assertTrue(auditTrail.isEmpty());
+        assertTrue(auditLogRecords.isEmpty());
 
         Ii identifier = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
         auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, startDate, endDate);
+        auditLogRecords = auditHistoryService.getAuditTrail(StudySite.class,
+                identifier);
         assertFalse(auditTrail.isEmpty());
+        assertFalse(auditLogRecords.isEmpty());
         assertEquals(6, auditTrail.size());
+        assertEquals(1, auditLogRecords.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));
             assertNotNull(detail.getNewValue());
+            assertEquals(detail.getRecord(), auditLogRecords.get(0));
         }
 
         auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, null, endDate);
