@@ -92,6 +92,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -140,11 +141,13 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
             String hql = "select ss from StudySite ss join ss.studySiteAccrualAccess ssas " 
                 + "where ss.studyProtocol.id = :studyProtocolId " 
                 + "and ss.functionalCode = :functionalCode "
-                + "and ssas.registryUser.id = :registerUserId";
+                + "and ssas.registryUser.id = :registerUserId "
+                + "and ssas.statusCode =:statusCode";
             Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
             query.setParameter("studyProtocolId", studyProtocolId);
             query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
             query.setParameter("registerUserId", user.getId());
+            query.setParameter("statusCode", ActiveInactiveCode.ACTIVE);
 
             List<StudySite> queryResults = query.list(); 
             

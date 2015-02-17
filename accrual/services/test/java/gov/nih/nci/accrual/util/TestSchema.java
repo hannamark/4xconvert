@@ -579,6 +579,15 @@ public class TestSchema {
         ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
+        //  to test PO-8644
+        ssaa = new StudySiteAccrualAccess();
+        ssaa.setRegistryUser(registryUsers.get(1));
+        ssaa.setStudySite(studySites.get(1));
+        ssaa.setStatusCode(ActiveInactiveCode.INACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        ssaa.setSource(AccrualAccessSourceCode.PA_SITE_REQUEST);
+        addUpdObject(ssaa);
+        studySiteAccrualAccess.add(ssaa);
         
         // Patient
         Patient p = new Patient();
