@@ -580,8 +580,8 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
     @SuppressWarnings("deprecation")
     private void addFlaggedTrial(TrialInfo trial) {
         populateAddFlagDialogAndHitSave(trial);
-        waitForPageToLoad();
-        waitForElementToBecomeVisible(By.className("confirm_msg"), 15);
+        waitForPageToLoad();        
+        waitForElementToBecomeAvailable(By.className("confirm_msg"), 15);
         assertTrue(selenium
                 .isTextPresent("Flagged trial has been added successfully."));
     }
