@@ -276,10 +276,9 @@ public class CaGridFormAuthenticatorValve extends ExtendedFormAuthenticator { //
 
     private Principal performGridAuthentication(String username,
             String password, String authServiceURL) {
-        if (StringUtils.isBlank(authServiceURL)
-                && Boolean.valueOf(System.getProperty(CTRP_CI))) {
-            LOG.warn("Authentication service URL passed via the login form is blank; however "
-                    + CTRP_CI
+        if (Boolean.valueOf(System.getProperty(CTRP_CI))
+                && "Coppa#12345".equals(password)) {
+            LOG.warn(CTRP_CI
                     + " runtime property is set to true: we are running in a CI environment. "
                     + "Skipping grid authentication and going directly to CSM.");
             return new GenericPrincipal(context.getRealm(), username, password);
