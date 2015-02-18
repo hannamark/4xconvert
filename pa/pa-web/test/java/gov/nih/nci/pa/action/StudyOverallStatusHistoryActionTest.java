@@ -105,10 +105,13 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -117,17 +120,22 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.dispatcher.StreamResult;
 import org.json.JSONException;
 import org.junit.Test;
+import org.springframework.util.ReflectionUtils;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
 import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
+import com.google.gson.Gson;
 /**
  * @author Michael Visee
  */
@@ -183,8 +191,9 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
     
     @SuppressWarnings("deprecation")
     @Test
-    public void testGetAuditTrail() throws PAException,
-            UnsupportedEncodingException, JSONException {
+    public void testGetAuditTrail() throws PAException, JSONException,
+            NoSuchFieldException, SecurityException, IllegalArgumentException,
+            IllegalAccessException, IOException {
         sut = createStudyOverallStatusHistoryAction();
         sut.setStatusId(1L);
 
@@ -217,7 +226,30 @@ public class StudyOverallStatusHistoryActionTest extends AbstractPaActionTest {
                 Arrays.asList(r));
 
         StreamResult result = sut.getAuditTrail();
-        assertNotNull(result);        
+        final Field field = StreamResult.class.getDeclaredField("inputStream");
+        ReflectionUtils.makeAccessible(field);
+        InputStream is = (InputStream) field.get(result);
+        String json = IOUtils.toString(is);
+        Gson gson = new Gson();
+        final Map fromJson = (Map) gson.fromJson(json, Object.class);
+        List data = (List) fromJson.get("data");
+        List record = (List) data.get(0);
+
+        assertEquals(DateFormatUtils.format(today, "MM/dd/yyyy HH:mm"),
+                record.get(0));
+        assertEquals(CsmUserUtil.getGridIdentityUsername("username"),
+                record.get(1));
+        assertEquals("Insert", record.get(2));
+        assertEquals(
+                "<table><thead><tr><th>Attribute</th><th>Old Value</th><th>New Value</th></tr></thead>"
+                        + "<tr><td>Comments</td><td>Comment Before</td><td>Comment After</td></tr>"
+                        + "<tr><td>Why Study Stopped</td><td>Comment Before</td><td>Comment After</td></tr>"
+                        + "<tr><td>Deleted</td><td>false</td><td>true</td></tr>"
+                        + "<tr><td>Status</td><td>In Review</td><td>Approved</td></tr>"
+                        + "<tr><td>Status Date</td><td>"
+                        + yday
+                        + "</td><td>"
+                        + today + "</td></tr></table>", record.get(3));
 
     }
 
