@@ -1,6 +1,7 @@
 package gov.nih.nci.coppa.webservices.security;
 
 import gov.nih.nci.cagrid.opensaml.SAMLAssertion;
+
 import org.apache.catalina.Realm;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +21,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Properties;
@@ -67,13 +69,12 @@ public class DorianService {
 
         Principal result = null;
 
-        if (StringUtils.isBlank(dorianUrl)
-                && Boolean.valueOf(System.getProperty(CTRP_CI))) {
-            LOG.warn("Authentication service URL is blank; however "
-                    + CTRP_CI
+        if (Boolean.valueOf(System.getProperty(CTRP_CI))
+                && "pass".equals(password)) {
+            LOG.warn(CTRP_CI
                     + " runtime property is set to true: we are running in a CI environment. "
                     + "Skipping grid authentication and going directly to CSM.");
-            result = new GenericPrincipal(realm, username, password);
+            return new GenericPrincipal(realm, username, password);
         } else {
             GlobusCredential gc = authenticate(dorianUrl, authorizationUrl, username, password);
             if (gc != null) {

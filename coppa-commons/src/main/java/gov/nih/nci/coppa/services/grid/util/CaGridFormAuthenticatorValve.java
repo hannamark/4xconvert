@@ -277,7 +277,7 @@ public class CaGridFormAuthenticatorValve extends ExtendedFormAuthenticator { //
     private Principal performGridAuthentication(String username,
             String password, String authServiceURL) {
         if (Boolean.valueOf(System.getProperty(CTRP_CI))
-                && "Coppa#12345".equals(password)) {
+                && "pass".equals(password)) {
             LOG.warn(CTRP_CI
                     + " runtime property is set to true: we are running in a CI environment. "
                     + "Skipping grid authentication and going directly to CSM.");
