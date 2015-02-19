@@ -297,7 +297,9 @@ public class SearchTrialBean implements SearchTrialService {
             + "  and (sc.roleCode ='" + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' "
             + "       or sc.roleCode is null) "
             + "  and (sos.id in (select max(id) from StudyOverallStatus as sos1 "
-            + "                where sos.studyProtocol = sos1.studyProtocol ) "
+            + "                where sos.studyProtocol = sos1.studyProtocol and sos1.deleted is not true and "
+            + " sos1.statusDate = (select max(statusDate) from StudyOverallStatus as sos2 "
+            + " where sos1.studyProtocol = sos2.studyProtocol and sos2.deleted is not true)) "
             + "       or sos.id is null)"
             + "  and (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
             + "       and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "') ";
