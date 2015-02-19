@@ -314,8 +314,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         System.out.println("About to click Login link...");
         clickAndWait("link=Login");
         selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        selenium.select("id=authenticationServiceURL", "label=Training");        
+        selenium.type("j_password", password);                
         clickAndWait("id=loginButton");
         assertTrue(selenium.isElementPresent("id=Help"));
         assertTrue(selenium.isElementPresent("id=Logout"));
@@ -339,11 +338,11 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
    
 
     public void loginAsCurator() {
-        login("curator", "Coppa#12345");
+        login("curator", "pass");
     }
 
     public void loginAsJohnDoe() {
-        login("jdoe01", "Aa_1111111");
+        login("jdoe01", "pass");
     }
     
     protected boolean isLoggedIn() {
@@ -1031,7 +1030,7 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         try {
             QueryRunner queryRunner = new QueryRunner();
             Object[] result = queryRunner.query(conn,
-                    "select user_id from csm_user where login_name ='/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=curator'", h);
+                    "select user_id from csm_user where login_name ='curator'", h);
             // get the DB Id of 'curator'
             curatorDbId = ((Long) result[0]).longValue();
             

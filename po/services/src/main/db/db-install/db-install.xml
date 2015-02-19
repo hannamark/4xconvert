@@ -8,7 +8,7 @@
     <preConditions>            
         <dbms type="postgresql" />                     
     </preConditions>                                       
-    <changeSet id="2" author="smiller">   
+    <changeSet id="2" author="smiller" runOnChange="false">   
         <validCheckSum>ANY</validCheckSum>     
         <comment>version 1.0 sql files</comment>
         <sqlFile path="${db-install.run.dir}/postgresql/po-create-schema.sql" />

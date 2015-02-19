@@ -193,6 +193,6 @@ public final class TstProperties {
     }
 
     public static String getWebservicePassword() {
-        return properties.getProperty(WS_CLIENT_PASSWORD, "Aa_1111111");
+        return properties.getProperty(WS_CLIENT_PASSWORD, "pass");
     }
 }

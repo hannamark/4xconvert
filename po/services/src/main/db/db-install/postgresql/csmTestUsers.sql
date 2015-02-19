@@ -1,5 +1,5 @@
 -- Password is pass
-INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ('curator', 'Test', 'Curator','BtM2GNbiAxg=');
+INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD) VALUES ('curator', 'PO', 'Curator','BtM2GNbiAxg=');
 INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID) VALUES (2, 2);
 
 INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID) VALUES ('Curator', 'Curator group - security role', (select application_id from csm_application where application_name = 'po'));

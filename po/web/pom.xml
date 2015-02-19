@@ -15,12 +15,6 @@
     <properties>
         <showErrorStackTraces>true</showErrorStackTraces>
         <defaultPageSize>20</defaultPageSize>        
-        <auth.service.name>caGRID Training</auth.service.name>
-        <auth.service.url>https://dorian.training.cagrid.org:8443/wsrf/services/cagrid/Dorian</auth.service.url>
-        <auth.dorian.url>https://dorian.training.cagrid.org:8443/wsrf/services/cagrid/Dorian</auth.dorian.url>
-        <gts.service.uri>https://slavegts.training.cagrid.org:8443/wsrf/services/cagrid/GTS</gts.service.uri>
-        <gts.identity>/O=caBIG/OU=caGrid/OU=Training Trust Fabric/CN=host/slavegts.training.cagrid.org</gts.identity>
-        <gts.ca.subject>O=caBIG,OU=caGrid,OU=Training Trust Fabric,CN=caGrid Training Trust Fabric CA</gts.ca.subject>
         <struts.devMode>false</struts.devMode>
         <test.jdbc.url>jdbc:hsqldb:mem:po-test</test.jdbc.url>
         <test.jdbc.username>sa</test.jdbc.username>
