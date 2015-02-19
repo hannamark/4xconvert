@@ -10,15 +10,6 @@
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
         <script type="text/javascript">
             var bla = <s:property value="trialDTO.participatingSitesList.size"/>;
-            jQuery(function() {
-                for (var i = 0; i < <s:property value="trialDTO.participatingSitesList.size"/>; i++) {
-                    addCalendar("Cal1-" + i, "Select Date", "trialDTO.participatingSitesList[" + i + "].recruitmentStatusDate", "updateProprietaryTrial");
-                    addCalendar("Cal2-" + i, "Select Date", "trialDTO.participatingSitesList[" + i + "].dateOpenedforAccrual", "updateProprietaryTrial");
-                    addCalendar("Cal3-" + i, "Select Date", "trialDTO.participatingSitesList[" + i + "].dateClosedforAccrual", "updateProprietaryTrial");
-                }
-                setWidth(90, 1, 15, 1);
-                setFormat("mm/dd/yyyy");
-            });
             var orgid;
             var chosenname;
             var persid;
@@ -288,27 +279,27 @@ ul.errorMessage > li > span {
                                     </span>
                                 </td>
                                 <td nowrap="nowrap">
-                                    <label><s:textfield name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" size="12" cssClass="form-control" /></label>
-                                    <a href="javascript:showCal('Cal1-<s:property value="%{#psstats.index}"/>')"> 
-                                        <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                    </a>
-                                    <span class="alert-danger">
-                                        <s:fielderror>
-                                            <s:param>participatingsite.recStatusDate<s:property value="%{#psstats.index}"/></s:param>
-                                        </s:fielderror>
-                                    </span>     
+                                    <div id="datetimepicker" class="datetimepicker input-append">
+                                       <s:textfield id="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy" />
+                                       <span class="add-on btn-default"><i class="fa-calendar"></i></span>
+                                       <span class="alert-danger">
+                                          <s:fielderror>
+                                             <s:param>participatingsite.recStatusDate<s:property value="%{#psstats.index}"/></s:param>
+                                         </s:fielderror>
+                                      </span>
+                                   </div>      
                                 </td>
                                 <td nowrap="nowrap">
-                                    <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" value="%{dateOpenedforAccrual}" size="12" cssClass="form-control" /></label>
-                                    <a href="javascript:showCal('Cal2-<s:property value="%{#psstats.index}"/>')"> 
-                                        <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                    </a>
+                                    <div id="datetimepicker" class="datetimepicker input-append">
+                                       <s:textfield id="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" name="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" value="%{dateOpenedforAccrual}" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy" />
+                                       <span class="add-on btn-default"><i class="fa-calendar"></i></span>
+                                    </div>
                                 </td>
                                 <td nowrap="nowrap">
-                                    <label><s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateClosedforAccrual" value="%{dateClosedforAccrual}" size="12" cssClass="form-control" /></label>
-                                    <a href="javascript:showCal('Cal3-<s:property value="%{#psstats.index}"/>')"> 
-                                        <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                    </a>
+                                    <div id="datetimepicker" class="datetimepicker input-append">
+                                       <s:textfield id="trialDTO.participatingSitesList[%{#psstats.index}].dateClosedforAccrual" name="trialDTO.participatingSitesList[%{#psstats.index}].dateClosedforAccrual" value="%{dateClosedforAccrual}" data-format="MM/dd/yyyy" type="text" cssClass="form-control" placeholder="mm/dd/yyyy" />
+                                       <span class="add-on btn-default"><i class="fa-calendar"></i></span>
+                                    </div>
                                 </td>
                             </tr>
                             </s:iterator >
