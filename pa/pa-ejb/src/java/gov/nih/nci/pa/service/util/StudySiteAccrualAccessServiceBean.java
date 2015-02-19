@@ -237,8 +237,10 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             + " join ss.healthCareFacility hcf join hcf.organization org "
             + " where sp.id = :spId "
             + " and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
-            + " and ssas.id = (select max(ssas.id) "
-            + " from StudySiteAccrualStatus ssas where ssas.studySite.id =ss.id) "
+            + " and ssas.id = (select max(id) "
+            + "    from StudySiteAccrualStatus where studySite.id = ss.id"
+            + "    and statusDate = (select max(statusDate) "
+            + "        from StudySiteAccrualStatus where studySite.id =ss.id)) "
             + " order by org.name, ss.id ";
         query = session.createQuery(hql);
         query.setParameter(SP_ID, studyProtocolId);

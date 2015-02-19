@@ -185,11 +185,16 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
          List<StudySite> finalSiteList = new ArrayList<StudySite>();
          List<StudySite> familyList = new ArrayList<StudySite>();
          String hql = "select ss from StudySite ss join ss.studySiteAccrualStatuses ssas " 
-                 + "join ss.healthCareFacility hcf join hcf.organization org "
-                 + "where ss.studyProtocol.id = :studyProtocolId " 
-                 + "and ss.functionalCode = :functionalCode "
-                 + "and ssas.statusCode <> :statusCode "
-                 + "and org.identifier IN  (:orgIDS)";
+                 + " join ss.healthCareFacility hcf join hcf.organization org "
+                 + " where ss.studyProtocol.id = :studyProtocolId " 
+                 + " and ss.functionalCode = :functionalCode "
+                 + " and org.identifier IN  (:orgIDS)"
+                 + " and ssas.statusCode <> :statusCode"
+                 + " and ssas.id = (select max(id) "
+                 + "    from StudySiteAccrualStatus where studySite.id = ss.id"
+                 + "    and statusDate = (select max(statusDate) "
+                 + "        from StudySiteAccrualStatus where studySite.id =ss.id)) ";
+         
              Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
              query.setParameter("studyProtocolId", studyProtocolId);
              query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);

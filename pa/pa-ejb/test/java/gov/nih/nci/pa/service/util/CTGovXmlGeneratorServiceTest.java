@@ -86,7 +86,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -107,7 +106,6 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -118,7 +116,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -133,7 +130,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -502,9 +498,11 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     public void testPhoneWithExt() throws PAException {
          String xml  = getBean().generateCTGovXml(spId);
          String newXML = createUnformattedXML(xml);
+         System.out.println(newXML);
                  assertTrue(newXML.contains
-                ("<location><facility><name>some name</name><address/></facility><contact>"
-                 +"<first_name>first name</first_name><last_name>last Name</last_name><phone>111-222-3333</phone>"
+                ("<location><facility><name>some name</name><address/></facility>"
+                 + "<status>Not yet recruiting</status>"
+                 +"<contact><first_name>first name</first_name><last_name>last Name</last_name><phone>111-222-3333</phone>"
                  +"<phone_ext>444</phone_ext><email>X</email></contact>"));
     }
 

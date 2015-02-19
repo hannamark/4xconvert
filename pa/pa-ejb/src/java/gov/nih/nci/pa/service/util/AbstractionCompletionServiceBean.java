@@ -1076,20 +1076,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         List<StudySiteDTO> studySites = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
 
         for (StudySiteDTO studySite : studySites) {
-            List<StudySiteAccrualStatusDTO> studySiteAccrualStatuses = studySiteAccrualStatusService
-                .getStudySiteAccrualStatusByStudySite(studySite.getIdentifier());
-
-            Long tmp = 1L;
-            StudySiteAccrualStatusDTO lastestStudySiteAccrualStatusDTO = null;
-            if (CollectionUtils.isNotEmpty(studySiteAccrualStatuses)) {
-                for (StudySiteAccrualStatusDTO studySiteAccrualStatus : studySiteAccrualStatuses) {
-                    Long latestId = IiConverter.convertToLong(studySiteAccrualStatus.getIdentifier());
-                    if (latestId > tmp) {
-                        tmp = latestId;
-                        lastestStudySiteAccrualStatusDTO = studySiteAccrualStatus;
-                    }
-                }
-            }
+            StudySiteAccrualStatusDTO lastestStudySiteAccrualStatusDTO = studySiteAccrualStatusService
+                .getCurrentStudySiteAccrualStatusByStudySite(studySite.getIdentifier());
 
             if (lastestStudySiteAccrualStatusDTO != null) {
                 String latestStatusCode = lastestStudySiteAccrualStatusDTO.getStatusCode().getCode();

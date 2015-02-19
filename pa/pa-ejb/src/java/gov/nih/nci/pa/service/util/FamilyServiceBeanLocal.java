@@ -133,22 +133,25 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
             + "  AND org.identifier IN (:orgIds) ";
 
     static final String HQL_ABBR_STATUS = "SELECT sp.id "
-            + "FROM StudyProtocol sp "
-            + "INNER JOIN sp.studyResourcings sr "
-            + "INNER JOIN sp.studySites ss  "
-            + "INNER JOIN ss.healthCareFacility hf "
-            + "INNER JOIN hf.organization org  "
-            + "INNER JOIN ss.studySiteAccrualStatuses ssas "
-            + "WHERE sp.statusCode = :statusCode "
-            + "  AND sp.proprietaryTrialIndicator = true "
-            + "  AND sr.summary4ReportedResourceIndicator = true "
-            + "  AND sr.typeCode != :excludeType "
-            + "  AND ss.functionalCode = :siteCode "
-            + "  AND org.identifier IN (:orgIds) "
-            + "  AND ssas.id IN "
-            + "     (SELECT MAX(id) FROM StudySiteAccrualStatus GROUP BY studySite)"
-            + "  AND ssas.statusCode NOT IN (:excludeStatus) ";
+                    + "FROM StudyProtocol sp "
+                    + "INNER JOIN sp.studyResourcings sr "
+                    + "INNER JOIN sp.studySites ss  "
+                    + "INNER JOIN ss.healthCareFacility hf "
+                    + "INNER JOIN hf.organization org  "
+                    + "INNER JOIN ss.studySiteAccrualStatuses ssas "
+                    + "WHERE sp.statusCode = :statusCode "
+                    + "  AND sp.proprietaryTrialIndicator = true "
+                    + "  AND sr.summary4ReportedResourceIndicator = true "
+                    + "  AND sr.typeCode != :excludeType "
+                    + "  AND ss.functionalCode = :siteCode "
+                    + "  AND org.identifier IN (:orgIds) "
+                    + "  AND ssas.id = (select max(id) "
+                    + "    FROM StudySiteAccrualStatus WHERE studySite.id = ss.id"
+                    + "    AND statusDate = (select max(statusDate) "
+                    + "        FROM StudySiteAccrualStatus WHERE studySite.id =ss.id)) "
+                    + "  AND ssas.statusCode NOT IN (:excludeStatus) ";
 
+ 
     private static final String HQL_LEAD_ORG = "SELECT org.identifier "
             + "FROM StudyProtocol sp "
             + "INNER JOIN sp.studyResourcings sr "
@@ -213,6 +216,7 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
             query.setParameter("excludeType", SummaryFourFundingCategoryCode.NATIONAL);
             query.setParameter("siteCode", StudySiteFunctionalCode.TREATING_SITE);
             query.setParameterList(ORG_IDS, convertPoOrgIdsToStrings(poOrgIds));
+           
             query.setParameterList("excludeStatus", RecruitmentStatusCode.NOT_ELIGIBLE_FOR_ACCRUAL_STATUSES);
             queryList = query.list();
             for (Long trialId : queryList) {

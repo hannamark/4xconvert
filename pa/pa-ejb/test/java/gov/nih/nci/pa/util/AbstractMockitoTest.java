@@ -411,6 +411,7 @@ public class AbstractMockitoTest {
        setupOrgDto(telAd);
 
        studyStieAccrualStatusDto = new StudySiteAccrualStatusDTO();
+       studyStieAccrualStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.IN_REVIEW));
 
        setupSsConDto(telAd);
 

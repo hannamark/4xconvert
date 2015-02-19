@@ -413,8 +413,8 @@ public class AbstractionCompletionServiceBeanTest {
         Ii spIi = IiConverter.convertToIi(1L);
         when(studySiteService.getByStudyProtocol(eq(spIi), any(StudySiteDTO.class))).thenReturn(studySites);
         Ii siteId = IiConverter.convertToIi(1L);
-        when(studySiteAccrualStatusService.getStudySiteAccrualStatusByStudySite(siteId))
-            .thenReturn(studySiteAccrualStatuses);
+        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(siteId))
+            .thenReturn(studySiteAccrualStatuses.isEmpty() ? null : studySiteAccrualStatuses.get(0));
         boolean result = sut.isStudySiteRecruiting(spIi);
         assertEquals("Wrong result returned by isStudySiteRecruiting", expectedResult, result);
         ArgumentCaptor<StudySiteDTO> studySiteDTOCaptor = ArgumentCaptor.forClass(StudySiteDTO.class);
@@ -426,7 +426,7 @@ public class AbstractionCompletionServiceBeanTest {
         if (studySites.isEmpty()) {
             verify(studySiteAccrualStatusService, never()).getStudySiteAccrualStatusByStudySite(siteId);
         } else {
-            verify(studySiteAccrualStatusService).getStudySiteAccrualStatusByStudySite(siteId);
+            verify(studySiteAccrualStatusService).getCurrentStudySiteAccrualStatusByStudySite(siteId);
         }
     }
     

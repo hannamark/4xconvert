@@ -164,10 +164,9 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
                 new Comparator<StudySiteAccrualStatus>() {
                     public int compare(StudySiteAccrualStatus s1,
                             StudySiteAccrualStatus s2) {
-                        final int byDate = s2.getStatusDate().compareTo(
+                         int result = s2.getStatusDate().compareTo(
                                 s1.getStatusDate());
-                        final int byId = s2.getId().compareTo(s1.getId());
-                        return byDate != 0 ? byDate : byId;
+                        return result != 0 ? result : s2.getId().compareTo(s1.getId());
                     }
                 });
 

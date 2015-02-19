@@ -1738,6 +1738,10 @@
         <comment>Site Status Change Notification email template.</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8323.sql"/>
      </changeSet>
+     <changeSet id="PO-8601" author="chandrasekaravr" runOnChange="false">
+        <comment>Truncating to just date for study overall status and study site recruitement status dates</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8601.sql"/>
+     </changeSet> 
      <changeSet id="PO-8112-1" author="krylovd">
         <comment>Converted all study subject identifiers to upper case.</comment>
         <sqlFile splitStatements="false" path="@db-upgrade.run.dir@/4.2/PO-8112-1.sql"/>
@@ -1746,4 +1750,5 @@
         <comment>Add unique study subject constraint</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8112-2.sql"/>
      </changeSet>
+
 </databaseChangeLog>

@@ -1010,7 +1010,12 @@ public class PAServiceUtils {
                 Collections.sort(participatingSitesOld, new Comparator<StudySiteAccrualStatusDTO>() {
                     @Override
                     public int compare(StudySiteAccrualStatusDTO o1, StudySiteAccrualStatusDTO o2) {
-                        return o1.getIdentifier().getExtension().compareToIgnoreCase(o2.getIdentifier().getExtension());
+                        int result = o1.getStatusDate().getValue().compareTo(o2.getStatusDate().getValue());
+                        if (result == 0) {
+                            result = o1.getIdentifier().getExtension()
+                                    .compareToIgnoreCase(o2.getIdentifier().getExtension());
+                        }
+                        return result;
                     }
                 });
                 latestDTO = participatingSitesOld.get(participatingSitesOld.size() - 1);

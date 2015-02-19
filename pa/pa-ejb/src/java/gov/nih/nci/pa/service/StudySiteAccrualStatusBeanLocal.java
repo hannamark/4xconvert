@@ -268,10 +268,11 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
-        List<StudySiteAccrualStatusDTO> ssasList = getStudySiteAccrualStatusByStudySite(studySiteIi);
+        Long ssId = Long.valueOf(studySiteIi.getExtension());
+        Map<Long, StudySiteAccrualStatus> map = getCurrentStudySiteAccrualStatus(new Long[] {ssId});
         StudySiteAccrualStatusDTO result = null;
-        if (!ssasList.isEmpty()) {
-            result = ssasList.get(ssasList.size() - 1);
+        if (!map.isEmpty()) {
+            result = new StudySiteAccrualStatusConverter().convertFromDomainToDto(map.get(ssId));
         }
         return result;
     }

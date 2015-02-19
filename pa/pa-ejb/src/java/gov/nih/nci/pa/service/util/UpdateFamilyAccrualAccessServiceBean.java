@@ -129,8 +129,9 @@ public class UpdateFamilyAccrualAccessServiceBean implements UpdateFamilyAccrual
                         String leadOrgtrial = "select ssas.study_site_identifier from study_site ss"
                         + " join study_site_accrual_status ssas on (ssas.study_site_identifier = ss.identifier)"
                         + " where ss.functional_code ='TREATING_SITE' and ss.study_protocol_identifier = " + trialID
-                        + " and ssas.status_code <> 'IN_REVIEW' and ssas.identifier in (select max(identifier) from"
-                        + " study_site_accrual_status where study_site_identifier  = ss.identifier)";
+                        + " and ssas.status_code <> 'IN_REVIEW' "
+                        + " and ssas.identifier in (select identifier from study_site_accrual_status where "
+                        + " study_site_identifier  = ss.identifier order by status_date desc, identifier desc limit 1)";
                         query = session.createSQLQuery(leadOrgtrial);
                     } else {
                         String treatingSitetrial = "select ssas.study_site_identifier from study_site ss"
@@ -139,8 +140,9 @@ public class UpdateFamilyAccrualAccessServiceBean implements UpdateFamilyAccrual
                         + " join organization org  on (hcf.organization_identifier = org.identifier)"
                         + " where ss.functional_code ='TREATING_SITE' and ss.study_protocol_identifier = " + trialID
                         + " and org.assigned_identifier IN (:orgIds)"
-                        + " and ssas.status_code <> 'IN_REVIEW' and ssas.identifier in (select max(identifier) from"
-                        + " study_site_accrual_status where study_site_identifier  = ss.identifier)";
+                        + " and ssas.status_code <> 'IN_REVIEW' "
+                        + " and ssas.identifier in (select identifier from study_site_accrual_status where "
+                        + " study_site_identifier  = ss.identifier order by status_date desc, identifier desc limit 1)";
                         query = session.createSQLQuery(treatingSitetrial);
                         query.setParameterList("orgIds", FamilyServiceBeanLocal.convertPoOrgIdsToStrings(poOrgList));
                     }
