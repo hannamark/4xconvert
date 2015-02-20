@@ -133,7 +133,7 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
      * @throws SQLException
      */
     private void loginToPAAndAddSite(TrialInfo info) throws SQLException {
-        login("/pa", "ctrpsubstractor", "Coppa#12345");
+        login("/pa", "ctrpsubstractor", "pass");
         disclaimer(true);
         searchAndSelectTrial(info.title);
         String siteCtepId = "DCP";
