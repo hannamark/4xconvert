@@ -32,12 +32,35 @@ public class StatesActionTest {
         assertEquals(instance.getField(), "a.b");
         instance.setField("abc");
         assertEquals(instance.getField(), "abc");
+        instance.setField("organization.postalAddress.stateOrProvince");
+        assertEquals(instance.getField(), "organization.postalAddress.stateOrProvince");
         try {
             instance.setField("a.");
             fail();
         } catch (IllegalArgumentException ex) {
-        }   
+        }  
+        try {
+            instance.setField("organization.postal Address.stateOrProvince");
+            fail();
+        } catch (IllegalArgumentException ex) {
+        }
+        try {
+            instance.setField(".a");
+            fail();
+        } catch (IllegalArgumentException ex) {
+        }
         
+    }
+    
+    @Test
+    public void testFieldNoCatastrophicBacktrackingPO8677() {
+        StatesAction instance = new StatesAction();
+        try {
+            instance.setField("organization.postalAddress.stateOrProvince.");
+            fail();
+        } catch (IllegalArgumentException ex) {
+        }
+
     }
 
 }
