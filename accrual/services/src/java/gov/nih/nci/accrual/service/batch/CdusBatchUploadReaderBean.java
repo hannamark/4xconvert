@@ -438,8 +438,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (spDto != null && spDto.getProprietaryTrialIndicator().getValue()) {
             importResult.setIndustrialTrial(true);
         }
+
         Map<String, Integer> industrialCounts = new HashMap<String, Integer>();
         List<Ii> partiSiteList = new ArrayList<Ii>();
+        Map<String, String> siteNameWithID = new HashMap<String, String>();
         
         if (spDto != null && CollectionUtils.isNotEmpty(accrualLines.keySet())) {
             for (Ii partSiteIi : accrualLines.keySet()) {
@@ -451,14 +453,18 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     subjectAccrualService.updateSubjectAccrualCount(studySite.getStudySiteIi(),  
                             accrualLines.get(partSiteIi), user, batchFile.getSubmissionTypeCode());
                     partiSiteList.add(partSiteIi);
+                    siteNameWithID.put(partSiteIi.getExtension(), StConverter.convertToString(
+                    studySite.getOrganizationName()));
                     count++;
                 } else {
                     // insert the incorrect sites into the patient_stage table
                     savePatientStageCounts(user, spDto.getIdentifier(), 
                             importResult.getNciIdentifier(), accrualLines, partSiteIi, importResult.getFileName());
                 }
+                importResult.setShowCountinEmail(true);
             }
         }
+        importResult.setSiteNames(siteNameWithID);
         if (CollectionUtils.isNotEmpty(partiSiteList)) {
             Map<String, Integer> studySiteCounts = BatchUploadUtils.getStudySiteCounts(lines);
             if (isSuAbstractor(user)) {
@@ -778,12 +784,14 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (result.isSkipBecauseOfChangeCode()) {
             body = PaServiceLocator.getInstance().getLookUpTableService()
                     .getPropertyValue("accrual.changeCode.body");
-        } else if (result.isIndustrialTrial() && CollectionUtils.isNotEmpty(result.getIndustrialCounts().keySet()))  {
+        } else if (result.isIndustrialTrial() && CollectionUtils.isNotEmpty(result.getIndustrialCounts().keySet()) 
+             || result.isShowCountinEmail())  {
             body = PaServiceLocator.getInstance().getLookUpTableService()
                     .getPropertyValue("accrual.industrialTrial.body");
             StringBuffer studySiteCounts = new StringBuffer();
             for (String partSiteIi : result.getIndustrialCounts().keySet()) {
-                studySiteCounts.append(partSiteIi).append(" : ")
+                studySiteCounts.append(partSiteIi).append(" - ")
+                .append(result.getSiteNames().get(partSiteIi)).append(" - ")
                 .append(result.getIndustrialCounts().get(partSiteIi)).append(" \n");
             }
             body = body.replace("${studySiteCounts}", studySiteCounts.toString().replace("\n", "<br/>"));

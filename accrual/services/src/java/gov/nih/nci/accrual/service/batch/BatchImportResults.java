@@ -97,7 +97,9 @@ public class BatchImportResults {
     private StringBuilder errors;
     private String nciIdentifier;
     private boolean industrialTrial;
+    private boolean showCountinEmail;
     private Map<String, Integer> industrialCounts = new HashMap<String, Integer>();
+    private Map<String, String> siteNames = new HashMap<String, String>();
 
     /**
      * @return the totalImports
@@ -196,4 +198,34 @@ public class BatchImportResults {
     public void setIndustrialCounts(Map<String, Integer> industrialCounts) {
         this.industrialCounts = industrialCounts;
     }
+    /***
+     * 
+     * @return showCountinEmail showCountinEmail
+     */
+    public boolean isShowCountinEmail() {
+        return showCountinEmail;
+    }
+    /**
+     * 
+     * @param showCountinEmail showCountinEmail
+     */
+    public void setShowCountinEmail(boolean showCountinEmail) {
+        this.showCountinEmail = showCountinEmail;
+    }
+    /**
+     * 
+     * @return siteNames siteNames
+     */
+    public Map<String, String> getSiteNames() {
+        return siteNames;
+    }
+    /**
+     * 
+     * @param siteNames siteNames
+     */
+    public void setSiteNames(Map<String, String> siteNames) {
+        this.siteNames = siteNames;
+    }
+    
+    
 }
