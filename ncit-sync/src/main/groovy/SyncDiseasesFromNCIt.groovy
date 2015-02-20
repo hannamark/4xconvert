@@ -42,11 +42,17 @@ public class SyncDiseasesFromNCIt{
 
     def synonyms = []
     def doc = response.data;
-    def prefName =  doc.EntityDescription.namedEntity.designation.find{ it.@designationRole == 'PREFERRED' }?.text().replaceAll("'","''")
+    def element = doc.EntityDescription.namedEntity.designation.find{ it.@designationRole == 'PREFERRED' }
+    def prefName ;
+    if(element!=null) {
+        prefName = element.value?.text().replaceAll("'","''")
+    }
+  
+    element = null;
     def altDesignations = doc.EntityDescription.namedEntity.designation.findAll{ it.@designationRole == 'ALTERNATIVE' }
     def synName
     for (def altDesignation : altDesignations) {
-      synName = altDesignation.text().replaceAll("'","''")
+      synName = altDesignation.value?.text().replaceAll("'","''")
       if(!synonyms.contains(synName)){
         synonyms += synName
       }

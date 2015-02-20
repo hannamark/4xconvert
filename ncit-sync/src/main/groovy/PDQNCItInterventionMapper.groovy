@@ -109,7 +109,12 @@ public class PDQNCItInterventionMapper{
       throw new RuntimeException("Failure from LexEVS: " + response.data.text)
     }
     def doc = response.data;
-    def prefName =  doc.EntityDescription.namedEntity.designation.find{ it.@designationRole == 'PREFERRED' }?.text()
+    def element = doc.EntityDescription.namedEntity.designation.find{ it.@designationRole == 'PREFERRED' }
+    
+    def prefName;
+    if(element!=null) {
+        prefName = element.value?.text()
+    }
     return prefName;
   }
 
@@ -144,9 +149,10 @@ public class PDQNCItInterventionMapper{
          String ncitCode =null;
          def  sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          def ctrpTerms = sql.rows("select distinct(nt_term_identifier) from intervention");
-         ctrpTerms.each (){
-         ncitCode= it.nt_term_identifier;
          
+         ctrpTerms.each (){
+        ncitCode= it.nt_term_identifier;
+       
          if(ncitCode!=null) {
             println "Syncing intervention term "+ncitCode
             String  prefName = getPreferredName(ncitCode,preferredNameUrl)
