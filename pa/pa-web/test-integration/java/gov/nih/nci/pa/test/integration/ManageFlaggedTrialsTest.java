@@ -424,7 +424,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                                     + trial.nciID
                                     + ","
                                     + trial.flaggedReason
-                                    + ",\"CI, ctrpsubstractor\",.*?,This is a comment,,,"
+                                    + ",\"ctrpsubstractor\",.*?,This is a comment,,,"
                                     + "$"));
             csv.delete();
         }
