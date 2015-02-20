@@ -134,7 +134,7 @@
 		</tr>
 	</table>
 	<span id="termValue" style="display:none"><s:property value="currentDisease.ntTermIdentifier" /></span>
-	<div align="center"><span class="info">Note: 'CDR Identifier', 'Display Name', 'Parent Terms' and 'Child Terms' attributes are NOT synchronized from NCIt, their existing CTRP values shown above will be retained.</span></div>
+	<div align="center"><span class="info">Note:  'CDR Identifier' attribute is NOT synchronized from NCIt; its existing CTRP value(s) shown above will be retained.</span></div>
 	<div class="actionsrow">
 		<del class="btnwrapper">
 			<ul class="btnrow">
