@@ -107,7 +107,7 @@ public class PAUIApplication extends AbstractRegistrySeleniumTest {
     }
 
     private void loginPA() {
-        loginPA("abstractor-ci", "Coppa#12345");
+        loginPA("abstractor-ci", "pass");
         clickAndWait("id=acceptDisclaimer");
         clickAndWait("id=trialSearchMenuOption");
     }
@@ -115,8 +115,7 @@ public class PAUIApplication extends AbstractRegistrySeleniumTest {
     private void loginPA(String username, String password) {
         openAndWait("/pa");
         selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        selenium.select("id=authenticationServiceURL", "label=Training");
+        selenium.type("j_password", password);        
         clickAndWait("id=loginLink");
     }
 

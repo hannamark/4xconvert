@@ -49,7 +49,7 @@ public class RegisterAbbreviatedTrialTest extends AbstractRestServiceTest {
     @Test
     public void testValidCredentialsButNoRole() throws Exception {
         Credentials credentials = new UsernamePasswordCredentials("curator",
-                "Coppa#12345");
+                "pass");
         httpClient.getCredentialsProvider().setCredentials(authScope,
                 credentials);
         String url = baseURL + "/trials/abbreviated/NCT01721876";

@@ -62,7 +62,7 @@ public abstract class AbstractTrialStatusTest extends AbstractPaSeleniumTest {
     protected TrialInfo createTrialAndAccessStatusPage(String username)
             throws SQLException {
         TrialInfo trial = createAcceptedTrial();
-        login(username, "Coppa#12345");
+        login(username, "pass");
         disclaimer(true);
         searchAndSelectTrial(trial.title);
         checkOutTrialAsAdminAbstractor();

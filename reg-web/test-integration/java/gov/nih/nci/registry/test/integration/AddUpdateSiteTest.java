@@ -288,7 +288,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     private TrialInfo createAndSelectTrial() throws SQLException {
         deactivateAllTrials();
         TrialInfo info = createAcceptedTrial(true);
-        login("/pa", "ctrpsubstractor", "Coppa#12345");
+        login("/pa", "ctrpsubstractor", "pass");
         disclaimer(true);
         searchAndSelectTrial(info.title);
         return info;

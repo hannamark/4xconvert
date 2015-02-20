@@ -793,8 +793,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
     private void login() {
         openAndWait("/accrual");
         selenium.type("j_username", "submitter-ci");
-        selenium.type("j_password", "Coppa#12345");
-        selenium.select("id=authenticationServiceURL", "label=Training");
+        selenium.type("j_password", "pass");        
         clickAndWait("xpath=//i[@class='fa-arrow-circle-right']");
         clickAndWait("id=acceptDisclaimer");
 

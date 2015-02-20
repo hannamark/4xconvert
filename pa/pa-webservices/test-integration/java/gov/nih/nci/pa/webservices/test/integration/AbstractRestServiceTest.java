@@ -91,7 +91,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         authScope = new AuthScope(TestProperties.getServerHostname(),
                 TestProperties.getServerPort());
         Credentials credentials = new UsernamePasswordCredentials(
-                "submitter-ci", "Coppa#12345");
+                "submitter-ci", "pass");
         httpClient.getCredentialsProvider().setCredentials(authScope,
                 credentials);
 
@@ -119,7 +119,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     @SuppressWarnings("deprecation")
     public void testValidCredentialsButNoRole() throws Exception {
         Credentials credentials = new UsernamePasswordCredentials("curator",
-                "Coppa#12345");
+                "pass");
         httpClient.getCredentialsProvider().setCredentials(authScope,
                 credentials);
         String url = baseURL + serviceURL;

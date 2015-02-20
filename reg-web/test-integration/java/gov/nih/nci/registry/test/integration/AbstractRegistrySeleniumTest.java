@@ -141,18 +141,17 @@ public abstract class AbstractRegistrySeleniumTest extends
         verifyLoginPage();
         clickAndWait("link=Sign In");
         selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        selenium.select("id=authenticationServiceURL", "label=Training");
+        selenium.type("j_password", password);       
         clickAndWait("id=loginButton");
         verifyDisclaimerPage();
     }
 
     public void loginAsAbstractor() {
-        login("abstractor-ci", "Coppa#12345");
+        login("abstractor-ci", "pass");
     }
 
     public void loginAsSubmitter() {
-        login("submitter-ci", "Coppa#12345");
+        login("submitter-ci", "pass");
     }
 
     public void verifyDisclaimer() {

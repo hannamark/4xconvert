@@ -281,8 +281,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         openAndWait(path);
         verifyLoginPage();
         selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        selenium.select("id=authenticationServiceURL", "label=Training");
+        selenium.type("j_password", password);        
         clickAndWait("id=loginLink");
         assertTrue(selenium.isElementPresent("link=Logout"));
         verifyDisclaimerPage();
@@ -544,28 +543,28 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     public void loginAsSuperAbstractor() {
-        login("ctrpsubstractor", "Coppa#12345");
+        login("ctrpsubstractor", "pass");
         disclaimer(true);
     }
 
     public void loginAsAbstractor() {
-        login("abstractor-ci", "Coppa#12345");
+        login("abstractor-ci", "pass");
         disclaimer(false);
-        login("abstractor-ci", "Coppa#12345");
+        login("abstractor-ci", "pass");
         disclaimer(true);
     }
 
     public void loginAsScientificAbstractor() {
-        login("scientific-ci", "Coppa#12345");
+        login("scientific-ci", "pass");
         disclaimer(false);
-        login("scientific-ci", "Coppa#12345");
+        login("scientific-ci", "pass");
         disclaimer(true);
     }
 
     public void loginAsAdminAbstractor() {
-        login("admin-ci", "Coppa#12345");
+        login("admin-ci", "pass");
         disclaimer(false);
-        login("admin-ci", "Coppa#12345");
+        login("admin-ci", "pass");
         disclaimer(true);
     }
 

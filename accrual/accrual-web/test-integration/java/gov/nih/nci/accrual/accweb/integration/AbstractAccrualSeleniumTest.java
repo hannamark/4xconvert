@@ -122,8 +122,7 @@ public abstract class AbstractAccrualSeleniumTest extends
     protected void login(String username, String password) {
         openAndWait("/accrual");
         selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        selenium.select("id=authenticationServiceURL", "label=Training");
+        selenium.type("j_password", password);        
         clickAndWait("xpath=//i[@class='fa-arrow-circle-right']");
         verifyDisclaimerPage();
     }
@@ -154,7 +153,7 @@ public abstract class AbstractAccrualSeleniumTest extends
 
     @Override
     public void loginAsAbstractor() {
-        login("abstractor-ci", "Coppa#12345");
+        login("abstractor-ci", "pass");
     }
 
 }
