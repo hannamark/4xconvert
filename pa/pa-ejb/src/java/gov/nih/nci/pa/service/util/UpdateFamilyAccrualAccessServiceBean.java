@@ -117,9 +117,7 @@ public class UpdateFamilyAccrualAccessServiceBean implements UpdateFamilyAccrual
                 qr.addParameter("spIds", user.getValue());
                 List<Object[]> list = dataAccessService.findByQuery(qr);
                 for (Object[] row : list) {
-                    Long studyId = ((BigInteger) row[0]).longValue();
-                    Long orgAssignedId = Long.valueOf(row[1].toString());
-                    trialsLeadOrgIdsList.put(studyId, orgAssignedId);
+                    trialsLeadOrgIdsList.put(((BigInteger) row[0]).longValue(), Long.valueOf(row[1].toString()));
                 }
                 List<Long> poOrgList =  FamilyHelper.getAllRelatedOrgs(user.getKey().getAffiliatedOrganizationId());
                 for (Long trialID : user.getValue()) {
@@ -131,7 +129,8 @@ public class UpdateFamilyAccrualAccessServiceBean implements UpdateFamilyAccrual
                         + " where ss.functional_code ='TREATING_SITE' and ss.study_protocol_identifier = " + trialID
                         + " and ssas.status_code <> 'IN_REVIEW' "
                         + " and ssas.identifier in (select identifier from study_site_accrual_status where "
-                        + " study_site_identifier  = ss.identifier order by status_date desc, identifier desc limit 1)";
+                        + " study_site_identifier  = ss.identifier and deleted=false"
+                        + " order by status_date desc, identifier desc limit 1)";
                         query = session.createSQLQuery(leadOrgtrial);
                     } else {
                         String treatingSitetrial = "select ssas.study_site_identifier from study_site ss"
@@ -142,14 +141,14 @@ public class UpdateFamilyAccrualAccessServiceBean implements UpdateFamilyAccrual
                         + " and org.assigned_identifier IN (:orgIds)"
                         + " and ssas.status_code <> 'IN_REVIEW' "
                         + " and ssas.identifier in (select identifier from study_site_accrual_status where "
-                        + " study_site_identifier  = ss.identifier order by status_date desc, identifier desc limit 1)";
+                        + " study_site_identifier  = ss.identifier and deleted=false"
+                        + " order by status_date desc, identifier desc limit 1)";
                         query = session.createSQLQuery(treatingSitetrial);
                         query.setParameterList("orgIds", FamilyServiceBeanLocal.convertPoOrgIdsToStrings(poOrgList));
                     }
                     List<BigInteger> ssList = query.list();
                     for (BigInteger obj : ssList) {
-                        Long studySiteId = obj.longValue();
-                        studySiteIdList.add(studySiteId);
+                        studySiteIdList.add(obj.longValue());
                     }
                     if (CollectionUtils.isNotEmpty(studySiteIdList)) {
                         String studySiteAccess = "select study_site_identifier, identifier, status_code from "

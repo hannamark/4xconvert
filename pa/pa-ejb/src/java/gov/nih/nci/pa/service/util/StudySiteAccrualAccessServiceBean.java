@@ -239,8 +239,10 @@ public class StudySiteAccrualAccessServiceBean // NOPMD
             + " and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
             + " and ssas.id = (select max(id) "
             + "    from StudySiteAccrualStatus where studySite.id = ss.id"
+            + "     and deleted=false"
             + "    and statusDate = (select max(statusDate) "
-            + "        from StudySiteAccrualStatus where studySite.id =ss.id)) "
+            + "        from StudySiteAccrualStatus where studySite.id =ss.id"
+            + "         and deleted=false)) "
             + " order by org.name, ss.id ";
         query = session.createQuery(hql);
         query.setParameter(SP_ID, studyProtocolId);

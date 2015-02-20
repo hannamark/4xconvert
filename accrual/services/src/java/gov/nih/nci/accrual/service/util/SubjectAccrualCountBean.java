@@ -192,8 +192,10 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
                  + " and ssas.statusCode <> :statusCode"
                  + " and ssas.id = (select max(id) "
                  + "    from StudySiteAccrualStatus where studySite.id = ss.id"
+                 + "    and deleted=false"
                  + "    and statusDate = (select max(statusDate) "
-                 + "        from StudySiteAccrualStatus where studySite.id =ss.id)) ";
+                 + "        from StudySiteAccrualStatus where studySite.id =ss.id"
+                 + "        and deleted=false)) ";
          
              Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
              query.setParameter("studyProtocolId", studyProtocolId);

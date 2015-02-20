@@ -147,8 +147,10 @@ public class FamilyServiceBeanLocal implements FamilyServiceLocal {
                     + "  AND org.identifier IN (:orgIds) "
                     + "  AND ssas.id = (select max(id) "
                     + "    FROM StudySiteAccrualStatus WHERE studySite.id = ss.id"
+                    + "    and deleted=false"
                     + "    AND statusDate = (select max(statusDate) "
-                    + "        FROM StudySiteAccrualStatus WHERE studySite.id =ss.id)) "
+                    + "        FROM StudySiteAccrualStatus WHERE studySite.id =ss.id"
+                    + "         and deleted=false)) "
                     + "  AND ssas.statusCode NOT IN (:excludeStatus) ";
 
  
