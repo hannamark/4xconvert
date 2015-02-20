@@ -15,7 +15,8 @@ To run selenium tests:
 ----------------------
 
 Note: the following commands WILL DROP and re-create your PA database!
-
+- Modify your JBoss start-up script to include the following JVM option: -Dctrp.env.ci=true
+-- Example: set JAVA_OPTS=-Dctrp.env.ci=true -Xmx1303M -XX:MaxPermSize=256M -Djava.net.preferIPv4Stack=true -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9700 -Xdebug -Dorg.apache.catalina.connector.URI_ENCODING=UTF-8
 - Modify build-pa\tier-properties\build-lite-LOCAL.properties: set mock.po=true. PA will use a PO mock rather than calling PO's Remote EJBs.
 - On Windows, ensure psexec.exe is available on your PATH. This tool is used to start JBoss process.
 - Stop PO & PA JBoss, if running.
