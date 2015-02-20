@@ -109,7 +109,7 @@ public class OutOfScopeAccrualsTest extends AbstractPaSeleniumTest {
                 + ctepID
                 + "' ,'Missing Trial',"
                 + "{ts '2014-05-07 16:58:00.000'},"
-                + "(select user_id from csm_user where login_name like '%CN=ctrpsubstractor' limit 1),'')";
+                + "(select user_id from csm_user where login_name like '%ctrpsubstractor%' limit 1),'')";
 
         QueryRunner runner = new QueryRunner();
         runner.update(connection, sql);

@@ -82,7 +82,7 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
 
         // Bring the dialog back again
         selenium.click("link=Scientific Check In");
-        selenium.select("supAbsId", "label=CI, ctrpsubstractor");
+        selenium.select("supAbsId", "label=ctrpsubstractor");
         clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-pickSuperAbstractor']//button//span[text()='Proceed with Check-in']");
         assertFalse(selenium.isVisible("id=pickSuperAbstractor"));
         assertTrue(selenium.isElementPresent("comment-dialog"));

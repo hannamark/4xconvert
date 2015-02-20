@@ -165,28 +165,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testEditDuplicateFlagValidation() throws SQLException,
-            ParseException {
-        TrialInfo trial = createTrialAndAccessManageFlags();
-        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
-        addFlaggedTrial(trial);
-        trial.flaggedReason = "Do not enforce unique Subject ID across sites";
-        addFlaggedTrial(trial);
-
-        clickAndWait("link=Manage Flagged Trials");
-        selenium.click("xpath=//table[@id='flaggedTrials']/thead/tr[1]/th[2]");
-        selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[6]");
-        selenium.select("reason", "label=Do not enforce unique Subject ID across sites");
-        selenium.type("comments", "This is edited comment.");
-        selenium.click("xpath=//button/span[normalize-space(text())='Save']");
-        pause(OP_WAIT_TIME);
-        assertFalse(selenium.isTextPresent("Changes saved!"));
-        assertTrue(selenium.isAlertPresent());
-
-    }
-
+    
     @SuppressWarnings("deprecation")
     @Test
     public void testNavigateToTrialHistory() throws SQLException,
@@ -343,7 +322,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[2]"));
         assertEquals(
-                "CI, ctrpsubstractor "
+                "ctrpsubstractor "
                         + DateFormatUtils.format(
                                 truncate(getDateOfLastFlaggedTrial(),
                                         Calendar.MINUTE), MM_DD_YYYY_HH_MM_AAA),
@@ -351,7 +330,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                         "xpath=//table[@id='deletedFlaggedTrials']/tbody/tr[1]/td[3]")
                         .replaceAll("\\s+", " "));
         assertEquals(
-                "CI, ctrpsubstractor "
+                "ctrpsubstractor "
                         + DateFormatUtils.format(
                                 truncate(getDeleteDateOfLastFlaggedTrial(),
                                         Calendar.MINUTE), MM_DD_YYYY_HH_MM_AAA),
@@ -560,7 +539,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                 "Do not enforce unique Subject ID across sites",
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[2]"));
         assertEquals(
-                "CI, ctrpsubstractor",
+                "ctrpsubstractor",
                 selenium.getText("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[3]"));
         assertEquals(
                 truncate(getDateOfLastFlaggedTrial(), Calendar.MINUTE),
