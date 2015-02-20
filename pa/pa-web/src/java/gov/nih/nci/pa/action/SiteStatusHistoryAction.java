@@ -116,10 +116,12 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -152,6 +154,8 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
     
     private static final Logger LOG = Logger
             .getLogger(SiteStatusHistoryAction.class);
+    
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
     
     private ParticipatingSiteServiceLocal participatingSiteService;
     private StudySiteServiceLocal studySiteService;
@@ -209,7 +213,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
         if (hasActionErrors()) {
             StringBuffer sb = new StringBuffer();
             for (String actionErr : getActionErrors()) {
-                sb.append(" - ").append(actionErr);
+                sb.append("\n").append(actionErr);
             }
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
         }
@@ -246,8 +250,8 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
             setSiteStatusList(convertToStatusWebDtoList(statusDtoList));
         } catch (Exception e) {
             LOG.info(e);
-            addActionError("Error validating participating site status history for participating site, " 
-            + studySiteId + ". Error: " + e.getMessage());
+            handle("Error validating participating site status history for participating site, " 
+            + studySiteId , new PAException(e));
         }
     }
 
@@ -296,7 +300,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
         status.setId(dto.getId());
         status.setStatusCode(RecruitmentStatusCode.valueOf(dto.getStatusCode()).getCode());
         status.setStatusDateRaw(dto.getStatusDate());
-        status.setStatusDate(dto.getStatusDate().toString());
+        status.setStatusDate(SDF.format(dto.getStatusDate()));
         status.setSystemCreated(dto.isSystemCreated());
         status.setComments(dto.getComments());
         status.setUpdatedBy(dto.getUpdatedBy());
@@ -322,7 +326,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
                 siteStatusList.add(studySiteStatus);
             }
         } catch (PAException e) {
-            addActionError(e.getMessage());
+            handle(e);
         }
     }
 
@@ -400,6 +404,9 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
             StudySiteAccrualStatusDTO dto = studySiteAccrualStatusService.getStudySiteAccrualStatus(
                     IiConverter.convertToStudySiteIi(statusId));
             if (dto != null) {
+                if (StringUtils.isEmpty(getDeleteComment())) {
+                    throw new PAException("Comment for deleting status is missing");
+                }
                 dto.setComments(StConverter.convertToSt(getDeleteComment()));
                 studySiteAccrualStatusService.softDelete(dto);
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
@@ -410,14 +417,23 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
         }
         return execute();
     }
-
+    
     /**
      * @param e
      */
     private void handle(PAException e) {
+       handle(null, e);
+    }
+
+    /**
+     * @param msg
+     * @param e
+     */
+    private void handle(String msg, PAException e) {
         LOG.warn(e, e);
+        
         ServletActionContext.getRequest().setAttribute(
-                Constants.FAILURE_MESSAGE, e.getMessage());
+                Constants.FAILURE_MESSAGE, msg == null?"" : msg + "\n" + e.getMessage());
     }
     
     
@@ -460,11 +476,10 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
         try {
             validateUpdates();
             loadUpdatesIntoDTO(dto);
-            validateStatusBeforeUpdate(dto);
             if (hasActionErrors()) {
                 StringBuffer sb = new StringBuffer();
                 for (String actionErr : getActionErrors()) {
-                    sb.append(" - ").append(actionErr);
+                    sb.append("\n").append(actionErr);
                 }
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
                 return execute();
@@ -573,7 +588,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
                 studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(
                         IiConverter.convertToStudySiteIi(studySiteId));
         List<StatusDto> statusDtos = null;
-        boolean isValidTransition = false;
+        boolean isValidTransition = true;
         try {
             statusDtos = statusTransitionService.validateStatusTransition(
                     AppName.PA, 
@@ -587,18 +602,32 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
                     TsConverter.convertToTimestamp(ssasDto.getStatusDate()));
             StatusDto dto = statusDtos.get(0);
             if (dto.hasErrorOfType(ErrorType.ERROR)) {
-                addActionError("ERRORS:" + dto.getConsolidatedErrorMessage());
+                addActionError(" ERRORS:\n" + dto.getConsolidatedErrorMessage());
+                isValidTransition = false;
             } 
             if (dto.hasErrorOfType(ErrorType.WARNING)) {
-                addActionError("WARNINGS:" + dto.getConsolidatedWarningMessage());
-                isValidTransition = true;
-            } else {
-                isValidTransition = true;
-            }
+                addActionError(" WARNINGS:\n" + dto.getConsolidatedWarningMessage());
+            } 
         } catch (PAException e) {
             addActionError(e.getMessage());
+            isValidTransition = true;
         }
+        consolidateAndClearActionErrors();
         return isValidTransition;
+    }
+    
+    /**
+     * Consolidates all action error messages into a single string and sets it as failure message
+     */
+    private void consolidateAndClearActionErrors() {
+        StringBuffer sb = new StringBuffer();
+        for (String actionErr : getActionErrors()) {
+            sb.append("\n").append(actionErr);
+        }
+        
+        ServletActionContext.getRequest().setAttribute(
+                Constants.FAILURE_MESSAGE, sb.toString().replaceAll("\\.\\s?", "\n"));
+        clearActionErrors();
     }
 
     private void validateUpdates() throws PAException {

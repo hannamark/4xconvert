@@ -19,7 +19,6 @@
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersonsUrl"/>
         <c:url value="/protected/popuplookupcontactpersons.action" var="lookupContactPersonsUrl"/>
         <c:url value="/protected/ajaxGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
-        <%-- <c:url value="/protected/participatingOrganizationshistoryPopup.action" var="lookupUrlstatusHistory" scope="request" /> --%>
         <c:url value="/protected/siteStatusHistorypopupexecute.action" var="lookupUrlstatusHistory" scope="request" />
 
         <script language="javascript" type="text/javascript">
@@ -192,6 +191,12 @@
                 $('personContactWebDTO.selectedPersId').value =  persid;
             }
         </script>
+        
+        <style type="text/css">
+            div.error_msg {
+			    white-space: pre-wrap;
+			}
+        </style>
     </head>
     <body>
         <h1><fmt:message key="participatingOrganizations.subtitle" /></h1>
@@ -203,7 +208,7 @@
             <pa:sucessMessage/>
             <pa:failureMessage/>
             <s:if test="hasActionErrors()">
-                <div class="error_msg"><s:actionerror escape="false"/></div>
+                <div class="action_error_msg"><s:actionerror escape="false"/></div>
             </s:if>
             <h2><fmt:message key="participatingOrganizations.subtitle" /></h2>
             <table class="form" id="formTable">

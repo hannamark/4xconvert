@@ -2,6 +2,9 @@
 <div id="orgDetailsDiv">
 <pa:failureMessage/>
 <pa:sucessMessage /> 
+ <s:if test="hasActionErrors()">
+    <div class="action_error_msg"><s:actionerror escape="false"/></div>
+</s:if>
 <h3><fmt:message key="participatingOrganizations.subtitle2" /></h3>
 
 <%@ include file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp" %>

@@ -435,6 +435,9 @@ TABLE.data TD A IMG.thumbnail:hover
 .float25_first
 { float:left; width:30%; padding:0 6px 0 0; border:0; }
 
+/* Action Error Messages */
+.action_error_msg
+{ background:#fff; color:#c00; border:1px solid #c00; padding:15px; margin-bottom:15px; white-space: pre-wrap; }
 
 /* Confirmation or Error Messages */
 

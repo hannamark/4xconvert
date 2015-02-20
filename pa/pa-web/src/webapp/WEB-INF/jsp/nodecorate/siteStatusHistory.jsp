@@ -55,6 +55,17 @@ th {
     text-align: left !important;    
 }
 
+div.error_msg {
+    white-space: pre-wrap;
+}
+
+span.warning {
+    white-space: pre-wrap;
+}
+span.error {
+    white-space: pre-wrap;
+}
+
 </style>
 
 <script type="text/javascript"
@@ -236,12 +247,12 @@ th {
 				<display:column escapeXml="true" property="comments" title="Comments" sortable="false" />
 				<display:column title="Validation Messages" sortable="false">
 					<c:if test="${not empty row.errors}">
-						<span class="error"><b>ERROR:</b> <c:out
+						<span class="error"><b>ERROR: </b> <c:out
 								value="${row.errors}" /></span>
 						<br />
 					</c:if>
 					<c:if test="${not empty row.warnings}">
-						<span class="warning"><b>WARNING:</b> <c:out
+						<span class="warning"><b>WARNING: </b> <c:out
 								value="${row.warnings}" /></span>
 						<br />
 					</c:if>

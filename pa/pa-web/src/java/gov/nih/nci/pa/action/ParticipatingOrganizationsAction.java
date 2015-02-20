@@ -242,6 +242,9 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private String statusCode;
     private List<StudyOverallStatusWebDTO> siteStatusList;
     private List<StudySubjectWebDto> subjects;
+    
+    //tracks status transition validity
+    private boolean isValidTransition;
 
     // Cache for org list
     private static CacheManager cacheManager;
@@ -362,9 +365,10 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
     private void consolidateAndClearActionErrors() {
         StringBuffer sb = new StringBuffer();
         for (String actionErr : getActionErrors()) {
-            sb.append(" - ").append(actionErr);
+            sb.append("\n").append(actionErr);
         }
-        ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, sb.toString());
+        ServletActionContext.getRequest().setAttribute(
+                Constants.FAILURE_MESSAGE, sb.toString().replaceAll("\\.\\s?", "\n"));
         clearActionErrors();
     }
 
@@ -373,6 +377,8 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
      */
     @SuppressWarnings("deprecation")
     public void facilitySaveOrUpdate() throws PAException {
+        //reset flag
+        isValidTransition = true;
         getPartSiteCache().remove(spIi);
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
@@ -405,7 +411,7 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             sp = new StudySiteDTO();
             ssIi = saveNonPropWithNewSite(sp, ssas, tab, errorOrgName);
         }
-        if (hasFieldErrors() || hasActionErrors()) {
+        if (hasFieldErrors() || (!isValidTransition && hasActionErrors())) {
             return;
         }
         tab.setStudyParticipationId(IiConverter.convertToLong(ssIi));
@@ -427,7 +433,6 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
         boolean spUpdated = isSiteUpdated(studySite, studySiteAccrualStatus);
         if (spUpdated) {
             List<StatusDto> statusDtos = null;
-            boolean isValidTransition = true;
             try {
                 statusDtos = statusTransitionService.validateStatusTransition(
                         AppName.PA, 
@@ -440,11 +445,11 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
                         TsConverter.convertToTimestamp(ssas.getStatusDate()));
                 StatusDto dto = statusDtos.get(0);
                 if (dto.hasErrorOfType(ErrorType.ERROR)) {
-                    addActionError("ERRORS: " + dto.getConsolidatedErrorMessage());
+                    addActionError("ERRORS:\n" + dto.getConsolidatedErrorMessage());
                     isValidTransition = false;
                 } 
                 if (dto.hasErrorOfType(ErrorType.WARNING)) {
-                    addActionError("WARNINGS: " + dto.getConsolidatedWarningMessage());
+                    addActionError("WARNINGS:\n" + dto.getConsolidatedWarningMessage());
                 } 
             } catch (PAException e) {
                 addActionError(e.getMessage());
@@ -547,7 +552,6 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
             ParticipatingOrganizationsTabWebDTO tab, String errorOrgName) throws PAException {
         
         List<StatusDto> statusDtos = null;
-        boolean isValidTransition = true;
         try {
             statusDtos = statusTransitionService.validateStatusTransition(
                     AppName.PA, 
@@ -558,11 +562,11 @@ public class ParticipatingOrganizationsAction extends AbstractMultiObjectDeleteA
                     TsConverter.convertToTimestamp(ssas.getStatusDate()));
             StatusDto dto = statusDtos.get(0);
             if (dto.hasErrorOfType(ErrorType.ERROR)) {
-                addActionError("ERRORS: " + dto.getConsolidatedErrorMessage());
+                addActionError("ERRORS:\n" + dto.getConsolidatedErrorMessage());
                 isValidTransition = false;
             } 
             if (dto.hasErrorOfType(ErrorType.WARNING)) {
-                addActionError("WARNINGS: " + dto.getConsolidatedWarningMessage());
+                addActionError("WARNINGS:\n" + dto.getConsolidatedWarningMessage());
             } 
         } catch (PAException e) {
             addActionError(e.getMessage());

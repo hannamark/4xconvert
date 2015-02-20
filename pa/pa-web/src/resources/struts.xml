@@ -354,7 +354,6 @@
             <result name="display_spContacts">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="input">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="error">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
-            <result name="historypopup">/WEB-INF/jsp/nodecorate/siteStatusHistory.jsp</result>
         </action> 
         <action name="popupParticipatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <result>/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationsDeletePopup.jsp</result>
