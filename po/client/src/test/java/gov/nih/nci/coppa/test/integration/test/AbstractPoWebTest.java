@@ -743,8 +743,8 @@ public abstract class AbstractPoWebTest extends AbstractSelenese2TestCase {
         selenium.type("postalAddressForm_address_cityOrMunicipality", address.getCityOrMunicipality());
         selenium.select("address.stateOrProvince", "value=" + address.getStateOrProvince());
         selenium.type("postalAddressForm_address_postalCode", address.getPostalCode());
-        clickAndWait("submitPostalAddressForm");
-        pause(3000);
+        selenium.click("id=submitPostalAddressForm");
+        pause(10000);
         driver.switchTo().defaultContent();
     }
 
