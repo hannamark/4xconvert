@@ -111,8 +111,8 @@ import org.openqa.selenium.By;
  */
 public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
-    private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
-            : 3000;
+    private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 15000
+            : 2000;
     private static final String MM_DD_YYYY_HH_MM_AAA = "MM/dd/yyyy hh:mm aaa";
     private static final String[] REASONS = new String[] {
             "Do not enforce unique Subject ID across sites",
@@ -266,6 +266,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
 
         selenium.click("xpath=//table[@id='flaggedTrials']/tbody/tr[1]/td[7]//input[@type='checkbox']");
         selenium.click("link=Delete");
+        waitForElementToBecomeVisible(By.id("deleteCommentsBox"), 5);
         selenium.type("deleteCommentsBox", "This is a delete comment.");
         selenium.click("xpath=//button/span[normalize-space(text())='Delete']");
         waitForPageToLoad();
@@ -424,7 +425,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
                                     + trial.nciID
                                     + ","
                                     + trial.flaggedReason
-                                    + ",\"ctrpsubstractor\",.*?,This is a comment,,,"
+                                    + ",ctrpsubstractor,.*?,This is a comment,,,"
                                     + "$"));
             csv.delete();
         }
