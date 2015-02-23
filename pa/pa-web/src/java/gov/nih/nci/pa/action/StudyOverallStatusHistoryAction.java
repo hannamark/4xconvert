@@ -210,7 +210,7 @@ public class StudyOverallStatusHistoryAction extends ActionSupport implements Pr
         }
         
         final HttpServletRequest request = ServletActionContext.getRequest();
-        if (validate && !hasWarningsOrErrors(overallStatusList)
+        if (validate && !overallStatusList.isEmpty() && !hasWarningsOrErrors(overallStatusList)
                 && request.getAttribute(Constants.SUCCESS_MESSAGE) == null) {
             request.setAttribute(Constants.SUCCESS_MESSAGE,
                     "All Statuses and Status Transitions are valid");
