@@ -88,7 +88,6 @@ import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -433,7 +432,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
         LOG.warn(e, e);
         
         ServletActionContext.getRequest().setAttribute(
-                Constants.FAILURE_MESSAGE, msg == null?"" : msg + "\n" + e.getMessage());
+                Constants.FAILURE_MESSAGE, (msg == null?"" : msg) + "\n" + e.getMessage());
     }
     
     
@@ -569,7 +568,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
 
     private String adjustAttrValue(String val) {
         try {
-            return StudyStatusCode.valueOf(val).getCode();
+            return RecruitmentStatusCode.valueOf(val).getCode();
         } catch (Exception e) {
         }
 
