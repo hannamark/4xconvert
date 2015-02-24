@@ -640,7 +640,7 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
 
     private void loadUpdatesIntoDTO(StudySiteAccrualStatusDTO dto) {
         dto.setComments(StConverter.convertToSt(comment));
-        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode
+        dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode
                 .getByCode(statusCode)));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil
                 .dateStringToDateTime(statusDate)));

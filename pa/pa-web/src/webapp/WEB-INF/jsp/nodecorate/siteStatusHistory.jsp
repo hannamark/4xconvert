@@ -318,7 +318,7 @@ span.error {
 					</div>
 					<div>
 						<s:select name="statusCode" id="statusCode"
-							list="@gov.nih.nci.pa.enums.StudyStatusCode@values()"
+							list="@gov.nih.nci.pa.enums.RecruitmentStatusCode@values()"
 							listKey="code" listValue="code" value="" />
 					</div>
 					<div class="label">
