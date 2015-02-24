@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.UUID;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -62,6 +63,8 @@ public class BatchUploadTest extends AbstractRestServiceTest {
     private static final int BATCH_PROCESSING_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 20000
             : 10000;
     public static final int PORT = 51234;
+    public static Logger LOG = Logger.getLogger(BatchUploadTest.class
+            .getName());
 
     /**
      * @throws java.lang.Exception
@@ -241,6 +244,43 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                         + "");
 
     }
+    
+    
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testAccrualCount() throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        TrialRegistrationConfirmation rConf = prepareNonInterventionalTrialForAccSub();
+        login();
+        accessTrialScreen(rConf);
+        logoutUser();
+        File batchFile = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
+                .toString() + ".txt");
+        writeValidBatchFileWithAccrualCount(rConf, batchFile);
+        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        submitBatchFile(batchFile);
+        pause(BATCH_PROCESSING_WAIT_TIME);
+        server.stop();
+        assertEquals(1, server.getReceivedEmailSize());
+        Iterator emailIter = server.getReceivedEmail();
+        SmtpMessage email = (SmtpMessage) emailIter.next();
+        String error = email.getBody();
+        LOG.info("Successfully connected to the database at " + error);
+        assertTrue(error.contains("Accrual counts for the following Study Site(s) were updated successfully as follows:"));
+        assertTrue(error.contains(" 3 - National Cancer Institute Division of Cancer Prevention - 12"));
+        assertEquals(
+                "12",
+                new QueryRunner()
+                        .query(connection,
+                                "select accrual_count from study_site_subject_accrual_count where study_protocol_identifier = "
+                                        + rConf.getPaTrialID(),
+                                new ArrayHandler())[0]
+                        + "");
+    }
 
     @Override
     protected void logoutUser() {
@@ -277,6 +317,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         clickAndWait("mainActionBtn");
     }
 
+    
     /**
      * @param rConf
      * @param batchFile
@@ -297,6 +338,27 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                                         + ",sU001,77058,,193106,Female,Not Hispanic or Latino,,20110513,, 3 ,,,,,,,,,,B46.9,,",
                                 "PATIENT_RACES," + rConf.getNciTrialID()
                                         + ",sU001,White" }));
+    }
+    
+
+    /**
+     * @param rConf
+     * @param batchFile
+     * @throws IOException
+     */
+    private void writeValidBatchFileWithAccrualCount(
+            TrialRegistrationConfirmation rConf, File batchFile)
+            throws IOException {
+        FileUtils
+                .writeLines(
+                        batchFile,
+                        "UTF-8",
+                        Arrays.asList(new String[] {
+                                "COLLECTIONS," + rConf.getNciTrialID()
+                                        + ",,,,,,,,,",
+                                "ACCRUAL_COUNT,"
+                                        + rConf.getNciTrialID()
+                                        + ", 3 , 12 " }));
     }
 
     /**
@@ -495,6 +557,30 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         return rConf;
     }
 
+    /**
+     * @return
+     * @throws JAXBException
+     * @throws SAXException
+     * @throws SQLException
+     * @throws ClientProtocolException
+     * @throws ParseException
+     * @throws IOException
+     * @throws NumberFormatException
+     */
+    private TrialRegistrationConfirmation prepareNonInterventionalTrialForAccSub()
+            throws JAXBException, SAXException, SQLException,
+            ClientProtocolException, ParseException, IOException,
+            NumberFormatException {
+        TrialRegistrationConfirmation rConf = register("/register_complete_noninterventional_minimal_data.xml");
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        grantAccrualAccess("submitter-ci", siteID);
+        return rConf;
+    }
+    
     @SuppressWarnings("rawtypes")
     @Test
     public void testDuplicateSubjectHandlingZipUploadPO8106() throws Exception {

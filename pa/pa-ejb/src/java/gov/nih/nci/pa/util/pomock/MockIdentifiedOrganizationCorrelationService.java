@@ -110,7 +110,7 @@ public class MockIdentifiedOrganizationCorrelationService implements
      */
     @Override
     public List<IdentifiedOrganizationDTO> search(IdentifiedOrganizationDTO arg0) {
-        throw new UnsupportedOperationException();
+        return new ArrayList<IdentifiedOrganizationDTO>();
     }
 
     /*
