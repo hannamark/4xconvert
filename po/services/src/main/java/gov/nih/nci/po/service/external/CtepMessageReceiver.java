@@ -267,8 +267,9 @@ public class CtepMessageReceiver extends CtepMessageBean implements CtepMessageR
             Topic topic = (Topic) initialContext.lookup(topicName);
             topicConnection = connectionFactory.createTopicConnection();
             
-            ((WLConnectionImpl)topicConnection).setReconnectPolicy("all");
-            final Field f = WLConnectionImpl.class.getSuperclass().getDeclaredField("TODOREMOVEDebug");            
+            ((WLConnectionImpl) topicConnection).setReconnectPolicy("all");
+            final Field f = WLConnectionImpl.class.getSuperclass()
+                    .getDeclaredField("TODOREMOVEDebug");
             f.setAccessible(true);
             f.set(null, true);
             
