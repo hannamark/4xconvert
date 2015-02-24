@@ -24,7 +24,7 @@ function cancel() {
 		<s:form name="lookupDiseaseForm" method="post"
 			action="manageTermssearchDisease.action">
 			<s:hidden name="importTerm" />
-			<s:hidden  name="pageDiscriminator" value="lookup"></s:hidden>
+			<s:hidden  name="pageDiscriminator" ></s:hidden>
 			<table class="form">
 				<tr>
 					<td colspan="3"><span class="info"><fmt:message key="manageTerms.lookup.helpmessage" /> </span></td>

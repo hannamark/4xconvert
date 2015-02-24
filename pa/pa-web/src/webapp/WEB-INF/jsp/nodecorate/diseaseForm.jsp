@@ -75,8 +75,14 @@
 	            buttons: {
 	                "OK": function() {
 	                  jQuery(this).dialog("close");
-	                  document.forms[0].action = "manageTerms.action";
-	                  document.forms[0].submit();
+	                  var pageType =jQuery("#pageType").val();
+	                  if(pageType=="disease") {
+	                      submitXsrfForm('/pa/protected/disease.action');
+	                  }
+	                  else {
+	                      document.forms[0].action = "manageTerms.action";
+	                      document.forms[0].submit();
+	                  }
 	              }
 	            }
 	         }); 
@@ -203,6 +209,14 @@
         <s:else>
         <s:hidden id="pageName" value="importTerm" />
          </s:else>
+         
+          <s:if test="pageDiscriminator=='disease'">
+         <s:hidden id="pageType" value="disease" />
+        </s:if>
+        <s:else>
+         <s:hidden id="pageType" value="newSearch" />
+         </s:else>
+         
 		<table class="form">
 		  <tr>
 				<td scope="row" width="20%"><label for="ntTermIdentifier">

@@ -46,8 +46,17 @@
             buttons: {
                 "OK": function() {
                   jQuery(this).dialog("close");
-                  document.forms[0].action = "manageTerms.action";
-                  document.forms[0].submit();
+                  var pageType =jQuery("#pageType").val();
+                  if(pageType=="disease") {
+                	  submitXsrfForm('/pa/protected/disease.action');
+                  }
+                  else {
+                	  document.forms[0].action = "manageTerms.action";
+                	  document.forms[0].submit();
+                  }
+                	  
+                 
+                 
               }
             }
          }); 
@@ -64,11 +73,23 @@
 </script>    
 </head>
 <body>
+  <s:if test="pageDiscriminator=='disease'">
+         <s:hidden id="pageType" value="disease" />
+        </s:if>
+        <s:else>
+         <s:hidden id="pageType" value="newSearch" />
+         </s:else>
+   
+  
 	<h1>
 		<fmt:message key="manageTerms.syncDisease.page.title" />
 	</h1>
+	
+	
 	<c:set var="topic" scope="request" value="syncdisease" />
 	<pa:failureMessage />
+	
+	 
 	<table class="form">
 		<thead>
 			<tr>
