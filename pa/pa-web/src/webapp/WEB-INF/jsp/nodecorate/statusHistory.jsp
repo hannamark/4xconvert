@@ -209,7 +209,10 @@ th {
                        	    }
                          }
                      }).on('draw', function() {
+                    	 $("td.dataTables_empty").addClass( "dataTables_empty_gone" );
                     	 $("td.dataTables_empty").removeClass( "dataTables_empty" );
+                     }).on('preXhr', function(e, settings, data) {
+                    	 $("td.dataTables_empty_gone").addClass( "dataTables_empty" );
                      });
                      
                      $( "#audit-trail" ).dialog({
