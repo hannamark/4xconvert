@@ -83,10 +83,9 @@
 package gov.nih.nci.po.service.external;
 
 import gov.nih.nci.po.util.PoHibernateUtil;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Field;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -103,7 +102,13 @@ import javax.jms.TopicSubscriber;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
-import java.lang.management.ManagementFactory;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
+
+import weblogic.jms.client.WLConnectionImpl;
 
 /**
  * CTEP JMS connection and subscription service. Startup is asynchronous and non-failing, for speed and ease of
@@ -261,6 +266,12 @@ public class CtepMessageReceiver extends CtepMessageBean implements CtepMessageR
                     .lookup(topicConnectionFactoryName);
             Topic topic = (Topic) initialContext.lookup(topicName);
             topicConnection = connectionFactory.createTopicConnection();
+            
+            ((WLConnectionImpl)topicConnection).setReconnectPolicy("all");
+            final Field f = WLConnectionImpl.class.getSuperclass().getDeclaredField("TODOREMOVEDebug");            
+            f.setAccessible(true);
+            f.set(null, true);
+            
             topicConnection.setClientID(clientId);
             topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             topicSubscriber = topicSession.createDurableSubscriber(topic, subscriptionName);
