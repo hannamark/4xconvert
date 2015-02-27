@@ -5,7 +5,7 @@ CREATE TABLE STG_DW_STUDY_DISEASE (
     DATE_LAST_CREATED timestamp,
     DATE_LAST_UPDATED timestamp,
     DISEASE_CODE character varying(200),
-    DISEASE_PREFERRED_NAME character varying(200),
+    DISEASE_PREFERRED_NAME character varying(1000),
     DISEASE_MENU_DISPLAY_NAME character varying(200),
     INTERNAL_SYSTEM_ID INTEGER NOT NULL,    -- study_disease_identifier
     INTERNAL_SYSTEM_ID2 INTEGER NOT NULL,   -- disease_identifier
