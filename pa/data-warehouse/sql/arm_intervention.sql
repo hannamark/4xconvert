@@ -8,7 +8,7 @@ CREATE TABLE STG_DW_STUDY_ARM_AND_INTERVENTION (
     DATE_CREATED_INTERVENTION timestamp,
     DATE_UPDATED_INTERVENTION timestamp,
     INTERVENTION_DESCRIPTION character varying(1000),
-    INTERVENTION_NAME character varying(200),
+    INTERVENTION_NAME character varying(1000),
     INTERVENTION_OTHER_NAME character varying(2000),
     INTERVENTION_ID integer,
     INTERVENTION_TYPE character varying(200),
