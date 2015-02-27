@@ -99,7 +99,9 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -178,6 +180,8 @@ private PDQDiseaseServiceLocal diseaseService;
         return resultList;
     }
     
+    
+   
 /**
      * @param currDisease diseaseDTO
      * @param parents parents list to be deleted
@@ -197,13 +201,33 @@ private PDQDiseaseServiceLocal diseaseService;
             deleteList(parents);
             // delete childs
             deleteList(children);
-            // add parents
+            
+            Map<String , PDQDiseaseParentDTO > parentsMap = new HashMap<String , PDQDiseaseParentDTO>();
+            Map<String , PDQDiseaseParentDTO > childsMap = new HashMap<String , PDQDiseaseParentDTO>();
+            
+            //remove duplicates before saving to database
             for (PDQDiseaseParentDTO diseaseParentDTO : parentsToAdd) {
-                create(diseaseParentDTO);
+                parentsMap.put(diseaseParentDTO.getDiseaseIdentifier().getExtension() 
+                        + diseaseParentDTO.getParentDiseaseIdentifier().getExtension()
+                        , diseaseParentDTO);
             }
+            
             for (PDQDiseaseParentDTO diseaseParentDTO : childsToAdd) {
-                create(diseaseParentDTO);
+                
+                childsMap.put(diseaseParentDTO.getDiseaseIdentifier().getExtension() 
+                        + diseaseParentDTO.getParentDiseaseIdentifier().getExtension()
+                        , diseaseParentDTO);
             }
+                    
+            // add parents
+            for (String key : parentsMap.keySet()) {
+                    create(parentsMap.get(key));
+            }
+            
+            for (String key : childsMap.keySet()) {
+                create(childsMap.get(key));
+             }
+           
         } catch (Exception e) {
             throw new PAException(e.getMessage());
         }
