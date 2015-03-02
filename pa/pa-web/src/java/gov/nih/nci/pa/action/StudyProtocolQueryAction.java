@@ -98,7 +98,6 @@ import gov.nih.nci.pa.service.StudyIdentifiersService;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
-import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
@@ -160,8 +159,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
     private String identifier;
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
     
-    private Long assignedTo;
-    private Long superAbstractorId;
+    private Long assignedTo;    
     private String newProcessingPriority;
     private String processingComments;
     private String pageFrom;
@@ -302,6 +300,7 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
      * @return res
      * @throws PAException exception
      */
+    @Override
     public String view() throws PAException { // NOPMD
         if (!ActionUtils.isUserRoleInSession(ServletActionContext.getRequest()
                 .getSession())) {
@@ -393,28 +392,6 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
         return SHOW_VIEW_REFRESH;
     }
     
-    /**
-     * @return String
-     * @throws PAException
-     *             PAException
-     */
-    @SuppressWarnings("deprecation")
-    public String checkInSciAndCheckOutToSuperAbs() throws PAException {
-        try {
-            getStudyCheckoutService().checkInSciAndCheckOutToSuperAbs(
-                    getStudyProtocolId(),
-                    getCheckInReason(),
-                    CSMUserService.getInstance().getCSMUserById(
-                            getSuperAbstractorId()));
-            String msg = getText("studyProtocol.trial.checkInSciAndCheckOutToSuperAbs");
-            ServletActionContext.getRequest().setAttribute(
-                    Constants.SUCCESS_MESSAGE, msg);
-            return view();
-        } catch (PAException e) {
-            addActionError(e.getLocalizedMessage());
-        }
-        return SHOW_VIEW_REFRESH;
-    }
     
     /**
      * Displays study alternate titles
@@ -684,17 +661,5 @@ public class StudyProtocolQueryAction extends AbstractCheckInOutAction implement
         this.documentWorkflowStatusService = documentWorkflowStatusService;
     }
 
-    /**
-     * @return the superAbstractorId
-     */
-    public Long getSuperAbstractorId() {
-        return superAbstractorId;
-    }
-
-    /**
-     * @param superAbstractorId the superAbstractorId to set
-     */
-    public void setSuperAbstractorId(Long superAbstractorId) {
-        this.superAbstractorId = superAbstractorId;
-    }
+   
 }

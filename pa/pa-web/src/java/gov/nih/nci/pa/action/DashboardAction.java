@@ -124,6 +124,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     private Long assignedTo;
     private String newProcessingPriority;
     private String processingComments;
+    
 
     private List<String> checkoutCommands = new ArrayList<String>();
 
@@ -279,6 +280,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
      * @throws PAException
      *             PAException
      */
+    @Override
     public String view() throws PAException {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setStudyProtocolId(getStudyProtocolId());
@@ -300,6 +302,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
                     IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
 
             ActionUtils.setCheckoutCommands(summaryDTO, checkoutCommands);
+            ActionUtils.runTrialStatusTransitionValidations(summaryDTO, session);
 
             toggleDetailsTab();
         } catch (PAException e) {
@@ -1006,4 +1009,5 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         this.assignee = assignee;
     }
 
+   
 }

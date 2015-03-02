@@ -33,12 +33,18 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
         super.tearDown();
     }
 
+    private void restartEmailServer() {
+        server.stop();
+        server = SimpleSmtpServer.start(PORT);
+    }
+
     @SuppressWarnings("deprecation")
     @Test
     public void testCheckInPreventedIfStatusErrorsForAdminAbstractor()
             throws Exception {
         final String user = "admin-ci";
-        testCheckInPreventedIfStatusErrors(user);
+        testCheckInPreventedIfStatusErrors(user, false);
+        testCheckInPreventedIfStatusErrors(user, true);
 
     }
 
@@ -47,19 +53,33 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
     public void testCheckInPreventedIfStatusErrorsForSuperAbstractor()
             throws Exception {
         final String user = "ctrpsubstractor";
-        testCheckInPreventedIfStatusErrors(user);
+        testCheckInPreventedIfStatusErrors(user, false);
+        testCheckInPreventedIfStatusErrors(user, true);
 
     }
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testScientificCheckInWhenStatusErrors() throws Exception {
+        scientificCheckInWhenStatusErrors(false);
+        scientificCheckInWhenStatusErrors(true);
+
+    }
+
+    /**
+     * @param useDashboard
+     * @throws SQLException
+     */
+    private void scientificCheckInWhenStatusErrors(boolean useDashboard)
+            throws SQLException {
+        logoutUser();
+        restartEmailServer();
         TrialInfo trial = createAcceptedTrial();
         loginAsScientificAbstractor();
         searchAndSelectTrial(trial.title);
         checkOutTrialAsScientificAbstractor();
         addSOS(trial, "IN_REVIEW");
-        clickAndWait("link=Trial Identification");
+        selectTrial(useDashboard, trial);
 
         // Checking In should be prevented
         selenium.click("link=Scientific Check In");
@@ -128,15 +148,15 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
                         + trial.nciID
                         + " when the Scientific Abstractor scientific-ci checked the trial in for Scientific Abstraction. The system has automatically checked out this trial for Administrative Abstraction under your name. Please log in, correct the status transition error(s), and check the trial in. Thank you. This is an automated message sent by the CTRP system. Please do not reply.",
                 body);
-
     }
 
     /**
      * @param user
      * @throws SQLException
      */
-    private void testCheckInPreventedIfStatusErrors(final String user)
-            throws SQLException {
+    private void testCheckInPreventedIfStatusErrors(final String user,
+            boolean useDashboard) throws SQLException {
+        logoutUser();
         TrialInfo trial = createTrialAndAccessStatusPage(user);
 
         // Adding In Review next to Approved is an error.
@@ -146,8 +166,8 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
         // Close History
         clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
         driver.switchTo().defaultContent();
-        clickAndWait("id=trialSearchMenuOption");
-        searchAndSelectTrial(trial.title);
+
+        selectTrial(useDashboard, trial);
 
         // Checking In should be prevented
         selenium.click("link=Admin Check In");
@@ -182,7 +202,8 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
     public void testCheckInWarningFunctionalityForAdminAbstractor()
             throws Exception {
         final String user = "admin-ci";
-        testCheckInWarningFunctionalityAsUser(user);
+        testCheckInWarningFunctionalityAsUser(user, false);
+        testCheckInWarningFunctionalityAsUser(user, true);
 
     }
 
@@ -191,7 +212,8 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
     public void testCheckInWarningFunctionalityForSuperAbstractor()
             throws Exception {
         final String user = "ctrpsubstractor";
-        testCheckInWarningFunctionalityAsUser(user);
+        testCheckInWarningFunctionalityAsUser(user, false);
+        testCheckInWarningFunctionalityAsUser(user, true);
 
     }
 
@@ -199,8 +221,9 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
      * @param user
      * @throws SQLException
      */
-    private void testCheckInWarningFunctionalityAsUser(final String user)
-            throws SQLException {
+    private void testCheckInWarningFunctionalityAsUser(final String user,
+            boolean useDashboard) throws SQLException {
+        logoutUser();
         TrialInfo trial = createTrialAndAccessStatusPage(user);
 
         // Adding In Review next to Approved is an error.
@@ -211,12 +234,13 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
         // Close History
         clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
         driver.switchTo().defaultContent();
-        clickAndWait("id=trialSearchMenuOption");
-        searchAndSelectTrial(trial.title);
+
+        selectTrial(useDashboard, trial);
 
         // Checking In should be prevented
         final String checkInOption = "Admin Check In";
         verifyCheckInWarningDialog(checkInOption);
+        selectTrial(useDashboard, trial);
 
         // proceed with check in
         selenium.click("link=Admin Check In");
@@ -237,7 +261,34 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
     }
 
     /**
+     * @param useDashboard
+     * @param trial
+     */
+    private void selectTrial(boolean useDashboard, TrialInfo trial) {
+        if (!useDashboard) {
+            clickAndWait("id=trialSearchMenuOption");
+            searchAndSelectTrial(trial.title);
+        } else {
+            selectTrialInDashboard(trial);
+        }
+    }
+
+    /**
+     * @param trial
+     */
+    private void selectTrialInDashboard(TrialInfo trial) {
+        clickAndWait("id=dashboardMenuOption");
+        if (selenium.isElementPresent("id=searchid")) {
+            selenium.type("submittedOnOrAfter", "01/01/2000");
+            clickAndWait("xpath=//div[@class='actionsrow']//a//span[text()='Search']");
+        }
+        clickAndWait("link=" + trial.nciID.replaceFirst("NCI-", ""));
+    }
+
+    /**
      * @param checkInOption
+     * @param useDashboard
+     * @param trial
      */
     private void verifyCheckInWarningDialog(final String checkInOption) {
         selenium.click("link=" + checkInOption);
@@ -258,7 +309,7 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
         selenium.click("link=" + checkInOption);
         clickAndWait("xpath=//div[@aria-labelledby='ui-dialog-title-transitionWarnings']//button//span[text()='Trial Status History']");
         assertEquals("Trial Status", driver.getTitle());
-        clickAndWait("link=Trial Identification");
+
     }
 
     @Test

@@ -37,22 +37,81 @@
 	
 	function handleCheckoutAction(action) {
         var studyProtocolId = '${sessionScope.summaryDTO.studyProtocolId}';
-        
-        if ((action == 'adminCheckIn') || (action == 'scientificCheckIn') || (action == 'adminAndScientificCheckIn')){
-        	var form = $('dashboardForm');
-            var bs = new Array(64).join(' ');
-            var comment = prompt(bs+"Enter check-in comment:"+bs,"");
-            if (comment == null){
-                return;
-            }
-            form.elements["checkInReason"].value = comment.substr(0,200);
-            handleAction(action);
+        if (!allowAction(action)) {
+            return;
+        }
+        if ((action == 'adminCheckIn') || (action == 'scientificCheckIn') || (action == 'adminAndScientificCheckIn')
+                || (action == 'checkInSciAndCheckOutToSuperAbs')) {
+        	 showCommentsBox(action);
         } else {
         	var form = $('checkoutForm');
         	form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
             form.submit();
         }       
-    }	
+    }
+	
+	 function saveCheckin(action) {		 
+         var form = $('dashboardForm');
+         var commandVal = document.getElementById('commentCommand').value;
+         var comment = document.getElementById('comments').value;
+         if (comment==null){
+        	    return;
+         }
+         form.elements["checkInReason"].value = comment;
+         handleAction(commandVal);
+     }
+	
+	 var eltDims = null;
+     function showCommentsBox(action) {
+         document.getElementById('commentCommand').value=action;
+         // retrieve required dimensions
+         if (eltDims == null) {
+             eltDims = $('comment-dialog').getDimensions();
+         }
+         var browserDims = $(document).viewport.getDimensions();
+
+         // calculate the center of the page using the browser and element dimensions
+         var y  = (browserDims.height - eltDims.height) / 2;
+         var x = (browserDims.width - eltDims.width) / 2;    
+         
+         $('comment-dialog').absolutize(); 
+         $('comment-dialog').style.left = x + 'px';
+         $('comment-dialog').style.top = y + 'px';
+         $('comment-dialog').show();
+     }    
+	
+	function allowAction(action) {
+        if (((action == 'adminCheckIn' || action == 'adminAndScientificCheckIn') 
+                && (trialHasStatusErrors || trialHasStatusWarnings)) || 
+                (action == 'scientificCheckIn' && suAbs && !checkedOutForAdmin && (trialHasStatusErrors || trialHasStatusWarnings)) ){
+            displayStatusTransitionMessages(action);
+            return false;
+        } 
+        if (action == 'scientificCheckIn' && sciAbs && !checkedOutForAdmin && trialHasStatusErrors) {
+            displayStatusTransitionMessageAndPickSuperAbstractor(action);
+            return false;
+        }
+        return true;
+    }
+	
+	 function displayStatusTransitionMessageAndPickSuperAbstractor(action) {
+         var dialogID = '#pickSuperAbstractor';                
+         jQuery(dialogID).dialog('open');  
+         jQuery(dialogID).attr('act', action);               
+     }
+	 
+	 function displayStatusTransitionMessages(action) {
+         var dialogID = '';
+         if (trialHasStatusErrors && !trialHasStatusWarnings) {
+             dialogID = '#transitionErrors';
+         } else if (!trialHasStatusErrors && trialHasStatusWarnings) {
+             dialogID = '#transitionWarnings';
+         } else if (trialHasStatusErrors && trialHasStatusWarnings) {
+             dialogID = '#transitionErrorsAndWarnings';
+         }
+         jQuery(dialogID).dialog('open');  
+         jQuery(dialogID).attr('act', action);               
+     }
 
 	function viewProtocol(pid) {
 		$('studyProtocolId').value = pid;
@@ -100,6 +159,101 @@
 	function loadDiv(orgId) {
 	}
 
+	(function($) {    
+        //******************
+        //** On DOM Ready **
+        //******************
+        $(function () {
+        	$( "#transitionErrors" ).dialog({
+                modal: true,
+                autoOpen : false,                         
+                buttons: {
+                  "Trial Status History": function() {
+                        $(this).dialog("close");
+                        goToTrialStatusHistory();
+                  },
+                  Cancel: function() {
+                    $(this).dialog("close");
+                  }
+                }
+            });
+        	
+        	$( "#transitionErrorsAndWarnings" ).dialog({
+                modal: true,
+                autoOpen : false,                         
+                buttons: {
+                  "Trial Status History": function() {
+                        $(this).dialog("close");
+                        goToTrialStatusHistory();
+                  },
+                  Cancel: function() {
+                    $(this).dialog("close");
+                  }
+                }
+            });
+        	
+        	$( "#transitionWarnings" ).dialog({
+                modal: true,
+                autoOpen : false,         
+                width : 450,
+                buttons: {
+                  "Proceed with Check-in": function() {
+                        $(this).dialog("close");
+                        trialHasStatusErrors = false;
+                        trialHasStatusWarnings = false;
+                        handleCheckoutAction($(this).attr('act'));
+                        
+                  },
+                  "Trial Status History": function() {
+                        $(this).dialog("close");
+                        goToTrialStatusHistory();
+                  },
+                  Cancel: function() {
+                    $(this).dialog("close");
+                  }
+                }
+            });
+        	
+        	$( "#pickSuperAbstractor" ).dialog({
+                modal: true,
+                autoOpen : false,         
+                width : 450,
+                buttons: {
+                  "Proceed with Check-in": function() {
+                      if ($.isNumeric($('#supAbsId').val())) {
+                          document.forms[0].elements["superAbstractorId"].value = $('#supAbsId').val();
+                          $(this).dialog("close");                                
+                          handleCheckoutAction('checkInSciAndCheckOutToSuperAbs'); 
+                      }                                                                 
+                  },                           
+                  "Cancel": function() {
+                    $(this).dialog("close");
+                  }
+                }
+            });
+        	
+        });
+	}(jQuery));
+        
+        var trialStatusHistoryURL = '<c:url value='/protected/studyOverallStatus.action'/>';
+        
+        function goToTrialStatusHistory() {
+             var form = document.forms[0];
+             form.action=trialStatusHistoryURL;
+             form.submit();
+        }
+        
+        var trialHasStatusErrors = ${sessionScope.trialHasStatusErrors==true};
+        var trialHasStatusWarnings = ${sessionScope.trialHasStatusWarnings==true};
+        
+        var adminAbs = ${sessionScope.isAdminAbstractor==true};
+        var sciAbs =    ${sessionScope.isScientificAbstractor==true};
+        var suAbs = ${sessionScope.isSuAbstractor==true};
+        
+        var checkedOutForAdmin = ${sessionScope.trialSummary.adminCheckout.checkoutBy != null};
+        var checkedOutForSci = ${sessionScope.trialSummary.scientificCheckout.checkoutBy != null};
+       
+	
 	Event.observe(window, 'load', function() {
 		
 		addCalendar("Cal1", "Select Date", "submittedOnOrAfter",
@@ -218,6 +372,7 @@
 			<pa:failureMessage />
 			<s:hidden id="studyProtocolId" name="studyProtocolId" />
 			<s:hidden name="checkInReason" id="checkInReason"/>
+			 <s:hidden name="superAbstractorId"/>
 			<table class="form">
 				<c:if test="${dashboardSearchResults!=null}">
 					<tr>
@@ -781,6 +936,7 @@ reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
 					</td>
 				</tr>
 			</table>
+			<pa:trialCheckInWarnings/>
 		</s:form>
 		<s:form action="studyProtocol" id="checkoutForm">
 		      <s:token></s:token>		      

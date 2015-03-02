@@ -6,6 +6,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.Constants;
 
 import javax.servlet.http.HttpSession;
@@ -42,6 +43,40 @@ public abstract class AbstractCheckInOutAction extends ActionSupport {
      * checkInReason.
      */
     private String checkInReason;
+    
+    /**
+     *  superAbstractorId
+     */
+    private Long superAbstractorId;
+    
+    /**
+     * @return String
+     * @throws PAException
+     *             PAException
+     */
+    @SuppressWarnings("deprecation")
+    public final String checkInSciAndCheckOutToSuperAbs() throws PAException {
+        try {
+            getStudyCheckoutService().checkInSciAndCheckOutToSuperAbs(
+                    getStudyProtocolId(),
+                    getCheckInReason(),
+                    CSMUserService.getInstance().getCSMUserById(
+                            getSuperAbstractorId()));
+            String msg = getText("studyProtocol.trial.checkInSciAndCheckOutToSuperAbs");
+            ServletActionContext.getRequest().setAttribute(
+                    Constants.SUCCESS_MESSAGE, msg);
+            return view();
+        } catch (PAException e) {
+            addActionError(e.getLocalizedMessage());
+        }
+        return SHOW_VIEW_REFRESH;
+    }
+    
+    /** 
+     * @return String
+     * @throws PAException PAException
+     */
+    public abstract String view() throws PAException;
    
 
     /**
@@ -219,4 +254,17 @@ public abstract class AbstractCheckInOutAction extends ActionSupport {
         this.studyProtocolId = studyProtocolId;
     }
     
+    /**
+     * @return the superAbstractorId
+     */
+    public Long getSuperAbstractorId() {
+        return superAbstractorId;
+    }
+
+    /**
+     * @param superAbstractorId the superAbstractorId to set
+     */
+    public void setSuperAbstractorId(Long superAbstractorId) {
+        this.superAbstractorId = superAbstractorId;
+    }
 }

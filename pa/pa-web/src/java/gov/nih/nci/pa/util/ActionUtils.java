@@ -240,7 +240,12 @@ public final class ActionUtils {
         runTrialStatusTransitionValidations(studyProtocolQueryDTO, session);
     }
 
-    private static void runTrialStatusTransitionValidations(
+    /**
+     * @param spqDTO StudyProtocolQueryDTO
+     * @param session HttpSession
+     * @throws PAException PAException
+     */
+    public static void runTrialStatusTransitionValidations(
             StudyProtocolQueryDTO spqDTO, HttpSession session) throws PAException {
         final Ii spID = IiConverter.convertToStudyProtocolIi(spqDTO
                 .getStudyProtocolId());
