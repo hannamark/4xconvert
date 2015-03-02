@@ -703,6 +703,7 @@ public class StudyMilestoneBeanLocal
                    checkAbstractionsRules(dto, MilestoneCode.READY_FOR_TSR);
                 } catch (PAException e) {
                    LOG.error(e.getMessage());
+                   dto.setErrorMessage(StConverter.convertToSt(e.getMessage()));
                    return false;
                } 
                 return true;

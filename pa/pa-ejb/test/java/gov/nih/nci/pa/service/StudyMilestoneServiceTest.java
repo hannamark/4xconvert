@@ -93,6 +93,8 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.dto.AbstractionCompletionDTO.ErrorMessageTypeEnum;
 import gov.nih.nci.pa.dto.LastCreatedDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
@@ -360,14 +362,28 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         
         bean.setValidateAbstractions(true);
-        bean.setAbstractionCompletionService(null);
+        List<AbstractionCompletionDTO> errorList = new ArrayList<AbstractionCompletionDTO>();
+        AbstractionCompletionDTO dtoabs = new AbstractionCompletionDTO();
+        dtoabs.setErrorMessageType(ErrorMessageTypeEnum.ADMIN);
+        dtoabs.setErrorType("Error");
+        errorList.add(dtoabs);
+        AbstractionCompletionServiceBean abstractionCompletionSerivce = mock(AbstractionCompletionServiceBean.class);
+        bean.setAbstractionCompletionService(abstractionCompletionSerivce);
+        when(abstractionCompletionSerivce.validateAbstractionCompletion(spIi)).thenReturn(errorList);
         StudyMilestoneDTO dto =  bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         assertEquals("Scientific QC Completed Date", dto.getMilestoneCode().getCode());
+        
+        assertEquals(StConverter.convertToString(dto.getErrorMessage()), "The milestone \"Ready for "
+           + "Trial Summary Report Date\" can only be recorded if the abstraction is valid. "
+           + " There is a problem with the current abstraction.  Select Abstraction "
+           + "Validation under Completion menu to view details.");
+        
         List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         dtoList.size();
         assertTrue(dtoList.size() > 0);
         assertEquals(CdConverter.convertCdToEnum(MilestoneCode.class,
                dtoList.get(dtoList.size() - 1).getMilestoneCode()), MilestoneCode.SCIENTIFIC_QC_COMPLETE);
+        
         PaHibernateUtil.getCurrentSession().flush();
     }
     

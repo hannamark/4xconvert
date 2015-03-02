@@ -100,6 +100,7 @@ import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -204,7 +205,10 @@ public final class MilestoneAction extends ActionSupport {
         }
         dto.setStudyProtocolIdentifier(getSpIi());
         try {
-            getStudyMilestoneService().create(dto);
+           StudyMilestoneDTO newDto = getStudyMilestoneService().create(dto);
+           if (newDto != null && !ISOUtil.isStNull(newDto.getErrorMessage())) {
+              addActionError(StConverter.convertToString(newDto.getErrorMessage()));
+           }
             // update the trial summary session bean
             Long spId = IiConverter.convertToLong(getSpIi());
             StudyProtocolQueryDTO studyProtocolQueryDTO = getProtocolQueryService()

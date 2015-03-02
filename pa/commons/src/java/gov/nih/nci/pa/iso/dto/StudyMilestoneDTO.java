@@ -108,6 +108,7 @@ public class StudyMilestoneDTO extends StudyDTO {
     private Cd rejectionReasonCode;
     private Long userLastCreated;
     private Long userLastUpdated;
+    private St errorMessage;
     
     
     /**
@@ -255,5 +256,20 @@ public class StudyMilestoneDTO extends StudyDTO {
         }
         return StConverter.convertToSt(str.toString());
     }
+    /**
+     * 
+     * @return errorMessage errorMessage
+     */
+    public St getErrorMessage() {
+        return errorMessage;
+    }
+    /**
+     * 
+     * @param errorMessage errorMessage
+     */
+    public void setErrorMessage(St errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+    
     
 }
