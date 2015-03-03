@@ -100,7 +100,9 @@ import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PersistentObjectHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
+
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -108,6 +110,7 @@ import javax.ejb.EJB;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -390,17 +393,16 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
     private Alias getNameAsAlias(Aliasable e) {
         Alias nameAlias = null;
 
-        if (e instanceof Organization) {
+        if (e instanceof Organization
+                && StringUtils.isNotBlank(((Organization) e).getName())) {
+            nameAlias = new Alias(((Organization) e).getName());
+        } else if (e instanceof AbstractEnhancedOrganizationRole
+                && StringUtils
+                        .isNotBlank(((AbstractEnhancedOrganizationRole) e)
+                                .getName())) {
             nameAlias = new Alias(
-                    ((Organization) e).getName()
-            );
-        } else  if (e instanceof AbstractEnhancedOrganizationRole) {
-
-            nameAlias = new Alias(
-                    ((AbstractEnhancedOrganizationRole) e).getName()
-            );
+                    ((AbstractEnhancedOrganizationRole) e).getName());
         }
-
         return nameAlias;
     }
 }
