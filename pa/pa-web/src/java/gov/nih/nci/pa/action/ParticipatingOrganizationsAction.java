@@ -451,13 +451,7 @@ public class ParticipatingOrganizationsAction
                         CdConverter.convertCdToEnum(RecruitmentStatusCode.class, ssas.getStatusCode()).name(),
                         TsConverter.convertToTimestamp(ssas.getStatusDate()));
                 StatusDto dto = statusDtos.get(0);
-                if (dto.hasErrorOfType(ErrorType.ERROR)) {
-                   setStatusTransitionErrors(dto.getConsolidatedErrorMessage());
-                    isValidTransition = false;
-                } 
-                if (dto.hasErrorOfType(ErrorType.WARNING)) {
-                    setStatusTransitionWarnings(dto.getConsolidatedWarningMessage());
-                } 
+                isValidTransition = checkStatusTransitionResults(dto);
             } catch (PAException e) {
                 addActionError(e.getMessage());
                 isValidTransition = false;
@@ -471,6 +465,18 @@ public class ParticipatingOrganizationsAction
             }
         }
         return studySite;
+    }
+    
+    private boolean checkStatusTransitionResults(StatusDto dto) {
+        boolean isValid = true;
+        if (dto.hasErrorOfType(ErrorType.ERROR)) {
+             setStatusTransitionErrors(dto.getConsolidatedErrorMessage().replaceAll("\\.\\s?", "\n"));
+             isValid = false;
+         } 
+         if (dto.hasErrorOfType(ErrorType.WARNING)) {
+             setStatusTransitionWarnings(dto.getConsolidatedWarningMessage().replaceAll("\\.\\s?", "\n"));
+         } 
+         return isValid;
     }
 
     private boolean isSiteUpdated(StudySiteDTO studySite, StudySiteAccrualStatusDTO ssas) {
@@ -567,13 +573,7 @@ public class ParticipatingOrganizationsAction
                             ssas.getStatusCode()).name(),
                     TsConverter.convertToTimestamp(ssas.getStatusDate()));
             StatusDto dto = statusDtos.get(0);
-            if (dto.hasErrorOfType(ErrorType.ERROR)) {
-                setStatusTransitionErrors(dto.getConsolidatedErrorMessage());
-                isValidTransition = false;
-            } 
-            if (dto.hasErrorOfType(ErrorType.WARNING)) {
-                setStatusTransitionWarnings(dto.getConsolidatedWarningMessage());
-            } 
+            isValidTransition = checkStatusTransitionResults(dto);
         } catch (PAException e) {
             addActionError(e.getMessage());
             isValidTransition = false;
