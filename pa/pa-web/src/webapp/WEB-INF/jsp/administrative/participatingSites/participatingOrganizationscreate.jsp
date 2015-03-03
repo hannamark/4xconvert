@@ -7,7 +7,6 @@
     <head>
         <title><fmt:message key="participatingOrganizations.subtitle" /></title>
         <s:head/>
-        <script type="text/javascript" src="scripts/js/prototype.js"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
@@ -194,6 +193,14 @@
         
         <style type="text/css">
             div.error_msg {
+			    white-space: pre-wrap;
+			}
+			span.warning {
+			    color: blue;
+			    white-space: pre-wrap;
+			}
+			span.error {
+			    color: red;
 			    white-space: pre-wrap;
 			}
         </style>

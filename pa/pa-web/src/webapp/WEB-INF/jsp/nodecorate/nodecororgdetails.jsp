@@ -5,6 +5,15 @@
  <s:if test="hasActionErrors()">
     <div class="action_error_msg"><s:actionerror escape="false"/></div>
 </s:if>
+<c:if test="${not empty statusTransitionErrors}">
+    <div class="action_error_msg"><span class="error"><b>ERROR: </b> <c:out
+            value="${statusTransitionErrors}" /></span></div>
+</c:if>
+<c:if test="${not empty statusTransitionWarnings}">
+    <div class="action_error_msg"><span class="warning"><b>WARNING: </b> <c:out
+            value="${statusTransitionWarnings}" /></span></div>
+    <br />
+</c:if>
 <h3><fmt:message key="participatingOrganizations.subtitle2" /></h3>
 
 <%@ include file="/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp" %>
