@@ -190,14 +190,9 @@ public class ResearchOrganizationActionTest extends AbstractRoleActionTest {
         PrivateAccessor.invokePrivateMethod(role, AbstractRole.class, "setPriorAsString",
                 new Object[] { roleStatus.name() });
         Collection<RoleStatus> allowedTransitions = new ArrayList<RoleStatus>();
-
-        if (roleStatus == RoleStatus.PENDING) {
-            allowedTransitions.add(RoleStatus.PENDING);
-        } else {
-            allowedTransitions.addAll(roleStatus.getAllowedTransitions());
-
-        }
-
+        
+        allowedTransitions.addAll(roleStatus.getAllowedTransitions());
+        
         if (roleStatus != RoleStatus.ACTIVE) {
             allowedTransitions.remove(RoleStatus.ACTIVE);
         }

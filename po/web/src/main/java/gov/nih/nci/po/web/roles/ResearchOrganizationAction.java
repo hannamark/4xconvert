@@ -428,18 +428,15 @@ public class ResearchOrganizationAction
 
     @Override
     public Collection<RoleStatus> getAvailableStatus() {
-        List<RoleStatus> result  = new ArrayList<RoleStatus>();
-        if (getRole().getId()  == null || getRole().getPriorStatus() == RoleStatus.PENDING) {
-            result.add(RoleStatus.PENDING);
+        final List<RoleStatus> result = new ArrayList<RoleStatus>();
+        if (getRole().isCtepOwned()) {
+            result.add(getRole().getPriorStatus());
         } else {
-            result.addAll(getBaseRole().getPriorStatus().getAllowedTransitions());
-
+            result.addAll(super.getAvailableStatus());
+            if (role.getPriorStatus() != RoleStatus.ACTIVE) {
+                result.remove(RoleStatus.ACTIVE);
+            }
         }
-
-        if (role.getPriorStatus() != RoleStatus.ACTIVE) {
-            result.remove(RoleStatus.ACTIVE);
-        }
-
         return result;
     }
 
