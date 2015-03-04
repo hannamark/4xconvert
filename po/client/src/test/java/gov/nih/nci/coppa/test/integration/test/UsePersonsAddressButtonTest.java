@@ -154,8 +154,8 @@ public class UsePersonsAddressButtonTest extends AbstractPoWebTest {
         clickAndWait("add_address");
 
         selenium.selectFrame("popupFrame");
-        clickAndWait("copy_parent_postalAddress");
-        pause(1000);
+        selenium.click("id=copy_parent_postalAddress");
+        pause(5000);
         driver.switchTo().defaultContent();
         waitForElementById("postalAddress0", 30);
 
