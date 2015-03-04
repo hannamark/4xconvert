@@ -436,16 +436,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
                                        HealthCareFacility hcf, ResearchOrganization ro)
             throws JMSException, EntityValidationException, CtepImportException {
 
-        Organization poOrg = identifiedOrg.getPlayer();
-
-        identifiedOrg.setStatus(identifiedOrg.getPlayer().getStatusCode() == EntityStatus.ACTIVE ? RoleStatus.ACTIVE
-                : RoleStatus.PENDING);
-        identifiedOrg.getAssignedIdentifier().setDisplayable(assignedId.getDisplayable());
-        identifiedOrg.getAssignedIdentifier().setIdentifierName(assignedId.getIdentifierName());
-        identifiedOrg.getAssignedIdentifier().setNullFlavor(assignedId.getNullFlavor());
-        identifiedOrg.getAssignedIdentifier().setReliability(assignedId.getReliability());
-        identifiedOrg.getAssignedIdentifier().setScope(assignedId.getScope());
-        this.identifiedOrgService.curate(identifiedOrg);
+        Organization poOrg = identifiedOrg.getPlayer();        
 
         // update health care facility role        
         if (hcf != null) {
@@ -458,7 +449,17 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
         }
 
         // update the Organization
-        updateOrg(ctepOrg, poOrg);        
+        updateOrg(ctepOrg, poOrg);     
+        
+        // Update IO Role.
+        identifiedOrg.setStatus(poOrg.getStatusCode() == EntityStatus.ACTIVE ? RoleStatus.ACTIVE
+                : RoleStatus.PENDING);
+        identifiedOrg.getAssignedIdentifier().setDisplayable(assignedId.getDisplayable());
+        identifiedOrg.getAssignedIdentifier().setIdentifierName(assignedId.getIdentifierName());
+        identifiedOrg.getAssignedIdentifier().setNullFlavor(assignedId.getNullFlavor());
+        identifiedOrg.getAssignedIdentifier().setReliability(assignedId.getReliability());
+        identifiedOrg.getAssignedIdentifier().setScope(assignedId.getScope());
+        this.identifiedOrgService.curate(identifiedOrg);
         
         return poOrg;
     }
