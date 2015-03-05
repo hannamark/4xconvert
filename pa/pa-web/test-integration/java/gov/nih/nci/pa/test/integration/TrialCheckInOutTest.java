@@ -260,30 +260,9 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
                         .trim());
     }
 
-    /**
-     * @param useDashboard
-     * @param trial
-     */
-    private void selectTrial(boolean useDashboard, TrialInfo trial) {
-        if (!useDashboard) {
-            clickAndWait("id=trialSearchMenuOption");
-            searchAndSelectTrial(trial.title);
-        } else {
-            selectTrialInDashboard(trial);
-        }
-    }
+    
 
-    /**
-     * @param trial
-     */
-    private void selectTrialInDashboard(TrialInfo trial) {
-        clickAndWait("id=dashboardMenuOption");
-        if (selenium.isElementPresent("id=searchid")) {
-            selenium.type("submittedOnOrAfter", "01/01/2000");
-            clickAndWait("xpath=//div[@class='actionsrow']//a//span[text()='Search']");
-        }
-        clickAndWait("link=" + trial.nciID.replaceFirst("NCI-", ""));
-    }
+    
 
     /**
      * @param checkInOption

@@ -4,7 +4,6 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
-import gov.nih.nci.pa.test.integration.util.TestProperties;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -34,6 +33,31 @@ public abstract class AbstractTrialStatusTest extends AbstractPaSeleniumTest {
         super.setUp();
         new QueryRunner().update(connection, "update pa_properties set value='"
                 + PORT + "' where name='smtp.port'");
+    }
+    
+    /**
+     * @param useDashboard
+     * @param trial
+     */
+    protected void selectTrial(boolean useDashboard, TrialInfo trial) {
+        if (!useDashboard) {
+            clickAndWait("id=trialSearchMenuOption");
+            searchAndSelectTrial(trial.title);
+        } else {
+            selectTrialInDashboard(trial);
+        }
+    }
+    
+    /**
+     * @param trial
+     */
+    private void selectTrialInDashboard(TrialInfo trial) {
+        clickAndWait("id=dashboardMenuOption");
+        if (selenium.isElementPresent("id=searchid")) {
+            selenium.type("submittedOnOrAfter", "01/01/2000");
+            clickAndWait("xpath=//div[@class='actionsrow']//a//span[text()='Search']");
+        }
+        clickAndWait("link=" + trial.nciID.replaceFirst("NCI-", ""));
     }
 
     @SuppressWarnings("deprecation")

@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -14,12 +16,48 @@ import org.openqa.selenium.By;
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class TrialStatusTest extends AbstractPaSeleniumTest {
-    private String tomorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(
-            new Date(), 1));
-    private String today = MONTH_DAY_YEAR_FMT.format(new Date());
-    private String yesterday = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(
-            new Date(), -1));
+public class TrialStatusTest extends AbstractTrialStatusTest {
+
+    @Test
+    public void testAbstractionValidationWithErrors() throws SQLException {
+        TrialInfo trial = createTrialAndAccessStatusPage("admin-ci");
+
+        // Adding In Review next to Approved is an error.
+        // Check-out the trial for Admin abstraction under the SuperAbstractor's
+        // name, and,
+        insertStatus("In Review", today, "", "New status");
+        // Close History
+        clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
+        driver.switchTo().defaultContent();
+
+        selectTrial(false, trial);
+        clickAndWait("link=Abstraction Validation");
+        assertTrue(selenium
+                .isElementPresent("xpath=//td[text()='Trial status transition errors were found.']"));
+        assertTrue(selenium
+                .isElementPresent("xpath=//td[text()='Select Trial Status from Administrative Data menu, then click History.']"));
+
+    }
+
+    @Test
+    public void testAbstractionValidationWithWarnings() throws SQLException {
+        TrialInfo trial = createTrialAndAccessStatusPage("admin-ci");
+
+        insertStatus("Temporarily Closed to Accrual", today,
+                "Temporarily Closed to Accrual", "New status");
+        // Close History
+        clickAndWait("xpath=//span[normalize-space(text())='Cancel']");
+        driver.switchTo().defaultContent();
+
+        selectTrial(false, trial);
+
+        clickAndWait("link=Abstraction Validation");
+        assertTrue(selenium
+                .isElementPresent("xpath=//td[text()='Trial status transition warnings were found.']"));
+        assertTrue(selenium
+                .isElementPresent("xpath=//td[text()='Select Trial Status from Administrative Data menu, then click History.']"));
+
+    }
 
     /**
      * Tests the standard trial transitions from In Review to Complete, with
@@ -126,7 +164,7 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         clickAndWait("link=History");
         assertTrue(selenium.isTextPresent("Status History"));
     }
-    
+
     @SuppressWarnings("deprecation")
     @Test
     public void testTrialStatusHistoryBeforeCheckOut() throws SQLException {
@@ -137,11 +175,11 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         checkInTrialAsAdminAbstractor();
         clickAndWait("link=Trial Status");
         assertFalse(selenium.isTextPresent("Save"));
-        
+
         clickAndWait("link=History");
         assertTrue(selenium.isTextPresent("Status History"));
         assertFalse(selenium.isTextPresent("Add New Status"));
-        assertFalse(selenium.isTextPresent("Validate Status Transactions")); 
+        assertFalse(selenium.isTextPresent("Validate Status Transactions"));
     }
 
     @SuppressWarnings("deprecation")
@@ -221,7 +259,7 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium
                 .isTextPresent("Status Transition Errors and Warnings were found. Please use the History button to review and make corrections. Trial record cannot be checked-in until all Status Transition Errors have been resolved."));
-        
+
         // Verify pop-up (Slide 24).
         assertFalse(selenium
                 .isVisible("id=displaySuAbstractorAutoCheckoutMessage"));

@@ -83,9 +83,10 @@
 
 package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyLong;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
@@ -127,6 +128,37 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
         bean.setStudySiteService(studySiteSvc);
         bean.setStudySiteAccrualStatusService(studySiteAccrualStatusSvc);
         bean.setStudySiteContactService(studySiteContactSvc);
+    }
+    
+    @Test
+    public void testStatusTransitionValidation() throws PAException {        
+        when(studyOverallStatusSvc.statusHistoryHasErrors(any(Ii.class))).thenReturn(Boolean.TRUE);
+        when(studyOverallStatusSvc.statusHistoryHasWarnings(any(Ii.class))).thenReturn(Boolean.TRUE);
+        List<AbstractionCompletionDTO> errList = bean.validateAbstractionCompletion(spId);
+
+        boolean errFound = false;
+        boolean warnFound = false;
+        for (AbstractionCompletionDTO error : errList) {
+            if (error.getComment().equals(
+                    "Select Trial Status from Administrative Data menu,"
+                            + " then click History.")
+                    && error.getErrorDescription().equals(
+                            "Trial status transition errors were found.")
+                    && error.getErrorType().equals(
+                            AbstractionCompletionDTO.ERROR_TYPE)) {
+                errFound = true;
+            }
+            if (error.getComment().equals(
+                    "Select Trial Status from Administrative Data menu,"
+                            + " then click History.")
+                    && error.getErrorDescription().equals(
+                            "Trial status transition warnings were found.")
+                    && error.getErrorType().equals(
+                            AbstractionCompletionDTO.WARNING_TYPE)) {
+                warnFound = true;
+            }
+        }
+        assertTrue(errFound && warnFound);
     }
 
     @Test

@@ -856,6 +856,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + ","
                 + "null,null,null,null,false)";
         runner.update(connection, sql);
+        
+        String sql2 = "INSERT INTO study_recruitment_status (identifier,status_code,status_date,"
+                + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,"
+                + "user_last_updated_id) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'"
+                + code
+                + "',"
+                + today_midnight()
+                + " ,"
+                + info.id
+                + ","
+                + "null,null,null,null)";
+        runner.update(connection, sql2);
+
     }
 
     private String today() {
