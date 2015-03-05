@@ -273,6 +273,7 @@ public abstract class AbstractRegistrySeleniumTest extends
      * @param rand
      * @throws URISyntaxException
      */
+    @SuppressWarnings("deprecation")
     protected void populateFieldsWithTrialData(String trialName,
             String leadOrgTrialId, final String rand) throws URISyntaxException {
         hideTopMenu();
@@ -338,13 +339,9 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.select("nciDivisionProgramCode", "label=CCR");
         selenium.click("grantbtnid");
         waitForElementById("grantdiv", 5);
-
-        // Trial Status Information
         driver.switchTo().defaultContent();
-        selenium.select("trialDTO_statusCode", "label=In Review");
-        selenium.type("trialDTO_statusDate", today);
-        clickAndWaitAjax("id=addStatusBtn");
-        waitForElementToBecomeVisible(By.id("trialStatusHistoryTable"), 10);
+        
+        populateStatusHistory();
         
         selenium.type("trialDTO_startDate", tommorrow);
         selenium.click("trialDTO_startDateTypeAnticipated");
@@ -399,6 +396,53 @@ public abstract class AbstractRegistrySeleniumTest extends
                 .getSystemResource(CONSENT_DOCUMENT).toURI()).toString()));
         selenium.type("submitTrial_otherDocument_0", (new File(ClassLoader
                 .getSystemResource(OTHER_DOCUMENT).toURI()).toString()));
+    }
+
+    /**
+     * 
+     */
+    @SuppressWarnings("deprecation")
+    private void populateStatusHistory() {
+        addStatus("In Review");
+
+        // Add a comment to In Review.
+        selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[1]/td[5]/i[@class='fa fa-edit']");
+        selenium.type("editComment", "This is initial status");
+        selenium.click("xpath=//div[@class='ui-dialog-buttonset']//span[text()='Save']");
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr[1]/td[3 and text()='This is initial status']"),
+                10);
+        
+        // Add Active, ensure warning, and delete.
+        addStatus("Active");
+        assertEquals(
+                "Interim status [APPROVED] is missing",
+                selenium.getText("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[4]/div[@class='warning']"));        
+        deleteStatus(2);
+        
+        
+        
+    }
+
+    @SuppressWarnings("deprecation")
+    private void deleteStatus(int row) {
+        selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr["+row+"]/td[5]/i[@class='fa fa-trash-o']");
+        selenium.type("deleteComment", "Wrong status");
+        selenium.click("xpath=//div[@class='ui-dialog-buttonset']//span[text()='Delete']");
+        waitForElementToGoAway(By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr["+row+"]"), 10);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void addStatus(String status) {
+        selenium.select("trialDTO_statusCode", "label=" + status);
+        selenium.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO_statusDate']]");
+        selenium.click("xpath=//td[@class='day active']");
+        selenium.click("trialDTO_statusDate");
+        clickAndWaitAjax("id=addStatusBtn");
+        waitForElementToBecomeVisible(By.id("trialStatusHistoryTable"), 10);
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr/td[2 and text()='"
+                        + status + "']"), 10);
     }
 
     protected void hideTopMenu() {
@@ -490,10 +534,7 @@ public abstract class AbstractRegistrySeleniumTest extends
 
         // Trial Status Information
         driver.switchTo().defaultContent();
-        selenium.select("trialDTO_statusCode", "label=In Review");
-        selenium.type("trialDTO_statusDate", today);
-        clickAndWaitAjax("id=addStatusBtn");
-        waitForElementToBecomeVisible(By.id("trialStatusHistoryTable"), 10);
+        populateStatusHistory();
         
         selenium.type("trialDTO_startDate", tommorrow);
         selenium.click("trialDTO_startDateTypeAnticipated");

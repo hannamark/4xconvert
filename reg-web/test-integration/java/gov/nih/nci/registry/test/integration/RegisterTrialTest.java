@@ -413,7 +413,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("", selenium.getValue("trialDTO_statusDate"));
         assertEquals(today, selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[1]"));
         assertEquals("In Review", selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[2]"));
-        assertEquals("", selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[3]"));
+        assertEquals("This is initial status", selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[3]"));
         
         
         assertEquals(tommorrow, selenium.getValue("trialDTO_startDate"));
