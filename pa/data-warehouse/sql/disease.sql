@@ -6,7 +6,7 @@ CREATE TABLE STG_DW_STUDY_DISEASE (
     DATE_LAST_UPDATED timestamp,
     DISEASE_CODE character varying(200),
     DISEASE_PREFERRED_NAME character varying(1000),
-    DISEASE_MENU_DISPLAY_NAME character varying(200),
+    DISEASE_MENU_DISPLAY_NAME character varying(1000),
     INTERNAL_SYSTEM_ID INTEGER NOT NULL,    -- study_disease_identifier
     INTERNAL_SYSTEM_ID2 INTEGER NOT NULL,   -- disease_identifier
     LEAD_DISEASE_INDICATOR character varying(3),
@@ -24,7 +24,7 @@ CREATE TABLE STG_DW_DISEASE_PARENTS (
     DISEASE_CODE character varying(200),
     NT_TERM_IDENTIFIER character varying(200),
     PREFERRED_NAME character varying(1000),
-    MENU_DISPLAY_NAME character varying(200),
+    MENU_DISPLAY_NAME character varying(1000),
     PRIMARY KEY (DISEASE_IDENTIFIER, PARENT_DISEASE_IDENTIFIER)
 );
 
