@@ -83,16 +83,20 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialStatus;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -301,10 +305,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("//div[@id='grantsDiv']/table/tbody/tr["
                         + oldGrantIndex + "]/td[4]"));
 
-        // Status & Dates
-        assertEquals("Approved", getTrialConfValue("Current Trial Status:"));
-        assertEquals("", getTrialConfValue("Why the Study Stopped:"));
-        assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
+        verifyTrialStatus(nciID, "Active");
         assertEquals(today + " Actual", getTrialConfValue("Trial Start Date:"));
         assertEquals(tommorrow + " Anticipated",
                 getTrialConfValue("Primary Completion Date:"));
@@ -345,14 +346,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         // Trial Status Information
         driver.switchTo().defaultContent();
-        clickAndWaitAjax("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr/td[5]/i[@class='fa fa-edit']");
-        pause(1000);
-        selenium.type("statusDate", today);
-        selenium.select("statusCode", "label=Approved");
-        selenium.type("editComment", "Trial approved!");
-        clickAndWaitAjax("xpath=//button/span[text()='Save']");
-        pause(5000);
-        
+        editStatus(2, today, "Active", "Changed to Active.");
+
         selenium.type("trialDTO_startDate", today);
         selenium.click("trialDTO_startDateTypeActual");
         selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
@@ -407,15 +402,26 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("National Cancer Institute",
                 getTrialConfValue("Summary 4 Funding Sponsor:"));
         assertEquals("PG" + rand, getTrialConfValue("Program code:"));
-        
+
         assertEquals("", selenium.getValue("trialDTO_statusCode"));
         assertEquals("", selenium.getValue("trialDTO_reason"));
         assertEquals("", selenium.getValue("trialDTO_statusDate"));
-        assertEquals(today, selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[1]"));
-        assertEquals("In Review", selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[2]"));
-        assertEquals("This is initial status", selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr/td[3]"));
-        
-        
+        assertEquals(
+                yesterday,
+                selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr[1]/td[1]"));
+        assertEquals(
+                "In Review",
+                selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr[1]/td[2]"));
+        assertEquals(
+                today,
+                selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[1]"));
+        assertEquals(
+                "Approved",
+                selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[2]"));
+        assertEquals(
+                "Changed to Approved.",
+                selenium.getText("//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[3]"));
+
         assertEquals(tommorrow, selenium.getValue("trialDTO_startDate"));
         assertTrue(selenium.isChecked("trialDTO_startDateTypeAnticipated"));
         assertEquals(oneYearFromToday,
@@ -597,7 +603,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selenium.type("siteDTO_recruitmentStatusDate", "09/25/2014");
         clickAndWaitAjax("id=addStatusBtn");
         waitForElementById("siteStatusHistoryTable", 15);
-        
+
         selenium.click("xpath=//button/i[@class='fa-floppy-o']");
         pause(5000);
 
@@ -616,10 +622,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("//table[@id='row']/tbody/tr/td[5]"));
         assertEquals("09/25/2014",
                 selenium.getText("//table[@id='row']/tbody/tr/td[6]"));
-        assertEquals("",
-                selenium.getText("//table[@id='row']/tbody/tr/td[7]"));
-        assertEquals("",
-                selenium.getText("//table[@id='row']/tbody/tr/td[8]"));
+        assertEquals("", selenium.getText("//table[@id='row']/tbody/tr/td[7]"));
+        assertEquals("", selenium.getText("//table[@id='row']/tbody/tr/td[8]"));
 
     }
 
@@ -1059,11 +1063,12 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      * Tests saving a draft trial.
      * 
      * @param nciID
+     * @throws SQLException
      * @throws Exception
      *             on error
      */
     private void verifyTrialConfirmaionPage(String rand, String nciID,
-            String category) {
+            String category) throws SQLException {
         verifyBaseTrialInfo(rand, nciID, category);
         verifyRegulatoryInfo();
         verifySponsor();
@@ -1074,9 +1079,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
     /**
      * @param rand
      * @param nciID
+     * @throws SQLException
      */
     protected void verifyBaseTrialInfo(String rand, String nciID,
-            String category) {
+            String category) throws SQLException {
         if (StringUtils.isNotBlank(nciID))
             assertEquals(nciID, getTrialConfValue("NCI Trial Identifier:"));
 
@@ -1115,9 +1121,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 getTrialConfValue("Summary 4 Funding Sponsor/Source:"));
         assertEquals("PG" + rand, getTrialConfValue("Program code:"));
 
-        assertEquals("In Review", getTrialConfValue("Current Trial Status:"));
-        assertEquals("", getTrialConfValue("Why the Study Stopped:"));
-        assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
+        verifyTrialStatus(nciID, "Approved");
+
         assertEquals(tommorrow + " Anticipated",
                 getTrialConfValue("Trial Start Date:"));
         assertEquals(oneYearFromToday + " Anticipated",
@@ -1154,6 +1159,34 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("//div[@id='grantsDiv']/table/tbody/tr/td[4]"));
 
         verifyDocuments();
+    }
+
+    /**
+     * @throws SQLException
+     * 
+     */
+    private void verifyTrialStatus(String nciID, String expected)
+            throws SQLException {
+        assertEquals(expected, getTrialConfValue("Current Trial Status:"));
+        assertEquals("", getTrialConfValue("Why the Study Stopped:"));
+        assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
+
+        // Ensure status history of two statuses (In Review, Approved) created.
+        if (StringUtils.isNotBlank(nciID)) {
+            TrialInfo info = new TrialInfo();
+            info.nciID = nciID;
+            List<TrialStatus> hist = getTrialStatusHistory(info);
+            assertEquals(2, hist.size());
+
+            assertTrue(DateUtils.isSameDay(hist.get(0).statusDate,
+                    yesterdayDate));
+            assertEquals("IN_REVIEW", hist.get(0).statusCode);
+            assertTrue(StringUtils.isBlank(hist.get(0).comments));
+
+            assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
+            assertEquals(expected.toUpperCase(), hist.get(1).statusCode);
+            assertEquals("Changed to " + expected + ".", hist.get(1).comments);
+        }
     }
 
     /**

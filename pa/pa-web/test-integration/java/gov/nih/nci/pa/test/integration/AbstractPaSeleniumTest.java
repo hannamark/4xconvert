@@ -1015,15 +1015,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             throws SQLException {
         final String sql = "select status_code, status_date, addl_comments, comment_text from study_overall_status "
                 + "where deleted=false and study_protocol_identifier="
-                + trial.id + " ORDER BY status_date ASC, identifier ASC";
+                + (trial.id != null ? trial.id : getTrialIdByNciId(trial.nciID))
+                + " ORDER BY status_date ASC, identifier ASC";
         return loadTrialStatuses(sql);
     }
-    
+
     protected List<TrialStatus> getDeletedTrialStatuses(TrialInfo trial)
             throws SQLException {
         final String sql = "select status_code, status_date, addl_comments, comment_text from study_overall_status "
                 + "where deleted=true and study_protocol_identifier="
-                + trial.id + " ORDER BY status_date ASC, identifier ASC";
+                + (trial.id != null ? trial.id : getTrialIdByNciId(trial.nciID))
+                + " ORDER BY status_date ASC, identifier ASC";
         return loadTrialStatuses(sql);
     }
 
@@ -1112,6 +1114,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 .query(connection,
                         "select study_protocol_identifier from rv_trial_id_nct where local_sp_indentifier='"
                                 + nctID + "'", new ArrayHandler())[0];
+    }
+    
+    protected Number getTrialIdByNciId(String nciID) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (Number) runner.query(connection,
+                "select study_protocol_id from rv_trial_id_nci where extension='"
+                        + nciID + "'", new ArrayHandler())[0];
     }
 
     protected Number getTrialIdByLeadOrgID(String loID) throws SQLException {

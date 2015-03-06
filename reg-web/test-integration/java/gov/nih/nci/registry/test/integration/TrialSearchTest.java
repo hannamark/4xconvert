@@ -469,7 +469,7 @@ public class TrialSearchTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[1]/a"));
         assertEquals("An Open-Label Study of Ruxolitinib " + info.rand,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[2]"));
-        assertEquals("In Review",
+        assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[3]"));
         assertEquals("National Cancer Institute Division of Cancer Prevention",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[4]"));
@@ -507,7 +507,7 @@ public class TrialSearchTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[6]"));
         assertEquals("OTHER" + info.rand,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[7]"));
-        assertEquals("In Review",
+        assertEquals("Approved",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[8]"));
         assertEquals("Accepted",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[9]"));

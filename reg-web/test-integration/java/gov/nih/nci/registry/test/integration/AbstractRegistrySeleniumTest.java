@@ -83,7 +83,6 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -94,13 +93,13 @@ import java.util.Date;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.hibernate.type.YesNoType;
 import org.junit.Ignore;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 import com.thoughtworks.selenium.SeleniumException;
 
@@ -110,6 +109,7 @@ import com.thoughtworks.selenium.SeleniumException;
  * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
  */
 @Ignore
+@SuppressWarnings("deprecation")
 public abstract class AbstractRegistrySeleniumTest extends
         AbstractPaSeleniumTest {
 
@@ -122,13 +122,13 @@ public abstract class AbstractRegistrySeleniumTest extends
     protected static final String CONSENT_DOCUMENT = "Consent.doc";
     protected static final String OTHER_DOCUMENT = "Other.doc";
 
-    private static boolean firstRun = true;
-
     protected String today = MONTH_DAY_YEAR_FMT.format(new Date());
     protected String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(
             new Date(), 1));
     protected String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils
             .addYears(new Date(), 1));
+    protected Date yesterdayDate = DateUtils.addDays(new Date(), -1);
+    protected String yesterday = MONTH_DAY_YEAR_FMT.format(yesterdayDate);
 
     @Override
     protected void logoutUser() {
@@ -403,7 +403,7 @@ public abstract class AbstractRegistrySeleniumTest extends
      */
     @SuppressWarnings("deprecation")
     private void populateStatusHistory() {
-        addStatus("In Review", "");
+        addStatus("", "In Review", "");
 
         // Add a comment to In Review.
         selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[1]/td[5]/i[@class='fa fa-edit']");
@@ -414,7 +414,7 @@ public abstract class AbstractRegistrySeleniumTest extends
                 10);
 
         // Add Active, ensure warning, and delete.
-        addStatus("Active", "");
+        addStatus("", "Active", "");
         assertEquals(
                 "Interim status [APPROVED] is missing",
                 selenium.getText("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[4]/div[@class='warning']"));
@@ -423,7 +423,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         // Add Temporarily Closed to Accrual and Intervention, ensure errors,
         // ensure unable to submit,
         // and delete.
-        addStatus("Temporarily Closed to Accrual and Intervention",
+        addStatus("", "Temporarily Closed to Accrual and Intervention",
                 "Put on hold for some reason.");
         assertEquals(
                 "Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date",
@@ -450,6 +450,48 @@ public abstract class AbstractRegistrySeleniumTest extends
                         .replaceAll("\\s+", " ").trim());
         deleteStatus(2);
 
+        // Change In Review to Approved.
+        editStatus(1, "", "Approved", "Changed to Approved.");
+
+        // Add In Review with yesterday's date.
+        addStatus(yesterday, "In Review", "Yesterday's status");
+
+    }
+
+    protected void editStatus(int row, String date, String newStatus,
+            String comment) {
+        selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr["
+                + row + "]/td[5]/i[@class='fa fa-edit']");
+        waitForElementToBecomeVisible(By.id("dialog-edit"), 5);
+        assertEquals("Edit Trial Status",
+                selenium.getText("ui-dialog-title-dialog-edit"));
+        if (StringUtils.isNotBlank(date)) {
+            selenium.type("statusDate", date);
+        } else {
+            selenium.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='statusDate']]");
+            clickOnFirstVisible(By.xpath("//td[@class='day active']"));
+            clickOnFirstVisible(By
+                    .xpath("//div[@class='datepicker']/button[@class='close']"));
+        }
+        selenium.select("statusCode", "label=" + newStatus);
+        selenium.type("editComment", comment);
+        selenium.click("xpath=//div[@class='ui-dialog-buttonset']//span[text()='Save']");
+        waitForElementToBecomeInvisible(By.id("dialog-edit"), 10);
+        waitForElementToBecomeInvisible(By.id("indicator"), 10);
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr["
+                        + row + "]/td[position()=1 and text()='"
+                        + (StringUtils.isNotBlank(date) ? date : today) + "']"),
+                10);
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr["
+                        + row + "]/td[position()=2 and text()='" + newStatus
+                        + "']"), 10);
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr["
+                        + row + "]/td[position()=3 and text()='" + comment
+                        + "']"), 10);
+
     }
 
     @SuppressWarnings("deprecation")
@@ -471,16 +513,21 @@ public abstract class AbstractRegistrySeleniumTest extends
     }
 
     @SuppressWarnings("deprecation")
-    private void addStatus(String status, String whyStopped) {
+    protected void addStatus(String date, String status, String whyStopped) {
         selenium.select("trialDTO_statusCode", "label=" + status);
         selenium.type("trialDTO_reason", whyStopped);
-        selenium.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO_statusDate']]");
-        selenium.click("xpath=//td[@class='day active']");
-        selenium.click("trialDTO_statusDate");
+        if (StringUtils.isNotBlank(date)) {
+            selenium.type("trialDTO_statusDate", date);
+        } else {
+            selenium.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO_statusDate']]");
+            clickOnFirstVisible(By.xpath("//td[@class='day active']"));
+            clickOnFirstVisible(By
+                    .xpath("//div[@class='datepicker']/button[@class='close']"));
+        }
         clickAndWaitAjax("id=addStatusBtn");
         waitForElementToBecomeVisible(By.id("trialStatusHistoryTable"), 10);
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr/td[2 and text()='"
+                By.xpath("//table[@id='trialStatusHistoryTable']/tbody//tr//td[text()='"
                         + status + "']"), 10);
     }
 

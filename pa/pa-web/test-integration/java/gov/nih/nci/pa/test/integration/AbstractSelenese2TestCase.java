@@ -201,6 +201,16 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
             }
         });        
     }
+    
+    protected void waitForElementToBecomeInvisible(final By by, int timeoutSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutSeconds);
+        wait.until(new Predicate<WebDriver>() {            
+            @Override
+            public boolean apply(WebDriver wd) {                
+                return !wd.findElement(by).isDisplayed();
+            }
+        });        
+    }
 
 
     /**
@@ -232,6 +242,15 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         WebElement el = driver.findElement(By.linkText(linkText));
         el.click();
         pause(MILLISECONDS_PER_SECOND / 2);
+    }
+    
+    protected void clickOnFirstVisible(By by) {
+        for (WebElement e: driver.findElements(by)) {
+            if (e.isDisplayed() && e.isEnabled()) {
+                e.click();
+                break;
+            }
+        }
     }
 
     public void pause(int millisecs) {
