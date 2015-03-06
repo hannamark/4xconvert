@@ -141,7 +141,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         verifyLoginPage();
         clickAndWait("link=Sign In");
         selenium.type("j_username", username);
-        selenium.type("j_password", password);       
+        selenium.type("j_password", password);
         clickAndWait("id=loginButton");
         verifyDisclaimerPage();
     }
@@ -320,7 +320,7 @@ public abstract class AbstractRegistrySeleniumTest extends
 
         // Select Sponsor
         driver.switchTo().defaultContent();
-        hover(By.id("trialDTO.sponsorNameField"));       
+        hover(By.id("trialDTO.sponsorNameField"));
         clickAndWaitAjax("xpath=//table[@id='dropdown-sponsorOrganization']//a[text()='Cancer Therapy Evaluation Program']");
 
         selenium.select("trialDTO.responsiblePartyType", "label=Sponsor");
@@ -340,9 +340,9 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.click("grantbtnid");
         waitForElementById("grantdiv", 5);
         driver.switchTo().defaultContent();
-        
+
         populateStatusHistory();
-        
+
         selenium.type("trialDTO_startDate", tommorrow);
         selenium.click("trialDTO_startDateTypeAnticipated");
         selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
@@ -403,38 +403,77 @@ public abstract class AbstractRegistrySeleniumTest extends
      */
     @SuppressWarnings("deprecation")
     private void populateStatusHistory() {
-        addStatus("In Review");
+        addStatus("In Review", "");
 
         // Add a comment to In Review.
         selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[1]/td[5]/i[@class='fa fa-edit']");
         selenium.type("editComment", "This is initial status");
         selenium.click("xpath=//div[@class='ui-dialog-buttonset']//span[text()='Save']");
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr[1]/td[3 and text()='This is initial status']"),
+                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr[1]/td[position()=3 and text()='This is initial status']"),
                 10);
-        
+
         // Add Active, ensure warning, and delete.
-        addStatus("Active");
+        addStatus("Active", "");
         assertEquals(
                 "Interim status [APPROVED] is missing",
-                selenium.getText("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[4]/div[@class='warning']"));        
+                selenium.getText("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[4]/div[@class='warning']"));
         deleteStatus(2);
-        
-        
-        
+
+        // Add Temporarily Closed to Accrual and Intervention, ensure errors,
+        // ensure unable to submit,
+        // and delete.
+        addStatus("Temporarily Closed to Accrual and Intervention",
+                "Put on hold for some reason.");
+        assertEquals(
+                "Statuses [IN REVIEW] and [TEMPORARILY CLOSED TO ACCRUAL AND INTERVENTION] can not have the same date",
+                selenium.getText("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[4]/div[position()=1 and @class='error']"));
+        assertEquals(
+                "Interim status [ACTIVE] is missing",
+                selenium.getText("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[4]/div[position()=2 and @class='error']"));
+        assertEquals(
+                "Interim status [APPROVED] is missing",
+                selenium.getText("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[4]/div[position()=3 and @class='warning']"));
+        assertEquals(
+                "Interim status [TEMPORARILY CLOSED TO ACCRUAL] is missing",
+                selenium.getText("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[4]/div[position()=4 and @class='warning']"));
+        hover(By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr[2]/td[5]/img[@rel='popover']"));
+        waitForElementToBecomeAvailable(
+                By.xpath("//div[@class='popover fade top in']"), 5);
+        assertEquals("Put on hold for some reason.",
+                selenium.getText("xpath=//div[@class='popover fade top in']"));
+        selenium.click("xpath=//button[text()='Review Trial']");
+        waitForElementToBecomeVisible(By.id("transitionErrorsWarnings"), 10);
+        assertEquals(
+                "Status Transition Errors and Warnings were found. This trial cannot be submitted until all Status Transition Errors have been resolved. Please use the action icons below to make corrections.",
+                selenium.getText("transitionErrorsWarnings")
+                        .replaceAll("\\s+", " ").trim());
+        deleteStatus(2);
+
     }
 
     @SuppressWarnings("deprecation")
     private void deleteStatus(int row) {
-        selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr["+row+"]/td[5]/i[@class='fa fa-trash-o']");
+        selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr["
+                + row + "]/td[5]/i[@class='fa fa-trash-o']");
+        waitForElementToBecomeVisible(By.id("dialog-delete"), 5);
+        assertEquals("Please provide a comment",
+                selenium.getText("ui-dialog-title-dialog-delete"));
+        assertEquals(
+                "Please provide a comment explaining why you are deleting this trial status:",
+                selenium.getText("xpath=//div[@id='dialog-delete']/p")
+                        .replaceAll("\\s+", " ").trim());
         selenium.type("deleteComment", "Wrong status");
         selenium.click("xpath=//div[@class='ui-dialog-buttonset']//span[text()='Delete']");
-        waitForElementToGoAway(By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr["+row+"]"), 10);
+        waitForElementToGoAway(
+                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr["
+                        + row + "]"), 10);
     }
 
     @SuppressWarnings("deprecation")
-    private void addStatus(String status) {
+    private void addStatus(String status, String whyStopped) {
         selenium.select("trialDTO_statusCode", "label=" + status);
+        selenium.type("trialDTO_reason", whyStopped);
         selenium.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO_statusDate']]");
         selenium.click("xpath=//td[@class='day active']");
         selenium.click("trialDTO_statusDate");
@@ -535,7 +574,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         // Trial Status Information
         driver.switchTo().defaultContent();
         populateStatusHistory();
-        
+
         selenium.type("trialDTO_startDate", tommorrow);
         selenium.click("trialDTO_startDateTypeAnticipated");
         selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
@@ -570,8 +609,6 @@ public abstract class AbstractRegistrySeleniumTest extends
         firstRun = false;
     }
 
-   
-    
     protected String getTrialConfValue(String labeltxt) {
         try {
             return selenium
@@ -584,7 +621,7 @@ public abstract class AbstractRegistrySeleniumTest extends
                             + labeltxt + "']/..]");
         }
     }
-    
+
     /**
      * @throws URISyntaxException
      * @throws SQLException
@@ -602,7 +639,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         info.rand = rand;
         return info;
     }
-    
+
     /**
      * 
      */
@@ -612,7 +649,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         clickAndWait("xpath=//a[text()='Clinical Trials']");
         waitForElementById("resetSearchBtn", 5);
     }
-    
+
     protected void changeRegUserAffiliation(String loginName, int orgPoId,
             String orgName) throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -648,7 +685,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         Number siteID = results != null ? (Number) results[0] : null;
         return siteID;
     }
-   
+
     protected void addToSiteStatusHistory(Number siteID, String statusCode,
             Timestamp date) throws SQLException {
         QueryRunner runner = new QueryRunner();
