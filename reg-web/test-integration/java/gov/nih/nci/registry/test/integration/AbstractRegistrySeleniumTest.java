@@ -83,12 +83,15 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialStatus;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
@@ -402,7 +405,7 @@ public abstract class AbstractRegistrySeleniumTest extends
      * 
      */
     @SuppressWarnings("deprecation")
-    private void populateStatusHistory() {
+    protected void populateStatusHistory() {
         addStatus("", "In Review", "");
 
         // Add a comment to In Review.
@@ -495,7 +498,7 @@ public abstract class AbstractRegistrySeleniumTest extends
     }
 
     @SuppressWarnings("deprecation")
-    private void deleteStatus(int row) {
+    protected void deleteStatus(int row) {
         selenium.click("xpath=//table[@id='trialStatusHistoryTable']/tbody/tr["
                 + row + "]/td[5]/i[@class='fa fa-trash-o']");
         waitForElementToBecomeVisible(By.id("dialog-delete"), 5);
@@ -507,9 +510,15 @@ public abstract class AbstractRegistrySeleniumTest extends
                         .replaceAll("\\s+", " ").trim());
         selenium.type("deleteComment", "Wrong status");
         selenium.click("xpath=//div[@class='ui-dialog-buttonset']//span[text()='Delete']");
-        waitForElementToGoAway(
-                By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr["
-                        + row + "]"), 10);
+        if (row == 1) {
+            waitForElementToBecomeAvailable(
+                    By.xpath("//table[@id='trialStatusHistoryTable']//td[@class='dataTables_empty']"),
+                    10);
+        } else {
+            waitForElementToGoAway(
+                    By.xpath("//table[@id='trialStatusHistoryTable']/tbody/tr["
+                            + row + "]"), 10);
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -529,6 +538,34 @@ public abstract class AbstractRegistrySeleniumTest extends
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='trialStatusHistoryTable']/tbody//tr//td[text()='"
                         + status + "']"), 10);
+    }
+
+    /**
+     * @throws SQLException
+     * 
+     */
+    protected void verifyTrialStatus(String nciID, String expected)
+            throws SQLException {
+        assertEquals(expected, getTrialConfValue("Current Trial Status:"));
+        assertEquals("", getTrialConfValue("Why the Study Stopped:"));
+        assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
+
+        // Ensure status history of two statuses (In Review, Approved) created.
+        if (StringUtils.isNotBlank(nciID)) {
+            TrialInfo info = new TrialInfo();
+            info.nciID = nciID;
+            List<TrialStatus> hist = getTrialStatusHistory(info);
+            assertEquals(2, hist.size());
+
+            assertTrue(DateUtils.isSameDay(hist.get(0).statusDate,
+                    yesterdayDate));
+            assertEquals("IN_REVIEW", hist.get(0).statusCode);
+            assertTrue(StringUtils.isBlank(hist.get(0).comments));
+
+            assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
+            assertEquals(expected.toUpperCase(), hist.get(1).statusCode);
+            assertEquals("Changed to " + expected + ".", hist.get(1).comments);
+        }
     }
 
     protected void hideTopMenu() {
@@ -571,11 +608,32 @@ public abstract class AbstractRegistrySeleniumTest extends
     /**
      * 
      */
+    protected void selectAction(String action) {
+        selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']");
+        clickAndWait("xpath=//ul[@id='actmenu']/li/a[normalize-space(text())='"
+                + action + "']");
+        hideTopMenu();
+    }
+
+    /**
+     * 
+     */
     protected void accessTrialSearchScreen() {
         hoverLink("Search");
         pause(1500);
         clickAndWait("xpath=//a[text()='Clinical Trials']");
         waitForElementById("resetSearchBtn", 5);
+    }
+
+    /**
+     * @param nciID
+     */
+    protected void searchForTrialByNciID(final String nciID) {
+        accessTrialSearchScreen();
+        selenium.type("identifier", nciID);
+        selenium.click("runSearchBtn");
+        clickAndWait("link=All Trials");
+        waitForElementById("row", 10);
     }
 
     protected void changeRegUserAffiliation(String loginName, int orgPoId,

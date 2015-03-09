@@ -1118,9 +1118,11 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     
     protected Number getTrialIdByNciId(String nciID) throws SQLException {
         QueryRunner runner = new QueryRunner();
-        return (Number) runner.query(connection,
-                "select study_protocol_id from rv_trial_id_nci where extension='"
-                        + nciID + "'", new ArrayHandler())[0];
+        return (Number) runner
+                .query(connection,
+                        "select study_protocol_id from rv_trial_id_nci inner join study_protocol sp on sp.identifier=study_protocol_id "
+                                + "where sp.status_code='ACTIVE' and extension='"
+                                + nciID + "'", new ArrayHandler())[0];
     }
 
     protected Number getTrialIdByLeadOrgID(String loID) throws SQLException {

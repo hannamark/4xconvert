@@ -111,6 +111,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
     private String driverClass = "org.openqa.selenium.firefox.FirefoxDriver";
 
     protected Selenium selenium;
+    protected Selenium s;
     protected WebDriver driver;
     protected String url;
     
@@ -142,6 +143,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         driver.manage().window().setSize(new Dimension(1500, 900));
         selenium = new WebDriverBackedSelenium(driver, url);
         selenium.setTimeout(toMillisecondsString(PAGE_TIMEOUT_SECONDS));
+        s = selenium;
        
     }
 

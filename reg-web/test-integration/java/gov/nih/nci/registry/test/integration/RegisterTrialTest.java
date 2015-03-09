@@ -155,7 +155,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assignTrialOwner("abstractor-ci", info.id);
         final String nciID = info.nciID;
         searchForTrialByNciID(nciID);
-        selectUpdateAction();
+        selectAction("Update");
 
         String rand = RandomStringUtils.randomNumeric(10);
 
@@ -248,7 +248,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         final String nciID = info.nciID;
         searchForTrialByNciID(nciID);
 
-        selectUpdateAction();
+        selectAction("Update");
 
         verifyUpdateCompleteTrialPage(info);
         populateUpdateCompleteTrialPage(rand);
@@ -306,6 +306,20 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                         + oldGrantIndex + "]/td[4]"));
 
         verifyTrialStatus(nciID, "Active");
+
+        // Make sure deleted statuses are there as well.
+        List<TrialStatus> hist = getDeletedTrialStatuses(info);
+        assertEquals(2, hist.size());
+
+        assertTrue(DateUtils.isSameDay(hist.get(0).statusDate, yesterdayDate));
+        assertEquals("IN_REVIEW", hist.get(0).statusCode);
+        assertEquals("Wrong status", hist.get(0).comments);
+
+        assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
+        assertEquals("APPROVED", hist.get(1).statusCode);
+        assertEquals("Wrong status", hist.get(1).comments);
+
+        // Start/End Dates
         assertEquals(today + " Actual", getTrialConfValue("Trial Start Date:"));
         assertEquals(tommorrow + " Anticipated",
                 getTrialConfValue("Primary Completion Date:"));
@@ -314,15 +328,6 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         verifyDocuments();
 
-    }
-
-    /**
-     * 
-     */
-    protected void selectUpdateAction() {
-        selenium.click("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']");
-        clickAndWait("xpath=//ul[@id='actmenu']/li/a[normalize-space(text())='Update']");
-        hideTopMenu();
     }
 
     /**
@@ -346,6 +351,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         // Trial Status Information
         driver.switchTo().defaultContent();
+        deleteStatus(2);
+        deleteStatus(1);
+        populateStatusHistory();
         editStatus(2, today, "Active", "Changed to Active.");
 
         selenium.type("trialDTO_startDate", today);
@@ -483,17 +491,6 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("Interventional", getTrialConfValue("Trial Type:"));
         assertEquals("Ancillary", getTrialConfValue("Secondary Purpose:"));
 
-    }
-
-    /**
-     * @param nciID
-     */
-    protected void searchForTrialByNciID(final String nciID) {
-        accessTrialSearchScreen();
-        selenium.type("identifier", nciID);
-        selenium.click("runSearchBtn");
-        clickAndWait("link=All Trials");
-        waitForElementById("row", 10);
     }
 
     @SuppressWarnings("deprecation")
@@ -1161,33 +1158,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         verifyDocuments();
     }
 
-    /**
-     * @throws SQLException
-     * 
-     */
-    private void verifyTrialStatus(String nciID, String expected)
-            throws SQLException {
-        assertEquals(expected, getTrialConfValue("Current Trial Status:"));
-        assertEquals("", getTrialConfValue("Why the Study Stopped:"));
-        assertEquals(today, getTrialConfValue("Current Trial Status Date:"));
-
-        // Ensure status history of two statuses (In Review, Approved) created.
-        if (StringUtils.isNotBlank(nciID)) {
-            TrialInfo info = new TrialInfo();
-            info.nciID = nciID;
-            List<TrialStatus> hist = getTrialStatusHistory(info);
-            assertEquals(2, hist.size());
-
-            assertTrue(DateUtils.isSameDay(hist.get(0).statusDate,
-                    yesterdayDate));
-            assertEquals("IN_REVIEW", hist.get(0).statusCode);
-            assertTrue(StringUtils.isBlank(hist.get(0).comments));
-
-            assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
-            assertEquals(expected.toUpperCase(), hist.get(1).statusCode);
-            assertEquals("Changed to " + expected + ".", hist.get(1).comments);
-        }
-    }
+    
 
     /**
      * 

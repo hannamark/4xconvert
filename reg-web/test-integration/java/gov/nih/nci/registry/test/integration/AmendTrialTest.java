@@ -83,11 +83,18 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialStatus;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -99,45 +106,124 @@ import org.openqa.selenium.By;
 @SuppressWarnings("deprecation")
 public class AmendTrialTest extends AbstractRegistrySeleniumTest {
 
+    @SuppressWarnings("deprecation")
     @Test
-    public void testAmendTrial() throws SQLException, URISyntaxException {
-        
+    public void testAmendTrial() throws Exception {
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
             // PhantomJS keeps crashing on Linux CI box. No idea why at the
             // moment.
             return;
         }
-        
-        final String nciID = getLastNciId();
-        TrialInfo info = createAcceptedTrial(false);
-        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,  DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.toString());
-        assignTrialOwner("abstractor-ci", info.id);
-        
+
         loginAndAcceptDisclaimer();
-        
+        String rand = RandomStringUtils.randomNumeric(10);
+        TrialInfo info = registerAndAcceptTrial(rand);
+        final String nciID = info.nciID;
+        addDWS(info,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+
+        searchForTrialByNciID(nciID);
+        selectAction("Amend");
+        populateAmendTrialPage(info);
+        clickAndWait("xpath=//button[text()='Review Trial']");
+        waitForElementById("reviewTrialForm", 10);
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("The amendment to trial with the NCI Identifier "
+                        + nciID + " was successfully submitted."));
+
+        // Trial Status
+        verifyTrialStatus(nciID, "Active");
+
+        // Make sure deleted statuses are there as well.
+        List<TrialStatus> hist = getDeletedTrialStatuses(info);
+        assertEquals(2, hist.size());
+
+        assertTrue(DateUtils.isSameDay(hist.get(0).statusDate, yesterdayDate));
+        assertEquals("IN_REVIEW", hist.get(0).statusCode);
+        assertEquals("Wrong status", hist.get(0).comments);
+
+        assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
+        assertEquals("APPROVED", hist.get(1).statusCode);
+        assertEquals("Wrong status", hist.get(1).comments);
+
+    }
+
+    private void populateAmendTrialPage(TrialInfo info)
+            throws URISyntaxException {
+        s.type("trialDTO.localAmendmentNumber", "1");
+        s.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO.amendmentDate']]");
+        clickOnFirstVisible(By.xpath("//td[@class='day active']"));
+        clickOnFirstVisible(By
+                .xpath("//div[@class='datepicker']/button[@class='close']"));
+
+        deleteStatus(2);
+        deleteStatus(1);
+        populateStatusHistory();
+        editStatus(2, today, "Active", "Changed to Active.");
+
+        // Start/End Dates.
+        selenium.type("trialDTO_startDate", today);
+        selenium.click("trialDTO_startDateTypeActual");
+        selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
+        selenium.type("trialDTO_primaryCompletionDate", tommorrow);
+        selenium.click("trialDTO_completionDateTypeAnticipated");
+        selenium.type("trialDTO_completionDate", tommorrow);
+
+        // Add Protocol and IRB Document
+        String protocolDocPath = (new File(ClassLoader.getSystemResource(
+                PROTOCOL_DOCUMENT).toURI()).toString());
+        String irbDocPath = (new File(ClassLoader.getSystemResource(
+                IRB_DOCUMENT).toURI()).toString());
+        selenium.type("protocolDoc", protocolDocPath);
+        selenium.type("irbApproval", irbDocPath);
+        selenium.type("protocolHighlightDocument", protocolDocPath);
+    }
+
+    @Test
+    public void testLeadOrgSelectionFixed() throws SQLException,
+            URISyntaxException {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+
+        TrialInfo info = createAcceptedTrial(false);
+        final String nciID = getLastNciId();
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        assignTrialOwner("abstractor-ci", info.id);
+
+        loginAndAcceptDisclaimer();
+
         String rand = info.leadOrgID;
         runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
         invokeAmendTrial();
         changeAndVerifyLeadOrganization();
     }
-    
+
     /**
      * @param fieldID
      * @param value
      * @param info
      */
-    protected void runSearchAndVerifySingleTrialResult(String fieldID, String value, TrialInfo info ) {
-        
+    protected void runSearchAndVerifySingleTrialResult(String fieldID,
+            String value, TrialInfo info) {
+
         accessTrialSearchScreen();
         selenium.type(fieldID, value);
-        
+
         selenium.click("runSearchBtn");
         clickAndWait("link=All Trials");
         waitForElementById("row", 10);
         verifySingleTrialSearchResult(info);
-        
+
     }
-    
+
     /**
      * @param info
      */
@@ -161,41 +247,41 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium
                 .isElementPresent("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']"));
     }
-    
-    
+
     private void invokeAmendTrial() {
         final By selectActionBtn = By
                 .xpath("//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']");
         moveElementIntoView(selectActionBtn);
         driver.findElement(selectActionBtn).click();
-        driver.findElement(
-                By.xpath("//li/a[normalize-space(text())='Amend']"))
+        driver.findElement(By.xpath("//li/a[normalize-space(text())='Amend']"))
                 .click();
-      
-        assertEquals("1",selenium.getValue("trialDTO.leadOrganizationIdentifier"));
+
+        assertEquals("1",
+                selenium.getValue("trialDTO.leadOrganizationIdentifier"));
     }
-    
+
     private void changeAndVerifyLeadOrganization() {
-        
-        final By leadOrgElement =By.id("trialDTO.leadOrganizationNameField");
+
+        final By leadOrgElement = By.id("trialDTO.leadOrganizationNameField");
         moveElementIntoView(leadOrgElement);
         driver.findElement(leadOrgElement).click();
         driver.findElement(
-                By.xpath("//tr/td/a[normalize-space(text())='Search...']")).click();
+                By.xpath("//tr/td/a[normalize-space(text())='Search...']"))
+                .click();
         selenium.selectFrame("popupFrame");
-        
-        final By poIDElement =By.id("orgPOIdSearch");
+
+        final By poIDElement = By.id("orgPOIdSearch");
         moveElementIntoView(poIDElement);
         selenium.type("orgPOIdSearch", "2");
         clickAndWaitAjax("search_organization_btn");
         assertTrue(selenium.isTextPresent("One item found.1"));
-        
-        moveElementIntoView(By
-                .xpath("//table[@id='row']/tbody/tr/td/button"));
+
+        moveElementIntoView(By.xpath("//table[@id='row']/tbody/tr/td/button"));
         selenium.click("//table[@id='row']/tbody/tr/td/button");
         waitForPageToLoad();
         driver.switchTo().defaultContent();
-        assertEquals("2",selenium.getValue("trialDTO.leadOrganizationIdentifier"));
+        assertEquals("2",
+                selenium.getValue("trialDTO.leadOrganizationIdentifier"));
     }
 
 }
