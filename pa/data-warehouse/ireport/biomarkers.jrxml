@@ -64,9 +64,8 @@ JOIN document_workflow_status dwf
                                     GROUP BY study_protocol_identifier))
 JOIN study_overall_status sos
          ON (sos.study_protocol_identifier = sp.identifier
-             AND sos.identifier IN (SELECT MAX(identifier)
-                                    FROM study_overall_status
-                                    GROUP BY study_protocol_identifier))
+             AND sos.identifier IN (select max_identifier from (SELECT MAX(status_date) as max_status_date, max(identifier) as max_identifier
+FROM study_overall_status where deleted = false GROUP BY study_protocol_identifier) as current_status))
 LEFT JOIN planned_activity pact ON (sp.identifier = pact.study_protocol_identifier
                                     AND pact.intervention_identifier IS NOT NULL)
 LEFT JOIN intervention intv ON (pact.intervention_identifier = intv.identifier)
