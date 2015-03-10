@@ -200,6 +200,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         s.click("xpath=//button/i[@class='fa-search']");
         s.selectFrame("popupFrame");
         waitForElementToBecomeAvailable(By.id("search_person_btn"), 10);
+        s.type("perCtepIdSearch", "JDOE01");
         s.click("search_person_btn");
         waitForElementToBecomeAvailable(
                 By.xpath("//table[@id='row']/tbody/tr"), 10);
