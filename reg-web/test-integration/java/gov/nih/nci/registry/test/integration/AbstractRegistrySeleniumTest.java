@@ -83,8 +83,6 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialStatus;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -99,7 +97,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
-import org.hibernate.type.YesNoType;
 import org.junit.Ignore;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;

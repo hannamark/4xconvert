@@ -1028,6 +1028,36 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + " ORDER BY status_date ASC, identifier ASC";
         return loadTrialStatuses(sql);
     }
+    
+    protected List<SiteStatus> getSiteStatusHistory(Number siteID)
+            throws SQLException {
+        final String sql = "select status_code, status_date, comments from study_site_accrual_status "
+                + "where deleted=false and study_site_identifier="
+                + siteID
+                + " ORDER BY status_date ASC, identifier ASC";
+        return loadSiteStatuses(sql);
+    }
+    
+    /**
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
+    private List<SiteStatus> loadSiteStatuses(final String sql)
+            throws SQLException {
+        List<SiteStatus> list = new ArrayList<>();
+        QueryRunner runner = new QueryRunner();
+        final List<Object[]> results = runner.query(connection, sql,
+                new ArrayListHandler());
+        for (Object[] row : results) {
+            SiteStatus status = new SiteStatus();
+            status.statusCode = (String) row[0];
+            status.statusDate = (Date) row[1];
+            status.comments = (String) row[2];            
+            list.add(status);
+        }
+        return list;
+    }
 
     /**
      * @param sql
@@ -1353,6 +1383,29 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         public Date statusDate;
         public String comments;
         public String whyStopped;
+        public boolean deleted;
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this);
+        }
+        
+        @Override
+        public boolean equals(Object obj) {         
+            return EqualsBuilder.reflectionEquals(this, obj);
+        }
+        
+        @Override
+        public int hashCode() {         
+            return HashCodeBuilder.reflectionHashCode(this);
+        }
+        
+    }
+    
+    public static final class SiteStatus {
+        public String statusCode;
+        public Date statusDate;
+        public String comments;        
         public boolean deleted;
 
         @Override

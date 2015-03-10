@@ -644,7 +644,7 @@ div.error,b.error {
 			<p>
 				<span class="ui-icon ui-icon-alert"
 					style="float: left; margin: 0 7px 20px 0;"></span>Please provide a
-				comment explaining why you are deleting this trial status:
+				comment explaining why you are deleting this recruitment status:
 			</p>
 			<div>
 				<s:textarea id="deleteComment" name="deleteComment" rows="2"
@@ -654,7 +654,7 @@ div.error,b.error {
 			<s:hidden name="uuid" id="uuid" />
 			<s:hidden name="runValidations" id="runValidations" />
 		</div>
-		<div id="dialog-edit" title="Edit Trial Status" style="display: none;">
+		<div id="dialog-edit" title="Edit Site Recruitment Status" style="display: none;">
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-xs-4" align="right">
