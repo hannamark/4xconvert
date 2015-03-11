@@ -291,6 +291,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.type("otherIdentifierOrg", nctID);
         clickAndWaitAjax("id=otherIdbtnid");
         waitForElementById("otherIdentifierdiv", 30);
+        pause(1000);
         assertTrue(selenium.isTextPresent(nctID));
 
         selenium.type("trialDTO.officialTitle", trialName);
