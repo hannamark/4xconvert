@@ -48,6 +48,7 @@ INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'scientific-ci'), (select group_id from csm_group where group_name = 'Abstractor'));
 
 INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'curator'), (select group_id from csm_group where group_name = 'test'));
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_user where login_name = 'curator'), (select group_id from csm_group where group_name = 'client'));
 
 
 UPDATE pa_properties SET value='example@example.com' WHERE value in ('@abstraction.script.mailTo@','@cde.request.to.email@','@ctrp.support.email@','@mail.from@');

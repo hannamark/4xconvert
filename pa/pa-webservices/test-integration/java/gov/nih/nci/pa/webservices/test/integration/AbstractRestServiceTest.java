@@ -127,7 +127,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         HttpPost req = new HttpPost(url);
         req.addHeader("Accept", APPLICATION_XML);
         HttpResponse response = httpClient.execute(req);
-        assertEquals(401, getReponseCode(response));
+        assertEquals(403, getReponseCode(response));
         assertNull(response.getFirstHeader("Set-Cookie"));
 
     }
