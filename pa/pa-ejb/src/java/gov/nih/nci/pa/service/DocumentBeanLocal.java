@@ -225,6 +225,11 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
                 String docPath = PAUtil.getDocumentFilePath(IiConverter.convertToLong(docDTO.getIdentifier()),
                         StConverter.convertToString(docDTO.getFileName()), nciIdentifier);
                 File downloadFile = new File(docPath);
+                if (Boolean.valueOf(System.getProperty("ctrp.env.ci"))
+                        && !downloadFile.exists()) {
+                    downloadFile.getParentFile().mkdirs();
+                    FileUtils.writeStringToFile(downloadFile, "");
+                }
                 final FileInputStream stream = FileUtils.openInputStream(downloadFile);
                 docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(stream)));
                 IOUtils.closeQuietly(stream);
