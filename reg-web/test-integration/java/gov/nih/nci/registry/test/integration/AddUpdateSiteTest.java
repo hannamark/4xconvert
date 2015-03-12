@@ -164,21 +164,82 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     @Test
     public void testAddMySite() throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
+        addMySiteAndVerify(info);
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testUpdateMySite() throws URISyntaxException, SQLException {
+        TrialInfo info = createAndSelectTrial();
+        addMySiteAndVerify(info);
+        logoutUser();
+
+        findInMyTrials();
+        invokeAction("Update My Site");
+        verifyTrialData(info);
+
+        // Populate fields.
+        s.type("localIdentifier", "DCP_SITE_U");
+        pickInvestigator();
+        s.type("programCode", "DCP_PROGRAM_U");
+
+        deleteStatus(info, 2);
+        deleteStatus(info, 1);
+
+        // Check validation.
+        clickAndWait("xpath=//button[text()='Save']");
+        assertTrue(s
+                .isTextPresent("A valid Recruitment Status Date is required"));
+        assertTrue(s
+                .isTextPresent("Please enter a value for Recruitment Status"));
+
+        populateStatusHistory(info);
+
+        s.click("xpath=//button/i[@class='fa-floppy-o']");
+        driver.switchTo().defaultContent();
+
+        // Check results.
+        if (isPhantomJS()) {
+            waitForPageToLoad();
+            pause(10000);
+            assertTrue(s
+                    .isTextPresent("Message: Your site information has been updated."));
+        } else {
+            waitForTextToAppear(By.className("alert-success"),
+                    "Message: Your site information has been updated.", 10);
+        }
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[1]"));
+        assertEquals("Doe,John",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
+        assertEquals("DCP_SITE_U",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
+        assertEquals("DCP_PROGRAM_U",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
+        assertEquals("Approved",
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[5]"));
+        assertEquals(today,
+                selenium.getText("xpath=//table[@id='row']/tbody/tr/td[6]"));
+
+        // Status history.
+        verifySiteStatusHistory(info, "DCP_SITE_U");
+
+        // Deleted status history.
+        verifyDeletedSiteStatusHistory(info, "DCP_SITE_U");
+
+    }
+
+    /**
+     * @param info
+     * @throws SQLException
+     */
+    private void addMySiteAndVerify(TrialInfo info) throws SQLException {
         assignTrialOwner("submitter-ci", info.id);
         findInMyTrials();
         invokeAction("Add My Site");
 
-        assertEquals(
-                info.nciID,
-                s.getText("xpath=//div[preceding-sibling::label[text()=' NCI Trial Identifier:']]"));
-        assertEquals(
-                info.leadOrgID,
-                s.getText("xpath=//div[preceding-sibling::label[text()=' Lead Org Trial Identifier:']]"));
-        assertEquals(
-                info.title,
-                s.getText("xpath=//div[preceding-sibling::label[text()=' Title:']]"));
-        assertEquals("National Cancer Institute Division of Cancer Prevention",
-                s.getValue("organizationName"));
+        verifyTrialData(info);
 
         // Check validation.
         clickAndWait("xpath=//button[text()='Save']");
@@ -194,20 +255,11 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 .isTextPresent("Please enter a value for Recruitment Status"));
 
         // Populate fields.
-        s.type("localIdentifier", "DCP_SITE");
+        final String localID = "DCP_SITE";
+        s.type("localIdentifier", localID);
 
         // Investigator.
-        s.click("xpath=//button/i[@class='fa-search']");
-        s.selectFrame("popupFrame");
-        waitForElementToBecomeAvailable(By.id("search_person_btn"), 10);
-        s.type("perCtepIdSearch", "JDOE01");
-        s.click("search_person_btn");
-        waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='row']/tbody/tr"), 10);
-        s.click("xpath=//table[@id='row']/tbody/tr/td[8]/button");
-        driver.switchTo().defaultContent();
-        s.selectFrame("popupFrame");
-        assertEquals("Doe,John", s.getValue("investigator"));
+        pickInvestigator();
 
         s.type("programCode", "DCP_PROGRAM");
 
@@ -223,7 +275,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[1]"));
         assertEquals("Doe,John",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[2]"));
-        assertEquals("DCP_SITE",
+        assertEquals(localID,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[3]"));
         assertEquals("DCP_PROGRAM",
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[4]"));
@@ -232,9 +284,19 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertEquals(today,
                 selenium.getText("xpath=//table[@id='row']/tbody/tr/td[6]"));
 
+        verifySiteStatusHistory(info, localID);
+    }
+
+    /**
+     * @param info
+     * @param localID
+     * @throws SQLException
+     */
+    private void verifySiteStatusHistory(TrialInfo info, final String localID)
+            throws SQLException {
         final Number siteID = findParticipatingSite(info,
                 "National Cancer Institute Division of Cancer Prevention",
-                "DCP_SITE");
+                localID);
         assertNotNull(siteID);
 
         // Ensure status history properly created.
@@ -248,7 +310,65 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
         assertEquals("Approved".toUpperCase(), hist.get(1).statusCode);
         assertEquals("Changed to Approved.", hist.get(1).comments);
+    }
 
+    /**
+     * @param info
+     * @param localID
+     * @throws SQLException
+     */
+    private void verifyDeletedSiteStatusHistory(TrialInfo info,
+            final String localID) throws SQLException {
+        final Number siteID = findParticipatingSite(info,
+                "National Cancer Institute Division of Cancer Prevention",
+                localID);
+        assertNotNull(siteID);
+
+        // Ensure status history properly created.
+        List<SiteStatus> hist = getDeletedSiteStatusHistory(siteID);
+        assertEquals(2, hist.size());
+
+        assertTrue(DateUtils.isSameDay(hist.get(0).statusDate, yesterdayDate));
+        assertEquals("IN_REVIEW", hist.get(0).statusCode);
+        assertEquals("Wrong status", hist.get(0).comments);
+
+        assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
+        assertEquals("Approved".toUpperCase(), hist.get(1).statusCode);
+        assertEquals("Wrong status", hist.get(1).comments);
+    }
+
+    /**
+     * 
+     */
+    private void pickInvestigator() {
+        s.click("xpath=//button/i[@class='fa-search']");
+        s.selectFrame("popupFrame");
+        waitForElementToBecomeAvailable(By.id("search_person_btn"), 10);
+        s.type("perCtepIdSearch", "JDOE01");
+        s.click("search_person_btn");
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='row']/tbody/tr"), 10);
+        s.click("xpath=//table[@id='row']/tbody/tr/td[8]/button");
+        driver.switchTo().defaultContent();
+        s.selectFrame("popupFrame");
+        assertEquals("Doe,John", s.getValue("investigator"));
+    }
+
+    /**
+     * @param info
+     */
+    private void verifyTrialData(TrialInfo info) {
+        assertEquals(
+                info.nciID,
+                s.getText("xpath=//div[preceding-sibling::label[text()=' NCI Trial Identifier:']]"));
+        assertEquals(
+                info.leadOrgID,
+                s.getText("xpath=//div[preceding-sibling::label[text()=' Lead Org Trial Identifier:']]"));
+        assertEquals(
+                info.title,
+                s.getText("xpath=//div[preceding-sibling::label[text()=' Title:']]"));
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                s.getValue("organizationName"));
     }
 
     /**

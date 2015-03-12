@@ -1038,6 +1038,15 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return loadSiteStatuses(sql);
     }
     
+    protected List<SiteStatus> getDeletedSiteStatusHistory(Number siteID)
+            throws SQLException {
+        final String sql = "select status_code, status_date, comments from study_site_accrual_status "
+                + "where deleted=true and study_site_identifier="
+                + siteID
+                + " ORDER BY status_date ASC, identifier ASC";
+        return loadSiteStatuses(sql);
+    }
+    
     /**
      * @param sql
      * @return

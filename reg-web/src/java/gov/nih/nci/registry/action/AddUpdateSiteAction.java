@@ -389,8 +389,9 @@ public class AddUpdateSiteAction extends StatusHistoryManagementAction implement
                     // For an update, this does matter. So we need to merge the
                     // deleted and non-deleted into one collection.
                     final Collection<StatusDto> merged = new ArrayList<StatusDto>();
-                    merged.addAll(siteDTO.getStatusHistory());
+                    // PO-8771: deletes must go FIRST (TODO: fix this in the service layer).
                     merged.addAll(getDeletedStatusHistoryFromSession());
+                    merged.addAll(siteDTO.getStatusHistory());                    
                     siteDTO.setStatusHistory(merged);
                     helper.updateSite();
                     session.setAttribute(SUCCESS_MESSAGE_KEY,
