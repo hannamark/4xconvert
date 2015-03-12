@@ -615,6 +615,9 @@ public class ManageTermsTest extends AbstractPaSeleniumTest {
         // clickAndWaitAjax("alt=Search");
         driver.findElement(By.cssSelector("input.search_inner_button")).click();
         pause(2000);
+        waitForElementToBecomeAvailable(
+                By.xpath("//div[@class='breadcrumbFeaturedElement']/div[@class='breadcrumbFeaturedElementText']"),
+                15);
         selenium.click("xpath=//div[@class='breadcrumbFeaturedElement']/div[@class='breadcrumbFeaturedElementText']");
 
     }
