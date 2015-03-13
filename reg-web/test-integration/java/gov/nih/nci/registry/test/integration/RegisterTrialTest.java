@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -233,7 +235,23 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testUpdateCompleteTrialAndCloseSitesPO_8323() throws Exception {
-        
+        updateCompleteTrialAndCloseSitesPO_8323(new String[] { /**
+         * DCP Site
+         * Status
+         **/
+        "In Review", /** CTEP Site Status **/
+        "Active", /** TrialStatus **/
+        "Closed to Accrual" });
+
+    }
+
+    /**
+     * @param params
+     * @throws URISyntaxException
+     * @throws SQLException
+     */
+    private void updateCompleteTrialAndCloseSitesPO_8323(String[] params)
+            throws URISyntaxException, SQLException {
         loginAndAcceptDisclaimer();
 
         // Register trial.
@@ -242,11 +260,11 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assignTrialOwner("submitter-ci", info.id);
         logoutUser();
 
-        // Add 3 sites
+        // Add 3 sites, one is already closed.
         selectTrialInPA(info);
-        addSiteToTrial(info, "DCP", "In Review");
-        addSiteToTrial(info, "CTEP", "Approved");
-        addSiteToTrial(info, "NCI", "Active");
+        addSiteToTrial(info, "DCP", params[0]);
+        addSiteToTrial(info, "CTEP", params[1]);
+        addSiteToTrial(info, "NCI", "Closed to Accrual");
 
         // Change trial status to closed in Registry.
         findInMyTrials(info.nciID);
@@ -256,7 +274,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         addStatus(date(-3), "In Review", "");
         addStatus(date(-2), "Approved", "");
         addStatus(date(-1), "Active", "");
-        addStatus(date(0), "Closed to Accrual", "");
+        addStatus(date(0), params[2], "");
 
         // Adjust dates.
         selenium.type("trialDTO_startDate", today);
@@ -273,9 +291,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 s.getText("//div[@id='dialog-opensites']/p")
                         .replaceAll("\\s+", " ").trim());
         waitForElementToBecomeAvailable(
-                By.xpath("//table[@id='openSitesTable']/tbody/tr[3]"), 10);
+                By.xpath("//table[@id='openSitesTable']/tbody/tr[2]"), 10);
         waitForElementToBecomeVisible(
-                By.xpath("//table[@id='openSitesTable']/tbody/tr[3]"), 5);
+                By.xpath("//table[@id='openSitesTable']/tbody/tr[2]"), 5);
 
         assertEquals("PO ID",
                 s.getText("//table[@id='openSitesTable']/thead/tr/th[1]"));
@@ -285,36 +303,28 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                 s.getText("//table[@id='openSitesTable']/thead/tr/th[3]"));
         assertEquals("Status Date",
                 s.getText("//table[@id='openSitesTable']/thead/tr/th[4]"));
-        assertTrue(s.isTextPresent("Showing 1 to 3 of 3 entries"));
+        assertTrue(s.isTextPresent("Showing 1 to 2 of 2 entries"));
 
         s.click("//table[@id='openSitesTable']/thead/tr/th[1]");
         pause(2000);
-        assertEquals("4",
+
+        assertEquals("3",
                 s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[1]"));
-        assertEquals("National Cancer Institute",
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
                 s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[2]"));
-        assertEquals("Active",
+        assertEquals(params[0],
                 s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[3]"));
         assertEquals(today,
                 s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));
 
-        assertEquals("3",
+        assertEquals("2",
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[1]"));
-        assertEquals("National Cancer Institute Division of Cancer Prevention",
+        assertEquals("Cancer Therapy Evaluation Program",
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[2]"));
-        assertEquals("In Review",
+        assertEquals(params[1],
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[3]"));
         assertEquals(today,
                 s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[4]"));
-
-        assertEquals("2",
-                s.getText("//table[@id='openSitesTable']/tbody/tr[3]/td[1]"));
-        assertEquals("Cancer Therapy Evaluation Program",
-                s.getText("//table[@id='openSitesTable']/tbody/tr[3]/td[2]"));
-        assertEquals("Approved",
-                s.getText("//table[@id='openSitesTable']/tbody/tr[3]/td[3]"));
-        assertEquals(today,
-                s.getText("//table[@id='openSitesTable']/tbody/tr[3]/td[4]"));
 
         // Test Cancel button.
         s.click("//div[@aria-labelledby='ui-dialog-title-dialog-opensites']//span[text()='Cancel']");
@@ -334,19 +344,24 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         // Do backend checks; ensure sites are closed with the same status.
         verifySiteIsNowClosed(info,
-                "National Cancer Institute Division of Cancer Prevention");
-        verifySiteIsNowClosed(info, "National Cancer Institute");
-        verifySiteIsNowClosed(info, "Cancer Therapy Evaluation Program");
+                "National Cancer Institute Division of Cancer Prevention",
+                params[2]);
+        verifySiteIsNowClosed(info, "Cancer Therapy Evaluation Program",
+                params[2]);
 
+        logoutUser();
+        logoutPA();
     }
 
-    private void verifySiteIsNowClosed(TrialInfo info, String orgName)
-            throws SQLException {
+    private void verifySiteIsNowClosed(TrialInfo info, String orgName,
+            String expectedStatusCode) throws SQLException {
         final Number siteID = findParticipatingSite(info, orgName);
         List<SiteStatus> hist = getSiteStatusHistory(siteID);
         assertEquals(2, hist.size());
         assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
-        assertEquals("CLOSED_TO_ACCRUAL", hist.get(1).statusCode);
+        assertEquals(
+                RecruitmentStatusCode.getByCode(expectedStatusCode).name(),
+                hist.get(1).statusCode);
 
     }
 

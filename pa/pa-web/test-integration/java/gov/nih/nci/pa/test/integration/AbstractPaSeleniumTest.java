@@ -256,6 +256,13 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected void logoutUser() {
+        logoutPA();
+    }
+
+    /**
+     * 
+     */
+    protected final void logoutPA() {
         openAndWait("/pa/logout.action");
     }
 
@@ -274,14 +281,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected void login(String username, String password) {
-        login("/pa", username, password);       
+        login("/pa", username, password);
     }
-    
+
     protected void login(String path, String username, String password) {
         openAndWait(path);
         verifyLoginPage();
         selenium.type("j_username", username);
-        selenium.type("j_password", password);        
+        selenium.type("j_password", password);
         clickAndWait("id=loginLink");
         assertTrue(selenium.isElementPresent("link=Logout"));
         verifyDisclaimerPage();
@@ -424,7 +431,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         assertTrue(selenium.isElementPresent("class=btn btn-icon btn-primary"));
         assertTrue(selenium.isElementPresent("class=btn btn-icon btn-default"));
         assertEquals(selenium.getText("class=btn btn-icon btn-primary"), "Ok");
-        assertEquals(selenium.getText("class=btn btn-icon btn-default"), "Cancel");
+        assertEquals(selenium.getText("class=btn btn-icon btn-default"),
+                "Cancel");
         selenium.type("id=comments", "Test admin check in comments");
         clickAndWait("class=btn btn-icon btn-primary");
         assertTrue(selenium.isElementPresent("link=Admin Check Out"));
@@ -613,16 +621,18 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
         }
     }
-    
+
     protected TrialInfo createSubmittedTrial() throws SQLException {
         return createSubmittedTrial(false);
     }
-    
-    protected TrialInfo createSubmittedTrial(boolean isAbbr) throws SQLException {
+
+    protected TrialInfo createSubmittedTrial(boolean isAbbr)
+            throws SQLException {
         return createSubmittedTrial(isAbbr, false);
     }
 
-    protected TrialInfo createSubmittedTrial(boolean isAbbr, boolean skipDocuments) throws SQLException {
+    protected TrialInfo createSubmittedTrial(boolean isAbbr,
+            boolean skipDocuments) throws SQLException {
         TrialInfo info = new TrialInfo();
         info.uuid = UUID.randomUUID().toString();
         info.title = "Title " + info.uuid;
@@ -661,8 +671,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "false,null,'Scientific Description','InterventionalStudyProtocol','RANDOMIZED_CONTROLLED_TRIAL',"
                 + "null,null,null,null,'OPEN','PARALLEL',1,'EFFICACY',null,null,null,1,null,null,null,null,null,"
                 + "{ts '2014-04-16 12:18:50.572'},null,'ACTIVE',{ts '2013-04-16 12:18:50.572'},null,"
-                + "null,null,1,null,'" + info.uuid + "',60,"+isAbbr+",false,"
-                + info.csmUserID + ",null,null,null,"
+                + "null,null,1,null,'" + info.uuid + "',60," + isAbbr
+                + ",false," + info.csmUserID + ",null,null,null,"
                 + "{ts '2018-04-16 12:18:50.572'},'ANTICIPATED',null,null,2,"
                 + info.csmUserID + ",false,null,false,null,null,'OTHER', 1);";
         runner.update(connection, protocolInsertSQL);
@@ -698,7 +708,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
 
     }
-    
+
     protected void deleteTrialDocuments(TrialInfo info) throws SQLException {
         QueryRunner runner = new QueryRunner();
         runner.update(connection,
@@ -741,7 +751,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         "select identifier from study_inbox order by identifier desc limit 1",
                         new ArrayHandler())[0];
     }
-    
+
     protected Number createStudyCheckout(TrialInfo trial, Date date)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -826,20 +836,21 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         "select identifier from ctgovimport_log order by identifier desc limit 1",
                         new ArrayHandler())[0];
     }
-    
+
     protected TrialInfo createAcceptedTrial() throws SQLException {
         return createAcceptedTrial(false);
     }
-    
-    protected TrialInfo createAcceptedTrial(boolean isAbbreviated, boolean skipDocuments) throws SQLException {
+
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated,
+            boolean skipDocuments) throws SQLException {
         TrialInfo info = createSubmittedTrial(isAbbreviated, skipDocuments);
         addDWS(info, "ACCEPTED");
         addMilestone(info, "SUBMISSION_ACCEPTED");
         return info;
     }
 
-
-    protected TrialInfo createAcceptedTrial(boolean isAbbreviated) throws SQLException {       
+    protected TrialInfo createAcceptedTrial(boolean isAbbreviated)
+            throws SQLException {
         return createAcceptedTrial(isAbbreviated, false);
     }
 
@@ -856,7 +867,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + ","
                 + "null,null,null,null,false)";
         runner.update(connection, sql);
-        
+
         String sql2 = "INSERT INTO study_recruitment_status (identifier,status_code,status_date,"
                 + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,"
                 + "user_last_updated_id) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'"
@@ -875,11 +886,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return String.format("{ts '%s'}",
                 new Timestamp(System.currentTimeMillis()).toString());
     }
-    
+
     private String today_midnight() {
-        return String.format("{ts '%s'}",
-                new Timestamp(DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH)
-                        .getTime()).toString());
+        return String.format(
+                "{ts '%s'}",
+                new Timestamp(DateUtils.truncate(new Date(),
+                        Calendar.DAY_OF_MONTH).getTime()).toString());
     }
 
     private String millenium() {
@@ -1010,7 +1022,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }
         return paID;
     }
-    
+
     protected List<TrialStatus> getTrialStatusHistory(TrialInfo trial)
             throws SQLException {
         final String sql = "select status_code, status_date, addl_comments, comment_text from study_overall_status "
@@ -1028,7 +1040,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + " ORDER BY status_date ASC, identifier ASC";
         return loadTrialStatuses(sql);
     }
-    
+
     protected List<SiteStatus> getSiteStatusHistory(Number siteID)
             throws SQLException {
         final String sql = "select status_code, status_date, comments from study_site_accrual_status "
@@ -1037,7 +1049,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + " ORDER BY status_date ASC, identifier ASC";
         return loadSiteStatuses(sql);
     }
-    
+
     protected List<SiteStatus> getDeletedSiteStatusHistory(Number siteID)
             throws SQLException {
         final String sql = "select status_code, status_date, comments from study_site_accrual_status "
@@ -1046,7 +1058,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + " ORDER BY status_date ASC, identifier ASC";
         return loadSiteStatuses(sql);
     }
-    
+
     /**
      * @param sql
      * @return
@@ -1062,7 +1074,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             SiteStatus status = new SiteStatus();
             status.statusCode = (String) row[0];
             status.statusDate = (Date) row[1];
-            status.comments = (String) row[2];            
+            status.comments = (String) row[2];
             list.add(status);
         }
         return list;
@@ -1154,7 +1166,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         "select study_protocol_identifier from rv_trial_id_nct where local_sp_indentifier='"
                                 + nctID + "'", new ArrayHandler())[0];
     }
-    
+
     protected Number getTrialIdByNciId(String nciID) throws SQLException {
         QueryRunner runner = new QueryRunner();
         return (Number) runner
@@ -1173,7 +1185,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + " where study_protocol.status_code='ACTIVE' and local_sp_indentifier='"
                                 + loID + "'", new ArrayHandler())[0];
     }
-    
+
     protected Number waitForTrialToRegister(String loID, int seconds)
             throws SQLException {
         long stamp = System.currentTimeMillis();
@@ -1189,8 +1201,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         } while (System.currentTimeMillis() - stamp < seconds * 1000);
         return null;
     }
-    
-    
+
     protected TrialInfo acceptTrialByNciId(String nciID, String leadOrgID)
             throws SQLException {
         TrialInfo info = new TrialInfo();
@@ -1203,9 +1214,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return info;
 
     }
-    
-    protected TrialInfo acceptTrialByNciIdWithGivenDWS(String nciID, String leadOrgID, String status)
-            throws SQLException {
+
+    protected TrialInfo acceptTrialByNciIdWithGivenDWS(String nciID,
+            String leadOrgID, String status) throws SQLException {
         TrialInfo info = new TrialInfo();
         info.nciID = nciID;
         info.id = (Long) getTrialIdByLeadOrgID(leadOrgID);
@@ -1244,7 +1255,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "','NCI study protocol entity identifier',null,'2.16.840.1.113883.3.26.4.3',null)";
         runner.update(connection, sql);
     }
-    
+
     protected String getLastNciId() throws SQLException {
         QueryRunner runner = new QueryRunner();
         return (String) runner
@@ -1254,7 +1265,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + " order by study_protocol_id desc LIMIT 1",
                         new ArrayHandler())[0];
     }
-    
+
     protected void changeNciId(String from, String to) throws SQLException {
         QueryRunner runner = new QueryRunner();
         runner.update(
@@ -1303,7 +1314,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                         + "' where local_sp_indentifier is not null");
         runner.update(connection, "delete from study_otheridentifiers");
     }
-    
+
     protected void assignTrialOwner(String loginName, Long trialID)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -1316,7 +1327,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + trialID + "," + regUserID + ",false)";
         runner.update(connection, sql);
     }
-    
+
     protected void grantAccrualAccess(String username, long siteID)
             throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -1330,7 +1341,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
 
     }
-   
+
     /**
      * @param paTrialID
      * @throws SQLException
@@ -1342,7 +1353,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + paTrialID;
         runner.update(connection, sql);
     }
-    
+
     protected void moveElementIntoView(By by) {
         WebElement element = driver.findElement(by);
         Point p = element.getLocation();
@@ -1350,7 +1361,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "," + (p.getY() - 150) + ");");
         pause(200);
     }
-    
+
     protected void hoverLink(String linkText) {
         By by = By.linkText(linkText);
         hover(by);
@@ -1381,12 +1392,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }
 
         @Override
-        public int compareTo(TrialInfo o) {           
+        public int compareTo(TrialInfo o) {
             return this.uuid.compareTo(o.uuid);
         }
 
     }
-    
+
     public static final class TrialStatus {
         public String statusCode;
         public Date statusDate;
@@ -1398,40 +1409,40 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         public String toString() {
             return ToStringBuilder.reflectionToString(this);
         }
-        
+
         @Override
-        public boolean equals(Object obj) {         
+        public boolean equals(Object obj) {
             return EqualsBuilder.reflectionEquals(this, obj);
         }
-        
+
         @Override
-        public int hashCode() {         
+        public int hashCode() {
             return HashCodeBuilder.reflectionHashCode(this);
         }
-        
+
     }
-    
+
     public static final class SiteStatus {
         public String statusCode;
         public Date statusDate;
-        public String comments;        
+        public String comments;
         public boolean deleted;
 
         @Override
         public String toString() {
             return ToStringBuilder.reflectionToString(this);
         }
-        
+
         @Override
-        public boolean equals(Object obj) {         
+        public boolean equals(Object obj) {
             return EqualsBuilder.reflectionEquals(this, obj);
         }
-        
+
         @Override
-        public int hashCode() {         
+        public int hashCode() {
             return HashCodeBuilder.reflectionHashCode(this);
         }
-        
+
     }
 
 }
