@@ -83,6 +83,7 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -95,6 +96,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
@@ -207,8 +209,7 @@ public abstract class AbstractRegistrySeleniumTest extends
 
     protected void registerTrial(final String rand, String category)
             throws URISyntaxException, SQLException {
-        registerTrial("An Open-Label Study of Ruxolitinib " + rand, "LEAD"
-                + rand, rand, category);
+        registerTrial(generateTrialTitle(rand), "LEAD" + rand, rand, category);
     }
 
     protected void registerTrial(String trialName, String leadOrgTrialId,
@@ -600,7 +601,17 @@ public abstract class AbstractRegistrySeleniumTest extends
                         + nciID));
         TrialInfo info = acceptTrialByNciId(nciID, "LEAD" + rand);
         info.rand = rand;
+        info.title = generateTrialTitle(rand);
+        info.uuid = rand;
         return info;
+    }
+
+    /**
+     * @param rand
+     * @return
+     */
+    private String generateTrialTitle(String rand) {
+        return "An Open-Label Study of Ruxolitinib " + rand;
     }
 
     /**
@@ -632,6 +643,86 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.click("runSearchBtn");
         clickAndWait("link=All Trials");
         waitForElementById("row", 10);
+    }
+
+    /**
+     * @return
+     * @throws SQLException
+     */
+    protected final TrialInfo createAndSelectTrial() throws SQLException {
+        deactivateAllTrials();
+        TrialInfo info = createAcceptedTrial(true);
+        selectTrialInPA(info);
+        return info;
+    }
+
+    /**
+     * @param info
+     */
+    protected void selectTrialInPA(TrialInfo info) {
+        login("/pa", "ctrpsubstractor", "pass");
+        disclaimer(true);
+        searchAndSelectTrial(info.title);
+    }
+
+    /**
+     * 
+     */
+    protected final void findInMyTrials() {
+        findInMyTrials("");
+    }
+
+    /**
+     * 
+     */
+    protected final void findInMyTrials(String id) {
+        loginAsSubmitter();
+        handleDisclaimer(true);
+        accessTrialSearchScreen();
+        if (StringUtils.isNotBlank(id))
+            s.type("identifier", id);
+        selenium.click("runSearchBtn");
+        clickAndWait("link=My Trials");
+        waitForElementById("row", 20);
+    }
+
+    /**
+     * @param info
+     * @param siteCtepId
+     */
+    protected final void addSiteToTrial(TrialInfo info, String siteCtepId,
+            String status) {
+        clickAndWait("link=Participating Sites");
+        clickAndWait("link=Add");
+        clickAndWaitAjax("link=Look Up");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("orgCtepIdSearch", 15);
+        selenium.type("orgCtepIdSearch", siteCtepId);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+        if (s.isElementPresent("siteLocalTrialIdentifier"))
+            selenium.type("siteLocalTrialIdentifier", info.uuid);
+        selenium.select("recStatus", status);
+        selenium.type("id=recStatusDate", today);
+        clickAndWait("link=Save");
+        assertTrue(selenium.isTextPresent("Record Created"));
+
+        selenium.click("link=Investigators");
+        clickAndWaitAjax("link=Add");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("poOrganizations", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[9]/a");
+        waitForPageToLoad();
+        pause(2000);
+        driver.switchTo().defaultContent();
+        assertTrue(selenium.isTextPresent("One item found"));
     }
 
     protected void changeRegUserAffiliation(String loginName, int orgPoId,
@@ -670,6 +761,29 @@ public abstract class AbstractRegistrySeleniumTest extends
         return siteID;
     }
 
+    protected Number findParticipatingSite(TrialInfo trial, String orgName)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "SELECT ss.identifier FROM "
+                + "("
+                + "   ("
+                + "      study_site ss"
+                + "      JOIN healthcare_facility ro ON"
+                + "      ("
+                + "         (ro.identifier = ss.healthcare_facility_identifier)"
+                + "      )"
+                + "   )"
+                + "   JOIN organization org ON ((org.identifier = ro.organization_identifier))"
+                + ")" + " WHERE org.name='" + orgName
+                + "' AND ss.study_protocol_identifier=" + trial.id
+                + " AND ((ss.functional_code)::text = 'TREATING_SITE'::text)";
+
+        final Object[] results = runner.query(connection, sql,
+                new ArrayHandler());
+        Number siteID = results != null ? (Number) results[0] : null;
+        return siteID;
+    }
+
     protected void addToSiteStatusHistory(Number siteID, String statusCode,
             Timestamp date) throws SQLException {
         QueryRunner runner = new QueryRunner();
@@ -677,6 +791,11 @@ public abstract class AbstractRegistrySeleniumTest extends
                 + "VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '"
                 + statusCode + "', '" + date.toString() + "'," + siteID + " )";
         runner.update(connection, sql);
+    }
+
+    protected String date(int offsetFromToday) {
+        return DateFormatUtils.format(
+                DateUtils.addDays(new Date(), offsetFromToday), "MM/dd/yyyy");
     }
 
 }

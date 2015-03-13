@@ -110,7 +110,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         TrialInfo info = createAndSelectTrial();
 
         String siteCtepId = "DCP";
-        addSiteToTrial(info, siteCtepId);
+        addSiteToTrial(info, siteCtepId, "In Review");
 
         findInMyTrials();
         invokeAction("Update My Site");
@@ -136,7 +136,7 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
         TrialInfo info = createAndSelectTrial();
 
         String siteCtepId = "DCP";
-        addSiteToTrial(info, siteCtepId);
+        addSiteToTrial(info, siteCtepId, "In Review");
 
         addToSiteStatusHistory(
                 findParticipatingSite(
@@ -506,9 +506,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
             throws URISyntaxException, SQLException {
         TrialInfo info = createAndSelectTrial();
 
-        addSiteToTrial(info, "DCP");
-        addSiteToTrial(info, "CTEP");
-        addSiteToTrial(info, "NCI");
+        addSiteToTrial(info, "DCP", "In Review");
+        addSiteToTrial(info, "CTEP", "In Review");
+        addSiteToTrial(info, "NCI", "In Review");
 
         findInMyTrials();
         invokeAction("Update My Site");
@@ -538,9 +538,9 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
 
         TrialInfo info = createAndSelectTrial();
 
-        addSiteToTrial(info, "DCP");
-        addSiteToTrial(info, "CTEP");
-        addSiteToTrial(info, "NCI");
+        addSiteToTrial(info, "DCP", "In Review");
+        addSiteToTrial(info, "CTEP", "In Review");
+        addSiteToTrial(info, "NCI", "In Review");
 
         findInMyTrials();
         invokeAction("Update My Site");
@@ -614,31 +614,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
     /**
      * 
      */
-    private void findInMyTrials() {
-        loginAsSubmitter();
-        handleDisclaimer(true);
-        accessTrialSearchScreen();
-        selenium.click("runSearchBtn");
-        clickAndWait("link=My Trials");
-        waitForElementById("row", 20);
-    }
-
-    /**
-     * @return
-     * @throws SQLException
-     */
-    private TrialInfo createAndSelectTrial() throws SQLException {
-        deactivateAllTrials();
-        TrialInfo info = createAcceptedTrial(true);
-        login("/pa", "ctrpsubstractor", "pass");
-        disclaimer(true);
-        searchAndSelectTrial(info.title);
-        return info;
-    }
-
-    /**
-     * 
-     */
     private void invokeAction(String action) {
         final By selectActionBtn = By
                 .xpath("//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']");
@@ -648,50 +623,6 @@ public class AddUpdateSiteTest extends AbstractRegistrySeleniumTest {
                 By.xpath("//li/a[normalize-space(text())='" + action + "']"))
                 .click();
         selenium.selectFrame("popupFrame");
-    }
-
-    /**
-     * @param info
-     * @param siteCtepId
-     */
-    public void addSiteToTrial(TrialInfo info, String siteCtepId) {
-        clickAndWait("link=Participating Sites");
-        clickAndWait("link=Add");
-        clickAndWaitAjax("link=Look Up");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("orgCtepIdSearch", 15);
-        selenium.type("orgCtepIdSearch", siteCtepId);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
-        waitForPageToLoad();
-        driver.switchTo().defaultContent();
-        selenium.type("siteLocalTrialIdentifier", info.uuid);
-        selenium.select("recStatus", "In Review");
-        selenium.type("id=recStatusDate", today);
-        clickAndWait("link=Save");
-        assertTrue(selenium.isTextPresent("Record Created"));
-
-        selenium.click("link=Investigators");
-        clickAndWaitAjax("link=Add");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("poOrganizations", 15);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[9]/a");
-        waitForPageToLoad();
-        pause(2000);
-        driver.switchTo().defaultContent();
-        assertTrue(selenium.isTextPresent("One item found"));
-    }
-
-    private void makeIndustrial(TrialInfo info) throws SQLException {
-        QueryRunner runner = new QueryRunner();
-        String sql = "UPDATE study_protocol SET proprietary_trial_indicator=true WHERE identifier="
-                + info.id;
-        runner.update(connection, sql);
     }
 
 }

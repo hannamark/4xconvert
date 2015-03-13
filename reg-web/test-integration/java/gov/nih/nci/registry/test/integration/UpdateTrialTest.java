@@ -105,29 +105,31 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testUpdateTrial() throws SQLException, URISyntaxException {
-        
+
         if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
             // PhantomJS keeps crashing on Linux CI box. No idea why at the
             // moment.
             return;
         }
-        
+
         final String nciID = getLastNciId();
         TrialInfo info = createAcceptedTrial(true);
-        
+
         loginToPAAndAddSite(info);
-        
-        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,  DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.toString());
+
+        acceptTrialByNciIdWithGivenDWS(nciID, info.leadOrgID,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
         assignTrialOwner("abstractor-ci", info.id);
-        
+
         loginAndAcceptDisclaimer();
-        
+
         String rand = info.leadOrgID;
         runSearchAndVerifySingleTrialResult("officialTitle", rand, info);
         invokeUpdateTrial();
         verifyCalendarPopup();
     }
-    
+
     /**
      * @param info
      * @throws SQLException
@@ -137,26 +139,27 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         disclaimer(true);
         searchAndSelectTrial(info.title);
         String siteCtepId = "DCP";
-        addSiteToTrial(info, siteCtepId);
+        addSiteToTrial(info, siteCtepId, "In Review");
     }
-    
+
     /**
      * @param fieldID
      * @param value
      * @param info
      */
-    protected void runSearchAndVerifySingleTrialResult(String fieldID, String value, TrialInfo info ) {
-        
+    protected void runSearchAndVerifySingleTrialResult(String fieldID,
+            String value, TrialInfo info) {
+
         accessTrialSearchScreen();
         selenium.type(fieldID, value);
-        
+
         selenium.click("runSearchBtn");
         clickAndWait("link=All Trials");
         waitForElementById("row", 10);
         verifySingleTrialSearchResult(info);
-        
+
     }
-    
+
     /**
      * @param info
      */
@@ -180,88 +183,50 @@ public class UpdateTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium
                 .isElementPresent("xpath=//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']"));
     }
-    
-    
+
     private void invokeUpdateTrial() {
         final By selectActionBtn = By
                 .xpath("//table[@id='row']/tbody/tr[1]/td[10]//button[normalize-space(text())='Select Action']");
         moveElementIntoView(selectActionBtn);
         driver.findElement(selectActionBtn).click();
-        driver.findElement(
-                By.xpath("//li/a[normalize-space(text())='Update']"))
+        driver.findElement(By.xpath("//li/a[normalize-space(text())='Update']"))
                 .click();
-      
-        assertEquals("1",selenium.getValue("trialDTO.leadOrganizationIdentifier"));
+
+        assertEquals("1",
+                selenium.getValue("trialDTO.leadOrganizationIdentifier"));
     }
-    
+
     private void verifyCalendarPopup() {
-        
+
         Date today = new Date();
-        
+
         SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM");
-        String month = monthFormat .format(today);  
-        
+        String month = monthFormat.format(today);
+
         SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
         String year = yearFormat.format(today);
-        
-        //find 3 divs containing calendar 
-        List<WebElement> dateDivs = driver.findElements(By.id("datetimepicker"));  
+
+        // find 3 divs containing calendar
+        List<WebElement> dateDivs = driver
+                .findElements(By.id("datetimepicker"));
         assertEquals("Wrong number of date elements", 3, dateDivs.size());
-        for(WebElement dateDiveElement : dateDivs) {
-            List<WebElement> columns=dateDiveElement.findElements(By.tagName("span"));  
-          //  assertEquals("Wrong number of span elements", 2, columns.size());
+        for (WebElement dateDiveElement : dateDivs) {
+            List<WebElement> columns = dateDiveElement.findElements(By
+                    .tagName("span"));
+            // assertEquals("Wrong number of span elements", 2, columns.size());
             Boolean hasCalendarElement = false;
-    
-            for (WebElement cell : columns)
-            {
-               if (cell.getAttribute("class").equals("add-on btn-default"))
-               {
-                  hasCalendarElement = true;
-                  cell.click();
-                  assertTrue(selenium.isTextPresent(month + " " + year));
-                  break;
-               }
+
+            for (WebElement cell : columns) {
+                if (cell.getAttribute("class").equals("add-on btn-default")) {
+                    hasCalendarElement = true;
+                    cell.click();
+                    assertTrue(selenium.isTextPresent(month + " " + year));
+                    break;
+                }
             }
-            
+
             assertTrue(hasCalendarElement);
         }
-    }
-    
-    /**
-     * @param info
-     * @param siteCtepId
-     */
-    public void addSiteToTrial(TrialInfo info, String siteCtepId) {
-        clickAndWait("link=Participating Sites");
-        clickAndWait("link=Add");
-        clickAndWaitAjax("link=Look Up");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("orgCtepIdSearch", 15);
-        selenium.type("orgCtepIdSearch", siteCtepId);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
-        waitForPageToLoad();
-        driver.switchTo().defaultContent();
-        selenium.type("siteLocalTrialIdentifier", info.uuid);
-        selenium.select("recStatus", "In Review");
-        selenium.type("id=recStatusDate", today);
-        clickAndWait("link=Save");
-        assertTrue(selenium.isTextPresent("Record Created"));
-
-        selenium.click("link=Investigators");
-        clickAndWaitAjax("link=Add");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("poOrganizations", 15);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[9]/a");
-        waitForPageToLoad();
-        pause(2000);
-        driver.switchTo().defaultContent();
-        assertTrue(selenium.isTextPresent("One item found"));
     }
 
 }
