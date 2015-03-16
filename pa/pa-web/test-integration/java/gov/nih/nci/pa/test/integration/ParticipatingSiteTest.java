@@ -82,110 +82,56 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import java.sql.SQLException;
 import java.util.Date;
 
-import org.junit.Ignore;
+import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Test;
 
 /**
  * Tests creation/editing/deleting of participating sites.
- *
+ * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Ignore
 public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
     private String today = MONTH_DAY_YEAR_FMT.format(new Date());
 
     /**
      * Creates participating sites.
+     * 
+     * @throws SQLException
      */
     @Test
-    public void testCreateParticipatingSite() {
-        loginAsAdminAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
-        checkOutTrialAsAdminAbstractor();
-        verifyTrialAccepted();
+    public void testAccrualDatesSavedProperly_PO_8774() throws SQLException {
+        TrialInfo info = createAndSelectTrial();
 
+        String siteCtepId = "DCP";
+        addSiteToTrial(info, siteCtepId, "Withdrawn");
+        Number siteID = findParticipatingSite(info,
+                "National Cancer Institute Division of Cancer Prevention");
+
+        QueryRunner runner = new QueryRunner();
+        String sql = "update study_site set accrual_date_range_low=now(), accrual_date_range_high=now() where identifier="
+                + siteID;
+        runner.update(connection, sql);
+
+        // Reset Accrual dates.
         clickAndWait("link=Participating Sites");
-        assertTrue(selenium.isTextPresent("Nothing found to display"));
-        clickAndWait("link=Add");
-
-
-        clickAndWaitAjax("link=Look Up");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("poOrganizations_", 15);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
-        waitForPageToLoad();
-        selenium.selectWindow(null);
-
+        clickAndWait("//table[@id='row']/tbody/tr/td[7]/a");
+        s.type("participatingOrganizationsedit_dateOpenedForAccrual", "");
+        s.type("participatingOrganizationsedit_dateClosedForAccrual", "");
         clickAndWait("link=Save");
-        assertTrue(selenium.isTextPresent("Please select a status"));
-        assertTrue(selenium.isTextPresent("Please choose a status date"));
+        assertTrue(selenium.isTextPresent("Message. Record Updated."));
 
-        selenium.type("id=siteLocalTrialIdentifier", "SITE-1");
-        selenium.type("id=recStatusDate", today);
-        selenium.select("id=recStatus", "label=In Review");
-        selenium.type("id=programCode", "SELENIUM");
-        selenium.type("id=targetAccrualNumber", "100");
-        clickAndWait("link=Save");
-        assertTrue(selenium.isTextPresent("Record Created"));
-
-        selenium.click("link=Investigators");
-        assertTrue(selenium.isElementPresent("id=investigators"));
-        clickAndWaitAjax("link=Add");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("poOrganizations", 15);
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[8]/a");
-        selenium.selectWindow(null);
-        assertTrue(selenium.isTextPresent("One item found"));
-
-        selenium.click("link=Contact");
-        assertTrue(selenium.isElementPresent("id=contacts"));
-        clickAndWaitAjax("link=Look Up Generic Contact");
-        waitForElementById("popupFrame", 15);
-        selenium.selectFrame("popupFrame");
-        waitForElementById("search_title", 15);
-        selenium.type("id=search_title", "title");
-        clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
-        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[5]/a");
-        selenium.selectWindow(null);
-        clickAndWaitAjax("link=Save");
-        assertFalse(selenium.isTextPresent("Please enter either an email address or phone number"));
-    }
-
-    @Test
-    public void testStatusChange() {
-        loginAsAdminAbstractor();
-        searchAndSelectTrial("PA Test Trial created by Selenium.");
-
+        // Ensure they are showing blanks.
         clickAndWait("link=Participating Sites");
-        assertTrue(selenium.isTextPresent("One item found"));
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
-        waitForPageToLoad();
+        clickAndWait("//table[@id='row']/tbody/tr/td[7]/a");
+        assertEquals(
+                "",
+                s.getValue("participatingOrganizationsedit_dateOpenedForAccrual"));
+        assertEquals(
+                "",
+                s.getValue("participatingOrganizationsedit_dateClosedForAccrual"));
 
-        waitForElementById("recStatus", 30);
-        changeStatus("Approved");
-        changeStatus("Active");
-        changeStatus("Enrolling by Invitation");
-        changeStatus("Closed to Accrual");
-        changeStatus("Closed to Accrual and Intervention");
-        changeStatus("Temporarily Closed to Accrual");
-        changeStatus("Temporarily Closed to Accrual and Intervention");
-        changeStatus("Withdrawn");
-        changeStatus("Administratively Complete");
-        changeStatus("Completed");
-    }
-
-    private void changeStatus(String statusLabel) {
-        selenium.select("id=recStatus", "label=" + statusLabel);
-        clickAndWaitAjax("link=Save");
-        assertTrue(selenium.isTextPresent("Record Updated"));
     }
 }

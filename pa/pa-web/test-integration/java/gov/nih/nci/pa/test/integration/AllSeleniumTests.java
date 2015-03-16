@@ -93,14 +93,15 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { LoginTest.class, ManageTrialOtherIdentifiersTest.class,
-        TrialStatusTest.class, TrialStatusHistoryTest.class,
-        RegulatoryInformationTest.class, AnatomicSiteTest.class, ArmTest.class,
-        StudyOwnershipTest.class, TrialRelatedDocumentTest.class,
-        CtGovImportTest.class, OutOfScopeAccrualsTest.class,
-        CtGovImportLogTest.class, DiseaseTest.class, TrialCheckInOutTest.class,
-        ManageTermsTest.class, PlannedMarkerTest.class,
-        ManageFlaggedTrialsTest.class, WebAppSecurityTest.class
+@SuiteClasses(value = { LoginTest.class, ParticipatingSiteTest.class,
+        ManageTrialOtherIdentifiersTest.class, TrialStatusTest.class,
+        TrialStatusHistoryTest.class, RegulatoryInformationTest.class,
+        AnatomicSiteTest.class, ArmTest.class, StudyOwnershipTest.class,
+        TrialRelatedDocumentTest.class, CtGovImportTest.class,
+        OutOfScopeAccrualsTest.class, CtGovImportLogTest.class,
+        DiseaseTest.class, TrialCheckInOutTest.class, ManageTermsTest.class,
+        PlannedMarkerTest.class, ManageFlaggedTrialsTest.class,
+        WebAppSecurityTest.class
 // DuplicateTrialEditTest.class,
 // LookupWithApostropheTest.class,
 // DiseaseTest.class,

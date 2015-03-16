@@ -147,6 +147,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             .getName());
     protected Connection connection;
 
+    protected String today = MONTH_DAY_YEAR_FMT.format(new Date());
+    protected String tommorrow = MONTH_DAY_YEAR_FMT.format(DateUtils.addDays(
+            new Date(), 1));
+    protected String oneYearFromToday = MONTH_DAY_YEAR_FMT.format(DateUtils
+            .addYears(new Date(), 1));
+    protected Date yesterdayDate = DateUtils.addDays(new Date(), -1);
+    protected String yesterday = MONTH_DAY_YEAR_FMT.format(yesterdayDate);
+
     static {
         new Timer(true).schedule(new TimerTask() {
             @SuppressWarnings("rawtypes")
@@ -854,6 +862,65 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return createAcceptedTrial(isAbbreviated, false);
     }
 
+    /**
+     * @return
+     * @throws SQLException
+     */
+    protected final TrialInfo createAndSelectTrial() throws SQLException {
+        deactivateAllTrials();
+        TrialInfo info = createAcceptedTrial(true);
+        selectTrialInPA(info);
+        return info;
+    }
+
+    /**
+     * @param info
+     */
+    protected final void selectTrialInPA(TrialInfo info) {
+        login("/pa", "ctrpsubstractor", "pass");
+        disclaimer(true);
+        searchAndSelectTrial(info.title);
+    }
+
+    /**
+     * @param info
+     * @param siteCtepId
+     */
+    protected final void addSiteToTrial(TrialInfo info, String siteCtepId,
+            String status) {
+        clickAndWait("link=Participating Sites");
+        clickAndWait("link=Add");
+        clickAndWaitAjax("link=Look Up");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("orgCtepIdSearch", 15);
+        selenium.type("orgCtepIdSearch", siteCtepId);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[9]/a");
+        waitForPageToLoad();
+        driver.switchTo().defaultContent();
+        if (s.isElementPresent("siteLocalTrialIdentifier"))
+            selenium.type("siteLocalTrialIdentifier", info.uuid);
+        selenium.select("recStatus", status);
+        selenium.type("id=recStatusDate", today);
+        clickAndWait("link=Save");
+        assertTrue(selenium.isTextPresent("Record Created"));
+
+        selenium.click("link=Investigators");
+        clickAndWaitAjax("link=Add");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("poOrganizations", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[9]/a");
+        waitForPageToLoad();
+        pause(2000);
+        driver.switchTo().defaultContent();
+        assertTrue(selenium.isTextPresent("One item found"));
+    }
+
     protected void addSOS(TrialInfo info, String code) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO study_overall_status (identifier,comment_text,status_code,status_date,"
@@ -943,6 +1010,29 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + info.csmUserID + "," + info.csmUserID + ",null)";
         runner.update(connection, sql);
 
+    }
+
+    protected final Number findParticipatingSite(TrialInfo trial, String orgName)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        final String sql = "SELECT ss.identifier FROM "
+                + "("
+                + "   ("
+                + "      study_site ss"
+                + "      JOIN healthcare_facility ro ON"
+                + "      ("
+                + "         (ro.identifier = ss.healthcare_facility_identifier)"
+                + "      )"
+                + "   )"
+                + "   JOIN organization org ON ((org.identifier = ro.organization_identifier))"
+                + ")" + " WHERE org.name='" + orgName
+                + "' AND ss.study_protocol_identifier=" + trial.id
+                + " AND ((ss.functional_code)::text = 'TREATING_SITE'::text)";
+
+        final Object[] results = runner.query(connection, sql,
+                new ArrayHandler());
+        Number siteID = results != null ? (Number) results[0] : null;
+        return siteID;
     }
 
     private Number findOrCreateHcp(Number paPersonID, String orgName)

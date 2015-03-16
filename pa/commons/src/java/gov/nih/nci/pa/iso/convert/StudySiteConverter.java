@@ -187,8 +187,13 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
                     CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode())));
         bo.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
         if (dto.getAccrualDateRange() != null) {
-            bo.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getAccrualDateRange()));
-            bo.setAccrualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getAccrualDateRange()));
+            bo.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(
+                    dto.getAccrualDateRange()));
+            bo.setAccrualDateRangeHigh(IvlConverter.convertTs().convertHigh(
+                    dto.getAccrualDateRange()));
+        } else {
+            bo.setAccrualDateRangeLow(null);
+            bo.setAccrualDateRangeHigh(null);
         }
     }
 }
