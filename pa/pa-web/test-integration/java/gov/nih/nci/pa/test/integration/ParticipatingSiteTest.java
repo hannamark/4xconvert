@@ -87,6 +87,7 @@ import java.util.Date;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Test;
+import org.openqa.selenium.By;
 
 /**
  * Tests creation/editing/deleting of participating sites.
@@ -120,7 +121,8 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         clickAndWait("//table[@id='row']/tbody/tr/td[7]/a");
         s.type("participatingOrganizationsedit_dateOpenedForAccrual", "");
         s.type("participatingOrganizationsedit_dateClosedForAccrual", "");
-        clickAndWait("link=Save");
+        s.click("link=Save");
+        waitForElementToBecomeAvailable(By.className("confirm_msg"), 10);
         assertTrue(selenium.isTextPresent("Message. Record Updated."));
 
         // Ensure they are showing blanks.

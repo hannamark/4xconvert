@@ -82,7 +82,9 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.SiteStatus;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import java.io.File;
@@ -656,6 +658,77 @@ public abstract class AbstractRegistrySeleniumTest extends
         selenium.click("runSearchBtn");
         clickAndWait("link=My Trials");
         waitForElementById("row", 20);
+    }
+
+    protected void verifySiteIsNowClosed(TrialInfo info, String orgName,
+            String expectedStatusCode) throws SQLException {
+        final Number siteID = findParticipatingSite(info, orgName);
+        List<SiteStatus> hist = getSiteStatusHistory(siteID);
+        assertEquals(2, hist.size());
+        assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
+        assertEquals(
+                RecruitmentStatusCode.getByCode(expectedStatusCode).name(),
+                hist.get(1).statusCode);
+
+    }
+
+    /**
+     * @param params
+     */
+    protected final void submitTrialAndVerifyOpenSitesDialog(String[] params) {
+        s.click("xpath=//button[text()='Review Trial']");
+        waitForElementToBecomeVisible(By.id("dialog-opensites"), 10);
+        assertEquals("The trial has open sites",
+                s.getText("ui-dialog-title-dialog-opensites"));
+        assertEquals(
+                "Since you are closing the trial, all open sites will be closed as well as a result. "
+                        + "For your information, below is a list of currently open sites that will be affected by this operation.",
+                s.getText("//div[@id='dialog-opensites']/p")
+                        .replaceAll("\\s+", " ").trim());
+        waitForElementToBecomeAvailable(
+                By.xpath("//table[@id='openSitesTable']/tbody/tr[2]"), 10);
+        waitForElementToBecomeVisible(
+                By.xpath("//table[@id='openSitesTable']/tbody/tr[2]"), 5);
+
+        assertEquals("PO ID",
+                s.getText("//table[@id='openSitesTable']/thead/tr/th[1]"));
+        assertEquals("Name",
+                s.getText("//table[@id='openSitesTable']/thead/tr/th[2]"));
+        assertEquals("Status",
+                s.getText("//table[@id='openSitesTable']/thead/tr/th[3]"));
+        assertEquals("Status Date",
+                s.getText("//table[@id='openSitesTable']/thead/tr/th[4]"));
+        assertTrue(s.isTextPresent("Showing 1 to 2 of 2 entries"));
+
+        s.click("//table[@id='openSitesTable']/thead/tr/th[1]");
+        pause(2000);
+
+        assertEquals("3",
+                s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[1]"));
+        assertEquals("National Cancer Institute Division of Cancer Prevention",
+                s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[2]"));
+        assertEquals(params[0],
+                s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[3]"));
+        assertEquals(today,
+                s.getText("//table[@id='openSitesTable']/tbody/tr[1]/td[4]"));
+
+        assertEquals("2",
+                s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[1]"));
+        assertEquals("Cancer Therapy Evaluation Program",
+                s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[2]"));
+        assertEquals(params[1],
+                s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[3]"));
+        assertEquals(today,
+                s.getText("//table[@id='openSitesTable']/tbody/tr[2]/td[4]"));
+
+        // Test Cancel button.
+        s.click("//div[@aria-labelledby='ui-dialog-title-dialog-opensites']//span[text()='Cancel']");
+        waitForElementToBecomeInvisible(By.id("dialog-opensites"), 3);
+
+        // Bring the dialog back again and submit the update.
+        s.click("xpath=//button[text()='Review Trial']");
+        waitForElementToBecomeVisible(By.id("dialog-opensites"), 10);
+        s.click("//div[@aria-labelledby='ui-dialog-title-dialog-opensites']//span[text()='Proceed']");
     }
 
     protected void changeRegUserAffiliation(String loginName, int orgPoId,

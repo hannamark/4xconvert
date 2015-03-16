@@ -83,8 +83,6 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialStatus;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -105,6 +103,67 @@ import org.openqa.selenium.By;
  */
 @SuppressWarnings("deprecation")
 public class AmendTrialTest extends AbstractRegistrySeleniumTest {
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testAmendCompleteTrialAndCloseSitesPO_8323() throws Exception {
+        // Prepare amendable trial.
+        loginAndAcceptDisclaimer();
+        String rand = RandomStringUtils.randomNumeric(10);
+        TrialInfo info = registerAndAcceptTrial(rand);
+        final String nciID = info.nciID;
+        addDWS(info,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                        .toString());
+        logoutUser();
+
+        // Add 3 sites, one is already closed.
+        selectTrialInPA(info);
+        addSiteToTrial(info, "DCP", "In Review");
+        addSiteToTrial(info, "CTEP", "Active");
+        addSiteToTrial(info, "NCI", "Closed to Accrual");
+        logoutPA();
+
+        // Amend
+        loginAndAcceptDisclaimer();
+        searchForTrialByNciID(nciID);
+        selectAction("Amend");
+
+        // Close trial.
+        deleteStatus(2);
+        deleteStatus(1);
+        addStatus(date(-3), "In Review", "");
+        addStatus(date(-2), "Approved", "");
+        addStatus(date(-1), "Active", "");
+        addStatus(date(0), "Closed to Accrual", "");
+
+        populateAmendmentNumber();
+        populateTrialDates();
+        populateDocuments();
+
+        // Try to submit and verify the dialog (see JIRA).
+        submitTrialAndVerifyOpenSitesDialog(new String[] { "In Review",
+                "Active" });
+
+        // Verify amendment went through.
+        waitForElementById("reviewTrialForm", 10);
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+        assertTrue(selenium
+                .isTextPresent("The amendment to trial with the NCI Identifier "
+                        + nciID + " was successfully submitted."));
+
+        // Do backend checks; ensure sites are closed with the same status.
+        assertEquals(
+                "CLOSED_TO_ACCRUAL",
+                getTrialStatusHistory(info).get(
+                        getTrialStatusHistory(info).size() - 1).statusCode);
+        verifySiteIsNowClosed(info,
+                "National Cancer Institute Division of Cancer Prevention",
+                "Closed to Accrual");
+        verifySiteIsNowClosed(info, "Cancer Therapy Evaluation Program",
+                "Closed to Accrual");
+    }
 
     @SuppressWarnings("deprecation")
     @Test
@@ -153,25 +212,33 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
 
     private void populateAmendTrialPage(TrialInfo info)
             throws URISyntaxException {
-        s.type("trialDTO.localAmendmentNumber", "1");
-        s.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO.amendmentDate']]");
-        clickOnFirstVisible(By.xpath("//td[@class='day active']"));
-        clickOnFirstVisible(By
-                .xpath("//div[@class='datepicker']/button[@class='close']"));
+        populateAmendmentNumber();
 
         deleteStatus(2);
         deleteStatus(1);
         populateStatusHistory();
         editStatus(2, today, "Active", "Changed to Active.");
 
-        // Start/End Dates.
-        selenium.type("trialDTO_startDate", today);
-        selenium.click("trialDTO_startDateTypeActual");
-        selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
-        selenium.type("trialDTO_primaryCompletionDate", tommorrow);
-        selenium.click("trialDTO_completionDateTypeAnticipated");
-        selenium.type("trialDTO_completionDate", tommorrow);
+        populateTrialDates();
 
+        populateDocuments();
+    }
+
+    /**
+     * 
+     */
+    protected void populateAmendmentNumber() {
+        s.type("trialDTO.localAmendmentNumber", "1");
+        s.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO.amendmentDate']]");
+        clickOnFirstVisible(By.xpath("//td[@class='day active']"));
+        clickOnFirstVisible(By
+                .xpath("//div[@class='datepicker']/button[@class='close']"));
+    }
+
+    /**
+     * @throws URISyntaxException
+     */
+    private void populateDocuments() throws URISyntaxException {
         // Add Protocol and IRB Document
         String protocolDocPath = (new File(ClassLoader.getSystemResource(
                 PROTOCOL_DOCUMENT).toURI()).toString());
@@ -180,6 +247,19 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         selenium.type("protocolDoc", protocolDocPath);
         selenium.type("irbApproval", irbDocPath);
         selenium.type("protocolHighlightDocument", protocolDocPath);
+    }
+
+    /**
+     * 
+     */
+    private void populateTrialDates() {
+        // Start/End Dates.
+        selenium.type("trialDTO_startDate", today);
+        selenium.click("trialDTO_startDateTypeActual");
+        selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
+        selenium.type("trialDTO_primaryCompletionDate", tommorrow);
+        selenium.click("trialDTO_completionDateTypeAnticipated");
+        selenium.type("trialDTO_completionDate", tommorrow);
     }
 
     @Test
