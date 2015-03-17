@@ -1726,7 +1726,7 @@
         <comment>Added email message templates for study site status change</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8273-1.sql"/>
      </changeSet> 
-     <changeSet id="PO-8273-2" author="chandrasekaravr">
+     <changeSet id="PO-8273-2" author="chandrasekaravr" runOnChange="true">
         <comment>Added email message template for study site status change to ctro</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8273-2.sql"/>
      </changeSet>

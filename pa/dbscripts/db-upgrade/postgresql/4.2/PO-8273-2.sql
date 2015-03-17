@@ -16,16 +16,16 @@ INSERT INTO pa_properties VALUES ((select max(identifier) + 1 from pa_properties
  * 7 - <new_site_status>
  */
 INSERT INTO pa_properties VALUES ((select max(identifier) + 1 from pa_properties), 'studysite.statuschange.ctro.email.body',
-'Title:  %1s
-NCI Trial ID:   %2s
-Lead Organization   %3s
-Participating Site:     %4s
-Date:   %5s
-
-The CTRP system was unable to find an email address to use for informing the participating site listed above of the automatic status change that resulted from closing this trial in ClinicalTrials.gov.
-Old Site Status:    %6s
-New Site Status:    %7s
-
-Thank you,
-CTRP - this is an automatically generated message. Please do not reply. 
+'Title:  %1s<br/>
+NCI Trial ID:   %2s<br/>
+Lead Organization   %3s<br/>
+Participating Site:     %4s<br/>
+Date:   %5s<br/>
+<br/>
+The CTRP system was unable to find an email address to use for informing the participating site listed above of the automatic status change that resulted from closing this trial in ClinicalTrials.gov.<br/>
+Old Site Status:    %6s<br/>
+New Site Status:    %7s<br/>
+<br/>
+Thank you,<br/>
+CTRP - this is an automatically generated message. Please do not reply.<br/> 
 ');
