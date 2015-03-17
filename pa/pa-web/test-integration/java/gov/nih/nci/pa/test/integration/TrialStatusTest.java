@@ -1,13 +1,9 @@
 package gov.nih.nci.pa.test.integration;
 
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
-
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 

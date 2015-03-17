@@ -949,6 +949,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     }
 
+    protected void changeTrialStatus(TrialInfo info, String code)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "UPDATE study_overall_status SET status_code='" + code
+                + "' where study_protocol_identifier=" + info.id;
+        runner.update(connection, sql);
+
+        sql = "UPDATE study_recruitment_status SET status_code='" + code
+                + "' where study_protocol_identifier=" + info.id;
+        runner.update(connection, sql);
+
+    }
+
     private String today() {
         return String.format("{ts '%s'}",
                 new Timestamp(System.currentTimeMillis()).toString());
@@ -1091,11 +1104,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
     }
 
-    private Number getOrgIdByName(String orgName) throws SQLException {
+    protected Number getOrgIdByName(String orgName) throws SQLException {
         QueryRunner runner = new QueryRunner();
         return (Number) runner.query(connection,
                 "select o.identifier from organization o " + "where o.name='"
                         + orgName + "' limit 1", new ArrayHandler())[0];
+    }
+
+    protected String getOrgPoIdByName(String orgName) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        return (String) runner.query(connection,
+                "select o.assigned_identifier from organization o "
+                        + "where o.name='" + orgName + "' limit 1",
+                new ArrayHandler())[0];
     }
 
     private Number findOrCreatePersonByPoId(String poPersonID)

@@ -22,19 +22,51 @@ INSERT INTO pa_properties VALUES ((select max(identifier) + 1 from pa_properties
  * 11 - <new_site_status>
  */
 INSERT INTO pa_properties VALUES ((select max(identifier) + 1 from pa_properties), 'studysite.statuschange.email.body',
-'Title:  %1s
-NCI Trial ID:   %2s
-Lead Organization   %3s
-Participating Site:     %4s
-Date:   %5s
+'<hr>
+<table border="0">
+    <tr>
+        <td><b>Title:</b></td>
+        <td>%1s</td>
+    </tr>
+    <tr>
+        <td><b>NCI Trial ID:</b></td>
+        <td>%2s</td>
+    </tr>
+    <tr>
+        <td><b>Lead Organization PO ID:</b></td>
+        <td>%3s</td>
+    </tr>
+    <tr>
+        <td><b>Participating Site:</b></td>
+        <td>%4s</td>
+    </tr>
 
-Dear %6s %7s,
-The ClinincalTrials.gov record shows that the trial listed above was closed as of %8s. For consistency, the CTRP system has changed the trials status at your participating site:
-Participating Site:     %9s
-Old Site Status:    %10s
-New Site Status:    %11s
+</table>
+<hr>
+<p>Date: %5s</p>
+<p>Dear %6s %7s,</p>
+<p>The ClinicalTrials.gov record shows that the trial listed above
+    was closed as of %8s. For consistency, the CTRP system has changed the
+    trials status at your participating site:</p>
+<table border="0">
+    <tr>
+        <td><b>Participating Site:</b></td>
+        <td>%9s</td>
+    </tr>
+    <tr>
+        <td><b>Old Site Status:</b></td>
+        <td>%10s</td>
+    </tr>
+    <tr>
+        <td><b>New Site Status:</b></td>
+        <td>%11s</td>
+    </tr>
+</table>
 
-If you believe this is an error, or if you have additional questions about this or other CTRP topics, please contact the CTRO at ncictro@mail.nih.gov.
 
-Thank you for participating in the NCI Clinical Trials Reporting Program.
+<p>If you believe this is an error, or if you have additional
+    questions about this or other CTRP topics, please contact the CTRO at
+    ncictro@mail.nih.gov.</p>
+<p>Thank you for participating in the NCI Clinical Trials Reporting
+    Program.</p>
 ');

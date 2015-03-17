@@ -1722,7 +1722,7 @@
         <comment>Added closing trial statuses to PA properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8273-0.sql"/>
      </changeSet>
-     <changeSet id="PO-8273-1" author="chandrasekaravr">
+     <changeSet id="PO-8273-1" author="chandrasekaravr" runOnChange="true">
         <comment>Added email message templates for study site status change</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8273-1.sql"/>
      </changeSet> 

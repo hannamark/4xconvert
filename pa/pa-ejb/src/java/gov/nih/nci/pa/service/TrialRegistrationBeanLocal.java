@@ -1287,9 +1287,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
             
             Object[] subjParams = {spDTO.getNciIdentifier() };
         
-            mailManagerSerivceLocal.sendNotificationMail("cictro@mail.nih.gov", 
-                    "studysite.statuschange.ctro.email.subject", "studysite.statuschange.ctro.email.body", 
-                    subjParams, bodyParamsLst.toArray());
+            mailManagerSerivceLocal.sendNotificationMail(
+                    lookUpTableServiceRemote
+                            .getPropertyValue("abstraction.script.mailTo"),
+                    "studysite.statuschange.ctro.email.subject",
+                    "studysite.statuschange.ctro.email.body", subjParams,
+                    bodyParamsLst.toArray());
             return;
         }
         
