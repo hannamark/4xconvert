@@ -86,6 +86,7 @@ import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_DRIVER
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_PASSWORD;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_URL;
 import static gov.nih.nci.pa.test.integration.util.TestProperties.TEST_DB_USER;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
 import java.io.File;
@@ -880,6 +881,18 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         login("/pa", "ctrpsubstractor", "pass");
         disclaimer(true);
         searchAndSelectTrial(info.title);
+    }
+
+    protected void verifySiteIsNowClosed(TrialInfo info, String orgName,
+            String expectedStatusCode) throws SQLException {
+        final Number siteID = findParticipatingSite(info, orgName);
+        List<SiteStatus> hist = getSiteStatusHistory(siteID);
+        assertEquals(2, hist.size());
+        assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
+        assertEquals(
+                RecruitmentStatusCode.getByCode(expectedStatusCode).name(),
+                hist.get(1).statusCode);
+
     }
 
     /**

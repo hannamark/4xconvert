@@ -660,18 +660,6 @@ public abstract class AbstractRegistrySeleniumTest extends
         waitForElementById("row", 20);
     }
 
-    protected void verifySiteIsNowClosed(TrialInfo info, String orgName,
-            String expectedStatusCode) throws SQLException {
-        final Number siteID = findParticipatingSite(info, orgName);
-        List<SiteStatus> hist = getSiteStatusHistory(siteID);
-        assertEquals(2, hist.size());
-        assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, new Date()));
-        assertEquals(
-                RecruitmentStatusCode.getByCode(expectedStatusCode).name(),
-                hist.get(1).statusCode);
-
-    }
-
     /**
      * @param params
      */

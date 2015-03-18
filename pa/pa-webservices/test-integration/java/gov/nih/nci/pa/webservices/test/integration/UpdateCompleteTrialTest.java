@@ -9,6 +9,7 @@ import gov.nih.nci.pa.webservices.types.TrialRegistrationConfirmation;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -18,6 +19,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -61,12 +63,52 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
         verifyUpdate(upd, uConf);
 
     }
-    
+
+    @Test
+    public void testUpdateCompleteTrialStatusAndCloseSitesPO_8323()
+            throws Exception {
+        final String file = "/integration_register_complete_minimal_dataset.xml";
+        TrialRegistrationConfirmation rConf = register(file);
+
+        // Add 3 sites, one is already closed.
+        TrialInfo info = new TrialInfo();
+        info.nciID = rConf.getNciTrialID();
+        info.id = rConf.getPaTrialID();
+        info.title = readCompleteTrialRegistrationFromFile(file).getTitle();
+        info.leadOrgID = readCompleteTrialRegistrationFromFile(file)
+                .getLeadOrgTrialID();
+        info.uuid = info.leadOrgID;
+        logoutPA();
+        selectTrialInPA(info);
+        addSiteToTrial(info, "DCP", "In Review");
+        addSiteToTrial(info, "CTEP", "Active");
+        addSiteToTrial(info, "NCI", "Closed to Accrual");
+
+        CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete_closed_trial.xml");
+        HttpResponse response = updateTrialFromJAXBElement("pa",
+                rConf.getPaTrialID() + "", upd);
+        TrialRegistrationConfirmation uConf = processTrialRegistrationResponseAndDoBasicVerification(response);
+        assertEquals(rConf.getPaTrialID(), uConf.getPaTrialID());
+        assertEquals(rConf.getNciTrialID(), uConf.getNciTrialID());
+
+        // Do backend checks; ensure sites are closed with the same status.
+        verifySiteIsNowClosed(info,
+                "National Cancer Institute Division of Cancer Prevention",
+                "Closed to Accrual");
+        verifySiteIsNowClosed(info, "Cancer Therapy Evaluation Program",
+                "Closed to Accrual");
+        List<TrialStatus> hist = getTrialStatusHistory(info);
+        assertEquals("CLOSED_TO_ACCRUAL", hist.get(1).statusCode);
+        assertTrue(DateUtils.isSameDay(hist.get(1).statusDate, upd
+                .getTrialStatusDate().toGregorianCalendar().getTime()));
+
+    }
+
     @Test
     public void testUpdateDoesNotResetCtroOverride() throws Exception {
         TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
         enableCtroOverride(rConf.getPaTrialID());
-        
+
         CompleteTrialUpdate upd = readCompleteTrialUpdateFromFile("/integration_update_complete.xml");
         HttpResponse response = updateTrialFromJAXBElement("pa",
                 rConf.getPaTrialID() + "", upd);
