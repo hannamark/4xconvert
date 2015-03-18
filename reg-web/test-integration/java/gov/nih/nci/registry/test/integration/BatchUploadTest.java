@@ -93,22 +93,13 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
-import com.dumbster.smtp.SimpleSmtpServer;
+
 import com.dumbster.smtp.SmtpMessage;
 
-/** 
+/**
  * @author dkrylov
  */
 public class BatchUploadTest extends AbstractRegistrySeleniumTest {
-
-    public static final int PORT = 51234;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        new QueryRunner().update(connection, "update pa_properties set value='"
-                + PORT + "' where name='smtp.port'");
-    }
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
@@ -122,7 +113,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
     public void testUpdateTrial() throws Exception {
         String leadOrgTrialId = "FKTESTING_23";
         registerNewTrialAndVerify();
-        
+
         changeNciId(getLastNciId(), "NCI-2015-99999");
         deleteTrialDocuments(acceptTrialByNciId("NCI-2015-99999",
                 leadOrgTrialId));
@@ -132,12 +123,12 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         accessBatchUploadScreen();
 
         final String trialDataFileName = "batch_update.xls";
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(trialDataFileName);
 
         Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
-        waitForEmailToArriveAndStopServer(server);
-        verifyEmailSentByBatchProcessing(server);
+        waitForEmailToArriveAndStopServer();
+        verifyEmailSentByBatchProcessing();
 
         TrialInfo trial = new TrialInfo();
         trial.id = trialID.longValue();
@@ -162,7 +153,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         deactivateTrialByLeadOrgId(leadOrgTrialId);
         accessBatchUploadScreen();
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
 
         final String trialDataFileName = "batch_new_registration.xls";
         submitBatchFile(trialDataFileName);
@@ -170,7 +161,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         Number trialID = waitForTrialToRegister(leadOrgTrialId, 60);
         assertNotNull(trialID);
 
-        waitForEmailToArriveAndStopServer(server);
+        waitForEmailToArriveAndStopServer();
 
         TrialInfo trial = new TrialInfo();
         trial.id = trialID.longValue();
@@ -178,14 +169,14 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         assertTrue(DateUtils.isSameDay(getCurrentTrialStatus(trial).statusDate,
                 DateUtils.parseDate("06/03/13", new String[] { "MM/dd/yy" })));
 
-        verifyEmailSentByBatchProcessing(server);
+        verifyEmailSentByBatchProcessing();
     }
 
     /**
      * @param server
      */
     @SuppressWarnings("rawtypes")
-    private void verifyEmailSentByBatchProcessing(SimpleSmtpServer server) {
+    private void verifyEmailSentByBatchProcessing() {
         assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
         SmtpMessage email = (SmtpMessage) emailIter.next();
@@ -205,7 +196,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
     /**
      * @param server
      */
-    private void waitForEmailToArriveAndStopServer(SimpleSmtpServer server) {
+    private void waitForEmailToArriveAndStopServer() {
         // wait for email to arrive
         long stamp = System.currentTimeMillis();
         while (server.getReceivedEmailSize() < 1

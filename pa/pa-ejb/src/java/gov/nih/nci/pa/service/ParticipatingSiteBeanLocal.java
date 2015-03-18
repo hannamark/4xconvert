@@ -146,6 +146,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -246,6 +247,7 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean /
         }
         
         if (!dataForEmail.getSiteData().isEmpty()) {
+            Collections.sort(dataForEmail.getSiteData());
             getMailManagerService().sendSiteCloseNotification(dataForEmail);
         }
     }

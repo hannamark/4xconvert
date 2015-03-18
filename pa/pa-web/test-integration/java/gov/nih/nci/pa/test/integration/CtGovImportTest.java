@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.dumbster.smtp.SimpleSmtpServer;
 import com.dumbster.smtp.SmtpMessage;
 
 /**
@@ -13,29 +12,6 @@ import com.dumbster.smtp.SmtpMessage;
  * 
  */
 public class CtGovImportTest extends AbstractTrialStatusTest {
-
-    private SimpleSmtpServer server;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        server = SimpleSmtpServer.start(PORT);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        try {
-            server.stop();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        super.tearDown();
-    }
-
-    private void restartEmailServer() {
-        server.stop();
-        server = SimpleSmtpServer.start(PORT);
-    }
 
     @Test
     public void testImportNCT01721876() throws Exception {
@@ -139,14 +115,7 @@ public class CtGovImportTest extends AbstractTrialStatusTest {
 
     }
 
-    private void waitForEmailsToArrive(int num) throws InterruptedException {
-        long stamp = System.currentTimeMillis();
-        while (server.getReceivedEmailSize() < num
-                && System.currentTimeMillis() - stamp < 1000 * 20) {
-            Thread.sleep(500);
-        }
-        assertEquals(num, server.getReceivedEmailSize());
-    }
+   
 
     @SuppressWarnings("deprecation")
     @Test

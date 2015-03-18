@@ -54,7 +54,6 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.xml.sax.SAXException;
 
-import com.dumbster.smtp.SimpleSmtpServer;
 import com.dumbster.smtp.SmtpMessage;
 
 @SuppressWarnings("deprecation")
@@ -62,8 +61,8 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
     private static final int BATCH_PROCESSING_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 20000
             : 10000;
-    public static final int PORT = 51234;
-    public static Logger LOG = Logger.getLogger(BatchUploadTest.class
+
+    public static final Logger LOG = Logger.getLogger(BatchUploadTest.class
             .getName());
 
     /**
@@ -74,8 +73,6 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         super.setUp("/sites/1");
         baseURL = "http://" + TestProperties.getServerHostname() + ":"
                 + TestProperties.getServerPort() + "/services";
-        new QueryRunner().update(connection, "update pa_properties set value='"
-                + PORT + "' where name='smtp.port'");
     }
 
     @Test
@@ -96,12 +93,12 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                 .toString() + ".txt");
         FileUtils.writeStringToFile(batchFile, batchFileStr);
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
         verifyAccrualCollectionRecordHasNullifiedOrgErrorMessage("6");
-        verifyEmailContainsNullifiedOrgError(server, "6");
+        verifyEmailContainsNullifiedOrgError("6");
     }
 
     @Test
@@ -122,12 +119,12 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                 .toString() + ".txt");
         FileUtils.writeStringToFile(batchFile, batchFileStr);
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
         verifyAccrualCollectionRecordHasNullifiedOrgErrorMessage("CTGOVDUPE");
-        verifyEmailContainsNullifiedOrgError(server, "CTGOVDUPE");
+        verifyEmailContainsNullifiedOrgError("CTGOVDUPE");
     }
 
     @SuppressWarnings("rawtypes")
@@ -144,7 +141,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                 .toString() + ".txt");
         writeValidBatchFileButWithDuplicatePatients(rConf, batchFile);
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
@@ -178,7 +175,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         File batchFile = writeBatchFileWithDuplicateSubjectOnAnotherSite(rConf);
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
@@ -221,7 +218,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                 .toString() + ".txt");
         writeValidBatchFileWithNoDuplicates(rConf, batchFile);
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
@@ -244,8 +241,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                         + "");
 
     }
-    
-    
+
     @SuppressWarnings("rawtypes")
     @Test
     public void testAccrualCount() throws Exception {
@@ -261,7 +257,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         File batchFile = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
                 .toString() + ".txt");
         writeValidBatchFileWithAccrualCount(rConf, batchFile);
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
@@ -270,8 +266,10 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         SmtpMessage email = (SmtpMessage) emailIter.next();
         String error = email.getBody();
         LOG.info("Successfully connected to the database at " + error);
-        assertTrue(error.contains("Accrual counts for the following Study Site(s) were updated successfully as follows:"));
-        assertTrue(error.contains(" 3 - National Cancer Institute Division of Cancer Prevention - 12"));
+        assertTrue(error
+                .contains("Accrual counts for the following Study Site(s) were updated successfully as follows:"));
+        assertTrue(error
+                .contains(" 3 - National Cancer Institute Division of Cancer Prevention - 12"));
         assertEquals(
                 "12",
                 new QueryRunner()
@@ -317,7 +315,6 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         clickAndWait("mainActionBtn");
     }
 
-    
     /**
      * @param rConf
      * @param batchFile
@@ -339,7 +336,6 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                                 "PATIENT_RACES," + rConf.getNciTrialID()
                                         + ",sU001,White" }));
     }
-    
 
     /**
      * @param rConf
@@ -349,16 +345,9 @@ public class BatchUploadTest extends AbstractRestServiceTest {
     private void writeValidBatchFileWithAccrualCount(
             TrialRegistrationConfirmation rConf, File batchFile)
             throws IOException {
-        FileUtils
-                .writeLines(
-                        batchFile,
-                        "UTF-8",
-                        Arrays.asList(new String[] {
-                                "COLLECTIONS," + rConf.getNciTrialID()
-                                        + ",,,,,,,,,",
-                                "ACCRUAL_COUNT,"
-                                        + rConf.getNciTrialID()
-                                        + ", 3 , 12 " }));
+        FileUtils.writeLines(batchFile, "UTF-8", Arrays.asList(new String[] {
+                "COLLECTIONS," + rConf.getNciTrialID() + ",,,,,,,,,",
+                "ACCRUAL_COUNT," + rConf.getNciTrialID() + ", 3 , 12 " }));
     }
 
     /**
@@ -580,7 +569,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         grantAccrualAccess("submitter-ci", siteID);
         return rConf;
     }
-    
+
     @SuppressWarnings("rawtypes")
     @Test
     public void testDuplicateSubjectHandlingZipUploadPO8106() throws Exception {
@@ -607,7 +596,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         zos.close();
         fos.close();
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(zip);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
@@ -653,7 +642,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
 
         File batchFile = writeInvalidBatchFileWithDuplicateSubjectOnAnotherSite(rConf);
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
@@ -758,7 +747,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
                 .toString() + ".txt");
         writeInvalidBatchFileWithDuplicatePatients(rConf, batchFile);
 
-        SimpleSmtpServer server = SimpleSmtpServer.start(PORT);
+        restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
         server.stop();
@@ -826,8 +815,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
     }
 
     @SuppressWarnings("rawtypes")
-    private void verifyEmailContainsNullifiedOrgError(SimpleSmtpServer server,
-            String orgID) {
+    private void verifyEmailContainsNullifiedOrgError(String orgID) {
         assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
         SmtpMessage email = (SmtpMessage) emailIter.next();
@@ -879,7 +867,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
     private void login() {
         openAndWait("/accrual");
         selenium.type("j_username", "submitter-ci");
-        selenium.type("j_password", "pass");        
+        selenium.type("j_password", "pass");
         clickAndWait("xpath=//i[@class='fa-arrow-circle-right']");
         clickAndWait("id=acceptDisclaimer");
 

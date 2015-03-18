@@ -133,6 +133,8 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import com.dumbster.smtp.SimpleSmtpServer;
+
 /**
  * Abstract base class for selenium tests.
  * 
@@ -155,6 +157,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             .addYears(new Date(), 1));
     protected Date yesterdayDate = DateUtils.addDays(new Date(), -1);
     protected String yesterday = MONTH_DAY_YEAR_FMT.format(yesterdayDate);
+
+    // SMTP
+    private static final int PORT = 51234;
+    protected SimpleSmtpServer server;
 
     static {
         new Timer(true).schedule(new TimerTask() {
@@ -190,6 +196,9 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     public void setUp() throws Exception {
         setUpSelenium();
         openDbConnection();
+        new QueryRunner().update(connection, "update pa_properties set value='"
+                + PORT + "' where name='smtp.port'");
+        server = SimpleSmtpServer.start(PORT);
     }
 
     /**
@@ -222,14 +231,41 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }
     }
 
+    public final void restartEmailServer() {
+        stopSMTP();
+        server = SimpleSmtpServer.start(PORT);
+    }
+
     @Override
     @After
     public void tearDown() throws Exception {
         DbUtils.closeQuietly(connection);
+        stopSMTP();
         takeScreenShot();
         logoutUser();
         closeBrowser();
         super.tearDown();
+    }
+
+    /**
+     * 
+     */
+    private void stopSMTP() {
+        try {
+            server.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void waitForEmailsToArrive(int numberOfEmailsToWaitFor)
+            throws InterruptedException {
+        long stamp = System.currentTimeMillis();
+        while (server.getReceivedEmailSize() < numberOfEmailsToWaitFor
+                && System.currentTimeMillis() - stamp < 1000 * 20) {
+            Thread.sleep(500);
+        }
+        assertEquals(numberOfEmailsToWaitFor, server.getReceivedEmailSize());
     }
 
     private void takeScreenShot() {
@@ -1448,7 +1484,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                                 + loginName + "%'", new ArrayHandler())[0];
 
         String sql = "INSERT INTO study_owner (study_id,user_id,enable_emails) VALUES ("
-                + trialID + "," + regUserID + ",false)";
+                + trialID + "," + regUserID + ", true)";
         runner.update(connection, sql);
     }
 

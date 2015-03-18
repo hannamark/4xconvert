@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Just a container for data.
  * 
@@ -52,7 +54,7 @@ public final class SiteStatusChangeNotificationData implements Serializable {
      * @author dkrylov
      * 
      */
-    public static final class SiteData implements Serializable {
+    public static final class SiteData implements Serializable, Comparable<SiteData> {
 
         private final String name;
         private final RecruitmentStatusCode previousTrialStatus;
@@ -108,6 +110,12 @@ public final class SiteStatusChangeNotificationData implements Serializable {
          */
         public String getErrors() {
             return errors;
+        }
+
+        @Override
+        public int compareTo(SiteData o) {
+            return StringUtils.defaultString(name).compareTo(
+                    StringUtils.defaultString(o.name));
         }
 
     }

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
-import com.dumbster.smtp.SimpleSmtpServer;
+
 import com.dumbster.smtp.SmtpMessage;
 
 /**
@@ -14,29 +14,6 @@ import com.dumbster.smtp.SmtpMessage;
  * @author Reshma Koganti
  */
 public class TrialCheckInOutTest extends AbstractTrialStatusTest {
-
-    private SimpleSmtpServer server;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        server = SimpleSmtpServer.start(PORT);
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        try {
-            server.stop();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        super.tearDown();
-    }
-
-    private void restartEmailServer() {
-        server.stop();
-        server = SimpleSmtpServer.start(PORT);
-    }
 
     @SuppressWarnings("deprecation")
     @Test
@@ -259,10 +236,6 @@ public class TrialCheckInOutTest extends AbstractTrialStatusTest {
                 selenium.getText("xpath=//table[@id='row']/tbody/tr[1]/td[5]")
                         .trim());
     }
-
-    
-
-    
 
     /**
      * @param checkInOption
