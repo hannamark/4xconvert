@@ -82,8 +82,6 @@
  */
 package gov.nih.nci.registry.test.integration;
 
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-
 import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -250,12 +248,105 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
     }
 
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testUpdateCompleteTrialStatusAndCloseSitesPO_8323()
+            throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        String[] params = new String[] { "In Review", "Active",
+                "Closed to Accrual" };
+
+        TrialInfo info = prepareTrialForUpdateAndSelectIt(params);
+
+        selectAction("Change Status");
+        waitForElementToBecomeAvailable(By.id("popupFrame"), 15);
+        s.selectFrame("popupFrame");
+
+        changeTrialStatusAndDates(params);
+
+        // Try to submit and verify the dialog (see JIRA).
+        submitTrialAndVerifyOpenSitesDialog(params, "Save");
+        waitForPageToLoad();
+
+        assertTrue(selenium.isTextPresent("Trial status successfully updated."));
+        driver.switchTo().defaultContent();
+
+        doBackEndChecksAndLogOut(params, info);
+
+    }
+
+    /**
+     * @param params
+     * @param info
+     * @throws SQLException
+     */
+    protected void doBackEndChecksAndLogOut(String[] params, TrialInfo info)
+            throws SQLException {
+        // Do backend checks; ensure sites are closed with the same status.
+        verifySiteIsNowClosed(info,
+                "National Cancer Institute Division of Cancer Prevention",
+                params[2]);
+        verifySiteIsNowClosed(info, "Cancer Therapy Evaluation Program",
+                params[2]);
+
+        logoutUser();
+        logoutPA();
+    }
+
     /**
      * @param params
      * @throws URISyntaxException
      * @throws SQLException
      */
     private void updateCompleteTrialAndCloseSitesPO_8323(String[] params)
+            throws URISyntaxException, SQLException {
+
+        TrialInfo info = prepareTrialForUpdateAndSelectIt(params);
+
+        selectAction("Update");
+
+        changeTrialStatusAndDates(params);
+
+        // Try to submit and verify the dialog (see JIRA).
+        submitTrialAndVerifyOpenSitesDialog(params, "Review Trial");
+        waitForElementById("updateTrialreviewUpdate", 10);
+        clickAndWait("xpath=//button[text()='Submit']");
+        waitForPageToLoad();
+
+        assertTrue(selenium
+                .isTextPresent("The trial update with the NCI Identifier "
+                        + info.nciID + " was successfully submitted"));
+
+        doBackEndChecksAndLogOut(params, info);
+    }
+
+    /**
+     * @param params
+     */
+    protected void changeTrialStatusAndDates(String[] params) {
+        deleteStatus(2);
+        deleteStatus(1);
+        addStatus(date(-3), "In Review", "");
+        addStatus(date(-2), "Approved", "");
+        addStatus(date(-1), "Active", "");
+        addStatus(date(0), params[2], "");
+
+        // Adjust dates.
+        selenium.type("trialDTO_startDate", today);
+        selenium.click("trialDTO_startDateTypeActual");
+    }
+
+    /**
+     * @param params
+     * @return
+     * @throws URISyntaxException
+     * @throws SQLException
+     */
+    protected TrialInfo prepareTrialForUpdateAndSelectIt(String[] params)
             throws URISyntaxException, SQLException {
         loginAndAcceptDisclaimer();
 
@@ -273,40 +364,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
         // Change trial status to closed in Registry.
         findInMyTrials(info.nciID);
-        selectAction("Update");
-        deleteStatus(2);
-        deleteStatus(1);
-        addStatus(date(-3), "In Review", "");
-        addStatus(date(-2), "Approved", "");
-        addStatus(date(-1), "Active", "");
-        addStatus(date(0), params[2], "");
-
-        // Adjust dates.
-        selenium.type("trialDTO_startDate", today);
-        selenium.click("trialDTO_startDateTypeActual");
-
-        // Try to submit and verify the dialog (see JIRA).
-        submitTrialAndVerifyOpenSitesDialog(params);
-        waitForElementById("updateTrialreviewUpdate", 10);
-        clickAndWait("xpath=//button[text()='Submit']");
-        waitForPageToLoad();
-
-        assertTrue(selenium
-                .isTextPresent("The trial update with the NCI Identifier "
-                        + info.nciID + " was successfully submitted"));
-
-        // Do backend checks; ensure sites are closed with the same status.
-        verifySiteIsNowClosed(info,
-                "National Cancer Institute Division of Cancer Prevention",
-                params[2]);
-        verifySiteIsNowClosed(info, "Cancer Therapy Evaluation Program",
-                params[2]);
-
-        logoutUser();
-        logoutPA();
+        return info;
     }
-
-    
 
     @SuppressWarnings("deprecation")
     @Test

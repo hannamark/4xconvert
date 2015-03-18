@@ -148,7 +148,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
 
         // Try to submit and verify the dialog (see JIRA).
         submitTrialAndVerifyOpenSitesDialog(new String[] { "In Review",
-                "Active" });
+                "Active" }, "Review Trial");
 
         // Verify amendment went through.
         waitForElementById("reviewTrialForm", 10);

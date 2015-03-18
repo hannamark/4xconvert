@@ -675,8 +675,9 @@ public abstract class AbstractRegistrySeleniumTest extends
     /**
      * @param params
      */
-    protected final void submitTrialAndVerifyOpenSitesDialog(String[] params) {
-        s.click("xpath=//button[text()='Review Trial']");
+    protected final void submitTrialAndVerifyOpenSitesDialog(String[] params,
+            String buttonToClick) {
+        s.click("xpath=//button[text()='" + buttonToClick + "']");
         waitForElementToBecomeVisible(By.id("dialog-opensites"), 10);
         assertEquals("The trial has open sites",
                 s.getText("ui-dialog-title-dialog-opensites"));
@@ -726,7 +727,7 @@ public abstract class AbstractRegistrySeleniumTest extends
         waitForElementToBecomeInvisible(By.id("dialog-opensites"), 3);
 
         // Bring the dialog back again and submit the update.
-        s.click("xpath=//button[text()='Review Trial']");
+        s.click("xpath=//button[text()='" + buttonToClick + "']");
         waitForElementToBecomeVisible(By.id("dialog-opensites"), 10);
         s.click("//div[@aria-labelledby='ui-dialog-title-dialog-opensites']//span[text()='Proceed']");
     }
