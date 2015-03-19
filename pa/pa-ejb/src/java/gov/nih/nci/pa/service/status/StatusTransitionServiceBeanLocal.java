@@ -264,4 +264,12 @@ public class StatusTransitionServiceBeanLocal implements
         statusDto.getValidationErrors().add(err);
     }
 
+    /**
+     * @param lookUpTableServiceRemote the lookUpTableServiceRemote to set
+     */
+    public void setLookUpTableServiceRemote(
+            LookUpTableServiceRemote lookUpTableServiceRemote) {
+        this.lookUpTableServiceRemote = lookUpTableServiceRemote;
+    }
+
 }

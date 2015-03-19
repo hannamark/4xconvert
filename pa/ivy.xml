@@ -182,6 +182,7 @@
     <dependency conf="reg-web->master" org="taglibs" name="standard" rev="1.1.2"/>
     
     <!-- test -->
+    <dependency conf="test->master" org="com.google.code.gson" name="gson" rev="2.2.4"/>
     <dependency conf="test->master" org="org.hsqldb" name="hsqldb" rev="1.8.0.10"/>
     <dependency conf="test->master" org="c3p0" name="c3p0" rev="0.9.1.2"/>
     <dependency conf="test->master" org="com.mockrunner" name="mockrunner" rev="0.4.1"/>

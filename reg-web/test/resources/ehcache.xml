@@ -66,4 +66,13 @@
          overflowToDisk="false"
     />
     
+     <cache
+         name="STATUS_RULES_CACHE"
+         maxElementsInMemory="10"
+         eternal="false"         
+         timeToIdleSeconds="120"
+         timeToLiveSeconds="180"
+         overflowToDisk="false"
+    />
+    
 </ehcache>
