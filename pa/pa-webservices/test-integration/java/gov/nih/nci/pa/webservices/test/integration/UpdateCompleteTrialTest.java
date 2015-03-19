@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.webservices.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.webservices.types.CompleteTrialUpdate;
 import gov.nih.nci.pa.webservices.types.Grant;
 import gov.nih.nci.pa.webservices.types.ObjectFactory;
@@ -111,27 +112,15 @@ public class UpdateCompleteTrialTest extends AbstractRestServiceTest {
 
         // Verify email.
         waitForEmailsToArrive(4);
-        verify(findEmailByRecipient("submitter-ci@example.com"),
+        verifySiteClosedEmail(findEmailByRecipient("submitter-ci@example.com"),
                 "submitter-ci@example.com", "Submitter CI", info);
-        verify(findEmailByRecipient("ctrpsubstractor-ci@example.com"),
+        verifySiteClosedEmail(
+                findEmailByRecipient("ctrpsubstractor-ci@example.com"),
                 "ctrpsubstractor-ci@example.com", "ctrpsubstractor CI", info);
 
     }
 
-    @SuppressWarnings("rawtypes")
-    private SmtpMessage findEmailByRecipient(String to) {
-        Iterator emailIter = server.getReceivedEmail();
-        while (emailIter.hasNext()) {
-            SmtpMessage email = (SmtpMessage) emailIter.next();
-            if (email.getHeaderValues("To")[0].equals(to)) {
-                return email;
-            }
-        }
-        fail("Email to " + to + " never received!");
-        return null;
-    }
-
-    private void verify(SmtpMessage email, String recipient,
+    private void verifySiteClosedEmail(SmtpMessage email, String recipient,
             String recipientName, TrialInfo info) throws SQLException {
         String subject = email.getHeaderValues("Subject")[0];
         String to = email.getHeaderValues("To")[0];

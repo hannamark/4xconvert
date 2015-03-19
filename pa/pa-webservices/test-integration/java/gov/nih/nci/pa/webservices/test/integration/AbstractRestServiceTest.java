@@ -6,6 +6,7 @@ package gov.nih.nci.pa.webservices.test.integration;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 import gov.nih.nci.pa.util.pomock.MockOrganizationEntityService;
 import gov.nih.nci.pa.util.pomock.MockPersonEntityService;
@@ -32,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -62,6 +64,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.Assert;
 import org.xml.sax.SAXException;
+
+import com.dumbster.smtp.SmtpMessage;
 
 /**
  * @author dkrylov
@@ -239,8 +243,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
     private HttpResponse submitRegistrationAndReturnResponse(
             StringEntity orgEntity) throws UnsupportedEncodingException,
             IOException, ClientProtocolException {
-        return submitEntityAndReturnResponse(orgEntity,
-                "/trials/complete");
+        return submitEntityAndReturnResponse(orgEntity, "/trials/complete");
 
     }
 
@@ -267,11 +270,10 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         LOG.info("Response code: " + getReponseCode(response));
         return response;
     }
-    
-    protected HttpResponse putEntityAndReturnResponse(
-            StringEntity orgEntity, String serviceURL)
-            throws UnsupportedEncodingException, IOException,
-            ClientProtocolException {
+
+    protected HttpResponse putEntityAndReturnResponse(StringEntity orgEntity,
+            String serviceURL) throws UnsupportedEncodingException,
+            IOException, ClientProtocolException {
         return putEntityAndReturnResponse(orgEntity, serviceURL,
                 APPLICATION_XML, APPLICATION_XML);
     }
@@ -944,7 +946,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
         return response;
 
     }
-    
+
     @SuppressWarnings("unchecked")
     protected ParticipatingSite readParticipatingSiteFromFile(String string)
             throws JAXBException, SAXException {
@@ -955,7 +957,7 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                 .unmarshal(url)).getValue();
         return o;
     }
-    
+
     @SuppressWarnings("unchecked")
     protected HttpResponse addSite(String idType, String trialID,
             ParticipatingSite o) throws ClientProtocolException, IOException,
@@ -991,4 +993,18 @@ public abstract class AbstractRestServiceTest extends AbstractPaSeleniumTest {
                 + rConf.getPaTrialID();
         runner.update(connection, sql);
     }
+
+    @SuppressWarnings("rawtypes")
+    protected SmtpMessage findEmailByRecipient(String to) {
+        Iterator emailIter = server.getReceivedEmail();
+        while (emailIter.hasNext()) {
+            SmtpMessage email = (SmtpMessage) emailIter.next();
+            if (email.getHeaderValues("To")[0].equals(to)) {
+                return email;
+            }
+        }
+        fail("Email to " + to + " never received!");
+        return null;
+    }
+
 }
