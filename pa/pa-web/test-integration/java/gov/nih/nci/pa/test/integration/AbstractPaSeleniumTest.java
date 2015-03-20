@@ -250,7 +250,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     /**
      * 
      */
-    private void stopSMTP() {
+    protected void stopSMTP() {
         try {
             server.stop();
         } catch (Exception e) {

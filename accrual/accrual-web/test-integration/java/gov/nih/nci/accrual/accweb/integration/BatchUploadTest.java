@@ -96,7 +96,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
         verifyAccrualCollectionRecordHasNullifiedOrgErrorMessage("6");
         verifyEmailContainsNullifiedOrgError("6");
     }
@@ -122,7 +122,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
         verifyAccrualCollectionRecordHasNullifiedOrgErrorMessage("CTGOVDUPE");
         verifyEmailContainsNullifiedOrgError("CTGOVDUPE");
     }
@@ -144,7 +144,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
 
         String error = getLatestAccrualCollectionMessage();
         verifyErrorMessageContainsDupePatientInfo(error);
@@ -178,7 +178,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
 
         String error = getLatestAccrualCollectionMessage();
         verifySubjectOnOtherSiteError(error);
@@ -221,7 +221,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
 
         assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
@@ -260,7 +260,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
         assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
         SmtpMessage email = (SmtpMessage) emailIter.next();
@@ -599,7 +599,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(zip);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
 
         assertEquals(2, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
@@ -645,7 +645,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
 
         String error = getLatestAccrualCollectionMessage();
         verifySubjectOnOtherSiteError(error);
@@ -750,7 +750,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
-        server.stop();
+        stopSMTP();
 
         String error = getLatestAccrualCollectionMessage();
         verifyErrorMessageContainsDupePatientInfo(error);
