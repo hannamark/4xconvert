@@ -96,6 +96,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(1);
         stopSMTP();
         verifyAccrualCollectionRecordHasNullifiedOrgErrorMessage("6");
         verifyEmailContainsNullifiedOrgError("6");
@@ -122,6 +123,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(1);
         stopSMTP();
         verifyAccrualCollectionRecordHasNullifiedOrgErrorMessage("CTGOVDUPE");
         verifyEmailContainsNullifiedOrgError("CTGOVDUPE");
@@ -144,6 +146,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(1);
         stopSMTP();
 
         String error = getLatestAccrualCollectionMessage();
@@ -178,6 +181,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(1);
         stopSMTP();
 
         String error = getLatestAccrualCollectionMessage();
@@ -221,6 +225,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(1);
         stopSMTP();
 
         assertEquals(1, server.getReceivedEmailSize());
@@ -260,6 +265,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(1);
         stopSMTP();
         assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
@@ -599,6 +605,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(zip);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(2);
         stopSMTP();
 
         assertEquals(2, server.getReceivedEmailSize());
@@ -645,6 +652,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(1);
         stopSMTP();
 
         String error = getLatestAccrualCollectionMessage();
@@ -750,6 +758,7 @@ public class BatchUploadTest extends AbstractRestServiceTest {
         restartEmailServer();
         submitBatchFile(batchFile);
         pause(BATCH_PROCESSING_WAIT_TIME);
+        waitForEmailsToArrive(1);
         stopSMTP();
 
         String error = getLatestAccrualCollectionMessage();
