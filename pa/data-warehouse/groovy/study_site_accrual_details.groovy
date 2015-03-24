@@ -3,6 +3,7 @@ def sql = """
     SELECT
        soi.extension AS nci_id,
        co.name AS country,
+       pat.birth_date AS birth_date,
        ssub.date_last_created AS date_last_created,
        ssub.date_last_created AS date_last_updated,
        delete_reason AS deletion_reason,
@@ -19,7 +20,11 @@ def sql = """
        ssub.user_last_updated_id,
        dis.disease_code,
        dis.code_system,
-       dis.preferred_name
+       dis.preferred_name,
+       ssub.disease_identifier,
+       ssub.site_disease_identifier,
+       ssub.submission_type,
+       pat.zip
     FROM study_subject ssub
     JOIN study_protocol sp ON (ssub.study_protocol_identifier = sp.identifier)
     JOIN study_otheridentifiers soi ON (sp.identifier = soi.study_protocol_id)
@@ -41,6 +46,7 @@ sourceConnection.eachRow(sql) { row ->
     ssad.add(
         nci_id: row.nci_id,
         country : row.country,
+        birth_date : row.birth_date,
         date_last_created : row.date_last_created,
         date_last_updated : row.date_last_updated,
         deletion_reason : row.deletion_reason,
@@ -57,15 +63,19 @@ sourceConnection.eachRow(sql) { row ->
         user_last_updated_id : row.user_last_updated_id,
         disease_code : row.disease_code,
         code_system : row.code_system,
-        preferred_name : row.preferred_name
+        preferred_name : row.preferred_name,
+        disease_identifier : row.disease_identifier,
+        site_disease_identifier : row.site_disease_identifier,
+        submission_type : row.submission_type,
+        zip : row.zip
     )};
     
 destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
-                                 SET user_name_last_created = us.name 
+                                 SET user_name_last_created = us.name,  user_email_last_created = us.email 
                                  FROM stg_dw_user us where ssad.user_last_created_id = us.csm_user_id""");
    
 destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
-                                 SET user_name_last_updated = us.name 
+                                 SET user_name_last_updated = us.name, user_email_last_updated = us.email 
                                  FROM stg_dw_user us where ssad.user_last_updated_id = us.csm_user_id""");
    
 destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad
