@@ -33,7 +33,7 @@
 
 	<!-- Maven comamnd line arguments, bda profile is inside profiles.xml that 
 		gets copied to ear folder before build to override exiting properties -->
-	<property name="po.maven.profile.list" value="local,bda" />
+	<property name="po.maven.profile.list" value="local,bda,quick" />
 	<property name="po.maven.goal.list" value="clean install" />
 
 	<!-- Distribution Structure properties, used to copy files into the distribution 
