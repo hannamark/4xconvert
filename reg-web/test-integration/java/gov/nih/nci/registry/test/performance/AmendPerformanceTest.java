@@ -27,8 +27,9 @@ public class AmendPerformanceTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testAmendPerformanceOnTrialsWithManySites() throws Exception {
-        amendAndCheckPerformance("NCI-2011-02050");
         amendAndCheckPerformance("NCI-2009-00702");
+        amendAndCheckPerformance("NCI-2011-02050");
+
     }
 
     /**
@@ -48,6 +49,14 @@ public class AmendPerformanceTest extends AbstractRegistrySeleniumTest {
         populateAmendmentNumber();
         populateDocuments();
         clickAndWait("xpath=//button[text()='Review Trial']");
+
+        try {
+            waitForElementToBecomeVisible(By.id("dialog-opensites"), 15);
+            s.click("//div[@aria-labelledby='ui-dialog-title-dialog-opensites']//span[text()='Proceed']");
+        } catch (Exception e) {
+            System.out.println("dialog-opensites did not show up.");
+        }
+
         waitForElementById("reviewTrialForm", 30);
 
         final Date start = new Date();
