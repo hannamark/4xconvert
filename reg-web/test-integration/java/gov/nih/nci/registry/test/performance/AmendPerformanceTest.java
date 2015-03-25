@@ -3,10 +3,11 @@
  */
 package gov.nih.nci.registry.test.performance;
 
+import gov.nih.nci.registry.test.integration.AbstractRegistrySeleniumTest;
+
 import java.io.File;
 import java.net.URISyntaxException;
-
-import gov.nih.nci.registry.test.integration.AbstractRegistrySeleniumTest;
+import java.util.Date;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -26,23 +27,51 @@ public class AmendPerformanceTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testAmendPerformanceOnTrialsWithManySites() throws Exception {
+        amendAndCheckPerformance("NCI-2011-02050");
+        amendAndCheckPerformance("NCI-2009-00702");
+    }
+
+    /**
+     * @param nciID
+     * @throws URISyntaxException
+     */
+    @SuppressWarnings("deprecation")
+    private void amendAndCheckPerformance(final String nciID)
+            throws URISyntaxException {
+        logoutUser();
         loginAsSubmitter();
         handleDisclaimer(true);
-        final String nciID = "NCI-2011-02050";
+
         searchForTrialByNciID(nciID);
         selectAction("Amend");
 
         populateAmendmentNumber();
         populateDocuments();
         clickAndWait("xpath=//button[text()='Review Trial']");
-        waitForElementById("reviewTrialForm", 10);
+        waitForElementById("reviewTrialForm", 30);
 
+        final Date start = new Date();
+        System.out.println("Timestamp prior to submitting an amendment of "
+                + nciID + ": " + start);
         driver.findElement(By.xpath("//button[text()='Submit']")).click();
         selenium.waitForPageToLoad(toMillisecondsString(60 * 10));
-
         assertTrue(selenium
                 .isTextPresent("The amendment to trial with the NCI Identifier "
                         + nciID + " was successfully submitted."));
+        final Date end = new Date();
+        System.out.println("Timestamp after submitting an amendment of "
+                + nciID + ": " + end);
+
+        long diff = end.getTime() - start.getTime();
+        final String durationString = "Duration: " + (diff / 1000L)
+                + " seconds or " + (diff / 1000D / 60D) + " minutes.";
+        System.out.println(durationString);
+
+        assertTrue(
+                "Amendment operation for "
+                        + nciID
+                        + " did not complete within 5 minutes, which is the timeout hard-coded in JBoss. "
+                        + durationString, diff <= 1000 * 60 * 5L);
     }
 
     /**
@@ -51,10 +80,7 @@ public class AmendPerformanceTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     protected void populateAmendmentNumber() {
         s.type("trialDTO.localAmendmentNumber", "1");
-        s.click("xpath=//span[@class='add-on btn-default' and preceding-sibling::input[@id='trialDTO.amendmentDate']]");
-        clickOnFirstVisible(By.xpath("//td[@class='day active']"));
-        clickOnFirstVisible(By
-                .xpath("//div[@class='datepicker']/button[@class='close']"));
+        s.type("trialDTO.amendmentDate", today);
     }
 
     /**
