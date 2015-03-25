@@ -225,11 +225,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
                 String docPath = PAUtil.getDocumentFilePath(IiConverter.convertToLong(docDTO.getIdentifier()),
                         StConverter.convertToString(docDTO.getFileName()), nciIdentifier);
                 File downloadFile = new File(docPath);
-                if (Boolean.valueOf(System.getProperty("ctrp.env.ci"))
-                        && !downloadFile.exists()) {
-                    downloadFile.getParentFile().mkdirs();
-                    FileUtils.writeStringToFile(downloadFile, "");
-                }
+                createFileIfNeedBe(downloadFile);
                 final FileInputStream stream = FileUtils.openInputStream(downloadFile);
                 docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(stream)));
                 IOUtils.closeQuietly(stream);
@@ -240,6 +236,18 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
             }
         }
         return docDTO;
+    }
+
+    /**
+     * @param file
+     * @throws IOException
+     */
+    private void createFileIfNeedBe(File file) throws IOException {
+        if (Boolean.valueOf(System.getProperty("ctrp.env.ci"))
+                && !file.exists()) {
+            file.getParentFile().mkdirs();
+            FileUtils.writeStringToFile(file, " ");
+        }
     }
 
     /**
@@ -306,7 +314,9 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
                 toName = PAUtil.getDocumentFilePath(Long.valueOf(toIi.getExtension()),
                         doc.getFileName(), nciIdentifier);
                 try {
-                    FileUtils.copyFile(new File(fromName), new File(toName));
+                    final File fromFile = new File(fromName);
+                    createFileIfNeedBe(fromFile);
+                    FileUtils.copyFile(fromFile, new File(toName));
                 } catch (IOException e) {
                     throw new PAException("Error while copy file from " + fromName + " to " + toName, e);
                 }

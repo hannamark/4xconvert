@@ -243,9 +243,9 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
         if (isUploadEnabled()) {
             LOG.info("Nightly CT.Gov FTP Upload kicked off.");
             try {
+                final URL ftpURL = new URL(PaEarPropertyReader.getCTGovFtpURL());
                 List<Ii> trialIDs = getTrialIdsForUpload();
-                LOG.info("Got " + trialIDs.size() + " trials to upload.");
-                URL ftpURL = new URL(PaEarPropertyReader.getCTGovFtpURL());
+                LOG.info("Got " + trialIDs.size() + " trials to upload.");                
                 LOG.info("CT.Gov FTP is " + hidePassword(ftpURL));
                 if (CollectionUtils.isNotEmpty(trialIDs)) {
                     uploadToCTGov(trialIDs, ftpURL);
