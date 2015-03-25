@@ -20,9 +20,11 @@ public class AmendPerformanceTest extends AbstractRegistrySeleniumTest {
      *             on error
      */
     @Test
-    public void testLogin() throws Exception {
-        loginAndAcceptDisclaimer();
-        isLoggedIn();
+    public void testAmendPerformanceOnTrialsWithManySites() throws Exception {
+        loginAsSubmitter();
+        handleDisclaimer(true);
+        searchForTrialByNciID("NCI-2011-02050");
+        selectAction("Amend");
     }
 
 }
