@@ -120,7 +120,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      * @throws PAException on error
      */
     @Override
-    @SuppressWarnings({ "PMD.ExcessiveMethodLength", "unchecked" })
+    @SuppressWarnings("PMD.ExcessiveMethodLength")
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         session.flush();        
@@ -133,11 +133,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         try {
             PaHibernateUtil.disableAudit();
             for (StudySite site : studySites) {
-                // PO-8679: next line was ruining performance.
-                // List<StudySiteContact> contacts = new ArrayList<StudySiteContact>(site.getStudySiteContacts());
-                List<StudySiteContact> contacts = session
-                        .createQuery("from StudySiteContact where studySite.id="
-                                + site.getId()).list();
+                List<StudySiteContact> contacts = new ArrayList<StudySiteContact>(site.getStudySiteContacts());
                 List<StudySiteAccrualStatus> accrualStatuses = new ArrayList<StudySiteAccrualStatus>(
                         site.getStudySiteAccrualStatuses());
                 session.evict(site);
