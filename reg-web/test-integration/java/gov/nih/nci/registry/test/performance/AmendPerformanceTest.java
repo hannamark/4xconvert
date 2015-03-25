@@ -37,8 +37,9 @@ public class AmendPerformanceTest extends AbstractRegistrySeleniumTest {
         clickAndWait("xpath=//button[text()='Review Trial']");
         waitForElementById("reviewTrialForm", 10);
 
-        clickAndWait("xpath=//button[text()='Submit']");
-        waitForPageToLoad();
+        driver.findElement(By.xpath("//button[text()='Submit']")).click();
+        selenium.waitForPageToLoad(toMillisecondsString(60 * 10));
+
         assertTrue(selenium
                 .isTextPresent("The amendment to trial with the NCI Identifier "
                         + nciID + " was successfully submitted."));
