@@ -243,7 +243,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
     /**
      * @throws URISyntaxException
      */
-    private void populateDocuments() throws URISyntaxException {
+    protected void populateDocuments() throws URISyntaxException {
         // Add Protocol and IRB Document
         String protocolDocPath = (new File(ClassLoader.getSystemResource(
                 PROTOCOL_DOCUMENT).toURI()).toString());
