@@ -316,7 +316,8 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         try {
             session = PaHibernateUtil.getCurrentSession();
             Date today = new Date();
-            User user = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()); 
+            User user = CSMUserService.getInstance().getCSMUserFromCache(
+                    UsernameHolder.getUser()); 
             if (ISOUtil.isIiNull(dto.getIdentifier())) {
                 bo = convertFromDtoToDomain(dto);
                 

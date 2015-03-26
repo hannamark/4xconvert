@@ -129,8 +129,21 @@ public class CorrelationUtils {
      * @return StucturalRole class for an corresponding iso ii
      * @throws PAException on error
      */
-    public <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi) throws PAException {
+    public <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi)
+            throws PAException {
+        T sr = findRoleByIi(isoIi);
+        PaHibernateUtil.getCurrentSession().flush();
+        return sr;
+    }
 
+    /**
+     * @param isoIi
+     * @return
+     * @throws PAException
+     * @throws HibernateException
+     */
+    private <T extends StructuralRole> T findRoleByIi(Ii isoIi)
+            throws PAException {
         StringBuffer hql = new StringBuffer("select role from ").append(getObjectName(isoIi))
             .append(" role where role.identifier = '" + isoIi.getExtension() + "'");
         Session session = PaHibernateUtil.getCurrentSession();
@@ -144,7 +157,6 @@ public class CorrelationUtils {
         if (!queryList.isEmpty()) {
             sr = queryList.get(0);
         }
-        session.flush();
         return sr;
     }
 
@@ -183,7 +195,7 @@ public class CorrelationUtils {
                 sr = (StructuralRole) PaHibernateUtil.getCurrentSession().get(srClass,
                         Long.parseLong(srIi.getExtension()));
             } else {
-                sr = getStructuralRoleByIi(srIi);
+                sr = findRoleByIi(srIi);
             }
         }
         return sr;

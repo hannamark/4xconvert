@@ -245,4 +245,9 @@ public class MockCSMUserService implements CSMUserUtil {
     public Map<Long, String> getSuperAbstractors() throws PAException {        
         return getAbstractors();
     }
+
+    @Override
+    public User getCSMUserFromCache(String loginName) throws PAException {       
+        return getCSMUser(loginName);
+    }
 }

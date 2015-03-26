@@ -136,6 +136,15 @@ public interface CSMUserUtil {
      */
     
     User getCSMUser(String loginName) throws PAException;
+    
+    /**
+     * Retrieve an existing CSM user checking cache first.
+     *
+     * @param loginName loginName
+     * @return user
+     * @throws PAException PAException
+     */    
+    User getCSMUserFromCache(String loginName) throws PAException;
 
     /**
      * Retrieves an existing CSM user by id.

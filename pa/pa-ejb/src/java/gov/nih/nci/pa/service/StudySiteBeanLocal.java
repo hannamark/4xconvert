@@ -278,6 +278,21 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     private void enforceNoDuplicate(StudySiteDTO dto) throws PAException {
         String newOrgId = getOrganizationId(dto);
         String newFunction = getFunctionalCode(dto);
+        if (!ISOUtil.isIiNull(dto.getIdentifier())
+                && CdConverter.convertCdToEnum(StudySiteFunctionalCode.class,
+                        dto.getFunctionalCode()) == StudySiteFunctionalCode.TREATING_SITE) {
+            // PO-8353: when we are updating an existing participating site, we
+            // can skip this validation method
+            // altogether to avoid the following 'getByStudyProtocol' call from
+            // being made in a loop.
+            // In CTRP, there is no option to change a participating site from
+            // one org to a different one:
+            // a new site would have to be created.
+            // Either way, there is a database constraint that will prevent a
+            // duplicate treating site existence
+            // in any case.
+            return;
+        }
         List<StudySiteDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
         for (StudySiteDTO sp : spList) {
             boolean sameSite = IiConverter.convertToLong(sp.getIdentifier())
@@ -329,8 +344,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             + "'" + " and dws.statusCode  <> '" + DocumentWorkflowStatusCode.REJECTED + "'" + " and sp.statusCode ='"
             + ActStatusCode.ACTIVE + "'" + " and ( dws.id in (select max(id) from DocumentWorkflowStatus as dws1 "
             + "  where dws.studyProtocol = dws1.studyProtocol ) or dws.id is null ) " + " and ro.id = :orgIdentifier";
-
-        LOG.info("query study_Site = " + hql + ".  ");
+        
         // step 2: construct query object
         query = session.createQuery(hql);
         query.setParameter("localStudyProtocolIdentifier",

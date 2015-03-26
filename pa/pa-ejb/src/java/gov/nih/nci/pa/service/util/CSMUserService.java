@@ -82,6 +82,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -252,6 +253,22 @@ public class CSMUserService implements CSMUserUtil {
         }
 
         return csmUser;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final User getCSMUserFromCache(final String loginName)
+            throws PAException {
+        return StringUtils.isBlank(loginName) ? null : (User) CacheUtils
+                .getFromCacheOrBackend(CacheUtils.getUserByLoginCache(),
+                        loginName, new CacheUtils.Closure() {
+                            @Override
+                            public Object execute() throws PAException {
+                                return getCSMUser(loginName);
+                            }
+                        });
     }
 
     /**

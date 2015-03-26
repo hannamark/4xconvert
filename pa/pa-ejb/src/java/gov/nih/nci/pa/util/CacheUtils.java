@@ -27,6 +27,16 @@ public final class CacheUtils {
     private static final String ORGANIZATIONS_FAMILY_CACHE_KEY = "ORGANIZATION_FAMILY_CACHE";
     private static final String PA_PROPS_CACHE_KEY = "PA_PROPS_CACHE";
     private static final String STATUS_RULES_CACHE_KEY = "STATUS_RULES_CACHE";
+    private static final String USER_BY_LOGIN_CACHE_KEY = "USER_BY_LOGIN_CACHE";
+    
+    /**
+     * Cache used for storing {@link User} objects by login names.
+     * 
+     * @return Cache
+     */
+    public static Cache getUserByLoginCache() {
+        return CACHE_MANAGER.getCache(USER_BY_LOGIN_CACHE_KEY);
+    }
 
     /**
      * Cache used for storing criteria's referenced collections, usually Lead
