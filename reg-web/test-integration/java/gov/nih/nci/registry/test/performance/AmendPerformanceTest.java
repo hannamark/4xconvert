@@ -7,6 +7,7 @@ import gov.nih.nci.registry.test.integration.AbstractRegistrySeleniumTest;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.junit.Test;
@@ -27,6 +28,7 @@ public class AmendPerformanceTest extends AbstractRegistrySeleniumTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testAmendPerformanceOnTrialsWithManySites() throws Exception {
+        amendAndCheckPerformance("NCI-2011-01123");
         amendAndCheckPerformance("NCI-2009-00702");
         amendAndCheckPerformance("NCI-2011-02050");
 
@@ -35,18 +37,30 @@ public class AmendPerformanceTest extends AbstractRegistrySeleniumTest {
     /**
      * @param nciID
      * @throws URISyntaxException
+     * @throws SQLException
      */
     @SuppressWarnings("deprecation")
     private void amendAndCheckPerformance(final String nciID)
-            throws URISyntaxException {
+            throws URISyntaxException, SQLException {
+        try {
+            assignTrialOwner("submitter-ci", getTrialIdByNciId(nciID)
+                    .longValue());
+        } catch (Exception e1) {
+            System.out.println("submitter-ci already owns " + nciID);
+        }
+
         logoutUser();
         loginAsSubmitter();
         handleDisclaimer(true);
-
         searchForTrialByNciID(nciID);
         selectAction("Amend");
 
         populateAmendmentNumber();
+        try {
+            deleteStatus(3);
+        } catch (Exception e1) {
+            System.out.println("Status history is all set.");
+        }
         populateDocuments();
         clickAndWait("xpath=//button[text()='Review Trial']");
 
