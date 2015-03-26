@@ -11,7 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { AmendPerformanceTest.class })
+@SuiteClasses(value = { UpdateAndAmendPerformanceTest.class })
 public class AllPerformanceTests {
 
 }
