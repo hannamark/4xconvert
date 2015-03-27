@@ -5,11 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,17 +22,38 @@ import org.junit.Test;
  * @author Gopalakrishnan Unnikrishnan
  *
  */
-public class NCItTermsLookupTest {
+public class NCItTermsLookupTest  {
 
     NCItTermsLookup lookup;
+    public static final int NCIT_API_MOCK_PORT = (int) (50000+Math.random()*1000);
+    private String lexEVSURL = null;
+    private String lexApiURL = null;
+    LookUpTableServiceRemote lookUpTableSrv = mock(LookUpTableServiceRemote.class);
+    MockNCITServer mockNCITServer = new MockNCITServer();
 
     @Before
     public void setUp() throws Exception {
+        
+        lexEVSURL ="http://localhost:"+ NCIT_API_MOCK_PORT + "/lexEVSAPI/";
+        lexApiURL ="http://localhost:"+ NCIT_API_MOCK_PORT + "/lexApiURL/"
+        +"{CODE}";
+    
+        
+        when(lookUpTableSrv.getPropertyValue("ctrp.lexEVSURL")).thenReturn(lexEVSURL);
+        when(lookUpTableSrv.getPropertyValue("ctrp.lexAPIURL")).thenReturn(lexApiURL);
+        
+        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        when(PaRegistry.getLookUpTableService()).thenReturn(lookUpTableSrv);
+        
         lookup = new NCItTermsLookup();
+         mockNCITServer.startServer( NCIT_API_MOCK_PORT);
+        
     }
 
     @After
     public void tearDown() throws Exception {
+        mockNCITServer.stopServer();
     }
 
     @Test

@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.dto.InterventionWebDTO;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -22,6 +23,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,8 +41,32 @@ public class NCItTermsLookup {
     private static final String ELEMENT_NAME_FIELD = "field";
     private static final String ATTR_NAME_NAME = "name";
     private static final String ELEMENT_NAME_CLASS = "class";
-
+    private static final Logger LOG = Logger.getLogger(NCItTermsLookup.class);
     
+    private String lexEVSURL = "http://lexevscts2.nci.nih.gov/lexevscts2/codesystem/NCI_Thesaurus/entity/";
+    private String lexAPIURL = "http://lexevsapi61.nci.nih.gov/lexevsapi61/GetXML?query=Entity[@_entityCode={CODE}]";
+    
+    /**
+     * init url values from properties if present
+     */
+    public NCItTermsLookup() {
+        LookUpTableServiceRemote lookUpTableService;
+        lookUpTableService = PaRegistry.getLookUpTableService();
+        String lexEVSURLStr = null;
+        String lexAPIURLStr = null;
+        try {
+            lexEVSURLStr = lookUpTableService.getPropertyValue("ctrp.lexEVSURL");
+            lexAPIURLStr = lookUpTableService.getPropertyValue("ctrp.lexAPIURL");       
+        } catch (Exception e) {
+          LOG.info("NCIT properties not found in DB hence taking hard coded values");
+        }
+        if (lexEVSURLStr != null) {
+            lexEVSURL = lexEVSURLStr;
+        }
+        if (lexAPIURLStr != null) {
+            lexAPIURL = lexAPIURLStr;
+        }
+    }
     /**
      * NCI Term
      * 
@@ -50,8 +76,7 @@ public class NCItTermsLookup {
     private static class NCItTerm {
         private String ncitCode; 
         private String preferredName;
-        
-        private List<NCItTerm> parentTerms = new ArrayList<NCItTerm>(); //NOPMD
+          private List<NCItTerm> parentTerms = new ArrayList<NCItTerm>(); //NOPMD
         private List<NCItTermAlterName> alterNames = new ArrayList<NCItTermsLookup.NCItTermAlterName>();
         
     }
@@ -88,18 +113,7 @@ public class NCItTermsLookup {
         }
        
     }
-
-    /**
-     *  LEXEVS CTS REST service URL
-     */
-    public static final String LEXVSCTSURL =
-            "http://lexevscts2.nci.nih.gov/lexevscts2/codesystem/NCI_Thesaurus/entity/";
-    /**
-     * LEXEVS API XML service URL
-     */
-    public static final String LEXEVSAPIURL =
-            "http://lexevsapi61.nci.nih.gov/lexevsapi61/GetXML?query=Entity[@_entityCode={CODE}]";
-
+   
     /**
      * Lookup for disease by NCIt Code in NCI Thesaurus
      * 
@@ -182,7 +196,7 @@ public class NCItTermsLookup {
      */
     private NCItTerm retrieveNCItDiseaseTermViaLexEVSCTS(String ncitCode, boolean getParent) 
             throws LEXEVSLookupException {
-        Element termEl = invokeWebService(LEXVSCTSURL + ncitCode);
+        Element termEl = invokeWebService(lexEVSURL + ncitCode);
         
         if (termEl == null) { // Term not found
             return null;
@@ -245,7 +259,7 @@ public class NCItTermsLookup {
 
         List<NCItTerm> children = new ArrayList<NCItTerm>();
 
-        Element termEl = invokeWebService(LEXVSCTSURL + ncitCode + "/children");
+        Element termEl = invokeWebService(lexEVSURL + ncitCode + "/children");
         if (termEl == null) {
             return children;
         }
@@ -286,7 +300,7 @@ public class NCItTermsLookup {
      */
     private NCItTerm retrieveNCItTermViaLexEVS(String ncitCode) throws LEXEVSLookupException {
         
-        Element termEl = invokeWebService(LEXEVSAPIURL.replace("{CODE}", ncitCode));
+        Element termEl = invokeWebService(lexAPIURL.replace("{CODE}", ncitCode));
         
         if (termEl == null) {
             return null;
