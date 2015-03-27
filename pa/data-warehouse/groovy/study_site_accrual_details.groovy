@@ -24,7 +24,8 @@ def sql = """
        ssub.disease_identifier,
        ssub.site_disease_identifier,
        ssub.submission_type,
-       pat.zip
+       pat.zip,
+       ssub.identifier as subject_identifier
     FROM study_subject ssub
     JOIN study_protocol sp ON (ssub.study_protocol_identifier = sp.identifier)
     JOIN study_otheridentifiers soi ON (sp.identifier = soi.study_protocol_id)
@@ -67,7 +68,8 @@ sourceConnection.eachRow(sql) { row ->
         disease_identifier : row.disease_identifier,
         site_disease_identifier : row.site_disease_identifier,
         submission_type : row.submission_type,
-        zip : row.zip
+        zip : row.zip,
+        subject_identifier : row.subject_identifier
     )};
     
 destinationConnection.execute("""UPDATE stg_dw_study_site_accrual_details ssad

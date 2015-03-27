@@ -25,6 +25,7 @@ CREATE TABLE stg_dw_study_site_accrual_details (
     site_disease_identifier bigint,
     status character varying(200),
     study_subject_id character varying(200),
+    subject_identifier integer,
     submission_type character varying(200),
     user_name_last_created character varying(500),
     user_name_last_updated character varying(500),
