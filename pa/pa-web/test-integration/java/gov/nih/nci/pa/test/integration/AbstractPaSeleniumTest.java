@@ -262,7 +262,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
             throws InterruptedException {
         long stamp = System.currentTimeMillis();
         while (server.getReceivedEmailSize() < numberOfEmailsToWaitFor
-                && System.currentTimeMillis() - stamp < 1000 * 20) {
+                && System.currentTimeMillis() - stamp < 1000 * 40) {
             Thread.sleep(500);
         }
         assertEquals(numberOfEmailsToWaitFor, server.getReceivedEmailSize());
