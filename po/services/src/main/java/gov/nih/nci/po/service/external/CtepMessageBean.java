@@ -88,8 +88,11 @@ import gov.nih.nci.po.data.bo.CtepJMSLogRecord;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.EmailLogger;
 import gov.nih.nci.po.util.PoHibernateUtil;
+
 import org.apache.commons.digester.Digester;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
@@ -100,6 +103,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.Date;
@@ -228,7 +232,10 @@ public class CtepMessageBean implements MessageListener {
         handleInvalidStateException(err, sb);
         EmailLogger.LOG.error(sb.toString(), err);
         LOG.error(sb.toString(), err);
+        storeProcessingError(msg, sb.toString(), err);
     }
+
+    
 
     private void handleInvalidStateException(Exception err, StringBuffer sb) {
         if (err instanceof SAXException && ((SAXException) err).getException() != null
@@ -252,6 +259,24 @@ public class CtepMessageBean implements MessageListener {
             processMessage((TextMessage) msg);
         } else {
             logError(String.format("Unsuported Message Type %s", msg.getClass().toString()), msg, null);
+        }
+    }
+    
+    private void storeProcessingError(Message msg, String errDescr,
+            Exception err) {
+        PoHibernateUtil.getHibernateHelper().openAndBindSession();
+        try {
+            CtepJMSLogRecord jmsLogRec = (CtepJMSLogRecord) PoHibernateUtil
+                    .getCurrentSession().get(CtepJMSLogRecord.class,
+                            msg.getJMSMessageID());
+            jmsLogRec.setProcessingErrors(errDescr + SystemUtils.LINE_SEPARATOR
+                    + ExceptionUtils.getFullStackTrace(err));
+            PoHibernateUtil.getCurrentSession().save(jmsLogRec);
+            PoHibernateUtil.getCurrentSession().flush();
+        } catch (Exception e) {
+            LOG.error(e);
+        } finally {
+            PoHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
     }
 

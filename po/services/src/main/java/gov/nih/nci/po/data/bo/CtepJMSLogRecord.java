@@ -11,12 +11,12 @@ import java.util.Date;
  */
 
 @Entity
-@org.hibernate.annotations.Entity(mutable = false)
 public class CtepJMSLogRecord {
 
     private String messageId;
     private String ctepJmsMsg;
     private Date createdDate;
+    private String processingErrors;
 
     /**
      * For unit tests only.
@@ -83,6 +83,21 @@ public class CtepJMSLogRecord {
      */
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    /**
+     * @return the processingErrors
+     */
+    @Column(name = "processing_errors")
+    public String getProcessingErrors() {
+        return processingErrors;
+    }
+
+    /**
+     * @param processingErrors the processingErrors to set
+     */
+    public void setProcessingErrors(String processingErrors) {
+        this.processingErrors = processingErrors;
     }
 
 }
