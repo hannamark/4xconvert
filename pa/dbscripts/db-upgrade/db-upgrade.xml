@@ -1754,4 +1754,8 @@
         <comment>Update a property in pa_properties</comment>
         <sqlFile path="@db-upgrade.run.dir@/4.2/PO-8655.sql"/>
      </changeSet>
+     <changeSet id="PO-8438" author="krylovd">
+        <comment>Added tables for logging emails.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/4.2.1/PO-8438.sql"/>
+     </changeSet>     
 </databaseChangeLog>

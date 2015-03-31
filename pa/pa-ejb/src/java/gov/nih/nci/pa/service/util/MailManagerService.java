@@ -93,6 +93,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.internet.MimeMessage;
+
 /**
  * @author Bala Nair
  * @since 04/14/2009
@@ -434,4 +436,12 @@ public interface MailManagerService {
      * @param dataForEmail SiteStatusChangeNotificationData
      */
     void sendSiteCloseNotification(SiteStatusChangeNotificationData dataForEmail);
+    
+    /**
+     * Generic send method. Just sends the given message using Transport.
+     * 
+     * @param message
+     *            MimeMessage
+     */
+    void send(MimeMessage message);
 }

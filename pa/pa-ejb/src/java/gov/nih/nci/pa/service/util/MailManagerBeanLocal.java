@@ -91,11 +91,14 @@ import freemarker.template.TemplateExceptionHandler;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.CTGovImportLog;
+import gov.nih.nci.pa.domain.EmailAttachment;
+import gov.nih.nci.pa.domain.EmailLog;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.OpOutcomeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
@@ -155,8 +158,11 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -174,12 +180,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.apache.xml.serialize.LineSeparator;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.hibernate.ConnectionReleaseMode;
+import org.hibernate.engine.SessionFactoryImplementor;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -257,6 +267,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
     private StudySiteServiceLocal studySiteService;
     
     private final ExecutorService mailDeliveryExecutor = Executors
+            .newSingleThreadExecutor();
+    private final ExecutorService mailLogExecutor = Executors
             .newSingleThreadExecutor();
     
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
@@ -516,22 +528,111 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         }
     }
 
-    private void invokeTransportAsync(final MimeMessage message, final File[] postDeletes) {
+    private void invokeTransportAsync(final MimeMessage message,
+            final File[] postDeletes) {
         mailDeliveryExecutor.submit(new Runnable() {
             @Override
             public void run() {
                 try {
                     Transport.send(message);
+                    logEmail(message, null, postDeletes);
+                } catch (Exception e) {
+                    LOG.error(SEND_MAIL_ERROR, e);
+                    logEmail(message, e, postDeletes);
+                }
+            }
+        });
+    }
+    
+    @Override
+    public void send(MimeMessage message) {
+        invokeTransportAsync(message, null);
+    }
+
+    private void logEmail(final MimeMessage message, final Throwable error,
+            final File[] postDeletes) {
+        mailLogExecutor.submit(new Runnable() {
+            @Override
+            public void run() {
+                org.hibernate.classic.Session currentSession = null;
+                try {
+                    SessionFactoryImplementor sessionFactoryImplementor = (SessionFactoryImplementor) PaHibernateUtil
+                            .getHibernateHelper().getSessionFactory();
+                    currentSession = sessionFactoryImplementor.openSession(
+                            null, true, false,
+                            ConnectionReleaseMode.AFTER_STATEMENT);
+                    currentSession.save(convertToEmailLog(message, error));
+                    currentSession.flush();
+                } catch (Exception e) {
+                    LOG.error(e, e);
+                } finally {
+                    if (currentSession != null) {
+                        currentSession.close();
+                    }
                     if (postDeletes != null) {
                         for (File file : postDeletes) {
                             file.delete();
                         }
                     }
-                } catch (Exception e) {
-                    LOG.error(SEND_MAIL_ERROR, e);
+
                 }
             }
         });
+    }
+
+
+    private EmailLog convertToEmailLog(final MimeMessage message,
+            final Throwable error) throws MessagingException, IOException {
+        EmailLog e = new EmailLog();
+        e.setDateSent(new Date());
+        e.setOutcome(error != null ? OpOutcomeCode.FAILURE
+                : OpOutcomeCode.SUCCESS);
+        e.setErrors(ExceptionUtils.getFullStackTrace(error));
+        e.setSender(toStr(message.getFrom()));
+        e.setRecipient(toStr(message.getRecipients(RecipientType.TO)));
+        e.setCc(toStr(message.getRecipients(RecipientType.CC)));
+        e.setBcc(toStr(message.getRecipients(RecipientType.BCC)));
+        e.setSubject(message.getSubject());
+
+        Object body = message.getContent();
+        if (body instanceof Multipart) {
+            Multipart multipart = (Multipart) body;
+            for (int i = 0; i < multipart.getCount(); i++) {
+                BodyPart part = multipart.getBodyPart(i);
+                if (part.getContent() instanceof String
+                        && StringUtils.isBlank(part.getFileName())) {
+                    e.setBody(StringUtils.defaultString(e.getBody())
+                            + part.getContent().toString());
+                } else if (StringUtils.isNotBlank(part.getFileName())) {
+                    attach(e, part);
+                }
+            }
+        } else {
+            e.setBody(ObjectUtils.defaultIfNull(body, StringUtils.EMPTY)
+                    .toString());
+        }
+        return e;
+    }
+
+
+    private void attach(EmailLog email, BodyPart part)
+            throws MessagingException, IOException {
+        EmailAttachment attach = new EmailAttachment();        
+        attach.setFilename(part.getFileName());
+        attach.setData(IOUtils.toByteArray(part.getInputStream()));
+        email.getAttachments().add(attach);
+    }
+
+
+    private String toStr(Address[] addr) {
+        StringBuilder sb = new StringBuilder();
+        if (addr != null) {
+            for (Address a : addr) {
+                sb.append(a.toString());
+                sb.append(", ");
+            }
+        }
+        return sb.toString().replaceFirst(", $", "");
     }
 
     /**

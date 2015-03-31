@@ -104,6 +104,8 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.AccountCommonOrganization" />
         <mapping class="gov.nih.nci.pa.domain.AccrualOutOfScopeTrial" />
         <mapping class="gov.nih.nci.pa.domain.StudyProtocolFlag" />
+        <mapping class="gov.nih.nci.pa.domain.EmailAttachment" />
+        <mapping class="gov.nih.nci.pa.domain.EmailLog" />
 
         <!-- mapping classes for Accrual -->
         <mapping class="gov.nih.nci.pa.domain.Patient" />

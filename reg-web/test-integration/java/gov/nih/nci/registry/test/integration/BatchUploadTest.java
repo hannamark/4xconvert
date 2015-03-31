@@ -89,10 +89,10 @@ import java.text.ParseException;
 import java.util.Iterator;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
-
 
 import com.dumbster.smtp.SmtpMessage;
 
@@ -174,20 +174,36 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
 
     /**
      * @param server
+     * @throws SQLException
      */
     @SuppressWarnings("rawtypes")
-    private void verifyEmailSentByBatchProcessing() {
+    private void verifyEmailSentByBatchProcessing() throws SQLException {
         assertEquals(1, server.getReceivedEmailSize());
         Iterator emailIter = server.getReceivedEmail();
         SmtpMessage email = (SmtpMessage) emailIter.next();
-        System.out.println(email.getBody());
-        assertTrue(email
-                .getBody()
-                .replaceAll("(\\r|\\n)+", "")
-                .contains(
-                        "<td><b>Number of trials submitted: </b></td><td>1</td>"));
-        assertTrue(email
-                .getBody()
+        final String body = email.getBody();
+        System.out.println(body);
+        verifyBody(body);
+
+        // Ensure same info was written into email log table.
+        pause(3000);
+        QueryRunner runner = new QueryRunner();
+        String loggedBody = (String) runner
+                .query(connection,
+                        "SELECT body FROM email_log INNER JOIN email_attachment ON email_log.identifier=email_attachment.email_id "
+                                + "WHERE outcome='SUCCESS' "
+                                + "ORDER BY date_sent desc LIMIT 1",
+                        new ArrayHandler())[0];
+        verifyBody(loggedBody);
+    }
+
+    /**
+     * @param body
+     */
+    private void verifyBody(final String body) {
+        assertTrue(body.replaceAll("(\\r|\\n)+", "").contains(
+                "<td><b>Number of trials submitted: </b></td><td>1</td>"));
+        assertTrue(body
                 .replaceAll("(\\r|\\n)+", "")
                 .contains(
                         "<td><b>Number of trials registered successfully: </b></td><td>1</td>"));
@@ -202,7 +218,7 @@ public class BatchUploadTest extends AbstractRegistrySeleniumTest {
         while (server.getReceivedEmailSize() < 1
                 && System.currentTimeMillis() - stamp < 10 * 1000) {
             try {
-                Thread.sleep(200);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
             }
         }

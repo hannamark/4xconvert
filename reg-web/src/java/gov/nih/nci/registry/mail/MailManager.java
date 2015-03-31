@@ -98,7 +98,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -184,7 +183,7 @@ public class MailManager {
         try {
             MimeMessage message = prepareMessage(mailTo, subject);
             message.setText(mailBody);
-            Transport.send(message);
+            PaRegistry.getMailManagerService().send(message);  
         } catch (Exception e) {
             LOG.error("Send Mail error", e);
         }
@@ -243,7 +242,7 @@ public class MailManager {
             message.setContent(mp);
 
             message.setSentDate(new Date());
-            Transport.send(message);
+            PaRegistry.getMailManagerService().send(message);            
         } catch (Exception e) {
             LOG.error("Exception sending mail with attachment", e);
         }

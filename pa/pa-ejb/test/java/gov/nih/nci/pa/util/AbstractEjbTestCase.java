@@ -45,6 +45,7 @@ import org.junit.Before;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import org.springframework.util.ReflectionUtils;
 
+import com.dumbster.smtp.SimpleSmtpServer;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -56,7 +57,8 @@ import com.sun.net.httpserver.HttpServer;
  */
 public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
-    public static final int CTGOV_API_MOCK_PORT = (int) (51235+Math.random()*1000);
+    public static final int CTGOV_API_MOCK_PORT = (int) (51235 + Math.random() * 1000);
+    public static final int SMTP_PORT = (int) (51235 + Math.random() * 10000);
 
     private EjbFactory ejbFactory;
 
@@ -66,6 +68,8 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
     private String backupUsername;
 
     private HttpServer server;
+
+    protected SimpleSmtpServer smtp;
 
     @Before
     public final void setupEjbEnvironment() throws ClassNotFoundException,
@@ -81,11 +85,18 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         populateRegulatoryAuthorities();
         setCurrentUser();
         startNctApiMock();
+        startSMTP();
         setUpPaEarProperties();
-        
+
     }
-    
-    private void setUpPaEarProperties () throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+
+    private void startSMTP() {
+        smtp = SimpleSmtpServer.start(SMTP_PORT);
+
+    }
+
+    private void setUpPaEarProperties() throws NoSuchFieldException,
+            SecurityException, IllegalArgumentException, IllegalAccessException {
         File tempDir;
         tempDir = new File(SystemUtils.JAVA_IO_TMPDIR, UUID.randomUUID()
                 .toString());
@@ -95,6 +106,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         Properties earProps = (Properties) field.get(null);
         earProps.setProperty("doc.upload.path", tempDir.getAbsolutePath());
     }
+
     private void startNctApiMock() throws IOException {
         server = HttpServer.create(new InetSocketAddress(CTGOV_API_MOCK_PORT),
                 0);
@@ -141,20 +153,25 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         ra.setAuthorityName("Food and Drug Administration");
         ra.setCountry(c);
         s.save(ra);
-        
-        RegulatoryAuthority iIDMC= new RegulatoryAuthority();
+
+        RegulatoryAuthority iIDMC = new RegulatoryAuthority();
         iIDMC.setAuthorityName("IDMC");
         iIDMC.setCountry(c);
         s.save(iIDMC);
-        
+
         s.flush();
     }
 
     /**
      * @throws HibernateException
-     * @throws IOException 
+     * @throws IOException
      */
     private void populatePaProperties() throws HibernateException, IOException {
+        addPaProperty("smtp", "localhost");
+        addPaProperty("smtp.port", SMTP_PORT + "");
+        addPaProperty("log.email.address", "log@example.com");
+        addPaProperty("fromaddress", "from@example.com");
+
         addPaProperty("ctgov.api.getByNct", "http://localhost:"
                 + CTGOV_API_MOCK_PORT + "/ctgov?${nctid}");
         addPaProperty("ctgov.sync.import_persons", "true");
@@ -173,10 +190,13 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         addPaProperty("other.identifiers.row", "");
         addPaProperty("ctep.ccr.learOrgIds", "NCICCR");
         addPaProperty("allowed.regulatory.authorities.no.country.name", "IDMC");
-        
-        addPaProperty("closed_industrial_trial_statuses", "CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE, COMPLETE");
-        
-        String statusRulesStr = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("statusvalidations.json"));
+
+        addPaProperty(
+                "closed_industrial_trial_statuses",
+                "CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE, COMPLETE");
+
+        String statusRulesStr = IOUtils.toString(getClass().getClassLoader()
+                .getResourceAsStream("statusvalidations.json"));
         addPaProperty("status.rules", statusRulesStr);
 
     }
@@ -208,11 +228,20 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        stopSMTP();
         CSMUserService.setInstance(backupCsmService);
         PaRegistry.getInstance().setServiceLocator(backupPaServiceLocator);
         PoRegistry.getInstance().setPoServiceLocator(backupPoServiceLocator);
         UsernameHolder.setUserCaseSensitive(UsernameHolder.ANONYMOUS_USERNAME
                 .equals(backupUsername) ? null : backupUsername);
+    }
+
+    protected void stopSMTP() {
+        try {
+            smtp.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createCsmUsers() throws CSConfigurationException {
@@ -274,11 +303,11 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
     }
 
-    @SuppressWarnings("rawtypes")
-    public final Object getEjbBean(Class clazz) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public final <T> T getEjbBean(Class<T> clazz) {
         for (Object ejb : ejbFactory.getEjbs()) {
             if (ejb.getClass().equals(clazz)) {
-                return ejb;
+                return (T) ejb;
             }
         }
         throw new RuntimeException("EJB of type " + clazz + " is not found");
@@ -327,7 +356,7 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
                 .getClass());
         String jndiURL = "java:global/pa/pa-ejb/"
                 + ejb.getClass().getSimpleName() + "!"
-                + localOrRemoteInterface.getName();        
+                + localOrRemoteInterface.getName();
         contextBuilder.bind(jndiURL, ejb);
     }
 
