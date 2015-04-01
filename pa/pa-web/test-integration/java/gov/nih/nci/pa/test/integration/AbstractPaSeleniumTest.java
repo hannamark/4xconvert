@@ -159,7 +159,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     protected String yesterday = MONTH_DAY_YEAR_FMT.format(yesterdayDate);
 
     // SMTP
-    private static final int PORT = 51234;
+    private int PORT = randomPort();
+
     protected SimpleSmtpServer server;
 
     static {
@@ -192,10 +193,24 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }, 120000, 120000);
     }
 
+    /**
+     * @return
+     */
+    private int randomPort() {
+        return (int) (32768 + Math.random() * 32766);
+    }
+
     @Override
     public void setUp() throws Exception {
         setUpSelenium();
         openDbConnection();
+        startSMTP();
+    }
+
+    /**
+     * @throws SQLException
+     */
+    private void startSMTP() throws SQLException {
         new QueryRunner().update(connection, "update pa_properties set value='"
                 + PORT + "' where name='smtp.port'");
         server = SimpleSmtpServer.start(PORT);
@@ -209,7 +224,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setDriverClass(TestProperties.getDriverClass());
-        //super.setDriverClass(PHANTOM_JS_DRIVER);
+        // super.setDriverClass(PHANTOM_JS_DRIVER);
         System.setProperty("phantomjs.binary.path",
                 TestProperties.getPhantomJsPath());
         super.setUp();
@@ -231,9 +246,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         }
     }
 
-    public final void restartEmailServer() {
+    public final void restartEmailServer() throws SQLException {
         stopSMTP();
-        server = SimpleSmtpServer.start(PORT);
+        PORT = randomPort();
+        startSMTP();
     }
 
     @Override
