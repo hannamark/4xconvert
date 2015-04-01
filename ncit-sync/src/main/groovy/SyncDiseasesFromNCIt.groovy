@@ -12,6 +12,10 @@ public class SyncDiseasesFromNCIt{
 
   def sql;
 
+  public SyncDiseasesFromNCIt() {
+      restClient.getClient().getParams().setParameter("http.socket.timeout", new Integer(60000));
+  }
+  
 
   def checkifTermExistsInNcit(def ncitCode, url){
       boolean isValid =false;
@@ -203,20 +207,25 @@ public class SyncDiseasesFromNCIt{
     }
   }
   
+  def syncDiseaseParentChilds(ncitTerm, url) {
+      println "-- SYNCING disease term "+ncitTerm
+      insertOrUpdateTerm(ncitTerm, url)
+      println "-- Syncing parents of CTRP term "+ncitTerm
+       // Retrieve parent and children tree for the term
+      extractParentTree(ncitTerm , url)
+      println "-- Syncing children of CTRP term "+ncitTerm
+      extractChildTree(ncitTerm , url)
+  }
+  
   def performSync(ncitTerm, url) {
       
       boolean isExists = checkifTermExistsInNcit(ncitTerm, url);
       
       if(isExists) {
-         
-          println "-- SYNCING disease term "+ncitTerm
-          insertOrUpdateTerm(ncitTerm, url)
-          println "-- Syncing parents of CTRP term "+ncitTerm
-           // Retrieve parent and children tree for the term
-          extractParentTree(ncitTerm , url)
-          println "-- Syncing children of CTRP term "+ncitTerm
-          extractChildTree(ncitTerm , url)
-      }
+          RetryUtil.retry(5, 500){
+                syncDiseaseParentChilds(ncitTerm, url);
+          }
+       }
       else {
           println "The term "+ncitTerm+" does not exists in ncit hence not synced"
       }
@@ -235,13 +244,10 @@ public class SyncDiseasesFromNCIt{
     println "-- Syncing ${ctrpTerms.size()} CTRP Disease terms from NCIt..."
   
     String ncitTerm =null;
-    
-   
     ctrpTerms.each (){
-    
     ncitTerm= it.nt_term_identifier;
-    performSync(ncitTerm, url);
-      
+     performSync(ncitTerm, url);
+   
     }
     
     

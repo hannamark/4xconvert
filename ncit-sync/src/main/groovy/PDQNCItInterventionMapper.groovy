@@ -9,6 +9,12 @@ public class PDQNCItInterventionMapper{
   
   StringBuffer fileContents = new StringBuffer("BEGIN;");
   
+  public PDQNCItInterventionMapper() {
+      restClient.getClient().getParams().setParameter("http.socket.timeout", new Integer(60000));
+      lexEVSRestClient.getClient().getParams().setParameter("http.socket.timeout", new Integer(60000));
+  }
+  
+  
   def checkItTermsExists(String ncitCode , url) {
       boolean termExists = false;
       
@@ -34,7 +40,6 @@ public class PDQNCItInterventionMapper{
       def response =null
       response = lexEVSRestClient.get(uri: inverVentionSyncUrl)
       if (! response.success || response.status != 200) {
-      
       throw new RuntimeException("Failure from LexEVS: " + response.data.text)
     }
 
@@ -98,11 +103,7 @@ public class PDQNCItInterventionMapper{
       
     String preferredNameUrl = url +"/${ncitCode}?format=xml"
     def response = null
-    try{
-        response = restClient.get(uri: preferredNameUrl)
-    } catch(Exception e) {
-          return
-      }    
+    response = restClient.get(uri: preferredNameUrl)
 
     if (! response.success || response.status != 200) {
       //            println "fetchChildren - failed to fetch children for ${ncitCode} from ${url} with error ${response.data.text}"
@@ -142,6 +143,21 @@ public class PDQNCItInterventionMapper{
     println "delete from intervention_alternate_name where intervention_identifier=${remove};"
     println "delete from intervention where identifier=${remove};"
   }
+  
+  public void performSync( String ncitCode,String preferredNameUrl, String interventionUrl) {
+      println "Syncing intervention term "+ncitCode
+      String  prefName = getPreferredName(ncitCode,preferredNameUrl)
+      if(prefName!=null) {
+          generateInvUpdateSQL(ncitCode,prefName)
+      }
+      // Get Intervention synonyms
+      def termExists = checkItTermsExists(ncitCode ,interventionUrl)
+      if (termExists) {
+          def syns
+          syns  = getInvSynonyms(ncitCode ,interventionUrl)
+          generateInvSynUpdateSQL(ncitCode,syns[1])
+      }
+  }
 
   public void syncIntervention(String outputDir, String preferredNameUrl, String interventionUrl ,
          String paJdbcUrl,String dbuser,String dbpassword){
@@ -149,22 +165,11 @@ public class PDQNCItInterventionMapper{
          String ncitCode =null;
          def  sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          def ctrpTerms = sql.rows("select distinct(nt_term_identifier) from intervention");
-         
          ctrpTerms.each (){
-        ncitCode= it.nt_term_identifier;
-       
+         ncitCode= it.nt_term_identifier;
          if(ncitCode!=null) {
-            println "Syncing intervention term "+ncitCode
-            String  prefName = getPreferredName(ncitCode,preferredNameUrl)
-            if(prefName!=null) {
-                generateInvUpdateSQL(ncitCode,prefName)
-            }
-            // Get Intervention synonyms
-            def termExists = checkItTermsExists(ncitCode ,interventionUrl)
-            if (termExists) {
-                def syns
-                syns  = getInvSynonyms(ncitCode ,interventionUrl)
-                generateInvSynUpdateSQL(ncitCode,syns[1])
+            RetryUtil.retry(5, 500){
+             performSync(ncitCode,preferredNameUrl,interventionUrl);
             }
           }
          }
