@@ -101,11 +101,15 @@ public class PDQNCItInterventionMapper{
 
   def getPreferredName(def ncitCode,String url){
       
+      
     String preferredNameUrl = url +"/${ncitCode}?format=xml"
     def response = null
-    response = restClient.get(uri: preferredNameUrl)
-
-    if (! response.success || response.status != 200) {
+    try{
+        response = restClient.get(uri: preferredNameUrl)
+    } catch(Exception e) {
+          return
+    }
+       if (! response.success || response.status != 200) {
       //            println "fetchChildren - failed to fetch children for ${ncitCode} from ${url} with error ${response.data.text}"
       throw new RuntimeException("Failure from LexEVS: " + response.data.text)
     }
