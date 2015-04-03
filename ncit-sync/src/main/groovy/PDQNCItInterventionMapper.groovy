@@ -172,7 +172,7 @@ public class PDQNCItInterventionMapper{
          ctrpTerms.each (){
          ncitCode= it.nt_term_identifier;
          if(ncitCode!=null) {
-            RetryUtil.retry(5, 500){
+            RetryUtil.retry(10, 1000){
              performSync(ncitCode,preferredNameUrl,interventionUrl);
             }
           }

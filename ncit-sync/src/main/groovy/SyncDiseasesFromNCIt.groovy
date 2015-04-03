@@ -222,7 +222,7 @@ public class SyncDiseasesFromNCIt{
       boolean isExists = checkifTermExistsInNcit(ncitTerm, url);
       
       if(isExists) {
-          RetryUtil.retry(5, 500){
+          RetryUtil.retry(10, 1000){
                 syncDiseaseParentChilds(ncitTerm, url);
           }
        }
