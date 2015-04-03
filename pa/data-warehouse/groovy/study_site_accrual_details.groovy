@@ -5,7 +5,7 @@ def sql = """
        co.name AS country,
        pat.birth_date AS birth_date,
        ssub.date_last_created AS date_last_created,
-       ssub.date_last_created AS date_last_updated,
+       ssub.date_last_updated AS date_last_updated,
        delete_reason AS deletion_reason,
        pat.ethnic_code AS ethnicity,
        pat.sex_code AS gender,
