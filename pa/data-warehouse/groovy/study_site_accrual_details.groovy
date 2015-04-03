@@ -1,6 +1,6 @@
 import groovy.sql.Sql
 def sql = """
-    SELECT
+      SELECT
        soi.extension AS nci_id,
        co.name AS country,
        pat.birth_date AS birth_date,
@@ -27,7 +27,8 @@ def sql = """
        pat.zip,
        ssub.identifier as subject_identifier
     FROM study_subject ssub
-    JOIN study_protocol sp ON (ssub.study_protocol_identifier = sp.identifier)
+    JOIN Study_site ss ON (ssub.study_site_identifier = ss.identifier)
+    JOIN study_protocol sp ON (ss.study_protocol_identifier = sp.identifier)
     JOIN study_otheridentifiers soi ON (sp.identifier = soi.study_protocol_id)
     JOIN performed_activity pact ON (ssub.identifier = pact.study_subject_identifier)
     JOIN patient pat ON (ssub.patient_identifier = pat.identifier)
