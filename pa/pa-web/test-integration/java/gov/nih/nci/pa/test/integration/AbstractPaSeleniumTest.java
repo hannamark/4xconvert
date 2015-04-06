@@ -224,7 +224,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setDriverClass(TestProperties.getDriverClass());
-        // super.setDriverClass(PHANTOM_JS_DRIVER);
+        //super.setDriverClass(PHANTOM_JS_DRIVER);
         System.setProperty("phantomjs.binary.path",
                 TestProperties.getPhantomJsPath());
         super.setUp();
@@ -342,6 +342,10 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected void login(String username, String password) {
+        loginPA(username, password);
+    }
+
+    public final void loginPA(String username, String password) {
         login("/pa", username, password);
     }
 
@@ -611,8 +615,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return searchAndSelectTrialWithMilestoneCheck(trialTitle, "", "", "");
     }
 
-    public void loginAsSuperAbstractor() {
-        login("ctrpsubstractor", "pass");
+    public final void loginAsSuperAbstractor() {
+        loginPA("ctrpsubstractor", "pass");
         disclaimer(true);
     }
 
@@ -1405,16 +1409,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected void addDWS(TrialInfo info, String status) throws SQLException {
+        String stamp = new Timestamp(System.currentTimeMillis()).toString();
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO document_workflow_status (identifier,status_code,comment_text,status_date_range_low,"
                 + "study_protocol_identifier,date_last_created,date_last_updated,status_date_range_high,"
                 + "user_last_created_id,user_last_updated_id) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'"
                 + status
                 + "',null,"
-                + "{ts '2014-04-16 14:20:22.361'},"
+                + "{ts '"+stamp+"'},"
                 + info.id
-                + ",{ts '2014-04-16 14:20:22.361'},"
-                + "{ts '2014-04-16 14:20:22.361'},{ts '2014-04-16 14:20:22.361'},"
+                + ",{ts '"+stamp+"'},"
+                + "{ts '"+stamp+"'},{ts '"+stamp+"'},"
                 + info.csmUserID + "," + info.csmUserID + ")";
         runner.update(connection, sql);
     }

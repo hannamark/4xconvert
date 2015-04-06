@@ -75,7 +75,9 @@ public class StudyMilestoneBeanLocal
     extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
     implements StudyMilestoneServicelocal {
     
-     /**
+     private static final String ENTIRE_TRIAL = "ENTIRE_TRIAL";
+
+    /**
      * Date format for TSR file names.
      */
     public static final String DATE_FORMAT = "yyyy-MM-dd-HHmm";
@@ -845,33 +847,69 @@ public class StudyMilestoneBeanLocal
         return convertFromDomainToDTOs(studyMilestoneList);
     }
 
-    private void rejectAmendmentAndSendLateRejectionEmail(StudyMilestoneDTO workDto) throws PAException {
-        MilestoneCode milestoneCode = MilestoneCode.getByCode(
-                CdConverter.convertCdToString(workDto.getMilestoneCode()));
-        if ((MilestoneCode.LATE_REJECTION_DATE.equals(milestoneCode))) {            
-            try {
-                StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(workDto.getStudyProtocolIdentifier());
-                //For the case where the milestone is late rejection date and trial is amended, we should follow 
-                //the same workflow as trial amendment rejection.
-                if (sp.getSubmissionNumber().getValue().intValue() > 1) {
-                    StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
-                            IiConverter.convertToLong(sp.getIdentifier()));
-                    PaHibernateUtil.getCurrentSession().flush();                    
-                    trialRegistrationService.reject(sp.getIdentifier(), workDto.getCommentText(), 
-                            workDto.getRejectionReasonCode(), milestoneCode);                    
-                    String comment = workDto.determineCommentText() == null ? "Unknown Reason"
-                            : workDto.determineCommentText().getValue();                    
-                    mailManagerService.sendAmendRejectEmail(spDTO, comment);
-                } else {
-                    mailManagerService.sendRejectionEmail(workDto.getStudyProtocolIdentifier());
-                }
-            } catch (PAException e) {
-                throw new PAException(workDto.getMilestoneCode().getCode() + "' could not "
-                        + "be recorded.", e);
+    private void rejectAmendmentAndSendLateRejectionEmail(
+            StudyMilestoneDTO workDto) throws PAException {
+        MilestoneCode milestoneCode = MilestoneCode.getByCode(CdConverter
+                .convertCdToString(workDto.getMilestoneCode()));
+        if ((MilestoneCode.LATE_REJECTION_DATE.equals(milestoneCode))) {
+            boolean rejectEntireTrial = ENTIRE_TRIAL.equals(CdConverter
+                    .convertCdToString(workDto.getLateRejectBehavior()));
+            if (rejectEntireTrial) {
+                rejectTrialBasedOnLateRejectionMilestone(workDto);
+            } else {
+                rejectOriginalSubmissionOrLatestAmendment(workDto,
+                        milestoneCode);
             }
         }
     }
+
+    /**
+     * @param workDto
+     * @param milestoneCode
+     * @throws HibernateException
+     * @throws PAException
+     */
+    private void rejectOriginalSubmissionOrLatestAmendment(
+            StudyMilestoneDTO workDto, MilestoneCode milestoneCode)
+            throws PAException {
+        try {
+            StudyProtocolDTO sp = studyProtocolService
+                    .getStudyProtocol(workDto
+                            .getStudyProtocolIdentifier());
+            // For the case where the milestone is late rejection date
+            // and trial is amended, we should follow
+            // the same workflow as trial amendment rejection.
+            if (sp.getSubmissionNumber().getValue().intValue() > 1) {
+                StudyProtocolQueryDTO spDTO = protocolQueryService
+                        .getTrialSummaryByStudyProtocolId(IiConverter
+                                .convertToLong(sp.getIdentifier()));
+                PaHibernateUtil.getCurrentSession().flush();
+                trialRegistrationService
+                        .reject(sp.getIdentifier(),
+                                workDto.getCommentText(),
+                                workDto.getRejectionReasonCode(),
+                                milestoneCode);
+                String comment = workDto.determineCommentText() == null ? "Unknown Reason"
+                        : workDto.determineCommentText().getValue();
+                mailManagerService.sendAmendRejectEmail(spDTO, comment);
+            } else {
+                mailManagerService.sendRejectionEmail(workDto
+                        .getStudyProtocolIdentifier());
+            }
+        } catch (PAException e) {
+            throw new PAException(workDto.getMilestoneCode().getCode()
+                    + "' could not " + "be recorded.", e);
+        }
+    }
     
+
+    private void rejectTrialBasedOnLateRejectionMilestone(
+            StudyMilestoneDTO workDto) throws PAException {
+        createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , workDto);
+        mailManagerService.sendRejectionEmail(workDto
+                .getStudyProtocolIdentifier());
+        
+    }
 
     /**
      * @param abstractionCompletionService the abstractionCompletionService to set

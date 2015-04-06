@@ -145,6 +145,7 @@ public final class MilestoneAction extends ActionSupport {
     private List<String> allowedMilestones;
     private boolean addAllowed;
     private Ii spIi;
+    private String lateRejectBehavior;
 
     /**
      * @return string
@@ -204,6 +205,7 @@ public final class MilestoneAction extends ActionSupport {
             dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(date)));
         }
         dto.setStudyProtocolIdentifier(getSpIi());
+        dto.setLateRejectBehavior(CdConverter.convertStringToCd(getLateRejectBehavior()));
         try {
            StudyMilestoneDTO newDto = getStudyMilestoneService().create(dto);
            if (newDto != null && !ISOUtil.isStNull(newDto.getErrorMessage())) {
@@ -474,5 +476,19 @@ public final class MilestoneAction extends ActionSupport {
      */
     public void setSpIi(Ii spIi) {
         this.spIi = spIi;
+    }
+
+    /**
+     * @return the lateRejectBehavior
+     */
+    public String getLateRejectBehavior() {
+        return lateRejectBehavior;
+    }
+
+    /**
+     * @param lateRejectBehavior the lateRejectBehavior to set
+     */
+    public void setLateRejectBehavior(String lateRejectBehavior) {
+        this.lateRejectBehavior = lateRejectBehavior;
     }
 }

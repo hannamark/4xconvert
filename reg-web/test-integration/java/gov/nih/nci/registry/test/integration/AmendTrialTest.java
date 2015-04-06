@@ -178,7 +178,160 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
             // moment.
             return;
         }
+        amendTrial();
+    }
 
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testLateRejectionMilestoneOnAmendedTrial_PO_8835()
+            throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        amendTrialAndAddMilestones();
+
+        // Late reject entire trial.
+        String action = "Reject Entire Trial";
+        lateReject(action);
+        assertTrue(s
+                .isElementPresent("xpath=//input[@value='Late Rejection Date']"));
+        assertTrue(s.isTextPresent("Processing Status: Rejected"));
+        assertTrue(s.isTextPresent("Amendment Number: 1"));
+        assertFalse(s.isTextPresent("Administrative Data"));
+        assertFalse(s.isTextPresent("Scientific Data"));
+        assertFalse(s.isTextPresent("Completion"));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testLateRejectionMilestoneRevertingAmendmentOnlyPO_8835()
+            throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        amendTrialAndAddMilestones();
+
+        // Late reject entire trial.
+        String action = "Reject This Amendment Only";
+        lateReject(action);
+
+        // We should have gone to the original submission now.
+        assertFalse(s
+                .isElementPresent("xpath=//input[@value='Late Rejection Date']"));
+        assertTrue(s
+                .isTextPresent("Processing Status: Abstraction Verified No Response"));
+        assertFalse(s.isTextPresent("Amendment Number: 1"));
+        assertTrue(s.isTextPresent("Administrative Data"));
+        assertTrue(s.isTextPresent("Scientific Data"));
+        assertTrue(s.isTextPresent("Completion"));
+        assertEquals("1", s.getValue("submissionNumber"));
+
+        // Late Rejection milestone should have recorded into the rejected
+        // amendment.
+        s.select("submissionNumber", "2");
+        waitForPageToLoad();
+        assertTrue(s
+                .isElementPresent("xpath=//input[@value='Late Rejection Date']"));
+
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testLateRejectionDialogMustNotShowUpForOriginalSubmission_PO_8835()
+            throws Exception {
+        if (isPhantomJS() && SystemUtils.IS_OS_LINUX) {
+            // PhantomJS keeps crashing on Linux CI box. No idea why at the
+            // moment.
+            return;
+        }
+        loginAndAcceptDisclaimer();
+        String rand = RandomStringUtils.randomNumeric(10);
+        TrialInfo info = registerAndAcceptTrial(rand);
+
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(info.title);
+        addMilestones();
+
+        s.select("milestone", "Late Rejection Date");
+        s.type("milestoneCommentsTA", "Rejecting entire trial.");
+        clickAndWait("addMilestoneBtn");
+        assertFalse(s.isVisible("late-reject-dialog"));
+        assertTrue(s
+                .isElementPresent("xpath=//input[@value='Late Rejection Date']"));
+        assertTrue(s.isTextPresent("Processing Status: Rejected"));
+        assertFalse(s.isTextPresent("Administrative Data"));
+        assertFalse(s.isTextPresent("Scientific Data"));
+        assertFalse(s.isTextPresent("Completion"));
+
+    }
+
+    /**
+     * @param action
+     */
+    private void lateReject(String action) {
+        s.select("milestone", "Late Rejection Date");
+        s.type("milestoneCommentsTA", "Rejecting entire trial.");
+        s.click("addMilestoneBtn");
+        waitForElementToBecomeVisible(By.id("late-reject-dialog"), 5);
+        assertEquals("Late Rejection",
+                s.getText("ui-dialog-title-late-reject-dialog"));
+        assertEquals(
+                "Please indicate an action you want to take on this trial:", s
+                        .getText("late-reject-dialog").trim());
+
+        clickAndWait("xpath=//button/span[text()='" + action + "']");
+    }
+
+    /**
+     * @throws URISyntaxException
+     * @throws SQLException
+     */
+    private void amendTrialAndAddMilestones() throws URISyntaxException,
+            SQLException {
+        TrialInfo info = amendTrial();
+        logoutPA();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(info.title);
+        acceptTrial();
+
+        addMilestones();
+    }
+
+    /**
+     * 
+     */
+    private void addMilestones() {
+        clickAndWait("link=Trial Milestones");
+        addMilestone("Administrative Processing Start Date");
+        addMilestone("Administrative Processing Completed Date");
+        addMilestone("Ready for Administrative QC Date");
+        addMilestone("Administrative QC Start Date");
+        addMilestone("Administrative QC Completed Date");
+        addMilestone("Scientific Processing Start Date");
+        addMilestone("Scientific Processing Completed Date");
+        addMilestone("Ready for Scientific QC Date");
+        addMilestone("Scientific QC Start Date");
+        addMilestone("Scientific QC Completed Date");
+    }
+
+    private void addMilestone(String milestone) {
+        s.select("milestone", milestone);
+        s.type("milestoneCommentsTA", "Just testing something...");
+        clickAndWait("id=addMilestoneBtn");
+        assertTrue(s.isElementPresent("xpath=//input[@value='" + milestone
+                + "']"));
+    }
+
+    /**
+     * @throws URISyntaxException
+     * @throws SQLException
+     */
+    private TrialInfo amendTrial() throws URISyntaxException, SQLException {
         loginAndAcceptDisclaimer();
         String rand = RandomStringUtils.randomNumeric(10);
         TrialInfo info = registerAndAcceptTrial(rand);
@@ -213,6 +366,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         assertEquals("APPROVED", hist.get(1).statusCode);
         assertEquals("Wrong status", hist.get(1).comments);
 
+        return info;
     }
 
     private void populateAmendTrialPage(TrialInfo info)

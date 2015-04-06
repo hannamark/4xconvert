@@ -109,6 +109,7 @@ public class StudyMilestoneDTO extends StudyDTO {
     private Long userLastCreated;
     private Long userLastUpdated;
     private St errorMessage;
+    private Cd lateRejectBehavior;
     
     
     /**
@@ -269,6 +270,20 @@ public class StudyMilestoneDTO extends StudyDTO {
      */
     public void setErrorMessage(St errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    /**
+     * @return the lateRejectBehavior
+     */
+    public Cd getLateRejectBehavior() {
+        return lateRejectBehavior;
+    }
+
+    /**
+     * @param lateRejectBehavior the lateRejectBehavior to set
+     */
+    public void setLateRejectBehavior(Cd lateRejectBehavior) {
+        this.lateRejectBehavior = lateRejectBehavior;
     }
     
     

@@ -12,6 +12,9 @@
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/datetimepicker.js"/>"></script>
         
         <script type="text/javascript" language="javascript">
+        
+            var trialAmended = ${not empty trialSummary.amendmentNumber};
+        
             addCalendar("Cal1", "Select Date", "milestone.date", "milestoneForm");
             setWidth(90, 1, 15, 1);
             setFormat("mm/dd/yyyy");
@@ -54,6 +57,41 @@
                 form.action="milestoneview.action";
                 form.submit();
             }    
+            
+            (function ($) {
+                $(function() {
+                	
+                	$("#late-reject-dialog").dialog({
+                        modal : true,
+                        width : '400px',
+                        autoOpen : false,                       
+                        buttons : {
+                            "Reject Entire Trial" : function() {
+                            	$('#lateRejectBehavior').val('ENTIRE_TRIAL');
+                            	$(this).dialog("close");
+                            	milestoneAdd();
+                            },
+                            "Reject This Amendment Only" : function() {
+                            	$('#lateRejectBehavior').val('AMENDMENT_ONLY');
+                            	$(this).dialog("close");
+                            	milestoneAdd();
+                            }
+                        }
+                    });
+                	
+                	$('#addMilestoneBtn')
+                    .bind(
+                            'click',
+                            function(e) {                            	                              
+                            	if (trialAmended && document.forms["addmilestoneForm"].elements["milestone.milestone"].value == "Late Rejection Date") {
+                            		$("#late-reject-dialog").dialog('open');
+                            	} else {
+                            		milestoneAdd();
+                            	}                            	
+                            });
+                })
+            }(jQuery));
+            
         </script>
     </head>
     <body>
@@ -153,6 +191,7 @@
 		                                    <s:form name="addmilestoneForm">
 		                                        <s:token/>
 		                                        <pa:studyUniqueToken/>
+		                                        <s:hidden name="lateRejectBehavior" id="lateRejectBehavior"/>
 		                                        <table class="form">
 		                                            <tr>
 		                                                <td class="label">
@@ -194,7 +233,7 @@
 		                                        <del class="btnwrapper">
 		                                            <ul class="btnrow">
 		                                                <li>
-		                                                    <s:a href="javascript:void(0)" cssClass="btn" onclick="milestoneAdd();">
+		                                                    <s:a href="javascript:void(0)" cssClass="btn" id="addMilestoneBtn">
 		                                                        <span class="btn_img"> <span class="add">Add Milestone</span></span>
 		                                                    </s:a>
 		                                                </li>
@@ -214,6 +253,13 @@
 		            </table>
 		        </div>
             </s:if>
-        </pa:displayWhenCheckedOut>            
+        </pa:displayWhenCheckedOut>     
+        <div id="late-reject-dialog" title="Late Rejection"
+	       style="display: none;">
+		    <p>
+		        <span class="ui-icon ui-icon-alert"
+		            style="float: left; margin: 0 7px 20px 0;"></span>Please indicate an action you want to take on this trial:
+		    </p>		   
+	   </div>               
     </body>
 </html>

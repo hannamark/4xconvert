@@ -84,17 +84,16 @@ package gov.nih.nci.registry.test.integration;
 
 import com.thoughtworks.selenium.Selenium;
 
-
 /**
  * @author moweis
- *
+ * 
  */
 public class PAUIApplication extends AbstractRegistrySeleniumTest {
-    
+
     public PAUIApplication(Selenium selenium) {
         this.selenium = selenium;
     }
-    
+
     public void acceptTrial(String trialTitle) {
         loginPA();
         selenium.type("id=officialTitle", trialTitle);
@@ -110,13 +109,6 @@ public class PAUIApplication extends AbstractRegistrySeleniumTest {
         loginPA("abstractor-ci", "pass");
         clickAndWait("id=acceptDisclaimer");
         clickAndWait("id=trialSearchMenuOption");
-    }
-
-    private void loginPA(String username, String password) {
-        openAndWait("/pa");
-        selenium.type("j_username", username);
-        selenium.type("j_password", password);        
-        clickAndWait("id=loginLink");
     }
 
 }
