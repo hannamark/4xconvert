@@ -171,9 +171,11 @@ sql = """select
                          org.id as organization_po_id,
 			 sr.id as role_po_id,
 			 sr.status,
-			 sr.statusdate
+			 sr.statusdate,
+			 srt.code
 			 from Organization org
 			 inner join researchorganization SR on SR.player_id = org.id
+			 left outer join researchorganizationtype srt on sr.typecode_id=srt.id
 			"""
 
 sourceConnection.eachRow(sql) { row ->
@@ -183,6 +185,7 @@ sourceConnection.eachRow(sql) { row ->
         role_po_id: row.role_po_id,
  		status: row.status,
  		status_date: row.statusdate,
+ 		role_type: row.code,
  	 	ROLE_NAME: "Research Organization"
 	)
 }
@@ -311,13 +314,15 @@ sourceConnection.eachRow("""SELECT rel.ro_id, e.value
 }
 
 sql = """select 
-                         org.name,
-                         org.id as organization_po_id,
+             org.name,
+             org.id as organization_po_id,
 			 sr.id as role_po_id,
 			 sr.status,
-			 sr.statusdate
+			 sr.statusdate,
+			 srt.code
 			 from Organization org
 			 inner join oversightcommittee SR on SR.player_id = org.id
+			 left outer join oversightcommitteetype srt on sr.typecode_id=srt.id
 			"""
 
 sourceConnection.eachRow(sql) { row ->
@@ -327,6 +332,7 @@ sourceConnection.eachRow(sql) { row ->
         role_po_id: row.role_po_id,
  		status: row.status,
  		status_date: row.statusdate,
+ 		role_type: row.code,
  	 	ROLE_NAME: "Oversight Committee"
 	)
 }

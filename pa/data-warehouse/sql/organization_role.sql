@@ -14,6 +14,7 @@ CREATE TABLE STG_DW_ORGANIZATION_ROLE (
 	ROLE_PO_ID integer,
 	STATUS character varying (20),
 	STATUS_DATE date,
+	ROLE_TYPE character varying (255),
 	EMAIL character varying (2000),
 	FAX character varying (2000),
 	PHONE character varying (2000),
