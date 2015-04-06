@@ -88,6 +88,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -95,6 +96,8 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
+
+import com.dumbster.smtp.SmtpMessage;
 
 /**
  * Searches and Amends trial in Registry.
@@ -181,7 +184,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         amendTrial();
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testLateRejectionMilestoneOnAmendedTrial_PO_8835()
             throws Exception {
@@ -190,9 +193,10 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
             // moment.
             return;
         }
-        amendTrialAndAddMilestones();
+        TrialInfo info = amendTrialAndAddMilestones();
 
         // Late reject entire trial.
+        restartEmailServer();
         String action = "Reject Entire Trial";
         lateReject(action);
         assertTrue(s
@@ -202,6 +206,33 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         assertFalse(s.isTextPresent("Administrative Data"));
         assertFalse(s.isTextPresent("Scientific Data"));
         assertFalse(s.isTextPresent("Completion"));
+
+        waitForEmailsToArrive(1);
+        Iterator emailIter = server.getReceivedEmail();
+        SmtpMessage email = (SmtpMessage) emailIter.next();
+        String subject = email.getHeaderValues("Subject")[0];
+        String to = email.getHeaderValues("To")[0];
+        String body = email.getBody().replaceAll("\\s+", " ")
+                .replaceAll(">\\s+", ">");
+        assertEquals("NCI CTRP: Trial REGISTRATION REJECTED for " + info.nciID
+                + ",", subject);
+        assertEquals(
+                "<hr><p><b>Title: </b>An Open-Label Study of Ruxolitinib "
+                        + info.rand
+                        + "</p><table border=\"0\"><tr><td><b>Lead Organization Trial ID:</b></td><td>LEAD"
+                        + info.rand
+                        + "</td></tr><tr><td><b>Lead Organization:</b></td><td>National Cancer Institute Division of Cancer Prevention</td></tr><tr><td><b>CTRP-assigned Lead Organization ID:</b></td><td>3</td></tr><tr><td><b>NCI Trial ID:</b></td><td>"
+                        + info.nciID
+                        + "</td></tr><tr><td><b>NCT ID:</b></td><td>NCT"
+                        + info.rand
+                        + "</td></tr><tr><td><b>Other IDs:</b></td><td>OTHER"
+                        + info.rand
+                        + "</td></tr><tr><td><b>Submission Date:</b></td><td>"
+                        + today
+                        + "</td></tr></table><hr><p>Date: "
+                        + today
+                        + "</p><p>Dear Abstractor User,</p><p>The Clinical Trials Reporting Office (CTRO) staff cannot register the trial identified above in the NCI Clinical Trials Reporting Program (CTRP) for the following reason(s):<br><i>Rejecting entire trial..</i></p><p><b>NEXT STEPS:</b><br>If you feel that this trial has been rejected in error, please contact us at ncictro@mail.nih.gov at your earliest convenience to resolve the issue.</p><p>If you have questions about this or other CTRP topics, please contact us at ncictro@mail.nih.gov.</p><p>Thank you for participating in the NCI Clinical Trials Reporting Program.</p>",
+                body);
 
     }
 
@@ -291,7 +322,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
      * @throws URISyntaxException
      * @throws SQLException
      */
-    private void amendTrialAndAddMilestones() throws URISyntaxException,
+    private TrialInfo amendTrialAndAddMilestones() throws URISyntaxException,
             SQLException {
         TrialInfo info = amendTrial();
         logoutPA();
@@ -300,6 +331,8 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         acceptTrial();
 
         addMilestones();
+
+        return info;
     }
 
     /**
