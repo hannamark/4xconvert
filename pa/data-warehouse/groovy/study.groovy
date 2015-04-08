@@ -75,7 +75,7 @@ def sql =
                 left outer join study_milestone as milestone on milestone.study_protocol_identifier = sp.identifier
                     and (milestone.identifier is null or milestone.identifier = (select max(identifier) from study_milestone where study_protocol_identifier = sp.identifier))
                 left outer join study_overall_status as current_status on current_status.study_protocol_identifier = sp.identifier
-                    and (current_status.identifier = (select max(identifier) from study_overall_status where study_protocol_identifier = sp.identifier))
+                    and (current_status.identifier = (select identifier from study_overall_status where study_protocol_identifier = sp.identifier and deleted=false order by status_date desc, identifier desc limit 1))
                 left outer join study_objective as obj_primary on obj_primary.study_protocol_identifier = sp.identifier and obj_primary.type_code = 'PRIMARY'
                     and obj_primary.identifier = (select max(identifier) from study_objective where study_protocol_identifier = sp.identifier and type_code = 'PRIMARY')
                 left outer join study_objective as obj_secondary on obj_secondary.study_protocol_identifier = sp.identifier and obj_secondary.type_code = 'SECONDARY'
@@ -101,7 +101,7 @@ def sql =
                 left outer join registry_user as submitter on submitter.csm_user_id = sp.user_last_created_id
                 left outer join study_overall_status as stopped on stopped.study_protocol_identifier = sp.identifier
                     and stopped.status_code in ('ADMINISTRATIVELY_COMPLETE', 'WITHDRAWN', 'TEMPORARILY_CLOSED_TO_ACCRUAL', 'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION')
-                    and stopped.identifier = (select max(identifier) from study_overall_status where study_protocol_identifier = sp.identifier)
+                    and stopped.identifier = (select identifier from study_overall_status where study_protocol_identifier = sp.identifier and deleted=false order by status_date desc, identifier desc limit 1)
                 left outer join study_site as irb on irb.study_protocol_identifier = sp.identifier and irb.functional_code = 'STUDY_OVERSIGHT_COMMITTEE'
                     and irb.identifier = (select max(identifier) from study_site where functional_code = 'STUDY_OVERSIGHT_COMMITTEE' and study_protocol_identifier = sp.identifier)
                 left outer join oversight_committee as oc on oc.identifier = irb.oversight_committee_identifier
