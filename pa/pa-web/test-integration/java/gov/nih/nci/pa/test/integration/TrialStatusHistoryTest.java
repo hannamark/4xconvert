@@ -64,7 +64,11 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
                         .trim());
 
         // Verify initial status is present.
-        verifyStatusRow(1, today, "Approved", "", "");
+        verifyStatusRow(1, yesterday, "In Review", "", "");
+        verifyStatusRow(2, today, "Approved", "", "");
+
+        // Delete In Review
+        deleteStatus(1);
 
         // Edit it back to In Review.
         editStatus(1, "In Review", yesterday, "This must be ignored",
@@ -140,6 +144,7 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
                 "TEMPORARILY_CLOSED_TO_ACCRUAL", "", "Trial on hold");
         selenium.click("xpath=//table[@id='row']/tbody/tr[3]/td[5]/a/img[@alt='Delete this trial status record.']");
         waitForElementById("delete-dialog", 5);
+        selenium.type("deleteComment", "");
         clickAndWait("xpath=//div/input[@value='Delete Status']");
         confirmFailure("A comment is required when deleting a status.");
         selenium.click("xpath=//table[@id='row']/tbody/tr[3]/td[5]/a/img[@alt='Delete this trial status record.']");
@@ -148,9 +153,9 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
         confirmSuccess("Record Deleted.");
         verifyCurrentStatusInDB(trial, new Date(), "ACTIVE", "New status", "");
         assertEquals(2, getTrialStatusHistory(trial).size());
-        assertEquals(1, getDeletedTrialStatuses(trial).size());
+        assertEquals(2, getDeletedTrialStatuses(trial).size());
         assertEquals("TEMPORARILY_CLOSED_TO_ACCRUAL",
-                getDeletedTrialStatuses(trial).get(0).statusCode);
+                getDeletedTrialStatuses(trial).get(1).statusCode);
 
         // Verify Deleted Statuses Table
         assertTrue(selenium
@@ -170,7 +175,7 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
         assertEquals("Deleted On",
                 selenium.getText("xpath=//table[@id='del']/thead/tr/th[5]")
                         .trim());
-        verifyDeletedStatusRow(1, today, "Temporarily Closed to Accrual",
+        verifyDeletedStatusRow(2, today, "Temporarily Closed to Accrual",
                 "Delete Test", "Trial on hold");
 
     }
@@ -374,6 +379,17 @@ public class TrialStatusHistoryTest extends AbstractTrialStatusTest {
         selenium.type("reason", reason);
         selenium.type("comment", comment);
         selenium.click("xpath=//div[@id='edit-dialog']//input[@value='Save']");
+        waitForPageToLoad();
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private void deleteStatus(int row) {
+        selenium.click("xpath=//table[@id='row']/tbody/tr[" + row
+                + "]/td[5]/a[2]");
+        waitForElementToBecomeVisible(By.id("delete-dialog"), 2);
+        selenium.type("deleteComment", "Deleting...");
+        selenium.click("xpath=//div[@id='delete-dialog']//input[@value='Delete Status']");
         waitForPageToLoad();
 
     }

@@ -750,6 +750,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         addMilestone(info, "SUBMISSION_RECEIVED");
         addLeadOrg(info, "ClinicalTrials.gov");
         addPI(info, "1");
+        addSOS(info, "IN_REVIEW", yday_midnight());
         addSOS(info, "APPROVED");
         if (!skipDocuments)
             addDocument(info, "PROTOCOL_DOCUMENT", "Protocol.doc");
@@ -991,13 +992,26 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
     }
 
     protected void addSOS(TrialInfo info, String code) throws SQLException {
-        QueryRunner runner = new QueryRunner();
+        final String statusDate = today_midnight();
+        addSOS(info, code, statusDate);
+
+    }
+
+    /**
+     * @param info
+     * @param code
+     * @param statusDate
+     * @throws SQLException
+     */
+    protected void addSOS(TrialInfo info, String code, final String statusDate)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();        
         String sql = "INSERT INTO study_overall_status (identifier,comment_text,status_code,status_date,"
                 + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,"
                 + "user_last_updated_id,system_created) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),null,'"
                 + code
                 + "',"
-                + today_midnight()
+                + statusDate
                 + " ,"
                 + info.id
                 + ","
@@ -1009,13 +1023,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "user_last_updated_id) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'"
                 + code
                 + "',"
-                + today_midnight()
+                + statusDate
                 + " ,"
                 + info.id
                 + ","
                 + "null,null,null,null)";
         runner.update(connection, sql2);
-
     }
 
     protected void changeTrialStatus(TrialInfo info, String code)
@@ -1040,6 +1053,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         return String.format(
                 "{ts '%s'}",
                 new Timestamp(DateUtils.truncate(new Date(),
+                        Calendar.DAY_OF_MONTH).getTime()).toString());
+    }
+    
+    protected String yday_midnight() {
+        return String.format(
+                "{ts '%s'}",
+                new Timestamp(DateUtils.truncate(
+                        DateUtils.addDays(new Date(), -1),
                         Calendar.DAY_OF_MONTH).getTime()).toString());
     }
 

@@ -1,5 +1,7 @@
 package gov.nih.nci.pa.test.integration;
 
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
+
 import java.sql.SQLException;
 import java.util.List;
 
@@ -164,8 +166,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testTrialStatusHistoryBeforeCheckOut() throws SQLException {
-        TrialInfo trial = createSubmittedTrial();
-
+        TrialInfo trial = createSubmittedTrial();        
         loginAsAdminAbstractor();
         searchSelectAndAcceptTrial(trial.title, true, false);
         checkInTrialAsAdminAbstractor();
@@ -181,7 +182,7 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testSuperAbstractorLogic() throws SQLException {
-        TrialInfo trial = createAcceptedTrial();
+        TrialInfo trial = createAcceptedTrial();       
         loginAsSuperAbstractor();
         searchAndSelectTrial(trial.title);
         clickAndWait("link=Trial Status");
@@ -194,13 +195,12 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
         assertEquals("ACTIVE", getCurrentTrialStatus(trial).statusCode);
 
         // Move to Withdrawn produces an error: bad transition.
-        selenium.select("id=currentTrialStatus", "label=Withdrawn");
-        selenium.type("statusReason", "Just testing.");
+        selenium.select("id=currentTrialStatus", "label=Approved");        
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium
                 .isTextPresent("Status Transition Errors were found. Please use the History button to review and make corrections. Trial record cannot be checked-in until all Status Transition Errors have been resolved."));
-        assertEquals("WITHDRAWN", getCurrentTrialStatus(trial).statusCode);
+        assertEquals("APPROVED", getCurrentTrialStatus(trial).statusCode);
 
         // Verify pop-up (Slide 24).
         waitForElementById("displaySuAbstractorAutoCheckoutMessage", 5);
