@@ -34,6 +34,15 @@
  *         Deleted [ADMINISTRATIVELY_COMPLETE] from all sections. Duplicate entry
  *         Changed [COMPLETE] to {COMPLETED] for participating sites
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+ * Date: 03/12/2015
+ * Author: Charles Yaghmour
+ * Changes: Made changes to reflect the results of reviewing the requirements spreadsheet with the CTRO
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ * Date: 04/8/2015
+ * Author: Charles Yaghmour
+ * Changes: Corrected a typo in trial status values from [COMPLETED] to [COMPLETE]
+ *         Changed all [True] to [true] to reduce any transformation when converting this file to JSON format
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  *
  */
  

@@ -698,11 +698,11 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         s.saveOrUpdate(sos);
         s.flush();
 
-        // Active to Complete should produce an error due to invalid status
+        // Active to Complete should produce an warning due to invalid status
         // transition.
         assertTrue(bean.statusHistoryHasWarnings(IiConverter
                 .convertToStudyProtocolIi(spNew.getId())));
-        assertTrue(bean.statusHistoryHasErrors(IiConverter
+        assertFalse(bean.statusHistoryHasErrors(IiConverter
                 .convertToStudyProtocolIi(spNew.getId())));
 
     }
@@ -765,11 +765,10 @@ public class StudyOverallStatusServiceTest extends AbstractEjbTestCase {
         assertEquals("Interim status [APPROVED] is missing. ", hist.get(1)
                 .getWarnings().getValue());
         assertEquals(
-                "Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing. ",
+                "Interim status [CLOSED TO ACCRUAL] is missing. Interim status [CLOSED TO ACCRUAL AND INTERVENTION] is missing. ",
                 hist.get(2).getWarnings().getValue());
-        assertEquals("Interim status [CLOSED TO ACCRUAL] is missing. ", hist
-                .get(2).getErrors().getValue());
 
+        assertTrue(StringUtils.isBlank(hist.get(2).getErrors().getValue()));
     }
 
     @Test

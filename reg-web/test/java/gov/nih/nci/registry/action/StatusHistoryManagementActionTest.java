@@ -319,10 +319,10 @@ public class StatusHistoryManagementActionTest extends AbstractRegWebTest {
         Map status2 = (Map) statusList.get(1);
 
         assertEquals(
-                "<div class='warning'>Interim status [APPROVED] is missing</div><div class='warning'>Interim status [APPROVED] is missing</div>",
+                "<div class='warning'>Interim status [IN REVIEW] is missing</div><div class='warning'>Interim status [APPROVED] is missing</div>",
                 status1.get("validationErrors"));
         assertEquals(
-                "<div class='error'>Interim status [CLOSED TO ACCRUAL] is missing</div>",
+                "<div class='warning'>Interim status [CLOSED TO ACCRUAL] is missing</div>",
                 status2.get("validationErrors"));
 
         System.out.println(json);
@@ -351,7 +351,7 @@ public class StatusHistoryManagementActionTest extends AbstractRegWebTest {
 
         Map json = getJsonMap(action.getValidationSummary());
         System.out.println(json);
-        assertTrue((Boolean) json.get("errors"));
+        assertFalse((Boolean) json.get("errors"));
         assertTrue((Boolean) json.get("warnings"));
 
         initAction();
