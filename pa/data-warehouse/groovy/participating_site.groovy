@@ -14,7 +14,7 @@ def sql = """
         left outer join study_site_accrual_status as ssas on ssas.study_site_identifier = ps.identifier
             and ssas.identifier = (select identifier from study_site_accrual_status where study_site_identifier  = ps.identifier 
             and deleted=false order by status_date desc, identifier desc limit 1)
-    where ps.functional_code = 'TREATING_SITE' and sp.status_code = 'ACTIVE' and ps.deleted=false"""
+    where ps.functional_code = 'TREATING_SITE' and sp.status_code = 'ACTIVE' and ssas.deleted=false"""
 def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.url'], properties['datawarehouse.pa.source.db.username'],
     properties['datawarehouse.pa.source.db.password'], properties['datawarehouse.pa.source.jdbc.driver'])
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
