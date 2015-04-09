@@ -285,9 +285,9 @@ public class TrialStatusTest extends AbstractTrialStatusTest {
         clickAndWait("link=Trial Status");
         assertEquals("Just a comment", selenium.getValue("additionalComments"));
         List<TrialStatus> hist = getTrialStatusHistory(trial);
-        assertEquals(1, hist.size());
-        assertEquals("APPROVED", hist.get(0).statusCode);
-        assertEquals("Just a comment", hist.get(0).comments);
+        assertEquals(2, hist.size());
+        assertEquals("APPROVED", hist.get(1).statusCode);
+        assertEquals("Just a comment", hist.get(1).comments);
 
         // Should be unable to move to a status with a future date
         TrialStatus statusBefore = getCurrentTrialStatus(trial);
