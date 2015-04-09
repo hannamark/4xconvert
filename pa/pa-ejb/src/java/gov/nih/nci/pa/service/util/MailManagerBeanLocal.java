@@ -129,6 +129,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1694,7 +1695,6 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         }
     }
     
-    
     @Override
     public void sendMailWithHtmlBodyAndAttachment(String mailTo, String mailFrom, // NOPMD
             List<String> mailCc, String subject, String mailBody,
@@ -2240,6 +2240,53 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
             }
         } catch (PAException | IOException | TemplateException e) {
             LOG.error(e, e);
+        }
+    }
+    
+    /**
+     * Sends an email to app Support.
+     * @param params params.
+     */
+    public void sendNewUserRequestEmail(String [] params) {
+        try {
+            String mailTo = lookUpTableService.getPropertyValue("appsupport.mailTo");
+            String emailSubject = lookUpTableService
+                .getPropertyValue("self.registration.appsupport.email.subject");
+
+            MessageFormat formatterBody =
+                new MessageFormat(lookUpTableService
+                        .getPropertyValue("self.registration.appsupport.email.body"));
+
+          
+
+            String emailBody = formatterBody.format(params);
+
+            LOG.warn("emailBody is: " + emailBody);
+            sendMailWithAttachment(mailTo, emailSubject, emailBody, null);
+        } catch (Exception e) {
+            LOG.error("Send confirmation mail error", e);
+        }
+    }
+    
+    
+    @Override
+    public void sendPleaseWaitEmail(String mailTo, String [] params) {
+        try {
+            
+
+            String emailSubject = lookUpTableService
+                .getPropertyValue("self.registration.pleaseWait.email.subject");
+
+            MessageFormat formatterBody =
+                new MessageFormat(lookUpTableService
+                        .getPropertyValue("self.registration.pleaseWait.email.body"));
+
+          
+            String emailBody = formatterBody.format(params);
+            sendMailWithHtmlBody(mailTo, emailSubject, emailBody);
+           
+        } catch (Exception e) {
+            LOG.error("Send confirmation mail error", e);
         }
     }
 

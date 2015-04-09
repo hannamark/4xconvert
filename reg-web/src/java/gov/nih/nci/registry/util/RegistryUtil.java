@@ -8,9 +8,9 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
-import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -21,6 +21,8 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.activation.FileDataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,6 +37,7 @@ public class RegistryUtil {
     private static final String PA_EXCEPTION_STRING = "gov.nih.nci.pa.service.PAException:";
     private static final Logger LOG = Logger.getLogger(RegistryUtil.class);
     private static final String[] VALID_DATE_FORMATS = {"MM/dd/yyyy", "MM-dd-yyyy", "yyyy/MM/dd", "yyyy-MM-dd"};    
+    private static final String FROMADDRESS = "fromaddress";
 
     /**
      * check if the email address is valid.
@@ -105,7 +108,7 @@ public class RegistryUtil {
     */
     public static void generateMail(String action, String userName, String successCount, String failedCount,
             String totalCount, String attachFileName, String errorMessage) {
-        final MailManager mailManager = new MailManager();
+       
         try {
             StringBuffer submissionMailBody = new StringBuffer();
             Calendar calendar = new GregorianCalendar();
@@ -140,11 +143,19 @@ public class RegistryUtil {
             String emailBody = submissionMailBody.toString();
             String emailTo = registryUser.getEmailAddress();
             if (!StringUtils.isEmpty(attachFileName)) {
+                FileDataSource fds = new FileDataSource(attachFileName);
+                File[] attachments = new File[1];
+                attachments[0] = fds.getFile();
+                String fromAddress = PaRegistry.getLookUpTableService().getPropertyValue(FROMADDRESS);
                 // Send the batch upload report to the submitter
-                mailManager.sendMailWithAattchement(emailTo, null, emailBody, emailSubject, attachFileName);
+                PaRegistry.getMailManagerService().sendMailWithHtmlBodyAndAttachment(emailTo, fromAddress
+                        , null, emailSubject, emailBody, attachments, false);
+                 
+              
             } else {
                 // Send the batch upload Error to the submitter
-                mailManager.sendMail(emailTo, emailBody, emailSubject);
+                PaRegistry.getMailManagerService().sendMailWithHtmlBody(emailTo, emailSubject, emailBody);
+              
             }
 
         } catch (PAException e) {

@@ -102,6 +102,7 @@ import javax.mail.internet.MimeMessage;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+
 @SuppressWarnings({"PMD.TooManyMethods" })
 public interface MailManagerService {
 
@@ -444,4 +445,17 @@ public interface MailManagerService {
      *            MimeMessage
      */
     void send(MimeMessage message);
+    
+    /**
+     * @param params params
+     */
+    void sendNewUserRequestEmail(String [] params);
+    
+    /**
+     * @param mailTo mailTo
+     * @param params params
+     */
+    void sendPleaseWaitEmail(String mailTo, String [] params);
+    
+    
 }

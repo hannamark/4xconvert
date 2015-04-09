@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.util.FamilyHelper;
 import gov.nih.nci.pa.service.util.FamilyServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceBean;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerService;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -102,7 +103,6 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.SAMLToAttributeMapper;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
 import gov.nih.nci.registry.dto.UserWebDTO;
-import gov.nih.nci.registry.mail.MailManager;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.EncoderDecoder;
 import gov.nih.nci.registry.util.RegistryUtil;
@@ -116,6 +116,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -152,6 +153,8 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
     private UserWebDTO userWebDTO = new UserWebDTO();
     private Map<String, String> identityProviders;
     private String selectedIdentityProvider;
+    private MailManagerService mailManagerService;
+    private static final Properties REG_PROPERTIES = PaEarPropertyReader.getProperties();
 
     /**
      * {@inheritDoc}
@@ -163,6 +166,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         organizationEntityService = PoRegistry.getOrganizationEntityService();
         registryUserService = PaRegistry.getRegistryUserService();
         familyService = PaRegistry.getFamilyService();
+        mailManagerService = PaRegistry.getMailManagerService();
     }
 
     /**
@@ -185,6 +189,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         return "activation";
     }
     
+    
     /**
      * Create Account Action.
      * @return redirect.
@@ -205,6 +210,7 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
         }
         try {
             RegistryUser registryUser = getRegistryUser();
+           
             if (StringUtils.isEmpty(userWebDTO.getUsername())) {
                 createUserWithNoGridAccount();
             } else {
@@ -237,10 +243,21 @@ public class RegisterUserAction extends ActionSupport implements Preparable {
     }
     
     private void createUserWithNoGridAccount() {
-        MailManager mailManager = new MailManager();
-        mailManager.sendNewUserRequestEmail(registryUserWebDTO);
+       
+        EncoderDecoder encodeDecoder = new EncoderDecoder();
+
+        String[] params = {registryUserWebDTO.getFirstName(), registryUserWebDTO.getLastName(),
+                registryUserWebDTO.getAffiliateOrg(), registryUserWebDTO.getPhone(), 
+                registryUserWebDTO.getEmailAddress(),
+                REG_PROPERTIES.getProperty("register.mail.body.url") + "?registryUserWebDTO.emailAddress="
+                + encodeDecoder.encodeString(registryUserWebDTO.getEmailAddress())
+                + "&userWebDTO.username=INSERTUSERNAME"
+        };
+       mailManagerService.sendNewUserRequestEmail(params);
+       String mailTo = registryUserWebDTO.getEmailAddress();
+       String[] userParams = {registryUserWebDTO.getFirstName(), registryUserWebDTO.getLastName()};
         LOG.info("Sending email to " + registryUserWebDTO.getEmailAddress());
-        mailManager.sendPleaseWaitEmail(registryUserWebDTO);
+        mailManagerService.sendPleaseWaitEmail(mailTo, userParams);
         addActionMessage(getText("login.message.waitForAppSupport"));
     }
 
