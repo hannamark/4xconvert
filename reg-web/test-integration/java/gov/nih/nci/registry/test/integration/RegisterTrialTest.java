@@ -360,7 +360,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         selectTrialInPA(info);
         addSiteToTrial(info, "DCP", params[0]);
         addSiteToTrial(info, "CTEP", params[1]);
-        addSiteToTrial(info, "NCI", "Closed to Accrual");
+        addSiteToTrial(info, "NCI", "Withdrawn");
 
         // Change trial status to closed in Registry.
         findInMyTrials(info.nciID);

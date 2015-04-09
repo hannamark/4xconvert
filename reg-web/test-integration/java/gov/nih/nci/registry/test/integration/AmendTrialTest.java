@@ -129,7 +129,7 @@ public class AmendTrialTest extends AbstractRegistrySeleniumTest {
         selectTrialInPA(info);
         addSiteToTrial(info, "DCP", "In Review");
         addSiteToTrial(info, "CTEP", "Active");
-        addSiteToTrial(info, "NCI", "Closed to Accrual");
+        addSiteToTrial(info, "NCI", "Withdrawn");
         logoutPA();
 
         // Amend
