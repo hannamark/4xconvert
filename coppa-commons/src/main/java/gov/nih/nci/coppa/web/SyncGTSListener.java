@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
@@ -58,7 +59,9 @@ public class SyncGTSListener implements ServletContextListener {
         LOG.info("Target grid: " + gridName);
 
         File certsDir = new File(SystemUtils.USER_HOME, ".globus/certificates");
-        certsDir.mkdirs();
+        certsDir.mkdirs(); 
+        LOG.info("Wiping out content of " + certsDir.getCanonicalPath());
+        FileUtils.cleanDirectory(certsDir);
         LOG.info("Attempting to install root CA certificates into "
                 + certsDir.getCanonicalPath());
         InputStream certsZipIs = null;
