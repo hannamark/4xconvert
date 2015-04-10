@@ -79,7 +79,7 @@ public class AmendCompleteTrialTest extends AbstractRestServiceTest {
         selectTrialInPA(info);
         addSiteToTrial(info, "DCP", "In Review");
         addSiteToTrial(info, "CTEP", "Active");
-        addSiteToTrial(info, "NCI", "Closed to Accrual");
+        addSiteToTrial(info, "NCI", "Withdrawn");
 
         // Amend
         restartEmailServer();
