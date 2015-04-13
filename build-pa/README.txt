@@ -17,7 +17,7 @@ Database
 Application Server
 1. Install JBoss EAP 6.2.0 GA.
 2. Extract the file build-pa/server-config/ctrp-pa-modules.zip to the folder <jboss home>/modules. Add jars listed
-   in the two module.xml file. Use https://drive.google.com/file/d/0B_R06zcO1q_mWkNfNWRxMERhUzQ/edit?usp=sharing 
+   in the two module.xml file. Use https://drive.google.com/file/d/0B2AAJeDeGUVGWjkxbDZQM25xbjA/view?usp=sharing 
    to avoid the need for this second step.
 3. Copy build-pa/server-config/standalone.xml to the folder <jboss home>/standalone/configuration.
 4. Search for "java:/pa-ds and edit" the datasource with appropriate database name, port, user.

@@ -297,9 +297,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>globus</groupId>
+            <groupId>org.cagrid</groupId>
             <artifactId>puretls</artifactId>
-            <version>4.0.3</version>
+            <version>0.9b4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -695,7 +695,7 @@
                             <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
-                            <groupId>globus</groupId>
+                            <groupId>org.cagrid</groupId>
                             <artifactId>puretls</artifactId>
                             <includeInApplicationXml>false</includeInApplicationXml>
                         </jarModule>
