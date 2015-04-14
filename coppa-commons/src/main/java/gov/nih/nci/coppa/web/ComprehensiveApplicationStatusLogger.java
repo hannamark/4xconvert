@@ -9,6 +9,7 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.sql.Connection;
@@ -41,8 +42,6 @@ import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
-
-import com.sun.management.OperatingSystemMXBean;
 
 /**
  * Dumps a whole bunch of useful debugging info about the application and
@@ -119,14 +118,8 @@ public class ComprehensiveApplicationStatusLogger {
         LOG.error("CPU Info:");
         try {
             OperatingSystemMXBean osBean = ManagementFactory
-                    .getPlatformMXBean(OperatingSystemMXBean.class);
-            // What % CPU load this current JVM is taking, from 0.0-1.0
-            LOG.error("What % CPU load this current JVM is taking, from 0.0-1: "
-                    + osBean.getProcessCpuLoad());
-
-            // What % load the overall system is at, from 0.0-1.0
-            LOG.error("What % load the overall system is at, from 0.0-1.0: "
-                    + osBean.getSystemCpuLoad());
+                    .getOperatingSystemMXBean();
+            LOG.error(BeanUtils.describe(osBean));
         } catch (Exception e) {
             LOG.error(e);
         }
