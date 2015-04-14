@@ -332,6 +332,24 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>commons-dbutils</groupId>
+            <artifactId>commons-dbutils</artifactId>
+            <version>1.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.8.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-exec</artifactId>
+            <version>1.3</version>
+            <scope>compile</scope>
+        </dependency>        
+        <dependency>
             <groupId>cagrid</groupId>
             <artifactId>cagrid-syncgts-stubs</artifactId>
             <version>1.3</version>
@@ -586,6 +604,8 @@
                             <exclude>gov/nih/nci/coppa/services/interceptor/*</exclude>
                             <exclude>gov/nih/nci/coppa/webservices/security/*</exclude>
                             <exclude>gov/nih/nci/coppa/web/CSMSyncListener.class</exclude>
+                            <exclude>gov/nih/nci/coppa/web/RequestTrackingFilter.class</exclude>
+                            <exclude>gov/nih/nci/coppa/web/ComprehensiveApplicationStatusLogger.class</exclude>
                             <exclude>gov/nih/nci/coppa/services/grid/util/CaGridFormAuthenticatorValve.class</exclude>
                             <exclude>gov/nih/nci/coppa/web/SyncGTSListener.class</exclude>
                             <exclude>gov/nih/nci/coppa/util/NullPasswordStackingLoginModule.class</exclude>
