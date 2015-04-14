@@ -242,15 +242,19 @@ public class SyncDiseasesFromNCIt{
       
     def ctrpTerms = sql.rows("select distinct nt_term_identifier from pdq_disease, study_disease where study_disease.disease_identifier = pdq_disease.identifier and nt_term_identifier is not null order by nt_term_identifier")
     println "-- Syncing ${ctrpTerms.size()} CTRP Disease terms from NCIt..."
-  
-    String ncitTerm =null;
+    List <String> ncitTermsList = new ArrayList<String>();
+    
     ctrpTerms.each (){
-    ncitTerm= it.nt_term_identifier;
-     performSync(ncitTerm, url);
-   
+      ncitTermsList.add(it.nt_term_identifier);
     }
-    
-    
+    //closing connection here becase we don't need to query on study disease table
+    sql.close();
+    //need to keep connection again becaause we do select query pdq_disease table 
+    sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
+    for(String ncitTerm : ncitTermsList) {
+        performSync(ncitTerm, url);
+    }
+   
     
     def outputFile = new File(outputDir)
     File sqlFile = new File(outputFile, "queries.sql")
@@ -263,12 +267,15 @@ public class SyncDiseasesFromNCIt{
     writer.write fileContents.toString()
     writer.flush();
     writer.close();
+   
    sql.executeUpdate(fileContents.toString());
+   sql.close();
    
    fileContents = new StringBuffer("BEGIN;");
    
    ctrpTerms = null
-   
+   sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
+   ncitTermsList = new ArrayList<String>();
    //sync terms that does not have parent and childs and at the rool level as a result of sync
    ctrpTerms = sql.rows("select nt_term_identifier from pdq_disease where nt_term_identifier in ("
    +" select distinct(nt_term_identifier) from pdq_disease where nt_term_identifier not in "
@@ -280,14 +287,16 @@ public class SyncDiseasesFromNCIt{
   println "-- Syncing additional ${ctrpTerms.size()} CTRP Disease terms from NCIt..."
 
    ctrpTerms.each (){
-       ncitTerm= it.nt_term_identifier;
-       performSync(ncitTerm, url);
-       
-   }
+       ncitTermsList.add(it.nt_term_identifier);
+    }
    
+   for(String ncitTerm : ncitTermsList) {
+       performSync(ncitTerm, url);
+   }
+  
    fileContents.append(";COMMIT;")
    sql.executeUpdate(fileContents.toString());
-    
+   sql.close();
   }
 
  

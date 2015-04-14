@@ -166,17 +166,21 @@ public class PDQNCItInterventionMapper{
   public void syncIntervention(String outputDir, String preferredNameUrl, String interventionUrl ,
          String paJdbcUrl,String dbuser,String dbpassword){
          
-         String ncitCode =null;
+       
          def  sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          def ctrpTerms = sql.rows("select distinct(nt_term_identifier) from intervention");
+         List<String> ncitTermsList = new ArrayList<String>();
          ctrpTerms.each (){
-         ncitCode= it.nt_term_identifier;
-         if(ncitCode!=null) {
+             if(it.nt_term_identifier!=null) {
+                 ncitTermsList.add(it.nt_term_identifier)
+            }
+         } 
+         sql.close();
+        for(String ncitCode :ncitTermsList) {
             RetryUtil.retry(10, 1000){
              performSync(ncitCode,preferredNameUrl,interventionUrl);
             }
-          }
-         }
+          }   
          def outputFile = new File(outputDir)
          File sqlFile = new File(outputFile, "interventionQueries.sql")
          if(sqlFile.exists()) {
@@ -190,6 +194,6 @@ public class PDQNCItInterventionMapper{
          writer.close();
          sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          sql.executeUpdate(fileContents.toString());
-    
+         sql.close();
   }
 }
