@@ -128,13 +128,13 @@ public class PDQNCItInterventionMapper{
   }
 
   def generateInvSynUpdateSQL(def ncitCode, def synonyms){
-      fileContents.append(" delete from intervention_alternate_name where intervention_identifier = (select min(identifier) from intervention where nt_term_identifier='${ncitCode}');");
+      fileContents.append(" delete from intervention_alternate_name where intervention_identifier = (select min(identifier) from intervention where nt_term_identifier='${ncitCode}' and status_code='ACTIVE' );");
     synonyms.each (){ code, vals ->
        
       if(vals){
        
         vals.each { val -> fileContents.append(" insert into intervention_alternate_name (identifier, intervention_identifier, name,status_code, status_date_range_low, ");
-          fileContents.append(" date_last_created, name_type_code) values ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), (select min(identifier) from intervention where nt_term_identifier='${ncitCode}'), ");
+          fileContents.append(" date_last_created, name_type_code) values ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), (select min(identifier) from intervention where nt_term_identifier='${ncitCode}' and status_code='ACTIVE' ), ");
           fileContents.append(" '${val.replaceAll('\'','\'\'')}','ACTIVE',now(),now(),'${code}' );")
           }
       }
