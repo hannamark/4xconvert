@@ -253,6 +253,13 @@
                 <param name="actionName">home</param>
             </result>
         </action>
+        <action name="systemStatusDump" class="gov.nih.nci.coppa.web.ComprehensiveApplicationStatusLogger">
+            <interceptor-ref name="poNoDisclaimerStack"/>  
+            <result name="success" type="redirectAction">
+                <param name="namespace">/protected</param>
+                <param name="actionName">home</param>
+            </result>          
+        </action>
     </package>
 
     <package name="common" extends="default" abstract="true">

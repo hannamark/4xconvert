@@ -19,7 +19,7 @@
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
         <nci-commons.version>1.4.10.1</nci-commons.version>
-        <coppa-commons.version>1.3.11</coppa-commons.version>
+        <coppa-commons.version>1.3.12</coppa-commons.version>
         <iso-datatypes.version>2.0</iso-datatypes.version>
         <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
         <maven-checkstyle-plugin.version>2.4</maven-checkstyle-plugin.version>
