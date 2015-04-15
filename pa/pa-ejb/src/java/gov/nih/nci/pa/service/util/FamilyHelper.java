@@ -216,17 +216,18 @@ public final class FamilyHelper {
             throws NullifiedRoleException, PAException {
         List<ResearchOrganizationDTO> roList = getCancerCenters(poOrgId);
         Set<RegistryUser> admins = new HashSet<RegistryUser>();
-        if (!roList.isEmpty()) {
-            for (ResearchOrganizationDTO roDTO : roList) {
-                List<RegistryUser> users =  
-                        PaRegistry.getRegistryUserService().findByAffiliatedOrg(
-                        IiConverter.convertToLong(roDTO.getPlayerIdentifier()));
-                if (!users.isEmpty()) {
-                    admins.addAll(users);
+        
+        for (ResearchOrganizationDTO roDTO : roList) {
+            List<RegistryUser> users =  
+                    PaRegistry.getRegistryUserService().findByAffiliatedOrg(
+                    IiConverter.convertToLong(roDTO.getPlayerIdentifier()));
+            
+            for (RegistryUser registryUser : users) {
+                if (UserOrgType.ADMIN == registryUser.getAffiliatedOrgUserType()) {
+                    admins.add(registryUser);
                 }
             }
         }
         return admins;
-        
     }
 }
