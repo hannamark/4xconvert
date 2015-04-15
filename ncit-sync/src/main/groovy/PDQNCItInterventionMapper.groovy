@@ -168,7 +168,7 @@ public class PDQNCItInterventionMapper{
          
        
          def  sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
-         def ctrpTerms = sql.rows("select distinct(nt_term_identifier) from intervention");
+         def ctrpTerms = sql.rows("select distinct(nt_term_identifier) from intervention where status_code='ACTIVE' ");
          List<String> ncitTermsList = new ArrayList<String>();
          ctrpTerms.each (){
              if(it.nt_term_identifier!=null) {
@@ -176,6 +176,7 @@ public class PDQNCItInterventionMapper{
             }
          } 
          sql.close();
+         println "-- Syncing ${ncitTermsList.size()} CTRP Intervention terms from NCIt..."
         for(String ncitCode :ncitTermsList) {
             RetryUtil.retry(10, 1000){
              performSync(ncitCode,preferredNameUrl,interventionUrl);
