@@ -571,6 +571,7 @@ public class ManageFlaggedTrialsTest extends AbstractPaSeleniumTest {
      */
     @SuppressWarnings("deprecation")
     private void populateAddFlagDialogAndHitSave(TrialInfo trial) {
+        pause(1000);
         selenium.click("xpath=//span[normalize-space(text())='Add Flagged Trial']");
         pause(1000);
         waitForElementById("comments", 5);
