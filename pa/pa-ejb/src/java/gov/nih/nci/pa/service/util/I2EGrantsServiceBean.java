@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -53,6 +55,9 @@ public class I2EGrantsServiceBean implements I2EGrantsServiceLocal {
 
     /** DB Connection. */
     private static Connection conn;
+    
+    private final ExecutorService exec = Executors
+            .newSingleThreadExecutor();
 
     /**
      * {@inheritDoc}
@@ -128,7 +133,17 @@ public class I2EGrantsServiceBean implements I2EGrantsServiceLocal {
         try {
             if (conn != null) {
                 if (conn instanceof OracleConnection && ((OracleConnection) conn).pingDatabase() != 0) {
-                    DbUtils.close(conn);
+                    // Call to Connection.close() may block for quite a bit of
+                    // time; reported by CTRO.
+                    // So we are closing it in an async manner. Since the ping
+                    // has failed, the connection is already dead.
+                    final Connection toClose = conn;
+                    exec.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            DbUtils.closeQuietly(toClose);
+                        }
+                    });             
                 } else {
                     return conn;
                 }
@@ -140,7 +155,7 @@ public class I2EGrantsServiceBean implements I2EGrantsServiceLocal {
             }
             conn = DriverManager.getConnection(lookUpTableSvc.getPropertyValue("I2EGrantsUrl"));
             if (((OracleConnection) conn).pingDatabase() != 0) {
-                DbUtils.close(conn);
+                DbUtils.closeQuietly(conn);
                 throw new PAException("Pinging I2E database failed.");
             }
         } catch (SQLException e) {
