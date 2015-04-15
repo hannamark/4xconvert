@@ -34,6 +34,10 @@
 
     <!-- Filters -->
     <filter>
+        <filter-name>RequestTrackingFilter</filter-name>
+        <filter-class>gov.nih.nci.coppa.web.RequestTrackingFilter</filter-class>
+    </filter>
+    <filter>
         <filter-name>characterEncodingFilter</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CharacterEncodingFilter</filter-class>
         <init-param>
@@ -82,6 +86,12 @@
         <filter-name>cgmmAuthSrcMapHelper</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CGMMAuthSourceRequestFilter</filter-class>
     </filter>
+    
+    <filter-mapping>
+        <filter-name>RequestTrackingFilter</filter-name>
+        <url-pattern>/*</url-pattern>       
+    </filter-mapping>    
+    
     <filter-mapping>
         <filter-name>characterEncodingFilter</filter-name>
         <url-pattern>*.action</url-pattern>

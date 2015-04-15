@@ -166,6 +166,12 @@
                 <param name="actionName">dashboard</param>                
             </result>             
         </action>
+        <action name="systemStatusDump" class="gov.nih.nci.coppa.web.ComprehensiveApplicationStatusLogger">
+            <interceptor-ref name="paNoDisclaimerDefaultInterceptor"/>  
+            <result name="success">
+               /index.jsp
+            </result>          
+        </action>
         <action name="logout" class="gov.nih.nci.pa.action.Logout" method="logout">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />
             <result>/index.jsp</result>
