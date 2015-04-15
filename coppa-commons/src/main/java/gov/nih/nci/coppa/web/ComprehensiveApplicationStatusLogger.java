@@ -23,13 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.Executors;
 
-import javax.management.MBeanInfo;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -39,9 +33,10 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
 
 /**
  * Dumps a whole bunch of useful debugging info about the application and
@@ -71,12 +66,12 @@ public class ComprehensiveApplicationStatusLogger {
         dumpMemory();
         dumpCPU();
         dumpDiskInfo();
-        dumpMBeans();
+        // dumpMBeans();
         dumpDatabaseInfo();
         dumpOSCommands();
 
         LOG.error("********** End of a comprehensive application/container status dump");
-        return StringUtils.EMPTY;
+        return "success";
     }
 
     private void dumpOSCommands() {
@@ -135,13 +130,15 @@ public class ComprehensiveApplicationStatusLogger {
         long allocatedMemory = runtime.totalMemory();
         long freeMemory = runtime.freeMemory();
 
-        sb.append("Free memory: " + format.format(freeMemory / 1024) + CRLF);
-        sb.append("Allocated memory: " + format.format(allocatedMemory / 1024)
+        sb.append("Free memory: " + format.format(freeMemory / 1024) + "KB"
                 + CRLF);
-        sb.append("Max memory: " + format.format(maxMemory / 1024) + CRLF);
+        sb.append("Allocated memory: " + format.format(allocatedMemory / 1024)
+                + "KB" + CRLF);
+        sb.append("Max memory: " + format.format(maxMemory / 1024) + "KB"
+                + CRLF);
         sb.append("Total free memory: "
                 + format.format((freeMemory + (maxMemory - allocatedMemory)) / 1024)
-                + CRLF);
+                + "KB" + CRLF);
         LOG.error(sb);
 
         try {
@@ -187,13 +184,13 @@ public class ComprehensiveApplicationStatusLogger {
         Statement stmt = null;
         ResultSet rs = null;
         try {
+            sb.append(CRLF);
             Properties properties = getDbProperties();
             Class.forName(properties.getProperty("csm.db.driver").trim());
             c = DriverManager.getConnection(
                     properties.getProperty("csm.db.connection.url").trim(),
                     properties.getProperty("csm.db.user").trim(), properties
                             .getProperty("csm.db.password").trim());
-            c.setNetworkTimeout(Executors.newSingleThreadExecutor(), 1000 * 60);
             c.setReadOnly(true);
 
             stmt = c.createStatement();
@@ -227,6 +224,7 @@ public class ComprehensiveApplicationStatusLogger {
             DbUtils.closeQuietly(stmt);
             DbUtils.closeQuietly(c);
         }
+        LOG.error(sb);
 
     }
 
@@ -237,7 +235,6 @@ public class ComprehensiveApplicationStatusLogger {
                 properties.load(getClass().getResourceAsStream(
                         "/WEB-INF/classes/csm.properties"));
             } catch (RuntimeException e) {
-                LOG.warn("Unable to load /WEB-INF/classes/csm.properties; now trying /csm.properties...");
                 properties.load(Thread.currentThread().getContextClassLoader()
                         .getResourceAsStream("/csm.properties"));
             }
@@ -259,39 +256,6 @@ public class ComprehensiveApplicationStatusLogger {
                 + file.getFreeSpace() + "; Usable Space is "
                 + file.getUsableSpace() + "; Total Space is "
                 + file.getTotalSpace());
-    }
-
-    @SuppressWarnings("unchecked")
-    private void dumpMBeans() {
-        LOG.error("MBeans:");
-        StringBuilder sb = new StringBuilder();
-        try {
-            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-            sb.append("MBean count: " + server.getMBeanCount() + CRLF);
-
-            Set<ObjectName> names = new TreeSet<ObjectName>(server.queryNames(
-                    null, null));
-            for (ObjectName name : names) {
-                sb.append("MBean: " + name.getCanonicalName() + CRLF);
-                try {
-                    MBeanInfo mbeanInfo = server.getMBeanInfo(name);
-                    for (int i = 0; i < mbeanInfo.getAttributes().length; i++) {
-                        String attributeName = mbeanInfo.getAttributes()[i]
-                                .getName();
-                        String attributeValue = server.getAttribute(name,
-                                attributeName).toString();
-                        sb.append(attributeName + "=" + attributeValue + CRLF);
-                    }
-                } catch (Exception e) {
-                    LOG.error(e.toString());
-                }
-                sb.append(CRLF);
-            }
-        } catch (Exception e) {
-            LOG.error(e);
-        }
-        LOG.error(sb);
-
     }
 
     private void dumpRequestProcessingInfo() {
@@ -374,6 +338,14 @@ public class ComprehensiveApplicationStatusLogger {
                 LOG.error(info);
             }
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        org.apache.log4j.Logger.getRootLogger().addAppender(
+                new ConsoleAppender(new SimpleLayout()));
+        org.apache.log4j.Logger.getRootLogger().setLevel(
+                org.apache.log4j.Level.ERROR);
+        new ComprehensiveApplicationStatusLogger().execute();
     }
 
 }
