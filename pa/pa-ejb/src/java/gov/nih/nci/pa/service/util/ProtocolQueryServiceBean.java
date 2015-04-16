@@ -172,6 +172,8 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {
 
+    private static final double MILLIS_PER_SECOND = 1000D;
+
     private static final String DCP = "dcp";
 
     private static final String CTEP = "ctep";
@@ -205,13 +207,19 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         if (isCriteriaEmpty(spsc)) {
             throw new PAException("At least one criteria is required");
         }
+        long start = System.currentTimeMillis();
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<Long> queryList = getStudyProtocolIdQueryResults(spsc);
         pdtos = protocolQueryResultsService.getResults(queryList,
-                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), spsc.getUserId());
+                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), spsc.getUserId());        
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
+        long end = System.currentTimeMillis();
+        LOG.warn(spsc.toString() + " took "
+                + ((end - start) / MILLIS_PER_SECOND)
+                + " seconds and returned " + (pdtos != null ? pdtos.size() : 0)
+                + " trials.");
         return pdtos;
     }
 
