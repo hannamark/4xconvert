@@ -604,7 +604,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         List<PaOrganizationDTO> sessionPartList = (List<PaOrganizationDTO>) ServletActionContext
                 .getRequest().getSession().getAttribute(Constants.PARTICIPATING_SITES_LIST);
         List<PaOrganizationDTO> currPartList = getParticipatingSitesList();
-        if (CollectionUtils.isEmpty(currPartList)) {
+        if (CollectionUtils.isEmpty(currPartList)
+                || CollectionUtils.isEmpty(sessionPartList)) {
             return;
         }
         for (int i = 0; i < currPartList.size(); i++)  {
