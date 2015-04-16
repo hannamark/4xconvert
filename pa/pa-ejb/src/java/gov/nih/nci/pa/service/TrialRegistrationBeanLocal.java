@@ -1273,7 +1273,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         Set<RegistryUser> users = null;
         if (dto.getCreatedUser() != null) {
             users = new HashSet<RegistryUser>();
-            users.add(registryUserServiceLocal.getUser(StConverter.convertToString(dto.getCreatedUser())));
+            RegistryUser crtduser = registryUserServiceLocal.getUser(StConverter.convertToString(dto.getCreatedUser())); 
+            if (crtduser != null) {
+                users.add(crtduser);
+            }
         } else if(!(users = FamilyHelper.getSiteAdmins(Long.valueOf(dto.getSiteOrgPoId()))).isEmpty()) {
             //do nothing for now, users are siteadmins
         } else if(!(users = FamilyHelper.getCancerCenterAdmins(Long.valueOf(dto.getSiteOrgPoId()))).isEmpty()) {
