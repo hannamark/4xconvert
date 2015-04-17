@@ -9,7 +9,7 @@
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
 	<parameter name="monthvalue" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA[$P{duration} +" month"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[$P{duration}!=null && $P{duration}.trim().length() > 0 ? $P{duration} +" month" :"6 month"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[Select a.nci_id as "NCI_ID",
@@ -28,7 +28,7 @@ where a.nci_id =b.nci_id
 and a.category = 'Complete'
 and  now() > a.record_verification_date + $P{monthvalue}::INTERVAL
 and processing_status <> 'Rejected'
-and processing_status <> 'SUBMISSION_TERMINATED'
+and  a.current_milestone <> 'Submission Terminated Date'
 group by a.nci_id,a.lead_org_id,a.ctep_id ,a.dcp_id,a.ccr_id,a.submitter_organization
 ,a.official_title,a.lead_org,a.current_trial_status,a.record_verification_date
 order by "Record_Verification_Date" desc ,"NCI_ID"]]>
@@ -402,6 +402,10 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="248" y="2" width="100" height="20" uuid="30ddf9e4-8438-4da7-bbc7-5dff738f2778"/>
+				<textFieldExpression><![CDATA[$P{duration}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
