@@ -121,6 +121,7 @@ CREATE TABLE STG_DW_STUDY (
     CONSORTIA_TRIAL_CATEGORY character varying(50),
     NCI_GRANT boolean,
     STUDY_SOURCE character varying(50),
+    CCR_ID character varying(200) ,
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 ); 
 

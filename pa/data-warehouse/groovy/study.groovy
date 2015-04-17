@@ -66,7 +66,8 @@ def sql =
             sp.comments, sp.processing_priority, sp.ctro_override,
             sp.bio_specimen_description, sp.bio_specimen_retention_code, sp.sampling_method_code, sp.study_model_code, sp.study_model_other_text,
             sp.study_population_description, sp.time_perspective_code, sp.time_perspective_other_text, sp.study_protocol_type, sp.study_subtype_code,
-            sp.consortia_trial_category, sp.nci_grant, sp.study_source
+            sp.consortia_trial_category, sp.nci_grant, sp.study_source ,
+            ccr.local_sp_indentifier as ccrid
             from STUDY_PROTOCOL sp
                 left outer join study_checkout as admin on (admin.study_protocol_identifier = sp.identifier and admin.checkout_type = 'ADMINISTRATIVE' and admin.checkin_date is null)
                 left outer join study_checkout as scientific on (scientific.study_protocol_identifier = sp.identifier and scientific.checkout_type = 'SCIENTIFIC' and scientific.checkin_date is null)
@@ -110,6 +111,7 @@ def sql =
                 left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id
                 left outer join study_contact as central_contact on central_contact.study_protocol_identifier = sp.identifier and central_contact.role_code = 'CENTRAL_CONTACT'
                 left outer join study_site as lead_org_id on lead_org_id.study_protocol_identifier = sp.identifier and lead_org_id.functional_code = 'LEAD_ORGANIZATION'
+                left outer join rv_ccr_id ccr on ccr.study_protocol_identifier = sp.identifier
         where sp.status_code = 'ACTIVE'"""
 
 
@@ -155,11 +157,11 @@ sourceConnection.eachRow(sql) { row ->
                     study_population_description: row.study_population_description, time_perspective_code: row.time_perspective_code,
                     time_perspective_other_text: row.time_perspective_other_text, study_protocol_type: row.study_protocol_type, study_subtype_code: row.study_subtype_code,
                     program_code: row.program_code, consortia_trial_category: row.consortia_trial_category, nci_grant: row.nci_grant,
-                    study_source: row.study_source
+                    study_source: row.study_source,ccr_id :row.ccrid
                     )
         } catch (Exception e) {
-            println "Error adding row : " + row
-        }
+         println "Error adding row : " + row
+       }
     }
 }
 
