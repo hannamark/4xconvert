@@ -79,7 +79,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[NCI_ID]]></text>
@@ -93,7 +93,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Lead Organization ID]]></text>
@@ -107,7 +107,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CTEP ID]]></text>
@@ -121,7 +121,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[DCP ID]]></text>
@@ -135,7 +135,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Submitting Organization]]></text>
@@ -149,7 +149,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Official Title]]></text>
@@ -163,7 +163,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Lead Organization]]></text>
@@ -177,7 +177,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Trial Status]]></text>
@@ -191,7 +191,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Verification  Date]]></text>
@@ -205,7 +205,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Owner(s)]]></text>
@@ -219,7 +219,7 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<bottomPen lineWidth="1.5"/>
 					<rightPen lineWidth="1.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[CCR ID]]></text>
@@ -402,10 +402,6 @@ order by "Record_Verification_Date" desc ,"NCI_ID"]]>
 					<font fontName="Bell MT" size="14" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="248" y="2" width="100" height="20" uuid="30ddf9e4-8438-4da7-bbc7-5dff738f2778"/>
-				<textFieldExpression><![CDATA[$P{duration}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
