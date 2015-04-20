@@ -223,17 +223,24 @@ public class AbstractEjbTestCase extends AbstractHibernateTestCase {
 
     @After
     public final void shutdown() {
-        try {
-            server.stop(1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        stopNctMockServer();
         stopSMTP();
         CSMUserService.setInstance(backupCsmService);
         PaRegistry.getInstance().setServiceLocator(backupPaServiceLocator);
         PoRegistry.getInstance().setPoServiceLocator(backupPoServiceLocator);
         UsernameHolder.setUserCaseSensitive(UsernameHolder.ANONYMOUS_USERNAME
                 .equals(backupUsername) ? null : backupUsername);
+    }
+
+    /**
+     * 
+     */
+    protected void stopNctMockServer() {
+        try {
+            server.stop(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected void stopSMTP() {

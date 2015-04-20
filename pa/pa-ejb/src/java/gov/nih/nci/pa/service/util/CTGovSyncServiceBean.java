@@ -175,6 +175,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
         "PMD.ExcessiveClassLength", "PMD.CyclomaticComplexity" })
 public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
 
+    private static final int RETRY_NUMBER = 3;
+
     private static final String WITHHELD = "Withheld";
 
     /**
@@ -273,7 +275,7 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
     private static final Logger LOG = Logger
             .getLogger(CTGovSyncServiceBean.class);
 
-    private static final int CONNECT_TIMEOUT = 30 * 1000;
+    private static final int CONNECT_TIMEOUT = 15 * 1000;
 
     private static final int L_300 = 300;
 
@@ -433,9 +435,37 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         }
     }
 
-    private String getCtGovXmlByNctId(String nctID) throws PAException,
+    private String getCtGovXmlByNctId(final String nctID) throws PAException,
             IOException {
+        int counter = 0;
+        IOException e = null;
+        while ((counter++) < RETRY_NUMBER) {
+            try {
+                return hitCtGovAndGetXML(nctID);
+            } catch (IOException io) {
+                e = io;
+                LOG.warn("This was attempt #" + counter
+                        + " to hit ClinicalTrials.gov and it failed: "
+                        + io.getMessage());
+            }
+            try {
+                Thread.sleep(DateUtils.MILLIS_PER_SECOND);
+            } catch (InterruptedException e1) {
+            }
+        }
+        throw e != null ? e
+                : new IOException(
+                        "Unable to get data from ClinicalTrials.gov; see previous error messages.");
 
+    }
+    /**
+     * @param nctID
+     * @return
+     * @throws PAException
+     * @throws IOException
+     */
+    private String hitCtGovAndGetXML(String nctID) throws PAException,
+            IOException {
         InputStream is = null;
         try {
             String urlTemplate = lookUpTableService
@@ -452,7 +482,6 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         } finally {
             IOUtils.closeQuietly(is);
         }
-
     }
 
     /**

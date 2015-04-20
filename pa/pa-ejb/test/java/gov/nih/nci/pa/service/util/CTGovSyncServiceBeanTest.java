@@ -526,6 +526,17 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
                                 + spID + " order by so.displayOrder").list();
         return exclList;
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testIOExceptionRetried3TimesAndThenFails()
+            throws PAException, ParseException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Connection refused: connect");
+
+        stopNctMockServer();
+        String nciID = serviceBean.importTrial("NCT01861054");
+    }
 
     /**
      * Test method for
