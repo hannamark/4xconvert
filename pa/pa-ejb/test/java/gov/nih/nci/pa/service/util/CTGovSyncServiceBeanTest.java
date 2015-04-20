@@ -64,6 +64,7 @@ import java.util.List;
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -532,7 +533,8 @@ public class CTGovSyncServiceBeanTest extends AbstractEjbTestCase {
     public final void testIOExceptionRetried3TimesAndThenFails()
             throws PAException, ParseException {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Connection refused: connect");
+        thrown.expectMessage(SystemUtils.IS_OS_WINDOWS ? "Connection refused: connect"
+                : "Connection refused");
 
         stopNctMockServer();
         String nciID = serviceBean.importTrial("NCT01861054");
