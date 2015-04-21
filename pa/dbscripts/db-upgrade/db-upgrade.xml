@@ -1762,4 +1762,8 @@
        <comment>Change grid grouper URLs to use SHA2 endpoints.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.2.1/PO-8813.sql"/>       
     </changeSet>
+	<changeSet id="PO-8635" author="khandalkara">
+       <comment>Migrate to the latest NCI LexEVS APIs</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.2.1/PO-8635.sql"/>       
+    </changeSet>
 </databaseChangeLog>
