@@ -138,6 +138,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -2042,7 +2043,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
                 // search the StudyProtocol to get the latest accepted protocol.
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
                 StudyProtocolDTO studyToSearch = new StudyProtocolDTO();
-                studyToSearch.setSecondaryIdentifiers(studyProtocolDto.getSecondaryIdentifiers());
+                studyToSearch.setSecondaryIdentifiers(DSetConverter.convertIiToDset(
+                    PAUtil.getAssignedIdentifier(studyProtocolDto)));
                 studyToSearch.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
                 List<StudyProtocolDTO> spList = studyProtocolService.search(studyToSearch, limit);
                 if (CollectionUtils.isNotEmpty(spList)) {
