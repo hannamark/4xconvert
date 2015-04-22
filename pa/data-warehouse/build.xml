@@ -110,6 +110,7 @@
             <transaction src="${basedir}/sql/grants_p30.sql"/>
             <transaction src="${basedir}/sql/indide.sql"/>
             <transaction src="${basedir}/sql/participating-site.sql"/>
+            <transaction src="${basedir}/sql/participating-site-status.sql"/>
             <transaction src="${basedir}/sql/participating_site_investigators.sql"/>
             <transaction src="${basedir}/sql/affiliate_org.sql"/>
             <transaction src="${basedir}/sql/user.sql"/>
@@ -301,6 +302,11 @@
         <echo message = "Running participating_site"/>
         <groovy src="groovy/participating_site.groovy"/>
         <stopwatch name="timer1" action="total"/>
+    	
+    	<stopwatch name="timer1"/>
+        <echo message = "Running participating_site_status"/>
+        <groovy src="groovy/participating_site_status.groovy"/>
+        <stopwatch name="timer1" action="total"/>
 
         <stopwatch name="timer1"/>
         <echo message = "Running participating_site_investigators"/>
@@ -382,6 +388,6 @@
         <groovy src="groovy/study_inbox.groovy"/>
         <stopwatch name="timer1" action="total"/>
    </target>
-
+	
 
 </project>
