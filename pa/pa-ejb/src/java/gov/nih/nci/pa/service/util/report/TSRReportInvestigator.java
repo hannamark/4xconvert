@@ -83,6 +83,8 @@
 
 package gov.nih.nci.pa.service.util.report;
 
+import java.io.Serializable;
+
 
 /**
  * Invesitgator.
@@ -90,7 +92,11 @@ package gov.nih.nci.pa.service.util.report;
  * @author kkanchinadam
  */
 
-public class TSRReportInvestigator {
+public class TSRReportInvestigator implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private final String firstName;
     private final String middleName;
     private final String lastName;

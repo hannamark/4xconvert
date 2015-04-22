@@ -135,5 +135,15 @@
          timeToLiveSeconds="30"
          overflowToDisk="false"
     />
+    
+    <cache
+         name="TSR_SITES_CACHE"
+         maxElementsInMemory="2000"
+         eternal="false"         
+         timeToIdleSeconds="420"
+         timeToLiveSeconds="420"
+         overflowToDisk="false"
+    />
+    
 
 </ehcache>

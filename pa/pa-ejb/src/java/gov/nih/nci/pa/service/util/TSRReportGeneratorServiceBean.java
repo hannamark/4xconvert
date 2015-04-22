@@ -182,6 +182,7 @@ import gov.nih.nci.pa.service.util.report.TSRReportSubGroupStratificationCriteri
 import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
+import gov.nih.nci.pa.util.CacheUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -1172,78 +1173,105 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceL
     throws PAException, NullifiedRoleException {
         StudySiteDTO srDTO = new StudySiteDTO();
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
-        List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), srDTO);
-        if (!spList.isEmpty()) {
+        List<StudySiteDTO> siteList = studySiteService.getByStudyProtocol(studyProtocolDto.getIdentifier(), srDTO);
+        if (!siteList.isEmpty()) {
             List<TSRReportParticipatingSite> participatingSites = new ArrayList<TSRReportParticipatingSite>();
-            for (StudySiteDTO sp : spList) {
-                TSRReportParticipatingSite participatingSite = new TSRReportParticipatingSite();
-                StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
-                        .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-                Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-                participatingSite.setFacility(getFacility(orgBo.getName(), getLocation(orgBo)));
-                String recruitmentStatus = getValue(ssas.getStatusCode()) + " as of "
-                        + PAUtil.convertTsToFormattedDate(ssas.getStatusDate());
-                participatingSite.setRecruitmentStatus(recruitmentStatus);
-                participatingSite.setPoId(orgBo.getIdentifier());
-                participatingSite.setTargetAccrual(getValue(sp.getTargetAccrualNumber()));                
-                participatingSite.setLocalTrialIdentifier(getValue(sp.getLocalStudyProtocolIdentifier(),
-                        INFORMATION_NOT_PROVIDED));
-                participatingSite.setOpenForAccrualDate(getValue(IvlConverter.convertTs().convertLowToString(
-                        sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
-                participatingSite.setClosedForAccrualDate(getValue(IvlConverter.convertTs().convertHighToString(
-                        sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
-                participatingSite.setProgramCode(getValue(sp.getProgramCodeText()));
-                               
-                List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
-                for (StudySiteContactDTO spcDto : spcDTOs) {
-                    if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDto.getRoleCode().getCode())) {
-                        // Set contact info.
-                        
-                        String email = StringUtils.isEmpty(PAUtil
-                                .getEmail(spcDto.getTelecomAddresses())) ? ""
-                                : PAUtil.getEmail(spcDto
-                                        .getTelecomAddresses());
-                        
-                        String phone = StringUtils.isEmpty(PAUtil
-                                .getPhone(spcDto.getTelecomAddresses())) ? ""
-                                : PAUtil.getPhone(spcDto
-                                        .getTelecomAddresses());
-                        
-                        String extn = StringUtils.isEmpty(PAUtil
-                                .getPhoneExtension(spcDto
-                                        .getTelecomAddresses())) ? ""
-                                : PAUtil.getPhoneExtension(spcDto
-                                        .getTelecomAddresses()); 
-                        
-                        String contact = null;
+            for (final StudySiteDTO site : siteList) {
+                final String siteID = IiConverter.convertToString(site
+                        .getIdentifier());
+                TSRReportParticipatingSite participatingSite = (TSRReportParticipatingSite) CacheUtils
+                        .getFromCacheOrBackend(CacheUtils.getTSRSitesCache(),
+                                siteID, new CacheUtils.Closure() {
+                                    @Override
+                                    public Object execute() throws PAException {                                        
+                                        try {
+                                            return convertToTsrSite(site);
+                                        } catch (NullifiedRoleException e) {
+                                            throw new PAException(e);
+                                        }
+                                    }
+                                });
 
-                        if (spcDto.getClinicalResearchStaffIi() != null) {
-                            Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
-                            contact = p.getFirstName() + SPACE + p.getLastName();
-                        } else if (spcDto.getOrganizationalContactIi() != null) {
-                            PAContactDTO paCDto = correlationUtils.getContactByPAOrganizationalContactId((Long
-                                    .valueOf(spcDto.getOrganizationalContactIi().getExtension())));
-                            contact = paCDto.getTitle();
-                        }
-                        StringBuilder builder = new StringBuilder();
-                        builder.append(contact).append(",").append(EMAIL).append(email).append(",").append(PHONE)
-                        .append(phone).append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
-                        participatingSite.setContact(builder.toString());
-
-                    } else {
-                        // Principal Investigator
-                        Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
-                        TSRReportInvestigator pi = new TSRReportInvestigator(p.getFirstName(), p.getMiddleName(), p
-                                .getLastName(), getValue(spcDto.getRoleCode()));
-                        participatingSite.getInvestigators().add(pi);
-                    }
-                }
-                
                 participatingSites.add(participatingSite);
             }
             Collections.sort(participatingSites);
             tsrReportGenerator.setParticipatingSites(participatingSites);
         }
+    }
+
+
+    /**
+     * @param sp
+     * @return
+     * @throws PAException
+     * @throws NullifiedRoleException
+     * @throws NumberFormatException
+     */
+    private TSRReportParticipatingSite convertToTsrSite(final StudySiteDTO sp)
+            throws PAException, NullifiedRoleException {
+        TSRReportParticipatingSite participatingSite = new TSRReportParticipatingSite();
+        StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService
+                .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
+        Organization orgBo = correlationUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
+        participatingSite.setFacility(getFacility(orgBo.getName(), getLocation(orgBo)));
+        String recruitmentStatus = getValue(ssas.getStatusCode()) + " as of "
+                + PAUtil.convertTsToFormattedDate(ssas.getStatusDate());
+        participatingSite.setRecruitmentStatus(recruitmentStatus);
+        participatingSite.setPoId(orgBo.getIdentifier());
+        participatingSite.setTargetAccrual(getValue(sp.getTargetAccrualNumber()));                
+        participatingSite.setLocalTrialIdentifier(getValue(sp.getLocalStudyProtocolIdentifier(),
+                INFORMATION_NOT_PROVIDED));
+        participatingSite.setOpenForAccrualDate(getValue(IvlConverter.convertTs().convertLowToString(
+                sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
+        participatingSite.setClosedForAccrualDate(getValue(IvlConverter.convertTs().convertHighToString(
+                sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
+        participatingSite.setProgramCode(getValue(sp.getProgramCodeText()));
+                       
+        List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
+        for (StudySiteContactDTO spcDto : spcDTOs) {
+            if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDto.getRoleCode().getCode())) {
+                // Set contact info.
+                
+                String email = StringUtils.isEmpty(PAUtil
+                        .getEmail(spcDto.getTelecomAddresses())) ? ""
+                        : PAUtil.getEmail(spcDto
+                                .getTelecomAddresses());
+                
+                String phone = StringUtils.isEmpty(PAUtil
+                        .getPhone(spcDto.getTelecomAddresses())) ? ""
+                        : PAUtil.getPhone(spcDto
+                                .getTelecomAddresses());
+                
+                String extn = StringUtils.isEmpty(PAUtil
+                        .getPhoneExtension(spcDto
+                                .getTelecomAddresses())) ? ""
+                        : PAUtil.getPhoneExtension(spcDto
+                                .getTelecomAddresses()); 
+                
+                String contact = null;
+
+                if (spcDto.getClinicalResearchStaffIi() != null) {
+                    Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
+                    contact = p.getFirstName() + SPACE + p.getLastName();
+                } else if (spcDto.getOrganizationalContactIi() != null) {
+                    PAContactDTO paCDto = correlationUtils.getContactByPAOrganizationalContactId((Long
+                            .valueOf(spcDto.getOrganizationalContactIi().getExtension())));
+                    contact = paCDto.getTitle();
+                }
+                StringBuilder builder = new StringBuilder();
+                builder.append(contact).append(",").append(EMAIL).append(email).append(",").append(PHONE)
+                .append(phone).append(StringUtils.isNotEmpty(extn) ? ", ext: " + extn : BLANK);
+                participatingSite.setContact(builder.toString());
+
+            } else {
+                // Principal Investigator
+                Person p = correlationUtils.getPAPersonByIi(spcDto.getClinicalResearchStaffIi());
+                TSRReportInvestigator pi = new TSRReportInvestigator(p.getFirstName(), p.getMiddleName(), p
+                        .getLastName(), getValue(spcDto.getRoleCode()));
+                participatingSite.getInvestigators().add(pi);
+            }
+        }
+        return participatingSite;
     }
 
     private String getFacility(String orgName, String location) {

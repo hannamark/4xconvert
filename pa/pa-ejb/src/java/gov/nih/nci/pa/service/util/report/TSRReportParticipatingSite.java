@@ -83,6 +83,7 @@
 
 package gov.nih.nci.pa.service.util.report;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,7 +94,11 @@ import java.util.List;
  * @author kkanchinadam
  */
 
-public class TSRReportParticipatingSite implements Comparable<TSRReportParticipatingSite> {
+public class TSRReportParticipatingSite implements Comparable<TSRReportParticipatingSite>, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private String poId;
     private String facility;
     private String contact;

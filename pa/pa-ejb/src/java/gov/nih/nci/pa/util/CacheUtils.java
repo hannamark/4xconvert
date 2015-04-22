@@ -28,6 +28,17 @@ public final class CacheUtils {
     private static final String PA_PROPS_CACHE_KEY = "PA_PROPS_CACHE";
     private static final String STATUS_RULES_CACHE_KEY = "STATUS_RULES_CACHE";
     private static final String USER_BY_LOGIN_CACHE_KEY = "USER_BY_LOGIN_CACHE";
+    private static final String TSR_SITES_CACHE_KEY = "TSR_SITES_CACHE";
+    
+    /**
+     * Cache used for storing {@link TSRReportParticipatingSite} objects used in
+     * TSR.
+     * 
+     * @return Cache
+     */
+    public static Cache getTSRSitesCache() {
+        return CACHE_MANAGER.getCache(TSR_SITES_CACHE_KEY);
+    }
     
     /**
      * Cache used for storing {@link User} objects by login names.
