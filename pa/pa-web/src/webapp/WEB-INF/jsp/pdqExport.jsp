@@ -14,7 +14,7 @@
                 </div>
             </s:if>
             <s:actionmessage/>
-            <display:table class="data" sort="list" pagesize="200" id="row" name="${requestScope.listOfFileNames}" export="false">
+            <display:table class="data" sort="list" pagesize="200" id="row" name="${requestScope.listOfFileNames}" export="false" requestURI="pdqgetAvailableFiles.action">
                 <display:column class="title" title="File Name" sortable="true" headerScope="col" scope="row">
                     <a href="pdqgetFileByDate.action?date=${row}">${row}</a>
                 </display:column>
