@@ -3,7 +3,7 @@ CREATE TABLE STG_DW_STUDY_PARTICIPATING_SITE_ACCRUAL_STATUS (
     STATUS character varying(50),
     STATUS_DATE timestamp,
     DATE_CREATED timestamp,
-    DATE_LAST_UPDATED timestamp
+    DATE_LAST_UPDATED timestamp,
     COMMENTS character varying(2000),
     INTERNAL_SYSTEM_ID INTEGER,
     STUDY_SITE_ID character varying(255),
