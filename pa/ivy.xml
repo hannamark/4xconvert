@@ -195,18 +195,18 @@
     <dependency conf="test->master" org="dumbster" name="dumbster" rev="1.6"/>
 
     <!-- other test targets -->
-    <dependency conf="test-checkstyle->master,runtime" org="com.google.guava" name="guava" rev="15.0" force="true">
+    <dependency conf="test-checkstyle->master,runtime" org="com.google.guava" name="guava" rev="18.0" force="true">
         <artifact name="guava" type="jar" conf="*"/>
     </dependency>
     <dependency conf="test-checkstyle->master,runtime" org="com.puppycrawl.tools" name="checkstyle" rev="5.7"/>
 
     <dependency conf="test-cobertura->master,runtime" org="net.sourceforge.cobertura" name="cobertura" rev="2.0.3"/>
     <dependency conf="test-junit->master" org="junit" name="junit" rev="4.8.2"/>    
-    <dependency conf="test-selenium->master" org="org.seleniumhq.selenium" name="selenium-java" rev="2.43.1"/>
+    <dependency conf="test-selenium->master" org="org.seleniumhq.selenium" name="selenium-java" rev="2.45.0"/>
     <dependency conf="test-selenium->master" org="org.postgresql" name="postgresql" rev="9.2-1003-jdbc4"/>
     <dependency conf="test-selenium->master" org="com.github.detro.ghostdriver" name="phantomjsdriver" rev="1.1.0"/>
-    <dependency conf="test-selenium->compile,master" org="org.seleniumhq.selenium" name="selenium-server" rev="2.43.1"/>
-    <dependency conf="test-selenium->compile,master" org="com.google.guava" name="guava" rev="15.0" force="true">
+    <dependency conf="test-selenium->compile,master" org="org.seleniumhq.selenium" name="selenium-server" rev="2.45.0"/>
+    <dependency conf="test-selenium->compile,master" org="com.google.guava" name="guava" rev="18.0" force="true">
         <artifact name="guava" type="jar" conf="*"/>
     </dependency>
     <dependency conf="test-pmd->master,runtime" org="pmd" name="pmd" rev="4.2.5"/>
