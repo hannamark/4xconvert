@@ -39,7 +39,7 @@ sourceConnection.eachRow(sql) { row ->
             user_created: row.creator, 
             user_last_updated: row.updater,
             status: row.status_code,
-            status_date: row.status_date
+            status_date: row.status_date,
             comments: row.comments
             )
 }
