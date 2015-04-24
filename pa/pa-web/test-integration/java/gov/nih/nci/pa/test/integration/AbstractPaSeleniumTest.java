@@ -190,7 +190,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 }
                 System.out.println(stringBuffer);
             }
-        }, 120000, 120000);
+        }, 220000, 220000);
     }
 
     /**
