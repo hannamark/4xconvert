@@ -5,8 +5,12 @@ package gov.nih.nci.registry.test.performance;
 
 import gov.nih.nci.registry.test.integration.AbstractRegistrySeleniumTest;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,6 +21,16 @@ import org.openqa.selenium.support.ui.WebDriverWait;
  * 
  */
 public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
+
+    private final File report = new File("trial_search_performance_report.txt");
+    {
+        try {
+            report.createNewFile();
+            report(new Date().toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void testSearchByParticipatingSite() throws Exception {
@@ -46,8 +60,8 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
             totalTime += runBySiteSearchWithTimeout(orgName, timeoutSecond);
         }
 
-        System.out.println(("Average time to search by site " + orgName
-                + " is " + (totalTime / tries) + " seconds.").toUpperCase());
+        report(("Average time to search by site " + orgName + " is "
+                + (totalTime / tries) + " seconds.").toUpperCase());
     }
 
     @SuppressWarnings("deprecation")
@@ -65,8 +79,7 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
         selenium.click("runSearchBtn");
 
         final Date start = new Date();
-        System.out.println("Timestamp prior to searching by site " + orgName
-                + ": " + start);
+        report("Timestamp prior to searching by site " + orgName + ": " + start);
 
         driver.findElement(By.linkText("All Trials")).click();
         WebDriverWait waiting = new WebDriverWait(driver, timeoutSeconds);
@@ -74,14 +87,13 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
                 .xpath("//h2[text()='Clinical Trials Search Results']")));
 
         final Date end = new Date();
-        System.out.println("Timestamp after searching by site " + orgName
-                + ": " + end);
+        report("Timestamp after searching by site " + orgName + ": " + end);
 
         long diff = end.getTime() - start.getTime();
         final long diffSeconds = diff / 1000L;
         final String durationString = "Duration: " + diffSeconds
                 + " seconds or " + (diff / 1000D / 60D) + " minutes.";
-        System.out.println(durationString);
+        report(durationString);
 
         assertTrue(s.isTextPresent("Showing 1 to"));
         assertTrue(s.isElementPresent("row"));
@@ -89,6 +101,17 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
                 diffSeconds <= timeoutSeconds);
 
         return diffSeconds;
+    }
+
+    private void report(String str) {
+        System.out.println(str);
+        try {
+            FileUtils.writeStringToFile(report,
+                    FileUtils.readFileToString(report)
+                            + SystemUtils.LINE_SEPARATOR + str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
