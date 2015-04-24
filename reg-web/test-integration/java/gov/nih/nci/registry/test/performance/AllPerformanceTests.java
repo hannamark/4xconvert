@@ -8,10 +8,11 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  * Class to control the order that selenium tests are run in.
  * 
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * @author dkrylov
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { UpdateAndAmendPerformanceTest.class })
+@SuiteClasses(value = { TrialSearchPerformanceTest.class,
+        UpdateAndAmendPerformanceTest.class })
 public class AllPerformanceTests {
 
 }

@@ -1766,4 +1766,8 @@
        <comment>Migrate to the latest NCI LexEVS APIs</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.2.1/PO-8635.sql"/>       
     </changeSet>
+    <changeSet id="PO-8732" author="krylovd" runOnChange="true">
+       <comment>Performance enhancements: added indexes.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8732.sql"/>       
+    </changeSet>
 </databaseChangeLog>

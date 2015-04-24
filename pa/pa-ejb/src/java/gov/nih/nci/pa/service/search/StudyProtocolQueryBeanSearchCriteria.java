@@ -125,19 +125,45 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
      */
     private static final long serialVersionUID = -4056363230689185168L;
     private final StudyProtocolOptions spo;
-    private static final String JOIN_CLAUSE = " left outer join obj.documentWorkflowStatuses as dws  "
-        + "left outer join obj.studyMilestones as sms "
-        + "left outer join obj.studyOverallStatuses as sos "
-        + "left outer join obj.studyOwners as sowner ";
+    private final String joinClause;
 
     /**
      * Default constructor.
-     * @param o the example
-     * @param spo the study protocol search options
+     * 
+     * @param o
+     *            the example
+     * @param spo
+     *            the study protocol search options
      */
-    public StudyProtocolQueryBeanSearchCriteria(StudyProtocol o, StudyProtocolOptions spo) {
+    public StudyProtocolQueryBeanSearchCriteria(StudyProtocol o,
+            StudyProtocolOptions spo) {
         super(o);
         this.spo = spo;
+        joinClause = figureOutJoinClause();
+    }
+
+    private String figureOutJoinClause() {
+        final StringBuilder join = new StringBuilder();
+        join.append(" left outer join obj.documentWorkflowStatuses as dws  ");
+        if (needJoinOnMilestones()) {
+            join.append(" left outer join obj.studyMilestones as sms ");
+        }
+        if (needJoinOnOverallStatuses()) {
+            join.append(" left outer join obj.studyOverallStatuses as sos ");
+        }
+        join.append(" left outer join obj.studyOwners as sowner ");
+        return join.toString();
+
+    }
+
+    private boolean needJoinOnOverallStatuses() {
+        return CollectionUtils.isNotEmpty(getCriteria()
+                .getStudyOverallStatuses());
+    }
+
+    private boolean needJoinOnMilestones() {
+        return CollectionUtils.isNotEmpty(getCriteria().getStudyMilestones())
+                || CollectionUtils.isNotEmpty(spo.getMilestoneFilters());
     }
 
     /**
@@ -153,7 +179,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
      */
     @Override
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
-        return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty, JOIN_CLAUSE,
+        return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty, joinClause,
                 getSession(), new StudyProtocolHelper(getCriteria(), spo));
     }
 
@@ -163,7 +189,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
     @Override
     public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
-                leftJoinClause + JOIN_CLAUSE, getSession(), new StudyProtocolHelper(getCriteria(), spo));
+                leftJoinClause + joinClause, getSession(), new StudyProtocolHelper(getCriteria(), spo));
     }
     
     /**
@@ -177,7 +203,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             String leftJoinClause, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(),
                 attributes, isCountOnly, orderByProperty, "", leftJoinClause
-                        + JOIN_CLAUSE, getSession(), new StudyProtocolHelper(
+                        + joinClause, getSession(), new StudyProtocolHelper(
                         getCriteria(), spo));
     } 
 
