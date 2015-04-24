@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.collections.Closure;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
@@ -37,49 +38,65 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
         loginAsSubmitter();
         handleDisclaimer(true);
 
-        testBySiteSearchPerformance("M D Anderson Cancer Center (MDA)", 90);
-        testBySiteSearchPerformance("Duke Cancer Institute", 20);
-        testBySiteSearchPerformance("Wake Forest University Health Sciences",
-                30);
-        testBySiteSearchPerformance("OHSU Knight Cancer Institute", 25);
-        testBySiteSearchPerformance("Mayo Clinic Cancer Center", 25);
-        testBySiteSearchPerformance("Mayo Clinic", 60);
-        testBySiteSearchPerformance("Mayo Clinic in Arizona", 45);
-
+        testSearchByParticipatingSitePerformance("Duke Cancer Institute", 20);
+        testSearchByParticipatingSitePerformance(
+                "Wake Forest University Health Sciences", 30);
+        testSearchByParticipatingSitePerformance(
+                "OHSU Knight Cancer Institute", 25);
+        testSearchByParticipatingSitePerformance("Mayo Clinic Cancer Center",
+                25);
+        testSearchByParticipatingSitePerformance("Mayo Clinic", 60);
+        testSearchByParticipatingSitePerformance("Mayo Clinic in Arizona", 45);
+        testSearchByParticipatingSitePerformance(
+                "M D Anderson Cancer Center (MDA)", 90);
     }
 
-    private void testBySiteSearchPerformance(String orgName, int timeoutSecond) {
+    private void testSearchByParticipatingSitePerformance(final String orgName,
+            int timeoutSecond) {
+        searchByClosure(new Closure() {
+            @SuppressWarnings("deprecation")
+            @Override
+            public void execute(Object o) {
+                s.select("organizationType", "Participating Site");
+                waitForElementToBecomeVisible(By.id("participatingSiteName"), 5);
+                driver.findElement(By.id("participatingSiteName")).sendKeys(
+                        orgName.replaceFirst(" \\(\\w+\\)$", ""));
+                waitForElementToBecomeAvailable(
+                        By.xpath("//ul[@role='listbox']/li/a[text()='"
+                                + orgName + "']"), 60);
+                s.click("//ul[@role='listbox']/li/a[text()='" + orgName + "']");
+                pause(500);
+            }
+        }, "by site " + orgName, timeoutSecond);
+    }
+
+    private void searchByClosure(Closure c, String descr, int timeoutSecond) {
         long totalTime = 0;
         int tries = 3;
 
         // Initial search can take longer since Postgres needs to cache stuff
         // etc, so ignore it from consideration.
-        runBySiteSearchWithTimeout(orgName, 300);
+        runSearchWithTimeout(c, descr, 300);
 
         for (int i = 0; i < tries; i++) {
-            totalTime += runBySiteSearchWithTimeout(orgName, timeoutSecond);
+            totalTime += runSearchWithTimeout(c, descr, timeoutSecond);
         }
 
-        report(("Average time to search by site " + orgName + " is "
+        report(("Average time to search " + descr + " is "
                 + (totalTime / tries) + " seconds.").toUpperCase());
     }
 
     @SuppressWarnings("deprecation")
-    private long runBySiteSearchWithTimeout(String orgName, int timeoutSeconds) {
+    private long runSearchWithTimeout(Closure c, String descr,
+            int timeoutSeconds) {
         accessTrialSearchScreen();
-        s.select("organizationType", "Participating Site");
-        waitForElementToBecomeVisible(By.id("participatingSiteName"), 5);
-        driver.findElement(By.id("participatingSiteName")).sendKeys(
-                orgName.replaceFirst(" \\(\\w+\\)$", ""));
-        waitForElementToBecomeAvailable(
-                By.xpath("//ul[@role='listbox']/li/a[text()='" + orgName + "']"),
-                60);
-        s.click("//ul[@role='listbox']/li/a[text()='" + orgName + "']");
-        pause(500);
+
+        c.execute(driver);
+
         selenium.click("runSearchBtn");
 
         final Date start = new Date();
-        report("Timestamp prior to searching by site " + orgName + ": " + start);
+        System.out.println("Timestamp prior to searching " + descr + ": " + start);
 
         driver.findElement(By.linkText("All Trials")).click();
         WebDriverWait waiting = new WebDriverWait(driver, timeoutSeconds);
@@ -87,12 +104,13 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
                 .xpath("//h2[text()='Clinical Trials Search Results']")));
 
         final Date end = new Date();
-        report("Timestamp after searching by site " + orgName + ": " + end);
+        System.out.println("Timestamp after searching " + descr + ": " + end);
 
         long diff = end.getTime() - start.getTime();
         final long diffSeconds = diff / 1000L;
-        final String durationString = "Duration: " + diffSeconds
-                + " seconds or " + (diff / 1000D / 60D) + " minutes.";
+        final String durationString = "Duration to search " + descr + ": "
+                + diffSeconds + " seconds or " + (diff / 1000D / 60D)
+                + " minutes.";
         report(durationString);
 
         assertTrue(s.isTextPresent("Showing 1 to"));
