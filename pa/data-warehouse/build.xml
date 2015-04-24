@@ -65,6 +65,17 @@
                     </classpath>
                 </sql>
                 <stopwatch name="timer1" action="total"/>    	  	
+
+                <echo message = "Granting SELECT privilege to copparead..."/>
+                <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}"
+                    userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}"
+		    		onerror="continue"
+                    expandproperties="true" autocommit="true">
+                    <transaction src="${basedir}/sql/grant_privileges.sql"/>
+                    <classpath>
+                        <path refid="bda-utils.classpath"/>
+                    </classpath>
+                </sql>
     	  	
     	  </sequential>
     	</parallel>
