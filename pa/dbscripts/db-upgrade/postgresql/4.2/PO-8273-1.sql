@@ -33,7 +33,7 @@ INSERT INTO pa_properties VALUES ((select max(identifier) + 1 from pa_properties
         <td>%2s</td>
     </tr>
     <tr>
-        <td><b>Lead Organization PO ID:</b></td>
+        <td><b>Lead Organization:</b></td>
         <td>%3s</td>
     </tr>
     <tr>

@@ -1262,8 +1262,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         ArrayList bodyParamsLst = new ArrayList();
         bodyParamsLst.add(spDTO.getOfficialTitle()); 
         bodyParamsLst.add(spDTO.getNciIdentifier()); 
-        if (spDTO.getLeadOrganizationPOId() != null) {
-            bodyParamsLst.add(spDTO.getLeadOrganizationPOId().toString());
+        if (spDTO.getLeadOrganizationName() != null) {
+            bodyParamsLst.add(spDTO.getLeadOrganizationName());
         } else {
             bodyParamsLst.add(" ");
         }

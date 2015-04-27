@@ -99,11 +99,10 @@ public class CtGovImportTest extends AbstractTrialStatusTest {
                 subject);
         assertEquals(
                 String.format(
-                        "<hr><table border=\"0\"><tr><td><b>Title:</b></td><td>%1s</td></tr><tr><td><b>NCI Trial ID:</b></td><td>%2s</td></tr><tr><td><b>Lead Organization PO ID:</b></td><td>%3s</td></tr><tr><td><b>Participating Site:</b></td><td>%4s</td></tr></table><hr><p>Date: %5s</p><p>Dear %6s %7s,</p><p>The ClinicalTrials.gov record shows that the trial listed above was closed as of %8s. For consistency, the CTRP system has changed the trials status at your participating site:</p><table border=\"0\"><tr><td><b>Participating Site:</b></td><td>%9s</td></tr><tr><td><b>Old Site Status:</b></td><td>%10s</td></tr><tr><td><b>New Site Status:</b></td><td>%11s</td></tr></table><p>If you believe this is an error, or if you have additional questions about this or other CTRP topics, please contact the CTRO at ncictro@mail.nih.gov.</p><p>Thank you for participating in the NCI Clinical Trials Reporting Program.</p>",
+                        "<hr><table border=\"0\"><tr><td><b>Title:</b></td><td>%1s</td></tr><tr><td><b>NCI Trial ID:</b></td><td>%2s</td></tr><tr><td><b>Lead Organization:</b></td><td>%3s</td></tr><tr><td><b>Participating Site:</b></td><td>%4s</td></tr></table><hr><p>Date: %5s</p><p>Dear %6s %7s,</p><p>The ClinicalTrials.gov record shows that the trial listed above was closed as of %8s. For consistency, the CTRP system has changed the trials status at your participating site:</p><table border=\"0\"><tr><td><b>Participating Site:</b></td><td>%9s</td></tr><tr><td><b>Old Site Status:</b></td><td>%10s</td></tr><tr><td><b>New Site Status:</b></td><td>%11s</td></tr></table><p>If you believe this is an error, or if you have additional questions about this or other CTRP topics, please contact the CTRO at ncictro@mail.nih.gov.</p><p>Thank you for participating in the NCI Clinical Trials Reporting Program.</p>",
                         info.title,
                         info.nciID,
-                        getOrgPoIdByName("University of British Columbia")
-                                .trim(),
+                        "University of British Columbia",
                         "National Cancer Institute Division of Cancer Prevention",
                         today,
                         "ctrpsubstractor",
