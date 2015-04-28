@@ -38,17 +38,17 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
         loginAsSubmitter();
         handleDisclaimer(true);
 
-        testSearchByParticipatingSitePerformance("Duke Cancer Institute", 20);
+        testSearchByParticipatingSitePerformance("Duke Cancer Institute", 18);
         testSearchByParticipatingSitePerformance(
-                "Wake Forest University Health Sciences", 30);
+                "Wake Forest University Health Sciences", 25);
         testSearchByParticipatingSitePerformance(
-                "OHSU Knight Cancer Institute", 25);
+                "OHSU Knight Cancer Institute", 20);
         testSearchByParticipatingSitePerformance("Mayo Clinic Cancer Center",
-                25);
-        testSearchByParticipatingSitePerformance("Mayo Clinic", 60);
-        testSearchByParticipatingSitePerformance("Mayo Clinic in Arizona", 45);
+                15);
+        testSearchByParticipatingSitePerformance("Mayo Clinic", 40);
+        testSearchByParticipatingSitePerformance("Mayo Clinic in Arizona", 25);
         testSearchByParticipatingSitePerformance(
-                "M D Anderson Cancer Center (MDA)", 90);
+                "M D Anderson Cancer Center (MDA)", 80);
     }
 
     private void testSearchByParticipatingSitePerformance(final String orgName,
