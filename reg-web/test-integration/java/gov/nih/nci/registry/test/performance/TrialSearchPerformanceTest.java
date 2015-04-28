@@ -72,23 +72,25 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
 
     private void searchByClosure(Closure c, String descr, int timeoutSecond) {
         long totalTime = 0;
-        int tries = 3;
+        int tries = 5;
 
         // Initial search can take longer since Postgres needs to cache stuff
         // etc, so ignore it from consideration.
-        runSearchWithTimeout(c, descr, 300);
+        runSearchWithTimeout(c, descr);
 
         for (int i = 0; i < tries; i++) {
-            totalTime += runSearchWithTimeout(c, descr, timeoutSecond);
+            totalTime += runSearchWithTimeout(c, descr);
         }
 
-        report(("Average time to search " + descr + " is "
-                + (totalTime / tries) + " seconds.").toUpperCase());
+        final long average = totalTime / tries;
+        report(("Average time to search " + descr + " is " + average + " seconds.")
+                .toUpperCase());
+        assertTrue("Average wait time exceeded the given timeout of "
+                + timeoutSecond, average <= timeoutSecond);
     }
 
     @SuppressWarnings("deprecation")
-    private long runSearchWithTimeout(Closure c, String descr,
-            int timeoutSeconds) {
+    private long runSearchWithTimeout(Closure c, String descr) {
         accessTrialSearchScreen();
 
         c.execute(driver);
@@ -96,10 +98,11 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
         selenium.click("runSearchBtn");
 
         final Date start = new Date();
-        System.out.println("Timestamp prior to searching " + descr + ": " + start);
+        System.out.println("Timestamp prior to searching " + descr + ": "
+                + start);
 
         driver.findElement(By.linkText("All Trials")).click();
-        WebDriverWait waiting = new WebDriverWait(driver, timeoutSeconds);
+        WebDriverWait waiting = new WebDriverWait(driver, 300);
         waiting.until(ExpectedConditions.presenceOfElementLocated(By
                 .xpath("//h2[text()='Clinical Trials Search Results']")));
 
@@ -115,8 +118,6 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
 
         assertTrue(s.isTextPresent("Showing 1 to"));
         assertTrue(s.isElementPresent("row"));
-        assertTrue("Wait time exceeded the given timeout of " + timeoutSeconds,
-                diffSeconds <= timeoutSeconds);
 
         return diffSeconds;
     }
