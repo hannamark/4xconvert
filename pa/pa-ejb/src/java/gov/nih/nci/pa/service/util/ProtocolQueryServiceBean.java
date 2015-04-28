@@ -152,7 +152,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -581,49 +580,15 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             Query query = crit.getQuery(Arrays.asList(new String[] {"id"}),
                     orderBy, joinClause, false);
             query.setCacheable(false);            
-            LOG.debug(query.getQueryString());
-            disableNestedLoops();
+            LOG.debug(query.getQueryString());           
             results = query.list();
         } catch (Exception e) {
             throw new PAException(
                     "An error has occurred when searching for trials.", e);
-        } finally {
-            enableNestedLoops();
-        }
+        } 
         return results;
     }
 
-    /**
-     * Some protocol search queries result in SQL queries, for which PostgreSQL 8.4 comes up with
-     * an extremely inefficient query plan. Simple queries take minutes to run without evident reason. 
-     * <code>SET enable_nestloop = off;</code> helps to solve this problem. I have found out that
-     * protocol search queries perform better with this option off.
-     * @see https://tracker.nci.nih.gov/browse/PO-5262
-     */
-    private void enableNestedLoops() {
-        try {
-            Session session = PaHibernateUtil.getCurrentSession();
-            session.createSQLQuery("SET enable_nestloop = on").executeUpdate();
-        } catch (HibernateException e) {
-            LOG.error(e, e);
-        }        
-    }
-
-    /**
-     * Some protocol search queries result in SQL queries, for which PostgreSQL 8.4 comes up with
-     * an extremely inefficient query plan. Simple queries take minutes to run without evident reason. 
-     * <code>SET enable_nestloop = off;</code> helps to solve this problem. I have found out that
-     * protocol search queries perform better with this option off.
-     * @see https://tracker.nci.nih.gov/browse/PO-5262
-     */
-    private void disableNestedLoops() {
-        try {
-            Session session = PaHibernateUtil.getCurrentSession();
-            session.createSQLQuery("SET enable_nestloop = off").executeUpdate();
-        } catch (HibernateException e) {
-            LOG.error(e, e);
-        }        
-    }
 
     /**
      * {@inheritDoc}
