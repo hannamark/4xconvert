@@ -21,12 +21,6 @@ import org.openqa.selenium.By;
  * 
  */
 public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest {
-    
-    @Before
-    public void skipIfReadOnly() {
-        org.junit.Assume.assumeTrue(StringUtils.isBlank(System
-                .getProperty("server.readonly")));
-    }
 
     /**
      * Tests logging in as abstractor.
@@ -37,6 +31,8 @@ public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest 
     @SuppressWarnings("deprecation")
     @Test
     public void testAmendPerformanceOnTrialsWithManySites() throws Exception {
+        org.junit.Assume.assumeTrue(StringUtils.isBlank(System
+                .getProperty("server.readonly")));
         amendAndCheckPerformance("NCI-2011-01123");
         amendAndCheckPerformance("NCI-2009-00702");
 
