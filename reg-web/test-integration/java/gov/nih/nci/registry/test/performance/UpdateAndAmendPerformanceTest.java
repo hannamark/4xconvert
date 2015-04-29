@@ -32,7 +32,7 @@ public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest 
     @Test
     public void testAmendPerformanceOnTrialsWithManySites() throws Exception {
         System.out.println(System.getProperties());
-        org.junit.Assume.assumeTrue(StringUtils.isBlank(System
+        org.junit.Assume.assumeTrue(!"true".equalsIgnoreCase(System
                 .getProperty("server.readonly")));
         amendAndCheckPerformance("NCI-2011-01123");
         amendAndCheckPerformance("NCI-2009-00702");
