@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
@@ -19,6 +21,12 @@ import org.openqa.selenium.By;
  * 
  */
 public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest {
+    
+    @Before
+    public void skipIfReadOnly() {
+        org.junit.Assume.assumeTrue(StringUtils.isBlank(System
+                .getProperty("server.readonly")));
+    }
 
     /**
      * Tests logging in as abstractor.
