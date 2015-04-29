@@ -259,6 +259,9 @@
     	 <fail if="junit.failure" message="Selenium test(s) failed.  See reports in ${reg-web.test.reports}."/>
     </target>	
 	<target name="run-performance-tests" depends="compile-selenium-tests" description="Run performance tests">
+		    <property name="submitter.login" value=""/>
+		    <property name="submitter.password" value=""/>
+		    <property name="server.readonly" value=""/>
 	        <mkdir dir="${reg-web.test.reports}"/>
 	        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="yes" failureproperty="junit.failure">
 	            <jvmarg value="-XX:-UseSplitVerifier"/>

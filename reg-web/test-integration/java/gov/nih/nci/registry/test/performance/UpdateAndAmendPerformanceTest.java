@@ -32,14 +32,13 @@ public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest 
     @Test
     public void testAmendPerformanceOnTrialsWithManySites() throws Exception {
         System.out.println(System.getProperties());
-        org.junit.Assume.assumeTrue(!"true".equalsIgnoreCase(System
-                .getProperty("server.readonly")));
-        amendAndCheckPerformance("NCI-2011-01123");
-        amendAndCheckPerformance("NCI-2009-00702");
+        if (!"true".equalsIgnoreCase(System.getProperty("server.readonly"))) {
+            amendAndCheckPerformance("NCI-2011-01123");
+            amendAndCheckPerformance("NCI-2009-00702");
 
-        updateAndCheckPerformance("NCI-2011-02050");
-        amendAndCheckPerformance("NCI-2011-02050");
-
+            updateAndCheckPerformance("NCI-2011-02050");
+            amendAndCheckPerformance("NCI-2011-02050");
+        }
     }
 
     @SuppressWarnings("deprecation")
