@@ -126,7 +126,7 @@ public abstract class AbstractSelenese2TestCase extends TestCase {
         String driverClass = getDriverClass();
         url = port == 0 ? "http://" + hostname : "http://" + hostname
                 + ":" + port;
-
+        System.out.println("URL: "+url);
         FirefoxProfile profile = new FirefoxProfile();
         profile.setPreference("browser.download.dir", downloadDir.getCanonicalPath());
         profile.setPreference("browser.download.folderList", 2);
