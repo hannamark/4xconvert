@@ -31,6 +31,7 @@ public class UpdateAndAmendPerformanceTest extends AbstractRegistrySeleniumTest 
     @SuppressWarnings("deprecation")
     @Test
     public void testAmendPerformanceOnTrialsWithManySites() throws Exception {
+        System.out.println(System.getProperties());
         org.junit.Assume.assumeTrue(StringUtils.isBlank(System
                 .getProperty("server.readonly")));
         amendAndCheckPerformance("NCI-2011-01123");
