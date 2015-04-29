@@ -258,9 +258,9 @@
          </junit>
     	 <fail if="junit.failure" message="Selenium test(s) failed.  See reports in ${reg-web.test.reports}."/>
     </target>	
-	<target name="run-performance-tests" depends="compile-selenium-tests" description="Run performance tests">
+	<target name="run-performance-tests" depends="compile-selenium-tests" description="Run performance tests">		    
 	        <mkdir dir="${reg-web.test.reports}"/>
-	        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="yes" failureproperty="junit.failure">
+	        <junit clonevm="true" printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="yes" failureproperty="junit.failure">
 	            <jvmarg value="-XX:-UseSplitVerifier"/>
 	            <formatter type="xml"/>
 	            <formatter type="plain" usefile="false"/>

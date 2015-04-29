@@ -147,7 +147,8 @@ public abstract class AbstractRegistrySeleniumTest extends
     }
 
     public void loginAsSubmitter() {
-        login("submitter-ci", "pass");
+        login(System.getProperty("submitter.login", "submitter-ci"),
+                System.getProperty("submitter.password", "pass"));
     }
 
     public void verifyDisclaimer() {
