@@ -262,12 +262,14 @@
 		    <property name="submitter.login" value=""/>
 		    <property name="submitter.password" value=""/>
 		    <property name="server.readonly" value=""/>
+		    <property name="no.duration.assertions" value=""/>
 	        <mkdir dir="${reg-web.test.reports}"/>
 	        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="yes" failureproperty="junit.failure">
 	            <jvmarg value="-XX:-UseSplitVerifier"/>
 	        	<jvmarg value="-Dserver.readonly=${server.readonly}"/>
 	        	<jvmarg value="-Dsubmitter.login=${submitter.login}"/>
 	        	<jvmarg value="-Dsubmitter.password=${submitter.password}"/>
+	        	<jvmarg value="-Dno.duration.assertions=${no.duration.assertions}"/>
 	            <formatter type="xml"/>
 	            <formatter type="plain" usefile="false"/>
 	            <classpath>

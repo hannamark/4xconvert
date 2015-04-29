@@ -85,8 +85,10 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
         final long average = totalTime / tries;
         report(("Average time to search " + descr + " is " + average + " seconds.")
                 .toUpperCase());
-        assertTrue("Average wait time exceeded the given timeout of "
-                + timeoutSecond, average <= timeoutSecond);
+        if (!"true".equalsIgnoreCase(System
+                .getProperty("no.duration.assertions")))
+            assertTrue("Average wait time exceeded the given timeout of "
+                    + timeoutSecond, average <= timeoutSecond);
     }
 
     @SuppressWarnings("deprecation")
