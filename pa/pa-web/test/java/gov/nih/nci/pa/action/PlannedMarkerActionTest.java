@@ -108,6 +108,8 @@ import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.query.hibernate.HQLCriteria;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -317,9 +319,11 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         designation.setId("1L");
         designation.setName("Bivinyl");
         designation.setType("Biomarker Synonym");
-        List<Object> obj = new ArrayList<Object>();
-        obj.add(designation);
-        when(appService.query(any(HQLCriteria.class))).thenReturn(obj);
+        
+        Collection<gov.nih.nci.cadsr.domain.Designation> designationCollection = new HashSet<Designation>();
+        designationCollection.add(designation);
+        vm.setDesignationCollection(designationCollection);
+        
         assertEquals(plannedMarkerAction.displaySelectedCDE(), "edit");
         assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin (Bivinyl)");
         assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
@@ -335,13 +339,14 @@ public class PlannedMarkerActionTest extends AbstractPaActionTest {
         designation2.setName("N-Cadherin");
         designation2.setType("Biomarker Marker");
 
-        obj.add(designation1);
-        obj.add(designation2);
-        when(appService.query(any(HQLCriteria.class))).thenReturn(obj);
+        designationCollection.add(designation1);
+        designationCollection.add(designation2);
+        vm.setDesignationCollection(designationCollection);
+
         assertEquals(plannedMarkerAction.displaySelectedCDE(), "edit");
-        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin (Bivinyl; alpha)");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getName(), "N-Cadherin (alpha; Bivinyl)");
         assertEquals(plannedMarkerAction.getPlannedMarker().getMeaning(), "N-Cadherin");
-        assertEquals(plannedMarkerAction.getPlannedMarker().getSynonymNames(), "Bivinyl; alpha");
+        assertEquals(plannedMarkerAction.getPlannedMarker().getSynonymNames(), "alpha; Bivinyl");
         assertFalse(plannedMarkerAction.getPlannedMarker().getSynonymNames().equals("Bivinyl; alpha; N-Cadherin"));
         assertTrue(StringUtils.contains(plannedMarkerAction.getPlannedMarker().getDescription(), "cadherin"));
     }

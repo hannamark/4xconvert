@@ -85,8 +85,8 @@ package gov.nih.nci.pa.action.popup;
 import gov.nih.nci.cadsr.domain.DataElement;
 import gov.nih.nci.cadsr.domain.Designation;
 import gov.nih.nci.cadsr.domain.ValueDomainPermissibleValue;
+import gov.nih.nci.cadsr.domain.ValueDomain;
 import gov.nih.nci.cadsr.domain.ValueMeaning;
-import gov.nih.nci.cadsr.domain.EnumeratedValueDomain;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.CaDSRWebDTO;
 import gov.nih.nci.pa.dto.PlannedMarkerWebDTO;
@@ -112,7 +112,6 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
-import gov.nih.nci.system.query.hibernate.HQLCriteria;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -196,7 +195,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
      * Performs the caDSR lookup for markers.
      * @return results
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "PMD.ExcessiveMethodLength" })
     public String lookup() {
         if (validateInput()) {
             return CADSR_RESULTS;
@@ -219,17 +218,31 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
                 throw new PAException("Search of caDSR returned no results.");
             }
             DataElement de = results.get(0);
-            String vdId = ((EnumeratedValueDomain) de.getValueDomain()).getId();
+            String vdId = ((ValueDomain) de.getValueDomain()).getId();
             DetachedCriteria crit = constructBaseCriteria(vdId);
             crit = constructSearchCriteria(crit);
             List<Object> permissibleValues = appService.query(crit);
+            List<Object> permissibleValuesVM = new ArrayList<Object>();
+            for (int i = 0; i < permissibleValues.size(); i++) {
+                ValueDomainPermissibleValue vdpvName = (ValueDomainPermissibleValue) permissibleValues.get(i);
+                permissibleValuesVM.add(vdpvName.getPermissibleValue().getValueMeaning());
+            }
           if (StringUtils.equals(BOTH, getSearchBothTerms())) {
               crit = constructBaseCriteria(vdId);
               crit = constructNameSearchCriteria(crit);
-              permissibleValues.addAll(avoidDuplicateEntries(permissibleValues, 
+              permissibleValuesVM.addAll(avoidDuplicateEntries(permissibleValues, 
                     (List<Object>) (List<?>) appService.query(crit)));
           }
-            List<CaDSRWebDTO> values = getSearchResults(new ArrayList<Object>(permissibleValues));
+          List<Object> result = new ArrayList<Object>();
+          for (int id = 0; id < permissibleValuesVM.size(); id++) {
+           crit = constructBaseCriteria(vdId);
+           ValueMeaning vdpvName = (ValueMeaning) permissibleValuesVM.get(id);
+               Long publicIDLocal = vdpvName.getPublicID();
+              crit.add(Expression.eq("vm.publicID", Long.valueOf(publicIDLocal)));
+              List<Object> permissibleValuesfinal = appService.query(crit);
+              result.addAll(new ArrayList<Object>(permissibleValuesfinal));
+          }
+            List<CaDSRWebDTO> values = getSearchResults(new ArrayList<Object>(result));
             markers.addAll(values);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
@@ -238,13 +251,14 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
         return CADSR_RESULTS;
     }
     
-    private DetachedCriteria constructBaseCriteria(String vdId) {
+    private static DetachedCriteria constructBaseCriteria(String vdId) {
         DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class)
             .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.add(Property.forName("enumeratedValueDomain.id").eq(vdId));
-        criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
-        criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
-        criteria.setFetchMode(DESIGNATION, FetchMode.JOIN);
+        criteria.setFetchMode("permissibleValue", FetchMode.EAGER);
+        criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.EAGER);
+        criteria.setFetchMode("permissibleValue.valueMeaning.designationCollection", FetchMode.EAGER);
+        criteria.setFetchMode("permissibleValue.valueMeaning.conceptDerivationRule", FetchMode.EAGER);
         criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
         return criteria;
     }
@@ -261,7 +275,7 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
             ValueDomainPermissibleValue vdpvName = (ValueDomainPermissibleValue) permissibleNameValues.get(i);
             Long publicID = vdpvName.getPermissibleValue().getValueMeaning().getPublicID();
             if (!publicIdList.contains(publicID)) {
-                returnValues.add(permissibleNameValues.get(i));
+                returnValues.add(vdpvName.getPermissibleValue().getValueMeaning());
             }
         }
        }
@@ -547,23 +561,21 @@ public class PlannedMarkerPopupAction extends ActionSupport implements Preparabl
          List<String> altNames = new ArrayList<String>();
          StringBuffer synonymName = new StringBuffer();
          ValueMeaning vm = (ValueMeaning) vdpv.getPermissibleValue().getValueMeaning();
-         String hql = "select vm.designationCollection from ValueMeaning vm where vm.id='"
-              + vm.getId() + "'";
-         HQLCriteria criteria = new HQLCriteria(hql);
-         List<Object> desgs = appService.query(criteria);
-         for (int j = 0; j < desgs.size(); j++) {
-            Designation designation = (Designation) desgs.get(j);
-            if (StringUtils.equalsIgnoreCase(designation.getType(), SYNONYM)) {
-                if (synonymName.length() == 0) {
-                   synonymName.append(designation.getName());
-                } else {
-                    synonymName.append("; ");
-                    synonymName.append(designation.getName());
-                  }
-                  altNames.add(designation.getName());
-            }
+         List<Designation> alternativeNames = new ArrayList<Designation>();
+         if (vm.getDesignationCollection() != null && !vm.getDesignationCollection().isEmpty()) {
+             alternativeNames.addAll(vm.getDesignationCollection());
+             for (Designation designation : alternativeNames) {
+                 if (StringUtils.equalsIgnoreCase(designation.getType(), "Biomarker Synonym")) {
+                      if (synonymName.length() == 0) {
+                           synonymName.append(designation.getName());
+                      } else {
+                           synonymName.append("; ");
+                           synonymName.append(designation.getName());
+                      }
+                      altNames.add(designation.getName());
+                 }
+             }
          }
-         
          if (synonymName.length() != 0) {
             dto.setVmName(vdpv.getPermissibleValue().getValue() + " (" +  synonymName.toString() + ")");
          } else {

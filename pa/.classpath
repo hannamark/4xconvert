@@ -58,8 +58,6 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/asm-3.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/asm-commons-3.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/asm-tree-3.3.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/caDSR-beans-4.0.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/caDSR-client-framework-4.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/commons-fileupload-1.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/commons-io-2.0.1.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/commons-lang3-3.1.jar"/>
@@ -194,5 +192,8 @@
 	<classpathentry kind="var" path="PA_LIB/test/spring-test-3.2.2.RELEASE.jar"/>
 	<classpathentry kind="var" path="PA_LIB/ear/commons-codec-1.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/compile/httpcore-4.3.2.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/jaxb-impl-2.2.6.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/sdk-client-framework-1.0.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/cadsrapi41-beans-1.0.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

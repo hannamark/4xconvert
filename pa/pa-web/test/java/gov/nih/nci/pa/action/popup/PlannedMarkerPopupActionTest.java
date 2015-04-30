@@ -112,9 +112,10 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.system.applicationservice.ApplicationService;
-import gov.nih.nci.system.query.hibernate.HQLCriteria;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.criterion.DetachedCriteria;
@@ -131,6 +132,9 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
     ProtocolQueryServiceBean protocolQrySrv = new ProtocolQueryServiceBean();
     ApplicationService appService = mock(ApplicationService.class);
     LookUpTableServiceRemote lookUpTableSrv = mock(LookUpTableServiceRemote.class);
+    ValueMeaning vm = new ValueMeaning();
+    PermissibleValue pv = new PermissibleValue();
+    ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
     @Before
     public void setUp() throws Exception {
         plannedMarkerAction = new PlannedMarkerPopupAction();
@@ -153,17 +157,17 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
 
         when(appService.search(eq(DataElement.class), any(DataElement.class))).thenReturn(deResults);
 
-        PermissibleValue pv = new PermissibleValue();
+     
         pv.setValue("N-Cadherin");
         
         
-        ValueMeaning vm = new ValueMeaning();
+       
         vm.setLongName("N-Cadherin");
         vm.setDescription("cadherin");
         vm.setPublicID(2578250L);
         pv.setValueMeaning(vm);
 
-        ValueDomainPermissibleValue vdpv = new ValueDomainPermissibleValue();
+
         vdpv.setPermissibleValue(pv);
         vdpv.setId("1");
         List<Object> results = new ArrayList<Object>();
@@ -217,15 +221,16 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        designation.setName("Bivinyl");
        designation.setType("Biomarker Synonym");
        
+       
        Designation designation1 = new Designation();
        designation1.setId("2L");
        designation1.setName("N-Cadherin");
        designation1.setType("Biomarker Marker");
        
-       List<Object> desgs = new ArrayList<Object>();
-       desgs.add(designation);
-       desgs.add(designation1);
-       when(appService.query(any(HQLCriteria.class))).thenReturn(desgs);
+       Collection<gov.nih.nci.cadsr.domain.Designation> designationCollection = new HashSet<Designation>();
+       designationCollection.add(designation);
+       designationCollection.add(designation1);
+       vm.setDesignationCollection(designationCollection);
        plannedMarkerAction.setName("N-Cadherin");
        plannedMarkerAction.setSearchBothTerms("both");
        assertEquals(plannedMarkerAction.lookup(), "results");
@@ -241,15 +246,15 @@ public class PlannedMarkerPopupActionTest extends AbstractPaActionTest {
        designation2.setName("alpha");
        designation2.setType("Biomarker Synonym");
        plannedMarkerAction.setName("alpha");
-       desgs.add(designation2);
+       designationCollection.add(designation2);
+       vm.setDesignationCollection(designationCollection);
        plannedMarkerAction.setSearchBothTerms("Synonym");
-       when(appService.query(any(HQLCriteria.class))).thenReturn(desgs);
        assertEquals(plannedMarkerAction.lookup(), "results");
        assertNull(getRequest().getAttribute(Constants.FAILURE_MESSAGE));
        assertFalse(plannedMarkerAction.getMarkers().isEmpty());
-       assertEquals("N-Cadherin (Bivinyl; alpha)", plannedMarkerAction.getMarkers().get(0).getVmName());
-       assertEquals("Bivinyl" , plannedMarkerAction.getMarkers().get(0).getAltNames().get(0));
-       assertEquals("alpha" , plannedMarkerAction.getMarkers().get(0).getAltNames().get(1));
+       assertEquals("N-Cadherin (alpha; Bivinyl)", plannedMarkerAction.getMarkers().get(0).getVmName());
+       assertEquals("alpha" , plannedMarkerAction.getMarkers().get(0).getAltNames().get(0));
+       assertEquals("Bivinyl" , plannedMarkerAction.getMarkers().get(0).getAltNames().get(1));
        assertFalse(plannedMarkerAction.getMarkers().get(0).getAltNames().get(0).equals("N-Cadherin"));
        
        getRequest().clearAttributes();

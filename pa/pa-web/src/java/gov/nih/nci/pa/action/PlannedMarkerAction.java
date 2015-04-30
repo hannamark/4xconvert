@@ -110,14 +110,11 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.system.applicationservice.ApplicationService;
 import gov.nih.nci.system.client.ApplicationServiceProvider;
-import gov.nih.nci.system.query.hibernate.HQLCriteria;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -350,8 +347,10 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         try {
             DetachedCriteria criteria = DetachedCriteria.forClass(ValueDomainPermissibleValue.class);
             criteria.add(Property.forName("id").eq(getCdeId()));
-            criteria.setFetchMode("permissibleValue", FetchMode.JOIN);
-            criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.JOIN);
+            criteria.setFetchMode("permissibleValue", FetchMode.EAGER);
+            criteria.setFetchMode("permissibleValue.valueMeaning", FetchMode.EAGER);
+            criteria.setFetchMode("permissibleValue.valueMeaning.designationCollection", FetchMode.EAGER);
+            criteria.createAlias("permissibleValue", "pv").createAlias("pv.valueMeaning", "vm");
             List<Object> results = (List<Object>) (List<?>) appService.query(criteria);
             if (results.size() < 1) {
                throw new PAException("Search of caDSR returned no results.");
@@ -360,20 +359,19 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             ValueMeaning vm = vdpv.getPermissibleValue().getValueMeaning();
             PlannedMarkerWebDTO dto = new PlannedMarkerWebDTO();
             StringBuffer synonymName = new StringBuffer();
-            String hql = "select vm.designationCollection from ValueMeaning vm where vm.id='"
-                 + vm.getId() + "'";
-            HQLCriteria hqlCriteria = new HQLCriteria(hql);
-            List<Object> desgs = appService.query(hqlCriteria);
-            for (int j = 0; j < desgs.size(); j++) {
-               Designation designation = (Designation) desgs.get(j);
-               if (StringUtils.equalsIgnoreCase(designation.getType(), "Biomarker Synonym")) {
-                   if (synonymName.length() == 0) {
-                      synonymName.append(designation.getName());
-                   } else {
-                       synonymName.append("; ");
-                       synonymName.append(designation.getName());
-                     }
-               }
+            List<Designation> alternativeNames = new ArrayList<Designation>();
+            if (vm.getDesignationCollection() != null && !vm.getDesignationCollection().isEmpty()) {
+                alternativeNames.addAll(vm.getDesignationCollection());
+                for (Designation designation : alternativeNames) {
+                    if (StringUtils.equalsIgnoreCase(designation.getType(), "Biomarker Synonym")) {
+                         if (synonymName.length() == 0) {
+                              synonymName.append(designation.getName());
+                         } else {
+                              synonymName.append("; ");
+                              synonymName.append(designation.getName());
+                         }
+                    }
+                }
             }
             dto.setSynonymNames(synonymName.toString());
             if (dto.getSynonymNames() != null && !dto.getSynonymNames().isEmpty()) {

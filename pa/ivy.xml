@@ -142,8 +142,6 @@
     <dependency conf="pa-web->master" org="commons-fileupload" name="commons-fileupload" rev="1.3"/>
     <dependency conf="pa-web->master" org="commons-io" name="commons-io" rev="2.0.1"/>
     <dependency conf="pa-web->master" org="displaytag" name="displaytag" rev="1.2"/>
-    <dependency conf="pa-web->master" org="gov.nih.nci.caintegrator2" name="caDSR-beans" rev="4.0"/> 
-    <dependency conf="pa-web->master" org="gov.nih.nci.caintegrator2" name="caDSR-client-framework" rev="4.0"/> 
     <dependency conf="pa-web->master" org="gov.nih.nci.coppa" name="nci-commons-ctrp-struts2" rev="1.4.10.1"/>
     <dependency conf="pa-web->master" org="javax.servlet" name="jstl" rev="1.1.2"/>
     <dependency conf="pa-web->master" org="net.htmlparser.jericho" name="jericho-html" rev="2.4"/>
@@ -164,6 +162,9 @@
     <dependency conf="pa-web->master" org="org.springframework.ws" name="spring-ws" rev="2.1.4.RELEASE"/>
     <dependency conf="pa-web->master" org="taglibs" name="standard" rev="1.1.2"/>
     <dependency conf="pa-web->master" org="org.json" name="json" rev="20140107"/>
+    <dependency conf="pa-web->master" org="com.sun.xml.bind" name="jaxb-impl" rev="2.2.6"/>
+	<dependency conf="pa-web->master" org="nih.nci.cadsr" name="sdk-client-framework" rev="1.0"/>
+	<dependency conf="pa-web->master" org="nih.nci.cadsr" name="cadsrapi41-beans" rev="1.0"/>
     
     <dependency conf="pa-webservices->master" org="commons-io" name="commons-io" rev="2.4"/>
     
