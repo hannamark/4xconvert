@@ -82,10 +82,7 @@
  */
 package gov.nih.nci.registry.test.integration;
 
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.SiteStatus;
-import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -147,8 +144,10 @@ public abstract class AbstractRegistrySeleniumTest extends
     }
 
     public void loginAsSubmitter() {
-        login(System.getProperty("submitter.login", "submitter-ci"),
-                System.getProperty("submitter.password", "pass"));
+        login(StringUtils.isNotBlank(System.getProperty("submitter.login")) ? System.getProperty("submitter.login")
+                : "submitter-ci",
+                StringUtils.isNotBlank(System.getProperty("submitter.password")) ? System
+                        .getProperty("submitter.password") : "pass");
     }
 
     public void verifyDisclaimer() {
