@@ -1770,12 +1770,16 @@
        <comment>Performance enhancements: added indexes.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8732.sql"/>       
     </changeSet>
-    <changeSet id="PO-8263-1" author="krylovd" runOnChange="true" runInTransaction="false">
+    <changeSet id="PO-8263-1" author="krylovd" runInTransaction="false">
        <comment>Performance enhancements: refactored and optimized milestone and sos rv* views.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8263-1.sql"  splitStatements="false"/>       
     </changeSet>
-    <changeSet id="PO-8263-2" author="krylovd" runOnChange="true" runInTransaction="false">
+    <changeSet id="PO-8263-2" author="krylovd" runInTransaction="false">
        <comment>Performance enhancements: refactored and optimized milestone and sos rv* views.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8263-2.sql"/>       
     </changeSet>
+    <changeSet id="PO-8263-3" author="krylovd" runOnChange="true" runInTransaction="false">
+       <comment>Performance enhancements: refactored and optimized dws rv* views.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8263-3.sql" splitStatements="false"/>       
+    </changeSet>    
 </databaseChangeLog>
