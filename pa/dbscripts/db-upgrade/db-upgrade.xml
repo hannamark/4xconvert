@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog logicalFilePath="/tmp/pa/db-upgrade.xml"
+<databaseChangeLog logicalFilePath="/tmp/pa/db-upgrade.xml" 
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
@@ -1770,8 +1770,12 @@
        <comment>Performance enhancements: added indexes.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8732.sql"/>       
     </changeSet>
-    <changeSet id="PO-8263" author="krylovd" runOnChange="true">
+    <changeSet id="PO-8263-1" author="krylovd" runOnChange="true" runInTransaction="false">
        <comment>Performance enhancements: refactored and optimized milestone and sos rv* views.</comment>
-       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8263.sql"  splitStatements="false"/>       
-    </changeSet>    
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8263-1.sql"  splitStatements="false"/>       
+    </changeSet>
+    <changeSet id="PO-8263-2" author="krylovd" runOnChange="true" runInTransaction="false">
+       <comment>Performance enhancements: refactored and optimized milestone and sos rv* views.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8263-2.sql"/>       
+    </changeSet>
 </databaseChangeLog>
