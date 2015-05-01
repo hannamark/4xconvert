@@ -403,7 +403,9 @@
                 <filter token="db-upgrade.run.dir" value="${dbscript.dir}/postgresql"/>
             </filterset>
         </copy>
-        <updateDatabase driver="${jdbc.driver}" url="${jdbc.url}" username="${db.username}" password="${db.password}"
+    	<property name="liq.jdbc.url" value="${jdbc.url}?connectTimeout=0&amp;socketTimeout=0&amp;tcpKeepAlive=true"/>
+    	<echo>Liquibase URL: ${liq.jdbc.url}</echo>
+        <updateDatabase driver="${jdbc.driver}" url="${liq.jdbc.url}" username="${db.username}" password="${db.password}"
                         classpathref="build.classpath" changeLogFile="${basedir}/target/db-upgrade.xml"/>
     </target>
     
