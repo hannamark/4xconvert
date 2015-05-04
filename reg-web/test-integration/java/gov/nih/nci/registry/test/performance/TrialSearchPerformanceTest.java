@@ -71,7 +71,7 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
     }
 
     private void searchByClosure(Closure c, String descr, int timeoutSecond) {
-        long totalTime = 0;
+        double totalTime = 0;
         int tries = 5;
 
         // Initial search can take longer since Postgres needs to cache stuff
@@ -82,7 +82,7 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
             totalTime += runSearchWithTimeout(c, descr);
         }
 
-        final long average = totalTime / tries;
+        final double average = totalTime / tries;
         report(("Average time to search " + descr + " is " + average + " seconds.")
                 .toUpperCase());
         if (!"true".equalsIgnoreCase(System
@@ -92,7 +92,7 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
     }
 
     @SuppressWarnings("deprecation")
-    private long runSearchWithTimeout(Closure c, String descr) {
+    private double runSearchWithTimeout(Closure c, String descr) {
         accessTrialSearchScreen();
 
         c.execute(driver);
@@ -112,7 +112,7 @@ public class TrialSearchPerformanceTest extends AbstractRegistrySeleniumTest {
         System.out.println("Timestamp after searching " + descr + ": " + end);
 
         long diff = end.getTime() - start.getTime();
-        final long diffSeconds = diff / 1000L;
+        final double diffSeconds = diff / 1000D;
         final String durationString = "Duration to search " + descr + ": "
                 + diffSeconds + " seconds or " + (diff / 1000D / 60D)
                 + " minutes.";
