@@ -13,6 +13,9 @@ create index clinical_research_staff_person_identifier on clinical_research_staf
 DROP INDEX IF EXISTS study_contact_clinical_research_staff_identifier;
 create index study_contact_clinical_research_staff_identifier on study_contact (clinical_research_staff_identifier);
 
+DROP INDEX IF EXISTS study_contact_healthcare_provider_identifier;
+create index study_contact_healthcare_provider_identifier on study_contact (healthcare_provider_identifier);
+
 DROP INDEX IF EXISTS study_contact_role_code;
 create index study_contact_role_code on study_contact (role_code);
 
@@ -42,6 +45,9 @@ create index study_protocol_submitting_organization_id on study_protocol (submit
 
 DROP INDEX IF EXISTS study_site_healthcare_facility_identifier;
 create index study_site_healthcare_facility_identifier ON study_site (healthcare_facility_identifier);
+
+DROP INDEX IF EXISTS healthcare_provider_person_identifier;
+create index healthcare_provider_person_identifier ON healthcare_provider (person_identifier);
 
 DROP INDEX IF EXISTS hcf_organization_identifier;
 create index hcf_organization_identifier ON healthcare_facility (organization_identifier);

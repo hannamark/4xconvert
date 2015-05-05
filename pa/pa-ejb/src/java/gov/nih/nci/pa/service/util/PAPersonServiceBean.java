@@ -97,6 +97,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -125,6 +126,7 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
      * @throws PAException on error
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @PermitAll
     public List<PaPersonDTO> getAllPrincipalInvestigators() throws PAException {
        List<Person> persons = generateDistinctPersonResults();
        return createPersonDTO(persons);

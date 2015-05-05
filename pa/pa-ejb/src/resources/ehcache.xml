@@ -74,7 +74,7 @@
          name="CRITERIA_COLLECTIONS_CACHE"
          maxElementsInMemory="10"
          eternal="false"         
-         timeToLiveSeconds="120"
+         timeToLiveSeconds="170"
          overflowToDisk="false"
     />
     

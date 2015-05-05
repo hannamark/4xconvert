@@ -366,4 +366,25 @@
             </cron>
         </trigger>
     </job>   
+    
+    <job>
+        <job-detail>
+            <name>primeCachesJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.CachePrimer</job-class>
+            <volatility>false</volatility>
+            <durability>false</durability>
+            <recover>false</recover>
+        </job-detail> 
+        <trigger>
+            <cron>
+                <name>primeCachesJobTrigger</name>
+                <group>DailyTriggerGroup</group>               
+                <misfire-instruction>MISFIRE_INSTRUCTION_FIRE_ONCE_NOW</misfire-instruction>
+                <job-name>primeCachesJob</job-name>
+                <job-group>DEFAULT</job-group>                
+                <cron-expression>0 0/3 * * * ?</cron-expression>
+            </cron>
+        </trigger>
+    </job>
 </quartz> 
