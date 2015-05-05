@@ -10,7 +10,7 @@
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     setFocusToFirstControl();
-}
+} 
 <!--
 function submitenter(myfield,e) {
  var keycode;
@@ -26,7 +26,7 @@ else return true;
   
 }
 function validateForm() {
-    if (validate()) {
+    if (<%=Boolean.valueOf(System.getProperty("ctrp.env.ci"))%> || validate()) {
        document.forms[0].submit()
     }
 }

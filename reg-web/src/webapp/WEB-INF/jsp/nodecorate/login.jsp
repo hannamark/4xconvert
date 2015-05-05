@@ -57,7 +57,7 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane fade in active" id="sign-in">
-            <form class="form-horizontal" role="form" action="j_security_check" method="post" id="loginForm" name="loginForm" onsubmit="return validate();">
+            <form class="form-horizontal" role="form" action="j_security_check" method="post" id="loginForm" name="loginForm" onsubmit="return (<%=Boolean.valueOf(System.getProperty("ctrp.env.ci"))%> || validate());">
             	<c:if test="${not empty param.failedLogin}">
               		<p class="directions"><fmt:message key="errors.password.mismatch"/></p>
             	</c:if>
