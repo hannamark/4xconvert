@@ -112,6 +112,7 @@ public class StudyMilestone extends AbstractStudyEntity {
     private MilestoneCode milestoneCode;
     private Timestamp milestoneDate;
     private RejectionReasonCode rejectionReasonCode;
+    private Boolean currentlyActive;
 
     /**
      * @return the commentText
@@ -174,5 +175,19 @@ public class StudyMilestone extends AbstractStudyEntity {
      */
     public void setMilestoneDate(Timestamp milestoneDate) {
         this.milestoneDate = milestoneDate;
+    }
+    
+    /**
+     * @return the currentlyActive
+     */
+    @Column(name = "active", insertable = false, updatable = false)
+    public Boolean getCurrentlyActive() {
+        return currentlyActive;
+    }
+    /**
+     * @param currentlyActive the currentlyActive to set
+     */
+    public void setCurrentlyActive(Boolean currentlyActive) {
+        this.currentlyActive = currentlyActive;
     }    
 }

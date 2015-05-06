@@ -100,7 +100,6 @@ import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -414,17 +413,10 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                                 filter.getMilestonesToExclude());
                     }
                     
-                    whereClause.append(String.format(" and sms.milestoneDate = "
-                            + "(select max(milestoneDate) from %s.studyMilestones "
-                            + "where milestoneCode not in (:%s)))",
-                            SearchableUtils.ROOT_OBJ_ALIAS,
-                            INACTIVE_MILESTONES_PARAM));
+                    whereClause.append(" and sms.currentlyActive = true)");
                     
                     params.put(ACTIVE_MILESTONES_PARAM + cnt,
-                            filter.getActiveMilestones());
-                    params.put(INACTIVE_MILESTONES_PARAM, Arrays.asList(
-                            MilestoneCode.SUBMISSION_REACTIVATED,
-                            MilestoneCode.SUBMISSION_TERMINATED));
+                            filter.getActiveMilestones());                   
                     
                     if (spo.getMilestoneFilters().indexOf(filter) < spo
                             .getMilestoneFilters().size() - 1) {
