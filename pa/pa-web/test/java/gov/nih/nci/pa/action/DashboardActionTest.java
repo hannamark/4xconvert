@@ -3,10 +3,12 @@
  */
 package gov.nih.nci.pa.action;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
@@ -15,6 +17,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -178,6 +181,11 @@ public class DashboardActionTest extends AbstractPaActionTest {
         dto2.setStudyProtocolId(2L);
         when(
                 mock.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
+                .thenReturn(Arrays.asList(dto1, dto2));
+        when(
+                mock.getStudyProtocolByCriteria(
+                        any(StudyProtocolQueryCriteria.class),
+                        (ProtocolQueryPerformanceHints[]) anyVararg()))
                 .thenReturn(Arrays.asList(dto1, dto2));
         when(mock.getTrialSummaryByStudyProtocolId(any(Long.class)))
                 .thenReturn(dto1);
