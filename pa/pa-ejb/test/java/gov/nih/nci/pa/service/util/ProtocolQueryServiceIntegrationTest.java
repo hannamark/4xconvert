@@ -178,7 +178,8 @@ public class ProtocolQueryServiceIntegrationTest extends
     class MockResultsService implements ProtocolQueryResultsServiceLocal {
         @Override
         public List<StudyProtocolQueryDTO> getResults(List<Long> ids,
-                boolean myTrialsOnly, Long userId) throws PAException {
+                boolean myTrialsOnly, Long userId,
+                ProtocolQueryPerformanceHints... hints) throws PAException {
             List<StudyProtocolQueryDTO> result = new ArrayList<StudyProtocolQueryDTO>();
             for (Long id : ids) {
                 Session session = PaHibernateUtil.getCurrentSession();

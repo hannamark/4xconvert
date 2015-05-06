@@ -126,4 +126,11 @@ public class ProtocolQueryServiceCachingDecorator implements ProtocolQueryServic
     public List<StudyProtocolQueryDTO> getActiveInactiveStudyProtocolsById(Long studyProtocolId) throws PAException {
        return serviceLocal.getActiveInactiveStudyProtocolsById(studyProtocolId);
     }
+
+    @Override
+    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
+            StudyProtocolQueryCriteria pSc,
+            ProtocolQueryPerformanceHints... hint) throws PAException {
+        return serviceLocal.getStudyProtocolByCriteria(pSc, hint);
+    }
 }

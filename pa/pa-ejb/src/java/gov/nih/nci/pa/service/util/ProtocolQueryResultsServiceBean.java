@@ -118,6 +118,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -301,8 +302,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
      */
     @Override
     @SuppressWarnings("PMD.CyclomaticComplexity")
-    public List<StudyProtocolQueryDTO> getResults(List<Long> protocols, boolean myTrialsOnly, Long userId)
-            throws PAException {
+    public List<StudyProtocolQueryDTO> getResults(List<Long> protocols,
+            boolean myTrialsOnly, Long userId,
+            ProtocolQueryPerformanceHints... hints) throws PAException {
         if (protocols == null) {
             return new ArrayList<StudyProtocolQueryDTO>();
         }
@@ -324,64 +326,70 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         List<StudyProtocolQueryDTO> dtoList = convertResults(queryList, 
                 ownerMap, myTrialsOnly, user, studyIDAndSiteOwnershipMap, rssOrgs);
         
-        query = new DAQuery();
-        query.setSql(true);
-        query.setText(OTHER_IDENTIFIERS_QRY_STRING);
-        query.addParameter(IDS, ownerMap.keySet());       
-        List<Object[]> otherIdentifierQueryList = dataAccessService.findByQuery(query);
-        
-        for (Object[] obj : otherIdentifierQueryList) { 
-            Long studyprotocolId = ((BigInteger) obj[0]).longValue();
-            for (StudyProtocolQueryDTO dto : dtoList) {     
-               String identifierName = (String) obj[2];
-               if (dto.getStudyProtocolId().equals(studyprotocolId) 
-                       && !identifierName.equals(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME)) {                  
-                   dto.getOtherIdentifiers().add((String) obj[1]);
-               }
-            }
-        }
-        
-        //populate study alternate title information
-        query = new DAQuery();
-        query.setSql(true);
-        query.setText(STUDY_ALTERNATE_TITLE_QRY_STRING);
-        query.addParameter(IDS, protocols);
-        List<Object[]> studyAlternateTitlesQueryList = dataAccessService.findByQuery(query);
-        
-        for (Object[] obj : studyAlternateTitlesQueryList) {
-            Long studyprotocolId = ((BigInteger) obj[0]).longValue();
-            for (StudyProtocolQueryDTO dto : dtoList) {
-                String alternateTitle = (String) obj[1];
-                String category = (String) obj[2];
-                if (dto.getStudyProtocolId().equals(studyprotocolId)) {
-                    if (dto.getStudyAlternateTitles() == null) {
-                        dto.setStudyAlternateTitles(new TreeSet<StudyAlternateTitleDTO>());                        
-                    }
-                    StudyAlternateTitleDTO alternateTitleDTO = new StudyAlternateTitleDTO();
-                    alternateTitleDTO.setAlternateTitle(StConverter.convertToSt(alternateTitle));
-                    alternateTitleDTO.setCategory(StConverter.convertToSt(category));
-                    dto.getStudyAlternateTitles().add(alternateTitleDTO);
+        if (!ArrayUtils.contains(hints, ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS)) {
+            query = new DAQuery();
+            query.setSql(true);
+            query.setText(OTHER_IDENTIFIERS_QRY_STRING);
+            query.addParameter(IDS, ownerMap.keySet());       
+            List<Object[]> otherIdentifierQueryList = dataAccessService.findByQuery(query);
+            
+            for (Object[] obj : otherIdentifierQueryList) { 
+                Long studyprotocolId = ((BigInteger) obj[0]).longValue();
+                for (StudyProtocolQueryDTO dto : dtoList) {     
+                   String identifierName = (String) obj[2];
+                   if (dto.getStudyProtocolId().equals(studyprotocolId) 
+                           && !identifierName.equals(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME)) {                  
+                       dto.getOtherIdentifiers().add((String) obj[1]);
+                   }
                 }
             }
         }
         
-        query = new DAQuery();
-        query.setSql(true);
-        query.setText(LAST_UPDATED_DATE);
-        query.addParameter(IDS, ownerMap.keySet());       
-        List<Object[]> lastUpdatedDateQueryList = dataAccessService.findByQuery(query);
-        for (StudyProtocolQueryDTO dto : dtoList) {   
-            for (Object[] obj : lastUpdatedDateQueryList) {
-                Long studyprotocolId = ((BigInteger) obj[STUDY_PROTOCOL_IDENTIFIER_IDX]).longValue();
-                if (dto.getStudyProtocolId().equals(studyprotocolId)) {
-                    Date openDate = (Date) obj[LAST_UPDATE_DATE_INX];
-                    dto.setUpdatedDate(openDate);
-                    
-                    User updater = new User();
-                    updater.setFirstName((String) obj[UPDATER_FIRST_NAME_IDX]);
-                    updater.setLastName((String) obj[UPDATER_LAST_NAME_IDX]);
-                    updater.setLoginName((String) obj[UPDATER_LOGIN_NAME_IDX]);
-                    dto.setLastUpdaterDisplayName(CsmUserUtil.getDisplayUsername(updater));
+        if (!ArrayUtils.contains(hints, ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES)) {
+            //populate study alternate title information
+            query = new DAQuery();
+            query.setSql(true);
+            query.setText(STUDY_ALTERNATE_TITLE_QRY_STRING);
+            query.addParameter(IDS, protocols);
+            List<Object[]> studyAlternateTitlesQueryList = dataAccessService.findByQuery(query);
+            
+            for (Object[] obj : studyAlternateTitlesQueryList) {
+                Long studyprotocolId = ((BigInteger) obj[0]).longValue();
+                for (StudyProtocolQueryDTO dto : dtoList) {
+                    String alternateTitle = (String) obj[1];
+                    String category = (String) obj[2];
+                    if (dto.getStudyProtocolId().equals(studyprotocolId)) {
+                        if (dto.getStudyAlternateTitles() == null) { // NOPMD
+                            dto.setStudyAlternateTitles(new TreeSet<StudyAlternateTitleDTO>());                        
+                        }
+                        StudyAlternateTitleDTO alternateTitleDTO = new StudyAlternateTitleDTO();
+                        alternateTitleDTO.setAlternateTitle(StConverter.convertToSt(alternateTitle));
+                        alternateTitleDTO.setCategory(StConverter.convertToSt(category));
+                        dto.getStudyAlternateTitles().add(alternateTitleDTO);
+                    }
+                }
+            }
+        }
+        
+        if (!ArrayUtils.contains(hints, ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO)) {
+            query = new DAQuery();
+            query.setSql(true);
+            query.setText(LAST_UPDATED_DATE);
+            query.addParameter(IDS, ownerMap.keySet());       
+            List<Object[]> lastUpdatedDateQueryList = dataAccessService.findByQuery(query);
+            for (StudyProtocolQueryDTO dto : dtoList) {   
+                for (Object[] obj : lastUpdatedDateQueryList) {
+                    Long studyprotocolId = ((BigInteger) obj[STUDY_PROTOCOL_IDENTIFIER_IDX]).longValue();
+                    if (dto.getStudyProtocolId().equals(studyprotocolId)) {
+                        Date openDate = (Date) obj[LAST_UPDATE_DATE_INX];
+                        dto.setUpdatedDate(openDate);
+                        
+                        User updater = new User();
+                        updater.setFirstName((String) obj[UPDATER_FIRST_NAME_IDX]);
+                        updater.setLastName((String) obj[UPDATER_LAST_NAME_IDX]);
+                        updater.setLoginName((String) obj[UPDATER_LOGIN_NAME_IDX]);
+                        dto.setLastUpdaterDisplayName(CsmUserUtil.getDisplayUsername(updater));
+                    }
                 }
             }
         }

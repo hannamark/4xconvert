@@ -102,6 +102,17 @@ public interface ProtocolQueryServiceLocal {
      * @throws PAException on error
      */
     List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria pSc) throws PAException;
+    
+    /**
+     * Same as {@link #getStudyProtocolByCriteria(StudyProtocolQueryCriteria)}, but takes in performance hints.
+     * @param pSc StudyProtocolQueryCriteria
+     * @param hint ProtocolQueryPerformanceHints
+     * @return List<StudyProtocolQueryDTO>
+     * @throws PAException PAException
+     */
+    List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
+            StudyProtocolQueryCriteria pSc,
+            ProtocolQueryPerformanceHints... hint) throws PAException;
 
     /**
      * Gets study protocols matching the given criteria. Returns an empty list (not null) if no matching study protocols

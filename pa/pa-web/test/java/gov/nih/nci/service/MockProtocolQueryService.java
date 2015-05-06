@@ -9,6 +9,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -134,5 +135,12 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
          Long studyProtocolId) throws PAException {
          // TODO Auto-generated method stub
          return null;
+    }
+
+    @Override
+    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
+            StudyProtocolQueryCriteria pSc,
+            ProtocolQueryPerformanceHints... hint) throws PAException {        
+        return getStudyProtocolByCriteria(pSc);
     }
 }

@@ -202,7 +202,20 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {
+    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
+            StudyProtocolQueryCriteria spsc) throws PAException {
+        return getStudyProtocolByCriteria(spsc,
+                new ProtocolQueryPerformanceHints[0]);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
+            StudyProtocolQueryCriteria spsc,
+            ProtocolQueryPerformanceHints... hints) throws PAException {
         if (isCriteriaEmpty(spsc)) {
             throw new PAException("At least one criteria is required");
         }
@@ -210,7 +223,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<Long> queryList = getStudyProtocolIdQueryResults(spsc);
         pdtos = protocolQueryResultsService.getResults(queryList,
-                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), spsc.getUserId());        
+                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), spsc.getUserId(), hints);        
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }

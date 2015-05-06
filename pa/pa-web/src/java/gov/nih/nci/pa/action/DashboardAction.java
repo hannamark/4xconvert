@@ -13,6 +13,9 @@ import static gov.nih.nci.pa.enums.MilestoneCode.SCIENTIFIC_PROCESSING_START_DAT
 import static gov.nih.nci.pa.enums.MilestoneCode.SCIENTIFIC_READY_FOR_QC;
 import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_ACCEPTED;
 import static gov.nih.nci.pa.enums.MilestoneCode.SUBMISSION_RECEIVED;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_ALTERNATE_TITLES;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_LAST_UPDATER_INFO;
+import static gov.nih.nci.pa.service.util.ProtocolQueryPerformanceHints.SKIP_OTHER_IDENTIFIERS;
 import static gov.nih.nci.pa.util.Constants.IS_ADMIN_ABSTRACTOR;
 import static gov.nih.nci.pa.util.Constants.IS_SCIENTIFIC_ABSTRACTOR;
 import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
@@ -233,7 +236,9 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             List<StudyProtocolQueryDTO> results = new ArrayList<StudyProtocolQueryDTO>();
             for (StudyProtocolQueryCriteria criteria : criteriaList) {
                 List<StudyProtocolQueryDTO> currentResults = protocolQueryService
-                        .getStudyProtocolByCriteria(criteria);
+                        .getStudyProtocolByCriteria(criteria,
+                                SKIP_ALTERNATE_TITLES, SKIP_LAST_UPDATER_INFO,
+                                SKIP_OTHER_IDENTIFIERS);
                 protocolQueryService.populateMilestoneHistory(currentResults);
                 results.addAll(currentResults);
             }

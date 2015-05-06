@@ -93,15 +93,21 @@ import javax.ejb.Local;
 public interface ProtocolQueryResultsServiceLocal {
     /**
      * Return a list of detailed data for the protocols selected.
-     *
-     * @param ids list of study protocol id's to return for display.
-     * @param myTrialsOnly return only user's trials
-     * @param userId id of user doing search. May be null.
+     * 
+     * @param ids
+     *            list of study protocol id's to return for display.
+     * @param myTrialsOnly
+     *            return only user's trials
+     * @param userId
+     *            id of user doing search. May be null.
+     * @param hints ProtocolQueryPerformanceHints
      * @return the populated list for display, empty list if not found
-     * @throws PAException exception
+     * @throws PAException
+     *             exception
      */
-    List<StudyProtocolQueryDTO> getResults(List<Long> ids, boolean myTrialsOnly, Long userId)
-            throws PAException;
+    List<StudyProtocolQueryDTO> getResults(List<Long> ids,
+            boolean myTrialsOnly, Long userId,
+            ProtocolQueryPerformanceHints... hints) throws PAException;
 
     /**
      * Return a list of of limited data for the protocols selected.
