@@ -188,14 +188,12 @@ public class HealthCareFacilityAction
     @Override
     public String edit() throws JMSException {
 
-        if (role.getPriorStatus() != RoleStatus.ACTIVE && role.getStatus() == RoleStatus.ACTIVE) {
-            LOG.warn(
-                    String.format(
-                            "Illegal attempt to update status from %s to %s",
-                            role.getPriorStatus().name(),
-                            role.getStatus().name()
-                    )
-            );
+        if (role.getPriorStatus() != RoleStatus.ACTIVE
+                && role.getStatus() == RoleStatus.ACTIVE
+                && !transitionToActiveAllowed()) {
+            LOG.warn(String.format(
+                    "Illegal attempt to update status from %s to %s", role
+                            .getPriorStatus().name(), role.getStatus().name()));
             return ERROR;
         }
 
@@ -396,6 +394,15 @@ public class HealthCareFacilityAction
             if (role.getPriorStatus() != RoleStatus.ACTIVE) {
                 result.remove(RoleStatus.ACTIVE);
             }
+        }
+        // PO-8000: if there is unprocessed CR that specifies a new status
+        // that's not in the list,
+        // Curators are going to be completely blocked from accepting the CR. To
+        // avoid this, add the new status
+        // to the list of available statuses.
+        if (transitionToActiveAllowed()
+                && !result.contains(getCr().getStatus())) {
+            result.add(getCr().getStatus());
         }
         return result;
     }

@@ -85,6 +85,7 @@ package gov.nih.nci.po.web.roles;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.CorrelationChangeRequest;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.service.GenericStructrualRoleServiceLocal;
 
 /**
@@ -126,6 +127,14 @@ public abstract class AbstractOrganizationRoleAction
      */
     public void setOrganization(Organization organization) {
         this.organization = organization;
+    }
+    
+    /**
+     * @return
+     */
+    protected boolean transitionToActiveAllowed() {
+        return getBaseCr() != null
+                && getBaseCr().getStatus() == RoleStatus.ACTIVE;
     }
     
     /**
