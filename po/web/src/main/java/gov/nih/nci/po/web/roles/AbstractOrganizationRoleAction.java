@@ -130,7 +130,7 @@ public abstract class AbstractOrganizationRoleAction
     }
     
     /**
-     * @return
+     * @return boolean whether transition To Active Allowed.
      */
     protected boolean transitionToActiveAllowed() {
         return getBaseCr() != null
