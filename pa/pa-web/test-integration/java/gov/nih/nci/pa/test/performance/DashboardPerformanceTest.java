@@ -36,13 +36,13 @@ public class DashboardPerformanceTest extends AbstractPaSeleniumTest {
     @Test
     public void testAdmin() {
         loginAsAdminAbstractor();
-        checkDashboardPerformance("Admin Dashboard", 5);
+        checkDashboardPerformance("Admin Dashboard", 7);
     }
 
     @Test
     public void testScientific() {
         loginAsScientificAbstractor();
-        checkDashboardPerformance("Scientific Dashboard", 5);
+        checkDashboardPerformance("Scientific Dashboard", 7);
     }
 
     private void checkDashboardPerformance(String descr, int timeoutSecond) {
