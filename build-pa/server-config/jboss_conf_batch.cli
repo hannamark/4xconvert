@@ -108,6 +108,27 @@ connect
     ] \
 ) {allow-resource-service-restart=true}
 
+
+# Direct JTA logging into a separate log file.
+if (outcome == success) of /subsystem=logging/logger=com.arjuna.ats.jta:read-resource
+	/subsystem=logging/logger=com.arjuna.ats.jta:remove
+end-if
+if (outcome == success) of /subsystem=logging/periodic-rotating-file-handler=ARJUNA:read-resource
+	/subsystem=logging/periodic-rotating-file-handler=ARJUNA:remove
+end-if
+
+/subsystem=logging/periodic-rotating-file-handler=ARJUNA:add(file={"path"=>"arjuna.log", "relative-to"=>"jboss.server.log.dir"},suffix=".yyyy-MM-dd")
+/subsystem=logging/periodic-rotating-file-handler=ARJUNA:change-log-level(level="@log.level@")
+/subsystem=logging/periodic-rotating-file-handler=ARJUNA:write-attribute(name="append", value="true")
+/subsystem=logging/periodic-rotating-file-handler=ARJUNA:write-attribute(name="autoflush", value="true")
+/subsystem=logging/periodic-rotating-file-handler=ARJUNA:write-attribute(name="formatter", value="%d{HH:mm:ss,SSS} %s%E%n")
+/subsystem=logging/periodic-rotating-file-handler=ARJUNA:write-attribute(name="suffix", value=".yyyy-MM-dd")
+/subsystem=logging/logger=com.arjuna.ats.jta:add
+/subsystem=logging/logger=com.arjuna.ats.jta:write-attribute(name="level", value="@log.level@")
+/subsystem=logging/logger=com.arjuna.ats.jta:assign-handler(name="ARJUNA")
+/subsystem=logging/logger=com.arjuna.ats.jta:write-attribute(name="use-parent-handlers", value="false")
+
+
 reload
 
 # The next block is here to simply introduce a delay as there is no "sleep" command. This CLI has been failing on a random basis; it appears that
