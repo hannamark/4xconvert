@@ -110,8 +110,8 @@ connect
 
 
 # Direct JTA logging into a separate log file.
-if (outcome == success) of /subsystem=logging/logger=com.arjuna.ats.jta:read-resource
-	/subsystem=logging/logger=com.arjuna.ats.jta:remove
+if (outcome == success) of /subsystem=logging/logger=com.arjuna:read-resource
+	/subsystem=logging/logger=com.arjuna:remove
 end-if
 if (outcome == success) of /subsystem=logging/periodic-rotating-file-handler=ARJUNA:read-resource
 	/subsystem=logging/periodic-rotating-file-handler=ARJUNA:remove
@@ -123,10 +123,10 @@ end-if
 /subsystem=logging/periodic-rotating-file-handler=ARJUNA:write-attribute(name="autoflush", value="true")
 /subsystem=logging/periodic-rotating-file-handler=ARJUNA:write-attribute(name="formatter", value="%d{HH:mm:ss,SSS} %s%E%n")
 /subsystem=logging/periodic-rotating-file-handler=ARJUNA:write-attribute(name="suffix", value=".yyyy-MM-dd")
-/subsystem=logging/logger=com.arjuna.ats.jta:add
-/subsystem=logging/logger=com.arjuna.ats.jta:write-attribute(name="level", value="@log.level@")
-/subsystem=logging/logger=com.arjuna.ats.jta:assign-handler(name="ARJUNA")
-/subsystem=logging/logger=com.arjuna.ats.jta:write-attribute(name="use-parent-handlers", value="false")
+/subsystem=logging/logger=com.arjuna:add
+/subsystem=logging/logger=com.arjuna:write-attribute(name="level", value="@log.level@")
+/subsystem=logging/logger=com.arjuna:assign-handler(name="ARJUNA")
+/subsystem=logging/logger=com.arjuna:write-attribute(name="use-parent-handlers", value="false")
 
 
 reload
