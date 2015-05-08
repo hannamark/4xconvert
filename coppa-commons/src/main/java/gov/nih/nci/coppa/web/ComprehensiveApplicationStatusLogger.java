@@ -23,7 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
+import javax.management.MBeanInfo;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,6 +58,18 @@ public class ComprehensiveApplicationStatusLogger {
     private static final Logger LOG = Logger
             .getLogger(ComprehensiveApplicationStatusLogger.class);
 
+    private static final List<String> MBEANS = Arrays.asList(
+            "com.mchange.v2.c3p0:type=PooledDataSource",
+            "type=GarbageCollector", "java.lang:type=Memory",
+            "type=MemoryPool", "java.lang:type=OperatingSystem",
+            "java.lang:type=Runtime", "jboss.as:data-source=",
+            "subsystem=ejb3", "subsystem=web", "jboss.as:statistics=jdbc",
+            "jboss.as:statistics=pool", "jboss.as:subsystem=transactions",
+            "statistics=pool,subsystem=datasources",
+            "jboss.as.expr:statistics=jdbc", "jboss.as.expr:statistics=pool"
+
+    );
+
     /**
      * @return String
      * @throws Exception
@@ -66,12 +83,55 @@ public class ComprehensiveApplicationStatusLogger {
         dumpMemory();
         dumpCPU();
         dumpDiskInfo();
-        // dumpMBeans();
+        dumpMBeans();
         dumpDatabaseInfo();
         dumpOSCommands();
 
         LOG.error("********** End of a comprehensive application/container status dump");
         return "success";
+    }
+
+    @SuppressWarnings("unchecked")
+    private void dumpMBeans() {
+        LOG.error("MBeans:");
+        StringBuilder sb = new StringBuilder();
+        try {
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            Set<ObjectName> names = new TreeSet<ObjectName>(server.queryNames(
+                    null, null));
+            for (ObjectName name : names) {
+                if (!allowedToLog(name)) {
+                    continue;
+                }
+                sb.append("MBean: " + name.getCanonicalName() + CRLF);
+                try {
+                    MBeanInfo mbeanInfo = server.getMBeanInfo(name);
+                    for (int i = 0; i < mbeanInfo.getAttributes().length; i++) {
+                        String attributeName = mbeanInfo.getAttributes()[i]
+                                .getName();
+                        String attributeValue = server.getAttribute(name,
+                                attributeName).toString();
+                        sb.append(attributeName + "=" + attributeValue + CRLF);
+                    }
+                } catch (Exception e) {
+                    LOG.error(e.toString());
+                }
+                sb.append(CRLF);
+            }
+        } catch (Exception e) {
+            LOG.error(e);
+        }
+        LOG.error(sb);
+
+    }
+
+    private boolean allowedToLog(ObjectName name) {
+        for (String namePart : MBEANS) {
+            if (name.getCanonicalName().contains(namePart)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void dumpOSCommands() {
