@@ -230,11 +230,22 @@
             <property name="webdriver.class" value="${webdriver.class}"/>
         </ant>    	
     </target>
+	
+    <target name="run-performance-tests" description="Runs performance tests against an already deployed application">
+        <ant target="run-performance-tests" dir="pa-web" inheritAll="false">
+            <property name="tier" value="${tier}"/>
+            <property name="webdriver.class" value="${webdriver.class}"/>
+        </ant>           
+    </target>
 
    
     <target name="test-integration" description="Runs integration tests against the automatically deploy application."
     	   depends="init-db-deploy-start-jboss,run-selenium-tests,stop-jboss-server">       
     </target>
+	
+	<target name="test-performance" description="Runs performance tests against the automatically deployed application."
+	               depends="deploy-notest,start-jboss-server,jar-test,run-performance-tests,stop-jboss-server">       
+	</target>	
 	
 	<target name="init-db-deploy-start-jboss" depends="database.install,database.update,populate-test-db,deploy-notest,start-jboss-server,jar-test">
 	</target>

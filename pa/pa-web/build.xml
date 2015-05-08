@@ -359,6 +359,34 @@
     	<fail if="junit.failure" message="Selenium test(s) failed.  See reports in ${pa-web.test.reports}/index.html."/>
     </target>
 	
+    <target name="run-performance-tests" depends="compile-tests" description="Run performance tests">
+        <mkdir dir="${pa-web.test.reports}"/>
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." showoutput="yes" failureproperty="junit.failure">
+            <jvmarg value="-XX:-UseSplitVerifier"/>
+            <formatter type="xml"/>
+            <formatter type="plain" usefile="false"/>
+            <classpath>
+                <path location="${pa-web.build.testOutputDir}"/>
+                <path refid="selenium.classpath"/>
+                <path refid="common.package.classpath"/>
+                <path refid="test-junit.classpath"/>
+                <path refid="test.classpath"/>              
+            </classpath>
+            <batchtest todir="${pa-web.test.reports}">
+                <fileset dir="${pa-web.build.integrationTestDir.0}">
+                    <include name="**/AllPerformanceTests.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="${pa-web.test.reports}">
+            <fileset dir="${pa-web.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${pa-web.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Performance test(s) failed.  See reports in ${pa-web.test.reports}/index.html."/>
+    </target>
+	
 	<target name="run-selenium-testreport" description="Run integration tests report">
     	<junitreport todir="${pa-web.test.reports}">
 	        <fileset dir="${pa-web.test.reports}">
