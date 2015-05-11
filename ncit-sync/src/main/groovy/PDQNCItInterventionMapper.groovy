@@ -162,6 +162,14 @@ public class PDQNCItInterventionMapper{
           generateInvSynUpdateSQL(ncitCode,syns[1])
       }
   }
+  public void changeInterventionTypeCode(String paJdbcUrl,String dbuser,String dbpassword) {
+      StringBuffer sqlQuery = new StringBuffer();
+      sqlQuery.append(" update intervention_alternate_name set name_type_code ='Chemical structure name' ");
+      sqlQuery.append(" where length(name) > 200 and name_type_code <> 'Chemical structure name' ;");
+      def  sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
+      sql.executeUpdate(sqlQuery.toString());
+      sql.close();
+  }
 
   public void syncIntervention(String outputDir, String preferredNameUrl, String interventionUrl ,
          String paJdbcUrl,String dbuser,String dbpassword){
@@ -196,5 +204,13 @@ public class PDQNCItInterventionMapper{
          sql = Sql.newInstance(paJdbcUrl, dbuser, dbpassword, "org.postgresql.Driver")
          sql.executeUpdate(fileContents.toString());
          sql.close();
+         
+         
+       
+         
+         //change intervention type code when sync intervention is finished
+         changeInterventionTypeCode(paJdbcUrl, dbuser, dbpassword);
+         println " Intervention type for more than 200 characters is changed to Chemical structure name";
+         
   }
 }
