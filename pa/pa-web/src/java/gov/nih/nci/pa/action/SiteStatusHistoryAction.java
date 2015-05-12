@@ -373,15 +373,6 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
         return false;
     }
     
-    private boolean hasErrors(List<StudyOverallStatusWebDTO> list) {
-        for (StudyOverallStatusWebDTO dto : list) {
-            if (StringUtils.isNotBlank(dto.getErrors())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void flagAvailableActions(final List<StudyOverallStatusWebDTO> list) {
         final boolean abstractor = ActionUtils
                 .isAbstractor(ServletActionContext.getRequest().getSession());
@@ -581,40 +572,6 @@ public class SiteStatusHistoryAction extends ActionSupport implements Preparable
         return val;
     }
 
-    private boolean validateStatusBeforeUpdate(StudySiteAccrualStatusDTO ssasDto)
-            throws PAException {
-        StudySiteAccrualStatusDTO studySiteAccrualStatus =
-                studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(
-                        IiConverter.convertToStudySiteIi(studySiteId));
-        List<StatusDto> statusDtos = null;
-        boolean isValidTransition = true;
-        try {
-            statusDtos = statusTransitionService.validateStatusTransition(
-                    AppName.PA, 
-                    spDTO.isProprietaryTrial()? TrialType.ABBREVIATED : TrialType.COMPLETE,
-                    TransitionFor.SITE_STATUS, 
-                    CdConverter.convertCdToEnum(RecruitmentStatusCode.class, 
-                            studySiteAccrualStatus.getStatusCode()).name(), 
-                    studySiteAccrualStatus.getStatusDate().getValue(), 
-                    CdConverter.convertCdToEnum(RecruitmentStatusCode.class, 
-                            ssasDto.getStatusCode()).name(),
-                    TsConverter.convertToTimestamp(ssasDto.getStatusDate()));
-            StatusDto dto = statusDtos.get(0);
-            if (dto.hasErrorOfType(ErrorType.ERROR)) {
-                addActionError(" ERRORS:\n" + dto.getConsolidatedErrorMessage());
-                isValidTransition = false;
-            } 
-            if (dto.hasErrorOfType(ErrorType.WARNING)) {
-                addActionError(" WARNINGS:\n" + dto.getConsolidatedWarningMessage());
-            } 
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-            isValidTransition = true;
-        }
-        consolidateAndClearActionErrors();
-        return isValidTransition;
-    }
-    
     /**
      * Consolidates all action error messages into a single string and sets it as failure message
      */

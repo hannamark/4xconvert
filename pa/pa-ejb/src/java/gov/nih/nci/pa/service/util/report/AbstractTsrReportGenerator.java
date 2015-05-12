@@ -1045,13 +1045,6 @@ public abstract class AbstractTsrReportGenerator {
         addTableRow(table, columnHeader, columnValue, 1);
     }
 
-    private void addTableRow(Table table, String columnHeader, List<String> colValues) throws BadElementException {
-        if (!colValues.isEmpty()) {
-            table.addCell(getItemCell(columnHeader, 1));
-            table.addCell(getItemValueCell(colValues));
-        }
-    }
-
     private void addTableRow(Table table, String columnHeader, String columnValue, int colspan)
         throws BadElementException {
         if (!StringUtils.isEmpty(columnValue)) {
