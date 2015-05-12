@@ -87,7 +87,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses(value = { DashboardPerformanceTest.class })
+@SuiteClasses(value = { DashboardPerformanceTest.class,
+        TrialMilestonePerformanceTest.class })
 public class AllPerformanceTests {
 
 }
