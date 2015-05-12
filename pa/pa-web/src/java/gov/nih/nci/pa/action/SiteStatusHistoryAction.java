@@ -102,7 +102,6 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.status.StatusDto;
 import gov.nih.nci.pa.service.status.StatusTransitionService;
 import gov.nih.nci.pa.service.status.json.AppName;
-import gov.nih.nci.pa.service.status.json.ErrorType;
 import gov.nih.nci.pa.service.status.json.TransitionFor;
 import gov.nih.nci.pa.service.status.json.TrialType;
 import gov.nih.nci.pa.service.util.CSMUserService;
