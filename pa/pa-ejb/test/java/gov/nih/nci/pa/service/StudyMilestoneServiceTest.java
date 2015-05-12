@@ -125,6 +125,7 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -1464,7 +1465,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.setProtocolQueryService(protocolQueryServiceLocal);
         assertTrue(protocolQueryServiceLocal == bean.getProtocolQueryService());
         bean.setTsrReportGeneratorService(tsrReportGeneratorServiceRemote);
-        assertTrue(tsrReportGeneratorServiceRemote == bean.getTsrReportGeneratorService());
+        assertTrue(bean.getTsrReportGeneratorService() instanceof TSRReportGeneratorServiceLocal);
     }
     
     @SuppressWarnings("serial")

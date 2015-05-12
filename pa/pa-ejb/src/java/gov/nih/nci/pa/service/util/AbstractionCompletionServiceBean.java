@@ -141,6 +141,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceCachingDecorator;
 import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
@@ -516,7 +517,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         // treating site for the study
         for (StudySiteDTO spartDto : spList) {
-            List<StudySiteContactDTO> spContactDtos = studySiteContactService.getByStudySite(spartDto.getIdentifier());
+            List<StudySiteContactDTO> spContactDtos = new StudySiteContactServiceCachingDecorator(
+                    studySiteContactService).getByStudySite(spartDto
+                    .getIdentifier());
             boolean piFound = false;
             for (StudySiteContactDTO spContactDto : spContactDtos) {
                 String contactRoleCode = spContactDto.getRoleCode().getCode();
@@ -657,7 +660,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     private void enforceStudySiteContactNullification(Ii studyProtocolIi, AbstractionMessageCollection messages)
             throws PAException {
-        List<StudySiteContactDTO> studySiteContactDtos = studySiteContactService.getByStudyProtocol(studyProtocolIi);
+        List<StudySiteContactDTO> studySiteContactDtos = new StudySiteContactServiceCachingDecorator(
+                studySiteContactService).getByStudyProtocol(studyProtocolIi);
         if (CollectionUtils.isNotEmpty(studySiteContactDtos)) {
             for (StudySiteContactDTO studySiteContactDTO : studySiteContactDtos) {
 
@@ -1103,7 +1107,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         boolean centralContactDefined = isCentralContactDefined(studyProtocolIi);
 
         for (StudySiteDTO spartDto : spList) {
-            List<StudySiteContactDTO> spContactDtos = studySiteContactService.getByStudySite(spartDto.getIdentifier());
+            List<StudySiteContactDTO> spContactDtos = new StudySiteContactServiceCachingDecorator(
+                    studySiteContactService).getByStudySite(spartDto
+                    .getIdentifier());
             boolean piFound = false;
             boolean contactFound = false;
             for (StudySiteContactDTO spContactDto : spContactDtos) {

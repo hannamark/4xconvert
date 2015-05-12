@@ -145,5 +145,22 @@
          overflowToDisk="false"
     />
     
+    <cache
+         name="TSR_CACHE"
+         maxElementsInMemory="5"
+         eternal="false"         
+         timeToIdleSeconds="90"
+         timeToLiveSeconds="90"
+         overflowToDisk="false"
+    />    
+
+    <cache
+         name="STUDY_SITE_CONTACTS_CACHE"
+         maxElementsInMemory="2000"
+         eternal="false"         
+         timeToIdleSeconds="120"
+         timeToLiveSeconds="120"
+         overflowToDisk="false"
+    />    
 
 </ehcache>

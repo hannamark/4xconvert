@@ -111,6 +111,8 @@ import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactService;
+import gov.nih.nci.pa.service.StudySiteContactServiceCachingDecorator;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -228,8 +230,9 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     /**
      * @return studySiteContactService the studySiteContactService
      */
-    public StudySiteContactServiceLocal getStudySiteContactService() {
-        return this.studySiteContactService;
+    public StudySiteContactService getStudySiteContactService() {
+        return new StudySiteContactServiceCachingDecorator(
+                this.studySiteContactService);
     }
 
 

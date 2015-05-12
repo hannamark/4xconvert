@@ -151,6 +151,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceCachingDecorator;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -1227,7 +1228,8 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceL
                 sp.getAccrualDateRange()), INFORMATION_NOT_PROVIDED));
         participatingSite.setProgramCode(getValue(sp.getProgramCodeText()));
                        
-        List<StudySiteContactDTO> spcDTOs = studySiteContactService.getByStudySite(sp.getIdentifier());
+        List<StudySiteContactDTO> spcDTOs = new StudySiteContactServiceCachingDecorator(
+                studySiteContactService).getByStudySite(sp.getIdentifier());
         for (StudySiteContactDTO spcDto : spcDTOs) {
             if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDto.getRoleCode().getCode())) {
                 // Set contact info.

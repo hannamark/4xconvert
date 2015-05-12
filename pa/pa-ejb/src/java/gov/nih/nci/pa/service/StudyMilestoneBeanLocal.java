@@ -36,6 +36,7 @@ import gov.nih.nci.pa.service.util.AbstractionCompletionServiceLocal;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceCachingDecorator;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -783,7 +784,7 @@ public class StudyMilestoneBeanLocal
                     String filename = TSR + nciID + "_"
                             + DateFormatUtils.format(new Date(), DATE_FORMAT)
                             + discriminator + EXTENSION_RTF;
-                    ByteArrayOutputStream tsrStream = tsrReportGeneratorService
+                    ByteArrayOutputStream tsrStream = getTsrReportGeneratorService()
                             .generateRtfTsrReport(studyID);
                     attachTSRToTrialDocs(studyMilestoneDTO, filename, tsrStream);
                 }
@@ -964,7 +965,8 @@ public class StudyMilestoneBeanLocal
      * @return the tsrReportGeneratorService
      */
     public TSRReportGeneratorServiceLocal getTsrReportGeneratorService() {
-        return tsrReportGeneratorService;
+        return new TSRReportGeneratorServiceCachingDecorator(
+                tsrReportGeneratorService);
     }
 
     /**

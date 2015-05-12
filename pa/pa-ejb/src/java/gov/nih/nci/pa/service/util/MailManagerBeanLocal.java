@@ -379,10 +379,14 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal, TemplateLo
         ByteArrayOutputStream tsrStream = null;
         OutputStream tsrFileStream = null;
         try {
+            final TSRReportGeneratorServiceCachingDecorator tsrService = new TSRReportGeneratorServiceCachingDecorator(
+                    tsrReportGeneratorService);
             if (StringUtils.equals(format, EXTENSION_RTF)) {
-                tsrStream = tsrReportGeneratorService.generateRtfTsrReport(studyProtocolID);
+                tsrStream = tsrService
+                        .generateRtfTsrReport(studyProtocolID);
             } else if (StringUtils.equals(format, EXTENSION_HTML)) {
-                tsrStream = tsrReportGeneratorService.generateHtmlTsrReport(studyProtocolID);
+                tsrStream = tsrService
+                        .generateHtmlTsrReport(studyProtocolID);
             }
             tsrFileStream = new FileOutputStream(tsrFile);
             tsrStream.writeTo(tsrFileStream);
