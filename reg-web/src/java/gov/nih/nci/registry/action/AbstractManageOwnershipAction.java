@@ -426,21 +426,6 @@ public abstract class AbstractManageOwnershipAction extends ActionSupport {
         return search();
     }
 
-    @SuppressWarnings("unchecked")
-    private boolean isEmailNotificationsEnabled(Long tId) {
-        studyProtocols = (List<SelectedStudyProtocol>) ServletActionContext
-                .getRequest()
-                .getSession()
-                .getAttribute(
-                        AbstractManageOwnershipAction.STUDY_PROTOCOLS_LIST);
-        for (SelectedStudyProtocol sp : studyProtocols) {
-            if (sp.getStudyProtocol().getId().equals(tId)) {
-                return sp.isEmailSelected();
-            }
-        }
-        return false;
-    }
-
     /**
      * @return String
      */
