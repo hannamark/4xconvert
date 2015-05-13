@@ -99,6 +99,7 @@ import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.OutcomeMeasureTypeCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -119,7 +120,6 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -537,16 +537,19 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     throws PAException {
         StudyOverallStatusDTO sosDTO = getStudyOverallStatusService().getCurrentByStudyProtocol(spDTO.getIdentifier());
         if (sosDTO != null) {
-
-            StudyRecruitmentStatusDTO srsDto =
-                getStudyRecruitmentService().getCurrentByStudyProtocol(spDTO.getIdentifier());
-            if (srsDto != null) {
-                XmlGenHelper.appendElement(root,
-                        XmlGenHelper.createElementWithTextblock("overall_status",
-                                convertToCtValues(srsDto.getStatusCode()), doc));
-            }
-
-            StudyStatusCode overStatusCode = StudyStatusCode.getByCode(sosDTO.getStatusCode().getCode());
+            StudyStatusCode overStatusCode = StudyStatusCode.getByCode(sosDTO
+                    .getStatusCode().getCode());
+            RecruitmentStatusCode studyRecruitmentStatus = RecruitmentStatusCode
+                    .getByStatusCode(overStatusCode);
+            XmlGenHelper
+                    .appendElement(
+                            root,
+                            XmlGenHelper
+                                    .createElementWithTextblock(
+                                            "overall_status",
+                                            convertToCtValues(CdConverter
+                                                    .convertToCd(studyRecruitmentStatus)),
+                                            doc));
             if (STOPPED_STATUSES.contains(overStatusCode)) {
                 XmlGenHelper.appendElement(root,
                         XmlGenHelper.createElementWithTextblock("why_stopped",

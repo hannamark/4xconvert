@@ -107,7 +107,6 @@ import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
@@ -173,8 +172,6 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     private InterventionAlternateNameServiceLocal interventionAlternateNameService;
     @EJB
     private RegistryUserServiceLocal registryUserService;
-    @EJB
-    private StudyRecruitmentStatusServiceLocal studyRecruitmentService;
     @EJB
     private StudyResourcingServiceLocal studyResourcingService;
     @EJB
@@ -336,13 +333,6 @@ public class AbstractCTGovXmlGeneratorServiceBean {
     }
 
     /**
-     * @param studyRecSvc the StudyRecruitmentStatusServiceLocal to set.
-     */
-    public void setStudyRecruitmentService(StudyRecruitmentStatusServiceLocal studyRecSvc) {
-        this.studyRecruitmentService = studyRecSvc;
-    }
-
-    /**
      * @param studyResSvc the StudyResourcingServiceLocal to set.
      */
     public void setStudyResourcingService(StudyResourcingServiceLocal studyResSvc) {
@@ -454,12 +444,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
         return interventionAlternateNameService;
     }
 
-    /**
-     * @return the studyRecruitmentService
-     */
-    public StudyRecruitmentStatusServiceLocal getStudyRecruitmentService() {
-        return studyRecruitmentService;
-    }
+   
 
     /**
      * @return the studyResourcingService

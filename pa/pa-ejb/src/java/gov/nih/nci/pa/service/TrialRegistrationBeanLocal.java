@@ -237,8 +237,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
     @EJB private StudyMilestoneServicelocal studyMilestoneService;
     @EJB private StudyOverallStatusServiceLocal studyOverallStatusService;
     @EJB private StudyProtocolServiceLocal studyProtocolService;
-    @EJB private ProtocolQueryServiceLocal protocolQueryService;
-    @EJB private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
+    @EJB private ProtocolQueryServiceLocal protocolQueryService;    
     @EJB private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
     @EJB private StudyRelationshipServiceLocal studyRelationshipService;
     @EJB private StudyResourcingServiceLocal studyResourcingService;
@@ -2661,8 +2660,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         validator.setStudyInboxServiceLocal(studyInboxServiceLocal);
         validator.setStudyIndldeService(studyIndldeService);
         validator.setStudyOverallStatusService(studyOverallStatusService);
-        validator.setStudyProtocolService(studyProtocolService);
-        validator.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusServiceLocal);
+        validator.setStudyProtocolService(studyProtocolService);        
         validator.setStudyResourcingService(studyResourcingService);       
         validator.setRegulatoryAuthorityService(regulatoryAuthorityService);
         validator.setAccrualDiseaseTerminologyService(accrualDiseaseTerminologyService);
@@ -2761,13 +2759,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean //
         this.studyProtocolService = studyProtocolService;
     }
 
-    /**
-     * @param srsServiceLocal the studyRecruitmentStatusServiceLocal to set
-     */
-    public void setStudyRecruitmentStatusServiceLocal(StudyRecruitmentStatusServiceLocal srsServiceLocal) {
-        this.studyRecruitmentStatusServiceLocal = srsServiceLocal;
-    }
-
+   
     /**
      * @param sraService the studyRegulatoryAuthorityService to set
      */

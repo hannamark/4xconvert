@@ -103,7 +103,6 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -120,7 +119,6 @@ import gov.nih.nci.pa.service.StudyInboxServiceLocal;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceBean;
@@ -218,8 +216,7 @@ public class TrialRegistrationValidator {
     private StudyInboxServiceLocal studyInboxServiceLocal;
     private StudyIndldeServiceLocal studyIndldeService;
     private StudyOverallStatusServiceLocal studyOverallStatusService;
-    private StudyProtocolServiceLocal studyProtocolService;
-    private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
+    private StudyProtocolServiceLocal studyProtocolService;    
     private StudyResourcingServiceLocal studyResourcingService;
     private RegulatoryAuthorityServiceLocal regulatoryAuthorityService;
     private AccrualDiseaseTerminologyServiceRemote accrualDiseaseTerminologyService;
@@ -515,7 +512,7 @@ public class TrialRegistrationValidator {
     void validateParticipatingSites(StudyProtocolDTO studyProtocolDTO,
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, StringBuilder errorMsg) throws PAException {
         if (CollectionUtils.isNotEmpty(studySiteAccrualStatusDTOs)) {
-            StudyRecruitmentStatusDTO recruitmentStatusDto = studyRecruitmentStatusServiceLocal
+            StudyOverallStatusDTO recruitmentStatusDto = studyOverallStatusService
                 .getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
             try {
                 paServiceUtils.enforceRecruitmentStatus(studyProtocolDTO, studySiteAccrualStatusDTOs,
@@ -1259,14 +1256,7 @@ public class TrialRegistrationValidator {
         this.studyProtocolService = studyProtocolService;
     }
 
-    /**
-     * @param studyRecruitmentStatusServiceLocal the studyRecruitmentStatusServiceLocal to set
-     */
-    public void setStudyRecruitmentStatusServiceLocal(
-            StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal) {
-        this.studyRecruitmentStatusServiceLocal = studyRecruitmentStatusServiceLocal;
-    }
-
+   
     /**
      * @param studyResourcingService the studyResourcingService to set
      */

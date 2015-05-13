@@ -117,7 +117,6 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -139,12 +138,11 @@ import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
-import gov.nih.nci.pa.service.StudySiteContactServiceCachingDecorator;
 import gov.nih.nci.pa.service.StudyResourcingService.Method;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteContactServiceCachingDecorator;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
@@ -236,9 +234,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     @EJB
     private StudyOverallStatusServiceLocal studyOverallStatusService;
     @EJB
-    private StudyProtocolServiceLocal studyProtocolService;
-    @EJB
-    private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusService;
+    private StudyProtocolServiceLocal studyProtocolService;   
     @EJB
     private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
     @EJB
@@ -1019,10 +1015,12 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         // spList Empty => No Study Oversight Committee.
         // Display warning if Study is recruiting && reviewBoardindicator is false =>
         // Board Approval Status = Submission Not Required.
-        StudyRecruitmentStatusDTO studyRecruitmentStatusDto = studyRecruitmentStatusService
-            .getCurrentByStudyProtocol(spDto.getIdentifier());
-        RecruitmentStatusCode recruitmentStatusCode = RecruitmentStatusCode.getByCode(studyRecruitmentStatusDto
-            .getStatusCode().getCode());
+        StudyOverallStatusDTO sosDTO = studyOverallStatusService
+                .getCurrentByStudyProtocol(spDto.getIdentifier());
+        RecruitmentStatusCode recruitmentStatusCode = RecruitmentStatusCode
+                .getByStatusCode(StudyStatusCode
+                        .getByCode(sosDTO.getStatusCode()
+                                .getCode()));
         if (spList.isEmpty() && BooleanUtils.isFalse(reviewBoardIndicator) && recruitmentStatusCode.isRecruiting()) {
             messages.addWarning("Select a different review board status",
                                 "Data inconsistency. Review Board Approval Status cannot be 'Not required'"
@@ -1038,8 +1036,11 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      */
     void enforceRecruitmentStatus(Ii studyProtocolIi, AbstractionMessageCollection messages) throws PAException {
 
-        StudyRecruitmentStatusDTO rsDto = studyRecruitmentStatusService.getCurrentByStudyProtocol(studyProtocolIi);
-        RecruitmentStatusCode recruitmentStatus = RecruitmentStatusCode.getByCode(rsDto.getStatusCode().getCode());
+        StudyOverallStatusDTO rsDto = studyOverallStatusService.getCurrentByStudyProtocol(studyProtocolIi);
+        RecruitmentStatusCode recruitmentStatus = RecruitmentStatusCode
+                .getByStatusCode(StudyStatusCode
+                        .getByCode(rsDto.getStatusCode()
+                                .getCode()));        
         boolean studySiteRecruiting = isStudySiteRecruiting(studyProtocolIi);
 
         if (recruitmentStatus.isRecruiting() && !studySiteRecruiting) {
@@ -1810,13 +1811,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         this.studyProtocolService = studyProtocolService;
     }
 
-    /**
-     * @param studyRecruitmentStatusService the studyRecruitmentStatusService to set
-     */
-    public void setStudyRecruitmentStatusService(StudyRecruitmentStatusServiceLocal studyRecruitmentStatusService) {
-        this.studyRecruitmentStatusService = studyRecruitmentStatusService;
-    }
-
+    
     /**
      * @param regulatoryAuthorityService the studyRegulatoryAuthorityService to set
      */

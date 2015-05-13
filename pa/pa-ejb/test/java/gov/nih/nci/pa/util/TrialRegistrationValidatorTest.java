@@ -114,7 +114,6 @@ import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -204,8 +203,7 @@ public class TrialRegistrationValidatorTest {
         validator.setStudyInboxServiceLocal(studyInboxServiceLocal);
         validator.setStudyIndldeService(studyIndldeService);
         validator.setStudyOverallStatusService(studyOverallStatusService);
-        validator.setStudyProtocolService(studyProtocolService);
-        validator.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusServiceLocal);
+        validator.setStudyProtocolService(studyProtocolService);        
         validator.setStudyResourcingService(studyResourcingService);
     }
 
@@ -573,10 +571,10 @@ public class TrialRegistrationValidatorTest {
         List<StudySiteAccrualStatusDTO> siteDTOs = new ArrayList<StudySiteAccrualStatusDTO>();
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
         siteDTOs.add(dto);
-        StudyRecruitmentStatusDTO recruitmentStatusDto = new StudyRecruitmentStatusDTO();
-        when(studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(spIi)).thenReturn(recruitmentStatusDto);
+        StudyOverallStatusDTO recruitmentStatusDto = new StudyOverallStatusDTO();
+        when(studyOverallStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(recruitmentStatusDto);
         validator.validateParticipatingSites(studyProtocolDTO, siteDTOs, errorMsg);
-        verify(studyRecruitmentStatusServiceLocal).getCurrentByStudyProtocol(spIi);
+        verify(studyOverallStatusService).getCurrentByStudyProtocol(spIi);
         verify(paServiceUtils).enforceRecruitmentStatus(studyProtocolDTO, siteDTOs, recruitmentStatusDto);
         checkErrorMsg("");
     }
@@ -592,11 +590,11 @@ public class TrialRegistrationValidatorTest {
         List<StudySiteAccrualStatusDTO> siteDTOs = new ArrayList<StudySiteAccrualStatusDTO>();
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
         siteDTOs.add(dto);
-        StudyRecruitmentStatusDTO recruitmentStatusDto = new StudyRecruitmentStatusDTO();
-        when(studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(spIi)).thenReturn(recruitmentStatusDto);
+        StudyOverallStatusDTO recruitmentStatusDto = new StudyOverallStatusDTO();
+        when(studyOverallStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(recruitmentStatusDto);
         doThrow(new PAException("PAException")).when(paServiceUtils).enforceRecruitmentStatus(studyProtocolDTO, siteDTOs, recruitmentStatusDto);
         validator.validateParticipatingSites(studyProtocolDTO, siteDTOs, errorMsg);
-        verify(studyRecruitmentStatusServiceLocal).getCurrentByStudyProtocol(spIi);
+        verify(studyOverallStatusService).getCurrentByStudyProtocol(spIi);
         verify(paServiceUtils).enforceRecruitmentStatus(studyProtocolDTO, siteDTOs, recruitmentStatusDto);
         checkErrorMsg("PAException");
     }
@@ -612,7 +610,7 @@ public class TrialRegistrationValidatorTest {
         List<StudySiteAccrualStatusDTO> siteDTOs = new ArrayList<StudySiteAccrualStatusDTO>();
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
         siteDTOs.add(dto);
-        doThrow(new PAException("PAException")).when(studyRecruitmentStatusServiceLocal).getCurrentByStudyProtocol(spIi);
+        doThrow(new PAException("PAException")).when(studyOverallStatusService).getCurrentByStudyProtocol(spIi);
         validator.validateParticipatingSites(studyProtocolDTO, siteDTOs, errorMsg);
     }
     

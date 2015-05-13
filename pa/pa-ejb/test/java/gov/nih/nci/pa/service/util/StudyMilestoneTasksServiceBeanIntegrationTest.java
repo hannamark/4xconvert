@@ -210,8 +210,7 @@ public class StudyMilestoneTasksServiceBeanIntegrationTest extends AbstractHiber
         StudyRecruitmentStatusDTO recruitDto = new StudyRecruitmentStatusDTO();
         recruitDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.IN_REVIEW));
         when(mockStudyRecruitBean.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(recruitDto);
-        when(mockStudyRecruitBean.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(recruitDto));
-        abstractionBean.setStudyRecruitmentStatusService(mockStudyRecruitBean);
+        when(mockStudyRecruitBean.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(recruitDto));        
         when(paRegSvcLoc.getLookUpTableService()).thenReturn(mockitoTest.getLookupSvc());
         when(mockitoTest.getLookupSvc().getPropertyValue(anyString())).thenReturn("");
         taskBean.performTask();

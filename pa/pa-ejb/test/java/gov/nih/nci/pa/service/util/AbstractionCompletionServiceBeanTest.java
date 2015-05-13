@@ -218,8 +218,7 @@ public class AbstractionCompletionServiceBeanTest {
         doCallRealMethod().when(service).setStudyIndldeService(studyIndldeService);
         doCallRealMethod().when(service).setStudyOutcomeMeasureService(studyOutcomeMeasureService);
         doCallRealMethod().when(service).setStudyOverallStatusService(studyOverallStatusService);
-        doCallRealMethod().when(service).setStudyProtocolService(studyProtocolService);
-        doCallRealMethod().when(service).setStudyRecruitmentStatusService(studyRecruitmentStatusService);
+        doCallRealMethod().when(service).setStudyProtocolService(studyProtocolService);        
         doCallRealMethod().when(service).setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
         doCallRealMethod().when(service).setStudyResourcingService(studyResourcingService);
         doCallRealMethod().when(service).setStudySiteService(studySiteService);
@@ -246,8 +245,7 @@ public class AbstractionCompletionServiceBeanTest {
         service.setStudyIndldeService(studyIndldeService);
         service.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
         service.setStudyOverallStatusService(studyOverallStatusService);
-        service.setStudyProtocolService(studyProtocolService);
-        service.setStudyRecruitmentStatusService(studyRecruitmentStatusService);
+        service.setStudyProtocolService(studyProtocolService);        
         service.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
         service.setStudyResourcingService(studyResourcingService);
         service.setStudySiteService(studySiteService);

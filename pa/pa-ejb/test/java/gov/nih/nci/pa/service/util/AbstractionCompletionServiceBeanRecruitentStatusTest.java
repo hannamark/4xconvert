@@ -87,18 +87,18 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -130,8 +130,8 @@ public class AbstractionCompletionServiceBeanRecruitentStatusTest {
     private static final String[] TYPES = {"Error", "Warning", "Warning"};
     
     private StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
-    private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusService = 
-            mock(StudyRecruitmentStatusServiceLocal.class);
+    private StudyOverallStatusServiceLocal studyRecruitmentStatusService = 
+            mock(StudyOverallStatusServiceLocal.class);
 
     private RecruitmentStatusCode recruitmentStatus;
     private boolean studySiteRecruiting;
@@ -221,7 +221,7 @@ public class AbstractionCompletionServiceBeanRecruitentStatusTest {
         AbstractionMessageCollection messages = new AbstractionMessageCollection();
         doCallRealMethod().when(sut).enforceRecruitmentStatus(spIi, messages);
         when(sut.isStudySiteRecruiting(spIi)).thenReturn(studySiteRecruiting);
-        StudyRecruitmentStatusDTO studyRecruitmentStatusDTO = createStudyRecruitmentStatusDTO(recruitmentStatus);
+        StudyOverallStatusDTO studyRecruitmentStatusDTO = createStudyRecruitmentStatusDTO(recruitmentStatus);
         when(studyRecruitmentStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(studyRecruitmentStatusDTO);
         StudyProtocolDTO studyProtocolDTO = createStudyProtocolDTO(isStartDatePast);
         when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(studyProtocolDTO);
@@ -240,16 +240,20 @@ public class AbstractionCompletionServiceBeanRecruitentStatusTest {
 
     private AbstractionCompletionServiceBean createAbstractionCompletionServiceBeanMock() {
         AbstractionCompletionServiceBean service = mock(AbstractionCompletionServiceBean.class);
-        doCallRealMethod().when(service).setStudyProtocolService(studyProtocolService);
-        doCallRealMethod().when(service).setStudyRecruitmentStatusService(studyRecruitmentStatusService);
+        doCallRealMethod().when(service).setStudyProtocolService(
+                studyProtocolService);
         service.setStudyProtocolService(studyProtocolService);
-        service.setStudyRecruitmentStatusService(studyRecruitmentStatusService);
+        doCallRealMethod().when(service).setStudyOverallStatusService(
+                studyRecruitmentStatusService);
+        service.setStudyOverallStatusService(studyRecruitmentStatusService);
         return service;
     }
 
-    private StudyRecruitmentStatusDTO createStudyRecruitmentStatusDTO(RecruitmentStatusCode recruitmentStatus) {
-        StudyRecruitmentStatusDTO dto = new StudyRecruitmentStatusDTO();
-        dto.setStatusCode(CdConverter.convertToCd(recruitmentStatus));
+    private StudyOverallStatusDTO createStudyRecruitmentStatusDTO(
+            RecruitmentStatusCode recruitmentStatus) {
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode
+                .getByRecruitmentStatus(recruitmentStatus)));
         return dto;
     }
 

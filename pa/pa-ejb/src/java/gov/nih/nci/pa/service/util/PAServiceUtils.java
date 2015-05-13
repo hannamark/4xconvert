@@ -109,6 +109,7 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -119,8 +120,8 @@ import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -971,15 +972,16 @@ public class PAServiceUtils {
      *
      * @param studyProtocolDTO the study protocol dto
      * @param participatingSites the participating sites
-     * @param recruitmentStatusDto the recruitment status dto
+     * @param studyOverallStatus the recruitment status dto
      *
      * @throws PAException the PA exception
      */
     public void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO,
-            List<StudySiteAccrualStatusDTO> participatingSites, StudyRecruitmentStatusDTO recruitmentStatusDto)
+            List<StudySiteAccrualStatusDTO> participatingSites, StudyOverallStatusDTO studyOverallStatus)
             throws PAException {
-        RecruitmentStatusCode studyRecruitmentStatus =
-            RecruitmentStatusCode.getByCode(recruitmentStatusDto.getStatusCode().getCode());
+        RecruitmentStatusCode studyRecruitmentStatus = RecruitmentStatusCode
+                .getByStatusCode(StudyStatusCode.getByCode(studyOverallStatus
+                        .getStatusCode().getCode()));
         StringBuffer errorMsg = new StringBuffer();
         if (CollectionUtils.isNotEmpty(participatingSites)
                 && studyRecruitmentStatus.isRecruiting()) {

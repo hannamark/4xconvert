@@ -108,8 +108,7 @@ public abstract class AbstractXmlGeneratorTest extends AbstractMockitoTest {
         getBean().setPlannedActivityService(plannedActSvc);
         getBean().setArmService(armSvc);
         getBean().setStudyDiseaseService(studyDiseaseSvc);
-        getBean().setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);
-        getBean().setStudyRecruitmentService(studyRecruitmentStatusSvc);
+        getBean().setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);        
         getBean().setStudyOverallStatusService(studyOverallStatusSvc);
         getBean().setRegulatoryInformationService(regulInfoSvc);
         getBean().setStudyRegulatoryAuthorityService(studyRegAuthSvc);

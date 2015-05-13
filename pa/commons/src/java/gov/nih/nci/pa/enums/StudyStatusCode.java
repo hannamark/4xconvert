@@ -223,6 +223,22 @@ public enum StudyStatusCode implements CodedEnum<String> {
     public static StudyStatusCode getByCode(String code) {
         return getByClassAndCode(StudyStatusCode.class, code);
     }
+    
+    /**
+     * Returns the corresponding study status code for a recruitment status
+     * code.
+     * 
+     * @param statusCode
+     *            RecruitmentStatusCode
+     * @return StudyStatusCode
+     */
+    public static StudyStatusCode getByRecruitmentStatus(
+            RecruitmentStatusCode statusCode) {
+        if (RecruitmentStatusCode.COMPLETED.equals(statusCode)) {
+            return COMPLETE;
+        }
+        return getByCode(statusCode.getCode());
+    }
 
     /**
      * construct a array of display names for Study Status coded Enum.
