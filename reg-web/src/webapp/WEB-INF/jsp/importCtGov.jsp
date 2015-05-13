@@ -12,6 +12,12 @@
 		$('importCtGovForm').action = "searchTrial" + action + ".action";
 		$('importCtGovForm').submit();
 	}
+	function submitImport() {
+		jQuery("#importTrial").prop("disabled" ,true);
+		jQuery("#importText").text("Please wait");
+		jQuery("#progressImg").show();
+		handleAction('importTrial')
+	}
 
 	document.onkeypress = runEnterScript;
 	function runEnterScript(e) {
@@ -72,7 +78,10 @@
 							</display:column>
 						</display:table>
 						<div class="bottom">
-				    		<button type="button" class="btn btn-icon btn-primary" onclick="handleAction('importTrial')"> <i class="fa-cloud-download"></i>Import Trial From ClinicalTrials.gov </button>
+						      
+				    		<button type="button" id="importTrial" style="" class="btn btn-icon btn-primary" onclick="submitImport();" align="Left"> <i class="fa-cloud-download"></i>
+				    		 <span id="importText" >Import Trial From ClinicalTrials.gov</span>
+				    		 <img id="progressImg" src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator." width="16" height="16" style="display:none" /> </button>
 				    		<button type="button" class="btn btn-icon btn-default" onclick="resetValues();return false"><i class="fa-times-circle"></i><s:a action="searchTrial.action">Cancel</s:a></button>
   						</div>
 					</s:if>

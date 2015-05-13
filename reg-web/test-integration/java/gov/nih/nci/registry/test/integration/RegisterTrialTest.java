@@ -98,6 +98,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 
 import com.thoughtworks.selenium.SeleniumException;
@@ -653,6 +654,46 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         pause(1500);
         assertFalse(selenium.isVisible("id=myModal"));
     }
+    
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testImportDisabledAfterClick() throws Exception {
+    
+        loginAndAcceptDisclaimer();
+        // Select register trial and choose trial type
+        hoverLink("Register Trial");
+        pause(1500);
+        clickAndWait("xpath=//a[text()='Industrial/Other']");
+        waitForElementById("nctID", 30);
+        deactivateTrialByNctId("NCT00038610");
+        selenium.type("nctID", "NCT00038610");
+        clickAndWait("xpath=//button/i[@class='fa-search']");
+
+        assertEquals("NCT00038610",
+                selenium.getText("//table[@id='row']/tbody/tr/td[1]"));
+        assertEquals("Completed",
+                selenium.getText("//table[@id='row']/tbody/tr/td[2]"));
+        assertTrue(selenium
+                .getText("//table[@id='row']/tbody/tr/td[3]")
+                .contains(
+                        "Phase II Study of Hyper-CVAD Plus Imatinib Mesylate (Gleevec, STI571) for Philadelphia-Positive Acute Lymphocytic Leukemia"));
+        
+        
+        WebElement element = driver.findElement(By.id("importTrial"));
+        //Disable form submit otherwise form will be submitted and this button will not be visible in selenium
+        //if this button is not visible then button is disabled can not be tested
+       
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.handleAction =function(args){ return false;};");
+        element.click();
+        
+        //test if button is disabled
+        assertFalse(element.isEnabled());
+        String buttonText = element.getText();
+        
+        //test if button text changed to please wait
+        assertEquals("Please wait",buttonText);
+    }    
 
     @SuppressWarnings("deprecation")
     @Test
