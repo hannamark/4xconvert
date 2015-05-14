@@ -128,7 +128,7 @@ public class CountryBean implements CountryService {
         }
         return bo;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -137,8 +137,8 @@ public class CountryBean implements CountryService {
         List<Country> countryDtos = new ArrayList<Country>();
         Session  session = PaHibernateUtil.getCurrentSession();
         Set<String> dupCountryFilter = new HashSet<String>();
-        List<Country> results = session.createQuery("select country from RegulatoryAuthority as ra "
-                + "order by ra.country.name ").list();
+        String hql = "from Country as c order by  c.name";
+        List<Country> results = session.createQuery(hql).list();
         for (int i = 0; i < results.size(); i++) {
             Country resCountry = results.get(i);
             if (dupCountryFilter.add(resCountry.getAlpha3())) {
