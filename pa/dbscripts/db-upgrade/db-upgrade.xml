@@ -1766,7 +1766,7 @@
        <comment>Migrate to the latest NCI LexEVS APIs</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.2.1/PO-8635.sql"/>       
     </changeSet>
-    <changeSet id="PO-8732" author="krylovd" runOnChange="true">
+    <changeSet id="PO-8732" author="krylovd">
        <comment>Performance enhancements: added indexes.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8732.sql"/>       
     </changeSet>
@@ -1778,8 +1778,12 @@
        <comment>Performance enhancements: refactored and optimized milestone and sos rv* views.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8263-2.sql"/>       
     </changeSet>
-    <changeSet id="PO-8263-3" author="krylovd" runOnChange="true" runInTransaction="false">
+    <changeSet id="PO-8263-3" author="krylovd" runInTransaction="false">
        <comment>Performance enhancements: refactored and optimized dws rv* views.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8263-3.sql" splitStatements="false"/>       
-    </changeSet>    
+    </changeSet>
+    <changeSet id="PO-8935" author="krylovd">
+       <comment>Dropping triggers that won't be needed once this release gets deployed.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8935.sql"/>       
+    </changeSet>        
 </databaseChangeLog>
