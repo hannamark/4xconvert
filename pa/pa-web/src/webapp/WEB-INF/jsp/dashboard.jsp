@@ -44,9 +44,7 @@
                 || (action == 'checkInSciAndCheckOutToSuperAbs')) {
         	 showCommentsBox(action);
         } else {
-        	var form = $('checkoutForm');
-        	form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
-            form.submit();
+        	handleAction(action);
         }       
     }
 	

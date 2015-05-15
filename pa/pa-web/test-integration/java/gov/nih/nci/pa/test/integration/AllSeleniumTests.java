@@ -99,9 +99,9 @@ import org.junit.runners.Suite.SuiteClasses;
         AnatomicSiteTest.class, ArmTest.class, StudyOwnershipTest.class,
         TrialRelatedDocumentTest.class, CtGovImportTest.class,
         OutOfScopeAccrualsTest.class, CtGovImportLogTest.class,
-        DiseaseTest.class, TrialCheckInOutTest.class, ManageTermsTest.class,
-        PlannedMarkerTest.class, ManageFlaggedTrialsTest.class,
-        WebAppSecurityTest.class
+        DiseaseTest.class, TrialCheckInOutTest.class, DashboardTest.class,
+        ManageTermsTest.class, PlannedMarkerTest.class,
+        ManageFlaggedTrialsTest.class, WebAppSecurityTest.class
 // DuplicateTrialEditTest.class,
 // LookupWithApostropheTest.class,
 // DiseaseTest.class,

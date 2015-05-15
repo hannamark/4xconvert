@@ -306,6 +306,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             session.setAttribute(Constants.STUDY_PROTOCOL_II,
                     IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
 
+            checkoutCommands = new ArrayList<>();
             ActionUtils.setCheckoutCommands(summaryDTO, checkoutCommands);
             ActionUtils.runTrialStatusTransitionValidations(summaryDTO, session);
 
@@ -591,6 +592,28 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         map.put(ME, getText("dashboard.me"));        
         map.putAll(CSMUserService.getInstance().getAbstractors());
         return map;
+    }
+    
+    @Override
+    public String adminCheckOut() throws PAException {
+        super.adminCheckOut();
+        return view();
+    }
+    
+    @Override
+    public String scientificCheckOut() throws PAException {
+        super.scientificCheckOut();
+        return view();
+    }
+    
+    @Override
+    public String adminAndScientificCheckOut() throws PAException {
+        super.adminAndScientificCheckOut();
+        if (!hasActionErrors()) {
+            request.setAttribute(Constants.SUCCESS_MESSAGE,
+                    getText("studyProtocol.trial.checkOut.adminAndScientific"));
+        }
+        return view();
     }
     
     @Override
