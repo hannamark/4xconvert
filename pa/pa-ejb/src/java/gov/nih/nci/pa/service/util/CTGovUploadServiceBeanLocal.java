@@ -109,6 +109,7 @@ public class CTGovUploadServiceBeanLocal implements CTGovUploadServiceLocal {
         
         for (StudyProtocolQueryDTO dto : queryServiceLocal
                 .getStudyProtocolByCriteria(criteria)) {
+                isExcludeLeadCCR = false;
                 String nctIdentifier = dto.getNctIdentifier();
                 String trialStatus = dto.getStudyStatusCode().getCode();
                 
