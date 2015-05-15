@@ -8,6 +8,12 @@
 <title><c:out value="${dashboardTitle}" escapeXml="false"/></title>
 <s:head />
 
+<style type="text/css">
+div.exportlinks {
+    text-align: right;
+}
+</style>
+
 <script type="text/javascript" language="javascript"
 	src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript"
@@ -162,6 +168,7 @@
         //** On DOM Ready **
         //******************
         $(function () {
+        	
         	$( "#transitionErrors" ).dialog({
                 modal: true,
                 autoOpen : false,                         
@@ -230,6 +237,10 @@
                 }
             });
         	
+            // Add the Export option: CSV | Excel to the top of the search results in all Dashboards.
+            // This is not supported by Display Tag, so doing this manually.
+            $( "div.exportlinks" ).clone().insertBefore( "span.pagebanner" );
+
         });
 	}(jQuery));
         

@@ -24,6 +24,12 @@ public class DashboardTest extends AbstractTrialStatusTest {
         loginAsAdminAbstractor();
         clickAndWait("link=Dashboard");
 
+        // Export banner must be at top and at bottom.
+        assertTrue(s
+                .isElementPresent("xpath=//div[@id='results']/div[@class='exportlinks'][1]"));
+        assertTrue(s
+                .isElementPresent("xpath=//div[@id='results']/div[@class='exportlinks'][2]/preceding-sibling::table[@id='results']"));
+
         // Finally, download CSV.
         if (!isPhantomJS()) {
             selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
