@@ -592,6 +592,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         dto.getLastCreated().setUserLastCreated(user.getLoginName());
         dto.getLastCreated().setUserLastDisplayName(CsmUserUtil.getDisplayUsername(user));
         dto.setLeadOrganizationName((String) row[LEAD_ORG_NAME_IDX]);
+        dto.setLeadOrganizationPOId((String) row[LEAD_ORG_POID_IDX]);
         dto.setLocalStudyProtocolIdentifier((String) row[LEAD_ORG_SP_IDENTIFIER_IDX]);
         dto.setNciIdentifier((String) row[NCI_NUMBER_IDX]);
         dto.setNctIdentifier((String) row[NCT_NUMBER_IDX]);

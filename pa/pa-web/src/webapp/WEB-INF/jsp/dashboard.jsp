@@ -614,7 +614,10 @@
                                         media="excel csv xml" property="nciIdentifierTruncated"
                                         headerClass="sortable">                                        
                                     </display:column>									
-
+                                    <display:column  title="Lead Organization" property="leadOrganizationName"
+                                        media="excel csv xml"/>
+                                    <display:column  title="Lead Org PO ID" property="leadOrganizationPOId"
+                                        media="excel csv xml"/>                                                                         
                                     <display:column  title="ClinicalTrials.gov Identifier" property="nctIdentifier"
                                         media="excel csv xml"/>									
 						            <display:column  titleKey="studyProtocol.ctepIdentifier" property="ctepId"

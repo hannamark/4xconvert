@@ -91,6 +91,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * @author mshestopalov
@@ -378,6 +379,16 @@ public class BaseStudyProtocolQueryDTO implements Serializable {
      */
     public void setLeadOrganizationPOId(Long leadOrganizationPOId) {
         this.leadOrganizationPOId = leadOrganizationPOId;
+    }
+    
+    /**
+     * @param poID
+     *            the leadOrganizationPOId to set
+     */
+    public void setLeadOrganizationPOId(String poID) {
+        if (NumberUtils.isNumber(poID)) {
+            setLeadOrganizationPOId(Long.parseLong(poID));
+        }
     }
     
     /**
