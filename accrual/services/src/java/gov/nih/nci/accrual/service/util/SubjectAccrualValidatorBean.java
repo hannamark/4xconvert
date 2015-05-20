@@ -244,7 +244,7 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
         }
     }
 
-    private void validateDiseaseAndParticipatingSite(SubjectAccrualDTO subjectAccrual,
+     void validateDiseaseAndParticipatingSite(SubjectAccrualDTO subjectAccrual,
             StringBuffer errMsg) throws PAException {
         Ii siteIi = subjectAccrual.getParticipatingSiteIdentifier();
         if (ISOUtil.isIiNull(siteIi)) {
@@ -269,12 +269,14 @@ public class SubjectAccrualValidatorBean implements SubjectAccrualValidator {
         } else {
             AccrualDisease disease = diseaseService.get(subjectAccrual.getDiseaseIdentifier());
             if (disease == null) {
-                errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(),
-                        DIDENTIFIERSTRING));
+               errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(),
+                         DIDENTIFIERSTRING));
             } else {
                 if (!dCode.equals(disease.getCodeSystem())) {
-                    errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(),
-                            DIDENTIFIERSTRING));
+                    errMsg.append("The subject's disease's coding system ");
+                    errMsg.append(disease.getCodeSystem());
+                    errMsg.append(" is different from the one used on the trial: ");
+                    errMsg.append(dCode);
                 }
             }
             if (!ISOUtil.isIiNull(subjectAccrual.getSiteDiseaseIdentifier())) {

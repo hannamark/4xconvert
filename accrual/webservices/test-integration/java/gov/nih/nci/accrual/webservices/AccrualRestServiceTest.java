@@ -763,6 +763,49 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
         submitAndVerify(rConf, siteID, subjects,
                 "/trials/nci/" + rConf.getNciTrialID() + "/sites/ctep/DCP");
     }
+    
+    
+    @Test
+    public final void testSubmitStudySubjectsDiseaseError()
+            throws ClientProtocolException, ParseException, JAXBException,
+            SAXException, SQLException, IOException,
+            DatatypeConfigurationException, java.text.ParseException {
+
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/services";
+        TrialRegistrationConfirmation rConf = register("/integration_register_complete_minimal_dataset.xml");
+        ParticipatingSite upd = readParticipatingSiteFromFile("/integration_ps_accruing_add.xml");
+        HttpResponse response = addSite("pa", rConf.getPaTrialID() + "", upd);
+        assertEquals(200, getReponseCode(response));
+        long siteID = Long.parseLong(EntityUtils.toString(response.getEntity(),
+                "utf-8"));
+        grantAccrualAccess("submitter-ci", siteID);
+
+        StudySubjects subjects = new ObjectFactory().createStudySubjects();
+        StudySubject subject = createSubject("SU001","ICD9","141.0");
+        subjects.getStudySubject().add(subject);
+        
+        baseURL = "http://" + TestProperties.getServerHostname() + ":"
+                + TestProperties.getServerPort() + "/accrual-services";
+        String xml = marshall(subjects);
+        StringEntity entity = new StringEntity(xml);
+        
+        
+        String url = baseURL + "/sites/" + siteID;
+        LOG.info("Hitting " + url);
+        LOG.info("Payload: " + xml);
+        HttpPut req = new HttpPut(url);
+        req.addHeader("Accept", TEXT_PLAIN);
+        req.addHeader("Content-Type", APPLICATION_XML);
+        req.setEntity(entity);
+
+        response = httpClient.execute(req);
+        LOG.info("Response code: " + getReponseCode(response));
+        assertEquals(400, getReponseCode(response));
+        assertTrue(EntityUtils.toString(response.getEntity(), "utf-8")
+           .contains("The subject's disease's coding system ICD9 is different from the one used on the trial: ICD10"));
+
+    }
 
     private void submitAndVerify(TrialRegistrationConfirmation rConf,
             long siteID, StudySubjects subjects, String serviceURL)
@@ -909,6 +952,17 @@ public class AccrualRestServiceTest extends AbstractRestServiceTest {
                 .newXMLGregorianCalendar(gc));
         ss.setZipCode("20171");
 
+        return ss;
+    }
+    
+    
+    private StudySubject createSubject(String id, String diseaseCode, String diseaseValue)
+            throws DatatypeConfigurationException, java.text.ParseException {
+        StudySubject ss = createSubject(id);
+        final DiseaseCode disease = new DiseaseCode();
+        disease.setCodeSystem(diseaseCode);
+        disease.setValue(diseaseValue);
+        ss.setDisease(disease);
         return ss;
     }
 

@@ -93,16 +93,22 @@ import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.SubjectAccrualKey;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.AccrualDisease;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.AccrualDiseaseTerminologyServiceRemote;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -243,6 +249,55 @@ public class SubjectAccrualValidatorTest {
         bean.validateDatesAndPaymentMethod(subject, errors);
         assertEquals("A is not a valid value for Payment Method Code.\n", errors.toString());
     }
+    
+    @Test
+    public void validateParticipatingSite() throws Exception {
+    	 ServiceLocatorPaInterface serviceLocatorPaInterface = mock(ServiceLocatorPaInterface.class);
+
+        PaServiceLocator.getInstance().setServiceLocator(
+                serviceLocatorPaInterface);
+        StudySiteServiceRemote studySiteServiceRemote = mock(StudySiteServiceRemote.class);
+        when(serviceLocatorPaInterface.getStudySiteService()).thenReturn(
+                studySiteServiceRemote);
+         SubjectAccrualDTO subject = createSubjectAccrualDTO();
+         StringBuffer errors = new StringBuffer();
+         bean.validateDiseaseAndParticipatingSite(subject, errors);
+         assertEquals("1 is not a valid value for Participating Site Identifier.\n", errors.toString());
+    }
+    
+    @Test
+    public void validateDiseaseIdentifier() throws Exception {
+        ServiceLocatorPaInterface serviceLocatorPaInterface = mock(ServiceLocatorPaInterface.class);
+
+        PaServiceLocator.getInstance().setServiceLocator(
+                serviceLocatorPaInterface);
+        StudySiteServiceRemote studySiteServiceRemote = mock(StudySiteServiceRemote.class);
+        AccrualDiseaseTerminologyServiceRemote adtsRemote = mock(AccrualDiseaseTerminologyServiceRemote.class);
+        when(serviceLocatorPaInterface.getStudySiteService()).thenReturn(
+                studySiteServiceRemote);
+        StudySiteDTO studySite = new StudySiteDTO();
+        studySite.setIdentifier(IiConverter.convertToIi(1L));;
+        when(studySiteServiceRemote.get(any(Ii.class))).thenReturn(studySite);
+        when(serviceLocatorPaInterface.getAccrualDiseaseTerminologyService()).thenReturn(adtsRemote);
+        when(adtsRemote.getCodeSystem(any(Long.class))).thenReturn("ICD-O-3");
+        AccrualDiseaseServiceLocal diseaseService = mock(AccrualDiseaseServiceLocal.class);
+        AccrualDisease disease = new AccrualDisease();
+        disease.setId(1L);
+        disease.setDiseaseCode("ICD9");
+        when(diseaseService.get(any(Ii.class))).thenReturn(disease);
+        bean.setDiseaseService(diseaseService);
+         SubjectAccrualDTO subject = createSubjectAccrualDTO();
+         StringBuffer errors = new StringBuffer();
+         bean.validateDiseaseAndParticipatingSite(subject, errors);
+         assertEquals("The subject's disease's coding system 234 is different from the one used on the trial: ICD-O-3", errors.toString());
+         
+         when(diseaseService.get(any(Ii.class))).thenReturn(null);
+         bean.setDiseaseService(diseaseService);
+         subject = createSubjectAccrualDTO();
+         errors = new StringBuffer();
+          bean.validateDiseaseAndParticipatingSite(subject, errors);
+          assertEquals("The subject's disease's coding system 234 is different from the one used on the trial: ICD-O-3", errors.toString());
+    }
 
     private StudySubjectDto createStudySubjectDto() {
         StudySubjectDto result = new StudySubjectDto();
@@ -267,7 +322,9 @@ public class SubjectAccrualValidatorTest {
         identifier.setRoot("root");
         result.setIdentifier(identifier);
         result.setParticipatingSiteIdentifier(IiConverter.convertToStudySiteIi(1L));
+        result.setDiseaseIdentifier(IiConverter.convertToStudySiteIi(234L));
         return result;
         
     }
+    
  }

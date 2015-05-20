@@ -89,13 +89,14 @@ public class AccrualServiceTest {
     }
 
     private AccrualService service = new AccrualService();
+    ServiceLocatorAccInterface serviceLocatorAccInterface = mock(ServiceLocatorAccInterface.class);
 
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
-        ServiceLocatorAccInterface serviceLocatorAccInterface = mock(ServiceLocatorAccInterface.class);
+
         ServiceLocatorPaInterface serviceLocatorPaInterface = mock(ServiceLocatorPaInterface.class);
 
         AccrualServiceLocator.getInstance().setServiceLocator(
@@ -303,6 +304,39 @@ public class AccrualServiceTest {
         assertEquals(Status.OK.getStatusCode(), r.getStatus());
         verifyManageSubjectsCall(reg);
     }
+    
+    /**
+     * .
+     * 
+     * @throws JAXBException
+     * @throws PAException
+     */
+    @Test
+    public final void testSubmitStudySubjectsDisease() throws JAXBException,
+            PAException {
+        StudySubjects reg = readStudySubjectsFromFile("/subject_bad_disease.xml");
+        Response r = service.submitStudySubjects(123L, reg);
+        assertEquals(Status.OK.getStatusCode(), r.getStatus());
+        ArgumentCaptor<List> subjectsCaptor = ArgumentCaptor
+                .forClass(List.class);
+        verify(AccrualServiceLocator.getInstance().getSubjectAccrualService())
+                .manageSubjectAccruals(subjectsCaptor.capture());
+        List<SubjectAccrualDTO> subjects = subjectsCaptor.getValue();
+        assertEquals(1, subjects.size());
+
+        StudySubject xmlSubject = reg.getStudySubject().get(0);
+        SubjectAccrualDTO dto = subjects.get(0);
+        assertEquals(xmlSubject.getIdentifier(),
+                StConverter.convertToString(dto.getAssignedIdentifier()));
+        assertEquals(xmlSubject.getBirthDate().toGregorianCalendar().getTime(),
+                TsConverter.convertToTimestamp(dto.getBirthDate()));
+        assertEquals(
+                PaymentMethodCode.valueOf(
+                        xmlSubject.getMethodOfPayment().value()).getCode(),
+                CdConverter.convertCdToString(dto.getPaymentMethod()));
+        assertEquals("1", dto.getDiseaseIdentifier().getExtension());
+    }
+
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void verifyManageSubjectsCall(StudySubjects reg) throws PAException {
