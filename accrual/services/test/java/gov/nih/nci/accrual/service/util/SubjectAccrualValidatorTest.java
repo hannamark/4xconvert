@@ -283,20 +283,21 @@ public class SubjectAccrualValidatorTest {
         AccrualDiseaseServiceLocal diseaseService = mock(AccrualDiseaseServiceLocal.class);
         AccrualDisease disease = new AccrualDisease();
         disease.setId(1L);
-        disease.setDiseaseCode("ICD9");
+        disease.setDiseaseCode("141.0");
+        disease.setCodeSystem("ICD9");
         when(diseaseService.get(any(Ii.class))).thenReturn(disease);
         bean.setDiseaseService(diseaseService);
          SubjectAccrualDTO subject = createSubjectAccrualDTO();
          StringBuffer errors = new StringBuffer();
          bean.validateDiseaseAndParticipatingSite(subject, errors);
-         assertEquals("The subject's disease's coding system 234 is different from the one used on the trial: ICD-O-3", errors.toString());
+         assertEquals("The subject's disease's coding system ICD9 is different from the one used on the trial: ICD-O-3", errors.toString());
          
          when(diseaseService.get(any(Ii.class))).thenReturn(null);
          bean.setDiseaseService(diseaseService);
          subject = createSubjectAccrualDTO();
          errors = new StringBuffer();
           bean.validateDiseaseAndParticipatingSite(subject, errors);
-          assertEquals("The subject's disease's coding system 234 is different from the one used on the trial: ICD-O-3", errors.toString());
+          assertEquals("234 is not a valid value for Disease Identifier.\n", errors.toString());
     }
 
     private StudySubjectDto createStudySubjectDto() {

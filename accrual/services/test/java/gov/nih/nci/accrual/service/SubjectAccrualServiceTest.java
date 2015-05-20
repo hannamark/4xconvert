@@ -412,7 +412,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
             bean.manageSubjectAccruals(Arrays.asList(dto));
             fail();
         } catch (IndexedInputValidationException e) {
-            assertEquals("The subject's disease's coding system 1 is different from the one used on the trial: xyzzy", e.getMessage());
+            assertEquals("The subject's disease's coding system SDC is different from the one used on the trial: xyzzy", e.getMessage());
         }
     }
 
