@@ -35,6 +35,9 @@ div.exportlinks {
 <c:set scope="request" var="sciAbs" value="${sessionScope.isScientificAbstractor==true || suAbs}"></c:set>
 
 <script type="text/javascript" language="javascript">
+
+    var interventionLookupURL = '<c:url value='/protected/popupIntsearch.action'/>';
+    var diseaseLookupURL = '<c:url value='/protected/ajaxDiseaseTreesearch.action'/>';
     
 	function handleAction(action) {
 		document.forms[0].action = "dashboard" + action + ".action";
@@ -139,6 +142,7 @@ div.exportlinks {
 		if ($('error_msg_div')!=null) {
 			$('error_msg_div').hide();
 		}
+		jQuery(".select2-hidden-accessible").val(null).trigger("change");
 	}
 
 	document.onkeypress = runEnterScript;
@@ -240,6 +244,85 @@ div.exportlinks {
             // Add the Export option: CSV | Excel to the top of the search results in all Dashboards.
             // This is not supported by Display Tag, so doing this manually.
             $( "div.exportlinks" ).clone().insertBefore( "span.pagebanner" );
+        	
+        	// Init Select2 boxes.
+            $("#anatomicSites").select2();
+            $("#diseases").select2({                 
+                ajax: {
+                    url: diseaseLookupURL,
+                    dataType: 'json',
+                    delay: 300,
+                    data: function (params) {
+                      return {
+                        searchName: params.term,
+                        page: params.page
+                      };
+                    },
+                    processResults: function (data, page) {
+                      // parse the results into the format expected by Select2.
+                      // since we are using custom formatting functions we do not need to
+                      // alter the remote JSON data
+                      return {
+                        results: data.items
+                      };
+                    },
+                    cache: true
+                  },
+                  escapeMarkup: function (markup) { return markup; }, 
+                  minimumInputLength: 1,
+                  templateResult: function (iv) {
+                        if (iv.loading) return iv.text;
+                        var markup = iv.text.replace(new RegExp(iv.term.replace(/[\}\{\+\$\^\)\(\?\*\]\[\.]/i,'\\\\$&'), 'i'), '<b>$&</b>');
+                        return markup;
+                  }, 
+                  templateSelection: function (iv) {                         
+                      return iv.text;
+                  }  
+            });
+            $("#interventions").select2({            	 
+            	  ajax: {
+            		    url: interventionLookupURL,
+            		    dataType: 'json',
+            		    delay: 300,
+            		    data: function (params) {
+            		      return {
+            		    	searchName: params.term,
+            		    	page: params.page
+            		      };
+            		    },
+            		    processResults: function (data, page) {
+            		      // parse the results into the format expected by Select2.
+            		      // since we are using custom formatting functions we do not need to
+            		      // alter the remote JSON data
+            		      return {
+            		        results: data.items
+            		      };
+            		    },
+            		    cache: true
+            		  },
+            		  escapeMarkup: function (markup) { return markup; }, 
+            		  minimumInputLength: 1,
+            		  templateResult: function (iv) {
+            			    if (iv.loading) return iv.text;
+            			    var markup = iv.text.replace(new RegExp(iv.term.replace(/[\}\{\+\$\^\)\(\?\*\]\[\.]/i,'\\\\$&'), 'i'), '<b>$&</b>') 
+            			         + " - (" + iv.type + (iv.ctgovType!=''?'/'+iv.ctgovType:'') + ")";
+            			    return markup;
+            		  }, 
+            		  templateSelection: function (iv) {                         
+                          return iv.text;
+                      }  
+            	});
+        	
+        	// Prevent opening of the Select2 box upon unselect.
+        	var ts = 0;
+            $(".select2-hidden-accessible").on("select2:unselect", function (e) { 
+            	ts = e.timeStamp;
+            }).on("select2:opening", function (e) { 
+                if (e.timeStamp - ts < 100) {                	
+                	e.preventDefault();
+                }
+            });
+
 
         });
 	}(jQuery));
@@ -570,7 +653,30 @@ div.exportlinks {
 											</table>
 										</td>
 									</tr>
-
+                                    <tr> 
+                                        <td scope="row" class="label"><label
+                                            for="diseases">Disease/Condition</label></td>
+                                        <td><s:select size="2" multiple="true"
+                                                listKey="diseaseIdentifier" listValue="preferredName"
+                                                id="diseases" name="diseases" list="diseasesList"
+                                                value="diseases" cssStyle="width:206px" /></td>
+                                        <s:set name="anatomicSites"
+                                            value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getAnatomicSites()" />
+                                        <td scope="row" class="label"><label
+                                            for="anatomicSites">Summary 4 Anatomic Site</label></td>
+                                        <td><s:select size="2" multiple="true"
+                                                listKey="id" listValue="displayName"
+                                                id="anatomicSites" name="anatomicSites" list="#anatomicSites"
+                                                value="anatomicSites" cssStyle="width:206px" /></td>
+                                    </tr>
+                                    <tr> 
+                                        <td scope="row" class="label"><label
+                                            for="interventions">Interventions</label></td>
+                                        <td><s:select size="2" multiple="true"
+                                                listKey="identifier.extension" listValue="name.value"
+                                                id="interventions" name="interventions" list="interventionsList"
+                                                value="interventions" cssStyle="width:206px" /></td>                                        
+                                    </tr>                                    
 								</table>
 								<div class="actionsrow">
 									<del class="btnwrapper">

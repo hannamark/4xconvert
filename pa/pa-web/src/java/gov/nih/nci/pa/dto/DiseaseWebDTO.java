@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +94,7 @@ import java.util.List;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class DiseaseWebDTO implements Serializable {
+public final class DiseaseWebDTO implements Serializable {
     private static final long serialVersionUID = 5484432673126229919L;
     private String studyDiseaseIdentifier;
     private String diseaseIdentifier;
@@ -110,6 +114,30 @@ public class DiseaseWebDTO implements Serializable {
 
     // List of existing displanames
     private List<String> displayNameList = new ArrayList<String>();
+    
+    /**
+     * Default.
+     */
+    public DiseaseWebDTO() {
+        // NOOP
+    }
+    
+    /**
+     * @param disease
+     *            PDQDiseaseDTO
+     */
+    public DiseaseWebDTO(final PDQDiseaseDTO disease) {
+        setDiseaseIdentifier(IiConverter.convertToString(disease
+                .getIdentifier()));
+        setPreferredName(StConverter
+                .convertToString(disease.getPreferredName()));
+        setCode(StConverter.convertToString(disease.getDiseaseCode()));
+        setConceptId(StConverter.convertToString(disease.getNtTermIdentifier()));
+        setMenuDisplayName(StConverter
+                .convertToString(disease.getDisplayName()));
+
+    }
+
     
     /**
      * @return the studyDiseaseIdentifier

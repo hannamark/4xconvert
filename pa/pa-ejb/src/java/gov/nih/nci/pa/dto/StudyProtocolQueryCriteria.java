@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang.StringUtils;
 
 
@@ -626,6 +627,16 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setSummary4AnatomicSites(List<Long> summary4AnatomicSiteIds) {
         summary4AnatomicSites = cleanupIds(summary4AnatomicSiteIds);
     }
+    
+    /**
+     * @param summary4AnatomicSiteIds
+     *            the summary4AnatomicSites to set
+     */
+    @SuppressWarnings("unchecked")
+    public void setSummary4AnatomicSitesAsStrings(
+            final List<String> summary4AnatomicSiteIds) {
+        setSummary4AnatomicSites(listOfStringToListOfLongs(summary4AnatomicSiteIds));
+    }
 
     /**
      * @return the bioMarkerIds
@@ -668,6 +679,32 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setPdqDiseases(List<Long> pdqDiseaseIds) {
         pdqDiseases = cleanupIds(pdqDiseaseIds);
     }
+    
+    /**
+     * @param pdqDiseaseIds
+     *            pdqDiseaseIds
+     */
+    @SuppressWarnings("unchecked")
+    public void setPdqDiseasesAsStrings(
+            final List<String> pdqDiseaseIds) {
+        setPdqDiseases(listOfStringToListOfLongs(pdqDiseaseIds));
+    }
+
+    /**
+     * @param listOfStrings
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private List<Long> listOfStringToListOfLongs(
+            final List<String> listOfStrings) {
+        return (List<Long>) CollectionUtils.collect(
+                listOfStrings, new Transformer() {
+                    @Override
+                    public Object transform(Object str) {
+                        return Long.valueOf(str.toString());
+                    }
+                });
+    }
 
     /**
      * @return the interventionIds
@@ -682,6 +719,16 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setInterventionIds(List<Long> interventionIds) {
         this.interventionIds = cleanupIds(interventionIds);
     }
+    
+    /**
+     * @param interventions
+     *            the summary4AnatomicSites to set
+     */
+    @SuppressWarnings("unchecked")
+    public void setInterventionIdsAsStrings(final List<String> interventions) {
+        setInterventionIds(listOfStringToListOfLongs(interventions));
+    }
+
 
     /**
      * @return the interventionAlternateNameIds

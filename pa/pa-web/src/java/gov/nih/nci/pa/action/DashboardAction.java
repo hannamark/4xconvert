@@ -20,16 +20,20 @@ import static gov.nih.nci.pa.util.Constants.IS_ADMIN_ABSTRACTOR;
 import static gov.nih.nci.pa.util.Constants.IS_SCIENTIFIC_ABSTRACTOR;
 import static gov.nih.nci.pa.util.Constants.IS_SU_ABSTRACTOR;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -97,6 +101,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     private HttpServletRequest request;
 
     private ProtocolQueryServiceLocal protocolQueryService;
+    private InterventionServiceLocal interventionService;
+    private PDQDiseaseServiceLocal pdqDiseaseService;
     private StudyProtocolService studyProtocolService;    
     private PAServiceUtils serviceUtils = new PAServiceUtils();
 
@@ -116,6 +122,9 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     private String milestoneType;
     private String milestone;
     private List<String> processingStatus = new ArrayList<String>();
+    private List<String> anatomicSites = new ArrayList<String>();
+    private List<String> interventions = new ArrayList<String>();
+    private List<String> diseases = new ArrayList<String>();
     private Boolean adminAbstraction;
     private Boolean adminQC;
     private Boolean scientificAbstraction;
@@ -387,6 +396,9 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         criteria.setDocumentWorkflowStatusCodes(processingStatus);
         criteria.setProcessingPriority(processingPriority);
         criteria.setCtepDcpCategory(ctepDcpCategory);
+        criteria.setSummary4AnatomicSitesAsStrings(anatomicSites);
+        criteria.setInterventionIdsAsStrings(interventions);
+        criteria.setPdqDiseasesAsStrings(diseases);
         for (String code : submissionType) {
             criteria.getTrialSubmissionTypes().add(
                     SubmissionTypeCode.getByCode(code));
@@ -547,6 +559,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         determineProperPageTitle();
         protocolQueryService = PaRegistry.getProtocolQueryService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
+        interventionService = PaRegistry.getInterventionService();
+        pdqDiseaseService = PaRegistry.getDiseaseService();
         setStudyCheckoutService(PaRegistry.getStudyCheckoutService());
     }
 
@@ -632,6 +646,38 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     public String adminAndScientificCheckIn() throws PAException {        
         super.adminAndScientificCheckIn();
         return view();
+    }
+    
+    /**
+     * @return List<InterventionWebDTO>
+     * @throws PAException  PAException
+     */
+    @SuppressWarnings("deprecation")
+    public List<InterventionDTO> getInterventionsList() throws PAException {
+        final List<InterventionDTO> list = new ArrayList<InterventionDTO>();
+        if (getInterventions() != null) {
+            for (String id : getInterventions()) {
+                list.add(interventionService.get(IiConverter.convertToIi(id)));
+            }
+        }
+        return list;
+    }
+    
+    /**
+     * @return List<DiseaseWebDTO>
+     * @throws PAException
+     *             PAException
+     */
+    @SuppressWarnings("deprecation")
+    public List<DiseaseWebDTO> getDiseasesList() throws PAException {
+        final List<DiseaseWebDTO> list = new ArrayList<DiseaseWebDTO>();
+        if (getDiseases() != null) {
+            for (String id : getDiseases()) {
+                list.add(new DiseaseWebDTO(pdqDiseaseService.get(IiConverter
+                        .convertToIi(id))));
+            }
+        }
+        return list;
     }
 
     /**
@@ -1037,5 +1083,47 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         this.assignee = assignee;
     }
 
-   
+    /**
+     * @return the anatomicSites
+     */
+    public List<String> getAnatomicSites() {
+        return anatomicSites;
+    }
+
+    /**
+     * @param anatomicSites the anatomicSites to set
+     */
+    public void setAnatomicSites(List<String> anatomicSites) {
+        this.anatomicSites = anatomicSites;
+    }
+
+    /**
+     * @return the interventions
+     */
+    public List<String> getInterventions() {
+        return interventions;
+    }
+
+    /**
+     * @param interventions the interventions to set
+     */
+    public void setInterventions(List<String> interventions) {
+        this.interventions = interventions;
+    }
+
+    /**
+     * @return the diseases
+     */
+    public List<String> getDiseases() {
+        return diseases;
+    }
+
+    /**
+     * @param diseases
+     *            the diseases to set
+     */
+    public void setDiseases(List<String> diseases) {
+        this.diseases = diseases;
+    }
+
 }

@@ -117,6 +117,7 @@ import net.sf.ehcache.Status;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -418,6 +419,46 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         return "displayList";
     }
     
+    // CHECKSTYLE:OFF
+    /**
+     * @return StreamResult
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     * @throws JSONException
+     *             JSONException
+     * @throws org.json.JSONException  org.json.JSONException
+     * @throws PAException  PAException
+     */
+    @SuppressWarnings("deprecation")
+    public StreamResult search() throws UnsupportedEncodingException,
+            JSONException, org.json.JSONException, PAException {
+        final JSONObject root = new JSONObject();
+        JSONArray arr = new JSONArray();
+        root.put("items", arr);
+        if (StringUtils.isNotBlank(getSearchName())) {
+            setIncludeSynonym(Boolean.FALSE.toString());
+            setExactMatch(Boolean.FALSE.toString());          
+            try {
+                for (PDQDiseaseDTO disease : searchDiseases()) {
+                    DiseaseWebDTO dto = new DiseaseWebDTO(disease);    
+                    JSONObject json = new JSONObject();
+                    json.put("id", dto.getDiseaseIdentifier());
+                    json.put("text",
+                            StringEscapeUtils.escapeHtml(dto.getPreferredName()));                   
+                    json.put("term",
+                            StringEscapeUtils.escapeHtml(getSearchName()));
+                    arr.put(json);
+                }
+            } catch (Exception e) {
+                LOG.error(e, e);
+            }
+        }
+        return new StreamResult(new ByteArrayInputStream(root.toString()
+                .getBytes("UTF-8")));
+    }
+
+    // CHECKSTYLE:ON
+    
     /**
      * 
      * @return The disease widget jsp
@@ -475,12 +516,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
     List<DiseaseWebDTO> getDiseaseWebList(Map<Ii, StudyDiseaseDTO> existingDiseases, List<PDQDiseaseDTO> searchResult) {
         List<DiseaseWebDTO> result = new ArrayList<DiseaseWebDTO>();
         for (PDQDiseaseDTO disease : searchResult) {
-            DiseaseWebDTO diseaseWebDTO = new DiseaseWebDTO();
-            diseaseWebDTO.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
-            diseaseWebDTO.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
-            diseaseWebDTO.setCode(StConverter.convertToString(disease.getDiseaseCode()));
-            diseaseWebDTO.setConceptId(StConverter.convertToString(disease.getNtTermIdentifier()));
-            diseaseWebDTO.setMenuDisplayName(StConverter.convertToString(disease.getDisplayName()));
+            DiseaseWebDTO diseaseWebDTO = new DiseaseWebDTO(disease);    
             diseaseWebDTO.setSelected(existingDiseases.containsKey(disease.getIdentifier()));
             if (diseaseWebDTO.isSelected()) {
                 StudyDiseaseDTO studyDiseaseDTO = existingDiseases.get(disease.getIdentifier());

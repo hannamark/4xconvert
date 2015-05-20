@@ -8,6 +8,7 @@
 	<script type="text/javascript" src="${scriptPath}/js/jquery.jstree.js"></script>
 	<script type="text/javascript" src="${scriptPath}/js/jquery.json-2.3.min.js"></script>
 	<script type="text/javascript" src="${scriptPath}/js/jquery.ui.potato.menu.js"></script>
+	<script type="text/javascript" src="${scriptPath}/js/select2.min.js"></script>
     <script type="text/javascript">
       jQuery.noConflict();
     </script>
