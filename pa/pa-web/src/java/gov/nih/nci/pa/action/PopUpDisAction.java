@@ -419,6 +419,23 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         return "displayList";
     }
     
+    /**
+     * @return StreamResult
+     * @throws PAException
+     *             PAException
+     * @throws UnsupportedEncodingException
+     *             UnsupportedEncodingException
+     */
+    @SuppressWarnings("deprecation")
+    public StreamResult getName() throws PAException,
+            UnsupportedEncodingException {
+        DiseaseWebDTO disease = new DiseaseWebDTO(
+                pdqDiseaseService.get(IiConverter.convertToIi(diseaseId)));
+        return new StreamResult(new ByteArrayInputStream(StringEscapeUtils
+                .escapeHtml(disease.getPreferredName()).getBytes("UTF-8")));
+    }
+    
+    
     // CHECKSTYLE:OFF
     /**
      * @return StreamResult

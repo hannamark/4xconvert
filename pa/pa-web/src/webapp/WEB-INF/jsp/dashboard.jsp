@@ -12,6 +12,22 @@
 div.exportlinks {
     text-align: right;
 }
+
+li[role="treeitem"] table td:first-child {
+   width: 100%;
+}
+
+li[role="treeitem"] table td:nth-child(2) {
+   min-width: 10px;
+   padding-left: 5px;
+   vertical-align: middle;
+}
+
+i.fa-sitemap {
+    cursor: default;
+}
+
+
 </style>
 
 <script type="text/javascript" language="javascript"
@@ -30,6 +46,7 @@ div.exportlinks {
 	src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
 
 <c:url value="/protected/popupOrglookuporgs.action" var="lookupOrgUrl" />
+<c:url value="/protected/popupDisdisplayDiseaseWidget.action" var="diseaseWidgetURL" />
 <c:set scope="request" var="suAbs" value="${sessionScope.isSuAbstractor==true}"></c:set>
 <c:set scope="request" var="admAbs" value="${sessionScope.isAdminAbstractor==true || suAbs}"></c:set>
 <c:set scope="request" var="sciAbs" value="${sessionScope.isScientificAbstractor==true || suAbs}"></c:set>
@@ -38,6 +55,7 @@ div.exportlinks {
 
     var interventionLookupURL = '<c:url value='/protected/popupIntsearch.action'/>';
     var diseaseLookupURL = '<c:url value='/protected/ajaxDiseaseTreesearch.action'/>';
+    var diseaseNameLookupURL = '<c:url value='/protected/ajaxDiseaseTreegetName.action'/>';
     
 	function handleAction(action) {
 		document.forms[0].action = "dashboard" + action + ".action";
@@ -247,6 +265,7 @@ div.exportlinks {
         	
         	// Init Select2 boxes.
             $("#anatomicSites").select2();
+        	
             $("#diseases").select2({                 
                 ajax: {
                     url: diseaseLookupURL,
@@ -259,9 +278,6 @@ div.exportlinks {
                       };
                     },
                     processResults: function (data, page) {
-                      // parse the results into the format expected by Select2.
-                      // since we are using custom formatting functions we do not need to
-                      // alter the remote JSON data
                       return {
                         results: data.items
                       };
@@ -272,13 +288,53 @@ div.exportlinks {
                   minimumInputLength: 1,
                   templateResult: function (iv) {
                         if (iv.loading) return iv.text;
-                        var markup = iv.text.replace(new RegExp(iv.term.replace(/[\}\{\+\$\^\)\(\?\*\]\[\.]/i,'\\\\$&'), 'i'), '<b>$&</b>');
+                        var markup = '<div><table cellpadding=0 cellspacing=0><tr><td>' + iv.text.replace(new RegExp(iv.term.replace(/[\}\{\+\$\^\)\(\?\*\]\[\.]/i,'\\\\$&'), 'i'), '<b>$&</b>') 
+                            + '</td><td><i title="Click here to open up the disease tree" data-diseaseid="'+iv.id+'" class="fa fa-sitemap"></i></td></tr></table></div>';
                         return markup;
                   }, 
                   templateSelection: function (iv) {                         
                       return iv.text;
                   }  
             });
+            
+            // Set up tricky event handling for tree icon clicks.
+            var diseaseID = null;
+            $(document).on( "mouseenter", "i.fa-sitemap", function(e) {
+            	diseaseID = e.target.attributes['data-diseaseid'].value;
+            }).on( "mouseleave", "i.fa-sitemap", function(e) {
+            	diseaseID = null;
+            });            
+            $("#diseases").on("select2:selecting", function (e) { 
+            	var dId = diseaseID;
+            	diseaseID = null;
+            	if (dId != null) {
+            		e.preventDefault();	
+            		$("#diseases").select2("close");
+            		showPopWin('${diseaseWidgetURL}?lookUp=true&diseaseID='+dId, 1100, 500, function(val) {
+            			if (val.value) {            			   
+            			    $.each(val.value.split(','), function(index, value) {
+            			    	// we have disease ID, but not name. We need to make an Ajax call to figure out
+            			    	// the name before adding OPTION to #diseases...
+            			    	$.get( diseaseNameLookupURL, "diseaseId="+value, function(data) {            			    		  
+            			    		// append the new option
+            		                $("#diseases").append('<option value="' + value + '">' + data + '</option>');
+
+            		                // get a list of selected values if any - or create an empty array
+            		                var selectedValues = $("#diseases").val();
+            		                if (selectedValues == null) {
+            		                    selectedValues = new Array();
+            		                }
+            		                selectedValues.push(value);   // add the newly created option to the list of selected items
+            		                $("#diseases").val(selectedValues).trigger('change');   // have select2 do it's thing
+            		          
+            			    	}, "html");
+            			    });
+            			}
+            		}, 'Disease/Condition');            		
+            	}            	
+            });
+           
+            
             $("#interventions").select2({            	 
             	  ajax: {
             		    url: interventionLookupURL,

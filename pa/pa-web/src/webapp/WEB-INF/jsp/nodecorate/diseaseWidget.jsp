@@ -1,3 +1,4 @@
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <c:set var="topic" scope="request" value="runadhoc" />
 
@@ -61,6 +62,18 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/disease/diseasesFilter.js?5347859245'/>"></script>
 
 <script type="text/javascript">
+
+var preSelectDiseaseID = '<%=StringEscapeUtils.escapeJavaScript(request.getParameter("diseaseID"))%>';
+
+(function($) {    
+    $(function () {
+    	if ($.isNumeric(preSelectDiseaseID)) {
+    	    jQuery.diseasesFilter.showTree(preSelectDiseaseID);
+    	}	
+    })
+}(jQuery));
+
+
 function addDisease(diseaseid) {
     // first get the elements into a list
     var domelts = jQuery('#pdqDiseases option');

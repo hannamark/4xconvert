@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * 
@@ -244,6 +245,113 @@ public class DashboardTest extends AbstractTrialStatusTest {
     }
 
     @SuppressWarnings("deprecation")
+    @Test
+    public void testDiseaseSearchWithDiseaseWidget() throws Exception {
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+
+        // trichothiodystrophy not found.
+        findAndSelectTrialInDashboard(trial);
+        addDisease("xerostomia");
+        clickAndWait("link=Dashboard");
+        selectDiseasesUsingWidget("trichothiodystrophy");
+        clickAndWait("link=Search");
+        assertFalse(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
+
+        // Add trichothiodystrophy to disease list, and now trial found.
+        findAndSelectTrialInDashboard(trial);
+        addDisease("trichothiodystrophy");
+        clickAndWait("link=Dashboard");
+        selectDiseasesUsingWidget("trichothiodystrophy");
+        clickAndWait("link=Search");
+        assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
+
+        // Trial found using both diseases, too
+        clickAndWait("link=Dashboard");
+        selectDiseasesUsingWidget("trichothiodystrophy", "xerostomia");
+        clickAndWait("link=Search");
+        assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
+
+        // verify disease option removal.
+        trial = createAcceptedTrial();
+        findAndSelectTrialInDashboard(trial);
+        addDisease("xerostomia");
+        clickAndWait("link=Dashboard");
+        selectDiseasesUsingWidget("trichothiodystrophy");
+        selectDiseasesUsingWidget("xerostomia");
+        clickAndWait("link=Search");
+        assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
+        s.click("searchid");
+        useSelect2ToUnselectOption("xerostomia");
+        clickAndWait("link=Search");
+        assertFalse(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
+
+        // Verify selected values persist in search criteria and resets
+        // properly.
+        clickAndWait("link=Dashboard");
+        selectDiseasesUsingWidget("trichothiodystrophy");
+        selectDiseasesUsingWidget("xerostomia");
+        clickAndWait("link=Search");
+        assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
+        clickAndWait("//input[@type='button' and @value='Refresh']");
+        assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
+        s.click("searchid");
+        assertOptionSelected("trichothiodystrophy");
+        assertOptionSelected("xerostomia");
+        clickAndWait("link=Reset");
+        assertOptionNotSelected("trichothiodystrophy");
+        assertOptionNotSelected("xerostomia");
+        clickAndWait("link=Search");
+        assertTrue(s.isTextPresent("At least one criteria is required."));
+    }
+
+    @SuppressWarnings("deprecation")
+    private void selectDiseasesUsingWidget(String... diseases) {
+        for (String disease : diseases) {
+            selectDiseaseUsingWidget(disease);
+        }
+    }
+
+    /**
+     * @param disease
+     */
+    @SuppressWarnings("deprecation")
+    private void selectDiseaseUsingWidget(String disease) {
+        WebElement sitesBox = driver
+                .findElement(By
+                        .xpath("//span[preceding-sibling::select[@id='diseases']]//input[@type='search']"));
+        sitesBox.click();
+        assertTrue(s.isElementPresent("select2-diseases-results"));
+        sitesBox.sendKeys(disease);
+
+        By xpath = By.xpath("//li[@role='treeitem']//td/b[text()='" + disease
+                + "']/../../td[2]/i[@class='fa fa-sitemap']");
+        waitForElementToBecomeAvailable(xpath, 10);
+
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElement(xpath));
+        driver.findElement(xpath).click();
+
+        driver.switchTo().frame("popupFrame");
+        waitForElementToBecomeAvailable(By.id("pdq_tree_dialog"), 15);
+        final By diseaseHighlightedInTree = By
+                .xpath("//span[@class='pdq-tree-highlight' and text()='"
+                        + disease + "']");
+        waitForElementToBecomeAvailable(diseaseHighlightedInTree, 30);
+        driver.findElement(diseaseHighlightedInTree).click();
+        final By diseaseSelected = By
+                .xpath("//span[@class='selectionFeaturedElement' and text()='"
+                        + disease + "']");
+        waitForElementToBecomeAvailable(diseaseSelected, 5);
+        s.click("//span[@class='ui-icon ui-icon-closethick']");
+        clickAndWait("//span[@class='add' and text()='Add']");
+        driver.switchTo().defaultContent();
+        waitForElementToBecomeAvailable(
+                By.xpath(getXPathForSelectedOption(disease)), 10);
+        assertOptionSelected(disease);
+    }
+
+    @SuppressWarnings("deprecation")
     private void addDisease(String disease) {
         clickAndWait("link=Disease/Condition");
         clickAndWait("link=Add");
@@ -397,9 +505,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
     private void useSelect2ToUnselectOption(String option) {
         s.click("//li[@class='select2-selection__choice' and @title='" + option
                 + "']/span[@class='select2-selection__choice__remove']");
-        assertFalse(s
-                .isElementPresent("//li[@class='select2-selection__choice' and @title='"
-                        + option + "']"));
+        assertFalse(s.isElementPresent(getXPathForSelectedOption(option)));
 
     }
 
@@ -419,7 +525,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
                     + "']");
             waitForElementToBecomeAvailable(xpath, 3);
         } catch (TimeoutException e) {
-            xpath = By.xpath("//li[@role='treeitem']/b[text()='" + option
+            xpath = By.xpath("//li[@role='treeitem']//td/b[text()='" + option
                     + "']");
             waitForElementToBecomeAvailable(xpath, 10);
         }
@@ -433,16 +539,21 @@ public class DashboardTest extends AbstractTrialStatusTest {
      */
     @SuppressWarnings("deprecation")
     private void assertOptionSelected(String option) {
-        assertTrue(s
-                .isElementPresent("//li[@class='select2-selection__choice' and @title='"
-                        + option + "']"));
+        assertTrue(s.isElementPresent(getXPathForSelectedOption(option)));
+    }
+
+    /**
+     * @param option
+     * @return
+     */
+    private String getXPathForSelectedOption(String option) {
+        return "//li[@class='select2-selection__choice' and @title='" + option
+                + "']";
     }
 
     @SuppressWarnings("deprecation")
     private void assertOptionNotSelected(String option) {
-        assertFalse(s
-                .isElementPresent("//li[@class='select2-selection__choice' and @title='"
-                        + option + "']"));
+        assertFalse(s.isElementPresent(getXPathForSelectedOption(option)));
     }
 
     /**
