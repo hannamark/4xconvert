@@ -525,9 +525,9 @@ public class DashboardTest extends AbstractTrialStatusTest {
                     + "']");
             waitForElementToBecomeAvailable(xpath, 3);
         } catch (TimeoutException e) {
-            xpath = By.xpath("//li[@role='treeitem']//td/b[text()='" + option
+            xpath = By.xpath("//li[@role='treeitem']//b[text()='" + option
                     + "']");
-            waitForElementToBecomeAvailable(xpath, 10);
+            waitForElementToBecomeAvailable(xpath, 15);
         }
 
         driver.findElement(xpath).click();
