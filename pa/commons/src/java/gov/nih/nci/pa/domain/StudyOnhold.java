@@ -113,6 +113,7 @@ public class StudyOnhold extends AbstractStudyEntity implements Auditable {
     private String onholdReasonText;
     private String processingLog;
     private OnholdReasonCode onholdReasonCode;
+    private String onHoldReasonCategory;
     private Timestamp onholdDate;
     private Timestamp offholdDate;
     private DocumentWorkflowStatusCode previousStatusCode;
@@ -133,6 +134,20 @@ public class StudyOnhold extends AbstractStudyEntity implements Auditable {
         this.onholdReasonText = onholdReasonText;
     }
 
+    /**
+     * @return onHoldReasonCategory
+     */
+    @Column(name = "ONHOLD_REASON_CATEGORY")
+    public String getOnholdReasonCategory() {
+        return onHoldReasonCategory;
+    }
+
+    /**
+     * @param  onHoldReasonCategoryVal onHoldReasonCategoryVal
+     */
+    public void setOnholdReasonCategory(String onHoldReasonCategoryVal) {
+        this.onHoldReasonCategory = onHoldReasonCategoryVal;
+    }
     /**
      * @return onholdReasonCode
      */

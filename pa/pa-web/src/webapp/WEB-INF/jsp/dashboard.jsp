@@ -648,7 +648,7 @@ i.fa-sitemap {
 													key="dashboard.onHoldReason" /></label></td>
 										<td><s:select headerKey="" headerValue="All" size="5"
 												multiple="true" id="onHoldReason" name="onHoldReason"
-												list="#OnholdReasonCodes" value="onHoldReason"
+												list="onHoldValuesMap" 
 												cssStyle="width:206px" /></td>
 										<td></td>
 										<s:set name="milestoneCodes"

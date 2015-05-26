@@ -231,4 +231,10 @@ public class MockStudyOnholdService extends MockAbstractBaseIsoService<StudyOnho
     @Override
     public void processOnHoldTrials() {        
     }
+
+    @Override
+    public String getReasonCategoryValue(String key) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

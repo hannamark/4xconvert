@@ -40,6 +40,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -123,6 +125,13 @@ implements StudyOnholdServiceLocal {
         if (newOnHold) {
             dto.setPreviousStatusCode(CdConverter.convertToCd(status));
         }
+        String holdReasonCode = OnholdReasonCode.getByCode(
+                CdConverter.convertCdToString(dto.getOnholdReasonCode())).getName();
+        if (!holdReasonCode.equals(OnholdReasonCode.OTHER.getName())) {
+            String holdReasonCategory = getReasonCategoryValue(holdReasonCode);
+            dto.setOnHoldCategory(StConverter.convertToSt(holdReasonCategory));
+        }
+             
         StudyOnholdDTO result = super.create(dto);
         if (!onHold && newOnHold) {
             createDocumentWorkflowStatus(dto.getStudyProtocolIdentifier(), DocumentWorkflowStatusCode.ON_HOLD);
@@ -588,5 +597,35 @@ implements StudyOnholdServiceLocal {
         this.studyMilestoneService = studyMilestoneService;
     }
 
+    @Override
+    public String getReasonCategoryValue(String key) throws PAException {
+        String fieldKeyToLabelMap = lookUpTableServiceRemote
+                .getPropertyValue("studyonhold.reason_category.mapping");
+        return getFieldKeyMappingValue(key, fieldKeyToLabelMap);
+    }
+    /**
+     * @param fieldKey
+     * @param fieldKeyMap
+     * @return
+     */
+    private String getFieldKeyMappingValue(String fieldKey,
+            String fieldKeyMap) {
+        Matcher m = getFieldKeyMappingMatcher(fieldKey, fieldKeyMap);
+        if (m.find()) {
+            return m.group(1).trim();
+        } else {
+            return fieldKey;
+        }
+    }
+    /**
+     * @param fieldKey
+     * @param fieldKeyMap
+     * @return
+     */
+    private Matcher getFieldKeyMappingMatcher(String fieldKey,
+            String fieldKeyMap) {
+        Pattern p = Pattern.compile("(?m)^\\Q" + fieldKey + "\\E=(.*)$");
+        return p.matcher(fieldKeyMap);        
+    }
 
 }

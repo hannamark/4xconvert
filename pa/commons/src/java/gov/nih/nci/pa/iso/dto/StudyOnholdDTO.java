@@ -87,6 +87,8 @@ import gov.nih.nci.iso21090.Ts;
  * @author Kalpana Guthikonda
  * @since 02/11/2009
  */
+
+
 public class StudyOnholdDTO extends StudyDTO {
 
     private static final long serialVersionUID = 7153947378245021625L;
@@ -96,6 +98,7 @@ public class StudyOnholdDTO extends StudyDTO {
     private Cd onholdReasonCode;
     private Ivl<Ts> onholdDate;
     private Cd previousStatusCode;
+    private St onHoldCategory;
 
     /**
      * @return onholdReasonText
@@ -165,6 +168,20 @@ public class StudyOnholdDTO extends StudyDTO {
      */
     public void setProcessingLog(St processingLog) {
         this.processingLog = processingLog;
+    }
+
+    /**
+     * @return onHoldCategory
+     */
+    public St getOnHoldCategory() {
+        return onHoldCategory;
+    }
+
+    /**
+     * @param onHoldCategory onHoldCategory
+     */
+    public void setOnHoldCategory(St onHoldCategory) {
+        this.onHoldCategory = onHoldCategory;
     }
 
 }

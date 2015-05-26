@@ -82,12 +82,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.io.InputStream;
+import java.lang.reflect.Field;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.struts2.dispatcher.StreamResult;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Hugh Reinhart
@@ -99,6 +109,7 @@ public class OnholdActionTest extends AbstractPaActionTest {
     public void prepare() throws Exception {
         act = new OnholdAction();
         act.prepare();
+      
     }
     
     @Test
@@ -199,5 +210,31 @@ public class OnholdActionTest extends AbstractPaActionTest {
     @Test
     public void testSave() throws PAException {
         assertEquals("edit", act.save());
+    }
+    
+    @Test
+    public void getOnHoldReasonCodeTest() throws Exception {
+        
+        StudyOnholdServiceLocal studyOnholdService;
+        studyOnholdService = mock(StudyOnholdServiceLocal.class);
+        when(studyOnholdService.getReasonCategoryValue(any(String.class))).thenReturn("CTRP");
+        act.setStudyOnholdService(studyOnholdService);
+        
+        // select from main menu
+        assertEquals(AbstractListEditAction.AR_LIST, act.execute());
+        // click add button
+        assertEquals(AbstractListEditAction.AR_EDIT, act.create());
+        act.getOnhold().setReasonCode(OnholdReasonCode.INVALID_GRANT.getCode());
+        
+       StreamResult result= act.getOnHoldReasonCode();
+               
+       final Field field = StreamResult.class.getDeclaredField("inputStream");
+       ReflectionUtils.makeAccessible(field);
+       InputStream is = (InputStream) field.get(result);
+       String value = IOUtils.toString(is);
+        
+       assertTrue(value.equals("CTRP"));
+       
+       
     }
 }

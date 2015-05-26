@@ -51,6 +51,7 @@
                             <s:set name="onholdList" value="onholdList" scope="request"/>
                             <display:table name="onholdList" id="row" class="data" sort="list" pagesize="10" requestURI="onhold.action">
                                 <display:column escapeXml="true" property="reasonCode" sortable="false" titleKey="onhold.reason.code"/>
+                                <display:column escapeXml="true" property="reasonCategory" sortable="false" titleKey="onhold.reason.category"/>
                                 <display:column escapeXml="true" property="reasonText" sortable="false" titleKey="onhold.reason.text"/>
                                 <display:column escapeXml="true" property="dateLow" sortable="false" titleKey="onhold.date.low"/>
                                 <display:column escapeXml="true" property="dateHigh" sortable="false" titleKey="onhold.date.high"/>

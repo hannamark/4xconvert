@@ -34,6 +34,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,6 +72,8 @@ import com.opensymphony.xwork2.Preparable;
  * @author Denis G. Krylov
  * 
  */
+
+
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods",
         "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class DashboardAction extends AbstractCheckInOutAction implements Preparable,
@@ -104,6 +108,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     private InterventionServiceLocal interventionService;
     private PDQDiseaseServiceLocal pdqDiseaseService;
     private StudyProtocolService studyProtocolService;    
+    private StudyOnholdServiceLocal onholdService;
     private PAServiceUtils serviceUtils = new PAServiceUtils();
 
     // fields that capture search criteria
@@ -139,10 +144,12 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     
 
     private List<String> checkoutCommands = new ArrayList<String>();
+    private Map<String, String> onHoldValuesMap = new HashMap<String, String>();
 
     @Override
     public String execute() {
         clearSearchSessionAttributes();
+       
         if (!canAccessDashboard()) {
             return NON_ABSTRACTOR_LANDING;
         }
@@ -159,6 +166,23 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
                 return determineLandingPage();
             }
         }
+        
+    }
+    
+    /**
+     *  Set values for onHold Drop down
+     */
+    private void setOnHoldDisplayValues()  {
+        try {
+        OnholdReasonCode [] keys =  OnholdReasonCode.values();
+        for (OnholdReasonCode key :keys) {
+            String value = onholdService.getReasonCategoryValue(key.getName());
+            onHoldValuesMap.put(key.getCode(), key.getCode() + " (" + value + ")");
+        }
+        } catch (Exception e) {
+            LOG.error("Error in setting on hold values " + e.getMessage());
+        }
+        
     }
 
     private List<StudyProtocolQueryCriteria> buildCriteriaByUserRole()
@@ -561,7 +585,9 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         studyProtocolService = PaRegistry.getStudyProtocolService();
         interventionService = PaRegistry.getInterventionService();
         pdqDiseaseService = PaRegistry.getDiseaseService();
+        onholdService = PaRegistry.getStudyOnholdService();
         setStudyCheckoutService(PaRegistry.getStudyCheckoutService());
+        setOnHoldDisplayValues();
     }
 
     private void determineProperPageTitle() {
@@ -1124,6 +1150,20 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
      */
     public void setDiseases(List<String> diseases) {
         this.diseases = diseases;
+    }
+
+    /**
+     * @return onHoldValuesMap
+     */
+    public Map<String, String> getOnHoldValuesMap() {
+        return onHoldValuesMap;
+    }
+
+    /**
+     * @param onHoldValuesMap onHoldValuesMap
+     */
+    public void setOnHoldValuesMap(Map<String, String> onHoldValuesMap) {
+        this.onHoldValuesMap = onHoldValuesMap;
     }
 
 }

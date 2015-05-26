@@ -233,6 +233,11 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
                         .getPropertyValue(eq("trial.amend.reject.subject")))
                 .thenReturn("test");
         
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("studyonhold.reason_category.mapping")))
+                .thenReturn("SUBMISSION_INCOM=Submitter\nSUBMISSION_INCOM_MISSING_DOCS=Submitter\nINVALID_GRANT=Submitter\nPENDING_CTRP_REVIEW=CTRP\nPENDING_DISEASE_CUR=CTRP\nPENDING_PERSON_CUR=CTRP\nPENDING_ORG_CUR=CTRP\nPENDING_INTERVENTION_CUR=CTRP\nOTHER=CTRP");
+        
         
         ohs.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         bean.setAbstractionCompletionService(abstractionCompletionSerivce);

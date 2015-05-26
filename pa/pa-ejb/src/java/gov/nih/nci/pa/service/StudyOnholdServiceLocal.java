@@ -103,4 +103,11 @@ public interface StudyOnholdServiceLocal extends StudyPaService<StudyOnholdDTO> 
      */
     void processOnHoldTrials(); 
     
+    /**
+     * @param key key
+     * @return value
+     * @throws PAException exception
+     */
+    String getReasonCategoryValue(String key) throws PAException;;
+    
 }

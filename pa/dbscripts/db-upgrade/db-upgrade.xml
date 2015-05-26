@@ -1785,5 +1785,9 @@
     <changeSet id="PO-8935" author="krylovd">
        <comment>Dropping triggers that won't be needed once this release gets deployed.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8935.sql"/>       
-    </changeSet>        
+    </changeSet>  
+    <changeSet id="PO-8949" author="khandalkara">
+       <comment>Implement On-Hold Feature Enhancements (On-hold Information screen in PA)	.</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8949.sql"/>       
+    </changeSet>        	
 </databaseChangeLog>

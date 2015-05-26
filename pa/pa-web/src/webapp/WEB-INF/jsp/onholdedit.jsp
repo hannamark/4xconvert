@@ -30,6 +30,43 @@
                     form.submit();
                 });
             });
+            function displayReasonCategory() {
+            	jQuery("#reasonCategoryList").prop("disabled",true);
+            	var reasonCode =jQuery("#reasonCode").val();
+            	if(reasonCode=="Other") {
+            		jQuery("#reasonCategoryList").prop("disabled",false);
+            	}
+            	else if(reasonCode!="") {
+            	    var form  = document.forms[0];
+                    var datastring = $(form).serialize();
+                    jQuery("#addButton").hide();
+                    jQuery("#reasonCategoryList").prop("disabled",true);
+                    jQuery("#progressImg").show();
+                    jQuery("#reasonCategoryList").hide();
+            		
+            		jQuery.ajax({
+            			   type: "POST",
+            			    url: "onholdgetOnHoldReasonCode.action",
+            			    data: datastring, 
+            			    success: function(data)
+                            {
+            			    	jQuery("#progressImg").hide();
+            			    	jQuery("#reasonCategoryList").val(data);
+            			    	jQuery("#reasonCategoryList").show();
+            			    	jQuery("#addButton").show();
+            			    	
+            			    },
+                            error: function (request, status, error) {
+                                alert("Error occured while fetching On Hold Reason Category value");
+                                jQuery("#progressImg").hide();
+                                jQuery("#reasonCategoryList").show();
+                                jQuery("#addButton").show();
+                                }
+                      });
+            		
+            	}
+            	
+            }
         </script>
     </head>
     <body>
@@ -59,16 +96,27 @@
                     <pa:valueRow labelFor="reasonCode" labelKey="onhold.reason.code" required="true">
                         <s:set name="onholdCodeValues" value="@gov.nih.nci.pa.enums.OnholdReasonCode@getDisplayNames()" />
                         <s:if test="%{currentAction == 'create'}">
-                            <s:select headerKey="" headerValue="--Select--" name="onhold.reasonCode" list="#onholdCodeValues" id="reasonCode"/>
+                            <s:select headerKey="" headerValue="--Select--" name="onhold.reasonCode" list="#onholdCodeValues" id="reasonCode" onChange="displayReasonCategory()"/>
                         </s:if>
                         <s:else>
                             <s:textfield name="onhold.reasonCode" cssStyle="width:200px;float:left" readonly="true" cssClass="readonly" id="reasonCode"/>
                         </s:else>
                         <pa:fieldError fieldName="onhold.reasonCode"/>
                     </pa:valueRow>
+                      <pa:valueRow labelFor="reasonCategory" labelKey="onhold.reason.category" required="true">
+                      <img id="progressImg" src="${pageContext.request.contextPath}/images/loading.gif" alt="Progress Indicator." width="16" height="16" style="display:none" />
+                        <s:if test="%{currentAction == 'create'}">
+                            <s:select headerKey=""  name="onhold.reasonCategory" list="onhold.allReasonCategoryValuesList" id="reasonCategoryList" disabled="true" />
+                           
+                        </s:if>
+                        <s:else>
+                            <s:textfield name="onhold.reasonCategory" cssStyle="width:200px;float:left" readonly="true" cssClass="readonly" id="reasonCategory"/>
+                        </s:else>
+                           
+                      </pa:valueRow>
                     <pa:valueRow labelFor="reasonText" labelKey="onhold.reason.text">
                         <s:if test="%{currentAction == 'create'}">
-                            <s:textarea id="reasonText" name="onhold.reasonText" rows="3" cssStyle="width:280px;" maxlength="200" cssClass="charcounter"/>
+                            <s:textarea id="reasonText" name="onhold.reasonText" rows="3" cssStyle="width:280px;" maxlength="4000" cssClass="charcounter"/>
                         </s:if>
                         <s:else>
                             <s:textarea id="reasonText" name="onhold.reasonText" rows="3" cssStyle="width:280px;float:left;" disabled="true" readonly="true" cssClass="readonly"/>

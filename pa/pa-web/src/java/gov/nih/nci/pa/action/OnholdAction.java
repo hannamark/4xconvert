@@ -81,23 +81,29 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.OnholdWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOnholdBeanLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.StreamResult;
 
 /**
  * @author Hugh Reinhart
@@ -109,6 +115,7 @@ public class OnholdAction extends AbstractListEditAction {
 
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyOnholdServiceLocal studyOnholdService;
+    private LookUpTableServiceRemote lookUpTableServiceRemote;
 
     private List<OnholdWebDTO> onholdList;
     private OnholdWebDTO onhold;
@@ -121,6 +128,7 @@ public class OnholdAction extends AbstractListEditAction {
         super.prepare();
         setProtocolQueryService(PaRegistry.getProtocolQueryService());
         setStudyOnholdService(PaRegistry.getStudyOnholdService());
+        lookUpTableServiceRemote = PaRegistry.getLookUpTableService();
     }
 
     /**
@@ -132,6 +140,7 @@ public class OnholdAction extends AbstractListEditAction {
             studyOnholdService.create(onhold.getIsoDto(getSpIi()));
             refreshStudyProtocol();
         } catch (PAFieldException e) {
+            setAllReasonCategoryValues();
             addFieldError(e);
             return AR_EDIT;
         } catch (PAException e) {
@@ -181,6 +190,8 @@ public class OnholdAction extends AbstractListEditAction {
             setOnhold(new OnholdWebDTO());
             getOnhold().setDateLow(DateFormatUtils.format(new Date(), PAUtil.DATE_FORMAT));
         }
+        
+        setAllReasonCategoryValues();
     }
 
     /**
@@ -256,5 +267,35 @@ public class OnholdAction extends AbstractListEditAction {
     public void deleteObject(Long objectId) throws PAException {
         throw new UnsupportedOperationException();
     }
+    
+    private void setAllReasonCategoryValues() throws PAException {
+        String onHoldCategoryValueString = lookUpTableServiceRemote.
+                getPropertyValue("studyonhold.reason_category");
+        if (onHoldCategoryValueString != null) {
+            String [] onHoldCategoryValues = onHoldCategoryValueString.split(",");
+            List<String> onHoldCategoryValuesList = Arrays.asList(onHoldCategoryValues);
+             if (onhold != null) {
+                 onhold.setAllReasonCategoryValuesList(onHoldCategoryValuesList);
+             }
+        }
+     
+    }
+    
+    /**
+     * @return StreamResult
+     * @throws PAException PAException
+     * @throws UnsupportedEncodingException UnsupportedEncodingException
+     */
+    public StreamResult getOnHoldReasonCode() throws PAException, UnsupportedEncodingException {
+        String value = null;
+        if (onhold.getReasonCode() != null) {
+            String reasonCode = onhold.getReasonCode();
+            String reasonCodeVal = OnholdReasonCode.getByCode(reasonCode).getName();
+            value = studyOnholdService.getReasonCategoryValue(reasonCodeVal);
+        }
+       
+        return new StreamResult(new ByteArrayInputStream(value.getBytes("UTF-8")));
+    }
+    
 
 }

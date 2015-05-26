@@ -222,7 +222,12 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
         when(
                 lookUpTableServiceRemote
                         .getPropertyValue(eq("trial.onhold.termination.comment")))
-                .thenReturn("trial.onhold.termination.comment");        
+                .thenReturn("trial.onhold.termination.comment");    
+        
+        when(
+                lookUpTableServiceRemote
+                        .getPropertyValue(eq("studyonhold.reason_category.mapping")))
+                .thenReturn("SUBMISSION_INCOM=Submitter\nSUBMISSION_INCOM_MISSING_DOCS=Submitter\nINVALID_GRANT=Submitter\nPENDING_CTRP_REVIEW=CTRP\nPENDING_DISEASE_CUR=CTRP\nPENDING_PERSON_CUR=CTRP\nPENDING_ORG_CUR=CTRP\nPENDING_INTERVENTION_CUR=CTRP\nOTHER=CTRP");        
         
         today =  new Timestamp(DateUtils.parseDate("03/23/2012", new String[] {"MM/dd/yyyy"}).getTime());
         
@@ -308,8 +313,11 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
         Timestamp low = new Timestamp(new DateTime().getMillis());
         Timestamp high = (onhold) ? null : low;
         dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, high));
+        dto.setOnholdReasonCode(CdConverter.convertStringToCd(OnholdReasonCode.SUBMISSION_INCOM.getCode()));
         return dto;
     }
+    
+  
     
     /**
      * Test the create method for the on-hold to off-hold transition.
@@ -994,6 +1002,85 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
         assertEquals(onholdRecord.getPreviousStatusCode(), newOnHold.getPreviousStatusCode());
         assertEquals(onholdRecord.getProcessingLog(), newOnHold.getProcessingLog());
     }
+    
+    /**
+     * Test if reason category value automatically populated to Submitter
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testReasonCategoryisSetToSubmitter() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
+        dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));;
+        when(documentWorkflowStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(dwsDto);
+        StudyOnholdDTO studyOnholdDTO = new StudyOnholdDTO();
+        Timestamp ts = new Timestamp(new DateTime().getMillis());
+        studyOnholdDTO.setOnholdDate(IvlConverter.convertTs().convertToIvl(ts, ts));
+        studyOnholdDTO.setOnholdReasonCode(CdConverter.convertToCd(OnholdReasonCode.SUBMISSION_INCOM));
+        studyOnholdDTO.setOnholdReasonText(StConverter.convertToSt("reason"));
+        studyOnholdDTO.setStudyProtocolIdentifier(spIi);
+        sut.create(studyOnholdDTO);
+    
+       List<StudyOnholdDTO> onholdDtoList =sut.getByStudyProtocol(spIi);
+       
+       assertTrue(onholdDtoList.size() > 0);
+       assertTrue(onholdDtoList.get(0).getOnHoldCategory().getValue().equals("Submitter"));
+      
+    }    
 
+    /**
+     * Test if reason category value automatically populated to CTRP
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testReasonCategoryisSetToCTRP() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
+        dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));;
+        when(documentWorkflowStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(dwsDto);
+        StudyOnholdDTO studyOnholdDTO = new StudyOnholdDTO();
+        Timestamp ts = new Timestamp(new DateTime().getMillis());
+        studyOnholdDTO.setOnholdDate(IvlConverter.convertTs().convertToIvl(ts, ts));
+        studyOnholdDTO.setOnholdReasonCode(CdConverter.convertToCd(OnholdReasonCode.PENDING_CTRP_REVIEW));
+        studyOnholdDTO.setOnholdReasonText(StConverter.convertToSt("reason"));
+        studyOnholdDTO.setStudyProtocolIdentifier(spIi);
+        sut.create(studyOnholdDTO);
+    
+       List<StudyOnholdDTO> onholdDtoList =sut.getByStudyProtocol(spIi);
+       
+       assertTrue(onholdDtoList.size() > 0);
+       assertTrue(onholdDtoList.get(0).getOnHoldCategory().getValue().equals("CTRP"));
+      
+    } 
+    
+    /**
+     * Test if reason category value does automatically populated 
+     * where reason code is other and this value is updated to what user has set
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testReasonCategoryisUpdated() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
+        dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));;
+        when(documentWorkflowStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(dwsDto);
+        StudyOnholdDTO studyOnholdDTO = new StudyOnholdDTO();
+        Timestamp ts = new Timestamp(new DateTime().getMillis());
+        studyOnholdDTO.setOnholdDate(IvlConverter.convertTs().convertToIvl(ts, ts));
+        studyOnholdDTO.setOnholdReasonCode(CdConverter.convertToCd(OnholdReasonCode.OTHER));
+        studyOnholdDTO.setOnHoldCategory(StConverter.convertToSt("reasonCategory"));
+        studyOnholdDTO.setOnholdReasonText(StConverter.convertToSt("reason"));
+        studyOnholdDTO.setStudyProtocolIdentifier(spIi);
+        sut.create(studyOnholdDTO);
+    
+       List<StudyOnholdDTO> onholdDtoList =sut.getByStudyProtocol(spIi);
+       
+       assertTrue(onholdDtoList.size() > 0);
+       assertTrue(onholdDtoList.get(0).getOnHoldCategory().getValue().equals("reasonCategory"));
+      
+    } 
    
 }

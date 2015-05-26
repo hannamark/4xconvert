@@ -88,6 +88,8 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -95,6 +97,7 @@ import org.apache.commons.lang.StringUtils;
 * @author Hugh Reinhart
 * @since 2/19/2009
 */
+
 public class OnholdWebDTO implements Serializable {
     private static final long serialVersionUID = -8451481638841127437L;
     private String identifier;
@@ -103,6 +106,8 @@ public class OnholdWebDTO implements Serializable {
     private String dateLow;
     private String dateHigh;
     private String processingLog;
+    private String reasonCategory;
+    private List<String> allReasonCategoryValuesList = new ArrayList<>(); 
 
     /** */
     public OnholdWebDTO() {
@@ -118,6 +123,7 @@ public class OnholdWebDTO implements Serializable {
         this.dateLow = IvlConverter.convertTs().convertLowToString(isoDto.getOnholdDate());
         this.dateHigh = IvlConverter.convertTs().convertHighToString(isoDto.getOnholdDate());
         this.processingLog = StConverter.convertToString(isoDto.getProcessingLog());
+        this.reasonCategory = StConverter.convertToString(isoDto.getOnHoldCategory());
     }
     /**
      * @param studyProtocolIi Ii for the associated study protocol
@@ -131,6 +137,7 @@ public class OnholdWebDTO implements Serializable {
         isoDto.setOnholdReasonText(StConverter.convertToSt(getReasonText()));
         isoDto.setOnholdDate(IvlConverter.convertTs().convertToIvl(getDateLow(), getDateHigh()));
         isoDto.setProcessingLog(StConverter.convertToSt(processingLog));
+        isoDto.setOnHoldCategory(StConverter.convertToSt(getReasonCategory()));
         return isoDto;
     }
     /**
@@ -204,5 +211,32 @@ public class OnholdWebDTO implements Serializable {
      */
     public void setProcessingLog(String processingLog) {
         this.processingLog = processingLog;
+    }
+    
+    /**
+     * @return reasonCategory
+     */
+    public String getReasonCategory() {
+        return reasonCategory;
+    }
+    
+    /**
+     * @param reasonCategory reasonCategory
+     */
+    public void setReasonCategory(String reasonCategory) {
+        this.reasonCategory = reasonCategory;
+    }
+    /**
+     * @return allReasonCategoryValuesList allReasonCategoryValuesList
+     */
+    public List<String> getAllReasonCategoryValuesList() {
+        return allReasonCategoryValuesList;
+    }
+    /**
+     * @param allReasonCategoryValuesList allReasonCategoryValuesList
+     */
+    public void setAllReasonCategoryValuesList(
+            List<String> allReasonCategoryValuesList) {
+        this.allReasonCategoryValuesList = allReasonCategoryValuesList;
     }
 }

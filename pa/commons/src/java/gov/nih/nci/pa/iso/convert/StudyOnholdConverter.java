@@ -106,6 +106,7 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(bo.getOnholdDate(), bo.getOffholdDate()));
         dto.setPreviousStatusCode(CdConverter.convertToCd(bo.getPreviousStatusCode()));
+        dto.setOnHoldCategory(StConverter.convertToSt(bo.getOnholdReasonCategory()));
         return dto;
     }
 
@@ -136,5 +137,6 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
         bo.setPreviousStatusCode(DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dto
             .getPreviousStatusCode())));
         bo.setStudyProtocol(spBo);
+        bo.setOnholdReasonCategory(StConverter.convertToString(dto.getOnHoldCategory()));
     }
 }
