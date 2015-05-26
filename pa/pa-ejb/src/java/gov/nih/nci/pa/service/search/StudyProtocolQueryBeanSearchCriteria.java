@@ -91,6 +91,7 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
@@ -230,6 +231,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String STUDY_OWNER_DWS_PARAM = "studyOwnerDWSParam";
         private static final String STUDY_OWNER_SITE_PARAM = "studyOwnerSiteFunctionalCodeParam";
         private static final String STUDY_PHASE_CODE_PARAM = "studyPhaseCodeParam";
+        private static final String PRIMARY_PURPOSE_CODE_PARAM = "primaryPurposeCodeParam";
         private static final String ANATOMIC_SITES_PARAM  = "anatomicSitesParam";
         private static final String PARTICIPATING_SITE_PARAM  = "participatingSiteParam";
         private static final String BIOMARKERS_PARAM  = "biomarkersParam";
@@ -268,29 +270,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         @Override
         public void afterIteration(Object obj, boolean isCountOnly, StringBuffer whereClause,
                 Map<String, Object> params) {
-            if (CollectionUtils.isNotEmpty(sp.getStudyOverallStatuses())) {
-                String operator = determineOperator(whereClause);
-                Set<StudyStatusCode> sosCodes = new HashSet<StudyStatusCode>();
-                for (StudyOverallStatus status : sp.getStudyOverallStatuses()) {
-                    sosCodes.add(status.getStatusCode());
-                }
-                //StudyStatusCode sos = sp.getStudyOverallStatuses().iterator().next().getStatusCode();
-                whereClause.append(String.format(" %s sos.statusCode in (:%s) ", operator, SOS_PARAM));
-                whereClause.append(String.format(" and sos.id = (select max(id) from %s.studyOverallStatuses)",
-                        SearchableUtils.ROOT_OBJ_ALIAS));
-                params.put(SOS_PARAM, sosCodes);
-            }
-            if (CollectionUtils.isNotEmpty(sp.getDocumentWorkflowStatuses())) {
-                String operator = determineOperator(whereClause);
-                Set<DocumentWorkflowStatusCode> statusCodes = new HashSet<DocumentWorkflowStatusCode>();
-                for (DocumentWorkflowStatus status : sp.getDocumentWorkflowStatuses()) {
-                    statusCodes.add(status.getStatusCode());
-                }
-                whereClause.append(String.format(" %s dws.statusCode in (:%s) ", operator, DWS_PARAM));
-                whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
-                        SearchableUtils.ROOT_OBJ_ALIAS));
-                params.put(DWS_PARAM, statusCodes);
-            }
+            handleStudyOverallStatuses(whereClause, params);
+            handleDocumentWorkflowStatuses(whereClause, params);
             handleMilestones(whereClause, params);   
             handleOfficialTitle(whereClause, params);
             
@@ -304,6 +285,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                         TERMINATED_DWS_PARAM);
             }
             
+            handlePrimaryPurposeCodes(whereClause, params);
             handlePhaseCodes(whereClause, params);
             handleSummary4AnatomicSites(whereClause, params);
             handleOrganizationIds(whereClause, params);
@@ -318,13 +300,74 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 params.put(CTGOV_XML_REQUIRED_INDICATOR, spo.getCtgovXmlRequiredIndicator());
             }
             
-            if (spo.getStudySource() != null) {
+            handleStudySource(whereClause, params);
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleStudySource(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(spo.getStudySource())) {
+                Set<StudySourceCode> statusCodes = new HashSet<StudySourceCode>();
+                for (String source : spo.getStudySource()) {
+                    statusCodes.add(StudySourceCode.getByCode(source));
+                }
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s %s.studySource = :%s" , operator,  
-                         SearchableUtils.ROOT_OBJ_ALIAS, STUDY_SOURCE_PARAM));
-                params.put(STUDY_SOURCE_PARAM, spo.getStudySource());
+                whereClause.append(String.format(
+                        " %s %s.studySource in (:%s) ", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS, STUDY_SOURCE_PARAM));
+                params.put(STUDY_SOURCE_PARAM, statusCodes);
             }
         }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleDocumentWorkflowStatuses(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(sp.getDocumentWorkflowStatuses())) {
+                String operator = determineOperator(whereClause);
+                Set<DocumentWorkflowStatusCode> statusCodes = new HashSet<DocumentWorkflowStatusCode>();
+                for (DocumentWorkflowStatus status : sp.getDocumentWorkflowStatuses()) {
+                    statusCodes.add(status.getStatusCode());
+                }
+                whereClause.append(String.format(" %s dws.statusCode in (:%s) ", operator, DWS_PARAM));
+                whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
+                        SearchableUtils.ROOT_OBJ_ALIAS));
+                params.put(DWS_PARAM, statusCodes);
+            }
+        }
+
+        /**
+         * @param whereClause
+         * @param params
+         */
+        private void handleStudyOverallStatuses(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(sp.getStudyOverallStatuses())) {
+                String operator = determineOperator(whereClause);
+                Set<StudyStatusCode> sosCodes = new HashSet<StudyStatusCode>();
+                for (StudyOverallStatus status : sp.getStudyOverallStatuses()) {
+                    sosCodes.add(status.getStatusCode());
+                }
+                // StudyStatusCode sos =
+                // sp.getStudyOverallStatuses().iterator().next().getStatusCode();
+                whereClause.append(String.format(
+                        " %s sos.statusCode in (:%s) ", operator, SOS_PARAM));
+                whereClause
+                        .append(String
+                                .format(" and sos.id = (select max(id) from %s.studyOverallStatuses where "
+                                        + "statusDate = (select max(statusDate) from %s.studyOverallStatuses))",
+                                        SearchableUtils.ROOT_OBJ_ALIAS,
+                                        SearchableUtils.ROOT_OBJ_ALIAS));
+                params.put(SOS_PARAM, sosCodes);
+            }
+        }
+
+       
 
         /**
          * @param whereClause where clause 
@@ -372,13 +415,9 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                     statusCodes.add(status.getMilestoneCode());
                 }
                 whereClause
-                        .append(String.format(
-                                " %s (sms.milestoneCode in (:%s) ", operator,
-                                SMS_PARAM));
-                whereClause
                         .append(String
-                                .format(" and sms.id = (select max(id) from %s.studyMilestones))",
-                                        SearchableUtils.ROOT_OBJ_ALIAS));
+                                .format(" %s (sms.milestoneCode in (:%s) and sms.last = true)",
+                                        operator, SMS_PARAM));
                 params.put(SMS_PARAM, statusCodes);
             }
             
@@ -427,6 +466,19 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(" ) ");
             }
             
+        }
+        
+        private void handlePrimaryPurposeCodes(StringBuffer whereClause,
+                Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(spo.getPrimaryPurposeCodes())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(
+                        " %s %s.primaryPurposeCode  in (:%s) ", operator,
+                        SearchableUtils.ROOT_OBJ_ALIAS,
+                        PRIMARY_PURPOSE_CODE_PARAM));
+                params.put(PRIMARY_PURPOSE_CODE_PARAM,
+                        spo.getPrimaryPurposeCodeEnums());
+            }
         }
         
         private void handlePhaseCodes(StringBuffer whereClause, Map<String, Object> params) {

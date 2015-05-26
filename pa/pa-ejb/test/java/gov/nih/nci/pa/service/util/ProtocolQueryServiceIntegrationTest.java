@@ -796,6 +796,11 @@ public class ProtocolQueryServiceIntegrationTest extends
         milestone2.setMilestoneCode(MilestoneCode.SUBMISSION_ACCEPTED);
         TestSchema.addUpdObject(milestone2);
         sp.getStudyMilestones().add(milestone2);
+        PaHibernateUtil
+                .getCurrentSession()
+                .createSQLQuery(
+                        "update study_milestone set last=true where identifier="
+                                + milestone2.getId()).executeUpdate();
 
         StudyInbox si = createStudyInboxobj(sp);
         TestSchema.addUpdObject(si);

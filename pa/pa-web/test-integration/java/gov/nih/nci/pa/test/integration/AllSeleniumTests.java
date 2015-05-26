@@ -100,7 +100,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TrialRelatedDocumentTest.class, CtGovImportTest.class,
         OutOfScopeAccrualsTest.class, CtGovImportLogTest.class,
         DiseaseTest.class, TrialCheckInOutTest.class, DashboardTest.class,
-        ManageTermsTest.class, PlannedMarkerTest.class,
+        TrialSearchTest.class, ManageTermsTest.class, PlannedMarkerTest.class,
         ManageFlaggedTrialsTest.class, WebAppSecurityTest.class,TrialOnHoldTest.class
 // DuplicateTrialEditTest.class,
 // LookupWithApostropheTest.class,

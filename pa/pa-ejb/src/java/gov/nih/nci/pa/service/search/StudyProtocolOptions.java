@@ -86,8 +86,8 @@ import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseCode;
-import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.lov.PrimaryPurposeCode;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -143,7 +143,8 @@ public class StudyProtocolOptions {
     private List<OnholdReasonCode> onholdReasons = new ArrayList<OnholdReasonCode>();    
     private List<MilestoneFilter> milestoneFilters = new ArrayList<MilestoneFilter>();    
     private List<Integer> processingPriority = new ArrayList<Integer>();
-    private StudySourceCode studySource;
+    private List<String> studySource = new ArrayList<>();
+    private List<String> primaryPurposeCodes = new ArrayList<String>();
     
     /**
      * @return excludeRejectedTrials
@@ -778,22 +779,45 @@ public class StudyProtocolOptions {
         this.excludeTerminatedTrials = excludeTerminatedTrials;
     }
 
+    
+
     /**
-     * 
-     * @return the study source to filter by.
+     * @return the primaryPurposeCodes
      */
-    public StudySourceCode getStudySource() {
+    public List<String> getPrimaryPurposeCodes() {
+        return primaryPurposeCodes;
+    }
+
+    /**
+     * @param primaryPurposeCodes the primaryPurposeCodes to set
+     */
+    public void setPrimaryPurposeCodes(List<String> primaryPurposeCodes) {
+        this.primaryPurposeCodes = primaryPurposeCodes;
+    }
+
+    /**
+     * @return List<PrimaryPurposeCode>
+     */
+    public List<PrimaryPurposeCode> getPrimaryPurposeCodeEnums() {
+        List<PrimaryPurposeCode> list = new ArrayList<>();
+        for (String code : getPrimaryPurposeCodes()) {
+            list.add(PrimaryPurposeCode.getByCode(code));
+        }
+        return list;
+    }
+
+    /**
+     * @return the studySource
+     */
+    public List<String> getStudySource() {
         return studySource;
     }
 
     /**
-     * 
-     * @param studySource The study source to filet by or none for all sources
+     * @param studySource the studySource to set
      */
-    public void setStudySource(StudySourceCode studySource) {
+    public void setStudySource(List<String> studySource) {
         this.studySource = studySource;
     }
 
-    
-    
 }

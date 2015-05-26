@@ -1005,7 +1005,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
      */
     protected void addSOS(TrialInfo info, String code, final String statusDate)
             throws SQLException {
-        QueryRunner runner = new QueryRunner();        
+        QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO study_overall_status (identifier,comment_text,status_code,status_date,"
                 + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,"
                 + "user_last_updated_id,system_created) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),null,'"
@@ -1044,7 +1044,14 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     }
 
-    private String today() {
+    protected void deleteCurrentTrialStatus(TrialInfo info) throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "UPDATE study_overall_status SET deleted=true WHERE current=true and study_protocol_identifier="
+                + info.id;
+        assertEquals(1, runner.update(connection, sql));
+    }
+
+    protected String today() {
         return String.format("{ts '%s'}",
                 new Timestamp(System.currentTimeMillis()).toString());
     }
@@ -1055,7 +1062,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 new Timestamp(DateUtils.truncate(new Date(),
                         Calendar.DAY_OF_MONTH).getTime()).toString());
     }
-    
+
     protected String yday_midnight() {
         return String.format(
                 "{ts '%s'}",
@@ -1074,6 +1081,18 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     protected void addMilestone(TrialInfo info, String code)
             throws SQLException {
+        final String milestoneDate = today();
+        addMilestone(info, code, milestoneDate);
+    }
+
+    /**
+     * @param info
+     * @param code
+     * @param milestoneDate
+     * @throws SQLException
+     */
+    protected void addMilestone(TrialInfo info, String code,
+            final String milestoneDate) throws SQLException {
         QueryRunner runner = new QueryRunner();
         String sql = "INSERT INTO study_milestone (identifier,comment_text,milestone_code,milestone_date,"
                 + "study_protocol_identifier,date_last_created,date_last_updated,user_last_created_id,user_last_updated_id,"
@@ -1081,18 +1100,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + code
                 + "',"
                 + ""
-                + today()
+                + milestoneDate
                 + ","
                 + info.id
                 + ","
                 + ""
-                + today()
+                + milestoneDate
                 + ","
-                + today()
+                + milestoneDate
                 + ","
                 + info.csmUserID
-                + ","
-                + info.csmUserID + ",null)";
+                + "," + info.csmUserID + ",null)";
         runner.update(connection, sql);
     }
 
@@ -1327,6 +1345,15 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
 
     }
 
+    protected void replaceLeadOrg(TrialInfo info, String orgName)
+            throws SQLException {
+        QueryRunner runner = new QueryRunner();
+        String sql = "DELETE FROM study_site WHERE study_protocol_identifier="
+                + info.id + " and functional_code='LEAD_ORGANIZATION'";
+        runner.update(connection, sql);
+        addLeadOrg(info, orgName);
+    }
+
     private void addLeadOrg(TrialInfo info, String orgName) throws SQLException {
         QueryRunner runner = new QueryRunner();
         info.leadOrgID = info.uuid;
@@ -1437,11 +1464,17 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
                 + "user_last_created_id,user_last_updated_id) VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')),'"
                 + status
                 + "',null,"
-                + "{ts '"+stamp+"'},"
+                + "{ts '"
+                + stamp
+                + "'},"
                 + info.id
-                + ",{ts '"+stamp+"'},"
-                + "{ts '"+stamp+"'},{ts '"+stamp+"'},"
-                + info.csmUserID + "," + info.csmUserID + ")";
+                + ",{ts '"
+                + stamp
+                + "'},"
+                + "{ts '"
+                + stamp
+                + "'},{ts '"
+                + stamp + "'}," + info.csmUserID + "," + info.csmUserID + ")";
         runner.update(connection, sql);
     }
 

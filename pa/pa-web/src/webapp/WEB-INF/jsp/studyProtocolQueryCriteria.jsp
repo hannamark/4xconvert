@@ -7,6 +7,11 @@
     <head>
         <title><fmt:message key="studyProtocol.search.title"/></title>
         <s:head/>
+        <style type="text/css">
+            span.select2-container {
+                max-width: 280px; 
+            }
+        </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>        
         <script type="text/javascript" language="javascript">
             function handleAction() {
@@ -21,26 +26,20 @@
                 showPopup('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId=' + pid, null, 'View Trial Summary Report');
             }
             function resetValues() {
-                $("officialTitle").value="";
-                $("leadOrganizationId").value="";
+            	// This will reset all Select2 backed boxes.
+            	jQuery(".select2-hidden-accessible").val(null).trigger("change");
+            	
+                $("officialTitle").value="";                
                 $("identifierType").value="All";
-                $("identifier").value="";
-                $("principalInvestigatorId").value="";
-                $("phaseCode").value="";
-                $("primaryPurpose").value="";
-                $("studyStatusCode").value="";
-                $("documentWorkflowStatusCode").value="";
-                $("studyMilestone").value="";
-                $("holdStatus").value="";
-                $("submissionType").value="";
+                $("identifier").value="";               
+                $("holdStatus").value="";                
                 $("studyLockedBy").checked=false;
                 $("trialCategory").value="";
                 $("ctepDcpCategory").value="";
                 $("ctgovXmlRequiredIndicator").value="";
                 $("studyProtocolType").value = "";
                 $("InterventionalStudyProtocol_studySubtypeCode").value = "";
-                $("NonInterventionalStudyProtocol_studySubtypeCode").value = "";
-                $("studySourceType").value="";
+                $("NonInterventionalStudyProtocol_studySubtypeCode").value = "";                                
                 studyProtocolTypeChanged();
                 
             }
@@ -70,6 +69,26 @@
             }
             
             Event.observe(window, "load", studyProtocolTypeChanged);
+            
+            (function($) {    
+                $(function () {
+                	// Init Select2 boxes.
+                    $("#leadOrganizationId, #principalInvestigatorId, #primaryPurpose, #phaseCode, #studyStatusCode, #documentWorkflowStatusCode, #studyMilestone, #submissionType, #studySourceType").select2({
+                    	  placeholder: "All"
+                   	});
+                   
+                	
+                    // Prevent opening of the Select2 box upon unselect.
+                    var ts = 0;
+                    $(".select2-hidden-accessible").on("select2:unselect", function (e) { 
+                        ts = e.timeStamp;
+                    }).on("select2:opening", function (e) { 
+                        if (e.timeStamp - ts < 100) {                   
+                            e.preventDefault();
+                        }
+                    });                	
+                })
+            }(jQuery));
             
         </script>
     </head>
@@ -104,8 +123,9 @@
                             <label for="leadOrganizationId"> <fmt:message key="studyProtocol.leadOrganization"/></label>
                         </td>
                         <td>
-                            <s:select name="criteria.leadOrganizationIds" id="leadOrganizationId" list="#protocolOrgs" listKey="id"
-                                listValue="name" headerKey="" headerValue="All" value="criteria.leadOrganizationIds[0]" />
+                            <s:select size="2" multiple="true" name="criteria.leadOrganizationIds" id="leadOrganizationId" 
+                                list="#protocolOrgs" listKey="id"
+                                listValue="name" value="criteria.leadOrganizationIdsStrings" />
                         </td>
                     </tr>
                     <s:set name="identifierSearchTypes" value="@gov.nih.nci.pa.enums.IdentifierType@getDisplayNames()" />
@@ -142,23 +162,21 @@
                             <label for="principalInvestigatorId"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
                         </td>
                         <td align=left>
-                            <s:select
-                                name="criteria.principalInvestigatorId"
+                            <s:select size="2" multiple="true"
+                                name="criteria.principalInvestigatorIds"
                                 id="principalInvestigatorId"
                                 list="#principalInvs"
                                 listKey="id"
-                                listValue="fullName"
-                                headerKey=""
-                                headerValue="All"
-                                value="criteria.principalInvestigatorId" />
+                                listValue="fullName"                               
+                                value="criteria.principalInvestigatorIds" />
                         </td>
                         <td  scope="row" class="label">
                             <label for="primaryPurpose"> <fmt:message key="studyProtocol.trialType"/></label>
                         </td>
                         <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.lov.PrimaryPurposeCode@getDisplayNames()" />
                         <td>
-                            <s:select headerKey="" id="primaryPurpose" headerValue="All" name="criteria.primaryPurposeCode" list="#primaryPurposeCodeValues"
-                                      value="criteria.primaryPurposeCode" cssStyle="width:206px" />
+                            <s:select size="2" multiple="true"  id="primaryPurpose"  name="criteria.primaryPurposeCodes" list="#primaryPurposeCodeValues"
+                                      value="criteria.primaryPurposeCodes" cssStyle="width:206px" />
                         </td>
                     </tr>
                     <tr>
@@ -167,14 +185,14 @@
                         </td>
                         <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                         <td>
-                            <s:select headerKey="" id="phaseCode" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCodes[0]" cssStyle="width:206px" />
+                            <s:select size="2" multiple="true"  id="phaseCode"  name="criteria.phaseCodes" list="#phaseCodeValues"  value="criteria.phaseCodes" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
                             <label for="studyStatusCode"> <fmt:message key="studyProtocol.studyStatus"/></label>
                         </td>
                         <s:set name="studyStatusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                         <td>
-                           <s:select headerKey="" id="studyStatusCode" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" cssStyle="width:206px" />
+                           <s:select size="2" multiple="true"  id="studyStatusCode" name="criteria.studyStatusCodeList" list="#studyStatusCodeValues"  value="criteria.studyStatusCodeList" cssStyle="width:206px" />
                         </td>
                     </tr>
                     <tr>
@@ -183,14 +201,14 @@
                         </td>
                         <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
                         <td>
-                           <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCodes" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCodes[0]" cssStyle="width:206px" />
+                           <s:select size="2" multiple="true" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCodes" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCodes" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
                             <label for="studyMilestone"> <fmt:message key="studyProtocol.milestone"/></label>
                         </td>
                         <s:set name="milestoneCodes" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
                         <td>
-                           <s:select headerKey="" headerValue="All" id="studyMilestone" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
+                           <s:select size="2" multiple="true" id="studyMilestone" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
                         </td>
                     </tr>
                     <tr>
@@ -215,7 +233,7 @@
                         </td>
                         <s:set name="submissionTypeValues" value="@gov.nih.nci.pa.enums.SubmissionTypeCode@getDisplayNames()" />
                         <td>
-                           <s:select headerKey="" headerValue="All" id="submissionType" name="criteria.submissionType" list="#submissionTypeValues"  value="criteria.submissionType" cssStyle="width:206px" />
+                           <s:select size="2" multiple="true" id="submissionType" name="criteria.trialSubmissionTypesAsString" list="#submissionTypeValues"  value="criteria.trialSubmissionTypesAsString" cssStyle="width:206px" />
                         </td>
                         <td scope="row" class="label">
                             <label for="trialCategory"> <fmt:message key="studyProtocol.trialCategorySearch"/></label>
@@ -270,9 +288,9 @@
                         </td>
                     	<td>
                            <s:set name="studySourceCodeValues" value="@gov.nih.nci.pa.enums.StudySourceCode@getDisplayNames()" />                          
-                           <s:select headerKey="" headerValue="All" id="studySourceType" 
-                           name="criteria.studySource" list="#studySourceCodeValues"  
-                           cssStyle="width:206px" value="criteria.studySource"/>                         
+                           <s:select size="2" multiple="true" id="studySourceType" 
+	                           name="criteria.studySource" list="#studySourceCodeValues"  
+	                           cssStyle="width:206px" value="criteria.studySource"/>                         
                         </td>   
                         <td scope="row" class="label">
                         </td>
