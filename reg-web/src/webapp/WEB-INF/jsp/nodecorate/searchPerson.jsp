@@ -93,6 +93,6 @@ function formClose() {
 	  <button type="button" class="btn btn-icon btn-primary" onclick="loadDiv();" id="search_person_btn"><i class="fa-search"></i>Search</button>
 	  <button type="button" class="btn btn-icon btn-primary" onclick="setCreateFormVisible();" id="add_person_btn"><i class="fa-plus"></i>Add Person</button>
 	  <button type="button" class="btn btn-icon btn-default" onclick="formReset();" id="search_person_reset_btn"><i class="fa-repeat"></i>Reset</button>
-	  <button type="button" class="btn btn-icon btn-default" onclick="window.parent.hidePopWin(true);" data-dismiss="modal" aria-hidden="true" id="search_person_close_btn"><i class="fa-times-circle"></i>Cancel</button>
+	  <button type="button" class="btn btn-icon btn-default" onclick="formClose();"data-dismiss="modal" aria-hidden="true" id="search_person_close_btn"><i class="fa-times-circle"></i>Cancel</button>
 </div>
 
