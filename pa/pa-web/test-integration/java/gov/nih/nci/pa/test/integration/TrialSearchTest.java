@@ -236,6 +236,7 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
         assertTrue(isTrialInSearchResults(trial));
 
         replaceLeadOrg(trial, "Cancer Therapy Evaluation Program");
+        pause(180*1000); // Let PA cache expire.
         runSearch("leadOrganizationId", new String[] { "ClinicalTrials.gov" });
         assertFalse(isTrialInSearchResults(trial));
         runSearch("leadOrganizationId",
