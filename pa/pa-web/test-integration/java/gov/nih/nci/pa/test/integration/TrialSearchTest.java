@@ -232,6 +232,7 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
     public void testSearchByLeadOrg() throws Exception {
         TrialInfo trial = createAcceptedTrial();
         loginAsSuperAbstractor();
+        pause(180*1000); // Let PA cache expire.
         runSearch("leadOrganizationId", new String[] { "ClinicalTrials.gov" });
         assertTrue(isTrialInSearchResults(trial));
 
