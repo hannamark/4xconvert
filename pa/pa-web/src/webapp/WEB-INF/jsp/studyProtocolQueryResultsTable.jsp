@@ -24,7 +24,10 @@
             <display:column class="title" titleKey="studyProtocol.nciIdentifier" sortable="true" headerScope="col" scope="row" media="excel csv xml">
                     <c:out value="${row.nciIdentifier}"/>
             </display:column>
-           
+            <display:column  title="Lead Organization" property="leadOrganizationName"
+                                        media="excel csv xml"/>
+            <display:column  title="Lead Org PO ID" property="leadOrganizationPOId"
+                                        media="excel csv xml"/>                 
             <display:column escapeXml="false" titleKey="studyProtocol.processingPriority" property="processingPriority"
                 sortable="true" headerClass="sortable"/>                
             <display:column escapeXml="true" titleKey="studyProtocol.ctepIdentifier" property="ctepId"
@@ -127,4 +130,16 @@
                 }
                 showPopWin('${studyAlternateTitlesPopUpUrl}?studyProtocolId='+studyProtocolId, width, height, '', 'Trial Alternate Titles');
             }
+            
+            (function($) {    
+                //******************
+                //** On DOM Ready **
+                //******************
+                $(function () {
+                	 // Add the Export option: CSV | Excel to the top of the search results in all Dashboards.
+                    // This is not supported by Display Tag, so doing this manually.
+                    $( "div.exportlinks" ).clone().insertBefore( "span.pagebanner" );
+                })
+            })(jQuery);
+            
         </script>

@@ -11,6 +11,11 @@
             span.select2-container {
                 max-width: 280px; 
             }
+            div.exportlinks {
+                 text-align: right;
+                 padding-right: 5px;
+            }
+            
         </style>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>        
         <script type="text/javascript" language="javascript">

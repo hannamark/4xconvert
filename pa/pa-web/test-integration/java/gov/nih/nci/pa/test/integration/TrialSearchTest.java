@@ -1,11 +1,15 @@
 package gov.nih.nci.pa.test.integration;
 
 import gov.nih.nci.pa.enums.StudySourceCode;
+import gov.nih.nci.pa.test.integration.AbstractPaSeleniumTest.TrialInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -15,6 +19,48 @@ import org.openqa.selenium.WebElement;
  * @author dkrylov
  */
 public class TrialSearchTest extends AbstractTrialStatusTest {
+
+    private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
+            : 2000;
+
+    @SuppressWarnings({ "deprecation", "unused", "unchecked" })
+    @Test
+    public void testCsvExport() throws Exception {
+        TrialInfo trial = createSubmittedTrial();
+        loginAsSuperAbstractor();
+        clickAndWait("trialSearchMenuOption");
+        s.type("identifier", trial.nciID);
+        clickAndWait("link=Search");
+
+        // Export banner must be at top and at bottom.
+        assertTrue(s
+                .isElementPresent("xpath=//form[@id='studyProtocolquery']/div[@class='exportlinks'][1]"));
+        assertTrue(s
+                .isElementPresent("xpath=//form[@id='studyProtocolquery']/div[@class='exportlinks'][2]/preceding-sibling::table[@id='row']"));
+
+        // Finally, download CSV.
+        if (!isPhantomJS()) {
+            selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
+            pause(OP_WAIT_TIME);
+            File csv = new File(downloadDir, "SearchTrialResults.csv");
+            assertTrue(csv.exists());
+            csv.deleteOnExit();
+
+            List<String> lines = FileUtils.readLines(csv);
+            String content = FileUtils.readFileToString(csv);
+            assertEquals(
+                    "NCI Trial Identifier,Lead Organization,Lead Org PO ID,Processing Priority,CTEP ID,DCP ID,Official Title,Milestone,Admin Milestone,Scientific Milestone,Processing Status,Processing Status Date,Trial Type,Trial Sub-type,Record Verification Date,Onhold Reasons,Onhold Dates,Submission Type,Submission Source,Checked Out for Admin. Use by,Checked Out for Scientific Use by",
+                    lines.get(0));
+            assertTrue(content.replaceAll("\\s+", " ").contains(
+                    trial.nciID + ",ClinicalTrials.gov,1,2,,," + trial.title
+                            + ",\"Submission Received Date " + today
+                            + "\",,,Submitted," + today
+                            + ",Interventional,,,,,O,Other,,"));
+
+            csv.delete();
+        }
+
+    }
 
     @SuppressWarnings("deprecation")
     @Test
@@ -232,12 +278,12 @@ public class TrialSearchTest extends AbstractTrialStatusTest {
     public void testSearchByLeadOrg() throws Exception {
         TrialInfo trial = createAcceptedTrial();
         loginAsSuperAbstractor();
-        pause(180*1000); // Let PA cache expire.
+        pause(180 * 1000); // Let PA cache expire.
         runSearch("leadOrganizationId", new String[] { "ClinicalTrials.gov" });
         assertTrue(isTrialInSearchResults(trial));
 
         replaceLeadOrg(trial, "Cancer Therapy Evaluation Program");
-        pause(180*1000); // Let PA cache expire.
+        pause(180 * 1000); // Let PA cache expire.
         runSearch("leadOrganizationId", new String[] { "ClinicalTrials.gov" });
         assertFalse(isTrialInSearchResults(trial));
         runSearch("leadOrganizationId",
