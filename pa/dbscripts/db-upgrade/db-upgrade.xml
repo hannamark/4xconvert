@@ -1789,5 +1789,9 @@
     <changeSet id="PO-8949" author="khandalkara">
        <comment>Implement On-Hold Feature Enhancements (On-hold Information screen in PA)	.</comment>
        <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8949.sql"/>       
-    </changeSet>        	
+    </changeSet>
+        <changeSet id="PO-8455" author="Reshma">
+       <comment>Update a property in pa_properties</comment>
+       <sqlFile path="@db-upgrade.run.dir@/4.3/PO-8455.sql"/>       
+    </changeSet>         	
 </databaseChangeLog>
