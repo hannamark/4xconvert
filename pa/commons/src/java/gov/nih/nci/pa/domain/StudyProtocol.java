@@ -125,7 +125,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
@@ -1100,20 +1099,17 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
         private static final long serialVersionUID = 5117406038792440978L;
 
         @Override
+        @SuppressWarnings("PMD.NPathComplexity")
         public int compare(StudyOverallStatus sos1, StudyOverallStatus sos2) {
-            String s1 = (sos1.getStatusDate() != null ? sos1.getStatusDate()
-                    .toString() : "")
-                    + "_"
-                    + ObjectUtils.defaultIfNull(sos1.getId(), "")
-                    + "_"
-                    + sos1.getStatusCode();
-            String s2 = (sos2.getStatusDate() != null ? sos2.getStatusDate()
-                    .toString() : "")
-                    + "_"
-                    + ObjectUtils.defaultIfNull(sos2.getId(), "")
-                    + "_"
-                    + sos2.getStatusCode();
-            return -s1.compareTo(s2);
+            Timestamp  date1=  sos1.getStatusDate() != null ? sos1.getStatusDate() : new Timestamp(0);
+            Timestamp date2 = sos2.getStatusDate() != null ? sos2.getStatusDate() :  new Timestamp(0);
+            
+             Long id1 = sos1.getId() != null ? sos1.getId() : 0;
+             Long id2 = sos2.getId() != null ? sos2.getId() : 0;
+            if (date1.equals(date2)) {
+                return -id1.compareTo(id2);
+            }
+            return -date1.compareTo(date2);
         }
     }
     
