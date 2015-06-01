@@ -1659,12 +1659,8 @@ public class CTGovSyncServiceBean implements CTGovSyncServiceLocal {
         dto.setKeywordText(getSt(study.getKeyword(), L_4000));
         //For the case where official title is null/empty in XML.
         if (StringUtils.isEmpty(study.getOfficialTitle())) {
-            //For new study set brief title as official title 
-            if (!isUpdate) {
-                dto.setOfficialTitle(getSt(defaultString(study.getBriefTitle()), L_4000));
-            }
-            //For updates don't update the official title.
-        } else {
+             dto.setOfficialTitle(getSt(defaultString(study.getBriefTitle()), L_4000));
+         } else {
             dto.setOfficialTitle(getSt(defaultString(study.getOfficialTitle()), 
                     L_4000));
         }
