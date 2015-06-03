@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.dto;
 
 import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -92,6 +93,7 @@ import java.util.Date;
  *
  */
 public class LastCreatedDTO implements Serializable {
+    private static final int TEN = 10;
     private static final long serialVersionUID = 6278080936014142515L;
     private String userLastCreated;
     private String userLastCreatedUsername;
@@ -117,6 +119,13 @@ public class LastCreatedDTO implements Serializable {
     public void setUserLastCreated(String userLastCreated) {
         this.userLastCreated = userLastCreated;
         this.userLastCreatedUsername = CsmUserUtil.getGridIdentityUsername(userLastCreated);
+    }
+    
+    /**
+     * @return dateLastCreated
+     */
+    public Date getDateLastCreatedPlusTenBiz() {
+        return PAUtil.addBusinessDays(getDateLastCreated(), TEN);
     }
 
     /**

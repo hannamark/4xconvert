@@ -60,11 +60,14 @@ public class ProtocolQueryResultsServiceTest {
     String leadOrgPoid = "123";
     String leadOrgName = "Duke Medical Center";
     String leadOrgSpIdentifier = "duk001";
-    String currentDwfStatusCode = DocumentWorkflowStatusCode.SUBMITTED.getName();
+    String currentDwfStatusCode = DocumentWorkflowStatusCode.SUBMITTED
+            .getName();
     Date currentDwfStatusDate = new Date();
     String currentStudyOverallStatus = StudyStatusCode.ACTIVE.getName();
-    String currentAdminMilestone = MilestoneCode.ADMINISTRATIVE_READY_FOR_QC.getName();
-    String currentScientificMilestone = MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getName();
+    String currentAdminMilestone = MilestoneCode.ADMINISTRATIVE_READY_FOR_QC
+            .getName();
+    String currentScientificMilestone = MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE
+            .getName();
     String currentOtherMilestone = MilestoneCode.SUBMISSION_ACCEPTED.getName();
     Integer adminCheckoutIdentifier = 19;
     String adminCheckoutUser = "cyx";
@@ -76,7 +79,7 @@ public class ProtocolQueryResultsServiceTest {
     String userLastCreatedFirst = "Jane";
     String userLastCreatedLast = "Smith";
     String dcpId = "DCPID";
-    String ctepId = "CTEPID";    
+    String ctepId = "CTEPID";
     Date amendmentDate = new Date();
     Date updatedDate = new Date();
     String phase = "0";
@@ -90,18 +93,19 @@ public class ProtocolQueryResultsServiceTest {
     Date primaryCompletionDate = new Date();
     String studyProtocolType = "InterventionalStudyProtocol";
     String studySubtypeCode = "OBSERVATIONAL";
-    
-    private String submitter_org_name; 
+   
+
+    private String submitter_org_name;
     private Date current_admin_milestone_date;
-    private Date current_scientific_milestone_date; 
+    private Date current_scientific_milestone_date;
     private Date current_other_milestone_date;
-    private Integer processing_priority; 
-    private String last_milestone; 
+    private Integer processing_priority;
+    private String last_milestone;
     private Date last_milestone_date;
-    private String active_milestone; 
+    private String active_milestone;
     private Date active_milestone_date;
     private String admin_checkout_csm_fname;
-    private String  admin_checkout_csm_lname;
+    private String admin_checkout_csm_lname;
     private String admin_checkout_reg_fname;
     private String admin_checkout_reg_lname;
     private String scientific_checkout_csm_fname;
@@ -111,18 +115,19 @@ public class ProtocolQueryResultsServiceTest {
     private String onhold_reason_code;
     private Date onhold_date;
     private Date offhold_date;
-    private String cdr_id; 
+    private String cdr_id;
     private String ccr_id;
     private String amendment_number;
     private Date admin_checkout_date;
     private Date scientific_checkout_date;
-    private String comments;    
+    private String comments;
     private String onholdDescription;
     private String study_source;
     private String accrual_disease_code_system;
     private String prev_dws = "SUBMITTED";
     private String submitter_org = "1";
-        
+    private String onholdReasonCategory = "CTRP";
+
     Object[] qryResult = { studyProtocolIdentifier, officialTitle,
             proprietaryTrialIndicator, recordVerificationDate,
             ctgovXmlRequiredIndicator, updating, dateLastCreated,
@@ -149,8 +154,10 @@ public class ProtocolQueryResultsServiceTest {
             scientific_checkout_reg_lname, onhold_reason_code, onhold_date,
             offhold_date, cdr_id, amendment_number, admin_checkout_date,
             scientific_checkout_date, comments, onholdDescription,
-            study_source, ccr_id, accrual_disease_code_system, prev_dws, submitter_org };
-    Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
+            study_source, ccr_id, accrual_disease_code_system, prev_dws,
+            submitter_org, onholdReasonCategory };
+    Object[] siteQryResult = { studyProtocolIdentifier,
+            BigInteger.valueOf(MEMB_USERID) };
 
     @Before
     public void init() throws Exception {
@@ -179,7 +186,8 @@ public class ProtocolQueryResultsServiceTest {
         ownedStudies.add(studyProtocolIdentifier);
         DAQuery queryMemb = new DAQuery();
         queryMemb.setSql(true);
-        queryMemb.setText("SELECT study_id FROM study_owner WHERE user_id = :userId");
+        queryMemb
+                .setText("SELECT study_id FROM study_owner WHERE user_id = :userId");
         queryMemb.addParameter("userId", MEMB_USERID);
         when(daMock.findByQuery(queryMemb)).thenReturn(ownedStudies);
 
@@ -195,7 +203,7 @@ public class ProtocolQueryResultsServiceTest {
         List<Object> result = new ArrayList<Object>();
         result.add(qryResult);
         when(daMock.findByQuery(qryMain)).thenReturn(result);
-        
+
         // set up subordinate query
         DAQuery qryStudyId = new DAQuery();
         qryStudyId.setSql(true);
@@ -206,7 +214,7 @@ public class ProtocolQueryResultsServiceTest {
         result = new ArrayList<Object>();
         result.add(siteQryResult);
         when(daMock.findByQuery(qryStudyId)).thenReturn(result);
-        
+
         // set up other Identifier
         DAQuery qryMain1 = new DAQuery();
         qryMain1.setSql(true);
@@ -217,9 +225,10 @@ public class ProtocolQueryResultsServiceTest {
         params1.put("ids", ids1);
         qryMain1.setParameters(params1);
         List<Object> result1 = new ArrayList<Object>();
-        result1.add(new Object[] {studyProtocolIdentifier, "OTHER_ID", IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME});
+        result1.add(new Object[] { studyProtocolIdentifier, "OTHER_ID",
+                IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME });
         when(daMock.findByQuery(qryMain1)).thenReturn(result1);
-        
+
         // fetch last updated date
         DAQuery qryMain2 = new DAQuery();
         qryMain2.setSql(true);
@@ -233,8 +242,8 @@ public class ProtocolQueryResultsServiceTest {
         result2.add(new Object[] { studyProtocolIdentifier, "Test", "Test",
                 "Test", new Date() });
         when(daMock.findByQuery(qryMain1)).thenReturn(result2);
-        
-        //populate study alternate titles
+
+        // populate study alternate titles
         DAQuery qryMain3 = new DAQuery();
         qryMain3.setSql(true);
         qryMain3.setText(ProtocolQueryResultsServiceBean.STUDY_ALTERNATE_TITLE_QRY_STRING);
@@ -244,16 +253,20 @@ public class ProtocolQueryResultsServiceTest {
         params3.put("ids", ids3);
         qryMain3.setParameters(params3);
         List<Object> result3 = new ArrayList<Object>();
-        result3.add(new Object[] {studyProtocolIdentifier, "Alternate Title", "Other"});
+        result3.add(new Object[] { studyProtocolIdentifier, "Alternate Title",
+                "Other" });
         when(daMock.findByQuery(qryMain3)).thenReturn(result3);
     }
-    
+
     @Test
     public void emptyListTest() throws Exception {
         assertEquals(0, bean.getResults(null, false, null).size());
-        assertEquals(0, bean.getResults(new ArrayList<Long>(), false, null).size());
-        assertEquals(0, bean.getResults(new ArrayList<Long>(), false, 1L).size());
-        assertEquals(0, bean.getResults(new ArrayList<Long>(), true, null).size());
+        assertEquals(0, bean.getResults(new ArrayList<Long>(), false, null)
+                .size());
+        assertEquals(0, bean.getResults(new ArrayList<Long>(), false, 1L)
+                .size());
+        assertEquals(0, bean.getResults(new ArrayList<Long>(), true, null)
+                .size());
         assertEquals(0, bean.getResults(new ArrayList<Long>(), true, 1L).size());
     }
 
@@ -269,7 +282,7 @@ public class ProtocolQueryResultsServiceTest {
     @Test
     public void noOwnedTrialsTest() throws Exception {
         List<Long> ids = new ArrayList<Long>();
-        for (long x = 0; x < 501; x++) {           
+        for (long x = 0; x < 501; x++) {
             ids.add(x);
         }
         assertEquals(0, bean.getResults(ids, true, null).size());
@@ -282,20 +295,24 @@ public class ProtocolQueryResultsServiceTest {
         id.setId(studyProtocolIdentifier.longValue());
         ids.add(studyProtocolIdentifier.longValue());
         // update
-        List<StudyProtocolQueryDTO> trials = bean.getResults(ids, false, MEMB_USERID);
+        List<StudyProtocolQueryDTO> trials = bean.getResults(ids, false,
+                MEMB_USERID);
         assertEquals(1, trials.size());
-        assertEquals(SubmissionTypeCode.U, trials.get(0).getSubmissionTypeCode());    
-        
+        assertEquals(SubmissionTypeCode.U, trials.get(0)
+                .getSubmissionTypeCode());
+
         // original
         qryResult[UPDATING_IDX] = null;
         trials = bean.getResults(ids, false, MEMB_USERID);
         assertEquals(1, trials.size());
-        assertEquals(SubmissionTypeCode.O, trials.get(0).getSubmissionTypeCode());
+        assertEquals(SubmissionTypeCode.O, trials.get(0)
+                .getSubmissionTypeCode());
         // amendment
         qryResult[SUBMISSION_NUMBER_IDX] = 2;
         trials = bean.getResults(ids, false, MEMB_USERID);
         assertEquals(1, trials.size());
-        assertEquals(SubmissionTypeCode.A, trials.get(0).getSubmissionTypeCode());
+        assertEquals(SubmissionTypeCode.A, trials.get(0)
+                .getSubmissionTypeCode());
     }
 
     @Test
@@ -359,57 +376,57 @@ public class ProtocolQueryResultsServiceTest {
         }
         assertEquals(1, bean.getResults(ids, false, null).size());
     }
-    
+
     @Test
     public void testSetFlags() {
         StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
         dto.setProprietaryTrial(true);
         List<String> rssOrgs = Arrays.asList("RSS");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
-        ((ProtocolQueryResultsServiceBean)bean).setFlags(dto, qryResult, rssOrgs);
+        ((ProtocolQueryResultsServiceBean) bean).setFlags(dto, qryResult,
+                rssOrgs);
         assertTrue(dto.isSiteSelfRegistrable());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setProprietaryTrial(true);
         rssOrgs = Arrays.asList("Duke Medical Center");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
-        ((ProtocolQueryResultsServiceBean)bean).setFlags(dto, qryResult, rssOrgs);
+        ((ProtocolQueryResultsServiceBean) bean).setFlags(dto, qryResult,
+                rssOrgs);
         assertFalse(dto.isSiteSelfRegistrable());
-        
+
         dto = new StudyProtocolQueryDTO();
         dto.setProprietaryTrial(true);
         rssOrgs = Arrays.asList("RSS");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.REJECTED);
         bean.setFlags(dto, qryResult, rssOrgs);
-        assertFalse(dto.isSiteSelfRegistrable());    
-        
+        assertFalse(dto.isSiteSelfRegistrable());
+
         dto = new StudyProtocolQueryDTO();
         dto.setProprietaryTrial(true);
         rssOrgs = Arrays.asList("RSS");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
         dto.setStudyStatusCode(StudyStatusCode.ACTIVE);
         bean.setFlags(dto, qryResult, rssOrgs);
-        assertTrue(dto.isSiteSelfRegistrable());  
-        
+        assertTrue(dto.isSiteSelfRegistrable());
+
         dto = new StudyProtocolQueryDTO();
         dto.setProprietaryTrial(true);
         rssOrgs = Arrays.asList("RSS");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
         dto.setStudyStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
         bean.setFlags(dto, qryResult, rssOrgs);
-        assertTrue(dto.isSiteSelfRegistrable());      
-        
-        
+        assertTrue(dto.isSiteSelfRegistrable());
+
     }
-    
-    
+
     /**
-     * @throws PAException 
+     * @throws PAException
      * 
      */
     @Test
     public void testGetStudiesOnWhichUserHasSite() throws PAException {
-        Map<Long, Boolean> map = bean.getStudiesOnWhichUserHasSite(memb) ;
+        Map<Long, Boolean> map = bean.getStudiesOnWhichUserHasSite(memb);
         assertEquals(1, map.size());
         assertEquals(Boolean.TRUE, map.get(studyProtocolIdentifier.longValue()));
     }

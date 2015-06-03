@@ -27,6 +27,15 @@ i.fa-sitemap {
     cursor: default;
 }
 
+div#workload {
+    max-width: 930px;
+    overflow-x: scroll;
+}
+
+a.nciid, td.checkedOut span {
+    white-space: nowrap;
+}
+
 
 </style>
 
@@ -261,7 +270,8 @@ i.fa-sitemap {
         	
             // Add the Export option: CSV | Excel to the top of the search results in all Dashboards.
             // This is not supported by Display Tag, so doing this manually.
-            $( "div.exportlinks" ).clone().insertBefore( "span.pagebanner" );
+            $( "#workload > div.exportlinks" ).clone().insertBefore( "#workload > span.pagebanner" );
+            $( "#results > div.exportlinks" ).clone().insertBefore( "#results > span.pagebanner" );
         	
         	// Init Select2 boxes.
             $("#anatomicSites").select2();
@@ -410,15 +420,29 @@ i.fa-sitemap {
 				"dashboardForm");
 		setWidth(90, 1, 15, 1);
 		setFormat("mm/dd/yyyy");
+		
 		var tabs = new Control.Tabs($('maintabs'));
+		
+		<c:if test="${not empty failureMessage}">
+        tabs.setActiveTab('search');
+        updateHelpTopic('search');
+        </c:if>
+        
 		<c:if test="${toggleResultsTab==true}">
 		tabs.setActiveTab('results');
 		updateHelpTopic('results');
 		</c:if>
+		
 		<c:if test="${toggleDetailsTab==true}">
 		tabs.setActiveTab('details');
 		updateHelpTopic('details');
 		</c:if>
+		
+        if ($('workloadid')!=null) {
+            Event.observe($('workloadid'), "click", function() {
+                     updateHelpTopic('workload');
+            });
+        }		
 		
 		if ($('resultsid')!=null) {
 		    Event.observe($('resultsid'), "click", function() {
@@ -462,6 +486,12 @@ i.fa-sitemap {
 	                    }
 	                }
 		} 
+		if(tabType =='workload') {           
+                document.getElementById('pageHelpid').onclick = function() {
+                    Help.popHelp('dashboardworkload');
+                }
+           
+        }		
 		if(tabType =='search') {
 			if("${sessionScope.isSuAbstractor}" == "true") {
                 document.getElementById('pageHelpid').onclick = function() {
@@ -520,20 +550,30 @@ i.fa-sitemap {
 			<pa:failureMessage />
 			<s:hidden id="studyProtocolId" name="studyProtocolId" />
 			<s:hidden name="checkInReason" id="checkInReason"/>
-			 <s:hidden name="superAbstractorId"/>
+			<s:hidden name="superAbstractorId"/>
 			<table class="form">
-				<c:if test="${dashboardSearchResults!=null}">
-					<tr>
-						<td align="right" nowrap="nowrap" style="padding: 0; margin: 0;">Results
-							as of <fmt:formatDate value="${currentDate}"
-								pattern="MM/dd/yyyy -- hh:mm:ss aaa" /> &nbsp;&nbsp; <input
-							type="button" value="Refresh" onclick="handleAction('${suAbs?'search':'execute'}');" />
-						</td>
-					</tr>
-				</c:if>
+			    <c:choose>
+			     <c:when test="${dashboardSearchResults!=null}">
+                    <tr>
+                        <td align="right" nowrap="nowrap" style="padding: 0; margin: 0;">Results
+                            as of <fmt:formatDate value="${currentDate}"
+                                pattern="MM/dd/yyyy -- hh:mm:ss aaa" /> &nbsp;&nbsp; <input
+                            type="button" value="Refresh" onclick="handleAction('${suAbs?'search':'execute'}');" />
+                        </td>
+                    </tr>			     
+			     </c:when>
+			     <c:otherwise>
+                    <tr>
+                        <td align="right" nowrap="nowrap" style="padding: 0; margin: 0;"><input
+                            type="button" value="Refresh" onclick="handleAction('execute');" />
+                        </td>
+                    </tr>
+			     </c:otherwise>
+			    </c:choose>
 				<tr>
 					<td>
 						<ul id="maintabs" class="tabs">
+						    <li><a id="workloadid" href="#workload">Workload</a></li>
 						    <c:if test="${suAbs}">
 							     <li><a id="searchid" href="#search">Search Criteria</a></li>
 							</c:if>
@@ -545,9 +585,12 @@ i.fa-sitemap {
 							</c:if>
 						</ul>
 						<div id="tabboxwrapper">
+						   <div id="workload" class="box" style="${toggleResultsTab || toggleDetailsTab?'display:none;':''}">
+						      <jsp:include page="dashboard.workload.jsp"/>
+                           </div>
 						    <c:if test="${suAbs}">						    
 							<div id="search" class="box"
-								style="${toggleResultsTab || toggleDetailsTab?'display:none;':''}">
+								style="display:none;">
 								<table class="form">
                                     <tr>
                                         <td scope="row" class="label"><label for="assignee"><fmt:message
@@ -801,11 +844,8 @@ i.fa-sitemap {
                                         media="excel csv xml"/>
                                     <display:column  title="Amendment #" property="amendmentNumber"
                                         media="excel csv xml"/>
-                                    <display:column  title="Trial Category" property="trialCategory"
-                                        media="excel csv xml"/>
                                     <display:column  title="Summary 4 Funding" property="summary4FundingSponsorType"
-                                        media="excel csv xml"/>
-                                        
+                                        media="excel csv xml"/>                                        
                                     <display:column  title="On Hold Date" property="recentOnHoldDate" format="{0,date,MM/dd/yyyy}"
                                         media="excel csv xml"/>
                                     <display:column  title="Off Hold Date" property="recentOffHoldDate" format="{0,date,MM/dd/yyyy}"
@@ -832,8 +872,6 @@ i.fa-sitemap {
 									<display:column escapeXml="true" sortable="true"
 										titleKey="studyProtocol.submissionType"
 										property="submissionTypeCode.code" headerClass="sortable" />
-									<display:column title="Trial Category" property="trialCategory"
-										sortable="true" headerClass="sortable" />
 									<display:column title="CTEP/DCP" property="ctepOrDcp"
 										sortable="true" headerClass="sortable" />
 									<display:column title="Submitting Organization"
@@ -876,8 +914,8 @@ i.fa-sitemap {
 ':''}" /><c:if
                                             test="${results.documentWorkflowStatusCode.code=='On-Hold'}">On hold since ${results.onHoldDate!=null?results.onHoldDate:'N/A'},
 reason: ${not empty results.onHoldReasons?results.onHoldReasons:'N/A'}
-                                        </c:if>
-                                    </display:column>
+                                        </c:if></display:column>
+                                    
                                     
                                     <s:set var="milestoneCodesForReporting" scope="request"
                                            value="@gov.nih.nci.pa.enums.MilestoneCode@getMilestoneCodesForReporting()" />

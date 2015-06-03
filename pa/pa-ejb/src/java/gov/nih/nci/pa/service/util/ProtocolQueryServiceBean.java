@@ -116,6 +116,7 @@ import gov.nih.nci.pa.enums.StudySubtypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.ReportStudyProtocolQueryConverter;
+import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
 import gov.nih.nci.pa.iso.convert.TrialSearchStudyProtocolQueryConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -396,16 +397,38 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         DAQuery query = DAQuery.queryByName("gov.nih.nci.pa.domain.StudyOnhold.offholdByStudyProtocolIds");
         query.addParameter("spIds", getProtocolIds(spDtos));
         List<Object[]> studyOnHoldList = dataAccessService.findByQuery(query);
-        Map<Long, List<StudyOnhold>> studyOnHolds = generateOnholdMap(studyOnHoldList);
-        populateOnHoldData(spDtos, studyOnHolds);
+        Map<Long, List<StudyOnhold>> studyOnHolds = generateActiveHoldMap(studyOnHoldList);
+        populateOnHoldData(spDtos, studyOnHolds);        
+        populateAllHolds(spDtos, studyOnHoldList);
         return spDtos;
+    }    
+   
+   
+    private void populateAllHolds(final List<StudyProtocolQueryDTO> spDtos,
+            final List<Object[]> studyOnHoldList) {
+        for (Object[] searchResult : studyOnHoldList) {
+            Long studyProtocolId = (Long) searchResult[0];
+            StudyOnhold studyOnhold = (StudyOnhold) searchResult[1];
+            for (StudyProtocolQueryDTO sp : spDtos) {
+                if (studyProtocolId.equals(sp.getStudyProtocolId())) {
+                    sp.getAllHolds().add(
+                            new StudyOnholdConverter()
+                                    .convertFromDomainToDto(studyOnhold));
+                    break;
+                }
+            }
+        }
     }
 
-   private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object[]> onHoldReasons) {
-        Map<Long , List<StudyOnhold>> studyOnHolds = new HashMap<Long , List<StudyOnhold>>();
+    private Map<Long, List<StudyOnhold>> generateActiveHoldMap(
+            List<Object[]> onHoldReasons) {
+        Map<Long, List<StudyOnhold>> studyOnHolds = new HashMap<Long, List<StudyOnhold>>();
         for (Object[] searchResult : onHoldReasons) {
             Long studyProtocolId = (Long) searchResult[0];
             StudyOnhold studyOnhold = (StudyOnhold) searchResult[1];
+            if (studyOnhold.getOffholdDate() != null) {
+                continue;
+            }
             if (studyOnHolds.containsKey(studyProtocolId)) {
                 studyOnHolds.get(studyProtocolId).add(studyOnhold);
             } else {
@@ -986,7 +1009,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 .createQuery("select sm.studyProtocol.id, sm.milestoneDate, sm.milestoneCode, sm.dateLastCreated, "
                         + "sm.userLastCreated.userId from "
                         + StudyMilestone.class.getSimpleName()
-                        + " sm where sm.studyProtocol.id in (:ids) order by sm.studyProtocol.id, sm.id asc");
+                        + " sm where sm.studyProtocol.id in (:ids) order by sm.studyProtocol.id, sm.milestoneDate, "
+                        + "sm.id asc");
 
         query.setParameterList("ids", ids);
         // CHECKSTYLE:OFF

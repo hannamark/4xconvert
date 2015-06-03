@@ -66,10 +66,10 @@ public class DashboardActionTest extends AbstractPaActionTest {
         DashboardAction action = getAction();
         assertEquals("abstractorLanding", action.execute());
         final List trials = (List) getRequest().getSession().getAttribute(
-                "dashboardSearchResults");
+                "workload");
         assertNotNull(trials);
         assertEquals(2, trials.size());
-        assertEquals(true, getRequest().getAttribute("toggleResultsTab"));
+        assertNull(getRequest().getAttribute("toggleResultsTab"));
     }
 
     @Test

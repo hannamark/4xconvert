@@ -1,10 +1,18 @@
 package gov.nih.nci.pa.test.integration;
 
 import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -15,6 +23,7 @@ import org.openqa.selenium.interactions.Actions;
  * 
  * @author dkrylov
  */
+@SuppressWarnings("deprecation")
 public class DashboardTest extends AbstractTrialStatusTest {
 
     private static final int OP_WAIT_TIME = SystemUtils.IS_OS_LINUX ? 10000
@@ -22,11 +31,618 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
     @SuppressWarnings({ "deprecation", "unused", "unchecked" })
     @Test
+    public void testWorkloadTab() throws Exception {
+        deactivateAllTrials();
+        restoreDefaultWorkloadMilestones();
+
+        TrialInfo acceptedTrial = createAcceptedTrial();
+        TrialInfo submittedTrial = createSubmittedTrial();
+        loginAsSuperAbstractor();
+
+        clickAndWait("link=Dashboard");
+        verifyWorkfloadTabActive();
+        assertTrue(s.isTextPresent("2 trials found, displaying all trials."));
+
+        // Verify column headers Super Abstractor sees
+        verifySuperAbstractorWorkloadHeaders();
+
+        // Admin/Scientific Abstractors see less.
+        logoutPA();
+        loginAsAdminAbstractor();
+        clickAndWait("link=Dashboard");
+        verifyWorkfloadTabActive();
+        verifyAdminScientificAbstractorWorkloadHeaders();
+        logoutPA();
+        loginAsScientificAbstractor();
+        clickAndWait("link=Dashboard");
+        verifyWorkfloadTabActive();
+        verifyAdminScientificAbstractorWorkloadHeaders();
+
+        // Verify selection criteria (last milestone, excluding Rejected
+        // trials).
+        logoutPA();
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+        assertTrue(isTrialInWorkloadTab(submittedTrial));
+        assertTrue(isTrialInWorkloadTab(acceptedTrial));
+        changePaProperty("dashboard.workload.milestones",
+                "Submission Received Date");
+        clickAndWait("link=Dashboard");
+        assertTrue(isTrialInWorkloadTab(submittedTrial));
+        assertFalse(isTrialInWorkloadTab(acceptedTrial));
+        changePaProperty("dashboard.workload.milestones",
+                "Submission Acceptance Date");
+        clickAndWait("link=Dashboard");
+        assertFalse(isTrialInWorkloadTab(submittedTrial));
+        assertTrue(isTrialInWorkloadTab(acceptedTrial));
+        changePaProperty("dashboard.workload.milestones",
+                "Submission Received Date,Submission Acceptance Date");
+        clickAndWait("link=Dashboard");
+        assertTrue(isTrialInWorkloadTab(submittedTrial));
+        assertTrue(isTrialInWorkloadTab(acceptedTrial));
+        addDWS(submittedTrial, "REJECTED");
+        addDWS(acceptedTrial, "REJECTED");
+        clickAndWait("link=Dashboard");
+        assertFalse(isTrialInWorkloadTab(submittedTrial));
+        assertFalse(isTrialInWorkloadTab(acceptedTrial));
+        restoreDefaultWorkloadMilestones();
+
+        // Verify submission type.
+        deactivateAllTrials();
+        acceptedTrial = createAcceptedTrial();
+        clickAndWait("link=Dashboard");
+        assertTrue(isTrialInWorkloadTab(acceptedTrial));
+        verifyColumnValue(1, "Submission Type", "Complete");
+        new QueryRunner().update(connection,
+                "update study_protocol set proprietary_trial_indicator=true where identifier="
+                        + acceptedTrial.id);
+        clickAndWait("link=Dashboard");
+        assertTrue(isTrialInWorkloadTab(acceptedTrial));
+        verifyColumnValue(1, "Submission Type", "Abbreviated");
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set proprietary_trial_indicator=false, amendment_date=now() where identifier="
+                                + acceptedTrial.id);
+        clickAndWait("link=Dashboard");
+        assertTrue(isTrialInWorkloadTab(acceptedTrial));
+        verifyColumnValue(1, "Submission Type", "Amendment");
+
+        // Submitted On
+        deactivateAllTrials();
+        acceptedTrial = createAcceptedTrial();
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-05-22 09:15.000' where identifier="
+                                + acceptedTrial.id);
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "Submitted On", "05/22/2015");
+        verifyColumnValue(1, "Submission Plus 10 Business Days", "06/08/2015");
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-06-01 09:15.000' where identifier="
+                                + acceptedTrial.id);
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "Submitted On", "06/01/2015");
+        verifyColumnValue(1, "Submission Plus 10 Business Days", "06/15/2015");
+
+        // Expected Abstraction Completion Date & Business Days On Hold.
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-05-22 09:15.000' where identifier="
+                                + acceptedTrial.id);
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "Expected Abstraction Completion Date",
+                "06/08/2015");
+        verifyColumnValue(1, "Business Days on Hold (CTRP)", "0");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", "0");
+        addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/26/2015"),
+                date("05/27/2015"), "CTRP");
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "Expected Abstraction Completion Date",
+                "06/08/2015");
+        verifyColumnValue(1, "Business Days on Hold (CTRP)", "2");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", "0");
+        addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/26/2015"),
+                date("05/27/2015"), "Submitter");
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "Expected Abstraction Completion Date",
+                "06/10/2015");
+        verifyColumnValue(1, "Business Days on Hold (CTRP)", "2");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", "2");
+        addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/24/2015"),
+                date("05/25/2015"), "Submitter");
+        addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/23/2015"),
+                date("05/25/2015"), "CTRP");
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "Expected Abstraction Completion Date",
+                "06/10/2015");
+        verifyColumnValue(1, "Business Days on Hold (CTRP)", "2");
+        verifyColumnValue(1, "Business Days on Hold (Submitter)", "2");
+
+        // Business Days Since Submitted
+        final Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        new QueryRunner().update(connection,
+                "update study_protocol set date_last_created=" + jdbcTs(date)
+                        + " where identifier=" + acceptedTrial.id);
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(
+                1,
+                "Business Days Since Submitted",
+                cal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
+                        && cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY ? "1"
+                        : "0");
+
+        // Current On Hold Date.
+        verifyColumnValue(1, "Current On-Hold Date", "");
+        addOnHold(acceptedTrial, "SUBMISSION_INCOM", date("05/23/2015"), null,
+                "CTRP");
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "Current On-Hold Date", "05/23/2015");
+
+        // Accepted
+        verifyColumnValue(1, "Accepted", today);
+
+        // Milestones
+        verifyColumnValue(1, "Admin Abstraction Completed", "");
+        verifyColumnValue(1, "Admin QC Completed", "");
+        verifyColumnValue(1, "Scientific Abstraction Completed", "");
+        verifyColumnValue(1, "Scientific QC Completed", "");
+        verifyColumnValue(1, "Ready for TSR", "");
+        addMilestone(acceptedTrial, "ADMINISTRATIVE_PROCESSING_COMPLETED_DATE",
+                jdbcTs(DateUtils.addDays(date, 1)));
+        addMilestone(acceptedTrial, "ADMINISTRATIVE_QC_COMPLETE",
+                jdbcTs(DateUtils.addDays(date, 2)));
+        addMilestone(acceptedTrial, "SCIENTIFIC_PROCESSING_COMPLETED_DATE",
+                jdbcTs(DateUtils.addDays(date, 3)));
+        addMilestone(acceptedTrial, "SCIENTIFIC_QC_COMPLETE",
+                jdbcTs(DateUtils.addDays(date, 4)));
+        addMilestone(acceptedTrial, "READY_FOR_TSR",
+                jdbcTs(DateUtils.addDays(date, 5)));
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "Admin Abstraction Completed",
+                fmt(DateUtils.addDays(date, 1)));
+        verifyColumnValue(1, "Admin QC Completed",
+                fmt(DateUtils.addDays(date, 2)));
+        verifyColumnValue(1, "Scientific Abstraction Completed",
+                fmt(DateUtils.addDays(date, 3)));
+        verifyColumnValue(1, "Scientific QC Completed",
+                fmt(DateUtils.addDays(date, 4)));
+        verifyColumnValue(1, "Ready for TSR", fmt(DateUtils.addDays(date, 5)));
+
+        // Checked out by
+        verifyColumnValue(1, "Checked Out By", "");
+        findAndSelectTrialInDashboard(acceptedTrial);
+        clickAndWait("link=Admin/Scientific Check Out");
+        assertTrue(s
+                .isTextPresent("Message. Trial Check-Out (Admin and Scientific) Successful"));
+        clickAndWait("link=Dashboard");
+        assertTrue(isTrialInWorkloadTab(acceptedTrial));
+        verifyColumnValue(1, "Checked Out By", "CI, ctrpsubstractor (AS)");
+        deactivateAllTrials();
+        acceptedTrial = createAcceptedTrial();
+        logoutPA();
+        loginAsAdminAbstractor();
+        clickAndWait("link=Dashboard");
+        clickAndWait("link=" + acceptedTrial.nciID.replaceFirst("NCI-", ""));
+        clickAndWait("link=Admin Check Out");
+        clickAndWait("//input[@value='Refresh']");
+        verifyColumnValue(1, "Checked Out By", "admin-ci (AD)");
+        logoutPA();
+        loginAsScientificAbstractor();
+        clickAndWait("link=Dashboard");
+        clickAndWait("link=" + acceptedTrial.nciID.replaceFirst("NCI-", ""));
+        clickAndWait("link=Scientific Check Out");
+        clickAndWait("//input[@value='Refresh']");
+        verifyColumnValue(1, "Checked Out By",
+                "admin-ci (AD) scientific-ci (SC)");
+
+        // Initial list sort is by Abstraction Expected Completion Date,
+        // descending
+        deactivateAllTrials();
+        logoutPA();
+        TrialInfo second = createAcceptedTrial();
+        TrialInfo first = createAcceptedTrial();
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-05-05 09:15.000' where identifier="
+                                + first.id);
+        new QueryRunner()
+                .update(connection,
+                        "update study_protocol set date_last_created='2015-05-04 09:15.000' where identifier="
+                                + second.id);
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Expected Abstraction Completion Date");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Sort NCI ID.
+        sort("NCI Trial Identifier");
+        if (first.nciID.compareTo(second.nciID) < 0) {
+            verifyColumnValue(1, "NCI Trial Identifier",
+                    first.nciID.replaceFirst("NCI-", ""));
+            verifyColumnValue(2, "NCI Trial Identifier",
+                    second.nciID.replaceFirst("NCI-", ""));
+        } else {
+            verifyColumnValue(2, "NCI Trial Identifier",
+                    first.nciID.replaceFirst("NCI-", ""));
+            verifyColumnValue(1, "NCI Trial Identifier",
+                    second.nciID.replaceFirst("NCI-", ""));
+        }
+        sort("NCI Trial Identifier");
+        if (first.nciID.compareTo(second.nciID) < 0) {
+            verifyColumnValue(2, "NCI Trial Identifier",
+                    first.nciID.replaceFirst("NCI-", ""));
+            verifyColumnValue(1, "NCI Trial Identifier",
+                    second.nciID.replaceFirst("NCI-", ""));
+        } else {
+            verifyColumnValue(1, "NCI Trial Identifier",
+                    first.nciID.replaceFirst("NCI-", ""));
+            verifyColumnValue(2, "NCI Trial Identifier",
+                    second.nciID.replaceFirst("NCI-", ""));
+        }
+
+        // Sort Submission Type.
+        new QueryRunner().update(connection,
+                "update study_protocol set proprietary_trial_indicator=true where identifier="
+                        + first.id);
+        clickAndWait("//input[@value='Refresh']");
+        sort("Submission Type");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Submission Type");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Sort Submitted On.
+        sort("Submitted On");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Submitted On");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Sort Submission Plus 10 Business Days.
+        sort("Submission Plus 10 Business Days");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Submission Plus 10 Business Days");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Sort Business Days Since Submitted
+        sort("Submission Plus 10 Business Days");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Submission Plus 10 Business Days");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Sort by Business Days on Hold.
+        addOnHold(first, "SUBMISSION_INCOM", date("05/26/2015"),
+                date("05/27/2015"), "CTRP");
+        clickAndWait("//input[@value='Refresh']");
+        sort("Business Days on Hold (CTRP)");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Business Days on Hold (CTRP)");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        addOnHold(first, "SUBMISSION_INCOM", date("05/26/2015"),
+                date("05/27/2015"), "Submitter");
+        clickAndWait("//input[@value='Refresh']");
+        sort("Business Days on Hold (Submitter)");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Business Days on Hold (Submitter)");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Sort by On Hold Date.
+        addOnHold(first, "SUBMISSION_INCOM", date("05/27/2015"), null, "CTRP");
+        clickAndWait("//input[@value='Refresh']");
+        sort("Current On-Hold Date");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Current On-Hold Date");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Sort by Submission Accepted
+        addMilestone(first, "SUBMISSION_ACCEPTED",
+                jdbcTs(DateUtils.addDays(date, 2)));
+        clickAndWait("//input[@value='Refresh']");
+        sort("Accepted");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Accepted");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Sort by all other milestones.
+        checkSortByMilestone(first, second, "Admin Abstraction Completed",
+                "ADMINISTRATIVE_PROCESSING_COMPLETED_DATE");
+        checkSortByMilestone(first, second, "Admin QC Completed",
+                "ADMINISTRATIVE_QC_COMPLETE");
+        checkSortByMilestone(first, second, "Scientific Abstraction Completed",
+                "SCIENTIFIC_PROCESSING_COMPLETED_DATE");
+        checkSortByMilestone(first, second, "Scientific QC Completed",
+                "SCIENTIFIC_QC_COMPLETE");
+        checkSortByMilestone(first, second, "Ready for TSR", "READY_FOR_TSR");
+
+        // Finally, sort by check out.
+        logoutPA();
+        loginAsAdminAbstractor();
+        clickAndWait("link=Dashboard");
+        clickAndWait("link=" + first.nciID.replaceFirst("NCI-", ""));
+        clickAndWait("link=Admin Check Out");
+        logoutPA();
+        loginAsScientificAbstractor();
+        clickAndWait("link=Dashboard");
+        clickAndWait("link=" + second.nciID.replaceFirst("NCI-", ""));
+        clickAndWait("link=Scientific Check Out");
+        clickAndWait("link=Dashboard");
+        sort("Checked Out By");
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort("Checked Out By");
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+        // Verify CSV Export; firefox only.
+        verifyWorkloadCSVExport();
+
+    }
+
+    /**
+     * @throws SQLException
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+    private void verifyWorkloadCSVExport() throws SQLException, IOException {
+        deactivateAllTrials();
+        TrialInfo trial = createAcceptedTrial();
+        new QueryRunner().update(connection,
+                "update study_protocol set date_last_created="
+                        + jdbcTs(new Date()) + " where identifier=" + trial.id);
+        logoutPA();
+        loginAsSuperAbstractor();
+        clickAndWait("link=Dashboard");
+        verifyWorkfloadTabActive();
+
+        // Export banner must be at top and at bottom.
+        assertTrue(s
+                .isElementPresent("xpath=//div[@id='workload']/div[@class='exportlinks'][1]"));
+        assertTrue(s
+                .isElementPresent("xpath=//div[@id='workload']/div[@class='exportlinks'][2]/preceding-sibling::table[@id='wl']"));
+
+        // Finally, download CSV.
+        if (!isPhantomJS()) {
+            selenium.click("xpath=//div[@id='workload']//a/span[normalize-space(text())='CSV']");
+            pause(OP_WAIT_TIME);
+            File csv = new File(downloadDir, "workload.csv");
+            assertTrue(csv.exists());
+            csv.deleteOnExit();
+
+            List<String> lines = FileUtils.readLines(csv);
+            assertEquals(
+                    "NCI Trial Identifier,Submission Type,Submitted On,Submission Plus 10 Business Days,Expected Abstraction Completion Date,Business Days Since Submitted,Business Days on Hold (CTRP),Business Days on Hold (Submitter),Current On-Hold Date,Accepted,Admin Abstraction Completed,Admin QC Completed,Scientific Abstraction Completed,Scientific QC Completed,Ready for TSR,Checked Out By,Lead Organization,Lead Org PO ID,ClinicalTrials.gov Identifier,CTEP ID,DCP ID,CDR ID,Amendment #,Summary 4 Funding,On Hold Date,Off Hold Date,On Hold Reason,On Hold Description,Trial Type,NCI Sponsored,Processing Status,Processing Status Date,Admin Check out Name,Admin Check out Date,Scientific Check out Name,Scientific Check out Date,CTEP/DCP,Submitting Organization,Submission Date,Last Milestone,Last Milestone Date,Submission Source,Processing Priority,Comments,This Trial is,Submission Received Date,Added By,Added On,Submission Acceptance Date,Added By,Added On,Submission Rejection Date,Added By,Added On,Submission Terminated Date,Added By,Added On,Submission Reactivated Date,Added By,Added On,Administrative Processing Completed Date,Added By,Added On,Administrative QC Completed Date,Added By,Added On,Scientific Processing Completed Date,Added By,Added On,Scientific QC Completed Date,Added By,Added On,Trial Summary Report Date,Added By,Added On,Submitter Trial Summary Report Feedback Date,Added By,Added On,Initial Abstraction Verified Date,Added By,Added On,On-going Abstraction Verified Date,Added By,Added On,Late Rejection Date,Added By,Added On",
+                    lines.get(0));
+
+            final String normalizedContent = lines.get(1).replaceAll("\\s+",
+                    " ");
+            final String expected = trial.nciID.replaceFirst("NCI-", "")
+                    + ",Complete,"
+                    + today
+                    + ",\\d{2}/\\d{2}/\\d{4},\\d{2}/\\d{2}/\\d{4},\\d,0,0,,"
+                    + today
+                    + ",,,,,,,ClinicalTrials.gov,1,,,,,,,,,,,Interventional,No,Accepted,"
+                    + today
+                    + ",,,,,,ClinicalTrials.gov,"
+                    + today
+                    + ",Submission Acceptance Date,"
+                    + today
+                    + ",Other,2,,Ready for Admin ProcessingReady for Scientific Processing,"
+                    + today + ",," + today + "," + today + ",," + today
+                    + ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
+
+            System.out.println(normalizedContent);
+            System.out.println(expected);
+            assertTrue(normalizedContent.matches(expected));
+
+            csv.delete();
+        }
+    }
+
+    private void checkSortByMilestone(TrialInfo first, TrialInfo second,
+            String column, String code) throws SQLException {
+        // Initially both trials have empty dates, verify sort does not change
+        // anything.
+        clickAndWait("//input[@value='Refresh']");
+        sort(column);
+        String before = getColumnValue(1, "NCI Trial Identifier");
+        sort(column);
+        String after = getColumnValue(1, "NCI Trial Identifier");
+        assertEquals(before, after);
+
+        addMilestone(first, code, jdbcTs(DateUtils.addDays(new Date(), 1)));
+        addMilestone(second, code, jdbcTs(DateUtils.addDays(new Date(), 2)));
+        clickAndWait("//input[@value='Refresh']");
+
+        sort(column);
+        verifyColumnValue(1, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(2, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+        sort(column);
+        verifyColumnValue(2, "NCI Trial Identifier",
+                first.nciID.replaceFirst("NCI-", ""));
+        verifyColumnValue(1, "NCI Trial Identifier",
+                second.nciID.replaceFirst("NCI-", ""));
+
+    }
+
+    private void sort(String columnHeader) {
+        final String xpath = "//table[@id='wl']//th/a[normalize-space(text())='"
+                + columnHeader + "']";
+        moveElementIntoView(By.xpath(xpath));
+        clickAndWait(xpath);
+    }
+
+    private String fmt(Date date) {
+        return DateFormatUtils.format(date, "MM/dd/yyyy");
+    }
+
+    private Date date(String date) throws ParseException {
+        return DateUtils.parseDate(date, new String[] { "MM/dd/yyyy" });
+    }
+
+    private void verifyColumnValue(int row, String header, String value) {
+        assertEquals(value, getColumnValue(row, header));
+    }
+
+    private String getColumnValue(int row, String header) {
+        // determine column index.
+        int index = 1;
+        while (!s.getText("//table[@id='wl']/thead/tr/th[" + index + "]/a")
+                .equalsIgnoreCase(header)) {
+            index++;
+        }
+        return s.getText(
+                "//table[@id='wl']/tbody/tr[" + row + "]/td[" + index + "]")
+                .replaceAll("\\s+", " ");
+    }
+
+    /**
+     * @throws SQLException
+     */
+    private void restoreDefaultWorkloadMilestones() throws SQLException {
+        changePaProperty(
+                "dashboard.workload.milestones",
+                "Submission Received Date,Submission Acceptance Date,Submission Reactivated Date,Administrative Processing Start Date,Administrative Processing Completed Date,Ready for Administrative QC Date,Administrative QC Start Date,Administrative QC Completed Date,Scientific Processing Start Date,Scientific Processing Completed Date,Ready for Scientific QC Date,Scientific QC Start Date,Scientific QC Completed Date,Ready for Trial Summary Report Date");
+    }
+
+    /**
+     * @throws SQLException
+     */
+    private void changePaProperty(String name, String value)
+            throws SQLException {
+        new QueryRunner().update(connection, "update pa_properties set value='"
+                + value + "' where name='" + name + "'");
+
+    }
+
+    private boolean isTrialInWorkloadTab(TrialInfo trial) {
+        final String xpath = "xpath=//table[@id='wl']//td[1]/a[normalize-space(text())='"
+                + trial.nciID.replaceFirst("NCI-", "") + "']";
+        return s.isElementPresent(xpath) && s.isVisible(xpath);
+    }
+
+    /**
+     * 
+     */
+    private void verifyAdminScientificAbstractorWorkloadHeaders() {
+        verifyWorkloadColumnHeader(1, "NCI Trial Identifier");
+        verifyWorkloadColumnHeader(2, "Submission Type");
+        verifyWorkloadColumnHeader(3, "Submitted On");
+        verifyWorkloadColumnHeader(4, "Expected Abstraction Completion Date");
+        verifyWorkloadColumnHeader(5, "Current On-Hold Date");
+        verifyWorkloadColumnHeader(6, "Accepted");
+        verifyWorkloadColumnHeader(7, "Admin Abstraction Completed");
+        verifyWorkloadColumnHeader(8, "Admin QC Completed");
+        verifyWorkloadColumnHeader(9, "Scientific Abstraction Completed");
+        verifyWorkloadColumnHeader(10, "Scientific QC Completed");
+        verifyWorkloadColumnHeader(11, "Ready for TSR");
+        verifyWorkloadColumnHeader(12, "Checked Out By");
+    }
+
+    /**
+     * 
+     */
+    private void verifySuperAbstractorWorkloadHeaders() {
+        verifyWorkloadColumnHeader(1, "NCI Trial Identifier");
+        verifyWorkloadColumnHeader(2, "Submission Type");
+        verifyWorkloadColumnHeader(3, "Submitted On");
+        verifyWorkloadColumnHeader(4, "Submission Plus 10 Business Days");
+        verifyWorkloadColumnHeader(5, "Expected Abstraction Completion Date");
+        verifyWorkloadColumnHeader(6, "Business Days Since Submitted");
+        verifyWorkloadColumnHeader(7, "Business Days on Hold (CTRP)");
+        verifyWorkloadColumnHeader(8, "Business Days on Hold (Submitter)");
+        verifyWorkloadColumnHeader(9, "Current On-Hold Date");
+        verifyWorkloadColumnHeader(10, "Accepted");
+        verifyWorkloadColumnHeader(11, "Admin Abstraction Completed");
+        verifyWorkloadColumnHeader(12, "Admin QC Completed");
+        verifyWorkloadColumnHeader(13, "Scientific Abstraction Completed");
+        verifyWorkloadColumnHeader(14, "Scientific QC Completed");
+        verifyWorkloadColumnHeader(15, "Ready for TSR");
+        verifyWorkloadColumnHeader(16, "Checked Out By");
+    }
+
+    private void verifyWorkloadColumnHeader(int pos, String header) {
+        assertEquals(header,
+                s.getText("//table[@id='wl']/thead/tr/th[" + pos + "]/a"));
+    }
+
+    @SuppressWarnings("deprecation")
+    private void verifyWorkfloadTabActive() {
+        assertTrue(s.isVisible("workloadid"));
+        assertTrue(s.isVisible("workload"));
+        assertTrue(s.isVisible("wl"));
+    }
+
+    @SuppressWarnings({ "deprecation", "unused", "unchecked" })
+    @Test
     public void testCsvExport() throws Exception {
         logoutUser();
         TrialInfo trial = createAcceptedTrial();
-        loginAsAdminAbstractor();
-        clickAndWait("link=Dashboard");
+        loginAsSuperAbstractor();
+        goToDashboardSearch();
+        s.type("submittedOnOrAfter", "01/01/1990");
+        clickAndWait("xpath=//a//span[text()='Search']");
 
         // Export banner must be at top and at bottom.
         assertTrue(s
@@ -36,7 +652,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Finally, download CSV.
         if (!isPhantomJS()) {
-            selenium.click("xpath=//a/span[normalize-space(text())='CSV']");
+            selenium.click("xpath=//div[@id='results']//a/span[normalize-space(text())='CSV']");
             pause(OP_WAIT_TIME);
             File csv = new File(downloadDir, "dashboardSearchResults.csv");
             assertTrue(csv.exists());
@@ -45,16 +661,22 @@ public class DashboardTest extends AbstractTrialStatusTest {
             List<String> lines = FileUtils.readLines(csv);
             String content = FileUtils.readFileToString(csv);
             assertEquals(
-                    "NCI Trial Identifier,Lead Organization,Lead Org PO ID,ClinicalTrials.gov Identifier,CTEP ID,DCP ID,CDR ID,Amendment #,Trial Category,Summary 4 Funding,On Hold Date,Off Hold Date,On Hold Reason,On Hold Description,Trial Type,NCI Sponsored,Processing Status,Processing Status Date,Admin Check out Name,Admin Check out Date,Scientific Check out Name,Scientific Check out Date,Submission Type,Trial Category,CTEP/DCP,Submitting Organization,Submission Date,Last Milestone,Last Milestone Date,Submission Source,Processing Priority,Comments,This Trial is,Submission Received Date,Added By,Added On,Submission Acceptance Date,Added By,Added On,Submission Rejection Date,Added By,Added On,Submission Terminated Date,Added By,Added On,Submission Reactivated Date,Added By,Added On,Administrative Processing Completed Date,Added By,Added On,Administrative QC Completed Date,Added By,Added On,Scientific Processing Completed Date,Added By,Added On,Scientific QC Completed Date,Added By,Added On,Trial Summary Report Date,Added By,Added On,Submitter Trial Summary Report Feedback Date,Added By,Added On,Initial Abstraction Verified Date,Added By,Added On,On-going Abstraction Verified Date,Added By,Added On,Late Rejection Date,Added By,Added On",
+                    "NCI Trial Identifier,Lead Organization,Lead Org PO ID,ClinicalTrials.gov Identifier,CTEP ID,DCP ID,CDR ID,Amendment #,Summary 4 Funding,On Hold Date,Off Hold Date,On Hold Reason,On Hold Description,Trial Type,NCI Sponsored,Processing Status,Processing Status Date,Admin Check out Name,Admin Check out Date,Scientific Check out Name,Scientific Check out Date,Submission Type,CTEP/DCP,Submitting Organization,Submission Date,Last Milestone,Last Milestone Date,Submission Source,Processing Priority,Comments,This Trial is,Submission Received Date,Added By,Added On,Submission Acceptance Date,Added By,Added On,Submission Rejection Date,Added By,Added On,Submission Terminated Date,Added By,Added On,Submission Reactivated Date,Added By,Added On,Administrative Processing Completed Date,Added By,Added On,Administrative QC Completed Date,Added By,Added On,Scientific Processing Completed Date,Added By,Added On,Scientific QC Completed Date,Added By,Added On,Trial Summary Report Date,Added By,Added On,Submitter Trial Summary Report Feedback Date,Added By,Added On,Initial Abstraction Verified Date,Added By,Added On,On-going Abstraction Verified Date,Added By,Added On,Late Rejection Date,Added By,Added On",
                     lines.get(0));
-            assertTrue(content
-                    .contains(trial.nciID.replaceFirst("NCI-", "")
-                            + ",ClinicalTrials.gov,1,,,,,,Complete,,,,,,Interventional,No,Accepted,"
-                            + today
-                            + ",,,,,Original,Complete,,ClinicalTrials.gov,04/16/2014,Submission Acceptance Date,"
-                            + today + ",Other,2,,Ready for Admin Processing,"
-                            + today + ",," + today + "," + today + ",," + today
-                            + ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"));
+
+            final String normalizedContent = content.replaceAll("\\s+", " ");
+            final String expected = trial.nciID.replaceFirst("NCI-", "")
+                    + ",ClinicalTrials.gov,1,,,,,,,,,,,Interventional,No,Accepted,"
+                    + today
+                    + ",,,,,Original,,ClinicalTrials.gov,04/16/2014,Submission Acceptance Date,"
+                    + today
+                    + ",Other,2,,\"Ready for Admin Processing Ready for Scientific Processing\","
+                    + today + ",," + today + "," + today + ",," + today
+                    + ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,";
+
+            System.out.println(normalizedContent);
+            System.out.println(expected);
+            assertTrue(normalizedContent.contains(expected));
 
             csv.delete();
         }
@@ -168,7 +790,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
      * 
      */
     private void runCombinedSearch() {
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("diseases", "trichothiodystrophy",
                 "trichothiodystrophy");
         useSelect2ToPickAnOption("interventions", "tarenflurbil",
@@ -186,7 +808,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // trichothiodystrophy not found.
         findAndSelectTrialInDashboard(trial);
         addDisease("xerostomia");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("diseases", "trichothiodystrophy",
                 "trichothiodystrophy");
         clickAndWait("link=Search");
@@ -195,14 +817,14 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Add trichothiodystrophy to disease list, and now trial found.
         findAndSelectTrialInDashboard(trial);
         addDisease("trichothiodystrophy");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("diseases", "trichothiodystrophy",
                 "trichothiodystrophy");
         clickAndWait("link=Search");
         assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
 
         // Trial found using both diseases, too
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("diseases", "trichothiodystrophy",
                 "trichothiodystrophy");
         useSelect2ToPickAnOption("diseases", "xerostomia", "xerostomia");
@@ -213,7 +835,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         trial = createAcceptedTrial();
         findAndSelectTrialInDashboard(trial);
         addDisease("xerostomia");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("diseases", "trichothiodystrophy",
                 "trichothiodystrophy");
         useSelect2ToPickAnOption("diseases", "xerostomia", "xerostomia");
@@ -226,7 +848,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Verify selected values persist in search criteria and resets
         // properly.
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("diseases", "trichothiodystrophy",
                 "trichothiodystrophy");
         useSelect2ToPickAnOption("diseases", "xerostomia", "xerostomia");
@@ -253,7 +875,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // trichothiodystrophy not found.
         findAndSelectTrialInDashboard(trial);
         addDisease("xerostomia");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         selectDiseasesUsingWidget("trichothiodystrophy");
         clickAndWait("link=Search");
         assertFalse(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
@@ -261,13 +883,13 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Add trichothiodystrophy to disease list, and now trial found.
         findAndSelectTrialInDashboard(trial);
         addDisease("trichothiodystrophy");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         selectDiseasesUsingWidget("trichothiodystrophy");
         clickAndWait("link=Search");
         assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
 
         // Trial found using both diseases, too
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         selectDiseasesUsingWidget("trichothiodystrophy", "xerostomia");
         clickAndWait("link=Search");
         assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
@@ -276,7 +898,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         trial = createAcceptedTrial();
         findAndSelectTrialInDashboard(trial);
         addDisease("xerostomia");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         selectDiseasesUsingWidget("trichothiodystrophy");
         selectDiseasesUsingWidget("xerostomia");
         clickAndWait("link=Search");
@@ -288,7 +910,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Verify selected values persist in search criteria and resets
         // properly.
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         selectDiseasesUsingWidget("trichothiodystrophy");
         selectDiseasesUsingWidget("xerostomia");
         clickAndWait("link=Search");
@@ -374,7 +996,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // tarenflurbil not found.
         findAndSelectTrialInDashboard(trial);
         addInterevention("pyroxamide");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("interventions", "tarenflurbil",
                 "tarenflurbil");
         clickAndWait("link=Search");
@@ -383,7 +1005,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // now found.
         findAndSelectTrialInDashboard(trial);
         addInterevention("tarenflurbil");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("interventions", "tarenflurbil",
                 "tarenflurbil");
         clickAndWait("link=Search");
@@ -394,12 +1016,12 @@ public class DashboardTest extends AbstractTrialStatusTest {
         findAndSelectTrialInDashboard(trial);
         addInterevention("tarenflurbil");
         addInterevention("pyroxamide");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("interventions", "tarenflurbil",
                 "tarenflurbil");
         clickAndWait("link=Search");
         assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("interventions", "pyroxamide", "pyroxamide");
         clickAndWait("link=Search");
         assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
@@ -408,7 +1030,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
         trial = createAcceptedTrial();
         findAndSelectTrialInDashboard(trial);
         addInterevention("tarenflurbil");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("interventions", "tarenflurbil",
                 "tarenflurbil");
         useSelect2ToPickAnOption("interventions", "pyroxamide", "pyroxamide");
@@ -418,7 +1040,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Verify selected values persist in search criteria and resets
         // properly.
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("interventions", "tarenflurbil",
                 "tarenflurbil");
         clickAndWait("link=Search");
@@ -458,26 +1080,26 @@ public class DashboardTest extends AbstractTrialStatusTest {
         // Kidney not found.
         findAndSelectTrialInDashboard(trial);
         addAnatomicSite("Colon");
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("anatomicSites", "kidney", "Kidney");
         clickAndWait("link=Search");
         assertFalse(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
 
         // Colon now found.
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("anatomicSites", "colo", "Colon");
         clickAndWait("link=Search");
         assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
 
         // Colon & Kidney now found.
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("anatomicSites", "kidney", "Kidney");
         useSelect2ToPickAnOption("anatomicSites", "colo", "Colon");
         clickAndWait("link=Search");
         assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
 
         // Add Colon & Kidney, then remove Colon. Not found.
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("anatomicSites", "kidney", "Kidney");
         useSelect2ToPickAnOption("anatomicSites", "colo", "Colon");
         useSelect2ToUnselectOption("Colon");
@@ -486,7 +1108,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
         // Verify selected values persist in search criteria and resets
         // properly.
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         useSelect2ToPickAnOption("anatomicSites", "colo", "Colon");
         clickAndWait("link=Search");
         assertTrue(s.isTextPresent(trial.nciID.replaceFirst("NCI-", "")));
@@ -559,6 +1181,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
     /**
      * @param site
      */
+    @SuppressWarnings("deprecation")
     private void addAnatomicSite(String site) {
         clickAndWait("link=Summary 4 Anatomic Site");
         clickAndWait("link=Add");
@@ -570,10 +1193,20 @@ public class DashboardTest extends AbstractTrialStatusTest {
     /**
      * @param trial
      */
+    @SuppressWarnings("deprecation")
     private void findAndSelectTrialInDashboard(TrialInfo trial) {
-        clickAndWait("link=Dashboard");
+        goToDashboardSearch();
         s.type("submittedOnOrAfter", "01/01/1990");
         clickAndWait("xpath=//a//span[text()='Search']");
-        clickAndWait("link=" + trial.nciID.replaceFirst("NCI-", ""));
+        clickAndWait("xpath=//table[@id='results']//td/a[normalize-space(text())='"
+                + trial.nciID.replaceFirst("NCI-", "") + "']");
+    }
+
+    /**
+     * 
+     */
+    protected void goToDashboardSearch() {
+        clickAndWait("link=Dashboard");
+        clickAndWait("searchid");
     }
 }

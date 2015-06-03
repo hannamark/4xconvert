@@ -1478,6 +1478,29 @@ public abstract class AbstractPaSeleniumTest extends AbstractSelenese2TestCase {
         runner.update(connection, sql);
     }
 
+    protected void addOnHold(TrialInfo trial, String code, Date from, Date to,
+            String category) throws SQLException {
+        String stamp = new Timestamp(System.currentTimeMillis()).toString();
+        QueryRunner runner = new QueryRunner();
+        String sql = "insert into study_onhold (identifier, onhold_reason_code, onhold_date, offhold_date, study_protocol_identifier, "
+                + "onhold_reason_category)"
+                + " VALUES ((SELECT NEXTVAL('HIBERNATE_SEQUENCE')), '"
+                + code
+                + "', "
+                + jdbcTs(from)
+                + ", "
+                + jdbcTs(to)
+                + ", "
+                + trial.id
+                + ", '" + category + "')";
+        runner.update(connection, sql);
+    }
+
+    protected String jdbcTs(Date dt) {
+        return dt != null ? "'" + new Timestamp(dt.getTime()).toString() + "'"
+                : "null";
+    }
+
     private void assignNciId(TrialInfo info) throws SQLException {
         info.nciID = "NCI-2014-" + RandomStringUtils.randomNumeric(8);
         QueryRunner runner = new QueryRunner();

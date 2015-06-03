@@ -772,6 +772,87 @@ public class PAUtilTest {
         assertFalse(DateUtils.isSameDay(date,
                 DateUtils.addMilliseconds(endOfDay, 1)));
     }
+    
+    @Test
+    public void getBusinessDaysBetween() throws ParseException {
+        final Date date = new Date();
+        
+        // boundary conditions
+        assertEquals(0, PAUtil.getBusinessDaysBetween(null, null));
+        assertEquals(0, PAUtil.getBusinessDaysBetween(date, null));
+        assertEquals(0, PAUtil.getBusinessDaysBetween(null, date));
+        assertEquals(0, PAUtil.getBusinessDaysBetween(date("06/02/2015"),
+                date("06/01/2015")));
+        
+        // test regular week.
+        assertEquals(1, PAUtil.getBusinessDaysBetween(date("06/01/2015"),
+                date("06/01/2015")));
+        assertEquals(2, PAUtil.getBusinessDaysBetween(date("06/01/2015"),
+                date("06/02/2015")));
+        assertEquals(3, PAUtil.getBusinessDaysBetween(date("06/01/2015"),
+                date("06/03/2015")));
+        assertEquals(4, PAUtil.getBusinessDaysBetween(date("06/01/2015"),
+                date("06/04/2015")));
+        assertEquals(5, PAUtil.getBusinessDaysBetween(date("06/01/2015"),
+                date("06/05/2015")));
+        assertEquals(5, PAUtil.getBusinessDaysBetween(date("06/01/2015"),
+                date("06/06/2015")));
+        assertEquals(5, PAUtil.getBusinessDaysBetween(date("06/01/2015"),
+                date("06/07/2015")));
+        assertEquals(6, PAUtil.getBusinessDaysBetween(date("06/01/2015"),
+                date("06/08/2015")));
+        
+        // test a holiday.
+        assertEquals(1, PAUtil.getBusinessDaysBetween(date("05/22/2015"),
+                date("05/22/2015")));
+        assertEquals(1, PAUtil.getBusinessDaysBetween(date("05/22/2015"),
+                date("05/23/2015")));
+        assertEquals(1, PAUtil.getBusinessDaysBetween(date("05/22/2015"),
+                date("05/24/2015")));
+        assertEquals(1, PAUtil.getBusinessDaysBetween(date("05/22/2015"),
+                date("05/25/2015")));
+        assertEquals(2, PAUtil.getBusinessDaysBetween(date("05/22/2015"),
+                date("05/26/2015")));
+        
+        // counting biz days within a long weekend must result in 0.
+        assertEquals(0, PAUtil.getBusinessDaysBetween(date("05/23/2015"),
+                date("05/23/2015")));
+        assertEquals(0, PAUtil.getBusinessDaysBetween(date("05/23/2015"),
+                date("05/24/2015")));
+        assertEquals(0, PAUtil.getBusinessDaysBetween(date("05/23/2015"),
+                date("05/25/2015")));
+        assertEquals(0, PAUtil.getBusinessDaysBetween(date("05/24/2015"),
+                date("05/25/2015")));
+
+    }
+    
+    @Test
+    public void addBusinessDays() throws ParseException {
+        assertNull(PAUtil.addBusinessDays(null, 1));
+
+        final Date date = new Date();
+        // Negative increments not supported; result in same date being
+        // returned.
+        assertEquals(date, PAUtil.addBusinessDays(date, 0));
+        assertEquals(date, PAUtil.addBusinessDays(date, -1));
+        assertEquals(date, PAUtil.addBusinessDays(date, -2));
+        
+        assertTrue(DateUtils.isSameDay(date("06/02/2015"), (PAUtil.addBusinessDays(date("06/01/2015"), 1))));
+        assertTrue(DateUtils.isSameDay(date("06/03/2015"), (PAUtil.addBusinessDays(date("06/01/2015"), 2))));
+        assertTrue(DateUtils.isSameDay(date("06/04/2015"), (PAUtil.addBusinessDays(date("06/01/2015"), 3))));
+        assertTrue(DateUtils.isSameDay(date("06/05/2015"), (PAUtil.addBusinessDays(date("06/01/2015"), 4))));
+        assertTrue(DateUtils.isSameDay(date("06/08/2015"), (PAUtil.addBusinessDays(date("06/01/2015"), 5))));
+        assertTrue(DateUtils.isSameDay(date("06/22/2015"), (PAUtil.addBusinessDays(date("06/01/2015"), 15))));
+        assertTrue(DateUtils.isSameDay(date("07/03/2015"), (PAUtil.addBusinessDays(date("06/01/2015"), 24))));
+        assertTrue(DateUtils.isSameDay(date("07/07/2015"), (PAUtil.addBusinessDays(date("06/01/2015"), 25))));
+        
+        assertTrue(DateUtils.isSameDay(date("05/26/2015"), (PAUtil.addBusinessDays(date("05/23/2015"), 1))));
+
+    }
+
+    private Date date(String date) throws ParseException {
+        return DateUtils.parseDate(date, new String[] { "MM/dd/yyyy" });
+    }
 
     @Test
     public void isGridCall() {

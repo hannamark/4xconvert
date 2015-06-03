@@ -38,6 +38,7 @@ import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions.MilestoneFilter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.ActionUtils;
@@ -73,11 +74,10 @@ import com.opensymphony.xwork2.Preparable;
  * 
  */
 
-
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods",
         "PMD.TooManyFields", "PMD.ExcessiveClassLength" })
-public class DashboardAction extends AbstractCheckInOutAction implements Preparable,
-        ServletRequestAware {
+public class DashboardAction extends AbstractCheckInOutAction implements
+        Preparable, ServletRequestAware {
 
     private static final String DASHBOARD_TITLE = "dashboardTitle";
     private static final String NCT_IDENTIFIER = "nctIdentifier";
@@ -87,6 +87,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     private static final String SU_ABSTRACTOR_LANDING = "suAbstractorLanding";
     private static final String ABSTRACTOR_LANDING = "abstractorLanding";
     private static final String DASHBOARD_SEARCH_RESULTS = "dashboardSearchResults";
+    private static final String WORKLOAD = "workload";
 
     private static final Logger LOG = Logger.getLogger(DashboardAction.class);
 
@@ -104,10 +105,11 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
 
     private HttpServletRequest request;
 
+    private LookUpTableServiceRemote lookUpService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private InterventionServiceLocal interventionService;
     private PDQDiseaseServiceLocal pdqDiseaseService;
-    private StudyProtocolService studyProtocolService;    
+    private StudyProtocolService studyProtocolService;
     private StudyOnholdServiceLocal onholdService;
     private PAServiceUtils serviceUtils = new PAServiceUtils();
 
@@ -136,12 +138,11 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     private Boolean scientificQC;
     private Boolean readyForTSR;
     private Boolean submittedUnaccepted;
-    
+
     // Details tab updatable fields
     private Long assignedTo;
     private String newProcessingPriority;
     private String processingComments;
-    
 
     private List<String> checkoutCommands = new ArrayList<String>();
     private Map<String, String> onHoldValuesMap = new HashMap<String, String>();
@@ -149,72 +150,56 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     @Override
     public String execute() {
         clearSearchSessionAttributes();
-       
         if (!canAccessDashboard()) {
             return NON_ABSTRACTOR_LANDING;
         }
-        if (isInRole(IS_SU_ABSTRACTOR)) {
-            return determineLandingPage();
-        } else {
-            try {
-                return search(buildCriteriaByUserRole().toArray(
-                        new StudyProtocolQueryCriteria[0]));
-            } catch (PAException e) {
-                LOG.error(e, e);
-                request.setAttribute(Constants.FAILURE_MESSAGE,
-                        e.getLocalizedMessage());
-                return determineLandingPage();
-            }
-        }
-        
-    }
-    
-    /**
-     *  Set values for onHold Drop down
-     */
-    private void setOnHoldDisplayValues()  {
+
         try {
-        OnholdReasonCode [] keys =  OnholdReasonCode.values();
-        for (OnholdReasonCode key :keys) {
-            String value = onholdService.getReasonCategoryValue(key.getName());
-            onHoldValuesMap.put(key.getCode(), key.getCode() + " (" + value + ")");
+            prepareWorkload();
+        } catch (PAException e) {
+            LOG.error(e, e);
+            request.setAttribute(Constants.FAILURE_MESSAGE,
+                    e.getLocalizedMessage());
         }
+        return landingPage();
+    }
+
+    private void prepareWorkload() throws PAException {
+        StudyProtocolQueryCriteria criteria = buildWorkloadCriteria();
+        List<StudyProtocolQueryDTO> results = protocolQueryService
+                .getStudyProtocolByCriteria(criteria, SKIP_ALTERNATE_TITLES,
+                        SKIP_LAST_UPDATER_INFO, SKIP_OTHER_IDENTIFIERS);
+        protocolQueryService.populateMilestoneHistory(results);
+        request.getSession().setAttribute(WORKLOAD, results);
+
+    }
+
+    private StudyProtocolQueryCriteria buildWorkloadCriteria()
+            throws PAException {
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setExcludeRejectProtocol(true);
+        criteria.setExcludeTerminatedTrials(true);
+        criteria.setStudyMilestone(Arrays.asList(lookUpService
+                .getPropertyValue("dashboard.workload.milestones").split(",")));
+        return criteria;
+    }
+
+    /**
+     * Set values for onHold Drop down
+     */
+    private void setOnHoldDisplayValues() {
+        try {
+            OnholdReasonCode[] keys = OnholdReasonCode.values();
+            for (OnholdReasonCode key : keys) {
+                String value = onholdService.getReasonCategoryValue(key
+                        .getName());
+                onHoldValuesMap.put(key.getCode(), key.getCode() + " (" + value
+                        + ")");
+            }
         } catch (Exception e) {
             LOG.error("Error in setting on hold values " + e.getMessage());
         }
-        
-    }
 
-    private List<StudyProtocolQueryCriteria> buildCriteriaByUserRole()
-            throws PAException {
-        // need two criterias here because
-        // gov.nih.nci.pa.service.search.StudyProtocolQueryBeanSearchCriteria
-        // does not support disjunction (OR) very well. Making it do so is
-        // somewhat messy...
-
-        // First.
-        setCheckedOutBy(CSMUserService.getInstance()
-                .getCSMUser(UsernameHolder.getUser()).getUserId());
-        final StudyProtocolQueryCriteria criteriaOne = buildCriteria();
-        criteriaOne.setExcludeRejectProtocol(true);
-        criteriaOne.setExcludeTerminatedTrials(true);
-        setCheckedOutBy(null);
-
-        // Second.
-        if (isInRole(IS_ADMIN_ABSTRACTOR)) {
-            setAdminAbstraction(true);
-            setAdminQC(true);
-            setSubmittedUnaccepted(true);
-        }
-        if (isInRole(IS_SCIENTIFIC_ABSTRACTOR)) {
-            setScientificAbstraction(true);
-            setScientificQC(true);
-        }
-        setReadyForTSR(true);
-        final StudyProtocolQueryCriteria criteriaTwo = buildCriteria();
-        criteriaTwo.setExcludeRejectProtocol(true);
-        criteriaTwo.setExcludeTerminatedTrials(true);
-        return Arrays.asList(criteriaOne, criteriaTwo);
     }
 
     private boolean canAccessDashboard() {
@@ -248,7 +233,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         if (!canAccessDashboard()) {
             return NON_ABSTRACTOR_LANDING;
         }
-        
+
         try {
             StudyProtocolQueryCriteria criteria = buildCriteria();
             return search(criteria);
@@ -257,7 +242,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             request.setAttribute(Constants.FAILURE_MESSAGE,
                     e.getLocalizedMessage());
         }
-        return determineLandingPage();
+        return landingPage();
     }
 
     /**
@@ -284,7 +269,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             request.setAttribute(Constants.FAILURE_MESSAGE,
                     e.getLocalizedMessage());
         }
-        return determineLandingPage();
+        return landingPage();
     }
 
     private void eliminateDupes(List<StudyProtocolQueryDTO> trials) {
@@ -303,9 +288,9 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @return
+     * @return landingPage
      */
-    private String determineLandingPage() {
+    public String landingPage() {
         if (isInRole(IS_SU_ABSTRACTOR)) {
             return SU_ABSTRACTOR_LANDING;
         } else {
@@ -331,17 +316,21 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             StudyProtocolQueryDTO summaryDTO = protocolQueryService
                     .getTrialSummaryByStudyProtocolId(getStudyProtocolId());
             session.setAttribute(SUMMARY_DTO, summaryDTO);
-            session.setAttribute(NCT_IDENTIFIER, getServiceUtils()
-                    .getStudyIdentifier(IiConverter
-                            .convertToStudyProtocolIi(getStudyProtocolId()),
-                            PAConstants.NCT_IDENTIFIER_TYPE));
+            session.setAttribute(
+                    NCT_IDENTIFIER,
+                    getServiceUtils()
+                            .getStudyIdentifier(
+                                    IiConverter
+                                            .convertToStudyProtocolIi(getStudyProtocolId()),
+                                    PAConstants.NCT_IDENTIFIER_TYPE));
             session.setAttribute(Constants.TRIAL_SUMMARY, summaryDTO);
             session.setAttribute(Constants.STUDY_PROTOCOL_II,
                     IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
 
             checkoutCommands = new ArrayList<>();
             ActionUtils.setCheckoutCommands(summaryDTO, checkoutCommands);
-            ActionUtils.runTrialStatusTransitionValidations(summaryDTO, session);
+            ActionUtils
+                    .runTrialStatusTransitionValidations(summaryDTO, session);
 
             toggleDetailsTab();
         } catch (PAException e) {
@@ -349,7 +338,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             request.setAttribute(Constants.FAILURE_MESSAGE,
                     e.getLocalizedMessage());
         }
-        return determineLandingPage();
+        return landingPage();
     }
 
     /**
@@ -361,7 +350,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     public String save() throws PAException {
         try {
             StudyProtocolDTO studyDTO = studyProtocolService
-                    .getStudyProtocol(IiConverter.convertToIi(getStudyProtocolId()));
+                    .getStudyProtocol(IiConverter
+                            .convertToIi(getStudyProtocolId()));
             final Ii assignedUser = studyDTO.getAssignedUser();
             final Ii newAssignedUser = IiConverter.convertToIi(assignedTo);
 
@@ -383,7 +373,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
                             && !ISOUtil.isIiNull(newAssignedUser) && !assignedUser
                             .getExtension().equals(
                                     newAssignedUser.getExtension())))) {
-                getStudyCheckoutService().handleTrialAssigneeChange(getStudyProtocolId());
+                getStudyCheckoutService().handleTrialAssigneeChange(
+                        getStudyProtocolId());
             }
             request.setAttribute(Constants.SUCCESS_MESSAGE,
                     getText("dashboard.save.success"));
@@ -393,7 +384,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             request.setAttribute(Constants.FAILURE_MESSAGE,
                     e.getLocalizedMessage());
         }
-        return determineLandingPage();
+        return landingPage();
     }
 
     /**
@@ -401,7 +392,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
      */
     public String loopback() {
         toggleResultsTab();
-        return determineLandingPage();
+        return landingPage();
     }
 
     /**
@@ -446,7 +437,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
      */
     @SuppressWarnings({ "PMD.NPathComplexity", "unchecked" })
     private void buildMilestoneCriteria(StudyProtocolQueryCriteria criteria) {
-        
+
         if (ANY.equalsIgnoreCase(milestoneType)
                 && StringUtils.isNotBlank(milestone)) {
             criteria.setCurrentOrPreviousMilestone(MilestoneCode
@@ -486,11 +477,11 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             filter.add(new MilestoneFilter(Arrays
                     .asList(SCIENTIFIC_READY_FOR_QC), ListUtils.EMPTY_LIST));
         }
-        if (Boolean.TRUE.equals(scientificAbstraction) 
-             || Boolean.TRUE.equals(adminAbstraction)
-             || Boolean.TRUE.equals(adminQC)
-             || Boolean.TRUE.equals(scientificQC)) {
-                  criteria.setExcludeRejectProtocol(true);
+        if (Boolean.TRUE.equals(scientificAbstraction)
+                || Boolean.TRUE.equals(adminAbstraction)
+                || Boolean.TRUE.equals(adminQC)
+                || Boolean.TRUE.equals(scientificQC)) {
+            criteria.setExcludeRejectProtocol(true);
         }
     }
 
@@ -511,17 +502,16 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
 
     /**
      * @param criteria
-     * @throws PAException 
+     * @throws PAException
      */
     private void buildSubmissionTimelineCriteria(
             StudyProtocolQueryCriteria criteria) throws PAException {
-        final Date onOrAfter = PAUtil
-                        .dateStringToDateTime(submittedOnOrAfter);
+        final Date onOrAfter = PAUtil.dateStringToDateTime(submittedOnOrAfter);
         final Date onOrBefore = PAUtil.endOfDay(PAUtil
                 .dateStringToDateTime(submittedOnOrBefore));
-        criteria.setSubmittedOnOrAfter(onOrAfter);       
+        criteria.setSubmittedOnOrAfter(onOrAfter);
         criteria.setSubmittedOnOrBefore(onOrBefore);
-        
+
         if (onOrAfter != null && onOrBefore != null
                 && onOrAfter.after(onOrBefore)) {
             throw new PAException(
@@ -547,7 +537,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
             }
         }
     }
-    
+
     /**
      * @param criteria
      * @throws PAException
@@ -555,7 +545,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     private void buildAssigneeCriteria(StudyProtocolQueryCriteria criteria)
             throws PAException {
         if (assignee != null) {
-            if (ME.equals(assignee)) {     
+            if (ME.equals(assignee)) {
                 criteria.setAssignedUserId(CSMUserService.getInstance()
                         .getCSMUser(UsernameHolder.getUser()).getUserId());
             } else {
@@ -586,6 +576,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         interventionService = PaRegistry.getInterventionService();
         pdqDiseaseService = PaRegistry.getDiseaseService();
         onholdService = PaRegistry.getStudyOnholdService();
+        lookUpService = PaRegistry.getLookUpTableService();
         setStudyCheckoutService(PaRegistry.getStudyCheckoutService());
         setOnHoldDisplayValues();
     }
@@ -621,7 +612,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         map.putAll(CSMUserService.getInstance().getAbstractors());
         return map;
     }
-    
+
     /**
      * @return Map<String, String>
      * @throws PAException
@@ -629,23 +620,23 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
      */
     public Map<Long, String> getAssigneeList() throws PAException {
         Map<Long, String> map = new LinkedHashMap<Long, String>();
-        map.put(ME, getText("dashboard.me"));        
+        map.put(ME, getText("dashboard.me"));
         map.putAll(CSMUserService.getInstance().getAbstractors());
         return map;
     }
-    
+
     @Override
     public String adminCheckOut() throws PAException {
         super.adminCheckOut();
         return view();
     }
-    
+
     @Override
     public String scientificCheckOut() throws PAException {
         super.scientificCheckOut();
         return view();
     }
-    
+
     @Override
     public String adminAndScientificCheckOut() throws PAException {
         super.adminAndScientificCheckOut();
@@ -655,28 +646,29 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         }
         return view();
     }
-    
+
     @Override
-    public String adminCheckIn() throws PAException {     
+    public String adminCheckIn() throws PAException {
         super.adminCheckIn();
         return view();
     }
-    
+
     @Override
     public String scientificCheckIn() throws PAException {
         super.scientificCheckIn();
         return view();
     }
-    
+
     @Override
-    public String adminAndScientificCheckIn() throws PAException {        
+    public String adminAndScientificCheckIn() throws PAException {
         super.adminAndScientificCheckIn();
         return view();
     }
-    
+
     /**
      * @return List<InterventionWebDTO>
-     * @throws PAException  PAException
+     * @throws PAException
+     *             PAException
      */
     @SuppressWarnings("deprecation")
     public List<InterventionDTO> getInterventionsList() throws PAException {
@@ -688,7 +680,7 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         }
         return list;
     }
-    
+
     /**
      * @return List<DiseaseWebDTO>
      * @throws PAException
@@ -946,7 +938,6 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
         this.scientificQC = scientificQC;
     }
 
-    
     /**
      * @return the assignedTo
      */
@@ -1045,7 +1036,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @param submittedBy the submittedBy to set
+     * @param submittedBy
+     *            the submittedBy to set
      */
     public void setSubmittedBy(String submittedBy) {
         this.submittedBy = submittedBy;
@@ -1059,14 +1051,16 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @param processingPriority the processingPriority to set
+     * @param processingPriority
+     *            the processingPriority to set
      */
     public void setProcessingPriority(List<String> processingPriority) {
         this.processingPriority = processingPriority;
     }
 
     /**
-     * @param protocolQueryService the protocolQueryService to set
+     * @param protocolQueryService
+     *            the protocolQueryService to set
      */
     public void setProtocolQueryService(
             ProtocolQueryServiceLocal protocolQueryService) {
@@ -1074,12 +1068,13 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @param studyProtocolService the studyProtocolService to set
+     * @param studyProtocolService
+     *            the studyProtocolService to set
      */
-    public void setStudyProtocolService(StudyProtocolService studyProtocolService) {
+    public void setStudyProtocolService(
+            StudyProtocolService studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
-  
 
     /**
      * @return the serviceUtils
@@ -1089,7 +1084,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @param serviceUtils the serviceUtils to set
+     * @param serviceUtils
+     *            the serviceUtils to set
      */
     public void setServiceUtils(PAServiceUtils serviceUtils) {
         this.serviceUtils = serviceUtils;
@@ -1103,7 +1099,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @param assignee the assignee to set
+     * @param assignee
+     *            the assignee to set
      */
     public void setAssignee(Long assignee) {
         this.assignee = assignee;
@@ -1117,7 +1114,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @param anatomicSites the anatomicSites to set
+     * @param anatomicSites
+     *            the anatomicSites to set
      */
     public void setAnatomicSites(List<String> anatomicSites) {
         this.anatomicSites = anatomicSites;
@@ -1131,7 +1129,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @param interventions the interventions to set
+     * @param interventions
+     *            the interventions to set
      */
     public void setInterventions(List<String> interventions) {
         this.interventions = interventions;
@@ -1160,7 +1159,8 @@ public class DashboardAction extends AbstractCheckInOutAction implements Prepara
     }
 
     /**
-     * @param onHoldValuesMap onHoldValuesMap
+     * @param onHoldValuesMap
+     *            onHoldValuesMap
      */
     public void setOnHoldValuesMap(Map<String, String> onHoldValuesMap) {
         this.onHoldValuesMap = onHoldValuesMap;

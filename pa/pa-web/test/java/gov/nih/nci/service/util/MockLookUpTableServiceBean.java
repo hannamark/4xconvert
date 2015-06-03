@@ -97,6 +97,8 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
            return "2787947";
        else if (name.equals("accrual.outofscope.actions"))
            return "Rejected;Out of Scope";
+       else if (name.equals("dashboard.workload.milestones"))
+           return "dashboard.workload.milestones','Submission Received Date,Submission Acceptance Date,Submission Reactivated Date,Administrative Processing Start Date,Administrative Processing Completed Date,Ready for Administrative QC Date,Administrative QC Start Date,Administrative QC Completed Date,Scientific Processing Start Date,Scientific Processing Completed Date,Ready for Scientific QC Date,Scientific QC Start Date,Scientific QC Completed Date,Ready for Trial Summary Report Date";
 	   else
 		  return value;
 	}

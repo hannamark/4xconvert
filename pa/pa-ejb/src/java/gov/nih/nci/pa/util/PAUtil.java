@@ -1360,6 +1360,52 @@ public class PAUtil {
     }
     
     /**
+     * Adds the given positive number of business days to the provided date.
+     * 
+     * @param date
+     *            Date
+     * @param days
+     *            days
+     * @return Date
+     */
+    public static Date addBusinessDays(Date date, int days) { // NOPMD
+        if (date == null) {
+            return null;
+        }
+        while (days > 0) {
+            date = DateUtils.addDays(date, 1);
+            if (PAUtil.isBusinessDay(date)) {
+                days--;
+            }
+        }
+        return date;
+    }
+    
+    /**
+     * Counts the number of business days between the two dates, inclusive.
+     * 
+     * @param start
+     *            date
+     * @param end
+     *            date
+     * @return days
+     */
+    public static int getBusinessDaysBetween(final Date start, final Date end) {
+        if (start == null || end == null || end.before(start)) {
+            return 0;
+        }
+        int days = 0;
+        Date current = start;
+        do {
+            if (isBusinessDay(current)) {
+                days++;
+            }
+            current = DateUtils.addDays(current, 1);
+        } while (!DateUtils.isSameDay(current, DateUtils.addDays(end, 1)));
+        return days;
+    }
+
+    /**
      * Returns true if the given date is a business day in Washington, DC, USA.
      * 
      * @param date
@@ -1521,5 +1567,9 @@ public class PAUtil {
         }
         return false;
     }
+
+  
+
+   
     
 }

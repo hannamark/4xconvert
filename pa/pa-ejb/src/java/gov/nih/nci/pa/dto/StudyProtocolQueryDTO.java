@@ -83,6 +83,10 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySourceCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyAlternateTitleDTO;
+import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.Serializable;
@@ -94,6 +98,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
@@ -131,6 +136,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     
     private String recentHoldReason;
     private String recentHoldDescription;
+    private String recentHoldCategory;
     private Date recentOnHoldDate;
     private Date recentOffHoldDate;
     private boolean verifyData = false;
@@ -140,6 +146,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String studySource;
     private List<OrganizationDTO> orgsThatCanBeAddedAsSite;
     private String accrualDiseaseCode;
+    private List<StudyOnholdDTO> allHolds = new ArrayList<>();
    
 
     /**
@@ -162,6 +169,14 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private Date primaryCompletionDate;
 
     private Long poOrganizationId;
+
+    private Integer bizDaysOnHoldCTRP;
+
+    private Integer bizDaysOnHoldSubmitter;
+
+    private Integer bizDaysSinceSubmitted;
+
+    private Date expectedAbstractionCompletionDate;
     
     
     /**
@@ -838,6 +853,138 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     public Long getSubmitterOrgId() {
         return poOrganizationId;
+    }
+    
+    // CHECKSTYLE:OFF
+    /**
+     * @return Date
+     */
+    public final Date getExpectedAbstractionCompletionDate() {
+        return expectedAbstractionCompletionDate != null ? expectedAbstractionCompletionDate
+                : (expectedAbstractionCompletionDate = DateUtils.addDays(
+                        getLastCreated().getDateLastCreatedPlusTenBiz(),
+                        getBizDaysOnHoldSubmitter()));
+    }
+    
+    /**
+     * Business Days Elapsed Since Submitted is a calculated field. It is equal
+     * to Today's date minus Submission Date minus (weekend and federal holiday
+     * days between Today date and the Submission Date, inclusive)
+     * 
+     * @return int BizDaysOnHoldSubmitter
+     */
+    public final Integer getBizDaysSinceSubmitted() {
+        return bizDaysSinceSubmitted != null ? bizDaysSinceSubmitted
+                : (bizDaysSinceSubmitted = PAUtil.getBusinessDaysBetween(
+                        getLastCreated().getDateLastCreated(), new Date()));
+    }
+    
+    /**
+     * @return int BizDaysOnHoldSubmitter
+     */
+    public final Integer getBizDaysOnHoldSubmitter() {
+        return bizDaysOnHoldSubmitter != null ? bizDaysOnHoldSubmitter
+                : (bizDaysOnHoldSubmitter = getBizDaysOnHold("Submitter"));
+    }
+
+    /**
+     * @return int BizDaysOnHoldCTRP
+     */
+    public final Integer getBizDaysOnHoldCTRP() {
+        return bizDaysOnHoldCTRP != null ? bizDaysOnHoldCTRP
+                : (bizDaysOnHoldCTRP = getBizDaysOnHold("CTRP"));
+    }
+
+    private int getBizDaysOnHold(String cat) {
+        int days = 0;
+        for (StudyOnholdDTO hold : getAllHolds()) {
+            if (cat.equalsIgnoreCase(StConverter.convertToString(hold
+                    .getOnHoldCategory()))) {
+                Date holdStart = IvlConverter.convertTs().convertLow(
+                        hold.getOnholdDate());
+                Date holdEnd = IvlConverter.convertTs().convertHigh(
+                        hold.getOnholdDate());
+                days += PAUtil.getBusinessDaysBetween(holdStart,
+                        holdEnd == null ? new Date() : holdEnd);
+            }
+        }
+        return days;
+    }
+
+    /**
+     * @return the recentHoldCategory
+     */
+    public String getRecentHoldCategory() {
+        return recentHoldCategory;
+    }
+
+    /**
+     * @param recentHoldCategory
+     *            the recentHoldCategory to set
+     */
+    public void setRecentHoldCategory(String recentHoldCategory) {
+        this.recentHoldCategory = recentHoldCategory;
+    }
+
+    /**
+     * @return the allHolds
+     */
+    public List<StudyOnholdDTO> getAllHolds() {
+        return allHolds;
+    }
+
+    /**
+     * @param allHolds the allHolds to set
+     */
+    public void setAllHolds(List<StudyOnholdDTO> allHolds) {
+        this.allHolds = allHolds;
+    }
+    
+    /**
+     * @return date
+     */
+    public Date getAdminAbstractionCompletedDate() {
+        return getDateOfMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE);
+    }
+    
+    /**
+     * @return date
+     */
+    public Date getAdminQCCompletedDate() {
+        return getDateOfMilestone(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE);
+    }
+    
+    /**
+     * @return date
+     */
+    public Date getScientificAbstractionCompletedDate() {
+        return getDateOfMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE);
+    }
+
+    /**
+     * @return date
+     */
+    public Date getScientificQCCompletedDate() {
+        return getDateOfMilestone(MilestoneCode.SCIENTIFIC_QC_COMPLETE);
+    }
+    
+    /**
+     * @return date
+     */
+    public Date getReadyForTSRDate() {
+        return getDateOfMilestone(MilestoneCode.READY_FOR_TSR);
+    }
+    
+    /**
+     * @return date when submission was accepted.
+     */
+    public Date getAcceptedDate() {
+        return getDateOfMilestone(MilestoneCode.SUBMISSION_ACCEPTED);
+    }
+
+    private Date getDateOfMilestone(MilestoneCode mc) {
+        MilestoneDTO milestone = findMilestoneInHistory(mc);
+        return milestone != null ? milestone.getMilestoneDate() : null;
     }
     
 }
