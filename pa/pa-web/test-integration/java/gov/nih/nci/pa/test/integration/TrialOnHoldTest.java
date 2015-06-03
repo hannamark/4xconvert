@@ -175,6 +175,52 @@ public class TrialOnHoldTest extends AbstractPaSeleniumTest {
         
     }
     
+    /**
+     * Test if user is able to add on hold with reason text value as 4000 characters
+     */
+    @Test
+    public void testReasonText4000Characters() throws Exception {
+        
+        StringBuffer reasonText = new StringBuffer();
+        
+        logoutUser();
+        TrialInfo trial = createAcceptedTrial();
+        loginAsSuperAbstractor();
+        searchAndSelectTrial(trial.title);
+        clickAndWait("link=On-hold Information");
+        assertTrue(selenium.isTextPresent("Nothing found to display."));
+        
+        s.click("link=Add");
+        selenium.select("id=reasonCode", "Other");
+        
+      //test if reason category dropdown is not disabled
+        WebElement element = driver.findElement(By.id("reasonCategoryList"));
+        assertTrue(element.isEnabled());
+        
+        selenium.select("id=reasonCategoryList", "CTRP");
+        
+        for(int i=0;i< 4000;i++) {
+            reasonText.append("1");
+        }
+        
+       
+        selenium.type("id=reasonText", reasonText.toString());
+        
+        //save record
+        s.click("link=Save");
+        
+        waitForPageToLoad();
+        assertTrue(selenium.isTextPresent("Record Created."));
+        
+        selenium.isTextPresent(reasonText.toString());
+        
+        long count = getRecourdCount(trial.id);
+        assertTrue (count > 0);
+        
+        
+        
+    }
+    
     private long getRecourdCount(long trialId)
             throws SQLException {
         String sql;

@@ -174,7 +174,7 @@ public class OnholdWebDTO implements Serializable {
      * @param reasonText the reasonText to set
      */
     public void setReasonText(String reasonText) {
-        this.reasonText = StringUtils.left(reasonText, PAAttributeMaxLen.LONG_TEXT_LENGTH);
+        this.reasonText = StringUtils.left(reasonText, PAAttributeMaxLen.LEN_4000);
     }
     /**
      * @return the dateLow
