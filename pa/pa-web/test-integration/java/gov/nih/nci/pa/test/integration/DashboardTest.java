@@ -912,7 +912,7 @@ public class DashboardTest extends AbstractTrialStatusTest {
 
     private void verifyWorkloadColumnHeader(int pos, String header) {
         assertEquals(header,
-                s.getText("//table[@id='wl']/thead/tr/th[" + pos + "]/a"));
+                s.getText("//table[@id='wl']/thead/tr/th[" + pos + "]//a"));
     }
 
     @SuppressWarnings("deprecation")
