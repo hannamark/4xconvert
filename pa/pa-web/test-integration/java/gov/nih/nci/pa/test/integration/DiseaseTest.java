@@ -85,7 +85,9 @@ package gov.nih.nci.pa.test.integration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 /**
  * Selenium test for adding/removing diseases
@@ -294,7 +296,33 @@ public class DiseaseTest extends AbstractPaSeleniumTest {
         assertFalse(selenium.isTextPresent("Preferred Term"));
         assertFalse(selenium.isElementPresent("class=breadcrumbFeaturedElement"));
         assertFalse(selenium.isTextPresent("lung cancer"));
-    }  
+    } 
+    
+    /**
+     * Test Plus Minus is present at correct location
+     */
+    
+    @Test
+    public void testIfPlusMinusSignPresent(){
+      
+        //check if minus sign is present
+       selenium.fireEvent("link=Show Tree", "click" );
+       WebElement webElement = driver.findElement(By.xpath("//*[contains(text(),'cancer genetics')]"));
+       WebElement parent = webElement.findElement(By.xpath(".."));
+       String className =parent.getAttribute("class");
+       assertTrue(className.equals("jstree-leaf"));
+       
+     //check if plus sign is present
+       selenium.fireEvent("link=Show Tree", "click" );
+       webElement = driver.findElement(By.xpath("//*[contains(text(),'Genetic condition')]"));
+       parent = webElement.findElement(By.xpath(".."));
+       className =parent.getAttribute("class");
+       assertTrue(className.equals("jstree-closed"));
+
+   
+    } 
+    
+   
     
     private void searchDisease(String searchName) {
         selenium.type("id=disease", searchName);

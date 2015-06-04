@@ -231,7 +231,11 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         JSONArray children = new JSONArray();
         for (PDQDiseaseNode pdqDiseaseNode : diseaseTree) {
             JSONObject child = new JSONObject();
-            child.put("state", "closed");
+            
+            if (pdqDiseaseNode.getHasChildren()) {
+                child.put("state", "closed");    
+            }
+            
 
             JSONObject attr = new JSONObject();
             attr.put("id", "ptid" + nodeIdPrefix + "_" + pdqDiseaseNode.getId());
