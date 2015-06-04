@@ -76,7 +76,7 @@ public class DashboardPerformanceTest extends AbstractPaSeleniumTest {
 
         WebDriverWait waiting = new WebDriverWait(driver, 300);
         waiting.until(ExpectedConditions.presenceOfElementLocated(By
-                .xpath("//a[text()='Trial List']")));
+                .xpath("//a[text()='Workload']")));
 
         final Date end = new Date();
         System.out.println("Timestamp after calling " + descr + ": " + end);
@@ -89,7 +89,7 @@ public class DashboardPerformanceTest extends AbstractPaSeleniumTest {
         report(durationString);
 
         assertTrue(s.isTextPresent("trials found, displaying all trials"));
-        assertTrue(s.isElementPresent("results"));
+        assertTrue(s.isElementPresent("wl"));
 
         return diffSeconds;
     }
